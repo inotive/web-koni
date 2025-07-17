@@ -1,0 +1,81 @@
+.menu-link,
+.menu-title {
+    font-size: 14px !important;
+}
+
+/* Custom active state for sidebar menu (orange like Dashboard) */
+.menu-link.active, .menu-link.active.bg-orange {
+    background-color: transparent !important;
+    color: #fd7e14 !important;
+    border-radius: 0 !important;
+}
+.menu-link.active .menu-title,
+.menu-link.active.bg-orange .menu-title {
+    color: #fd7e14 !important;
+}
+.menu-link.active .menu-icon i,
+.menu-link.active.bg-orange .menu-icon i {
+    color: #fd7e14 !important;
+}
+
+/* Hover state for sidebar menu (orange like Dashboard) */
+.menu-link:hover:not(.active):not(.bg-orange) {
+    background-color: #fff5e5 !important;
+    color: #fd7e14 !important;
+    border-radius: 12px !important;
+}
+.menu-link:hover:not(.active):not(.bg-orange) .menu-title {
+    color: #fd7e14 !important;
+}
+.menu-link:hover:not(.active):not(.bg-orange) .menu-icon i {
+    color: #fd7e14 !important;
+}
+.menu-link:hover:not(.active):not(.bg-orange) .menu-bullet .bullet {
+    background-color: #fd7e14 !important;
+}
+
+/* Bullet orange for active menu */
+.menu-link.active .menu-bullet .bullet,
+.menu-link.active.bg-orange .menu-bullet .bullet {
+    background-color: #fd7e14 !important;
+}
+
+/* Animated arrow for parent menu (rotate on open) */
+.menu-link .fa-angle-down,
+.menu-link .fa-angle-up {
+    transition: transform 0.3s cubic-bezier(.4,2,.6,1);
+}
+.menu-link[aria-expanded="true"] .fa-angle-down,
+.menu-link.active .fa-angle-down {
+    transform: rotate(-180deg);
+}
+
+/* Remove default blue highlight if any */
+.menu-link.active,
+.menu-link.active.bg-orange {
+    box-shadow: none !important;
+}
+
+/* Menu utama bold, lebih spesifik */
+[data-kt-app-layout] .menu-column > .menu-item > .menu-link,
+[data-kt-app-layout] .menu-column > .menu-item > .menu-title {
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+}
+
+/* Sub menu normal, lebih spesifik */
+[data-kt-app-layout] .menu ul.menu .menu-link,
+[data-kt-app-layout] .menu ul.menu .menu-title {
+    font-weight: normal !important;
+    font-size: 14px !important;
+}
+
+.menu-icon i {
+    font-size: 1.3rem !important; /* lebih kecil, setara 20-21px */
+    line-height: 1.2 !important;
+}
+.menu-link {
+    min-height: 48px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
