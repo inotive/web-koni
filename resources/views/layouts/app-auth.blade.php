@@ -1,37 +1,42 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ config('app.name', 'Perumda Varia Niaga') }} | {{ $title ?? 'Login' }}</title>
+    <title>{{ config('app.name', 'KONI Tabalong') }} | {{ $title ?? 'Login' }}</title>
     <meta name="description" content="Portal Manajemen Konten Perumda Varia Niaga Samarinda" />
     <link rel="shortcut icon" href="{{ asset('landing-assets/img/logo.png') }}" />
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Stylesheets -->
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
+
         .btn-orange {
             background-color: #FF6224;
             color: #fff;
         }
+
         .btn-orange:hover {
             background-color: #e55720;
             color: #fff;
         }
+
         .text-orange {
             color: #FF6224;
         }
+
         .text-navy {
             color: #003C77;
         }

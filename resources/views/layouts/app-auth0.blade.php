@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Perumda Varia Niaga - @yield('title')</title>
+    <title>KONI Tabalong - @yield('title')</title>
     <link rel="shortcut icon" href="{{ asset('assets/media/logos/logo-mustikagadai-tiga-puteri.png') }}" />
     <!--begin::Fonts(mandatory for all pages)-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />

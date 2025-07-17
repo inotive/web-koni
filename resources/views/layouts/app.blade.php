@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Perumda Varia Niaga - @yield('title')</title>
+    <title>KONI Tabalong - @yield('title')</title>
 
     <link rel="shortcut icon" href="{{ asset('landing-assets/img/logo.png') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
