@@ -9,16 +9,16 @@
                 </script>
                 &copy;
             </span>
-            <a href="#" class="text-muted fw-bold">Perumda</a>
-            <a href="#" class="text-orange fw-bold text-hover-primary">Varia Niaga</a>
-            <span class="text-muted ms-1">- Content Management System</span>
+            <a href="#" class="text-muted fw-bold"></a>
+            <a href="#" class="text-orange fw-bold text-hover-primary"></a>
+            <span class="text-muted ms-1"></span>
         </div>
         <!--end::Copyright-->
 
         <!--begin::Menu-->
         <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1 order-md-2">
             <li class="menu-item">
-                <span class="menu-link px-2">Versi 1.0.0</span>
+                <span class="menu-link px-2"></span>
             </li>
         </ul>
         <!--end::Menu-->
