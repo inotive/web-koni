@@ -15,479 +15,273 @@
 
 @section('content')
 
-    <style>
-        .form-main-container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+<style>
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    .card-form {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: none;
+    }
+    .file-upload-wrapper {
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease-in-out;
+        position: relative;
+    }
+    .file-upload-wrapper:hover {
+        border-color: #0d6efd;
+        background-color: #e9ecef;
+    }
+    .file-upload-wrapper input[type="file"] {
+        display: none;
+    }
+    .file-upload-icon {
+        font-size: 2.5rem;
+        color: #0d6efd;
+    }
+    .file-upload-text {
+        color: #495057;
+        font-weight: 500;
+    }
+    .file-upload-hint {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+    .current-photo {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .preview-image {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+    .current-image-container {
+        margin-top: 1rem;
+    }
+    .current-image-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    .current-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+</style>
 
-        .form-card {
-            width: 100%;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e5e7eb;
-            overflow: hidden;
-        }
+<div class="container mt-4">
+    <div class="card card-form">
+        <div class="card-body p-4 p-md-5">
+            <h3 class="fw-bold mb-4">Edit Data Atlet</h3>
 
-        .form-card-header {
-            padding: 24px 32px;
-            border-bottom: 1px solid #f1f1f4;
-        }
-
-        .form-card-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #071437;
-            margin: 0;
-        }
-
-        .form-body {
-            padding: 20px 32px;
-        }
-
-        /* Form Elements Improvements */
-        .form-field {
-            display: flex;
-            align-items: center;
-            margin-bottom: 24px;
-            gap: 24px;
-        }
-
-        .form-label {
-            width: 200px;
-            min-width: 200px;
-        }
-
-        .form-label-text {
-            font-size: 14px;
-            color: #252f4a;
-            font-weight: 500;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            flex: 1;
-            padding: 14px 16px;
-            font-size: 14px;
-            border: 1px solid #dbdfe9;
-            border-radius: 8px;
-            background-color: #fcfcfc;
-            transition: all 0.2s ease;
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: #1b84ff;
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(27, 132, 255, 0.1);
-        }
-
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        /* Upload Section Improvements */
-        .upload-container {
-            display: flex;
-            margin-bottom: 24px;
-            gap: 24px;
-        }
-
-        .upload-label {
-            width: 200px;
-            min-width: 200px;
-        }
-
-        .upload-info {
-            font-size: 13px;
-            color: #6b7280;
-            margin-top: 4px;
-        }
-
-        .upload-box {
-            flex: 1;
-            padding: 24px;
-            border: 2px dashed #1b84ff;
-            border-radius: 8px;
-            background-color: #eff6ff;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .upload-box:hover {
-            background-color: #e0f2fe;
-            border-color: #0369a1;
-        }
-
-        .upload-icon {
-            width: 48px;
-            height: 48px;
-            color: #1b84ff;
-        }
-
-        .upload-text {
-            font-size: 14px;
-            color: #252f4a;
-            font-weight: 500;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .preview-image {
-            max-width: 250px;
-            max-height: 250px;
-            border-radius: 8px;
-            margin-top: 16px;
-            border: 1px solid #e5e7eb;
-            object-fit: cover;
-        }
-
-        .current-image {
-            max-width: 250px;
-            max-height: 250px;
-            border-radius: 8px;
-            margin-top: 16px;
-            border: 1px solid #e5e7eb;
-            object-fit: cover;
-        }
-
-        #imagePreviewContainer {
-            margin-top: 16px;
-        }
-
-        .current-image-container {
-            margin-top: 16px;
-        }
-
-        .current-image-label {
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        /* Buttons Improvements */
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 16px;
-            padding: 24px 32px;
-            border-top: 1px solid #f1f1f4;
-        }
-
-        .btn-primary {
-            padding: 14px 24px;
-            background-color: #d20a11;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #b91c1c;
-        }
-
-        .btn-secondary {
-            padding: 14px 24px;
-            background-color: #6b7280;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .btn-secondary:hover {
-            background-color: #4b5563;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-
-            .form-field,
-            .upload-container {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-
-            .form-label,
-            .upload-label {
-                width: 100%;
-                min-width: 100%;
-            }
-
-            .form-body {
-                padding: 16px;
-            }
-
-            .form-card-header,
-            .form-actions {
-                padding: 16px;
-            }
-        }
-    </style>
-
-    <div class="form-main-container">
-        <div class="form-card">
-            <div class="form-card-header">
-                <h2 class="form-card-title">Edit Data Atlet</h2>
-            </div>
-
-            <form action="{{ route('admin.konfigurasi.atlet.update', $atlet->id) }}" method="POST"
-                enctype="multipart/form-data">
+            <form action="{{ route('admin.konfigurasi.atlet.update', $atlet->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
-                <div class="form-body">
-                    <div class="upload-container">
-                        <div class="upload-label">
-                            <p class="form-label-text">Foto Atlet</p>
-                            <p class="upload-info">150x150px JPEG, PNG Image</p>
-                        </div>
-                        <div style="flex: 1;">
-                            <label for="foto_atlet" class="upload-box" id="dropArea">
-                                <svg class="upload-icon" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z"
-                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path d="M12 18V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                    <path d="M9 15L12 12L15 15" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <div class="upload-text">
-                                    <p>Seret dan lepas file di sini, atau klik untuk mengunggah.</p>
-                                </div>
-                            </label>
-                            <input type="file" class="hidden" id="foto_atlet" name="foto_atlet" accept="image/*">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3">
+                        <label for="foto_atlet" class="form-label">Foto Atlet</label>
+                    </div>
+                    <div class="col-md-9">
+                        <label for="foto_atlet" class="file-upload-wrapper" id="dropArea">
+                            <input type="file" name="foto_atlet" id="foto_atlet" accept="image/*">
 
+                            <!-- Upload content - akan disembunyikan jika ada foto -->
+                            <div class="d-flex justify-content-center align-items-center" id="uploadContent" @if($atlet->foto_atlet) style="display: none !important;" @endif>
+                                <i class="fas fa-cloud-upload-alt file-upload-icon me-3" id="uploadIcon"></i>
+                                <div id="uploadText">
+                                    <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah</p>
+                                    <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
+                                </div>
+                            </div>
+
+                            <!-- Container untuk preview gambar baru -->
+                            <div id="imagePreviewContainer" style="display: none;"></div>
+
+                            <!-- Container untuk gambar yang sudah ada - ditampilkan di dalam kotak -->
                             @if ($atlet->foto_atlet)
-                                <div class="current-image-container" id="currentImageContainer">
-                                    <span class="current-image-label">Foto Saat Ini:</span>
-                                    <img src="{{ asset('storage/' . $atlet->foto_atlet) }}" alt="Foto Atlet"
-                                        class="current-image" id="currentImage">
+                                <div id="existingImageContainer" class="d-flex justify-content-center align-items-center">
+                                    <img src="{{ asset('storage/' . $atlet->foto_atlet) }}" alt="Foto Atlet" class="preview-image me-3">
+                                    <div>
+                                        <p class="file-upload-text mb-1">Foto Atlet Saat Ini</p>
+                                        <p class="file-upload-hint">Klik untuk mengubah foto</p>
+                                    </div>
                                 </div>
                             @endif
-
-                            <div id="imagePreviewContainer"></div>
-                        </div>
+                        </label>
                     </div>
-
-                    <div class="form-field">
-                        <div class="form-label">
-                            <p class="form-label-text">Nama Lengkap</p>
-                        </div>
-                        <input type="text" class="form-input" name="nama" placeholder="Masukkan nama lengkap" required
-                            value="{{ old('nama', $atlet->nama) }}">
-                    </div>
-
-                    <div class="form-field">
-                        <div class="form-label">
-                            <p class="form-label-text">Cabang Olahraga</p>
-                        </div>
-                        <select class="form-select" name="cabor" required>
-                            <option value="">Pilih Cabang Olahraga</option>
-                            <option value="Sepak Bola" {{ old('cabor', $atlet->cabor) == 'Sepak Bola' ? 'selected' : '' }}>
-                                Sepak Bola</option>
-                            <option value="Basket" {{ old('cabor', $atlet->cabor) == 'Basket' ? 'selected' : '' }}>Basket
-                            </option>
-                            <option value="Badminton" {{ old('cabor', $atlet->cabor) == 'Badminton' ? 'selected' : '' }}>
-                                Badminton</option>
-                            <option value="Renang" {{ old('cabor', $atlet->cabor) == 'Renang' ? 'selected' : '' }}>Renang
-                            </option>
-                            <option value="Atletik" {{ old('cabor', $atlet->cabor) == 'Atletik' ? 'selected' : '' }}>Atletik
-                            </option>
-                            <option value="Tenis" {{ old('cabor', $atlet->cabor) == 'Tenis' ? 'selected' : '' }}>Tenis
-                            </option>
-                            <option value="Voli" {{ old('cabor', $atlet->cabor) == 'Voli' ? 'selected' : '' }}>Voli
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="form-field">
-                        <div class="form-label">
-                            <p class="form-label-text">Email</p>
-                        </div>
-                        <input type="email" class="form-input" name="email" placeholder="emailatlet@gmail.com"
-                            value="{{ old('email', $atlet->email) }}">
-                    </div>
-
-                    <div class="form-field">
-                        <div class="form-label">
-                            <p class="form-label-text">No Telepon</p>
-                        </div>
-                        <input type="text" class="form-input" name="no_telepon" placeholder="0895 9271 8263"
-                            value="{{ old('no_telepon', $atlet->no_telepon) }}">
-                    </div>
-
-                    <div class="form-field">
-                        <div class="form-label">
-                            <p class="form-label-text">Tanggal Lahir</p>
-                        </div>
-                        <input type="date" class="form-input" name="tanggal_lahir" required
-                            value="{{ old('tanggal_lahir', $atlet->tanggal_lahir) }}">
-                    </div>
-
-                    <div class="form-field">
-                        <div class="form-label">
-                            <p class="form-label-text">Tempat Lahir</p>
-                        </div>
-                        <input type="text" class="form-input" name="tempat_lahir"
-                            placeholder="Balikpapan, Kalimantan Timur" required
-                            value="{{ old('tempat_lahir', $atlet->tempat_lahir) }}">
-                    </div>
-
-                    <div class="form-field">
-                        <div class="form-label">
-                            <p class="form-label-text">Jenis Kelamin</p>
-                        </div>
-                        <select class="form-select" name="jenis_kelamin" required>
-                            <option value="">Pilih Jenis Kelamin</option>
-                            <option value="Laki-laki"
-                                {{ old('jenis_kelamin', $atlet->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>
-                                Laki-laki</option>
-                            <option value="Perempuan"
-                                {{ old('jenis_kelamin', $atlet->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>
-                                Perempuan</option>
-                        </select>
-                    </div>
-
-                    <div class="form-field">
-                        <div class="form-label">
-                            <p class="form-label-text">Alamat (Sesuai KTP)</p>
-                        </div>
-                        <textarea class="form-textarea" name="alamat" placeholder="Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan"
-                            required>{{ old('alamat', $atlet->alamat) }}</textarea>
-                    </div>
-
                 </div>
 
-                <div class="form-actions">
-                    <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn-secondary">Batal</a>
-                    <button type="submit" class="btn-primary">Update Data</button>
+                @php
+                $fields = [
+                    'nama' => ['label' => 'Nama Lengkap', 'type' => 'text', 'placeholder' => 'Masukkan nama lengkap', 'required' => true, 'value' => $atlet->nama],
+                    'cabor' => ['label' => 'Cabang Olahraga', 'type' => 'select', 'options' => ['Sepak Bola', 'Basket', 'Badminton', 'Renang', 'Atletik', 'Tenis', 'Voli'], 'required' => true, 'value' => $atlet->cabor],
+                    'email' => ['label' => 'Email', 'type' => 'email', 'placeholder' => 'emailatlet@gmail.com', 'required' => false, 'value' => $atlet->email],
+                    'no_telepon' => ['label' => 'No Telepon', 'type' => 'text', 'placeholder' => '0895 9271 8263', 'required' => false, 'value' => $atlet->no_telepon],
+                    'tanggal_lahir' => ['label' => 'Tanggal Lahir', 'type' => 'date', 'required' => true, 'value' => $atlet->tanggal_lahir],
+                    'tempat_lahir' => ['label' => 'Tempat Lahir', 'type' => 'text', 'placeholder' => 'Balikpapan, Kalimantan Timur', 'required' => true, 'value' => $atlet->tempat_lahir],
+                    'jenis_kelamin' => ['label' => 'Jenis Kelamin', 'type' => 'select', 'options' => ['Laki-laki', 'Perempuan'], 'required' => true, 'value' => $atlet->jenis_kelamin],
+                    'alamat' => ['label' => 'Alamat (Sesuai KTP)', 'type' => 'textarea', 'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan', 'required' => true, 'value' => $atlet->alamat],
+                ];
+                @endphp
+
+                @foreach ($fields as $key => $field)
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                        <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
+                    </div>
+                    <div class="col-md-9">
+                        @php
+                            $value = old($key, $field['value']);
+                        @endphp
+                        @if ($field['type'] === 'select')
+                            <select name="{{ $key }}" id="{{ $key }}" class="form-select @error($key) is-invalid @enderror" {{ $field['required'] ? 'required' : '' }}>
+                                <option value="">Pilih {{ $field['label'] }}</option>
+                                @foreach($field['options'] as $option)
+                                <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                @endforeach
+                            </select>
+                        @elseif ($field['type'] === 'textarea')
+                            <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror" placeholder="{{ $field['placeholder'] }}" rows="3" {{ $field['required'] ? 'required' : '' }}>{{ $value }}</textarea>
+                        @else
+                            <input type="{{ $field['type'] }}" name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror" placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}" {{ $field['required'] ? 'required' : '' }}>
+                        @endif
+                        @error($key) <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+                @endforeach
+
+                <div class="row mt-4">
+                    <div class="col-md-9 offset-md-3 d-flex justify-content-between">
+                        <button type="submit" class="btn btn-danger px-4">Update Data</button>
+                        <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn btn-secondary px-4">Batal</a>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadInput = document.getElementById('foto_atlet');
-            const dropArea = document.getElementById('dropArea');
-            const previewContainer = document.getElementById('imagePreviewContainer');
-            const currentImageContainer = document.getElementById('currentImageContainer');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadInput = document.getElementById('foto_atlet');
+        const dropArea = document.getElementById('dropArea');
+        const uploadContent = document.getElementById('uploadContent');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const existingImageContainer = document.getElementById('existingImageContainer');
 
-            // Image preview functionality
-            uploadInput.addEventListener('change', function() {
-                const file = this.files[0];
+        // Image preview functionality
+        uploadInput.addEventListener('change', function() {
+            const file = this.files[0];
 
-                // Clear previous preview
+            if (file) {
+                if (!file.type.match('image.*')) {
+                    alert('Hanya file gambar yang diizinkan');
+                    return;
+                }
+
+                // Hide upload content and existing image
+                uploadContent.style.display = 'none';
+                if (existingImageContainer) {
+                    existingImageContainer.style.display = 'none';
+                }
+
+                // Show preview container
+                previewContainer.style.display = 'flex';
+                previewContainer.style.justifyContent = 'center';
+                previewContainer.style.alignItems = 'center';
                 previewContainer.innerHTML = '';
 
-                if (file) {
-                    if (!file.type.match('image.*')) {
-                        alert('Hanya file gambar yang diizinkan');
-                        return;
-                    }
+                const reader = new FileReader();
 
-                    const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewContent = `
+                        <div class="d-flex justify-content-center align-items-center">
+                            <img src="${e.target.result}" class="preview-image me-3" alt="Preview Foto Atlet" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                            <div>
+                                <p class="file-upload-text mb-1">${file.name}</p>
+                                <p class="file-upload-hint">Klik untuk mengubah foto</p>
+                            </div>
+                        </div>
+                    `;
+                    previewContainer.innerHTML = previewContent;
+                };
 
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.className = 'preview-image';
-                        img.alt = 'Preview Foto Atlet';
+                reader.readAsDataURL(file);
+            } else {
+                // Reset to original state
+                previewContainer.style.display = 'none';
+                previewContainer.innerHTML = '';
 
-                        // Add label for new image
-                        const label = document.createElement('span');
-                        label.className = 'current-image-label';
-                        label.textContent = 'Foto Baru:';
-
-                        previewContainer.appendChild(label);
-                        previewContainer.appendChild(img);
-
-                        // Hide current image when new image is selected
-                        if (currentImageContainer) {
-                            currentImageContainer.style.display = 'none';
-                        }
-                    };
-
-                    reader.readAsDataURL(file);
+                // Show appropriate content based on whether existing image exists
+                if (existingImageContainer) {
+                    existingImageContainer.style.display = 'flex';
+                    uploadContent.style.display = 'none';
                 } else {
-                    // Show current image again if no new file selected
-                    if (currentImageContainer) {
-                        currentImageContainer.style.display = 'block';
-                    }
+                    uploadContent.style.display = 'flex';
                 }
-            });
-
-            // Drag and drop functionality
-            dropArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropArea.style.borderColor = '#0369a1';
-                dropArea.style.backgroundColor = '#e0f2fe';
-            });
-
-            dropArea.addEventListener('dragleave', () => {
-                dropArea.style.borderColor = '#1b84ff';
-                dropArea.style.backgroundColor = '#eff6ff';
-            });
-
-            dropArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropArea.style.borderColor = '#1b84ff';
-                dropArea.style.backgroundColor = '#eff6ff';
-
-                if (e.dataTransfer.files.length) {
-                    uploadInput.files = e.dataTransfer.files;
-                    uploadInput.dispatchEvent(new Event('change'));
-                }
-            });
-
-            // Form validation
-            document.querySelector('form').addEventListener('submit', function(e) {
-                const requiredFields = this.querySelectorAll('[required]');
-                let isValid = true;
-
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        isValid = false;
-                        field.style.borderColor = '#ef4444';
-                        field.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
-                    } else {
-                        field.style.borderColor = '#dbdfe9';
-                        field.style.boxShadow = 'none';
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault();
-                    alert('Mohon lengkapi semua field yang wajib diisi!');
-                }
-            });
+            }
         });
-    </script>
+
+        // Drag and drop functionality
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#0d6efd';
+            dropArea.style.backgroundColor = '#e9ecef';
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.style.borderColor = '#dee2e6';
+            dropArea.style.backgroundColor = '#f8f9fa';
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#dee2e6';
+            dropArea.style.backgroundColor = '#f8f9fa';
+
+            if (e.dataTransfer.files.length) {
+                uploadInput.files = e.dataTransfer.files;
+                uploadInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = '#ef4444';
+                    field.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                } else {
+                    field.style.borderColor = '#dbdfe9';
+                    field.style.boxShadow = 'none';
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Mohon lengkapi semua field yang wajib diisi!');
+            }
+        });
+    });
+</script>
 @endsection
