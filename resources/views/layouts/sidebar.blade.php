@@ -82,6 +82,50 @@
                     </div>
                 </div>
 
+                <div class="menu-item">
+                    <a class="menu-link d-flex justify-content-between {{ request()->is('admin/konfigurasi*') ? 'active bg-orange' : '' }}"
+                        data-bs-toggle="collapse" href="#submenu-pengguna" role="button"
+                        aria-expanded="{{ request()->is('admin/konfigurasi*') ? 'true' : 'false' }}"
+                        aria-controls="submenu-pengguna">
+                        <span class="d-flex align-items-center">
+                            <span class="menu-icon"><i
+                                    class="fa-solid fa-users fs-2 {{ request()->is('admin/konfigurasi*') ? 'text-orange' : 'text-gray-600' }}"></i></span>
+                            <span class="menu-title">Konfigurasi</span>
+                        </span>
+                        <i
+                            class="fa-solid {{ request()->is('admin/konfigurasi*') ? 'fa-angle-up' : 'fa-angle-down' }} fs-4"></i>
+                    </a>
+                    <div class="{{ request()->is('admin/konfigurasi*') ? 'show' : '' }} collapse"
+                        id="submenu-pengguna">
+                        <ul class="menu flex-column ms-5">
+                            <li class="menu-item">
+                                <a class="menu-link {{ request()->is('admin/konfigurasi/pelatih*') ? 'active' : '' }}"
+                                    href="{{ route('admin.konfigurasi.pelatih.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Pelatih</span>
+                                </a>
+                            </li>
+                            {{-- <li class="menu-item">
+                                <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active' : '' }}"
+                                    href="{{ route('admin.manajemen-pengguna.role.index') }}">
+                                    <span class="menu-bullet">
+                                        <span class="bullet bullet-dot"></span>
+                                    </span>
+                                    <span class="menu-title">Jabatan</span>
+                                </a>
+                            </li> --}}
+                            {{-- <li class="menu-item">
+                                <a class="menu-link {{ request()->routeIs('nota-penebusan.create') ? 'active' : '' }}"
+                                    href="{{ route('nota-penebusan.create') }}"><span class="menu-bullet"><span
+                                            class="bullet bullet-dot"></span></span><span class="menu-title">Transaksi
+                                        Penebusan</span></a>
+                            </li> --}}
+                        </ul>
+                    </div>
+                </div>
+
 
             </div>
             <!--end::Menu-->

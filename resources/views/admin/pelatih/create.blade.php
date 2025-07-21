@@ -1,0 +1,129 @@
+@extends('layouts.app')
+@section('pageTitle', 'Tambah Data Pelatih')
+@section('mainSection', 'Konfigurasi')
+@section('subSection', 'Pelatih')
+@section('currentSection', 'Tambah Data Pelatih')
+
+@section('content')
+<style>
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    .card-form {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: none;
+    }
+    .file-upload-wrapper {
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 2.5rem;
+        text-align: center;
+        cursor: pointer;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease-in-out;
+    }
+    .file-upload-wrapper:hover {
+        border-color: #0d6efd;
+        background-color: #e9ecef;
+    }
+    .file-upload-wrapper input[type="file"] {
+        display: none;
+    }
+    .file-upload-icon {
+        font-size: 2.5rem;
+        color: #0d6efd;
+    }
+    .file-upload-text {
+        color: #495057;
+        font-weight: 500;
+    }
+    .file-upload-hint {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="card card-form">
+        <div class="card-body p-4 p-md-5">
+            <h3 class="fw-bold mb-4">Tambah Data</h3>
+
+            <form action="{{ route('admin.konfigurasi.pelatih.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-3">
+                        <label for="foto" class="form-label">Foto</label>
+                    </div>
+                    <div class="col-md-9">
+                        <label for="foto" class="file-upload-wrapper">
+                            <input type="file" name="foto" id="foto" class="@error('foto') is-invalid @enderror">
+                            <i class="fas fa-cloud-upload-alt file-upload-icon mb-2"></i>
+                            <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah.</p>
+                            <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
+                            @error('foto') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                        </label>
+                    </div>
+                </div>
+
+                @php
+                $fields = [
+                    'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Alessandro Benaya Pinem'],
+                    'cabor' => ['label' => 'Cabor', 'type' => 'select', 'options' => ['Bola Basket', 'Catur', 'Tenis', 'Tenis Meja', 'Panjat Tebing', 'Sepak Bola', 'Bulu Tangkis']],
+                    'email' => ['label' => 'Email', 'type' => 'email', 'placeholder' => 'emailpelatih@gmail.com'],
+                    'ketersediaan' => ['label' => 'Ketersediaan', 'type' => 'select-static', 'options' => ['Tersedia', 'Tidak Tersedia']],
+                    'no_telepon' => ['label' => 'No Telepon', 'type' => 'text', 'placeholder' => '0895 9271 8263'],
+                    'tanggal_lahir' => ['label' => 'Tanggal Lahir', 'type' => 'date'],
+                    'tempat_lahir' => ['label' => 'Tempat Lahir', 'type' => 'text', 'placeholder' => 'Balikpapan, Kalimantan Timur'],
+                    'kelamin' => ['label' => 'Jenis Kelamin', 'type' => 'select', 'options' => ['Laki - Laki', 'Perempuan']],
+                    'alamat' => ['label' => 'Alamat (Sesuai KTP)', 'type' => 'text', 'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan'],
+                    // 'prestasi' => ['label' => 'Prestasi', 'type' => 'textarea', 'placeholder' => 'Tuliskan prestasi yang diraih, pisahkan dengan baris baru...'],
+                ];
+                @endphp
+
+                @foreach ($fields as $key => $field)
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-3">
+                        <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
+                    </div>
+                    <div class="col-md-9">
+                        @if ($field['type'] === 'select')
+                            <select name="{{ $key }}" id="{{ $key }}" class="form-select @error($key) is-invalid @enderror">
+                                <option value="">Pilih {{ $field['label'] }}</option>
+                                @foreach($field['options'] as $option)
+                                <option value="{{ $option }}" {{ old($key) == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                @endforeach
+                            </select>
+                        @elseif ($field['type'] === 'select-static')
+                            <select name="{{ $key }}" id="{{ $key }}" class="form-select" disabled>
+                                <option value="Tersedia">Tersedia</option>
+                            </select>
+                            <small class="text-muted">Fitur ini belum diimplementasikan.</small>
+                        @elseif ($field['type'] === 'textarea')
+                            <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror" placeholder="{{ $field['placeholder'] }}" rows="3">{{ old($key) }}</textarea>
+                        @else
+                            <input type="{{ $field['type'] }}" name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror" placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ old($key) }}">
+                        @endif
+                        @error($key) <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+                @endforeach
+
+                <div class="row mt-4">
+                    <div class="col-md-9 offset-md-3">
+                        <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('foto').addEventListener('change', function(e) {
+        const fileName = e.target.files[0] ? e.target.files[0].name : '150x150px JPEG, PNG Image';
+        document.getElementById('file-name-display').textContent = fileName;
+    });
+</script>
+@endsection
