@@ -8,6 +8,7 @@
 @section('mainSection', 'Manajemen Pengguna')
 @section('currentSection', 'Pengguna')
 
+
 @section('content')
     <div class="row col-12 mt-5">
         <div class="card">
@@ -45,7 +46,7 @@
                                 @foreach ($users as $value)
                                     <tr id="{{ $value->id }}">
                                         <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td class="text-center">                                         
+                                        <td class="text-center">
                                             <div class="d-flex gap-5">
                                                 <div class="symbol symbol-50px">
                                                     @if ($value->image)

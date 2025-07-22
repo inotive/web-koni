@@ -218,7 +218,7 @@
     });
 
     const inputNama = $("#inputNama");
-    
+
     inputNama.on("input", function(event) {
         const inputValue = inputNama.val();
         const nonNumericValue = inputValue.replace(/[!@#$%^&*="()_+{}\[\]:;<>,.?~\\|0-9/'-]/g, '');
@@ -226,7 +226,7 @@
             inputNama.val(nonNumericValue);
         }
     });
-    
+
     // const username = $("#username");
     // username.on("input", function(event) {
     //     const inputValue = username.val();
