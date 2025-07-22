@@ -24,6 +24,7 @@ use App\Http\Controllers\Admin\PrestasiController;
 
 Route::get('login', [LoginController::class, 'show'])->middleware('guest')->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('login-post');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');

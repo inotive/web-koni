@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-<<<<<<< HEAD
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,17 +23,3 @@ class Prestasi extends Model
         return $this->belongsTo(Atlet::class);
     }
 }
-=======
-use Illuminate\Database\Eloquent\Model;
-
-class Prestasi extends Model
-{
-    protected $fillable = ['pelatih_id', 'nama_prestasi', 'tempat', 'tahun'];
-
-    public function pelatih()
-    {
-        return $this->belongsTo(Pelatih::class);
-    }
-}
-
->>>>>>> origin/group/sultan
