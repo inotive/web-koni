@@ -15,7 +15,6 @@
                 <h3 class="card-title align-items-start flex-column">
                     <span class="card-label fw-bold fs-3 mb-1">Daftar Pengguna</span>
                 </h3>
-
                 <div class="card-toolbar d-flex gap-2">
                     <div class="col-5">
                         <input type="search" name="search" id="search" class="form-control" placeholder="Search">
@@ -25,7 +24,6 @@
                         Tambah Data
                     </a>
                 </div>
-
             </div>
             <div class="card-body ">
                 <div class="row g-12 g-xl-12">
@@ -45,17 +43,8 @@
                                 @foreach ($users as $value)
                                     <tr id="{{ $value->id }}">
                                         <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td class="text-center">                                         
+                                        <td class="text-center">
                                             <div class="d-flex gap-5">
-                                                <div class="symbol symbol-50px">
-                                                    @if ($value->image)
-                                                        <img src="{{ Storage::url('profile/' . $value->image) }}" class="img-thumbnail">
-                                                    @else
-                                                        <div class="symbol-label fs-2 fw-bold bg-light-warning text-dark">
-                                                            {{ substr($value->username, 0, 1) }}
-                                                        </div>
-                                                    @endif
-                                                </div>
                                                 <div class="text-center align-content-center">
                                                     {{ $value->username }}
                                                 </div>

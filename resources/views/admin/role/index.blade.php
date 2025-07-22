@@ -28,7 +28,7 @@
                 <div class="card-toolbar d-flex gap-2">
                     <div class="col-5">
                         <input type="search" name="search" id="search" class="form-control" placeholder="Search">
-                    </div>
+                    </div class="">
                         <a href="#" class="btn btn-warning" data-bs-toggle="modal"
                             data-bs-target="#kt_modal_tambah">
                         <i class="ki-duotone ki-plus fs-2"></i>Tambah Jabatan</a>
@@ -71,8 +71,8 @@
 
                                                 <ul class="dropdown-menu">
                                                         <li>
-                                                            <button class="dropdown-item d-flex align-items-center gap-2" 
-                                                                data-bs-toggle="modal" 
+                                                            <button class="dropdown-item d-flex align-items-center gap-2"
+                                                                data-bs-toggle="modal"
                                                                 data-bs-target="#kt_modal_{{ $value->id }}">
                                                                 {{-- <i class="ki-duotone ki-pencil fs-5"></i>  --}}
                                                                 Edit
@@ -96,7 +96,7 @@
                                                             </button>
                                                         </li>
                                                     </ul>
-                                            </div>                                                                         
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach

@@ -42,50 +42,46 @@
                         <div class="col-4 mb-5"> <!-- Responsive columns -->
                             <div class="p-3"> <!-- Remove fixed width/height -->
                                 <h6 class="fw-medium mb-5">{{ $permission->display_name }}</h6>
-                                @if ($permission->name === 'beranda')
-                                    <p class="mb-3 desc">Menampilkan halaman utama situs yang berisi informasi ringkas
-                                        perusahaan.</p>
-                                @elseif ($permission->name === 'tentang-kami')
-                                    <p class="mb-3 desc">Mengelola halaman yang menjelaskan profil, visi, dan misi
-                                        perusahaan.</p>
-                                @elseif ($permission->name === 'direksi')
-                                    <p class="mb-3 desc">Menampilkan informasi struktur dan anggota Direksi perusahaan.</p>
-                                @elseif ($permission->name === 'agenda')
-                                    <p class="mb-3 desc">Mengatur jadwal kegiatan perusahaan seperti rapat, seminar, atau
-                                        acara publik.</p>
-                                @elseif ($permission->name === 'berita')
-                                    <p class="mb-3 desc">Mengelola publikasi berita resmi perusahaan.</p>
-                                @elseif ($permission->name === 'karir')
-                                    <p class="mb-3 desc">Menampilkan dan mengatur informasi lowongan kerja yang tersedia.
-                                    </p>
-                                @elseif ($permission->name === 'sektor-proyek')
-                                    <p class="mb-3 desc">Mengelola data terkait sektor atau jenis proyek yang dikerjakan
-                                        perusahaan.</p>
-                                @elseif ($permission->name === 'portofolio-proyek')
-                                    <p class="mb-3 desc">Menampilkan proyek-proyek yang telah diselesaikan sebagai
-                                        portofolio perusahaan.</p>
-                                @elseif ($permission->name === 'produk-pangan')
-                                    <p class="mb-3 desc">Mengatur informasi dan detail produk pangan yang ditawarkan
-                                        perusahaan.</p>
-                                @elseif ($permission->name === 'pergudangan')
-                                    <p class="mb-3 desc">Mengelola layanan atau fasilitas pergudangan milik perusahaan.</p>
-                                @elseif ($permission->name === 'rusunawa')
-                                    <p class="mb-3 desc">Mengatur informasi seputar rumah susun sewa (rusunawa) yang
-                                        dikelola perusahaan.</p>
-                                @elseif ($permission->name === 'client-&-vendor')
-                                    <p class="mb-3 desc">Mengelola data klien dan vendor yang bekerja sama dengan
-                                        perusahaan.</p>
-                                @elseif ($permission->name === 'kontak')
-                                    <p class="mb-3 desc">Mengelola pesan yang dikirimkan melalui formulir kontak pengguna.
-                                    </p>
+                                @if ($permission->name === 'dashboard')
+                                    <p class="mb-3 desc">Memberikan hak akses untuk Melihat seluruh data agregat di
+                                        dashboard sistem secara real-time.</p>
+                                @elseif ($permission->name === 'manajemen-rka')
+                                    <p class="mb-3 desc">Memiliki wewenang penuh (Create, Read, Update, Delete) atas data
+                                        Rencana Kerja dan Anggaran.</p>
+                                @elseif ($permission->name === 'laporan-lpj')
+                                    <p class="mb-3 desc">Memegang kontrol penuh atas data Laporan Pertanggungjawaban untuk
+                                        keperluan teknis dan administratif.</p>
+                                @elseif ($permission->name === 'database-bendahara')
+                                    <p class="mb-3 desc">Mengelola seluruh data master yang berkaitan dengan keuangan dan
+                                        perbendaharaan KONI.</p>
+                                @elseif ($permission->name === 'file-kesekretariatan')
+                                    <p class="mb-3 desc">Admin dapat mengelola struktur folder, mengatur kuota penyimpanan,
+                                        dan melakukan backup data penting.</p>
+                                @elseif ($permission->name === 'surat-masuk-keluar')
+                                    <p class="mb-3 desc">Dapat mengakses dan mengelola seluruh data surat-menyurat sebagai
+                                        bagian dari tugas pemeliharaan.</p>
+                                @elseif ($permission->name === 'pelatih')
+                                    <p class="mb-3 desc">Menguasai data master pelatih, termasuk menambah, mengubah, dan
+                                        menghapus data secara penuh.</p>
+                                @elseif ($permission->name === 'atlet')
+                                    <p class="mb-3 desc">Memiliki wewenang penuh untuk mengelola data master atlet di
+                                        seluruh cabang olahraga.</p>
                                 @elseif ($permission->name === 'pengguna')
-                                    <p class="mb-3 desc">Menambah, menghapus, dan mengelola akun pengguna sistem.</p>
+                                    <p class="mb-3 desc">Menu ini adalah pusat kontrol keamanan sistem, tempat Admin membuat
+                                        akun pengguna baru, mengatur ulang kata sandi.</p>
                                 @elseif ($permission->name === 'jabatan')
-                                    <p class="mb-3 desc">Mengatur daftar jabatan atau peran yang digunakan dalam manajemen
-                                        pengguna.</p>
+                                    <p class="mb-3 desc">Keamanan dan struktur sistem, memastikan setiap pengguna hanya bisa
+                                        mengakses informasi sesuai jabatannya.</p>
+                                @elseif ($permission->name === 'tahun-anggaran')
+                                    <p class="mb-3 desc">Mengelola daftar Tahun Anggaran yang menjadi acuan untuk semua
+                                        modul keuangan (RKA dan LPJ).</p>
+                                @elseif ($permission->name === 'cabang-olahraga')
+                                    <p class="mb-3 desc">Bertanggung jawab untuk mengelola data master Cabang Olahraga
+                                        (Cabor) yang diakui oleh KONI.</p>
+                                @elseif ($permission->name === 'kejuaraan')
+                                    <p class="mb-3 desc">Memiliki wewenang penuh untuk mengelola data event skala besar atau
+                                        memperbaiki data historis kejuaraan.</p>
                                 @endif
-
-
                                 <div class="form-check form-switch form-check-custom form-check-solid">
                                     <input class="form-check-input statusSwitch" name="permissions[]" type="checkbox"
                                         value="{{ $permission->id }}" {{ $hasPermission ? 'checked' : '' }} />

@@ -17,28 +17,28 @@ class UserSeeder extends Seeder
         DB::transaction(function () {
             $users = [
                 [
-                    // 'name'  => 'Super Admin',
+                    'name'  => 'Super Admin',
                     'username' => 'superadmin',
                     'email' => 'superadmin@gmail.com',
                     'role'  => 'superadmin',
                 ],
                 [
-                    // 'name'  => 'Admin',
+                    'name'  => 'Admin',
                     'username' => 'admin',
                     'email' => 'admin@gmail.com',
                     'role'  => 'admin',
                 ],
                 [
-                    // 'name'  => 'Pengawas',
+                    'name'  => 'tes1',
                     'username' => 'pengawas',
                     'email' => 'pengawas@gmail.com',
                     'role'  => 'superadmin',
                 ],
                 [
-                    // 'name'  => 'Operator',
+                    'name'  => 'tes2',
                     'username' => 'operator',
                     'email' => 'operator@gmail.com',
-                    'role'  => 'ppk',
+                    'role'  => 'dashboard',
                 ],
             ];
 

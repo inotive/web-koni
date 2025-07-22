@@ -24,17 +24,17 @@
         }
 
         .btn-orange {
-            background-color: #FF6224;
+            background-color: #F8285A;
             color: #fff;
         }
 
         .btn-orange:hover {
-            background-color: #e55720;
+            background-color: #F8285A;
             color: #fff;
         }
 
         .text-orange {
-            color: #FF6224;
+            color: #F8285A;
         }
 
         .text-navy {

@@ -43,12 +43,12 @@
         }
 
         .bg-orange-strong {
-            background-color: #FF6224 !important;
+            background-color: #F8285A !important;
             font-weight: bold;
         }
 
         .border-orange {
-            border-color: #FF6224 !important;
+            border-color: #F8285A !important;
         }
 
         .truncate {
@@ -61,11 +61,11 @@
         }
 
         .text-orange {
-            color: #FF6224 !important;
+            color: #F8285A !important;
         }
 
         .muted-hover:hover {
-            color: #FF6224 !important;
+            color: #F8285A !important;
         }
 
         .percentage-option {
@@ -77,7 +77,7 @@
         }
 
         .percentage-option.selected {
-            background-color: #FF6224;
+            background-color: #F8285A;
             color: white;
         }
 

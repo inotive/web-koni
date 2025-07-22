@@ -136,11 +136,11 @@
                     <div class="card-footer text-end">
                         <div class="col-12">
                                 <div class=" col-12 d-flex justify-content-start gap-5">
-                                    <button type="submit" class="btn w-100 h-50 d-flex align-items-center justify-content-center" style="background-color: #FF6A33; color: white; border-radius: 8px; padding: 12px 0;">
+                                    <button type="submit" class="btn w-100 h-50 d-flex align-items-center justify-content-center" style="background-color: #F8285A; color: white; border-radius: 8px; padding: 12px 0;">
                                         <!-- icon disini -->
                                         Simpan Pengguna
                                     </button>
-                                    <button type="submit" name="action" value="save_&_create" class="btn w-100 h-50 d-flex align-items-center justify-content-center" style="background-color: #FFE8D4; color: #FF6224; border-radius: 8px; padding: 12px 0;">
+                                    <button type="submit" name="action" value="save_&_create" class="btn w-100 h-50 d-flex align-items-center justify-content-center" style="background-color: #ffe6ec; color: #F8285A; border-radius: 8px; padding: 12px 0;">
                                         <!-- icon disini -->
                                         Simpan & Buat Lagi
                                     </button>
@@ -218,7 +218,7 @@
     });
 
     const inputNama = $("#inputNama");
-    
+
     inputNama.on("input", function(event) {
         const inputValue = inputNama.val();
         const nonNumericValue = inputValue.replace(/[!@#$%^&*="()_+{}\[\]:;<>,.?~\\|0-9/'-]/g, '');
@@ -226,7 +226,7 @@
             inputNama.val(nonNumericValue);
         }
     });
-    
+
     // const username = $("#username");
     // username.on("input", function(event) {
     //     const inputValue = username.val();

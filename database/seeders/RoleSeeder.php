@@ -17,7 +17,7 @@ class RoleSeeder extends Seeder
     {
         DB::transaction(function () {
             app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-            $roles = ['superadmin', 'admin', 'ppk', 'konsultan'];
+            $roles = ['superadmin', 'admin', 'dashboard', 'manajemen-rka'];
             foreach ($roles as $value) {
                 Role::create([ 'name' => $value]);
             }
