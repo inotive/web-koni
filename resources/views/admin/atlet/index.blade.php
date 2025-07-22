@@ -161,7 +161,7 @@
     <div class="row col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-                <h3 class="card-title fw-bold fs-3 mb-0">Atlet</h3>
+                <h3 cla`ss="card-title fw-bold fs-3 mb-0">Atlet</h3>
                 <a href="{{ route('admin.konfigurasi.atlet.create') }}" class="btn custom-red-button"
                     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Atlet
