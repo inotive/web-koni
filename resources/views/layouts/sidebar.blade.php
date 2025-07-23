@@ -5,8 +5,7 @@
     style="box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.1);">
 
     <!--begin::Aside Toolbar-->
-    data-kt-drawer-toggle="#kt_aside_mobile_toggle"
-    style="box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.1);">
+
 
     <!--begin::Aside Toolbar-->
     <div class="aside-toolbar flex-column-auto" id="kt_aside_toolbar">
@@ -26,8 +25,6 @@
             data-kt-scroll-wrappers="#kt_aside_menu"
             data-kt-scroll-offset="5px">
 
-            data-kt-scroll-wrappers="#kt_aside_menu"
-            data-kt-scroll-offset="5px">
 
             <!--begin::Menu-->
             <div class="menu-column menu-title-gray-800" id="#kt_aside_menu" data-kt-menu="true">
@@ -42,38 +39,50 @@
                 <!-- Dashboard -->
                 <div class="menu-item">
                     <a class="menu-link {{ request()->routeIs('admin.dashboard.index') ? 'active bg-orange' : '' }}"
-                    <a class="menu-link {{ request()->routeIs('admin.dashboard.index') ? 'active bg-orange' : '' }}"
+
                         href="{{ route('admin.dashboard.index') }}">
                         <span class="menu-icon">
                             <i class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
-                        <span class="menu-icon">
+                        {{-- <span class="menu-icon">
                             <i class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
-                        </span>
+                        </span> --}}
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </div>
 
-                <!-- Pengguna -->
+            <!-- Manajemen Pengguna -->
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'active bg-orange' : '' }}"
-                        href="{{ route('admin.manajemen-pengguna.pengguna.index') }}">
-                        <span class="menu-icon">
-                            <i class="fa-solid fa-user fs-2 {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                    <a class="menu-link d-flex justify-content-between {{ request()->is('admin/manajemen-pengguna*') ? 'active bg-orange' : '' }}"
+                        data-bs-toggle="collapse" href="#submenu-pengguna" role="button"
+                        aria-expanded="{{ request()->is('admin/manajemen-pengguna*') ? 'true' : 'false' }}"
+                        aria-controls="submenu-pengguna">
+                        <span class="d-flex align-items-center">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-users fs-2 {{ request()->is('admin/manajemen-pengguna*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                            </span>
+                            <span class="menu-title">Manajemen Pengguna</span>
                         </span>
-                        <span class="menu-title">Pengguna</span>
+                        <i class="fa-solid {{ request()->is('admin/manajemen-pengguna*') ? 'fa-angle-up' : 'fa-angle-down' }} fs-4"></i>
                     </a>
-                </div>
-
-                <!-- Jabatan -->
-                <div class="menu-item">
-                    <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active bg-orange' : '' }}"
-                        href="{{ route('admin.manajemen-pengguna.role.index') }}">
-                        <span class="menu-icon">
-                            <i class="fa-solid fa-user-tie fs-2 {{ request()->is('admin/manajemen-pengguna/role*') ? 'text-orange' : 'text-gray-600' }}"></i>
-                        </span>
-                        <span class="menu-title">Jabatan</span>
-                    </a>
+                    <div class="collapse {{ request()->is('admin/manajemen-pengguna*') ? 'show' : '' }}" id="submenu-pengguna">
+                        <ul class="menu flex-column ms-5">
+                            <li class="menu-item">
+                                <a class="menu-link {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'active' : '' }}"
+                                    href="{{ route('admin.manajemen-pengguna.pengguna.index') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Pengguna</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active' : '' }}"
+                                    href="{{ route('admin.manajemen-pengguna.role.index') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Jabatan</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Konfigurasi Section -->
@@ -109,7 +118,7 @@
                     <a class="menu-link {{ request()->is('admin/konfigurasi/index*') ? 'active bg-orange' : '' }}"
                         href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}">
                         <span class="menu-icon">
-                            <i class="fa-solid fa-running fs-2 {{ request()->is('admin/konfigurasi/index*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                            <i class="fa-solid fa-basketball fs-2 {{ request()->is('admin/konfigurasi/index*') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
                         <span class="menu-title">Cabang Olahraga</span>
                     </a>

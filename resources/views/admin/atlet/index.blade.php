@@ -5,11 +5,11 @@
 @section('currentSection', 'Atlet')
 
 @section('breadcrumb-title')
-    <h1 class="d-flex flex-column text-dark fw-bold fs-3 mb-0">Halaman Atlet</h1>
+    {{-- <h1 class="d-flex flex-column text-dark fw-bold fs-3 mb-0">Halaman Atlet</h1> --}}
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item text-gray-600">Atlet</li>
+    {{-- <li class="breadcrumb-item text-gray-600">Atlet</li> --}}
 @endsection
 
 @section('content')

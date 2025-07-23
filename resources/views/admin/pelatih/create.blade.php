@@ -1,9 +1,10 @@
 @extends('layouts.app')
 @section('pageTitle', 'Tambah Data Pelatih')
 @section('mainSection', 'Konfigurasi')
+@section('mainSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('subSection', 'Pelatih')
+@section('subSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('currentSection', 'Tambah Data Pelatih')
-
 @section('content')
 <style>
     .form-label {

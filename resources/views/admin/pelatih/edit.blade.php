@@ -1,7 +1,9 @@
 @extends('layouts.app')
 @section('pageTitle', 'Edit Data Pelatih')
 @section('mainSection', 'Konfigurasi')
+@section('mainSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('subSection', 'Pelatih')
+@section('subSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('currentSection','Edit Data Pelatih')
 
 @section('content')

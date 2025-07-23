@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Atlet;
+use App\Models\CabangOlahraga;
 
 class AtletController extends Controller
 {
@@ -17,6 +18,7 @@ class AtletController extends Controller
 
     public function create()
     {
+        $cabors = CabangOlahraga::all();
         return view('admin.atlet.create');
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\CabangOlahraga;
 use App\Models\Pelatih;
 use Illuminate\Support\Facades\Storage;
 
@@ -56,7 +57,7 @@ class PelatihController extends Controller
 
     public function create()
     {
-        $allCabor = Pelatih::select('cabor')->distinct()->pluck('cabor');
+        $cabors = CabangOlahraga::all();
         $allKelamin = ['Laki - Laki', 'Perempuan'];
 
         return view('admin.pelatih.create', compact('allCabor', 'allKelamin'));

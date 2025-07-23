@@ -41,7 +41,7 @@ class CabangOlahragaController extends Controller
         $cabors = $query->paginate($perPage)->appends(request()->query());
 
         // CHANGED: Path now includes 'konfigurasi' and uses hyphen
-        return view('admin.konfigurasi.cabang-olahraga.index', compact('cabors'));
+        return view('admin.cabang-olahraga.index', compact('cabors'));
     }
 
     /**
@@ -50,7 +50,7 @@ class CabangOlahragaController extends Controller
     public function create()
     {
         // CHANGED: Path now includes 'konfigurasi' and uses hyphen
-        return view('admin.konfigurasi.cabang-olahraga.create');
+        return view('admin.cabang-olahraga.create');
     }
 
     /**
@@ -89,7 +89,7 @@ class CabangOlahragaController extends Controller
     {
         $cabor = CabangOlahraga::findOrFail($id);
         // CHANGED: Path now includes 'konfigurasi' and uses hyphen
-        return view('admin.konfigurasi.cabang-olahraga.edit', compact('cabor'));
+        return view('admin.cabang-olahraga.edit', compact('cabor'));
     }
 
     /**
@@ -151,6 +151,6 @@ class CabangOlahragaController extends Controller
     {
         $item = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
         // CHANGED: Path now includes 'konfigurasi' and uses hyphen
-        return view('admin.konfigurasi.cabang-olahraga.show', compact('item'));
+        return view('admin.cabang-olahraga.show', compact('item'));
     }
 }
