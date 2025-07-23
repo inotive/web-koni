@@ -29,8 +29,13 @@ class Pelatih extends Model
     ];
 
 
-    public function prestasis(): MorphMany
+    public function prestasis()
     {
         return $this->morphMany(Prestasi::class, 'subject');
+    }
+
+    public function cabangOlahraga()
+    {
+        return $this->belongsTo(CabangOlahraga::class);
     }
 }

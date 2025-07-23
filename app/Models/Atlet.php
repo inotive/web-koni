@@ -26,7 +26,7 @@ class Atlet extends Model
 
     public function cabor()
     {
-        return $this->belongsTo(Cabor::class);
+        return $this->belongsTo(CabangOlahraga::class);
     }
 
     public function getUmurAttribute()
@@ -38,13 +38,18 @@ class Atlet extends Model
     }
 
 
-      public function prestasiTerbaru()
+    public function prestasiTerbaru()
     {
         return $this->morphOne(Prestasi::class, 'subject')->latestOfMany('tahun');
     }
 
-      public function prestasis()
+    public function prestasis()
     {
         return $this->morphMany(Prestasi::class, 'subject');
+    }
+
+    public function cabangOlahraga()
+    {
+        return $this->belongsTo(CabangOlahraga::class);
     }
 }

@@ -4,9 +4,15 @@
     data-kt-drawer-toggle="#kt_aside_mobile_toggle" style="box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.1);">
 
     <!--begin::Aside Toolbar-->
+
+
+    <!--begin::Aside Toolbar-->
     <div class="aside-toolbar flex-column-auto" id="kt_aside_toolbar">
         <!-- Placeholder for future user/profile -->
+        <!-- Placeholder for future user/profile -->
     </div>
+    <!--end::Aside Toolbar-->
+
     <!--end::Aside Toolbar-->
 
     <!--begin::Aside menu-->
@@ -15,6 +21,7 @@
             data-kt-scroll-height="auto"
             data-kt-scroll-dependencies="{default: '#kt_aside_toolbar, #kt_aside_footer', lg: '#kt_header, #kt_aside_toolbar, #kt_aside_footer'}"
             data-kt-scroll-wrappers="#kt_aside_menu" data-kt-scroll-offset="5px">
+
 
             <!--begin::Menu-->
             <div class="menu-column menu-title-gray-800" id="#kt_aside_menu" data-kt-menu="true">
@@ -34,11 +41,15 @@
                             <i
                                 class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
+                        {{-- <span class="menu-icon">
+                            <i
+                                class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                        </span> --}}
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </div>
 
-                <!-- Manajemen Pengguna -->
+
                 <div class="menu-item">
                     <a class="menu-link d-flex justify-content-between {{ request()->is('admin/manajemen-pengguna*') ? 'active bg-orange' : '' }}"
                         data-bs-toggle="collapse" href="#submenu-pengguna" role="button"
@@ -103,30 +114,20 @@
                         <span class="menu-title">Pelatih</span>
                     </a>
                 </div>
-
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.konfigurasi.cabang-olahraga.index') ? 'active bg-orange' : '' }}"
+                    <a class="menu-link {{ request()->is('admin/konfigurasi/index*') ? 'active bg-orange' : '' }}"
                         href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}">
                         <span class="menu-icon">
                             <i
-                                class="fa-solid fa-basketball fs-2 {{ request()->routeIs('admin.konfigurasi.atlet.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                                class="fa-solid fa-basketball fs-2 {{ request()->is('admin/konfigurasi/index*') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
-                        <span class="menu-title">cabang Olahraga</span>
+                        <span class="menu-title">Cabang Olahraga</span>
                     </a>
                 </div>
-
             </div>
             <!--end::Menu-->
         </div>
     </div>
     <!--end::Aside menu-->
-
-    <!--begin::Footer-->
-    {{-- <div class="p-0 aside-footer flex-column-auto" id="kt_aside_footer">
-        <div class="aside-footer-content">
-            <!-- Optional footer content -->
-        </div>
-    </div> --}}
-    <!--end::Footer-->
 
 </div>

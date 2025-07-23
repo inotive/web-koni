@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Atlet;
+use App\Models\CabangOlahraga;
 
 class AtletController extends Controller
 {
@@ -17,14 +18,15 @@ class AtletController extends Controller
 
     public function create()
     {
-        return view('admin.atlet.create');
+        $cabors = CabangOlahraga::pluck('nama_cabor');
+        return view('admin.atlet.create', compact('cabors'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'cabor' => 'required|string|max:100',
+            'cabor' => 'required|exists:cabang_olahragas,nama_cabor',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
@@ -47,7 +49,8 @@ class AtletController extends Controller
     public function edit($id)
     {
         $atlet = Atlet::findOrFail($id);
-        return view('admin.atlet.edit', compact('atlet'));
+        $cabors = CabangOlahraga::pluck('nama_cabor');
+        return view('admin.atlet.edit', compact('atlet', 'cabors'));
     }
 
     public function update(Request $request, $id)
@@ -56,7 +59,7 @@ class AtletController extends Controller
 
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'cabor' => 'required|string|max:100',
+            'cabor' => 'required|exists:cabang_olahragas,nama_cabor',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
