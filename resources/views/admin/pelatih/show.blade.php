@@ -656,10 +656,15 @@
                                     </div>
                                 </td>
                                 <td style="text-align: center;">
-                                    <form
+                                    {{-- <form
                                         action="{{ route('admin.prestasi.destroy', [$pelatih->id, $prestasi->id]) }}"
                                         method="POST"
                                         onsubmit="return confirm('Anda yakin ingin menghapus prestasi ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                                    </form> --}}
+                                    <form action="{{ route('admin.prestasi.destroy', $prestasi->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus prestasi ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Hapus</button>

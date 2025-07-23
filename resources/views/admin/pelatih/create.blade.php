@@ -62,20 +62,20 @@
                     @csrf
                     <div class="row align-items-center mb-4">
                         <div class="col-md-3">
-                            <label for="foto" class="form-label">Foto</label>
+                          <label for="foto" class="form-label">Foto</label>
                         </div>
                         <div class="col-md-9">
                             <label for="foto" class="file-upload-wrapper">
-                                <input type="file" name="foto" id="foto"
-                                    class="@error('foto') is-invalid @enderror">
+                                <input type="file" name="foto" id="foto" class="@error('foto') is-invalid @enderror">
                                 <i class="fas fa-cloud-upload-alt file-upload-icon mb-2"></i>
-                                <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah.
-                                </p>
+                                <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah.</p>
                                 <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
                                 @error('foto')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
+                                <div id="imagePreviewContainer" style="display: none;"></div>
                             </label>
+
                         </div>
                     </div>
 
@@ -169,9 +169,45 @@
     </div>
 
     <script>
-        document.getElementById('foto').addEventListener('change', function(e) {
-            const fileName = e.target.files[0] ? e.target.files[0].name : '150x150px JPEG, PNG Image';
-            document.getElementById('file-name-display').textContent = fileName;
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadInput = document.getElementById('foto');
+            const fileNameDisplay = document.getElementById('file-name-display');
+            const previewContainer = document.getElementById('imagePreviewContainer');
+
+            uploadInput.addEventListener('change', function () {
+                const file = this.files[0];
+                if (file) {
+                    fileNameDisplay.textContent = file.name;
+
+                    if (!file.type.startsWith('image/')) {
+                        alert('Hanya file gambar yang diizinkan.');
+                        previewContainer.style.display = 'none';
+                        previewContainer.innerHTML = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        previewContainer.style.display = 'flex';
+                        previewContainer.style.justifyContent = 'center';
+                        previewContainer.style.alignItems = 'center';
+                        previewContainer.innerHTML = `
+                            <div class="d-flex justify-content-center align-items-center mt-3">
+                                <img src="${e.target.result}" class="preview-image me-3" alt="Preview Foto"
+                                    style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
+                            </div>
+                        `;
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    fileNameDisplay.textContent = '150x150px JPEG, PNG Image';
+                    previewContainer.style.display = 'none';
+                    previewContainer.innerHTML = '';
+                }
+            });
         });
     </script>
+
 @endsection
