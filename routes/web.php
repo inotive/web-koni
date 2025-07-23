@@ -59,6 +59,32 @@ Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
          ->name('pelatih.prestasi.store');
 });
 
+// Add these routes to your web.php file
+
+Route::middleware('auth')->group(function() {
+    Route::prefix('admin')->name('admin.')->group(function() {
+
+        // Prestasi routes for Atlet
+        Route::post('atlet/{atlet}/prestasi', [PrestasiController::class, 'storeForAtlet'])
+            ->name('atlet.prestasi.store');
+
+        // Prestasi routes for Pelatih
+        Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'storeForPelatih'])
+            ->name('pelatih.prestasi.store');
+
+        // Generic prestasi delete route
+        Route::delete('prestasi/{prestasi}', [PrestasiController::class, 'destroy'])
+            ->name('prestasi.destroy');
+
+        // Alternative specific delete routes if needed
+        Route::delete('atlet/{atlet}/prestasi/{prestasi}', [PrestasiController::class, 'destroyForAtlet'])
+            ->name('atlet.prestasi.destroy');
+
+        Route::delete('pelatih/{pelatih}/prestasi/{prestasi}', [PrestasiController::class, 'destroyForPelatih'])
+            ->name('pelatih.prestasi.destroy');
+    });
+});
+
     Route::post('atlets/{atlet}/prestasi', [PrestasiController::class, 'store'])->name('atlet.prestasi.store');
     Route::delete('prestasi/{prestasi}', [PrestasiController::class, 'destroy'])->name('prestasi.destroy');
 
