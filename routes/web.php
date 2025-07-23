@@ -10,18 +10,17 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\AtletController;
 use App\Http\Controllers\Admin\PelatihController;
 use App\Http\Controllers\Admin\PrestasiController;
+use App\Http\Controllers\Admin\CabangOlahragaController;
+// Removed: use App\Http\Controllers\Admin\AtletController;
+// Removed: use App\Http\Controllers\Admin\PelatihController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
+// Login
 Route::get('login', [LoginController::class, 'show'])->middleware('guest')->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('login-post');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -34,11 +33,13 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::put('profile/{profile}/update-profile', [ProfileController::class, 'updateProfile'])->name('profile-update');
     });
 
-    Route::group(['middleware' => [], 'as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {
+    // Hak Akses
+    Route::prefix('hak-akses')->name('hak-akses.')->group(function () {
         Route::resource('permission', PermissionController::class)->except('show', 'create', 'edit');
         Route::resource('user', UserController::class)->except('show');
     });
 
+    // Manajemen Pengguna
     Route::prefix('manajemen-pengguna')->name('manajemen-pengguna.')->group(function () {
         Route::resource('/user', UserController::class)->except('show');
         Route::resource('pengguna', UserController::class);
@@ -55,6 +56,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::resource('pelatih', PelatihController::class);
         Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
             ->name('pelatih.prestasi.store');
+        Route::resource('cabang-olahraga', CabangOlahragaController::class);
     });
 
     Route::post('atlets/{atlet}/prestasi', [PrestasiController::class, 'store'])->name('atlet.prestasi.store');
