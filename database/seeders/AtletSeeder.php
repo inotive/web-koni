@@ -10,20 +10,18 @@ class AtletSeeder extends Seeder
 {
     public function run()
     {
-        $basket = CabangOlahraga::where('nama_cabor', 'Bola Basket')->first();
-
-        Atlet::create([
-            'cabang_olahraga_id' => $basket->id,
-            'nama' => 'Joko Slamet',
-            'jenis_kelamin' => 'Laki-laki',
-            'tanggal_lahir' => '2003-05-12',
-        ]);
-
-        Atlet::create([
-            'cabang_olahraga_id' => $basket->id,
-            'nama' => 'Budi Santoso',
-            'jenis_kelamin' => 'Laki-laki',
-            'tanggal_lahir' => '2004-02-20',
-        ]);
+        for ($i = 1; $i <= 12; $i++) {
+            Atlet::create([
+                'nama' => "Atlet $i",
+                'cabor' => ['Renang', 'Lari', 'Bulu Tangkis', 'Sepak Bola'][rand(0, 3)],
+                'tempat_lahir' => 'Kota ' . $i,
+                'tanggal_lahir' => now()->subYears(rand(17, 30))->subDays(rand(0, 365)),
+                'alamat' => "Alamat Atlet $i",
+                'jenis_kelamin' => ['Laki-laki', 'Perempuan'][rand(0, 1)],
+                'no_telepon' => '08' . rand(1111111111, 9999999999),
+                'email' => "atlet$i@example.com",
+                'foto_atlet' => null, // atau default image jika ada
+            ]);
+        }
     }
 }

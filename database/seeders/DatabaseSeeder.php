@@ -18,8 +18,6 @@ class DatabaseSeeder extends Seeder
             CabangOlahragaSeeder::class, // Tambahkan langsung di dalam array ini
             AtletSeeder::class,
             PelatihSeeder::class,
-        
-
         ]);
     }
 }
