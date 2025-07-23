@@ -30,7 +30,7 @@
 
                 <!-- Dashboard -->
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('dashboard') ? 'active bg-orange' : '' }}"
+                    <a class="menu-link {{ request()->routeIs('admin.dashboard.index') ? 'active bg-orange' : '' }}"
                         href="{{ route('admin.dashboard.index') }}">
                         <span class="menu-icon">
                             <i class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
@@ -39,49 +39,26 @@
                     </a>
                 </div>
 
-                <!-- Manajemen Pengguna -->
+                <!-- Pengguna -->
                 <div class="menu-item">
-                    <a class="menu-link d-flex justify-content-between {{ request()->is('admin/manajemen-pengguna*') ? 'active bg-orange' : '' }}"
-                        data-bs-toggle="collapse" href="#submenu-manajemen-pengguna" role="button"
-                        aria-expanded="{{ request()->is('admin/manajemen-pengguna*') ? 'true' : 'false' }}"
-                        aria-controls="submenu-manajemen-pengguna">
-                        <span class="d-flex align-items-center">
-                            <span class="menu-icon"><i
-                                    class="fa-solid fa-users fs-2 {{ request()->is('admin/manajemen-pengguna*') ? 'text-orange' : 'text-gray-600' }}"></i></span>
-                            <span class="menu-title">Manajemen Pengguna</span>
+                    <a class="menu-link {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'active bg-orange' : '' }}"
+                        href="{{ route('admin.manajemen-pengguna.pengguna.index') }}">
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-user fs-2 {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
-                        <i
-                            class="fa-solid {{ request()->is('admin/manajemen-pengguna*') ? 'fa-angle-up' : 'fa-angle-down' }} fs-4"></i>
+                        <span class="menu-title">Pengguna</span>
                     </a>
-                    <div class="{{ request()->is('admin/manajemen-pengguna*') ? 'show' : '' }} collapse"
-                        id="submenu-pengguna">
-                        <ul class="menu flex-column ms-5">
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'active' : '' }}"
-                                    href="{{ route('admin.manajemen-pengguna.pengguna.index') }}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title">Pengguna</span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active' : '' }}"
-                                    href="{{ route('admin.manajemen-pengguna.role.index') }}">
-                                    <span class="menu-bullet">
-                                        <span class="bullet bullet-dot"></span>
-                                    </span>
-                                    <span class="menu-title">Jabatan</span>
-                                </a>
-                            </li>
-                            {{-- <li class="menu-item">
-                                <a class="menu-link {{ request()->routeIs('nota-penebusan.create') ? 'active' : '' }}"
-                                    href="{{ route('nota-penebusan.create') }}"><span class="menu-bullet"><span
-                                            class="bullet bullet-dot"></span></span><span class="menu-title">Transaksi
-                                        Penebusan</span></a>
-                            </li> --}}
-                        </ul>
-                    </div>
+                </div>
+
+                <!-- Jabatan -->
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active bg-orange' : '' }}"
+                        href="{{ route('admin.manajemen-pengguna.role.index') }}">
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-user-tie fs-2 {{ request()->is('admin/manajemen-pengguna/role*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                        </span>
+                        <span class="menu-title">Jabatan</span>
+                    </a>
                 </div>
 
                 <!-- Konfigurasi Section -->
@@ -91,38 +68,26 @@
                     </div>
                 </div>
 
-                <!-- Konfigurasi Menu -->
+                <!-- Pelatih -->
                 <div class="menu-item">
-                    <a class="menu-link d-flex justify-content-between {{ request()->is('admin/konfigurasi*') ? 'active bg-orange' : '' }}"
-                        data-bs-toggle="collapse" href="#submenu-konfigurasi" role="button"
-                        aria-expanded="{{ request()->is('admin/konfigurasi*') ? 'true' : 'false' }}"
-                        aria-controls="submenu-konfigurasi">
-                        <span class="d-flex align-items-center">
-                            <span class="menu-icon">
-                                <i class="fa-solid fa-cogs fs-2 {{ request()->is('admin/konfigurasi*') ? 'text-orange' : 'text-gray-600' }}"></i>
-                            </span>
-                            <span class="menu-title">Konfigurasi</span>
+                    <a class="menu-link {{ request()->is('admin/konfigurasi/pelatih*') ? 'active bg-orange' : '' }}"
+                        href="{{ route('admin.konfigurasi.pelatih.index') }}">
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-chalkboard-user fs-2 {{ request()->is('admin/konfigurasi/pelatih*') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
-                        <i class="fa-solid {{ request()->is('admin/konfigurasi*') ? 'fa-angle-up' : 'fa-angle-down' }} fs-4"></i>
+                        <span class="menu-title">Pelatih</span>
                     </a>
-                    <div class="collapse {{ request()->is('admin/konfigurasi*') ? 'show' : '' }}" id="submenu-konfigurasi">
-                        <ul class="menu flex-column ms-5">
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/konfigurasi/pelatih*') ? 'active' : '' }}"
-                                    href="{{ route('admin.konfigurasi.pelatih.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Pelatih</span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/konfigurasi/atlet*') ? 'active' : '' }}"
-                                    href="{{ route('admin.konfigurasi.atlet.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Atlet</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                </div>
+
+                <!-- Atlet -->
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->is('admin/konfigurasi/atlet*') ? 'active bg-orange' : '' }}"
+                        href="{{ route('admin.konfigurasi.atlet.index') }}">
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-running fs-2 {{ request()->is('admin/konfigurasi/atlet*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                        </span>
+                        <span class="menu-title">Atlet</span>
+                    </a>
                 </div>
 
             </div>
@@ -132,11 +97,4 @@
     </div>
     <!--end::Aside menu-->
 
-    <!--begin::Footer-->
-    {{-- <div class="p-0 aside-footer flex-column-auto" id="kt_aside_footer">
-        <div class="aside-footer-content">
-            <!-- Tambahkan konten footer lain jika ada -->
-        </div>
-    </div> --}}
-    <!--end::Footer-->
 </div>

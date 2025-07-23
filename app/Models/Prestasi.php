@@ -12,14 +12,15 @@ class Prestasi extends Model
 
     protected $fillable = [
         'atlet_id',
+        'pelatih_id',
         'nama_prestasi',
         'tempat',
         'tahun',
         'medali',
     ];
 
-    public function atlet(): BelongsTo
+    public function subject()
     {
-        return $this->belongsTo(Atlet::class);
+        return $this->morphTo();
     }
 }

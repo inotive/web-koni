@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Carbon\Carbon; 
+use Carbon\Carbon;
 
 class Atlet extends Model
 {
@@ -37,13 +37,14 @@ class Atlet extends Model
         return '-';
     }
 
-    public function prestasis(): HasMany
+
+      public function prestasiTerbaru()
     {
-        return $this->hasMany(Prestasi::class)->orderBy('tahun', 'desc');
+        return $this->morphOne(Prestasi::class, 'subject')->latestOfMany('tahun');
     }
 
-    public function prestasiTerbaru(): HasOne
+      public function prestasis()
     {
-        return $this->hasOne(Prestasi::class)->latestOfMany('tahun');
+        return $this->morphMany(Prestasi::class, 'subject');
     }
 }

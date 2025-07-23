@@ -6,27 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-public function up(): void
-{
-    Schema::create('prestasis', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('atlet_id')->constrained()->onDelete('cascade');
-        $table->string('nama_prestasi');
-        $table->string('tempat');
-        $table->year('tahun');
-        $table->enum('medali', ['Emas', 'Perak', 'Perunggu']);
-        $table->timestamps();
-    });
-}
+    public function up()
+    {
+        Schema::create('prestasis', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_prestasi');
+            $table->string('tempat');
+            $table->integer('tahun');
+            $table->enum('medali', ['Emas', 'Perak', 'Perunggu']);
 
+            // Polymorphic relationship columns
+            $table->unsignedBigInteger('subject_id');
+            $table->string('subject_type');
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+            $table->timestamps();
+
+            // Index for polymorphic relationship
+            $table->index(['subject_id', 'subject_type']);
+        });
+    }
+
+    public function down()
     {
         Schema::dropIfExists('prestasis');
     }
