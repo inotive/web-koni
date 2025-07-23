@@ -7,9 +7,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\AtletController;
 use App\Http\Controllers\Admin\PelatihController;
 use App\Http\Controllers\Admin\PrestasiController;
-
+use App\Http\Controllers\Admin\CabangOlahragaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,6 +24,7 @@ use App\Http\Controllers\Admin\PrestasiController;
 
 Route::get('login', [LoginController::class, 'show'])->middleware('guest')->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('login-post');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
@@ -48,12 +50,46 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::post('/role/updateSinglePermissions', [RoleController::class, 'updateSinglePermissions'])->name('role.updateSinglePermissions');
     });
 
-    Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
-        Route::resource('pelatih', PelatihController::class);
-    });
+Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
+    Route::resource('atlet', AtletController::class);
+    Route::resource('pelatih', PelatihController::class);
+    Route::resource('cabang-olahraga', CabangOlahragaController::class);
 
-    Route::get('/admin/konfigurasi/pelatih/{id}/deskripsi', [PelatihController::class, 'deskripsi'])->name('admin.konfigurasi.pelatih.deskripsi');
-    Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])->name('konfigurasi.pelatih.prestasi.store');
+    Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
+         ->name('pelatih.prestasi.store');
 });
 
-Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+// Add these routes to your web.php file
+
+Route::middleware('auth')->group(function() {
+    Route::prefix('admin')->name('admin.')->group(function() {
+
+        // Prestasi routes for Atlet
+        Route::post('atlet/{atlet}/prestasi', [PrestasiController::class, 'storeForAtlet'])
+            ->name('atlet.prestasi.store');
+
+        // Prestasi routes for Pelatih
+        Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'storeForPelatih'])
+            ->name('pelatih.prestasi.store');
+
+        // Generic prestasi delete route
+        Route::delete('prestasi/{prestasi}', [PrestasiController::class, 'destroy'])
+            ->name('prestasi.destroy');
+
+        // Alternative specific delete routes if needed
+        Route::delete('atlet/{atlet}/prestasi/{prestasi}', [PrestasiController::class, 'destroyForAtlet'])
+            ->name('atlet.prestasi.destroy');
+
+        Route::delete('pelatih/{pelatih}/prestasi/{prestasi}', [PrestasiController::class, 'destroyForPelatih'])
+            ->name('pelatih.prestasi.destroy');
+    });
+});
+
+    Route::post('atlets/{atlet}/prestasi', [PrestasiController::class, 'store'])->name('atlet.prestasi.store');
+    Route::delete('prestasi/{prestasi}', [PrestasiController::class, 'destroy'])->name('prestasi.destroy');
+
+
+Route::get('konfigurasi/pelatih/{id}/deskripsi', [PelatihController::class, 'deskripsi'])
+     ->name('konfigurasi.pelatih.deskripsi');
+
+    });

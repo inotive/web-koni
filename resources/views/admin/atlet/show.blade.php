@@ -1,12 +1,13 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Detail Pelatih')
+@section('pageTitle', 'Detail Atlet')
 @section('mainSection', 'Konfigurasi')
-@section('mainSectionUrl', route('admin.konfigurasi.pelatih.index'))
-@section('subSection', 'Pelatih')
-@section('subSectionUrl', route('admin.konfigurasi.pelatih.index'))
-@section('currentSection', 'Detail Pelatih')
-<h1 class="text-dark fw-bold fs-3 mb-0">Detail Pelatih</h1>
+@section('mainSectionUrl', route('admin.konfigurasi.atlet.index'))
+@section('subSection', 'Atlet')
+@section('subSectionUrl', route('admin.konfigurasi.atlet.index'))
+@section('currentSection', 'Detail Atlet')
+<h1 class="text-dark fw-bold fs-3 mb-0">Detail Atlet</h1>
+
 
 @section('content')
     <style>
@@ -402,7 +403,7 @@
 
     <div class="detail-container">
         <div class="detail-header">
-            <h1 class="detail-title">Profil Pelatih</h1>
+            <h1 class="detail-title">Profil Atlet</h1>
         </div>
 
         <div class="detail-card">
@@ -416,9 +417,10 @@
                         <p class="detail-label-text">Foto</p>
                     </div>
                     <div class="detail-photo-container">
-                        @if ($pelatih->foto)
+                        @if ($atlet->foto_atlet)
                             <div class="detail-photo-wrapper">
-                                <img src="{{ asset('storage/' . $pelatih->foto) }}" alt="Foto Pelatih" class="detail-photo">
+                                <img src="{{ asset('storage/' . $atlet->foto_atlet) }}" alt="Foto Atlet"
+                                    class="detail-photo">
                             </div>
                         @else
                             <div class="detail-photo-wrapper">
@@ -443,7 +445,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Nama</p>
                     </div>
-                    <p class="detail-value">{{ $pelatih->nama }}</p>
+                    <p class="detail-value">{{ $atlet->nama }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -460,7 +462,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Cabor</p>
                     </div>
-                    <p class="detail-value">{{ $pelatih->cabor }}</p>
+                    <p class="detail-value">{{ $atlet->cabor }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -477,7 +479,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Email</p>
                     </div>
-                    <p class="detail-value">{{ $pelatih->email ?? '<span class="empty-value">-</span>' }}</p>
+                    <p class="detail-value">{{ $atlet->email ?? '<span class="empty-value">-</span>' }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -511,7 +513,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">No Telepon</p>
                     </div>
-                    <p class="detail-value">{{ $pelatih->no_telepon ?? '<span class="empty-value">-</span>' }}</p>
+                    <p class="detail-value">{{ $atlet->no_telepon ?? '<span class="empty-value">-</span>' }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -528,7 +530,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Tempat Lahir</p>
                     </div>
-                    <p class="detail-value">{{ $pelatih->tempat_lahir }}</p>
+                    <p class="detail-value">{{ $atlet->tempat_lahir }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -545,7 +547,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Tanggal Lahir</p>
                     </div>
-                    <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d M Y') }}</p>
+                    <p class="detail-value">{{ \Carbon\Carbon::parse($atlet->tanggal_lahir)->format('d M Y') }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -562,7 +564,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Umur</p>
                     </div>
-                    <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age }} Tahun</p>
+                    <p class="detail-value">{{ \Carbon\Carbon::parse($atlet->tanggal_lahir)->age }} Tahun</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -579,7 +581,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Kelamin</p>
                     </div>
-                    <p class="detail-value">{{ $pelatih->kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+                    <p class="detail-value">{{ $atlet->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -596,7 +598,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Alamat</p>
                     </div>
-                    <p class="detail-value">{{ $pelatih->alamat ?? 'Belum ada alamat yang tercantum' }}</p>
+                    <p class="detail-value">{{ $atlet->alamat ?? 'Belum ada alamat yang tercantum' }}</p>
                     <div class="add-address">
                         <span>tambah</span>
                     </div>
@@ -624,7 +626,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($pelatih->prestasis as $prestasi)
+                        @forelse($atlet->prestasis as $prestasi)
                             <tr>
                                 <td>{{ $prestasi->nama_prestasi }}</td>
                                 <td>{{ $prestasi->tempat }} - <strong>{{ $prestasi->tahun }}</strong></td>
@@ -656,9 +658,7 @@
                                     </div>
                                 </td>
                                 <td style="text-align: center;">
-                                    <form
-                                        action="{{ route('admin.prestasi.destroy', [$pelatih->id, $prestasi->id]) }}"
-                                        method="POST"
+                                    <form action="{{ route('admin.prestasi.destroy', $prestasi->id) }}" method="POST"
                                         onsubmit="return confirm('Anda yakin ingin menghapus prestasi ini?');">
                                         @csrf
                                         @method('DELETE')
@@ -678,7 +678,7 @@
         </div>
 
         <div class="detail-actions">
-            <a href="{{ route('admin.konfigurasi.pelatih.index') }}" class="btn-secondary">Kembali</a>
+            <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn-secondary">Kembali</a>
         </div>
     </div>
 
@@ -687,11 +687,11 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="tambahPrestasiModalLabel">Tambah Prestasi Baru untuk {{ $pelatih->nama }}
+                    <h5 class="modal-title" id="tambahPrestasiModalLabel">Tambah Prestasi Baru untuk {{ $atlet->nama }}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('admin.konfigurasi.pelatih.prestasi.store', $pelatih->id) }}" method="POST">
+                <form action="{{ route('admin.atlet.prestasi.store', $atlet->id) }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="mb-3">

@@ -3,7 +3,7 @@
 @section('pageTitle', 'Pelatih')
 
 @section('mainSection', 'Konfigurasi')
-
+@section('mainSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('currentSection', 'Pelatih')
 
 @section('content')

@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class RoleSeeder extends Seeder
 {
@@ -16,11 +15,16 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
-            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+            app()[PermissionRegistrar::class]->forgetCachedPermissions();
+
             $roles = ['superadmin', 'admin', 'ppk', 'konsultan'];
             foreach ($roles as $value) {
-                Role::create([ 'name' => $value]);
+                // Cek dulu, kalau belum ada baru buat
+                if (!Role::where('name', $value)->exists()) {
+                    Role::create(['name' => $value]);
+                }
             }
+
             $this->command->info('Seeding Roles has been completed!');
         });
     }

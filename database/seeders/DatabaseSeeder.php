@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,6 +15,11 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             PermissionSeeder::class,
             UserSeeder::class,
+            CabangOlahragaSeeder::class, // Tambahkan langsung di dalam array ini
+            AtletSeeder::class,
+            PelatihSeeder::class,
+        
+
         ]);
     }
 }

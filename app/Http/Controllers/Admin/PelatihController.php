@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\CabangOlahraga;
 use App\Models\Pelatih;
 use Illuminate\Support\Facades\Storage;
 
@@ -56,10 +57,10 @@ class PelatihController extends Controller
 
     public function create()
     {
-        $allCabor = Pelatih::select('cabor')->distinct()->pluck('cabor');
+        $cabors      = CabangOlahraga::pluck('nama_cabor');
         $allKelamin = ['Laki - Laki', 'Perempuan'];
 
-        return view('admin.pelatih.create', compact('allCabor', 'allKelamin'));
+        return view('admin.pelatih.create', compact('cabors', 'allKelamin'));
     }
 
     public function store(Request $request)
@@ -100,10 +101,10 @@ class PelatihController extends Controller
     public function edit($id)
     {
         $pelatih = Pelatih::findOrFail($id);
-        $allCabor = Pelatih::select('cabor')->distinct()->pluck('cabor');
+        $cabors      = CabangOlahraga::pluck('nama_cabor');
         $allKelamin = ['Laki - Laki', 'Perempuan'];
 
-        return view('admin.pelatih.edit', compact('pelatih', 'allCabor', 'allKelamin'));
+        return view('admin.pelatih.edit', compact('pelatih', 'cabors', 'allKelamin'));
     }
 
     public function update(Request $request, Pelatih $pelatih)
