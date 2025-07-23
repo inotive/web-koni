@@ -10,7 +10,7 @@ class Pelatih extends Model
 {
     use HasFactory;
 
-     protected $table = 'pelatih';
+    protected $table = 'pelatih';
 
     protected $fillable = [
         'nama',
