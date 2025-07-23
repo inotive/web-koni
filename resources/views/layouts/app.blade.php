@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>KONI Tabalong - @yield('title')</title>
 
-    <link rel="shortcut icon" href="{{ asset('landing-assets/img/logo.png') }}" />
+    <link rel="shortcut icon" href="{{ asset('assets/img/logo.png') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 
@@ -118,6 +118,9 @@
     </style>
     @stack('stack-css')
 
+
+
+
 </head>
 <!--end::Head-->
 <!--begin::Body-->
@@ -157,7 +160,17 @@
                 <!--begin::Header-->
                 @include('layouts.header')
                 <!--end::Header-->
-                <!--begin::Content-->
+                <!--begin::Breadcrumb (Custom)-->
+<div class="container-fluid-limited mt-5">
+    <div class="mb-5">
+        <h1 class="text-2xl font-semibold text-gray-800">@yield('breadcrumb-title')</h1>
+        <nav class="text-sm mt-1" aria-label="Breadcrumb">
+            <ol class="flex space-x-2 text-gray-600">
+                @yield('breadcrumb-items')
+            </ol>
+        </nav>
+    </div>
+</div>
                 @yield('content')
                 <!--end::Content-->
                 <!--begin::Footer-->
@@ -189,6 +202,17 @@
     @stack('modal')
     @yield('script')
     @stack('stack-script')
+
+<!-- Tambahkan sebelum penutup </body> -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        lucide.createIcons();
+    });
+</script>
+
+
+
 </body>
 <!--end::Body-->
 
