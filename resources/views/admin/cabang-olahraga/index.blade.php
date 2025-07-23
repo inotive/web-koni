@@ -90,6 +90,12 @@
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <li>
+                                                        <a href="{{ route('admin.konfigurasi.cabang-olahraga.show', $cabor->id) }}"
+                                                            class="dropdown-item d-flex align-items-center gap-2">
+                                                            <i class="ki-duotone ki-pencil fs-5"></i> Show
+                                                        </a>
+                                                    </li>
+                                                    <li>
                                                         <a href="{{ route('admin.konfigurasi.cabang-olahraga.edit', $cabor->id) }}"
                                                             class="dropdown-item d-flex align-items-center gap-2">
                                                             <i class="ki-duotone ki-pencil fs-5"></i> Edit
