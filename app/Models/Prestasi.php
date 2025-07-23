@@ -35,16 +35,16 @@ class Prestasi extends Model
     /**
      * Get the atlet that owns the prestasi (if applicable)
      */
-    public function atlet()
-    {
-        return $this->morphedByMany(Atlet::class, 'subject');
-    }
+    // public function atlet()
+    // {
+    //     return $this->morphedByMany(Atlet::class, 'subject');
+    // }
 
-    /**
-     * Get the pelatih that owns the prestasi (if applicable)
-     */
-    public function pelatih()
-    {
-        return $this->morphedByMany(Pelatih::class, 'subject');
-    }
+    // /**
+    //  * Get the pelatih that owns the prestasi (if applicable)
+    //  */
+    // public function pelatih()
+    // {
+    //     return $this->morphedByMany(Pelatih::class, 'subject');
+    // }
 }

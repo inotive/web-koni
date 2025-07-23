@@ -55,8 +55,11 @@ Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
     Route::resource('pelatih', PelatihController::class);
     Route::resource('cabang-olahraga', CabangOlahragaController::class);
 
-    Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
-         ->name('pelatih.prestasi.store');
+
+    Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'storeForPelatih'])
+            ->name('pelatih.prestasi.store');
+    // Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
+    //      ->name('pelatih.prestasi.store');
 });
 
 // Add these routes to your web.php file
@@ -69,8 +72,7 @@ Route::middleware('auth')->group(function() {
             ->name('atlet.prestasi.store');
 
         // Prestasi routes for Pelatih
-        Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'storeForPelatih'])
-            ->name('pelatih.prestasi.store');
+
 
         // Generic prestasi delete route
         Route::delete('prestasi/{prestasi}', [PrestasiController::class, 'destroy'])
@@ -91,5 +93,7 @@ Route::middleware('auth')->group(function() {
 
 Route::get('konfigurasi/pelatih/{id}/deskripsi', [PelatihController::class, 'deskripsi'])
      ->name('konfigurasi.pelatih.deskripsi');
+
+
 
     });

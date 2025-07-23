@@ -13,7 +13,7 @@ class PelatihController extends Controller
     public function index(Request $request)
     {
         $query = Pelatih::with(['prestasis' => function ($q) {
-            $q->orderByDesc('tahun')->limit(1);
+            $q->orderByDesc('tahun');
         }]);
 
         if ($request->filled('sort') && $request->sort === 'prestasi') {
