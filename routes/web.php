@@ -57,7 +57,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);
         Route::resource('pelatih', PelatihController::class);
-        Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
+        Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'storeForPelatih'])
             ->name('pelatih.prestasi.store');
         Route::resource('cabang-olahraga', CabangOlahragaController::class);
     });

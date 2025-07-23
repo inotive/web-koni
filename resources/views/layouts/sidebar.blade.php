@@ -98,7 +98,7 @@
                         href="{{ route('admin.konfigurasi.atlet.index') }}">
                         <span class="menu-icon">
                             <i
-                                class="fa-solid fa-basketball fs-2 {{ request()->routeIs('admin.konfigurasi.atlet.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                                class="fa-solid fa-running fs-2 {{ request()->routeIs('admin.konfigurasi.atlet.index') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
                         <span class="menu-title">Atlet</span>
                     </a>
@@ -109,7 +109,7 @@
                         href="{{ route('admin.konfigurasi.pelatih.index') }}">
                         <span class="menu-icon">
                             <i
-                                class="fa-solid fa-basketball fs-2 {{ request()->routeIs('admin.konfigurasi.pelatih.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                                class="fa-solid fa-chalkboard-user fs-2 {{ request()->routeIs('admin.konfigurasi.pelatih.index') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
                         <span class="menu-title">Pelatih</span>
                     </a>
