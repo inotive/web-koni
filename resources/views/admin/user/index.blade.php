@@ -19,9 +19,10 @@
                     <div class="col-5">
                         <input type="search" name="search" id="search" class="form-control" placeholder="Search">
                     </div>
-                    <a href="{{ route('admin.manajemen-pengguna.pengguna.create') }}" class="btn btn-warning">
-                        <i class="ki-duotone ki-plus fs-2"></i>
-                        Tambah Data
+                    <a href="{{ route('admin.manajemen-pengguna.pengguna.create') }}" class="btn"
+                        style="background-color: #F8285A;">
+                        <i class="ki-duotone ki-plus fs-2" style="color: white"></i>
+                        <span class="text-white">Tambah Data</span>
                     </a>
                 </div>
             </div>
@@ -54,7 +55,8 @@
                                             <td class="text-capitalize text-center">{{ $roleName }}</td>
                                         @endforeach
                                         <td class="text-center">{{ $value->email }}</td>
-                                        <td class="text-center">{{ \Carbon\Carbon::parse($value->created_at)->format('d/m/Y') }}</td>
+                                        <td class="text-center">
+                                            {{ \Carbon\Carbon::parse($value->created_at)->format('d/m/Y') }}</td>
 
                                         <td class="text-center">
                                             <div class="dropdown">
@@ -70,28 +72,28 @@
                                                 </button>
 
                                                 <ul class="dropdown-menu">
-                                                        <li>
-                                                            <a href="{{ route('admin.manajemen-pengguna.pengguna.edit', $value->id) }}"
-                                                                class="dropdown-item d-flex align-items-center gap-2">
-                                                                  <i class="ki-duotone ki-pencil fs-5"></i> Edit
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            {{-- <form action="{{ route('admin.manajemen-pengguna.pengguna.destroy', $value->id) }}" method="post">
+                                                    <li>
+                                                        <a href="{{ route('admin.manajemen-pengguna.pengguna.edit', $value->id) }}"
+                                                            class="dropdown-item d-flex align-items-center gap-2">
+                                                            <i class="ki-duotone ki-pencil fs-5"></i> Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        {{-- <form action="{{ route('admin.manajemen-pengguna.pengguna.destroy', $value->id) }}" method="post">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger">
                                                                    <i class="ki-duotone ki-trash fs-5"></i> Hapus
                                                                 </button>
                                                             </form> --}}
-                                                            <button
-                                                                class="dropdown-item d-flex align-items-center gap-2 text-danger"
-                                                                onclick="destroyItem(this)"
-                                                                data-route="{{ route('admin.manajemen-pengguna.pengguna.destroy', $value->id) }}">
-                                                                <i class="ki-duotone ki-trash fs-5"></i> Hapus
-                                                            </button>
-                                                        </li>
-                                                    </ul>
+                                                        <button
+                                                            class="dropdown-item d-flex align-items-center gap-2 text-danger"
+                                                            onclick="destroyItem(this)"
+                                                            data-route="{{ route('admin.manajemen-pengguna.pengguna.destroy', $value->id) }}">
+                                                            <i class="ki-duotone ki-trash fs-5"></i> Hapus
+                                                        </button>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </td>
                                     </tr>
@@ -109,12 +111,12 @@
 
 @section('script')
     <script>
-        const table =  $("#kt_datatable_dom_positioning").DataTable();
-        $('#search').on('keyup', function () {
+        const table = $("#kt_datatable_dom_positioning").DataTable();
+        $('#search').on('keyup', function() {
             table.search(this.value).draw();
         });
 
-         // Fungsi global untuk menghapus data
+        // Fungsi global untuk menghapus data
         window.destroyItem = function(e) {
             const route = e.dataset.route;
 
@@ -156,6 +158,5 @@
                 }
             });
         };
-
     </script>
 @endsection
