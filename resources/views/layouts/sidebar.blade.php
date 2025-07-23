@@ -105,6 +105,16 @@
                     </a>
                 </div>
 
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->is('admin/konfigurasi/index*') ? 'active bg-orange' : '' }}"
+                        href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}">
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-running fs-2 {{ request()->is('admin/konfigurasi/index*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                        </span>
+                        <span class="menu-title">Cabang Olahraga</span>
+                    </a>
+                </div>
+
             </div>
             <!--end::Menu-->
         </div>

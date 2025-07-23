@@ -85,3 +85,4 @@ Route::get('konfigurasi/pelatih/{id}/deskripsi', [PelatihController::class, 'des
     // Removed: Route::resource('atlet', AtletController::class)->only(['show']);
     // Removed: Route::resource('pelatih', PelatihController::class)->only(['show']);
 });
+});
