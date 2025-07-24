@@ -11,18 +11,27 @@ class CabangOlahraga extends Model
         'ketua_penanggung_jawab',
         'status',
         'tanggal_pembentukan',
-        'jumlah_atlet',
-        'jumlah_pelatih',
         'icon_cabor',
+        'terakhir_update',
     ];
 
     public function atlets()
     {
-        return $this->hasMany(Atlet::class);
+        return $this->hasMany(Atlet::class, 'cabor_id');
     }
 
     public function pelatihs()
     {
-        return $this->hasMany(Pelatih::class);
+        return $this->hasMany(Pelatih::class, 'cabor_id');
+    }
+
+        public function getJumlahAtletAttribute()
+    {
+        return $this->atlets()->count();
+    }
+
+    public function getJumlahPelatihAttribute()
+    {
+        return $this->pelatihs()->count();
     }
 }

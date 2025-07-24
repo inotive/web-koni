@@ -14,7 +14,7 @@ class Atlet extends Model
 
     protected $fillable = [
         'nama',
-        'cabor',
+        'cabor_id',
         'tempat_lahir',
         'tanggal_lahir',
         'alamat',
@@ -50,6 +50,6 @@ class Atlet extends Model
 
     public function cabangOlahraga()
     {
-        return $this->belongsTo(CabangOlahraga::class);
+        return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
     }
 }

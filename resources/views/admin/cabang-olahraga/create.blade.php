@@ -1,260 +1,281 @@
 @extends('layouts.app')
-
 @section('pageTitle', 'Tambah Cabang Olahraga')
-@section('mainSection', 'Manajemen Cabang Olahraga')
+@section('mainSection', 'Konfigurasi')
+@section('mainSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
+@section('subSection', 'Cabang Olahraga')
+@section('subSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
 @section('currentSection', 'Tambah Cabang Olahraga')
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/create.css') }}">
+@endpush
 
 @section('breadcrumb-title')
     <h1 class="text-dark fw-bold fs-3 mb-0">Tambah Cabang Olahraga</h1>
 @endsection
 
 @section('content')
-<style>
-    /* Existing styles from your form */
-    .form-main-container {
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-    }
 
-    .form-card {
-        width: 100%;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
-    }
-
-    .form-card-header {
-        padding: 24px 32px;
-        border-bottom: 1px solid #f1f1f4;
-    }
-
-    .form-card-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #071437;
-        margin: 0;
-    }
-
-    .form-body {
-        padding: 20px 32px;
-    }
-
-    .form-field {
-        display: flex;
-        align-items: center;
-        margin-bottom: 24px;
-        gap: 24px;
-    }
-
-    .form-label {
-        width: 200px;
-        min-width: 200px;
-    }
-
-    .form-label-text {
-        font-size: 14px;
-        color: #252f4a;
-        font-weight: 500;
-    }
-
-    .form-input, .form-select {
-        flex: 1;
-        padding: 14px 16px;
-        font-size: 14px;
-        border: 1px solid #dbdfe9;
-        border-radius: 8px;
-        background-color: #fcfcfc;
-        transition: all 0.2s ease;
-    }
-
-    .form-input:focus, .form-select:focus {
-        outline: none;
-        border-color: #1b84ff;
-        background-color: #fff;
-        box-shadow: 0 0 0 3px rgba(27, 132, 255, 0.1);
-    }
-
-    .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 16px;
-        padding: 24px 32px;
-        border-top: 1px solid #f1f1f4;
-    }
-
-    .btn-primary {
-        padding: 14px 24px;
-        background-color: #d20a11;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-
-    .btn-primary:hover {
-        background-color: #b91c1c;
-    }
-
-    .btn-secondary {
-        padding: 14px 24px;
-        background-color: #6b7280;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-
-    .btn-secondary:hover {
-        background-color: #4b5563;
-    }
-
-    @media (max-width: 768px) {
-        .form-field {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
+    <style>
         .form-label {
-            width: 100%;
-            min-width: 100%;
+            font-weight: 500;
+            color: #495057;
         }
 
-        .form-body {
-            padding: 16px;
+        .card-form {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: none;
         }
 
-        .form-card-header, .form-actions {
-            padding: 16px;
+        .file-upload-wrapper {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease-in-out;
+            position: relative;
         }
-    }
 
-    /* Styles for file upload from your friend's form */
-    .form-label {
-        font-weight: 500;
-        color: #495057;
-    }
-    .card-form {
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border: none;
-    }
-    .file-upload-wrapper {
-        border: 2px dashed #dee2e6;
-        border-radius: 8px;
-        padding: 2.5rem;
-        text-align: center;
-        cursor: pointer;
-        background-color: #f8f9fa;
-        transition: all 0.2s ease-in-out;
-        flex: 1; /* Added to make it fill available space */
-    }
-    .file-upload-wrapper:hover {
-        border-color: #0d6efd;
-        background-color: #e9ecef;
-    }
-    .file-upload-wrapper input[type="file"] {
-        display: none;
-    }
-    .file-upload-icon {
-        font-size: 2.5rem;
-        color: #0d6efd;
-    }
-    .file-upload-text {
-        color: #495057;
-        font-weight: 500;
-    }
-    .file-upload-hint {
-        color: #6c757d;
-        font-size: 0.9em;
-    }
-</style>
+        .file-upload-wrapper:hover {
+            border-color: #0d6efd;
+            background-color: #e9ecef;
+        }
 
-<div class="form-card">
-    <div class="form-card-header">
-        <div class="flex items-center gap-2">
-            {{-- Assuming you want an icon here, you might need to adjust based on your icon library (e.g., Font Awesome, Lucide) --}}
-            {{-- <i data-lucide="dumbbell" class="w-6 h-6 text-red-600"></i> --}}
-            <h2 class="form-card-title">Tambah Cabang Olahraga</h2>
+        .file-upload-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-icon {
+            font-size: 2.5rem;
+            color: #0d6efd;
+        }
+
+        .file-upload-text {
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .file-upload-hint {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .current-photo {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .preview-image {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+    </style>
+
+    <div class="container mt-4">
+        <div class="card card-form">
+            <div class="card-body p-4 p-md-5">
+                <h3 class="fw-bold mb-4">Tambah Data Cabang Olahraga</h3>
+
+                <form action="{{ route('admin.konfigurasi.cabang-olahraga.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="row align-items-center mb-4">
+                        <div class="col-md-3">
+                            <label for="icon_cabor" class="form-label">Ikon Cabang Olahraga</label>
+                        </div>
+                        <div class="col-md-9">
+                            <label for="icon_cabor" class="file-upload-wrapper" id="dropArea">
+                                <input type="file" name="icon_cabor" id="icon_cabor" accept="image/*">
+                                <div class="d-flex justify-content-center align-items-center" id="uploadContent">
+                                    <i class="fas fa-cloud-upload-alt file-upload-icon me-3" id="uploadIcon"></i>
+                                    <div id="uploadText">
+                                        <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk
+                                            mengunggah</p>
+                                        <p class="file-upload-hint" id="file-name-display">80x80px JPEG, PNG Image</p>
+                                    </div>
+                                </div>
+                                <div id="imagePreviewContainer" style="display: none;"></div>
+                            </label>
+                            @error('icon_cabor')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    @php
+                        $fields = [
+                            'nama_cabor' => [
+                                'label' => 'Nama Cabang Olahraga',
+                                'type' => 'text',
+                                'placeholder' => 'Masukkan nama cabang olahraga',
+                                'required' => true,
+                            ],
+                            'ketua_penanggung_jawab' => [
+                                'label' => 'Ketua Penanggung Jawab',
+                                'type' => 'text',
+                                'placeholder' => 'Masukkan nama ketua penanggung jawab',
+                                'required' => true,
+                            ],
+                            'status' => [
+                                'label' => 'Status Keaktifan',
+                                'type' => 'select',
+                                'options' => ['Aktif', 'Tidak Aktif'],
+                                'required' => true,
+                            ],
+                            'tanggal_pembentukan' => [
+                                'label' => 'Tanggal Pembentukan',
+                                'type' => 'date',
+                                'required' => true,
+                            ],
+                        ];
+                    @endphp
+
+                    @foreach ($fields as $key => $field)
+                        <div class="row align-items-center mb-3">
+                            <div class="col-md-3">
+                                <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
+                            </div>
+                            <div class="col-md-9">
+                                @php
+                                    $value = old($key, '');
+                                @endphp
+                                @if ($field['type'] === 'select')
+                                    <select name="{{ $key }}" id="{{ $key }}"
+                                        class="form-select @error($key) is-invalid @enderror"
+                                        {{ $field['required'] ? 'required' : '' }}>
+                                        <option value="">Pilih {{ $field['label'] }}</option>
+                                        @foreach ($field['options'] as $option)
+                                            <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>
+                                                {{ $option }}</option>
+                                        @endforeach
+                                    </select>
+                                @elseif ($field['type'] === 'textarea')
+                                    <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
+                                        placeholder="{{ $field['placeholder'] }}" rows="3" {{ $field['required'] ? 'required' : '' }}>{{ $value }}</textarea>
+                                @else
+                                    <input type="{{ $field['type'] }}" name="{{ $key }}"
+                                        id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
+                                        placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}"
+                                        {{ $field['required'] ? 'required' : '' }}
+                                        @if($field['type'] === 'number') min="0" @endif>
+                                @endif
+                                @error($key)
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    @endforeach
+
+                    <div class="row mt-4">
+                        <div class="col-md-9 offset-md-3 d-flex justify-content-between">
+                            <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
+                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}" class="btn btn-secondary px-4">Batal</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <form action="{{ route('admin.konfigurasi.cabang-olahraga.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        <div class="form-body">
-            {{-- File Upload Field --}}
-            <div class="form-field">
-                <div class="form-label"><p class="form-label-text">Ikon Cabor</p></div>
-                <label for="icon_cabor" class="file-upload-wrapper">
-                    <input type="file" name="icon_cabor" id="icon_cabor" class="@error('icon_cabor') is-invalid @enderror">
-                    <i class="fas fa-cloud-upload-alt file-upload-icon mb-2"></i> {{-- Requires Font Awesome --}}
-                    <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah.</p>
-                    <p class="file-upload-hint" id="file-name-display">80x80px PNG Files</p>
-                    @error('icon_cabor') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-                </label>
-            </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadInput = document.getElementById('icon_cabor');
+            const dropArea = document.getElementById('dropArea');
+            const previewContainer = document.getElementById('imagePreviewContainer');
 
-            <div class="form-field">
-                <div class="form-label"><p class="form-label-text">Nama Cabor</p></div>
-                <input type="text" class="form-input" name="nama_cabor" value="{{ old('nama_cabor') }}" required>
-                @error('nama_cabor') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-            </div>
+            // Image preview functionality
+            uploadInput.addEventListener('change', function() {
+                const file = this.files[0];
+                const uploadContent = document.getElementById('uploadContent');
+                const previewContainer = document.getElementById('imagePreviewContainer');
 
-            <div class="form-field">
-                <div class="form-label"><p class="form-label-text">Ketua Penanggung Jawab</p></div>
-                <input type="text" class="form-input" name="ketua_penanggung_jawab" value="{{ old('ketua_penanggung_jawab') }}" required>
-                @error('ketua_penanggung_jawab') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-            </div>
+                if (file) {
+                    if (!file.type.match('image.*')) {
+                        alert('Hanya file gambar yang diizinkan');
+                        return;
+                    }
 
-            <div class="form-field">
-                <div class="form-label"><p class="form-label-text">Status</p></div>
-                <select name="status" class="form-select" required>
-                    <option value="Aktif" {{ old('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                    <option value="Tidak Aktif" {{ old('status') == 'Tidak Aktif' ? 'selected' : '' }}>Tidak Aktif</option>
-                </select>
-                @error('status') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-            </div>
+                    // Hide upload content and show preview container
+                    uploadContent.style.display = 'none';
+                    previewContainer.style.display = 'flex';
+                    previewContainer.style.justifyContent = 'center';
+                    previewContainer.style.alignItems = 'center';
+                    previewContainer.innerHTML = '';
 
-            <div class="form-field">
-                <div class="form-label"><p class="form-label-text">Tanggal Pembentukan</p></div>
-                <input type="date" class="form-input" name="tanggal_pembentukan" value="{{ old('tanggal_pembentukan') }}" required>
-                @error('tanggal_pembentukan') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-            </div>
+                    const reader = new FileReader();
 
-            <div class="form-field">
-                <div class="form-label"><p class="form-label-text">Jumlah Atlet</p></div>
-                <input type="number" class="form-input" name="jumlah_atlet" value="{{ old('jumlah_atlet') }}" required>
-                @error('jumlah_atlet') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-            </div>
+                    reader.onload = function(e) {
+                        const previewContent = `
+                        <div class="d-flex justify-content-center align-items-center">
+                            <img src="${e.target.result}" class="preview-image me-3" alt="Preview Ikon Cabor" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                            <div>
+                                <p class="file-upload-text mb-1">${file.name}</p>
+                                <p class="file-upload-hint">Klik untuk mengubah ikon</p>
+                            </div>
+                        </div>
+                    `;
+                        previewContainer.innerHTML = previewContent;
+                    };
 
-            <div class="form-field">
-                <div class="form-label"><p class="form-label-text">Jumlah Pelatih</p></div>
-                <input type="number" class="form-input" name="jumlah_pelatih" value="{{ old('jumlah_pelatih') }}" required>
-                @error('jumlah_pelatih') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
-            </div>
-        </div>
+                    reader.readAsDataURL(file);
+                } else {
+                    // Show upload content and hide preview
+                    uploadContent.style.display = 'flex';
+                    previewContainer.style.display = 'none';
+                    previewContainer.innerHTML = '';
+                }
+            });
 
-        <div class="form-actions">
-            <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}" class="btn-secondary">Batal</a>
-            <button type="submit" class="btn-primary">Simpan Data</button>
-        </div>
-    </form>
-</div>
+            // Drag and drop functionality
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = '#0d6efd';
+                dropArea.style.backgroundColor = '#e9ecef';
+            });
 
-<script>
-    document.getElementById('icon_cabor').addEventListener('change', function(e) {
-        const fileName = e.target.files[0] ? e.target.files[0].name : '80x80px PNG Files';
-        document.getElementById('file-name-display').textContent = fileName;
-    });
-</script>
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.style.borderColor = '#dee2e6';
+                dropArea.style.backgroundColor = '#f8f9fa';
+            });
+
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = '#dee2e6';
+                dropArea.style.backgroundColor = '#f8f9fa';
+
+                if (e.dataTransfer.files.length) {
+                    uploadInput.files = e.dataTransfer.files;
+                    uploadInput.dispatchEvent(new Event('change'));
+                }
+            });
+
+            // Form validation
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const requiredFields = this.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.style.borderColor = '#ef4444';
+                        field.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                    } else {
+                        field.style.borderColor = '#dbdfe9';
+                        field.style.boxShadow = 'none';
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Mohon lengkapi semua field yang wajib diisi!');
+                }
+            });
+        });
+    </script>
 @endsection

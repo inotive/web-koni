@@ -9,25 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class CabangOlahragaController extends Controller
 {
-    /**
-     * Menampilkan daftar cabang olahraga dengan fitur search, sort, dan pagination.
-     */
+
     public function index(Request $request)
     {
         $query = CabangOlahraga::query();
 
-        // Pencarian berdasarkan nama cabang olahraga atau ketua penanggung jawab
         if ($search = $request->input('search')) {
             $query->where('nama_cabor', 'like', '%' . $search . '%')
                   ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
         }
 
-        // Filter berdasarkan status keaktifan
         if ($status = $request->input('filter_status')) {
             $query->where('status', $status);
         }
 
-        // Sorting
         if ($sortBy = $request->input('sort_by')) {
             $order = $request->input('order', 'asc');
             $query->orderBy($sortBy, $order);
@@ -40,22 +35,16 @@ class CabangOlahragaController extends Controller
         /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator $cabors */
         $cabors = $query->paginate($perPage)->appends(request()->query());
 
-        // CHANGED: Path now includes 'konfigurasi' and uses hyphen
         return view('admin.cabang-olahraga.index', compact('cabors'));
     }
 
-    /**
-     * Menampilkan form untuk membuat cabang olahraga baru.
-     */
+
     public function create()
     {
-        // CHANGED: Path now includes 'konfigurasi' and uses hyphen
         return view('admin.cabang-olahraga.create');
     }
 
-    /**
-     * Menyimpan data cabang olahraga baru ke database.
-     */
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -63,8 +52,6 @@ class CabangOlahragaController extends Controller
             'ketua_penanggung_jawab' => 'required|string|max:100',
             'status' => 'required|in:Aktif,Tidak Aktif',
             'tanggal_pembentukan' => 'required|date',
-            'jumlah_atlet' => 'required|integer|min:0',
-            'jumlah_pelatih' => 'required|integer|min:0',
             'icon_cabor' => 'nullable|image|mimes:png|dimensions:width=80,height=80|max:2048',
         ]);
 
@@ -74,27 +61,28 @@ class CabangOlahragaController extends Controller
         }
 
         $validatedData['terakhir_update'] = now();
-
+        
         CabangOlahraga::create($validatedData);
 
-        // This redirect uses the route name, which should be correct based on web.php
         return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
             ->with('success', 'Cabang olahraga berhasil ditambahkan.');
     }
 
-    /**
-     * Menampilkan form edit data cabang olahraga.
-     */
+
+    public function show($id)
+    {
+        $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
+        return view('admin.cabang-olahraga.show', compact('cabor'));
+    }
+
+
     public function edit($id)
     {
         $cabor = CabangOlahraga::findOrFail($id);
-        // CHANGED: Path now includes 'konfigurasi' and uses hyphen
         return view('admin.cabang-olahraga.edit', compact('cabor'));
     }
 
-    /**
-     * Memperbarui data cabang olahraga.
-     */
+
     public function update(Request $request, $id)
     {
         $cabor = CabangOlahraga::findOrFail($id);
@@ -104,8 +92,6 @@ class CabangOlahragaController extends Controller
             'ketua_penanggung_jawab' => 'required|string|max:100',
             'status' => 'required|in:Aktif,Tidak Aktif',
             'tanggal_pembentukan' => 'required|date',
-            'jumlah_atlet' => 'required|integer|min:0',
-            'jumlah_pelatih' => 'required|integer|min:0',
             'icon_cabor' => 'nullable|image|mimes:png|dimensions:width=80,height=80|max:2048',
         ]);
 
@@ -121,14 +107,11 @@ class CabangOlahragaController extends Controller
 
         $cabor->update($validatedData);
 
-        // This redirect uses the route name, which should be correct based on web.php
         return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
             ->with('success', 'Cabang olahraga berhasil diperbarui.');
     }
 
-    /**
-     * Menghapus data cabang olahraga.
-     */
+
     public function destroy($id)
     {
         $cabor = CabangOlahraga::findOrFail($id);
@@ -139,18 +122,7 @@ class CabangOlahragaController extends Controller
 
         $cabor->delete();
 
-        // This redirect uses the route name, which should be correct based on web.php
         return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
             ->with('success', 'Cabang olahraga berhasil dihapus.');
-    }
-
-    /**
-     * Menampilkan detail cabang olahraga beserta atlet dan pelatih.
-     */
-    public function show($id)
-    {
-        $item = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
-        // CHANGED: Path now includes 'konfigurasi' and uses hyphen
-        return view('admin.cabang-olahraga.show', compact('item'));
     }
 }
