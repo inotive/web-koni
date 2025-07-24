@@ -9,12 +9,15 @@ use App\Models\CabangOlahraga;
 
 class AtletController extends Controller
 {
-    public function index()
-    {
-        $atlets = Atlet::with('prestasiTerbaru')->latest()->paginate(10);
+public function index(Request $request)
+{
+    $perPage = $request->get('per_page', 10);
 
-        return view('admin.atlet.index', compact('atlets'));
-    }
+    $atlets = Atlet::with('prestasiTerbaru')
+                   ->paginate($perPage);
+
+    return view('admin.atlet.index', compact('atlets'));
+}
 
     public function create()
     {

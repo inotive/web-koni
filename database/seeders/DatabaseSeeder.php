@@ -15,9 +15,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             PermissionSeeder::class,
             UserSeeder::class,
-            CabangOlahragaSeeder::class, // Tambahkan langsung di dalam array ini
-            AtletSeeder::class,
-            PelatihSeeder::class,
+            AtletSeeder::class
         ]);
     }
 }
