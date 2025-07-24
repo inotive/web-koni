@@ -5,16 +5,7 @@
 @endpush
 @section('pageTitle', 'Jabatan')
 @section('mainSection', 'Manajemen Pengguna')
-@section('currentSection', 'Jabatan')
-
-@section('breadcrumb-title')
-    <h1 class="d-flex flex-column text-dark fw-bold fs-3 mb-0">Halaman Jabatan</h1>
-@endsection
-
-@section('breadcrumb-items')
-    <li class="breadcrumb-item text-gray-600">Jabatan</li>
-
-@endsection
+@section('currentSection', 'Jabatan & Hak Akses')
 
 @section('content')
     <div class="row col-12 mt-5">
@@ -40,21 +31,21 @@
                             <thead>
                                 <tr class="fw-bold fs-6 text-gray-800 px-7">
                                     <th class="col-1">No</th>
-                                    <th class="col-4 text-center">Name</th>
-                                    <th class="col-3 text-center">Total Pengguna</th>
-                                    <th class="col-3 text-center">Jumlah Hak Akses</th>
-                                    <th class="col-1 text-center">Aksi</th>
+                                    <th class="col-4 text-start">Name</th>
+                                    <th class="col-3 text-start">Total Pengguna</th>
+                                    <th class="col-3 text-start">Jumlah Hak Akses</th>
+                                    <th class="col-1 text-start">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="table-body" class="text-center">
                                 @foreach ($data as $value)
                                     <tr id="{{ $value->id }}">
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $value->name }}</td>
-                                        <td>{{ $value->assignedUsers->count() }} Pengguna</td>
-                                        <td>{{ $value->permissions->count() }} Hak Akses</td>
+                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                        <td class="text-start">{{ $value->name }}</td>
+                                        <td class="text-start">{{ $value->assignedUsers->count() }} Pengguna</td>
+                                        <td class="text-start">{{ $value->permissions->count() }} Hak Akses</td>
                                         {{-- <td>{{ $value->model_has_role_count }} User</td> --}}
-                                        <td>
+                                        <td class="text-start">
                                             <div class="dropdown">
                                                 <button class="btn btn-sm" type="button" data-bs-toggle="dropdown"
                                                     aria-expanded="false"
@@ -66,16 +57,7 @@
                                                             d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
                                                     </svg>
                                                 </button>
-
                                                 <ul class="dropdown-menu">
-                                                    <li>
-                                                        <button class="dropdown-item d-flex align-items-center gap-2"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#kt_modal_{{ $value->id }}">
-                                                            {{-- <i class="ki-duotone ki-pencil fs-5"></i>  --}}
-                                                            Edit Jabatan
-                                                        </button>
-                                                    </li>
                                                     <li>
                                                         <div>
                                                             <a href="{{ route('admin.manajemen-pengguna.role.show', $value->id) }}"
@@ -84,6 +66,14 @@
                                                                 Atur Hak Akses
                                                             </a>
                                                         </div>
+                                                    </li>
+                                                    <li>
+                                                        <button class="dropdown-item d-flex align-items-center gap-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#kt_modal_{{ $value->id }}">
+                                                            {{-- <i class="ki-duotone ki-pencil fs-5"></i>  --}}
+                                                            Edit Jabatan
+                                                        </button>
                                                     </li>
                                                     <li>
                                                         <button

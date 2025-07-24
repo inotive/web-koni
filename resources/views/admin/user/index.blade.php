@@ -2,8 +2,27 @@
 
 
 @push('stack-css')
-    <!-- Kalau Ada Plugin Tambahan -->
+    <style>
+        th.sorting::after {
+            float: right;
+            font-size: 0.75rem;
+            opacity: 0.5;
+        }
+
+        th.sorting_asc::after {
+            float: right;
+            font-size: 0.75rem;
+            opacity: 1;
+        }
+
+        th.sorting_desc::after {
+            float: right;
+            font-size: 0.75rem;
+            opacity: 1;
+        }
+    </style>
 @endpush
+
 @section('pageTitle', 'Pengguna')
 @section('mainSection', 'Manajemen Pengguna')
 @section('currentSection', 'Pengguna')
@@ -23,7 +42,7 @@
                     <a href="{{ route('admin.manajemen-pengguna.pengguna.create') }}" class="btn"
                         style="background-color: #F8285A;">
                         <i class="ki-duotone ki-plus fs-2" style="color: white"></i>
-                        <span class="text-white">Tambah Data</span>
+                        <span class="text-white">Tambah Pengguna</span>
                     </a>
                 </div>
             </div>
@@ -34,7 +53,7 @@
                             <thead>
                                 <tr class="fw-bold fs-6 text-gray-800 px-7" style="background-color: #FCFCFC">
                                     <th class="col-1 text-center">No</th>
-                                    <th class="col-4 text-center">Nama</th>
+                                    <th class="col-4 text-start">Nama</th>
                                     <th class="col-1 text-center">Jabatan</th>
                                     <th class="col-3 text-center">Email</th>
                                     <th class="col-2 text-center">Tanggal Di Tambahkan</th>
