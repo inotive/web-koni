@@ -1,83 +1,120 @@
 @extends('layouts.app')
 @section('pageTitle', 'Tambah Data Pelatih')
 @section('mainSection', 'Konfigurasi')
-@section('mainSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('subSection', 'Pelatih')
 @section('subSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('currentSection', 'Tambah Data Pelatih')
 @section('content')
+
     <style>
-        .form-label {
-            font-weight: 500;
-            color: #495057;
-        }
+    body {
+        background-color: #f5f5f5 !important;
+    }
 
-        .card-form {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: none;
-        }
+    .main-content {
+        background-color: #f5f5f5;
+        min-height: 100vh;
+        padding: 20px 10px 40px;
+    }
 
-        .file-upload-wrapper {
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            padding: 2.5rem;
-            text-align: center;
-            cursor: pointer;
-            background-color: #f8f9fa;
-            transition: all 0.2s ease-in-out;
-        }
+    .card-form {
+        background-color: white;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
 
-        .file-upload-wrapper:hover {
-            border-color: #0d6efd;
-            background-color: #e9ecef;
-        }
+    .section-header {
+        color: #0b153a;
+        font-weight: 700;
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+    }
 
-        .file-upload-wrapper input[type="file"] {
-            display: none;
-        }
+    .file-upload-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid #cfe2ff;
+        background-color: #edf5ff;
+        border-radius: 10px;
+        padding: 16px 20px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
 
-        .file-upload-icon {
-            font-size: 2.5rem;
-            color: #0d6efd;
-        }
+    .file-upload-wrapper:hover {
+        border-color: #0d6efd;
+        background-color: #e6f0ff;
+    }
 
-        .file-upload-text {
-            color: #495057;
-            font-weight: 500;
-        }
+    .file-upload-wrapper input[type="file"] {
+        display: none;
+    }
 
-        .file-upload-hint {
-            color: #6c757d;
-            font-size: 0.9em;
-        }
-    </style>
+    .file-upload-icon-wrapper {
+        background-color: #d0e7ff;
+        padding: 8px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-    <div class="container mt-4">
+    .file-upload-icon {
+        font-size: 1.5rem;
+        color: #0d6efd;
+    }
+
+    .file-upload-text {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #0b153a;
+    }
+
+    .file-upload-hint {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 4px;
+    }
+</style>
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
+                        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Pelatih</h3>
+    </div>
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+
         <div class="card card-form">
             <div class="card-body p-4 p-md-5">
                 <h3 class="fw-bold mb-4">Tambah Data</h3>
-
                 <form action="{{ route('admin.konfigurasi.pelatih.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="row align-items-center mb-4">
-                        <div class="col-md-3">
-                          <label for="foto" class="form-label">Foto</label>
+                    <div class="row align-items-start mb-4">
+                <div class="col-md-3">
+                    <label for="foto" class="form-label"></label>
+                    <p class="file-upload-hint">150x150px JPEG, PNG Image</p>
+                </div>
+                <div class="col-md-9">
+                    <label for="foto" class="file-upload-wrapper">
+                        <input type="file" name="foto" id="foto" class="@error('foto') is-invalid @enderror">
+                        <div class="file-upload-icon-wrapper">
+                            <i class="fas fa-upload file-upload-icon"></i>
                         </div>
-                        <div class="col-md-9">
-                            <label for="foto" class="file-upload-wrapper">
-                                <input type="file" name="foto" id="foto" class="@error('foto') is-invalid @enderror">
-                                <i class="fas fa-cloud-upload-alt file-upload-icon mb-2"></i>
-                                <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah.</p>
-                                <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
-                                @error('foto')
-                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                @enderror
-                                <div id="imagePreviewContainer" style="display: none;"></div>
-                            </label>
+                        <div>
+                            <p class="file-upload-text" id="file-name-display">Seret dan lepas file di sini, atau klik untuk mengunggah.</p>
+                        </div>
+                    </label>
 
-                        </div>
-                    </div>
+                    @error('foto')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+
+                    <div id="imagePreviewContainer" style="display: none;"></div>
+                </div>
+            </div>
 
                     @php
                         $fields = [
@@ -166,8 +203,9 @@
                 </form>
             </div>
         </div>
+        </div>
     </div>
-
+</div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const uploadInput = document.getElementById('foto');

@@ -2,7 +2,6 @@
 
 @section('pageTitle', 'Detail Pelatih')
 @section('mainSection', 'Konfigurasi')
-@section('mainSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('subSection', 'Pelatih')
 @section('subSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('currentSection', 'Detail Pelatih')
@@ -10,11 +9,20 @@
 
 @section('content')
     <style>
+        body {
+        background-color: #f5f5f5 !important;
+        }
+
+        .main-content {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px 10px 40px;
+        }
         .detail-container {
             gap: 30px;
             width: 100%;
             display: flex;
-            padding: 0 40px 30px;
+            padding: 0 20px 20px;
             position: relative;
             max-width: 1067px;
             margin: 0 auto;
@@ -399,7 +407,7 @@
             }
         }
     </style>
-
+<div class="main-content">
     <div class="detail-container">
         <div class="detail-header">
             <h1 class="detail-title">Profil Pelatih</h1>
@@ -730,4 +738,5 @@
             </div>
         </div>
     </div>
+</div>
 @endsection

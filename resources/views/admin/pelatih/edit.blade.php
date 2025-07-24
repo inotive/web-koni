@@ -8,69 +8,114 @@
 
 @section('content')
     <style>
-        .form-label {
-            font-weight: 500;
-            color: #495057;
-        }
+    body {
+        background-color: #f5f5f5 !important;
+    }
 
-        .card-form {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: none;
-        }
+    .main-content {
+        background-color: #f5f5f5;
+        min-height: 100vh;
+        padding: 20px 0;
+    }
 
-        .file-upload-wrapper {
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            background-color: #f8f9fa;
-            transition: all 0.2s ease-in-out;
-            position: relative;
-        }
+    .card-form {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+    }
 
-        .file-upload-wrapper:hover {
-            border-color: #0d6efd;
-            background-color: #e9ecef;
-        }
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+    }
 
-        .file-upload-wrapper input[type="file"] {
-            display: none;
-        }
+    .btn-danger {
+        background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+    }
 
-        .file-upload-icon {
-            font-size: 2.5rem;
-            color: #0d6efd;
-        }
+    .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+    }
 
-        .file-upload-text {
-            color: #495057;
-            font-weight: 500;
-        }
+    .file-upload-wrapper {
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 2.5rem;
+        text-align: center;
+        cursor: pointer;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease-in-out;
+    }
 
-        .file-upload-hint {
-            color: #6c757d;
-            font-size: 0.9em;
-        }
+    .file-upload-wrapper:hover {
+        border-color: #e91e63;
+        background-color: #f1f1f1;
+    }
 
-        .current-photo {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
+    .file-upload-wrapper input[type="file"] {
+        display: none;
+    }
+
+    .file-upload-icon {
+        font-size: 2.5rem;
+        color: #e91e63;
+    }
+
+    .file-upload-text {
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .file-upload-hint {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #e91e63;
+        box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.2);
+    }
+
+    .invalid-feedback {
+        font-size: 0.85rem;
+        color: #e74c3c;
+    }
+
+    h3.fw-bold {
+        color: #2c3e50;
+        font-size: 1.6rem;
+        font-weight: 700;
+    }
+
     </style>
-
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 30px">
+                    <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Pelatih</h3>
+                </div>
+<div class="main-content">
     <div class="container mt-4">
         <div class="card card-form">
             <div class="card-body p-4 p-md-5">
                 <h3 class="fw-bold mb-4">Edit Data Pelatih</h3>
 
-                [cite_start]<form action="{{ route('admin.konfigurasi.pelatih.update', $pelatih->id) }}" method="POST"
-                    enctype="multipart/form-data"> [cite: 580]
+                  <form action="{{ route('admin.konfigurasi.pelatih.update', $pelatih->id) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
-                    [cite_start]@method('PUT') [cite: 582]
+                    @method('PUT')
 
                     <div class="row align-items-center mb-4">
                         <div class="col-md-3">
@@ -196,6 +241,7 @@
             </div>
         </div>
     </div>
+</div>
 
     <script>
         document.getElementById('foto').addEventListener('change', function(e) {
