@@ -5,16 +5,12 @@
 @section('subSection', 'Atlet')
 @section('subSectionUrl', route('admin.konfigurasi.atlet.index'))
 @section('currentSection', 'Tambah Atlet')
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/create.css') }}">
-@endpush
 
 @section('breadcrumb-title')
     <h1 class="text-dark fw-bold fs-3 mb-0">Tambah Atlet</h1>
 @endsection
 
 @section('content')
-
     <style>
         .form-label {
             font-weight: 500;
@@ -30,12 +26,11 @@
         .file-upload-wrapper {
             border: 2px dashed #dee2e6;
             border-radius: 8px;
-            padding: 1.5rem;
+            padding: 2.5rem;
             text-align: center;
             cursor: pointer;
             background-color: #f8f9fa;
             transition: all 0.2s ease-in-out;
-            position: relative;
         }
 
         .file-upload-wrapper:hover {
@@ -62,18 +57,11 @@
             font-size: 0.9em;
         }
 
-        .current-photo {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
         .preview-image {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 8px;
+            width: 150px;
+            height: 150px;
             object-fit: cover;
+            border-radius: 8px;
         }
     </style>
 
@@ -85,23 +73,24 @@
                 <form action="{{ route('admin.konfigurasi.atlet.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
+                    <!-- Bagian Foto Atlet -->
                     <div class="row align-items-center mb-4">
                         <div class="col-md-3">
                             <label for="foto_atlet" class="form-label">Foto Atlet</label>
                         </div>
                         <div class="col-md-9">
                             <label for="foto_atlet" class="file-upload-wrapper" id="dropArea">
-                                <input type="file" name="foto_atlet" id="foto_atlet" accept="image/*">
-                                <div class="d-flex justify-content-center align-items-center" id="uploadContent">
-                                    <i class="fas fa-cloud-upload-alt file-upload-icon me-3" id="uploadIcon"></i>
-                                    <div id="uploadText">
-                                        <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk
-                                            mengunggah</p>
-                                        <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
-                                    </div>
+                                <input type="file" name="foto_atlet" id="foto_atlet" accept="image/*" class="@error('foto_atlet') is-invalid @enderror">
+                                <div id="uploadContent">
+                                    <i class="fas fa-cloud-upload-alt file-upload-icon mb-2"></i>
+                                    <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah</p>
+                                    <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
                                 </div>
                                 <div id="imagePreviewContainer" style="display: none;"></div>
                             </label>
+                            @error('foto_atlet')
+                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
 
@@ -111,12 +100,6 @@
                                 'label' => 'Nama Lengkap',
                                 'type' => 'text',
                                 'placeholder' => 'Masukkan nama lengkap',
-                                'required' => true,
-                            ],
-                            'cabor' => [
-                                'label' => 'Cabang Olahraga',
-                                'type' => 'select',
-                                'options' => $cabors,
                                 'required' => true,
                             ],
                             'email' => [
@@ -188,6 +171,26 @@
                         </div>
                     @endforeach
 
+                    <!-- Field Cabang Olahraga -->
+                    <div class="row align-items-center mb-3">
+                        <div class="col-md-3">
+                            <label for="cabor_id" class="form-label">Cabang Olahraga</label>
+                        </div>
+                        <div class="col-md-9">
+                            <select name="cabor_id" id="cabor_id" class="form-select @error('cabor_id') is-invalid @enderror" required>
+                                <option value="">-- Pilih Cabang Olahraga --</option>
+                                @foreach($cabors as $cabor)
+                                    <option value="{{ $cabor->id }}" {{ old('cabor_id') == $cabor->id ? 'selected' : '' }}>
+                                        {{ $cabor->nama_cabor }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('cabor_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
                     <div class="row mt-4">
                         <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                             <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
@@ -203,13 +206,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             const uploadInput = document.getElementById('foto_atlet');
             const dropArea = document.getElementById('dropArea');
+            const uploadContent = document.getElementById('uploadContent');
             const previewContainer = document.getElementById('imagePreviewContainer');
+            const fileNameDisplay = document.getElementById('file-name-display');
 
             // Image preview functionality
             uploadInput.addEventListener('change', function() {
                 const file = this.files[0];
-                const uploadContent = document.getElementById('uploadContent');
-                const previewContainer = document.getElementById('imagePreviewContainer');
 
                 if (file) {
                     if (!file.type.match('image.*')) {
@@ -217,31 +220,33 @@
                         return;
                     }
 
+                    // Update file name display
+                    fileNameDisplay.textContent = file.name;
+
                     // Hide upload content and show preview container
                     uploadContent.style.display = 'none';
-                    previewContainer.style.display = 'flex';
-                    previewContainer.style.justifyContent = 'center';
-                    previewContainer.style.alignItems = 'center';
+                    previewContainer.style.display = 'block';
                     previewContainer.innerHTML = '';
 
                     const reader = new FileReader();
 
                     reader.onload = function(e) {
                         const previewContent = `
-                        <div class="d-flex justify-content-center align-items-center">
-                            <img src="${e.target.result}" class="preview-image me-3" alt="Preview Foto Atlet" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
-                            <div>
-                                <p class="file-upload-text mb-1">${file.name}</p>
-                                <p class="file-upload-hint">Klik untuk mengubah foto</p>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <img src="${e.target.result}" class="preview-image me-3" alt="Preview Foto Atlet">
+                                <div>
+                                    <p class="file-upload-text mb-1">${file.name}</p>
+                                    <p class="file-upload-hint">Klik untuk mengubah foto</p>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
                         previewContainer.innerHTML = previewContent;
                     };
 
                     reader.readAsDataURL(file);
                 } else {
-                    // Show upload content and hide preview
+                    // Reset to original state
+                    fileNameDisplay.textContent = '150x150px JPEG, PNG Image';
                     uploadContent.style.display = 'flex';
                     previewContainer.style.display = 'none';
                     previewContainer.innerHTML = '';

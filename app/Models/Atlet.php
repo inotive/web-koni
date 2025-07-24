@@ -24,11 +24,7 @@ class Atlet extends Model
         'foto_atlet'
     ];
 
-    public function cabor()
-    {
-        return $this->belongsTo(CabangOlahraga::class);
-    }
-
+    
     public function getUmurAttribute()
     {
         if ($this->tanggal_lahir) {
@@ -48,8 +44,8 @@ class Atlet extends Model
         return $this->morphMany(Prestasi::class, 'subject');
     }
 
-    public function cabangOlahraga()
-    {
-        return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
-    }
+public function cabangOlahraga()
+{
+    return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
+}
 }

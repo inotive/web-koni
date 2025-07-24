@@ -1,8 +1,10 @@
 @extends('layouts.app')
-
 @section('pageTitle', 'Detail Cabang Olahraga')
 @section('mainSection', 'Konfigurasi')
-@section('currentSection', 'Cabang Olahraga')
+@section('mainSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
+@section('subSection', 'Cabang Olahraga')
+@section('subSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
+@section('currentSection', 'Detail Cabang Olahraga')
 
 @section('breadcrumb-title')
     {{-- Halaman Detail Cabang Olahraga --}}
@@ -253,7 +255,7 @@
                                             </div>
                                         </td>
                                         <td class="text-end">
-                                            <a href="{{ route('admin.atlet.show', $atlet->id ?? '#') }}" 
+                                            <a href="{{ route('admin.konfigurasi.atlet.show', $atlet->id ?? '#') }}" 
                                                class="btn btn-sm btn-light-primary">
                                                 <i class="ki-duotone ki-eye fs-5">
                                                     <span class="path1"></span>
@@ -370,7 +372,7 @@
                                             </div>
                                         </td>
                                         <td class="text-end">
-                                            <a href="{{ route('admin.pelatih.show', $pelatih->id ?? '#') }}" 
+                                            <a href="{{ route('admin.konfigurasi.pelatih.show', $pelatih->id ?? '#') }}" 
                                                class="btn btn-sm btn-light-success">
                                                 <i class="ki-duotone ki-eye fs-5">
                                                     <span class="path1"></span>

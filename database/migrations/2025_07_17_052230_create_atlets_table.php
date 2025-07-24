@@ -14,7 +14,7 @@ return new class extends Migration
 Schema::create('atlets', function (Blueprint $table) {
     $table->id();
     $table->string('nama');
-    $table->string('cabor');
+    $table->string('cabor_id');
     $table->string('tempat_lahir');
     $table->date('tanggal_lahir');
     $table->text('alamat');

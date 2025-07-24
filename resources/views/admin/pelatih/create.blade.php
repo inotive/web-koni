@@ -5,6 +5,7 @@
 @section('subSection', 'Pelatih')
 @section('subSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('currentSection', 'Tambah Data Pelatih')
+
 @section('content')
     <style>
         .form-label {
@@ -51,51 +52,58 @@
             color: #6c757d;
             font-size: 0.9em;
         }
+
+        .preview-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
     </style>
 
     <div class="container mt-4">
         <div class="card card-form">
             <div class="card-body p-4 p-md-5">
-                <h3 class="fw-bold mb-4">Tambah Data</h3>
+                <h3 class="fw-bold mb-4">Tambah Data Pelatih</h3>
 
                 <form action="{{ route('admin.konfigurasi.pelatih.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+
+                    <!-- Bagian Foto -->
                     <div class="row align-items-center mb-4">
                         <div class="col-md-3">
-                          <label for="foto" class="form-label">Foto</label>
+                            <label for="foto" class="form-label">Foto</label>
                         </div>
                         <div class="col-md-9">
                             <label for="foto" class="file-upload-wrapper">
-                                <input type="file" name="foto" id="foto" class="@error('foto') is-invalid @enderror">
-                                <i class="fas fa-cloud-upload-alt file-upload-icon mb-2"></i>
-                                <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah.</p>
-                                <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
+                                <input type="file" name="foto" id="foto"
+                                    class="@error('foto') is-invalid @enderror">
+                                <div id="uploadContent">
+                                    <i class="fas fa-cloud-upload-alt file-upload-icon mb-2"></i>
+                                    <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk
+                                        mengunggah.</p>
+                                    <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
+                                </div>
                                 @error('foto')
                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                                 <div id="imagePreviewContainer" style="display: none;"></div>
                             </label>
-
                         </div>
                     </div>
 
                     @php
                         $fields = [
                             'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Alessandro Benaya Pinem'],
-                            'cabor' => [
-                                'label' => 'Cabor',
+                            'cabor_id' => [
+                                'label' => 'Cabang Olahraga',
                                 'type' => 'select',
-                                'options' => $cabors,
-                                ],
+                                'options' => $cabors, // Pastikan $cabors dikirim sebagai [id => nama_cabor]
+                            ],
                             'email' => [
                                 'label' => 'Email',
                                 'type' => 'email',
                                 'placeholder' => 'emailpelatih@gmail.com',
-                            ],
-                            'ketersediaan' => [
-                                'label' => 'Ketersediaan',
-                                'type' => 'select-static',
-                                'options' => ['Tersedia', 'Tidak Tersedia'],
                             ],
                             'no_telepon' => [
                                 'label' => 'No Telepon',
@@ -111,14 +119,16 @@
                             'kelamin' => [
                                 'label' => 'Jenis Kelamin',
                                 'type' => 'select',
-                                'options' => ['Laki - Laki', 'Perempuan'],
+                                'options' => [
+                                    'Laki-laki' => 'Laki-laki',
+                                    'Perempuan' => 'Perempuan',
+                                ],
                             ],
                             'alamat' => [
-                                'label' => 'Alamat (Sesuai KTP)',
+                                'label' => 'Alamat',
                                 'type' => 'text',
                                 'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
                             ],
-                            // 'prestasi' => ['label' => 'Prestasi', 'type' => 'textarea', 'placeholder' => 'Tuliskan prestasi yang diraih, pisahkan dengan baris baru...'],
                         ];
                     @endphp
 
@@ -130,26 +140,20 @@
                             <div class="col-md-9">
                                 @if ($field['type'] === 'select')
                                     <select name="{{ $key }}" id="{{ $key }}"
-                                        class="form-select @error($key) is-invalid @enderror">
+                                        class="form-select @error($key) is-invalid @enderror"
+                                        {{ $key === 'cabor_id' ? 'required' : '' }}>
                                         <option value="">Pilih {{ $field['label'] }}</option>
-                                        @foreach ($field['options'] as $option)
-                                            <option value="{{ $option }}"
-                                                {{ old($key) == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                        @foreach ($field['options'] as $id => $nama)
+                                            <option value="{{ $id }}" {{ old($key) == $id ? 'selected' : '' }}>
+                                                {{ $nama }}
+                                            </option>
                                         @endforeach
                                     </select>
-                                @elseif ($field['type'] === 'select-static')
-                                    <select name="{{ $key }}" id="{{ $key }}" class="form-select"
-                                        disabled>
-                                        <option value="Tersedia">Tersedia</option>
-                                    </select>
-                                    <small class="text-muted">Fitur ini belum diimplementasikan.</small>
-                                @elseif ($field['type'] === 'textarea')
-                                    <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
-                                        placeholder="{{ $field['placeholder'] }}" rows="3">{{ old($key) }}</textarea>
                                 @else
                                     <input type="{{ $field['type'] }}" name="{{ $key }}"
                                         id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
-                                        placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ old($key) }}">
+                                        placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ old($key) }}"
+                                        {{ in_array($key, ['nama', 'cabor_id', 'tanggal_lahir', 'tempat_lahir', 'kelamin', 'alamat']) ? 'required' : '' }}>
                                 @endif
                                 @error($key)
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -161,6 +165,8 @@
                     <div class="row mt-4">
                         <div class="col-md-9 offset-md-3">
                             <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
+                            <a href="{{ route('admin.konfigurasi.pelatih.index') }}"
+                                class="btn btn-secondary px-4 ms-2">Batal</a>
                         </div>
                     </div>
                 </form>
@@ -169,45 +175,47 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const uploadInput = document.getElementById('foto');
-            const fileNameDisplay = document.getElementById('file-name-display');
+            const uploadContent = document.getElementById('uploadContent');
             const previewContainer = document.getElementById('imagePreviewContainer');
+            const fileNameDisplay = document.getElementById('file-name-display');
 
-            uploadInput.addEventListener('change', function () {
+            uploadInput.addEventListener('change', function() {
                 const file = this.files[0];
+
                 if (file) {
                     fileNameDisplay.textContent = file.name;
 
-                    if (!file.type.startsWith('image/')) {
-                        alert('Hanya file gambar yang diizinkan.');
-                        previewContainer.style.display = 'none';
-                        previewContainer.innerHTML = '';
+                    if (!file.type.match('image.*')) {
+                        alert('Hanya file gambar yang diizinkan');
                         return;
                     }
 
-                    const reader = new FileReader();
+                    uploadContent.style.display = 'none';
+                    previewContainer.style.display = 'block';
+                    previewContainer.innerHTML = '';
 
-                    reader.onload = function (e) {
-                        previewContainer.style.display = 'flex';
-                        previewContainer.style.justifyContent = 'center';
-                        previewContainer.style.alignItems = 'center';
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
                         previewContainer.innerHTML = `
-                            <div class="d-flex justify-content-center align-items-center mt-3">
-                                <img src="${e.target.result}" class="preview-image me-3" alt="Preview Foto"
-                                    style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <img src="${e.target.result}" class="preview-image" alt="Preview Foto">
+                                <div class="ms-3">
+                                    <p class="file-upload-text mb-1">${file.name}</p>
+                                    <p class="file-upload-hint">Klik untuk mengubah foto</p>
+                                </div>
                             </div>
                         `;
                     };
-
                     reader.readAsDataURL(file);
                 } else {
                     fileNameDisplay.textContent = '150x150px JPEG, PNG Image';
+                    uploadContent.style.display = 'block';
                     previewContainer.style.display = 'none';
                     previewContainer.innerHTML = '';
                 }
             });
         });
     </script>
-
 @endsection
