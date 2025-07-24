@@ -5,11 +5,11 @@
 @section('currentSection', 'Atlet')
 
 @section('breadcrumb-title')
-    <h1 class="d-flex flex-column text-dark fw-bold fs-3 mb-0">Halaman Atlet</h1>
+    {{-- <h1 class="d-flex flex-column text-dark fw-bold fs-3 mb-0">Halaman Atlet</h1> --}}
 @endsection
 
 @section('breadcrumb-items')
-    <li class="breadcrumb-item text-gray-600">Atlet</li>
+    {{-- <li class="breadcrumb-item text-gray-600">Atlet</li> --}}
 @endsection
 
 @section('content')
@@ -161,7 +161,7 @@
     <div class="row col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
-                <h3 cla`ss="card-title fw-bold fs-3 mb-0">Atlet</h3>
+                <h3 class="card-title fw-bold fs-3 mb-0">Atlet</h3>
                 <a href="{{ route('admin.konfigurasi.atlet.create') }}" class="btn custom-red-button"
                     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Atlet
@@ -252,7 +252,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div id="filter-info" class="text-muted">
                             Menampilkan <span id="showing-count">{{ $atlets->count() }}</span> dari <span
-                                id="total-count">{{ $atlets->count() }}</span> atlet
+                                id="total-count">{{ $atlets->total() }}</span> atlet
                         </div>
                     </div>
 
@@ -293,7 +293,7 @@
                                         data-age="{{ $atlet->umur }}"
                                         data-prestasi="{{ $atlet->prestasiTerbaru ? 'ada' : 'tidak' }}"
                                         data-medali="{{ $atlet->prestasiTerbaru ? strtolower($atlet->prestasiTerbaru->medali) : '' }}">
-                                        <td class="text-center">{{ $index + 1 }}</td>
+                                        <td class="text-center">{{ ($atlets->currentPage() - 1) * $atlets->perPage() + $index + 1 }}</td>
                                         <td>
                                             @if ($atlet->foto_atlet)
                                                 <img src="{{ asset('storage/' . $atlet->foto_atlet) }}" width="40"
@@ -402,38 +402,36 @@
                         </table>
                     </div>
 
+                    {{-- Custom Pagination --}}
                     <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
                         <div class="mb-2 mb-md-0">
                             <div class="d-flex align-items-center">
                                 <span class="me-2">Show</span>
-                                <select class="form-select form-select-sm w-auto">
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
+                                <select class="form-select form-select-sm w-auto" id="per-page-select">
+                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
                                 </select>
                                 <span class="ms-2">per page</span>
                             </div>
                         </div>
 
+                        {{-- Laravel Pagination Links --}}
                         <div class="d-flex align-items-center gap-3">
                             <div class="d-flex align-items-center">
-                                <span class="me-2">Page</span>
-                                <select class="form-select form-select-sm" style="width: 80px;">
-                                    <option value="1">1</option>
-                                </select>
-                                <span class="ms-2">of 1</span>
+                                <span class="me-2">Page {{ $atlets->currentPage() }} of {{ $atlets->lastPage() }}</span>
                             </div>
 
-                            <div class="btn-group">
-                                <button class="btn btn-outline-secondary disabled">
-                                    <i class="fas fa-chevron-left"></i>
-                                </button>
-                                <button class="btn btn-outline-secondary disabled">
-                                    <i class="fas fa-chevron-right"></i>
-                                </button>
+                            <div class="pagination-wrapper">
+                                {{ $atlets->appends(request()->query())->links('pagination::bootstrap-4') }}
                             </div>
                         </div>
+                    </div>
+
+                    {{-- Info Text --}}
+                    <div class="text-muted mt-2 text-center">
+                        Showing {{ $atlets->firstItem() }} to {{ $atlets->lastItem() }} of {{ $atlets->total() }} results
                     </div>
                 @endif
             </div>
@@ -446,10 +444,11 @@
     @if ($atlets->isNotEmpty())
         <script>
             $(document).ready(function() {
+                // Initialize DataTable ONLY for search and filter functionality
                 const table = $("#kt_datatable_dom_positioning").DataTable({
-                    paging: false,
-                    info: false,
-                    searching: true,
+                    paging: false, // Disable DataTables pagination
+                    info: false,   // Disable DataTables info
+                    searching: false, // We'll handle search manually
                     ordering: true,
                     responsive: true,
                     autoWidth: false,
@@ -474,58 +473,115 @@
                     ]
                 });
 
-                const totalCount = table.rows().count();
-
-                $('#search').on('keyup', function() {
-                    table.search(this.value).draw();
-                    updateFilterInfo();
+                // Handle per page selection
+                $('#per-page-select').on('change', function() {
+                    const perPage = $(this).val();
+                    const currentUrl = new URL(window.location.href);
+                    currentUrl.searchParams.set('per_page', perPage);
+                    currentUrl.searchParams.set('page', 1); // Reset to first page
+                    window.location.href = currentUrl.toString();
                 });
 
-                $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                    const row = table.row(dataIndex).node();
-                    const $row = $(row);
+                // Handle search functionality
+                $('#search').on('keyup', function() {
+                    const searchTerm = this.value.toLowerCase();
 
+                    if (searchTerm === '') {
+                        // Show all rows if search is empty
+                        table.rows().nodes().to$().show();
+                    } else {
+                        // Hide all rows first
+                        table.rows().nodes().to$().hide();
+
+                        // Show matching rows
+                        table.rows().nodes().to$().each(function() {
+                            const rowText = $(this).text().toLowerCase();
+                            if (rowText.includes(searchTerm)) {
+                                $(this).show();
+                            }
+                        });
+                    }
+
+                    updateDisplayCount();
+                });
+
+                // Custom filter function
+                function applyFilters() {
                     const caborFilter = $('#filter-cabor').val();
                     const genderFilter = $('#filter-gender').val();
                     const ageFilter = $('#filter-age').val();
                     const prestasiFilter = $('#filter-prestasi').val();
+                    const searchTerm = $('#search').val().toLowerCase();
 
-                    const rowCabor = $row.data('cabor');
-                    const rowGender = $row.data('gender');
-                    const rowAge = parseInt($row.data('age'));
-                    const rowPrestasi = $row.data('prestasi');
-                    const rowMedali = $row.data('medali');
+                    let visibleCount = 0;
 
-                    if (caborFilter && rowCabor !== caborFilter) return false;
-                    if (genderFilter && rowGender !== genderFilter) return false;
+                    table.rows().nodes().to$().each(function() {
+                        const $row = $(this);
+                        const rowCabor = $row.data('cabor');
+                        const rowGender = $row.data('gender');
+                        const rowAge = parseInt($row.data('age'));
+                        const rowPrestasi = $row.data('prestasi');
+                        const rowMedali = $row.data('medali');
+                        const rowText = $row.text().toLowerCase();
 
-                    if (ageFilter) {
-                        const [minAge, maxAge] = ageFilter.split('-').map(age => {
-                            if (age === '36+') return [36, 999];
-                            return parseInt(age);
-                        });
+                        let show = true;
 
-                        if (ageFilter === '36+') {
-                            if (rowAge < 36) return false;
-                        } else {
-                            if (rowAge < minAge || rowAge > maxAge) return false;
+                        // Apply search filter
+                        if (searchTerm && !rowText.includes(searchTerm)) {
+                            show = false;
                         }
-                    }
 
-                    if (prestasiFilter) {
-                        if (prestasiFilter === 'ada' && rowPrestasi !== 'ada') return false;
-                        if (prestasiFilter === 'tidak' && rowPrestasi !== 'tidak') return false;
-                        if (prestasiFilter === 'emas' && rowMedali !== 'emas') return false;
-                        if (prestasiFilter === 'perak' && rowMedali !== 'perak') return false;
-                        if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') return false;
-                    }
+                        // Apply cabor filter
+                        if (caborFilter && rowCabor !== caborFilter) {
+                            show = false;
+                        }
 
-                    return true;
-                });
+                        // Apply gender filter
+                        if (genderFilter && rowGender !== genderFilter) {
+                            show = false;
+                        }
 
+                        // Apply age filter
+                        if (ageFilter) {
+                            if (ageFilter === '36+') {
+                                if (rowAge < 36) show = false;
+                            } else {
+                                const [minAge, maxAge] = ageFilter.split('-').map(age => parseInt(age));
+                                if (rowAge < minAge || rowAge > maxAge) show = false;
+                            }
+                        }
+
+                        // Apply prestasi filter
+                        if (prestasiFilter) {
+                            if (prestasiFilter === 'ada' && rowPrestasi !== 'ada') show = false;
+                            if (prestasiFilter === 'tidak' && rowPrestasi !== 'tidak') show = false;
+                            if (prestasiFilter === 'emas' && rowMedali !== 'emas') show = false;
+                            if (prestasiFilter === 'perak' && rowMedali !== 'perak') show = false;
+                            if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') show = false;
+                        }
+
+                        if (show) {
+                            $row.show();
+                            visibleCount++;
+                        } else {
+                            $row.hide();
+                        }
+                    });
+
+                    updateDisplayCount();
+                }
+
+                // Update display count
+                function updateDisplayCount() {
+                    const visibleRows = table.rows().nodes().to$().filter(':visible').length;
+                    const totalRows = {{ $atlets->total() }};
+                    $('#showing-count').text(visibleRows);
+                    $('#total-count').text(totalRows);
+                }
+
+                // Filter event handlers
                 $('#apply-filters').on('click', function() {
-                    table.draw();
-                    updateFilterInfo();
+                    applyFilters();
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
                 });
@@ -537,8 +593,9 @@
                     $('#filter-prestasi').val('');
                     $('#search').val('');
 
-                    table.search('').draw();
-                    updateFilterInfo();
+                    // Show all rows
+                    table.rows().nodes().to$().show();
+                    updateDisplayCount();
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
                 });
@@ -561,16 +618,37 @@
                     }
                 }
 
-                function updateFilterInfo() {
-                    const info = table.page.info();
-                    const showingCount = info.recordsDisplay;
-                    $('#showing-count').text(showingCount);
-                    $('#total-count').text(totalCount);
-                }
-
-                updateFilterInfo();
+                // Initialize
+                updateDisplayCount();
                 updateFilterCount();
             });
         </script>
+
+        <style>
+            /* Custom pagination styling */
+            .pagination-wrapper .pagination {
+                margin-bottom: 0;
+            }
+
+            .pagination-wrapper .page-link {
+                padding: 0.375rem 0.75rem;
+                margin-left: -1px;
+                color: #6c757d;
+                background-color: #fff;
+                border: 1px solid #dee2e6;
+            }
+
+            .pagination-wrapper .page-item.active .page-link {
+                background-color: #007bff;
+                border-color: #007bff;
+                color: #fff;
+            }
+
+            .pagination-wrapper .page-link:hover {
+                color: #495057;
+                background-color: #e9ecef;
+                border-color: #dee2e6;
+            }
+        </style>
     @endif
 @endsection

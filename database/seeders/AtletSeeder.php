@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Atlet;
-use Illuminate\Support\Str;
+use App\Models\CabangOlahraga;
 
 class AtletSeeder extends Seeder
 {

@@ -28,7 +28,7 @@
                     <div class="modal-footer">
                         {{-- <button type="button" class="btn btn-light" data-bs-dismiss="modal">Kembali</button> --}}
                         <div class="col-12">
-                            <button type="submit" class="btn w-100 d-flex align-items-center justify-content-center" style="background-color: #FF6A33; color: white; border-radius: 8px; padding: 12px 0;">
+                            <button type="submit" class="btn w-100 d-flex align-items-center justify-content-center" style="background-color: #F8285A; color: white; border-radius: 8px; padding: 12px 0;">
                                 <!-- icon disini -->
                                 Simpan Jabatan
                             </button>

@@ -2,7 +2,6 @@
 
 
 @push('stack-css')
-
 @endpush
 @section('pageTitle', 'Jabatan')
 @section('mainSection', 'Manajemen Pengguna')
@@ -28,12 +27,11 @@
                 <div class="card-toolbar d-flex gap-2">
                     <div class="col-5">
                         <input type="search" name="search" id="search" class="form-control" placeholder="Search">
-                    </div>
-                        <a href="#" class="btn btn-warning" data-bs-toggle="modal"
-                            data-bs-target="#kt_modal_tambah">
-                        <i class="ki-duotone ki-plus fs-2"></i>Tambah Jabatan</a>
-                    </div>
-
+                    </div class="">
+                    <a href="#" class="btn text-white" style="background-color: #F8285A;" data-bs-toggle="modal"
+                        data-bs-target="#kt_modal_tambah">
+                        <i class="ki-duotone ki-plus fs-2" style="color: white"></i>Tambah Jabatan</a>
+                </div>
             </div>
             <div class="card-body ">
                 <div class="row g-12 g-xl-12">
@@ -70,33 +68,34 @@
                                                 </button>
 
                                                 <ul class="dropdown-menu">
-                                                        <li>
-                                                            <button class="dropdown-item d-flex align-items-center gap-2" 
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#kt_modal_{{ $value->id }}">
-                                                                {{-- <i class="ki-duotone ki-pencil fs-5"></i>  --}}
-                                                                Edit
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <div>
-                                                                <a href="{{ route('admin.manajemen-pengguna.role.show', $value->id) }}" class="dropdown-item d-flex align-items-center gap-2">
-                                                                    {{-- <i class="ki-duotone ki-pencil fs-5"></i> --}}
-                                                                    Atur Hak Akses
-                                                                </a>
-                                                            </div>
-                                                        </li>
-                                                        <li>
-                                                            <button
-                                                                class="dropdown-item d-flex align-items-center gap-2 text-danger"
-                                                                onclick="destroyItem(this)"
-                                                                data-route="{{ route('admin.manajemen-pengguna.role.destroy', $value->id) }}">
-                                                                {{-- <i class="ki-duotone ki-trash fs-5"></i>  --}}
-                                                                Hapus
-                                                            </button>
-                                                        </li>
-                                                    </ul>
-                                            </div>                                                                         
+                                                    <li>
+                                                        <button class="dropdown-item d-flex align-items-center gap-2"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#kt_modal_{{ $value->id }}">
+                                                            {{-- <i class="ki-duotone ki-pencil fs-5"></i>  --}}
+                                                            Edit Jabatan
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <div>
+                                                            <a href="{{ route('admin.manajemen-pengguna.role.show', $value->id) }}"
+                                                                class="dropdown-item d-flex align-items-center gap-2">
+                                                                {{-- <i class="ki-duotone ki-pencil fs-5"></i> --}}
+                                                                Atur Hak Akses
+                                                            </a>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <button
+                                                            class="dropdown-item d-flex align-items-center gap-2 text-danger"
+                                                            onclick="destroyItem(this)"
+                                                            data-route="{{ route('admin.manajemen-pengguna.role.destroy', $value->id) }}">
+                                                            {{-- <i class="ki-duotone ki-trash fs-5"></i>  --}}
+                                                            Hapus
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -118,9 +117,8 @@
 
 @section('script')
     <script>
-
-        const table =  $("#kt_datatable_dom_positioning").DataTable();
-        $('#search').on('keyup', function () {
+        const table = $("#kt_datatable_dom_positioning").DataTable();
+        $('#search').on('keyup', function() {
             table.search(this.value).draw();
         });
 
