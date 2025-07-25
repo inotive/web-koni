@@ -2,23 +2,51 @@
 
 
 @push('stack-css')
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+
     <style>
-        th.sorting::after {
-            float: right;
-            font-size: 0.75rem;
-            opacity: 0.5;
+        /* Style dasar tabel */
+        table.table th,
+        table.table td {
+            border: 0.5px solid #F1F1F4 !important;
+            vertical-align: middle;
         }
 
-        th.sorting_asc::after {
-            float: right;
-            font-size: 0.75rem;
-            opacity: 1;
+        table.dataTable thead th {
+            color: #4B5675 !important;
+            position: relative;
         }
 
-        th.sorting_desc::after {
-            float: right;
-            font-size: 0.75rem;
-            opacity: 1;
+        /* Kolom No: pastikan tidak ada ikon bawaan */
+        table.dataTable thead>tr>th:nth-child(1)::before,
+        table.dataTable thead>tr>th:nth-child(1)::after {
+            content: "" !important;
+            display: none !important;
+        }
+
+        /* Nonaktifkan efek hover cursor dari DataTables jika pakai header custom */
+        table.dataTable thead th.sorting,
+        table.dataTable thead th.sorting_asc,
+        table.dataTable thead th.sorting_desc {
+            background-image: none !important;
+        }
+
+        /* Ikon sort kustom */
+        .sort-header {
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .sort-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .rotate-asc {
+            transform: rotate(180deg);
+        }
+
+        .rotate-desc {
+            transform: rotate(0deg);
         }
     </style>
 @endpush
@@ -48,35 +76,54 @@
             <div class="card-body ">
                 <div class="row g-12 g-xl-12">
                     <div class="col-xl-12">
-                        <table id="kt_datatable_dom_positioning" class="table table-row-bordered gy-5 gs-7 border rounded">
-                            <thead>
-                                <tr class="fw-bold fs-6 text-gray-800 px-7" style="background-color: #FCFCFC">
-                                    <th class="col-1 text-center">No</th>
-                                    <th class="col-4 text-start">Nama</th>
-                                    <th class="col-1 text-center">Jabatan</th>
-                                    <th class="col-3 text-center">Email</th>
-                                    <th class="col-2 text-center">Tanggal Di Tambahkan</th>
-                                    <th class="col-1 text-center">Aksi</th>
+                        <table id="kt_datatable_dom_positioning"
+                            class="table table-bordered  align-middle text-gray-800 fs-6 gy-5">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="text-center fw-semibold text-gray-700">No</th>
+                                    <th class="text-start fw-semibold text-gray-700 cursor-pointer sort-header "
+                                        data-column="1">
+                                        <span>Nama</span>
+                                        <svg class="sort-icon ms-2 transition-rotate" width="16" height="16"
+                                            stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+                                        </svg>
+                                    </th>
+                                    <th class="text-center fw-semibold text-gray-700 cursor-pointer sort-header "
+                                        data-column="2">
+                                        <span>Jabatan</span>
+                                        <svg class="sort-icon ms-2 transition-rotate" width="16" height="16"
+                                            stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+                                        </svg>
+                                    </th>
+                                    <th class="text-center fw-semibold text-gray-700 cursor-pointer sort-header "
+                                        data-column="3">
+                                        <span>Email</span>
+                                        <svg class="sort-icon ms-2 transition-rotate" width="16" height="16"
+                                            stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+                                        </svg>
+                                    </th>
+                                    <th class="text-center fw-semibold text-gray-700 cursor-pointer sort-header "
+                                        data-column="4">
+                                        <span>Tanggal Dibuat</span>
+                                    </th>
+                                    <th class="text-center fw-semibold text-gray-700">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-body">
+                            <tbody>
                                 @foreach ($users as $value)
                                     <tr id="{{ $value->id }}">
                                         <td class="text-center">{{ $loop->iteration }}</td>
-                                        <td class="text-center">
-                                            <div class="d-flex gap-5">
-                                                <div class="text-center align-content-center">
-                                                    {{ $value->username }}
-                                                </div>
-                                            </div>
-                                        </td>
-                                        @foreach ($value->getRoleNames() as $roleName)
-                                            <td class="text-capitalize text-center">{{ $roleName }}</td>
-                                        @endforeach
+                                        <td class="text-start">{{ $value->username }}</td>
+                                        <td class="text-center text-capitalize">{{ $value->getRoleNames()->first() }}</td>
                                         <td class="text-center">{{ $value->email }}</td>
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($value->created_at)->format('d/m/Y') }}</td>
-
                                         <td class="text-center">
                                             <div class="dropdown">
                                                 <button class="btn btn-sm" type="button" data-bs-toggle="dropdown"
@@ -99,13 +146,6 @@
                                                         </a>
                                                     </li>
                                                     <li>
-                                                        {{-- <form action="{{ route('admin.manajemen-pengguna.pengguna.destroy', $value->id) }}" method="post">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                                                                   <i class="ki-duotone ki-trash fs-5"></i> Hapus
-                                                                </button>
-                                                            </form> --}}
                                                         <button
                                                             class="dropdown-item d-flex align-items-center gap-2 text-danger"
                                                             onclick="destroyItem(this)"
@@ -117,12 +157,6 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    @foreach ($users as $value)
-                                        @include('admin.user.component.modal', [
-                                            'value' => $value,
-                                            'roles' => $roles,
-                                        ])
-                                    @endforeach
                                 @endforeach
                             </tbody>
                         </table>
@@ -132,13 +166,55 @@
             </div>
         </div>
     </div>
+    @foreach ($users as $value)
+        @include('admin.user.component.modal', [
+            'value' => $value,
+            'roles' => $roles,
+        ])
+    @endforeach
     @include('admin.user.component.modal-tambah', ['roles' => $roles])
 
 @endsection
 
 @section('script')
     <script>
-        const table = $("#kt_datatable_dom_positioning").DataTable();
+        let table;
+
+        $(document).ready(function() {
+            table = $('#kt_datatable_dom_positioning').DataTable({
+                paging: true,
+                info: true,
+                ordering: true,
+                columnDefs: [{
+                    orderable: false,
+                    targets: [0, 4, 5]
+                }],
+                initComplete: function() {
+                    $('#kt_datatable_dom_positioning thead th').removeClass(
+                        'sorting sorting_asc sorting_desc');
+                }
+            });
+            table.on('order.dt', function() {
+                $('.sort-icon').removeClass('rotate-asc rotate-desc');
+
+                const order = table.order();
+                if (order.length > 0) {
+                    const colIndex = order[0][0];
+                    const direction = order[0][1];
+
+                    const th = $('th[data-column="' + colIndex + '"]');
+                    const icon = th.find('.sort-icon');
+
+                    if (direction === 'asc') {
+                        icon.addClass('rotate-asc');
+                    } else if (direction === 'desc') {
+                        icon.addClass('rotate-desc');
+                    }
+                }
+            });
+
+        });
+
         $('#search').on('keyup', function() {
             table.search(this.value).draw();
         });
