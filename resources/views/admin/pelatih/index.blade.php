@@ -3,35 +3,18 @@
 @section('pageTitle', 'Pelatih')
 @section('mainSection', 'Konfigurasi')
 @section('currentSection', 'Pelatih')
+
+@section('content')
+
 @php
 function sortIcon($field) {
-    $currentSort = request('sort_by');
-    $currentOrder = request('order');
-
-    if ($currentSort === $field) {
-        return $currentOrder === 'asc'
-            ? '<i class="fas fa-sort-up"></i>'
-            : '<i class="fas fa-sort-down"></i>';
-    }
-
     return '<i class="fas fa-sort text-muted"></i>';
 }
 
 function sortUrl($field) {
-    $currentSort = request('sort_by');
-    $currentOrder = request('order');
-
-    $order = ($currentSort === $field && $currentOrder === 'asc')
-        ? 'desc'
-        : 'asc';
-
-    return request()->fullUrlWithQuery([
-        'sort_by' => $field,
-        'order' => $order
-    ]);
+    return '#';
 }
 @endphp
-@section('content')
 
 <style>
     body {
@@ -391,7 +374,7 @@ function sortUrl($field) {
                                                 data-age="{{ $age }}"
                                                 data-prestasi="{{ $hasPrestasi }}">
 
-                                                <td></td>
+                                                <td></td> {{-- Will be populated by DataTable --}}
 
                                                 <td>
                                                     @if ($item->foto)

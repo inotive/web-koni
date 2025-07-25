@@ -1,4 +1,4 @@
-<?php
+fix my seeder based on my controller <?php
 
 namespace Database\Seeders;
 
