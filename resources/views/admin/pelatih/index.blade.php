@@ -285,7 +285,7 @@ function sortUrl($field) {
     }
 </style>
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
-                    <h3 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h3>
+                    <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
                     <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
                         style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
                         <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Pelatih
@@ -300,7 +300,7 @@ function sortUrl($field) {
                 <div class="table-container">
                     <div class="table-header">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h4>
+                            <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>
 
                             <div class="d-flex align-items-center gap-2 flex-wrap">
                                 <div class="input-group" style="width: 250px;">
@@ -415,7 +415,7 @@ function sortUrl($field) {
                                         <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('email') }}"
                                                 class="text-dark text-decoration-none">Email {!! sortIcon('email') !!}</a></th>
                                         <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('prestasi') }}"
-                                                class="text-dark text-decoration-none">Prestasi {!! sortIcon('prestasi') !!}</a>
+                                                class="text-dark text-decoration-none">Prestasi Terbaru {!! sortIcon('prestasi') !!}</a>
                                         </th>
                                         <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('updated_at') }}"
                                                 class="text-dark text-decoration-none">Terakhir Diupdate {!! sortIcon('updated_at') !!}</a>
@@ -622,24 +622,26 @@ function sortUrl($field) {
                     responsive: true,
                     autoWidth: false,
                     scrollX: false,
-                    columnDefs: [{
-                            targets: -1,
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            width: "50px",
-                            targets: 0
-                        },
-                        {
-                            width: "60px",
-                            targets: 1
-                        },
-                        {
-                            width: "150px",
-                            targets: 2
-                        },
-                    ]
+                    columnDefs: [
+                                {
+                                    targets: 0, // "No" column
+                                    orderable: true,
+                                    searchable: false
+                                },
+                                {
+                                    targets: -1, // "Aksi" column
+                                    orderable: false,
+                                    searchable: false
+                                },
+                                {
+                                    width: "60px",
+                                    targets: 1
+                                },
+                                {
+                                    width: "150px",
+                                    targets: 2
+                                },
+                            ]
                 });
 
                 const totalCount = table.rows().count();

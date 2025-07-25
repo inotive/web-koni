@@ -614,10 +614,10 @@
 
         <div class="detail-card">
             <div class="detail-card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <h2 class="detail-card-title">Informasi Kejuaraan</h2>
+                <b><h1 class="detail-card-title">Informasi Kejuaraan</h1></b>
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                     data-bs-target="#tambahPrestasiModal">
-                    + Tambah Prestasi
+                    Tambah
                 </button>
             </div>
 
@@ -643,14 +643,12 @@
                                             if ($prestasi->medali == 'Emas') {
                                                 $medalColor = '#FFD700';
                                             }
-                                            // Gold
                                             elseif ($prestasi->medali == 'Perak') {
                                                 $medalColor = '#C0C0C0';
                                             }
-                                            // Silver
                                             elseif ($prestasi->medali == 'Perunggu') {
                                                 $medalColor = '#CD7F32';
-                                            } // Bronze
+                                            } 
                                         @endphp
                                         <svg class="achievement-icon" viewBox="0 0 24 24"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -690,9 +688,9 @@
             </div>
         </div>
 
-        <div class="detail-actions">
+        {{-- <div class="detail-actions">
             <a href="{{ route('admin.konfigurasi.pelatih.index') }}" class="btn-secondary">Kembali</a>
-        </div>
+        </div> --}}
     </div>
 
     <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" aria-labelledby="tambahPrestasiModalLabel"
