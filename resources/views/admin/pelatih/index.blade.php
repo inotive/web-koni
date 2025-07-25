@@ -81,23 +81,10 @@ function sortUrl($field) {
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
     }
-
-    table td,
-    table th {
-        vertical-align: middle;
-        word-wrap: break-word;
-        max-width: 200px;
-        padding: 8px 6px !important; /* Reduced padding */
-        border-spacing: 0;
-        margin: 0;
-    }
-
-    .object-fit-cover {
-        object-fit: cover;
-    }
-
     .table-responsive {
-        overflow-x: visible !important;
+        overflow-x: auto;
+        overflow-y: visible;
+        -webkit-overflow-scrolling: touch;
         border-radius: 0;
         border: none;
     }
@@ -108,34 +95,33 @@ function sortUrl($field) {
         margin: 0 !important;
         background-color: white;
         width: 100%;
+        min-width: 1200px;
     }
 
-    .table tbody tr {
-        border-spacing: 0;
+    .table thead th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #495057;
+        white-space: nowrap;
+        padding: 12px 8px !important;
+        position: static;
     }
 
     .table tbody tr td {
         border-left: none !important;
         border-right: none !important;
-        padding-left: 8px !important;
-        padding-right: 8px !important;
+        padding: 8px !important;
         font-size: 0.875rem;
         border-bottom: 1px solid #e9ecef;
         white-space: nowrap;
-    }
-
-    .table thead th {
-        border-left: none !important;
-        border-right: none !important;
-        border-top: none !important;
-        padding-left: 8px !important;
-        padding-right: 8px !important;
-        background-color: #f8f9fa;
-        border-bottom: 2px solid #dee2e6;
-        font-weight: 600;
-        font-size: 0.875rem;
-        color: #495057;
-        white-space: nowrap;
+        vertical-align: middle;
+        word-wrap: break-word;
+        max-width: 200px;
     }
 
     .table tbody tr:last-child td {
@@ -152,69 +138,18 @@ function sortUrl($field) {
         padding-right: 12px !important;
     }
 
-    .table th:nth-child(1) {
-        width: 40px;
-        text-align: center;
-    }
-
-    /* Foto */
-    .table th:nth-child(2) {
-        width: 50px;
-        text-align: center;
-    }
-
-    /* Nama & Cabor */
-    .table th:nth-child(3) {
-        width: 140px;
-    }
-
-    /* Tempat & Tanggal Lahir */
-    .table th:nth-child(4) {
-        width: 110px;
-    }
-
-    /* Alamat */
-    .table th:nth-child(5) {
-        width: 100px;
-    }
-
-    /* Jenis Kelamin */
-    .table th:nth-child(6) {
-        width: 70px;
-        text-align: center;
-    }
-
-    /* Usia */
-    .table th:nth-child(7) {
-        width: 50px;
-        text-align: center;
-    }
-
-    /* Telepon */
-    .table th:nth-child(8) {
-        width: 110px;
-    }
-
-    /* Email */
-    .table th:nth-child(9) {
-        width: 110px;
-    }
-
-    /* Prestasi */
-    .table th:nth-child(10) {
-        width: 120px;
-    }
-
-    /* Tanggal Update */
-    .table th:nth-child(11) {
-        width: 90px;
-    }
-
-    /* Aksi */
-    .table th:nth-child(12) {
-        width: 80px;
-        text-align: center;
-    }
+    .table th:nth-child(1), .table td:nth-child(1) { width: 40px; text-align: center; } /* No */
+    .table th:nth-child(2), .table td:nth-child(2) { width: 50px; text-align: center; } /* Foto */
+    .table th:nth-child(3), .table td:nth-child(3) { width: 140px; } /* Nama & Cabor */
+    .table th:nth-child(4), .table td:nth-child(4) { width: 110px; } /* Tempat & Tanggal Lahir */
+    .table th:nth-child(5), .table td:nth-child(5) { width: 100px; } /* Alamat */
+    .table th:nth-child(6), .table td:nth-child(6) { width: 70px; text-align: center; } /* Jenis Kelamin */
+    .table th:nth-child(7), .table td:nth-child(7) { width: 50px; text-align: center; } /* Usia */
+    .table th:nth-child(8), .table td:nth-child(8) { width: 110px; } /* Telepon */
+    .table th:nth-child(9), .table td:nth-child(9) { width: 110px; } /* Email */
+    .table th:nth-child(10), .table td:nth-child(10) { width: 120px; } /* Prestasi */
+    .table th:nth-child(11), .table td:nth-child(11) { width: 90px; } /* Tanggal Update */
+    .table th:nth-child(12), .table td:nth-child(12) { width: 80px; text-align: center; } /* Aksi */
 
     .text-truncate-custom {
         max-width: 120px;
@@ -227,7 +162,10 @@ function sortUrl($field) {
         color: #CD7F32 !important;
     }
 
-    /* Center align specific columns */
+    .object-fit-cover {
+        object-fit: cover;
+    }
+
     .table td:nth-child(1),
     .table td:nth-child(2),
     .table td:nth-child(6),
@@ -236,67 +174,68 @@ function sortUrl($field) {
         text-align: center;
     }
 
-    /* Responsive adjustments */
-    @media (max-width: 1200px) {
-
-        .table th:nth-child(4),
-        .table th:nth-child(5),
-        .table th:nth-child(8),
-        .table th:nth-child(9),
-        .table th:nth-child(10),
-        .table th:nth-child(11) {
-            display: none;
-        }
-
-        .table td:nth-child(4),
-        .table td:nth-child(5),
-        .table td:nth-child(8),
-        .table td:nth-child(9),
-        .table td:nth-child(10),
-        .table td:nth-child(11) {
-            display: none;
-        }
-    }
-
     @media (max-width: 768px) {
-
-        .table th:nth-child(6),
-        .table th:nth-child(7) {
-            display: none;
-        }
-
-        .table td:nth-child(6),
-        .table td:nth-child(7) {
-            display: none;
-        }
-
-        .table-header {
-            padding: 15px;
-        }
-
+        .table-header,
         .table-footer {
             padding: 15px;
         }
 
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        .d-flex.justify-content-between.align-items-center.flex-wrap {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .d-flex.align-items-center.gap-2.flex-wrap {
+            justify-content: center;
+            width: 100%;
         }
     }
+
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+    }
+
+    .form-select {
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        transition: all 0.2s ease;
+    }
+
+    .form-select:focus {
+        border-color: #F8285A;
+        box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f5f5f5;
+        border-color: #f5f5f5;
+    }
+
+    .badge-circle {
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
 </style>
-                <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
-                    <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
-                    <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
-                        style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
-                        <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Pelatih
-                    </a>
-                </div>
+
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
+    <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
+    <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
+        style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
+        <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Pelatih
+    </a>
+</div>
 
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-
                 <div class="table-container">
                     <div class="table-header">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -392,32 +331,31 @@ function sortUrl($field) {
                             <h4>Tidak ada data pelatih.</h4>
                         </div>
                     @else
-                        {{-- Table --}}
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning">
-                                <thead class="bg-light">
+                            <table class="table table-hover align-middle" id="kt_datatable_dom_positioning">
+                                <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Foto</th>
                                         <th><a href="{{ sortUrl('nama') }}" class="text-dark text-decoration-none">Nama Pelatih & Cabor
                                                 {!! sortIcon('nama') !!}</a></th>
-                                        <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('tanggal_lahir') }}"
+                                        <th><a href="{{ sortUrl('tanggal_lahir') }}"
                                                 class="text-dark text-decoration-none">Tempat & Tanggal Lahir
                                                 {!! sortIcon('tanggal_lahir') !!}</a></th>
-                                        <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('alamat') }}"
+                                        <th><a href="{{ sortUrl('alamat') }}"
                                                 class="text-dark text-decoration-none">Alamat {!! sortIcon('alamat') !!}</a></th>
-                                        <th class="d-none d-md-table-cell"><a href="{{ sortUrl('kelamin') }}"
+                                        <th><a href="{{ sortUrl('kelamin') }}"
                                                 class="text-dark text-decoration-none">Kelamin {!! sortIcon('kelamin') !!}</a></th>
-                                        <th class="d-none d-md-table-cell"><a href="{{ sortUrl('tanggal_lahir') }}"
+                                        <th><a href="{{ sortUrl('tanggal_lahir') }}"
                                                 class="text-dark text-decoration-none">Usia {!! sortIcon('tanggal_lahir') !!}</a></th>
-                                        <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('no_telepon') }}"
+                                        <th><a href="{{ sortUrl('no_telepon') }}"
                                                 class="text-dark text-decoration-none">Telepon {!! sortIcon('no_telepon') !!}</a></th>
-                                        <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('email') }}"
+                                        <th><a href="{{ sortUrl('email') }}"
                                                 class="text-dark text-decoration-none">Email {!! sortIcon('email') !!}</a></th>
-                                        <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('prestasi') }}"
+                                        <th><a href="{{ sortUrl('prestasi') }}"
                                                 class="text-dark text-decoration-none">Prestasi Terbaru {!! sortIcon('prestasi') !!}</a>
                                         </th>
-                                        <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('updated_at') }}"
+                                        <th><a href="{{ sortUrl('updated_at') }}"
                                                 class="text-dark text-decoration-none">Terakhir Diupdate {!! sortIcon('updated_at') !!}</a>
                                         </th>
                                         <th>Aksi</th>
@@ -436,7 +374,9 @@ function sortUrl($field) {
                                                 data-age="{{ $age }}"
                                                 data-prestasi="{{ $hasPrestasi }}"
                                                 data-medali="{{ $medali }}">
-                                                <td class="text-center">{{ $index + 1 }}</td>
+
+                                                <td></td> {{-- Will be populated by DataTable --}}
+
                                                 <td>
                                                     @if ($item->foto)
                                                         <img src="{{ Storage::url($item->foto) }}" width="40" height="40" class="rounded-circle object-fit-cover">
@@ -452,7 +392,7 @@ function sortUrl($field) {
                                                         <small class="text-muted">{{ $item->cabor }}</small>
                                                     </div>
                                                 </td>
-                                                <td class="d-none d-xl-table-cell">
+                                                <td>
                                                     @if($item->tanggal_lahir)
                                                         <div class="d-flex flex-column">
                                                             <span class="text-truncate-custom">{{ \Carbon\Carbon::parse($item->tanggal_lahir)->format('d M Y') }}</span>
@@ -464,7 +404,7 @@ function sortUrl($field) {
                                                         <span class="text-muted">-</span>
                                                     @endif
                                                 </td>
-                                                <td class="d-none d-xl-table-cell">
+                                                <td>
                                                     @if($item->alamat)
                                                         @php
                                                             $alamatParts = explode(' ', $item->alamat);
@@ -479,19 +419,18 @@ function sortUrl($field) {
                                                         <span class="text-muted">-</span>
                                                     @endif
                                                 </td>
-                                                <td class="d-none d-md-table-cell">{{ $item->kelamin }}</td>
-                                                <td class="d-none d-md-table-cell">{{ $age }} Tahun</td>
-                                                <td class="d-none d-xl-table-cell">
+                                                <td>{{ $item->kelamin }}</td>
+                                                <td>{{ $age }} Tahun</td>
+                                                <td>
                                                     <div class="text-truncate-custom">{{ $item->no_telepon ?? '-' }}</div>
                                                 </td>
-                                                <td class="d-none d-xl-table-cell">
+                                                <td>
                                                     <div class="text-truncate-custom" title="{{ $item->email }}">
                                                         {{ $item->email ?? '-' }}</div>
                                                 </td>
-                                                <td class="d-none d-xl-table-cell">
+                                                <td>
                                                     @if($prestasiTerbaru)
                                                         <div class="d-flex align-items-center">
-                                                            {{-- Bagian Ikon Medali dengan Warna --}}
                                                             @if(isset($prestasiTerbaru->medali))
                                                                 <div class="me-3">
                                                                     @if (strtolower($prestasiTerbaru->medali) === 'emas')
@@ -503,8 +442,6 @@ function sortUrl($field) {
                                                                     @endif
                                                                 </div>
                                                             @endif
-
-                                                            {{-- Bagian Teks Prestasi --}}
                                                             <div class="d-flex flex-column">
                                                                 <span class="text-truncate-custom">{{ $prestasiTerbaru->nama_prestasi }}</span>
                                                                 <small class="text-muted">{{ $prestasiTerbaru->tahun }}@if(isset($prestasiTerbaru->tempat)) • {{ $prestasiTerbaru->tempat }}@endif</small>
@@ -514,7 +451,7 @@ function sortUrl($field) {
                                                         <span class="text-muted">-</span>
                                                     @endif
                                                 </td>
-                                                <td class="d-none d-xl-table-cell">
+                                                <td>
                                                     {{ \Carbon\Carbon::parse($item->updated_at)->format('M d, Y') }}</td>
                                                 <td class="text-center">
                                                     <div class="d-flex justify-content-center gap-1">
@@ -523,17 +460,15 @@ function sortUrl($field) {
                                                         title="Detail">
                                                             <i class="fa-solid fa-eye"></i>
                                                         </a>
-
                                                         <a href="{{ route('admin.konfigurasi.pelatih.edit', $item->id) }}"
                                                         class="btn btn-icon btn-sm btn-light-warning"
                                                         title="Edit">
                                                             <i class="fa-solid fa-pen-to-square"></i>
                                                         </a>
-
                                                         <form action="{{ route('admin.konfigurasi.pelatih.destroy', $item->id) }}"
-                                                            method="POST"
-                                                            class="d-inline"
-                                                            onsubmit="return confirm('Yakin ingin menghapus pelatih ini?')">
+                                                                method="POST"
+                                                                class="d-inline"
+                                                                onsubmit="return confirm('Yakin ingin menghapus pelatih ini?')">
                                                             @csrf @method('DELETE')
                                                             <button type="submit"
                                                                     class="btn btn-icon btn-sm btn-light-danger"
@@ -554,7 +489,6 @@ function sortUrl($field) {
                             </table>
                         </div>
 
-                        <!-- Table Footer with Pagination -->
                         <div class="table-footer">
                             <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
                                 <div class="mb-2 mb-md-0">
@@ -619,32 +553,35 @@ function sortUrl($field) {
                     info: false,
                     searching: true,
                     ordering: true,
-                    responsive: true,
+                    responsive: false,
                     autoWidth: false,
                     scrollX: false,
                     columnDefs: [
-                                {
-                                    targets: 0, // "No" column
-                                    orderable: true,
-                                    searchable: false
-                                },
-                                {
-                                    targets: -1, // "Aksi" column
-                                    orderable: false,
-                                    searchable: false
-                                },
-                                {
-                                    width: "60px",
-                                    targets: 1
-                                },
-                                {
-                                    width: "150px",
-                                    targets: 2
-                                },
-                            ]
+                        {
+                            searchable: false,
+                            orderable: false,
+                            targets: 0
+                        },
+                        {
+                            targets: -1,
+                            orderable: false,
+                            searchable: false
+                        },
+                        { width: "60px", targets: 1 },
+                        { width: "150px", targets: 2 },
+                    ]
                 });
 
                 const totalCount = table.rows().count();
+
+                table.on('draw.dt', function () {
+                    const pageInfo = table.page.info();
+                    table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
+                        cell.innerHTML = i + 1 + pageInfo.start;
+                    });
+                });
+
+                table.draw();
 
                 $('#search').on('keyup', function() {
                     table.search(this.value).draw();
@@ -736,6 +673,10 @@ function sortUrl($field) {
 
                 updateFilterInfo();
                 updateFilterCount();
+
+                $('#filter-cabor, #filter-gender, #filter-age, #filter-prestasi').on('change', function() {
+                    updateFilterCount();
+                });
             });
         </script>
     @endif

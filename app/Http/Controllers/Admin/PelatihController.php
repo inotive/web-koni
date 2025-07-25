@@ -46,6 +46,10 @@ class PelatihController extends Controller
         if ($request->filled('sort') && in_array($request->sort, ['nama', 'tanggal_lahir', 'kelamin', 'alamat', 'updated_at'])) {
             $query->orderBy($request->sort, $request->order === 'desc' ? 'desc' : 'asc');
         }
+        else {
+            $query->orderByDesc('created_at'); 
+        }
+
 
         $pelatih = $query->paginate($request->per_page ?? 10);
 
