@@ -99,14 +99,14 @@
                     </div>
                     <div class="col-md-9">
                         <label for="icon_cabor" class="file-upload-wrapper" id="dropArea">
-                            <input type="file" name="icon_cabor" id="icon_cabor" accept="image/*">
+                            <input type="file" name="icon_cabor" id="icon_cabor" accept=".png,.webp,.svg,image/png,image/webp,image/svg+xml">
 
                             <!-- Upload content - akan disembunyikan jika ada ikon -->
                             <div class="d-flex justify-content-center align-items-center" id="uploadContent" @if($cabor->icon_cabor) style="display: none !important;" @endif>
                                 <i class="fas fa-cloud-upload-alt file-upload-icon me-3" id="uploadIcon"></i>
                                 <div id="uploadText">
                                     <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah</p>
-                                    <p class="file-upload-hint" id="file-name-display">80x80px JPEG, PNG Image</p>
+                                    <p class="file-upload-hint" id="file-name-display">PNG, WebP, atau SVG (80x80px)</p>
                                 </div>
                             </div>
 
@@ -116,9 +116,10 @@
                             <!-- Container untuk ikon yang sudah ada - ditampilkan di dalam kotak -->
                             @if ($cabor->icon_cabor)
                                 <div id="existingImageContainer" class="d-flex justify-content-center align-items-center">
-                                    <img src="{{ asset('storage/' . $cabor->icon_cabor) }}" alt="Ikon Cabor" class="preview-image me-3">
+                                    <img src="{{ asset('storage/' . $cabor->icon_cabor) }}" alt="Ikon Cabor" class="preview-image me-3" style="width: 80px; height: 80px; object-fit: contain; border: 1px solid #dee2e6;">
                                     <div>
                                         <p class="file-upload-text mb-1">Ikon Cabor Saat Ini</p>
+                                        <p class="file-upload-hint">80x80px</p>
                                         <p class="file-upload-hint">Klik untuk mengubah ikon</p>
                                     </div>
                                 </div>
@@ -221,13 +222,78 @@
         const previewContainer = document.getElementById('imagePreviewContainer');
         const existingImageContainer = document.getElementById('existingImageContainer');
 
-        // Image preview functionality
+        // Define allowed file types
+        const allowedTypes = ['image/png', 'image/webp', 'image/svg+xml'];
+        const allowedExtensions = ['.png', '.webp', '.svg'];
+
+        // Function to validate file type
+        function isValidFileType(file) {
+            const fileType = file.type;
+            const fileName = file.name.toLowerCase();
+            
+            // Check MIME type
+            if (allowedTypes.includes(fileType)) {
+                return true;
+            }
+            
+            // Check file extension as fallback
+            return allowedExtensions.some(ext => fileName.endsWith(ext));
+        }
+
+        // Function to resize image to 80x80px
+        function resizeImage(file, callback) {
+            // Skip resize for SVG files
+            if (file.type === 'image/svg+xml') {
+                callback(file);
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                // Set canvas size to 80x80
+                canvas.width = 80;
+                canvas.height = 80;
+                
+                // Calculate scaling to fit image in 80x80 while maintaining aspect ratio
+                const scale = Math.min(80 / img.width, 80 / img.height);
+                const scaledWidth = img.width * scale;
+                const scaledHeight = img.height * scale;
+                
+                // Center the image
+                const x = (80 - scaledWidth) / 2;
+                const y = (80 - scaledHeight) / 2;
+                
+                // Fill background with transparent
+                ctx.clearRect(0, 0, 80, 80);
+                
+                // Draw the resized image
+                ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+                
+                // Convert canvas to blob
+                canvas.toBlob(function(blob) {
+                    // Create new File object with resized image
+                    const resizedFile = new File([blob], file.name, {
+                        type: file.type === 'image/webp' ? 'image/webp' : 'image/png',
+                        lastModified: Date.now()
+                    });
+                    callback(resizedFile);
+                }, file.type === 'image/webp' ? 'image/webp' : 'image/png', 0.9);
+            };
+            
+            img.src = URL.createObjectURL(file);
+        }
+
+        // Image preview functionality with auto resize
         uploadInput.addEventListener('change', function() {
             const file = this.files[0];
 
             if (file) {
-                if (!file.type.match('image.*')) {
-                    alert('Hanya file gambar yang diizinkan');
+                if (!isValidFileType(file)) {
+                    alert('Hanya file PNG, WebP, atau SVG yang diizinkan');
+                    this.value = ''; // Clear the input
                     return;
                 }
 
@@ -237,28 +303,47 @@
                     existingImageContainer.style.display = 'none';
                 }
 
-                // Show preview container
+                // Show loading state
                 previewContainer.style.display = 'flex';
                 previewContainer.style.justifyContent = 'center';
                 previewContainer.style.alignItems = 'center';
-                previewContainer.innerHTML = '';
+                previewContainer.innerHTML = `
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="spinner-border text-primary me-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div>
+                            <p class="file-upload-text mb-1">Memproses gambar...</p>
+                            <p class="file-upload-hint">Mohon tunggu sebentar</p>
+                        </div>
+                    </div>
+                `;
 
-                const reader = new FileReader();
+                // Resize image and update preview
+                resizeImage(file, (resizedFile) => {
+                    // Create new FileList with resized file
+                    const dt = new DataTransfer();
+                    dt.items.add(resizedFile);
+                    uploadInput.files = dt.files;
 
-                reader.onload = function(e) {
-                    const previewContent = `
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const fileSize = (resizedFile.size / 1024).toFixed(1);
+                        const previewContent = `
                         <div class="d-flex justify-content-center align-items-center">
-                            <img src="${e.target.result}" class="preview-image me-3" alt="Preview Ikon Cabor" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
+                            <img src="${e.target.result}" class="preview-image me-3" alt="Preview Ikon Cabor" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; border: 1px solid #dee2e6;">
                             <div>
-                                <p class="file-upload-text mb-1">${file.name}</p>
+                                <p class="file-upload-text mb-1">${resizedFile.name}</p>
+                                <p class="file-upload-hint">80x80px • ${fileSize} KB</p>
                                 <p class="file-upload-hint">Klik untuk mengubah ikon</p>
                             </div>
                         </div>
                     `;
-                    previewContainer.innerHTML = previewContent;
-                };
-
-                reader.readAsDataURL(file);
+                        previewContainer.innerHTML = previewContent;
+                    };
+                    reader.readAsDataURL(resizedFile);
+                });
             } else {
                 // Reset to original state
                 previewContainer.style.display = 'none';
@@ -292,7 +377,19 @@
             dropArea.style.backgroundColor = '#f8f9fa';
 
             if (e.dataTransfer.files.length) {
-                uploadInput.files = e.dataTransfer.files;
+                const file = e.dataTransfer.files[0];
+                
+                if (!isValidFileType(file)) {
+                    alert('Hanya file PNG, WebP, atau SVG yang diizinkan');
+                    return;
+                }
+                
+                // Create DataTransfer object and set it to input
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                uploadInput.files = dt.files;
+                
+                // Trigger change event
                 uploadInput.dispatchEvent(new Event('change'));
             }
         });
