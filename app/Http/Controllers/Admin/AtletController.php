@@ -22,6 +22,7 @@ public function index(Request $request)
                        ELSE jenis_kelamin
                    END as jenis_kelamin
                ")
+               ->orderBy('created_at', 'DESC')
                ->paginate($perPage);
 
     return view('admin.atlet.index', compact('atlets'));

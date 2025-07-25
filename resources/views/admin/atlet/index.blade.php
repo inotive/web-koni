@@ -368,8 +368,7 @@
                                                         data-age="{{ $atlet->umur }}"
                                                         data-prestasi="{{ $atlet->prestasiTerbaru ? 'ada' : 'tidak' }}"
                                                         data-medali="{{ $atlet->prestasiTerbaru ? strtolower($atlet->prestasiTerbaru->medali) : '' }}">
-                                                        <td class="text-center">
-                                                            {{ ($atlets->currentPage() - 1) * $atlets->perPage() + $index + 1 }}
+                                                        <td class="text-center row-number">
                                                         </td>
                                                         <td>
                                                             @if ($atlet->foto_atlet)
@@ -467,17 +466,11 @@
                                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                                 </a>
 
-                                                                <form
-                                                                    action="{{ route('admin.konfigurasi.atlet.destroy', $atlet->id) }}"
-                                                                    method="POST" class="d-inline"
-                                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus atlet ini?')">
-                                                                    @csrf @method('DELETE')
-                                                                    <button type="submit"
-                                                                        class="btn btn-icon btn-sm btn-light-danger"
-                                                                        title="Hapus">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </button>
-                                                                </form>
+                                                                <button class="btn btn-icon btn-sm btn-light-danger"
+                                                                    title="Hapus" onclick="destroyItem(this)"
+                                                                    data-route="{{ route('admin.konfigurasi.atlet.destroy', $atlet->id) }}">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -543,8 +536,10 @@
 
     @section('script')
         @if ($atlets->isNotEmpty())
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
                 $(document).ready(function() {
+                    // Inisialisasi DataTable
                     const table = $("#kt_datatable_dom_positioning").DataTable({
                         paging: false,
                         info: false,
@@ -552,6 +547,9 @@
                         ordering: true,
                         responsive: false,
                         autoWidth: false,
+                        serverSide: false,
+                        deferRender: true,
+                        order: [], // Kosongkan agar tidak override urutan dari server
                         columnDefs: [{
                             targets: 0,
                             orderable: false
@@ -560,17 +558,18 @@
                             orderable: false,
                             searchable: false
                         }],
-                        order: [
-                            [2, 'asc']
-                        ],
+                        drawCallback: function() {
+                            updateRowNumbers();
+                        },
                         initComplete: function() {
                             updateDisplayCount();
                             updateFilterCount();
                             updateRowNumbers();
-                            toggleNoDataMessage(); 
+                            toggleNoDataMessage();
                         }
                     });
 
+                    // Fungsi untuk menampilkan pesan ketika tidak ada data
                     function toggleNoDataMessage() {
                         const tbody = $('#kt_datatable_dom_positioning tbody');
                         const existingMessage = $('#no-data-message');
@@ -580,24 +579,27 @@
 
                         if (visibleRows === 0) {
                             const noDataHtml = `
-            <tr id="no-data-message">
-                <td colspan="12" class="text-center py-8">
-                    <i class="ki-duotone ki-magnifier fs-4x text-muted mb-3"><span class="path1"></span><span class="path2"></span></i>
-                    <h4 class="text-muted">Data tidak tersedia</h4>
-                    <p class="text-muted">Tidak ada data yang cocok dengan kriteria filter atau pencarian Anda.</p>
-                </td>
-            </tr>
-        `;
+                    <tr id="no-data-message">
+                        <td colspan="12" class="text-center py-8">
+                            <i class="ki-duotone ki-magnifier fs-4x text-muted mb-3"><span class="path1"></span><span class="path2"></span></i>
+                            <h4 class="text-muted">Data tidak tersedia</h4>
+                            <p class="text-muted">Tidak ada data yang cocok dengan kriteria filter atau pencarian Anda.</p>
+                        </td>
+                    </tr>
+                `;
                             tbody.append(noDataHtml);
                         }
                     }
 
+                    // Fungsi untuk update nomor urut baris
                     function updateRowNumbers() {
-                        $('#kt_datatable_dom_positioning tbody tr:visible').not('#no-data-message').each(function(index) {
-                            $(this).find('td:first').text(index + 1);
+                        let counter = 1;
+                        $('#kt_datatable_dom_positioning tbody tr:visible').not('#no-data-message').each(function() {
+                            $(this).find('.row-number').text(counter++);
                         });
                     }
 
+                    // Fungsi untuk update tampilan jumlah data
                     function updateDisplayCount() {
                         const visibleRows = $('#kt_datatable_dom_positioning tbody tr:visible').not('#no-data-message')
                             .length;
@@ -606,6 +608,7 @@
                         $('#total-count').text(totalRows);
                     }
 
+                    // Fungsi untuk menerapkan filter dan pencarian
                     function applyFiltersAndSearch() {
                         const caborFilter = $('#filter-cabor').val();
                         const genderFilter = $('#filter-gender').val();
@@ -626,6 +629,7 @@
 
                             let show = true;
 
+                            // Filter pencarian
                             if (searchTerm) {
                                 const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
                                 if (!searchWords.every(word => rowText.includes(word))) {
@@ -633,10 +637,13 @@
                                 }
                             }
 
+                            // Filter cabang olahraga
                             if (caborFilter && rowCabor !== caborFilter) show = false;
 
+                            // Filter jenis kelamin
                             if (genderFilter && rowGender !== genderFilter) show = false;
 
+                            // Filter prestasi
                             if (prestasiFilter) {
                                 if (prestasiFilter === 'ada' && rowPrestasi !== 'ada') show = false;
                                 if (prestasiFilter === 'tidak' && rowPrestasi !== 'tidak') show = false;
@@ -645,6 +652,7 @@
                                 if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') show = false;
                             }
 
+                            // Filter usia
                             if (ageFilter && rowAge > 0) {
                                 if (ageFilter === '36+') {
                                     if (rowAge < 36) show = false;
@@ -664,19 +672,74 @@
                         toggleNoDataMessage();
                     }
 
+                    // Fungsi untuk update jumlah filter aktif
+                    function updateFilterCount() {
+                        const count = [$('#filter-cabor').val(), $('#filter-gender').val(), $('#filter-age').val(), $(
+                                '#filter-prestasi').val()]
+                            .filter(Boolean).length;
+                        const badge = $('#filter-count');
+                        count > 0 ? badge.text(count).removeClass('d-none') : badge.addClass('d-none');
+                    }
+
+                    // Fungsi global untuk menghapus data dengan konfirmasi SweetAlert2
+                    window.destroyItem = function(e) {
+                        const route = e.dataset.route;
+
+                        Swal.fire({
+                            title: "Apakah Anda Yakin?",
+                            html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
+                            icon: "warning",
+                            showCancelButton: true,
+                            reverseButtons: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Hapus!',
+                            cancelButtonText: 'Batalkan!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                const form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = route;
+
+                                const token = document.createElement('input');
+                                token.type = 'hidden';
+                                token.name = '_token';
+                                token.value = '{{ csrf_token() }}';
+
+                                const method = document.createElement('input');
+                                method.type = 'hidden';
+                                method.name = '_method';
+                                method.value = 'DELETE';
+
+                                form.appendChild(token);
+                                form.appendChild(method);
+                                document.body.appendChild(form);
+                                form.submit();
+                            } else {
+                                Swal.fire({
+                                    title: "Aksi Dibatalkan :)",
+                                    icon: "info",
+                                });
+                            }
+                        });
+                    };
+
+                    // Event listener untuk pencarian
                     $('#search').on('keyup', applyFiltersAndSearch);
 
+                    // Event listener untuk tombol terapkan filter
                     $('#apply-filters').on('click', function() {
                         applyFiltersAndSearch();
                         updateFilterCount();
                         $('.dropdown-toggle').dropdown('hide');
                     });
 
+                    // Event listener untuk tombol reset filter
                     $('#reset-filters').on('click', function() {
                         $('#filter-cabor, #filter-gender, #filter-age, #filter-prestasi').val('');
                         $('#search').val('');
 
-                        table.rows().nodes().to$().show();
+                        $('#kt_datatable_dom_positioning tbody tr').show();
 
                         updateRowNumbers();
                         updateDisplayCount();
@@ -685,13 +748,7 @@
                         $('.dropdown-toggle').dropdown('hide');
                     });
 
-                    function updateFilterCount() {
-                        const count = [$('#filter-cabor').val(), $('#filter-gender').val(), $('#filter-age').val(), $(
-                            '#filter-prestasi').val()].filter(Boolean).length;
-                        const badge = $('#filter-count');
-                        count > 0 ? badge.text(count).removeClass('d-none') : badge.addClass('d-none');
-                    }
-
+                    // Event listener untuk perubahan jumlah data per halaman
                     $('#per-page-select').on('change', function() {
                         const perPage = $(this).val();
                         const currentUrl = new URL(window.location.href);
@@ -699,6 +756,9 @@
                         currentUrl.searchParams.set('page', 1);
                         window.location.href = currentUrl.toString();
                     });
+
+                    // Inisialisasi awal
+                    updateRowNumbers();
                 });
             </script>
         @endif
