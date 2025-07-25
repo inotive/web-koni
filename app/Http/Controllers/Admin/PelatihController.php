@@ -25,7 +25,6 @@ class PelatihController extends Controller
                 ->orderBy('prestasis.tahun', $request->order === 'desc' ? 'desc' : 'asc');
         }
 
-        // Pencarian
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('pelatih.nama', 'like', "%{$request->search}%")
@@ -42,7 +41,6 @@ class PelatihController extends Controller
             $query->where('kelamin', $request->kelamin);
         }
 
-        // Filter cabang olahraga
         if ($request->filled('cabor_id')) {
             $query->where('cabor_id', $request->cabor_id);
         }
@@ -50,6 +48,8 @@ class PelatihController extends Controller
         // Sorting
         if ($request->filled('sort') && in_array($request->sort, ['nama', 'tanggal_lahir', 'kelamin', 'alamat', 'updated_at'])) {
             $query->orderBy($request->sort, $request->order === 'desc' ? 'desc' : 'asc');
+        } else {
+            $query->orderByDesc('created_at');
         }
 
         $pelatih = $query->paginate($request->per_page ?? 10);
@@ -131,7 +131,6 @@ class PelatihController extends Controller
 
         try {
             if ($request->hasFile('foto')) {
-                // Hapus foto lama jika ada
                 if ($pelatih->foto) {
                     Storage::disk('public')->delete($pelatih->foto);
                 }
@@ -151,7 +150,6 @@ class PelatihController extends Controller
     public function destroy(Pelatih $pelatih)
     {
         try {
-            // Hapus foto jika ada
             if ($pelatih->foto) {
                 Storage::disk('public')->delete($pelatih->foto);
             }
