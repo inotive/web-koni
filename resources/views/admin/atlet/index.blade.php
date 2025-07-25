@@ -25,7 +25,6 @@
     @endphp
 
     <style>
-        /* Background utama */
         body {
             background-color: #f5f5f5 !important;
         }
@@ -45,7 +44,57 @@
             object-fit: cover;
         }
 
-        /* Styling untuk fixed header dan scroll horizontal */
+        .table thead th {
+            background-color: #f8f9fa !important;
+            border-bottom: 2px solid #dee2e6 !important;
+            font-weight: 600 !important;
+            font-size: 14px !important;
+            color: #495057 !important;
+            padding: 12px 8px !important;
+            text-align: center !important;
+            white-space: nowrap;
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 5 !important;
+        }
+
+        .table thead th a {
+            color: #495057 !important;
+            text-decoration: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .table thead th a:hover {
+            color: #007bff !important;
+        }
+
+        .table thead th a i {
+            font-size: 12px;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+        }
+
+        .table thead th a:hover i {
+            opacity: 1;
+        }
+
+        .table thead th:first-child {
+            text-align: center !important;
+        }
+
+        .table thead th:nth-child(2) {
+            text-align: center !important;
+        }
+
+        .table thead th:last-child {
+            text-align: center !important;
+        }
+
         .table-container {
             position: relative;
             overflow: hidden;
@@ -68,21 +117,79 @@
         .table-responsive {
             overflow-y: auto;
             max-height: calc(100vh - 300px);
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
         }
 
-        /* Lebar kolom */
-        .table th:nth-child(1) { width: 50px; } /* No */
-        .table th:nth-child(2) { width: 60px; } /* Foto */
-        .table th:nth-child(3) { width: 150px; } /* Nama & Cabor */
-        .table th:nth-child(4) { width: 120px; } /* Tempat & Tanggal Lahir */
-        .table th:nth-child(5) { width: 120px; } /* Alamat */
-        .table th:nth-child(6) { width: 80px; } /* Jenis Kelamin */
-        .table th:nth-child(7) { width: 120px; } /* Usia - Diperlebar */
-        .table th:nth-child(8) { width: 120px; } /* Telepon */
-        .table th:nth-child(9) { width: 120px; } /* Email */
-        .table th:nth-child(10) { width: 100px; } /* Prestasi */
-        .table th:nth-child(11) { width: 100px; } /* Tanggal Ditambahkan */
-        .table th:nth-child(12) { width: 120px; } /* Aksi */
+        .table th:nth-child(1) {
+            width: 60px;
+            min-width: 60px;
+        }
+
+        .table th:nth-child(2) {
+            width: 80px;
+            min-width: 80px;
+        }
+
+        .table th:nth-child(3) {
+            width: 180px;
+            min-width: 180px;
+        }
+
+        .table th:nth-child(4) {
+            width: 150px;
+            min-width: 150px;
+        }
+
+        .table th:nth-child(5) {
+            width: 140px;
+            min-width: 140px;
+        }
+
+        .table th:nth-child(6) {
+            width: 90px;
+            min-width: 90px;
+        }
+
+        .table th:nth-child(7) {
+            width: 100px;
+            min-width: 100px;
+        }
+
+        .table th:nth-child(8) {
+            width: 130px;
+            min-width: 130px;
+        }
+
+        .table th:nth-child(9) {
+            width: 160px;
+            min-width: 160px;
+        }
+
+        .table th:nth-child(10) {
+            width: 140px;
+            min-width: 140px;
+        }
+
+        .table th:nth-child(11) {
+            width: 120px;
+            min-width: 120px;
+        }
+
+        .table th:nth-child(12) {
+            width: 120px;
+            min-width: 120px;
+        }
+
+        .table tbody td {
+            padding: 12px 8px !important;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa !important;
+        }
 
         .text-truncate-custom {
             max-width: 120px;
@@ -95,20 +202,17 @@
             color: #CD7F32 !important;
         }
 
-        /* Card styling */
         .table-card {
             background-color: white !important;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Header section styling */
         .page-header {
             background-color: transparent;
             margin-bottom: 20px;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 1200px) {
             .table th:nth-child(4),
             .table th:nth-child(5),
@@ -145,7 +249,6 @@
             }
         }
 
-        /* Pagination styling */
         .pagination-wrapper .pagination {
             margin-bottom: 0;
         }
@@ -171,10 +274,8 @@
         }
     </style>
 
-    <!-- Background dengan warna #f5f5f5 -->
     <div style="background-color: #f5f5f5; min-height: 100vh; padding: 20px 0;">
         <div class="container-fluid">
-            <!-- Header utama (H2) -->
             <div class="page-header d-flex justify-content-between align-items-center mb-4">
                 <h2 class="fw-bold fs-3 mb-0">Atlet</h2>
                 <a href="{{ route('admin.konfigurasi.atlet.create') }}" class="btn custom-red-button"
@@ -183,13 +284,10 @@
                 </a>
             </div>
 
-            <!-- Card putih untuk tabel -->
             <div class="card table-card">
                 <div class="card-body p-3 p-md-4">
                     <div class="table-container">
-                        <!-- Fixed header section -->
                         <div class="table-header-fixed">
-                            <!-- Sub header (H3) -->
                             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                                 <h3 class="mb-0">Informasi Atlet</h3>
 
@@ -206,7 +304,8 @@
                                         <button class="btn btn-outline-secondary dropdown-toggle" type="button"
                                             data-bs-toggle="dropdown">
                                             <i class="fas fa-filter me-1"></i> Filter
-                                            <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                            <span id="filter-count"
+                                                class="badge badge-circle badge-danger ms-1 d-none">0</span>
                                         </button>
                                         <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
                                             <div class="mb-3">
@@ -253,10 +352,12 @@
                                             </div>
 
                                             <div class="d-flex gap-2">
-                                                <button type="button" id="apply-filters" class="btn btn-primary btn-sm flex-fill">
+                                                <button type="button" id="apply-filters"
+                                                    class="btn btn-primary btn-sm flex-fill">
                                                     <i class="ki-duotone ki-check fs-3"></i>Terapkan
                                                 </button>
-                                                <button type="button" id="reset-filters" class="btn btn-light btn-sm flex-fill">
+                                                <button type="button" id="reset-filters"
+                                                    class="btn btn-light btn-sm flex-fill">
                                                     <i class="ki-duotone ki-arrows-circle fs-3"></i>Reset
                                                 </button>
                                             </div>
@@ -265,14 +366,12 @@
                                 </div>
                             </div>
 
-                            <!-- Filter info -->
                             <div id="filter-info" class="text-muted mb-2">
                                 Menampilkan <span id="showing-count">{{ $atlets->count() }}</span> dari
                                 <span id="total-count">{{ $atlets->total() }}</span> atlet
                             </div>
                         </div>
 
-                        <!-- Table wrapper -->
                         <div class="table-responsive-wrapper">
                             <div class="table-responsive">
                                 @if ($atlets->isEmpty())
@@ -281,46 +380,91 @@
                                         <h4>Tidak ada data atlet.</h4>
                                     </div>
                                 @else
-                                    <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning">
-                                        <thead class="bg-light">
+                                    <table class="table table-bordered table-hover align-middle"
+                                        id="kt_datatable_dom_positioning">
+                                        <thead>
                                             <tr>
                                                 <th>No</th>
                                                 <th>Foto</th>
-                                                <th><a href="{{ sortUrl('nama') }}" class="text-dark text-decoration-none">Nama & Cabor
-                                                        {!! sortIcon('nama') !!}</a></th>
-                                                <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('tanggal_lahir') }}"
-                                                        class="text-dark text-decoration-none">Tempat & Tanggal Lahir
-                                                        {!! sortIcon('tanggal_lahir') !!}</a></th>
-                                                <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('alamat') }}"
-                                                        class="text-dark text-decoration-none">Alamat {!! sortIcon('alamat') !!}</a></th>
-                                                <th class="d-none d-md-table-cell"><a href="{{ sortUrl('jenis_kelamin') }}"
-                                                        class="text-dark text-decoration-none">Gender {!! sortIcon('jenis_kelamin') !!}</a></th>
-                                                <th class="d-none d-md-table-cell"><a href="{{ sortUrl('umur') }}"
-                                                        class="text-dark text-decoration-none">Usia {!! sortIcon('umur') !!}</a></th>
-                                                <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('no_telepon') }}"
-                                                        class="text-dark text-decoration-none">Telepon {!! sortIcon('no_telepon') !!}</a></th>
-                                                <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('email') }}"
-                                                        class="text-dark text-decoration-none">Email {!! sortIcon('email') !!}</a></th>
-                                                <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('prestasi') }}"
-                                                        class="text-dark text-decoration-none">Prestasi {!! sortIcon('prestasi') !!}</a>
+                                                <th>
+                                                    <a href="{{ sortUrl('nama') }}" class="text-dark text-decoration-none">
+                                                        <span>Nama & Cabor</span>
+                                                        {!! sortIcon('nama') !!}
+                                                    </a>
                                                 </th>
-                                                <th class="d-none d-xl-table-cell"><a href="{{ sortUrl('created_at') }}"
-                                                        class="text-dark text-decoration-none">Ditambahkan {!! sortIcon('created_at') !!}</a>
+                                                <th class="d-none d-xl-table-cell">
+                                                    <a href="{{ sortUrl('tanggal_lahir') }}"
+                                                        class="text-dark text-decoration-none">
+                                                        <span>Tempat & Tanggal Lahir</span>
+                                                        {!! sortIcon('tanggal_lahir') !!}
+                                                    </a>
+                                                </th>
+                                                <th class="d-none d-xl-table-cell">
+                                                    <a href="{{ sortUrl('alamat') }}"
+                                                        class="text-dark text-decoration-none">
+                                                        <span>Alamat</span>
+                                                        {!! sortIcon('alamat') !!}
+                                                    </a>
+                                                </th>
+                                                <th class="d-none d-md-table-cell">
+                                                    <a href="{{ sortUrl('jenis_kelamin') }}"
+                                                        class="text-dark text-decoration-none">
+                                                        <span>Gender</span>
+                                                        {!! sortIcon('jenis_kelamin') !!}
+                                                    </a>
+                                                </th>
+                                                <th class="d-none d-md-table-cell">
+                                                    <a href="{{ sortUrl('umur') }}" class="text-dark text-decoration-none">
+                                                        <span>Usia</span>
+                                                        {!! sortIcon('umur') !!}
+                                                    </a>
+                                                </th>
+                                                <th class="d-none d-xl-table-cell">
+                                                    <a href="{{ sortUrl('no_telepon') }}"
+                                                        class="text-dark text-decoration-none">
+                                                        <span>Telepon</span>
+                                                        {!! sortIcon('no_telepon') !!}
+                                                    </a>
+                                                </th>
+                                                <th class="d-none d-xl-table-cell">
+                                                    <a href="{{ sortUrl('email') }}"
+                                                        class="text-dark text-decoration-none">
+                                                        <span>Email</span>
+                                                        {!! sortIcon('email') !!}
+                                                    </a>
+                                                </th>
+                                                <th class="d-none d-xl-table-cell">
+                                                    <a href="{{ sortUrl('prestasi') }}"
+                                                        class="text-dark text-decoration-none">
+                                                        <span>Prestasi</span>
+                                                        {!! sortIcon('prestasi') !!}
+                                                    </a>
+                                                </th>
+                                                <th class="d-none d-xl-table-cell">
+                                                    <a href="{{ sortUrl('created_at') }}"
+                                                        class="text-dark text-decoration-none">
+                                                        <span>Ditambahkan</span>
+                                                        {!! sortIcon('created_at') !!}
+                                                    </a>
                                                 </th>
                                                 <th>Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @forelse ($atlets as $index => $atlet)
-                                                <tr data-cabor="{{ $atlet->cabor }}" data-gender="{{ $atlet->jenis_kelamin }}"
+                                                <tr data-cabor="{{ $atlet->cabor }}"
+                                                    data-gender="{{ $atlet->jenis_kelamin }}"
                                                     data-age="{{ $atlet->umur }}"
                                                     data-prestasi="{{ $atlet->prestasiTerbaru ? 'ada' : 'tidak' }}"
                                                     data-medali="{{ $atlet->prestasiTerbaru ? strtolower($atlet->prestasiTerbaru->medali) : '' }}">
-                                                    <td class="text-center">{{ ($atlets->currentPage() - 1) * $atlets->perPage() + $index + 1 }}</td>
+                                                    <td class="text-center">
+                                                        {{ ($atlets->currentPage() - 1) * $atlets->perPage() + $index + 1 }}
+                                                    </td>
                                                     <td>
                                                         @if ($atlet->foto_atlet)
-                                                            <img src="{{ asset('storage/' . $atlet->foto_atlet) }}" width="40"
-                                                                height="40" class="rounded-circle object-fit-cover">
+                                                            <img src="{{ asset('storage/' . $atlet->foto_atlet) }}"
+                                                                width="40" height="40"
+                                                                class="rounded-circle object-fit-cover">
                                                         @else
                                                             <div class="rounded-circle bg-secondary text-white text-center fw-bold"
                                                                 style="width: 40px; height: 40px; line-height: 40px;">
@@ -330,7 +474,8 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex flex-column">
-                                                            <strong class="text-truncate-custom">{{ $atlet->nama }}</strong>
+                                                            <strong
+                                                                class="text-truncate-custom">{{ $atlet->nama }}</strong>
                                                             <small class="text-muted">{{ $atlet->cabor }}</small>
                                                         </div>
                                                     </td>
@@ -346,7 +491,8 @@
                                                     </td>
                                                     <td class="d-none d-xl-table-cell">
                                                         @if ($atlet->alamat)
-                                                            <div class="text-truncate-custom" title="{{ $atlet->alamat }}">
+                                                            <div class="text-truncate-custom"
+                                                                title="{{ $atlet->alamat }}">
                                                                 {{ $atlet->alamat }}
                                                             </div>
                                                         @else
@@ -356,7 +502,8 @@
                                                     <td class="d-none d-md-table-cell">{{ $atlet->jenis_kelamin }}</td>
                                                     <td class="d-none d-md-table-cell">{{ $atlet->umur }}</td>
                                                     <td class="d-none d-xl-table-cell">
-                                                        <div class="text-truncate-custom">{{ $atlet->no_telepon ?? '-' }}</div>
+                                                        <div class="text-truncate-custom">{{ $atlet->no_telepon ?? '-' }}
+                                                        </div>
                                                     </td>
                                                     <td class="d-none d-xl-table-cell">
                                                         <div class="text-truncate-custom" title="{{ $atlet->email }}">
@@ -367,7 +514,8 @@
                                                             <div class="d-flex align-items-center">
                                                                 <div class="me-3">
                                                                     @if (strtolower($atlet->prestasiTerbaru->medali) === 'emas')
-                                                                        <i class="fas fa-medal fs-2x text-warning" title="Emas"></i>
+                                                                        <i class="fas fa-medal fs-2x text-warning"
+                                                                            title="Emas"></i>
                                                                     @elseif(strtolower($atlet->prestasiTerbaru->medali) === 'perak')
                                                                         <i class="fas fa-medal fs-2x text-secondary"
                                                                             title="Perak"></i>
@@ -389,24 +537,29 @@
                                                         @endif
                                                     </td>
                                                     <td class="d-none d-xl-table-cell">
-                                                        {{ \Carbon\Carbon::parse($atlet->created_at)->format('M d, Y') }}</td>
+                                                        {{ \Carbon\Carbon::parse($atlet->created_at)->format('M d, Y') }}
+                                                    </td>
                                                     <td class="text-center">
                                                         <div class="d-flex justify-content-center gap-1">
                                                             <a href="{{ route('admin.konfigurasi.atlet.show', $atlet->id) }}"
-                                                                class="btn btn-icon btn-sm btn-light-primary" title="Detail">
+                                                                class="btn btn-icon btn-sm btn-light-primary"
+                                                                title="Detail">
                                                                 <i class="fa-solid fa-eye"></i>
                                                             </a>
 
                                                             <a href="{{ route('admin.konfigurasi.atlet.edit', $atlet->id) }}"
-                                                                class="btn btn-icon btn-sm btn-light-warning" title="Edit">
+                                                                class="btn btn-icon btn-sm btn-light-warning"
+                                                                title="Edit">
                                                                 <i class="fa-solid fa-pen-to-square"></i>
                                                             </a>
 
-                                                            <form action="{{ route('admin.konfigurasi.atlet.destroy', $atlet->id) }}"
+                                                            <form
+                                                                action="{{ route('admin.konfigurasi.atlet.destroy', $atlet->id) }}"
                                                                 method="POST" class="d-inline"
                                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus atlet ini?')">
                                                                 @csrf @method('DELETE')
-                                                                <button type="submit" class="btn btn-icon btn-sm btn-light-danger"
+                                                                <button type="submit"
+                                                                    class="btn btn-icon btn-sm btn-light-danger"
                                                                     title="Hapus">
                                                                     <i class="fa-solid fa-trash"></i>
                                                                 </button>
@@ -416,7 +569,8 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="12" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                                                    <td colspan="12" class="text-center py-5 text-muted">Data tidak
+                                                        ditemukan</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
@@ -431,10 +585,14 @@
                                     <div class="d-flex align-items-center">
                                         <span class="me-2">Show</span>
                                         <select class="form-select form-select-sm w-auto" id="per-page-select">
-                                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10
+                                            </option>
+                                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25
+                                            </option>
+                                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50
+                                            </option>
+                                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100
+                                            </option>
                                         </select>
                                         <span class="ms-2">per page</span>
                                     </div>
@@ -442,7 +600,8 @@
 
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="d-flex align-items-center">
-                                        <span class="me-2">Page {{ $atlets->currentPage() }} of {{ $atlets->lastPage() }}</span>
+                                        <span class="me-2">Page {{ $atlets->currentPage() }} of
+                                            {{ $atlets->lastPage() }}</span>
                                     </div>
 
                                     <div class="pagination-wrapper">
@@ -452,7 +611,8 @@
                             </div>
 
                             <div class="text-muted mt-2 text-center">
-                                Showing {{ $atlets->firstItem() }} to {{ $atlets->lastItem() }} of {{ $atlets->total() }} results
+                                Showing {{ $atlets->firstItem() }} to {{ $atlets->lastItem() }} of {{ $atlets->total() }}
+                                results
                             </div>
                         @endif
                     </div>
@@ -474,9 +634,8 @@
                     responsive: true,
                     autoWidth: false,
                     scrollX: false,
-                    columnDefs: [
-                        {
-                            targets: 0, // Kolom No
+                    columnDefs: [{
+                            targets: 0,
                             orderable: false
                         },
                         {
@@ -498,10 +657,29 @@
                         },
                         {
                             width: "120px",
-                            targets: 7 // Kolom usia
+                            targets: 7
                         }
                     ],
-                    order: [[2, 'asc']] // Default sorting by nama
+                    order: [
+                        [2, 'asc']
+                    ],
+                    drawCallback: function() {
+                        updateRowNumbers();
+                    }
+                });
+
+                function updateRowNumbers() {
+                    let visibleIndex = 1;
+                    $('#kt_datatable_dom_positioning tbody tr:visible').each(function() {
+                        $(this).find('td:first-child').text(visibleIndex);
+                        visibleIndex++;
+                    });
+                }
+
+                table.on('order.dt', function() {
+                    setTimeout(function() {
+                        updateRowNumbers();
+                    }, 10);
                 });
 
                 $('#per-page-select').on('change', function() {
@@ -519,7 +697,6 @@
                         table.rows().nodes().to$().show();
                     } else {
                         table.rows().nodes().to$().hide();
-
                         table.rows().nodes().to$().each(function() {
                             const rowText = $(this).text().toLowerCase();
                             if (rowText.includes(searchTerm)) {
@@ -529,6 +706,7 @@
                     }
 
                     updateDisplayCount();
+                    updateRowNumbers();
                 });
 
                 function applyFilters() {
@@ -537,8 +715,6 @@
                     const ageFilter = $('#filter-age').val();
                     const prestasiFilter = $('#filter-prestasi').val();
                     const searchTerm = $('#search').val().toLowerCase();
-
-                    let visibleCount = 0;
 
                     table.rows().nodes().to$().each(function() {
                         const $row = $(this);
@@ -580,19 +756,15 @@
                             if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') show = false;
                         }
 
-                        if (show) {
-                            $row.show();
-                            visibleCount++;
-                        } else {
-                            $row.hide();
-                        }
+                        $row.toggle(show);
                     });
 
                     updateDisplayCount();
+                    updateRowNumbers();
                 }
 
                 function updateDisplayCount() {
-                    const visibleRows = table.rows().nodes().to$().filter(':visible').length;
+                    const visibleRows = $('#kt_datatable_dom_positioning tbody tr:visible').length;
                     const totalRows = {{ $atlets->total() }};
                     $('#showing-count').text(visibleRows);
                     $('#total-count').text(totalRows);
@@ -614,12 +786,12 @@
                     table.rows().nodes().to$().show();
                     updateDisplayCount();
                     updateFilterCount();
+                    updateRowNumbers();
                     $('.dropdown-toggle').dropdown('hide');
                 });
 
                 function updateFilterCount() {
                     const activeFilters = [];
-
                     if ($('#filter-cabor').val()) activeFilters.push('cabor');
                     if ($('#filter-gender').val()) activeFilters.push('gender');
                     if ($('#filter-age').val()) activeFilters.push('age');
@@ -627,16 +799,31 @@
 
                     const count = activeFilters.length;
                     const badge = $('#filter-count');
-
-                    if (count > 0) {
-                        badge.text(count).removeClass('d-none');
-                    } else {
-                        badge.addClass('d-none');
-                    }
+                    count > 0 ? badge.text(count).removeClass('d-none') : badge.addClass('d-none');
                 }
 
                 updateDisplayCount();
                 updateFilterCount();
+                updateRowNumbers();
+
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' ||
+                            (mutation.type === 'attributes' && mutation.attributeName === 'style')) {
+                            setTimeout(updateRowNumbers, 50);
+                        }
+                    });
+                });
+
+                const tbody = document.querySelector('#kt_datatable_dom_positioning tbody');
+                if (tbody) {
+                    observer.observe(tbody, {
+                        childList: true,
+                        subtree: true,
+                        attributes: true,
+                        attributeFilter: ['style']
+                    });
+                }
             });
         </script>
     @endif
