@@ -38,46 +38,41 @@
 
         /* No */
         .table th:nth-child(2) {
-            width: 60px;
+            width: 200px;
         }
 
-        /* Icon */
+        /* Nama Cabor dengan Icon */
         .table th:nth-child(3) {
-            width: 150px;
-        }
-
-        /* Nama Cabor */
-        .table th:nth-child(4) {
             width: 180px;
         }
 
         /* Ketua Penanggung Jawab */
-        .table th:nth-child(5) {
+        .table th:nth-child(4) {
             width: 120px;
         }
 
         /* Status */
-        .table th:nth-child(6) {
+        .table th:nth-child(5) {
             width: 120px;
         }
 
         /* Tanggal Pembentukan */
-        .table th:nth-child(7) {
+        .table th:nth-child(6) {
             width: 80px;
         }
 
         /* Jumlah Atlet */
-        .table th:nth-child(8) {
+        .table th:nth-child(7) {
             width: 80px;
         }
 
         /* Jumlah Pelatih */
-        .table th:nth-child(9) {
+        .table th:nth-child(8) {
             width: 120px;
         }
 
         /* Terakhir Update */
-        .table th:nth-child(10) {
+        .table th:nth-child(9) {
             width: 100px;
         }
 
@@ -91,30 +86,30 @@
         /* Responsive adjustments */
         @media (max-width: 1200px) {
 
+            .table th:nth-child(5),
             .table th:nth-child(6),
             .table th:nth-child(7),
-            .table th:nth-child(8),
-            .table th:nth-child(9) {
+            .table th:nth-child(8) {
                 display: none;
             }
 
+            .table td:nth-child(5),
             .table td:nth-child(6),
             .table td:nth-child(7),
-            .table td:nth-child(8),
-            .table td:nth-child(9) {
+            .table td:nth-child(8) {
                 display: none;
             }
         }
 
         @media (max-width: 768px) {
 
-            .table th:nth-child(4),
-            .table th:nth-child(5) {
+            .table th:nth-child(3),
+            .table th:nth-child(4) {
                 display: none;
             }
 
-            .table td:nth-child(4),
-            .table td:nth-child(5) {
+            .table td:nth-child(3),
+            .table td:nth-child(4) {
                 display: none;
             }
 
@@ -218,7 +213,6 @@
                             <thead class="bg-light">
                                 <tr>
                                     <th>No</th>
-                                    <th>Icon</th>
                                     <th>
                                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama_cabor', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}" 
                                            class="text-dark text-decoration-none">
@@ -284,19 +278,19 @@
                                     <tr>
                                         <td class="text-center">{{ $cabors->firstItem() + $index }}</td>
                                         <td>
-                                            @if ($cabor->icon_cabor)
-                                                <img src="{{ asset('storage/' . $cabor->icon_cabor) }}" width="40"
-                                                    height="40" class="rounded object-fit-cover">
-                                            @else
-                                                <div class="rounded bg-secondary text-white text-center fw-bold d-flex align-items-center justify-content-center"
-                                                    style="width: 40px; height: 40px;">
-                                                    <i class="ki-duotone ki-picture fs-2"></i>
+                                            <div class="d-flex align-items-center">
+                                                @if ($cabor->icon_cabor)
+                                                    <img src="{{ asset('storage/' . $cabor->icon_cabor) }}" width="20"
+                                                        height="20" class="rounded object-fit-cover me-3">
+                                                @else
+                                                    <div class="rounded bg-secondary text-white text-center fw-bold d-flex align-items-center justify-content-center me-3"
+                                                        style="width: 40px; height: 40px;">
+                                                        <i class="ki-duotone ki-picture fs-2"></i>
+                                                    </div>
+                                                @endif
+                                                <div class="d-flex flex-column">
+                                                    <strong class="text-truncate-custom">{{ $cabor->nama_cabor }}</strong>
                                                 </div>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="d-flex flex-column">
-                                                <strong class="text-truncate-custom">{{ $cabor->nama_cabor }}</strong>
                                             </div>
                                         </td>
                                         <td class="d-none d-md-table-cell">
@@ -347,7 +341,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="10" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                                        <td colspan="9" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                                     </tr>
                                 @endforelse
                             </tbody>
