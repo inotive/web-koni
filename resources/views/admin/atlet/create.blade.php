@@ -10,82 +10,103 @@
 @endpush
 
 @section('breadcrumb-title')
-    <h1 class="text-dark fw-bold fs-3 mb-0">Tambah Atlet</h1>
+@endsection
+
+@section('breadcrumb-items')
 @endsection
 
 @section('content')
 
-    <style>
-        .form-label {
-            font-weight: 500;
-            color: #495057;
-        }
+<style>
+    body {
+        background-color: #f5f5f5 !important;
+    }
 
-        .card-form {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: none;
-        }
+    .main-content {
+        background-color: #f5f5f5 !important;
+    }
 
-        .file-upload-wrapper {
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            cursor: pointer;
-            background-color: #f8f9fa;
-            transition: all 0.2s ease-in-out;
-            position: relative;
-        }
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
 
-        .file-upload-wrapper:hover {
-            border-color: #0d6efd;
-            background-color: #e9ecef;
-        }
+    .card-form {
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border: none;
+        background-color: white !important;
+    }
 
-        .file-upload-wrapper input[type="file"] {
-            display: none;
-        }
+    .page-header {
+        background-color: transparent;
+        margin-bottom: 15px;
+    }
 
-        .file-upload-icon {
-            font-size: 2.5rem;
-            color: #0d6efd;
-        }
+    .file-upload-wrapper {
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 1.2rem;
+        text-align: center;
+        cursor: pointer;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease-in-out;
+        position: relative;
+    }
 
-        .file-upload-text {
-            color: #495057;
-            font-weight: 500;
-        }
+    .file-upload-wrapper:hover {
+        border-color: #0d6efd;
+        background-color: #e9ecef;
+    }
 
-        .file-upload-hint {
-            color: #6c757d;
-            font-size: 0.9em;
-        }
+    .file-upload-wrapper input[type="file"] {
+        display: none;
+    }
 
-        .current-photo {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
+    .file-upload-icon {
+        font-size: 2.2rem;
+        color: #0d6efd;
+    }
 
-        .preview-image {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-    </style>
+    .file-upload-text {
+        color: #495057;
+        font-weight: 500;
+    }
 
-    <div class="container mt-4">
-        <div class="card card-form">
-            <div class="card-body p-4 p-md-5">
-                <h3 class="fw-bold mb-4">Tambah Data Atlet</h3>
+    .file-upload-hint {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+
+    .current-photo {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .preview-image {
+        max-width: 100px;
+        max-height: 100px;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+</style>
+
+<div style="background-color: #f5f5f5; padding: 35px 0 20px;">
+        <div class="container-fluid">
+        <div class="page-header mb-8">
+            <h3 class="fw-bold fs-3 mb-0">Tambah Atlet</h3>
+        </div>
+
+        <div class="card card-form mb-0">
+            <div class="card-body p-3 p-md-4">
+                <h2 class="mb-3">Tambah Data Atlet</h2>
 
                 <form action="{{ route('admin.konfigurasi.atlet.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    <div class="row align-items-center mb-4">
+                    <div class="row align-items-center mb-3">
                         <div class="col-md-3">
                             <label for="foto_atlet" class="form-label">Foto Atlet</label>
                         </div>
@@ -95,8 +116,7 @@
                                 <div class="d-flex justify-content-center align-items-center" id="uploadContent">
                                     <i class="fas fa-cloud-upload-alt file-upload-icon me-3" id="uploadIcon"></i>
                                     <div id="uploadText">
-                                        <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk
-                                            mengunggah</p>
+                                        <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah</p>
                                         <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
                                     </div>
                                 </div>
@@ -163,23 +183,16 @@
                                     $value = old($key, '');
                                 @endphp
                                 @if ($field['type'] === 'select')
-                                    <select name="{{ $key }}" id="{{ $key }}"
-                                        class="form-select @error($key) is-invalid @enderror"
-                                        {{ $field['required'] ? 'required' : '' }}>
+                                    <select name="{{ $key }}" id="{{ $key }}" class="form-select @error($key) is-invalid @enderror" {{ $field['required'] ? 'required' : '' }}>
                                         <option value="">Pilih {{ $field['label'] }}</option>
                                         @foreach ($field['options'] as $option)
-                                            <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>
-                                                {{ $option }}</option>
+                                            <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>{{ $option }}</option>
                                         @endforeach
                                     </select>
                                 @elseif ($field['type'] === 'textarea')
-                                    <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
-                                        placeholder="{{ $field['placeholder'] }}" rows="3" {{ $field['required'] ? 'required' : '' }}>{{ $value }}</textarea>
+                                    <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror" placeholder="{{ $field['placeholder'] }}" rows="3" {{ $field['required'] ? 'required' : '' }}>{{ $value }}</textarea>
                                 @else
-                                    <input type="{{ $field['type'] }}" name="{{ $key }}"
-                                        id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
-                                        placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}"
-                                        {{ $field['required'] ? 'required' : '' }}>
+                                    <input type="{{ $field['type'] }}" name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror" placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}" {{ $field['required'] ? 'required' : '' }}>
                                 @endif
                                 @error($key)
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -188,46 +201,45 @@
                         </div>
                     @endforeach
 
-                    <div class="row mt-4">
+                    <div class="row mt-3">
                         <div class="col-md-9 offset-md-3 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
-                            <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn btn-secondary px-4">Batal</a>
+                            <button type="submit" class="btn" style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">Simpan Data</button>
+                            <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn btn-secondary">Batal</a>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadInput = document.getElementById('foto_atlet');
-            const dropArea = document.getElementById('dropArea');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uploadInput = document.getElementById('foto_atlet');
+        const dropArea = document.getElementById('dropArea');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+
+        uploadInput.addEventListener('change', function() {
+            const file = this.files[0];
+            const uploadContent = document.getElementById('uploadContent');
             const previewContainer = document.getElementById('imagePreviewContainer');
 
-            // Image preview functionality
-            uploadInput.addEventListener('change', function() {
-                const file = this.files[0];
-                const uploadContent = document.getElementById('uploadContent');
-                const previewContainer = document.getElementById('imagePreviewContainer');
+            if (file) {
+                if (!file.type.match('image.*')) {
+                    alert('Hanya file gambar yang diizinkan');
+                    return;
+                }
 
-                if (file) {
-                    if (!file.type.match('image.*')) {
-                        alert('Hanya file gambar yang diizinkan');
-                        return;
-                    }
+                uploadContent.style.display = 'none';
+                previewContainer.style.display = 'flex';
+                previewContainer.style.justifyContent = 'center';
+                previewContainer.style.alignItems = 'center';
+                previewContainer.innerHTML = '';
 
-                    // Hide upload content and show preview container
-                    uploadContent.style.display = 'none';
-                    previewContainer.style.display = 'flex';
-                    previewContainer.style.justifyContent = 'center';
-                    previewContainer.style.alignItems = 'center';
-                    previewContainer.innerHTML = '';
+                const reader = new FileReader();
 
-                    const reader = new FileReader();
-
-                    reader.onload = function(e) {
-                        const previewContent = `
+                reader.onload = function(e) {
+                    const previewContent = `
                         <div class="d-flex justify-content-center align-items-center">
                             <img src="${e.target.result}" class="preview-image me-3" alt="Preview Foto Atlet" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
                             <div>
@@ -236,62 +248,60 @@
                             </div>
                         </div>
                     `;
-                        previewContainer.innerHTML = previewContent;
-                    };
+                    previewContainer.innerHTML = previewContent;
+                };
 
-                    reader.readAsDataURL(file);
-                } else {
-                    // Show upload content and hide preview
-                    uploadContent.style.display = 'flex';
-                    previewContainer.style.display = 'none';
-                    previewContainer.innerHTML = '';
-                }
-            });
-
-            // Drag and drop functionality
-            dropArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropArea.style.borderColor = '#0d6efd';
-                dropArea.style.backgroundColor = '#e9ecef';
-            });
-
-            dropArea.addEventListener('dragleave', () => {
-                dropArea.style.borderColor = '#dee2e6';
-                dropArea.style.backgroundColor = '#f8f9fa';
-            });
-
-            dropArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropArea.style.borderColor = '#dee2e6';
-                dropArea.style.backgroundColor = '#f8f9fa';
-
-                if (e.dataTransfer.files.length) {
-                    uploadInput.files = e.dataTransfer.files;
-                    uploadInput.dispatchEvent(new Event('change'));
-                }
-            });
-
-            // Form validation
-            document.querySelector('form').addEventListener('submit', function(e) {
-                const requiredFields = this.querySelectorAll('[required]');
-                let isValid = true;
-
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        isValid = false;
-                        field.style.borderColor = '#ef4444';
-                        field.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
-                    } else {
-                        field.style.borderColor = '#dbdfe9';
-                        field.style.boxShadow = 'none';
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault();
-                    alert('Mohon lengkapi semua field yang wajib diisi!');
-                }
-            });
+                reader.readAsDataURL(file);
+            } else {
+                uploadContent.style.display = 'flex';
+                previewContainer.style.display = 'none';
+                previewContainer.innerHTML = '';
+            }
         });
-    </script>
+
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#0d6efd';
+            dropArea.style.backgroundColor = '#e9ecef';
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.style.borderColor = '#dee2e6';
+            dropArea.style.backgroundColor = '#f8f9fa';
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.style.borderColor = '#dee2e6';
+            dropArea.style.backgroundColor = '#f8f9fa';
+
+            if (e.dataTransfer.files.length) {
+                uploadInput.files = e.dataTransfer.files;
+                uploadInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = '#ef4444';
+                    field.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                } else {
+                    field.style.borderColor = '#dbdfe9';
+                    field.style.boxShadow = 'none';
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Mohon lengkapi semua field yang wajib diisi!');
+            }
+        });
+    });
+</script>
+
 @endsection
