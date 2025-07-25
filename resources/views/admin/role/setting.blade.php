@@ -12,18 +12,10 @@
 @section('pageTitle', 'Manajemen Pengguna')
 @section('mainSection', 'Manajemen Pengguna')
 @section('subSection')
-    <a href="{{ route('admin.manajemen-pengguna.role.index') }}" class="text-muted muted-hover">Jabatan</a>
+    <a href="{{ route('admin.manajemen-pengguna.role.index') }}" class="text-muted muted-hover">Jabatan & Hak Akses</a>
 @endsection
 @section('currentSection', 'Kelola Hak Akses')
 
-@section('breadcrumb-title')
-    <h1 class="d-flex flex-column text-dark fw-bold fs-3 mb-0">Halaman Hak Akses</h1>
-@endsection
-
-@section('breadcrumb-items')
-    <li class="breadcrumb-item text-gray-600">Hak Akses</li>
-
-@endsection
 @section('content')
     <div class="container mt-5">
         <div class="card">
