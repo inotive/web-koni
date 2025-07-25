@@ -15,7 +15,16 @@ public function index(Request $request)
     $perPage = $request->get('per_page', 10);
 
     $atlets = Atlet::with('prestasiTerbaru')
-                   ->paginate($perPage);
+               ->select('*')
+               ->selectRaw("
+                   CASE
+                       WHEN jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
+                       WHEN jenis_kelamin = 'Perempuan' THEN 'Perempuan'
+                       ELSE jenis_kelamin
+                   END as jenis_kelamin
+               ")
+               ->orderBy('created_at', 'DESC')
+               ->paginate($perPage);
 
     return view('admin.atlet.index', compact('atlets'));
 }
