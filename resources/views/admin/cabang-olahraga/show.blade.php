@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('pageTitle', 'Detail Cabang Olahraga')
+@section('pageTitle', 'Cabang Olahraga')
 @section('mainSection', 'Konfigurasi')
 @section('mainSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
 @section('subSection', 'Cabang Olahraga')
@@ -7,7 +7,7 @@
 @section('currentSection', 'Detail Cabang Olahraga')
 
 @section('breadcrumb-title')
-    {{-- Halaman Detail Cabang Olahraga --}}
+    {{-- Halaman Cabang Olahraga --}}
 @endsection
 
 @section('content')
@@ -21,7 +21,7 @@
                         <span class="path1"></span>
                         <span class="path2"></span>
                     </i>
-                    Detail Cabang Olahraga: {{ $cabor->nama_cabor ?? 'Nama Cabang Olahraga' }}
+                    Cabang Olahraga: {{ $cabor->nama_cabor ?? 'Nama Cabang Olahraga' }}
                 </h2>
             </div>
             <div class="card-toolbar">
@@ -37,100 +37,7 @@
         </div>
     </div>
 
-    <!-- Main Information Card -->
-    <div class="card mb-6">
-        <div class="card-body">
-            <div class="row g-6">
-                <!-- Icon and Basic Info -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="d-flex flex-column align-items-center text-center">
-                        <div class="mb-4">
-                            @if (isset($cabor->icon_cabor) && $cabor->icon_cabor)
-                                <div class="symbol symbol-100px">
-                                    <img src="{{ asset('storage/' . $cabor->icon_cabor) }}" 
-                                         alt="Icon {{ $cabor->nama_cabor }}" 
-                                         class="rounded-3 object-fit-cover">
-                                </div>
-                            @else
-                                <div class="symbol symbol-100px">
-                                    <div class="symbol-label bg-light-primary text-primary rounded-3">
-                                        <i class="ki-duotone ki-picture fs-2x">
-                                            <span class="path1"></span>
-                                            <span class="path2"></span>
-                                        </i>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                        <h3 class="fw-bold text-dark mb-1">{{ $cabor->nama_cabor ?? 'Nama Cabang Olahraga' }}</h3>
-                        <div class="mb-3">
-                            <span class="badge {{ ($cabor->status ?? '') == 'Aktif' ? 'badge-light-success' : 'badge-light-danger' }} fs-7">
-                                {{ $cabor->status ?? 'Tidak Diketahui' }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Details -->
-                <div class="col-md-6 col-lg-8">
-                    <div class="row g-4">
-                        <div class="col-sm-6">
-                            <div class="d-flex flex-column">
-                                <label class="text-muted fs-7 fw-semibold mb-2">Ketua Penanggung Jawab</label>
-                                <span class="fw-bold fs-6 text-gray-800">{{ $cabor->ketua_penanggung_jawab ?? '-' }}</span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="d-flex flex-column">
-                                <label class="text-muted fs-7 fw-semibold mb-2">Tanggal Pembentukan</label>
-                                <span class="fw-bold fs-6 text-gray-800">
-                                    {{ isset($cabor->tanggal_pembentukan) ? \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->translatedFormat('d F Y') : '-' }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="d-flex flex-column">
-                                <label class="text-muted fs-7 fw-semibold mb-2">Jumlah Atlet</label>
-                                <span class="fw-bold fs-6 text-primary">
-                                    <i class="ki-duotone ki-user fs-2 me-1">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-                                    {{ $cabor->atlets->count() ?? 0 }} Orang
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="d-flex flex-column">
-                                <label class="text-muted fs-7 fw-semibold mb-2">Jumlah Pelatih</label>
-                                <span class="fw-bold fs-6 text-success">
-                                    <i class="ki-duotone ki-profile-user fs-2 me-1">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                        <span class="path3"></span>
-                                        <span class="path4"></span>
-                                    </i>
-                                    {{ $cabor->pelatihs->count() ?? 0 }} Orang
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="d-flex flex-column">
-                                <label class="text-muted fs-7 fw-semibold mb-2">Terakhir Update</label>
-                                <span class="fw-bold fs-6 text-gray-800">
-                                    <i class="ki-duotone ki-calendar fs-2 me-1">
-                                        <span class="path1"></span>
-                                        <span class="path2"></span>
-                                    </i>
-                                    {{ isset($cabor->terakhir_update) ? \Carbon\Carbon::parse($cabor->terakhir_update)->translatedFormat('d F Y H:i') : '-' }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Tabs Card -->
     <div class="card">
