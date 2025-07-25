@@ -8,15 +8,7 @@
 
 @section('content')
 
-@php
-function sortIcon($field) {
-    return '<i class="fas fa-sort text-muted"></i>';
-}
 
-function sortUrl($field) {
-    return '#';
-}
-@endphp
 
 <style>
     table td,

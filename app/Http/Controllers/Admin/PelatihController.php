@@ -12,44 +12,49 @@ class PelatihController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pelatih::with(['prestasis' => function ($q) {
+        $query = Pelatih::with(['cabangOlahraga', 'prestasis' => function ($q) {
             $q->orderByDesc('tahun');
         }]);
 
+        // Sorting berdasarkan prestasi terbaru
         if ($request->filled('sort') && $request->sort === 'prestasi') {
-        $query->with(['prestasis' => function ($q) {
-            $q->orderByDesc('tahun')->limit(1);
-        }])->leftJoin('prestasis', 'pelatih.id', '=', 'prestasis.pelatih_id')
-            ->select('pelatih.*')
-            ->orderBy('prestasis.tahun', $request->order === 'desc' ? 'desc' : 'asc');
+            $query->with(['prestasis' => function ($q) {
+                $q->orderByDesc('tahun')->limit(1);
+            }])->leftJoin('prestasis', 'pelatih.id', '=', 'prestasis.pelatih_id')
+                ->select('pelatih.*')
+                ->orderBy('prestasis.tahun', $request->order === 'desc' ? 'desc' : 'asc');
         }
 
-
-
+        // Pencarian
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('nama', 'like', "%{$request->search}%")
-                ->orWhere('cabor', 'like', "%{$request->search}%")
-                ->orWhere('alamat', 'like', "%{$request->search}%")
-                ->orWhere('email', 'like', "%{$request->search}%");
+                $q->where('pelatih.nama', 'like', "%{$request->search}%")
+                    ->orWhereHas('cabangOlahraga', function ($q) use ($request) {
+                        $q->where('nama_cabor', 'like', "%{$request->search}%");
+                    })
+                    ->orWhere('pelatih.alamat', 'like', "%{$request->search}%")
+                    ->orWhere('pelatih.email', 'like', "%{$request->search}%");
             });
         }
 
+        // Filter jenis kelamin
         if ($request->filled('kelamin')) {
             $query->where('kelamin', $request->kelamin);
         }
 
-        if ($request->filled('cabor')) {
-            $query->where('cabor', $request->cabor);
+        // Filter cabang olahraga
+        if ($request->filled('cabor_id')) {
+            $query->where('cabor_id', $request->cabor_id);
         }
 
+        // Sorting
         if ($request->filled('sort') && in_array($request->sort, ['nama', 'tanggal_lahir', 'kelamin', 'alamat', 'updated_at'])) {
             $query->orderBy($request->sort, $request->order === 'desc' ? 'desc' : 'asc');
         }
 
         $pelatih = $query->paginate($request->per_page ?? 10);
 
-        $allCabor = Pelatih::select('cabor')->distinct()->pluck('cabor');
+        $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
         $allKelamin = Pelatih::select('kelamin')->distinct()->pluck('kelamin');
 
         return view('admin.pelatih.index', compact('pelatih', 'allCabor', 'allKelamin'));
@@ -57,8 +62,8 @@ class PelatihController extends Controller
 
     public function create()
     {
-        $cabors      = CabangOlahraga::pluck('nama_cabor');
-        $allKelamin = ['Laki - Laki', 'Perempuan'];
+        $cabors = CabangOlahraga::pluck('nama_cabor', 'id');
+        $allKelamin = ['Laki-laki', 'Perempuan'];
 
         return view('admin.pelatih.create', compact('cabors', 'allKelamin'));
     }
@@ -66,16 +71,15 @@ class PelatihController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nama' => 'required',
-            'cabor' => 'required',
-            'tempat_lahir' => 'required',
+            'nama' => 'required|string|max:255',
+            'cabor_id' => 'required|exists:cabang_olahragas,id',
+            'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
-            'alamat' => 'required',
-            'kelamin' => 'required',
-            'prestasi' => 'nullable',
-            'no_telepon' => 'nullable',
-            'email' => 'nullable|email',
-            'foto' => 'nullable|image|max:10000'
+            'alamat' => 'required|string',
+            'kelamin' => 'required|in:Laki-laki,Perempuan',
+            'no_telepon' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'foto' => 'nullable|image|max:2048'
         ]);
 
         try {
@@ -83,26 +87,30 @@ class PelatihController extends Controller
                 $data['foto'] = $request->file('foto')->store('pelatih', 'public');
             }
 
-            Pelatih::create($data);
+            $pelatih = Pelatih::create($data);
 
-            return redirect()->route('admin.konfigurasi.pelatih.index')->with('OK', 'Data pelatih berhasil disimpan.');
+            return redirect()->route('admin.konfigurasi.pelatih.index')
+                ->with('OK', 'Data pelatih berhasil disimpan.');
         } catch (\Exception $e) {
-            return back()->withInput()->with('ERR', 'Gagal menyimpan data pelatih. Coba lagi.');
+            return back()->withInput()
+                ->with('ERR', 'Gagal menyimpan data pelatih. Error: ' . $e->getMessage());
         }
     }
 
     public function show($id)
     {
-        $pelatih = Pelatih::with('prestasis')->findOrFail($id);
+        $pelatih = Pelatih::with(['cabangOlahraga', 'prestasis' => function ($q) {
+            $q->orderByDesc('tahun');
+        }])->findOrFail($id);
+
         return view('admin.pelatih.show', compact('pelatih'));
     }
-
 
     public function edit($id)
     {
         $pelatih = Pelatih::findOrFail($id);
-        $cabors      = CabangOlahraga::pluck('nama_cabor');
-        $allKelamin = ['Laki - Laki', 'Perempuan'];
+        $cabors = CabangOlahraga::pluck('nama_cabor', 'id');
+        $allKelamin = ['Laki-laki', 'Perempuan'];
 
         return view('admin.pelatih.edit', compact('pelatih', 'cabors', 'allKelamin'));
     }
@@ -110,56 +118,74 @@ class PelatihController extends Controller
     public function update(Request $request, Pelatih $pelatih)
     {
         $data = $request->validate([
-            'nama' => 'required',
-            'cabor' => 'required',
-            'tempat_lahir' => 'required',
+            'nama' => 'required|string|max:255',
+            'cabor_id' => 'required|exists:cabang_olahragas,id',
+            'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
-            'alamat' => 'required',
-            'kelamin' => 'required',
-            'prestasi' => 'nullable',
-            'no_telepon' => 'nullable',
-            'email' => 'nullable|email',
+            'alamat' => 'required|string',
+            'kelamin' => 'required|in:Laki-laki,Perempuan',
+            'no_telepon' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
             'foto' => 'nullable|image|max:2048'
         ]);
 
-        if ($request->hasFile('foto')) {
-            if ($pelatih->foto) {
-                Storage::disk('public')->delete($pelatih->foto);
+        try {
+            if ($request->hasFile('foto')) {
+                // Hapus foto lama jika ada
+                if ($pelatih->foto) {
+                    Storage::disk('public')->delete($pelatih->foto);
+                }
+                $data['foto'] = $request->file('foto')->store('pelatih', 'public');
             }
-            $data['foto'] = $request->file('foto')->store('pelatih', 'public');
+
+            $pelatih->update($data);
+
+            return redirect()->route('admin.konfigurasi.pelatih.index')
+                ->with('OK', 'Data pelatih berhasil diubah.');
+        } catch (\Exception $e) {
+            return back()->withInput()
+                ->with('ERR', 'Gagal mengubah data pelatih. Error: ' . $e->getMessage());
         }
-
-        $pelatih->update($data);
-
-        return redirect()->route('admin.konfigurasi.pelatih.index')->with('OK', 'Data pelatih berhasil diubah.');
     }
 
     public function destroy(Pelatih $pelatih)
     {
-        if ($pelatih->foto) {
-            Storage::disk('public')->delete($pelatih->foto);
+        try {
+            // Hapus foto jika ada
+            if ($pelatih->foto) {
+                Storage::disk('public')->delete($pelatih->foto);
+            }
+
+            $pelatih->delete();
+
+            return redirect()->route('admin.konfigurasi.pelatih.index')
+                ->with('OK', 'Data pelatih berhasil dihapus.');
+        } catch (\Exception $e) {
+            return back()->with('ERR', 'Gagal menghapus data pelatih. Error: ' . $e->getMessage());
         }
-
-        $pelatih->delete();
-
-        return redirect()->back()->with('OK', 'Data pelatih telah dihapus.');
     }
 
     public function addPrestasi(Request $request, $id)
     {
         $request->validate([
-            'tahun' => 'required|digits:4',
+            'tahun' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
             'tempat' => 'required|string|max:255',
-            'prestasi' => 'required|string|max:255',
+            'nama_prestasi' => 'required|string|max:255',
         ]);
 
-        $pelatih = Pelatih::findOrFail($id);
-        $newEntry = "{$request->prestasi} {$request->tahun} {$request->tempat}";
+        try {
+            $pelatih = Pelatih::findOrFail($id);
 
-        $pelatih->prestasi = trim($pelatih->prestasi . "\n" . $newEntry);
-        $pelatih->save();
+            $pelatih->prestasis()->create([
+                'tahun' => $request->tahun,
+                'tempat' => $request->tempat,
+                'nama_prestasi' => $request->nama_prestasi
+            ]);
 
-        return redirect()->back()->with('success', 'Prestasi berhasil ditambahkan.');
+            return redirect()->back()
+                ->with('OK', 'Prestasi berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            return back()->with('ERR', 'Gagal menambahkan prestasi. Error: ' . $e->getMessage());
+        }
     }
-
 }

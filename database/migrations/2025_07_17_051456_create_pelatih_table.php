@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('pelatih', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('cabor'); // Cabang olahraga
+            $table->string('cabor_id'); // Cabang olahraga
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->string('alamat');
-            $table->enum('kelamin', ['Laki - Laki', 'Perempuan']);
+            $table->enum('kelamin', ['Laki-Laki', 'Perempuan']);
             $table->string('prestasi')->nullable();
             $table->string('no_telepon')->nullable();
             $table->string('email')->nullable();
