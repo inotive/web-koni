@@ -261,9 +261,9 @@ function sortUrl($field) {
                                             <label class="form-label fw-semibold">Cabang Olahraga</label>
                                             <select id="filter-cabor" class="form-select">
                                                 <option value="">Semua Cabor</option>
-                                                @if(isset($pelatih))
-                                                    @foreach ($pelatih->pluck('cabor')->unique()->filter() as $cabor)
-                                                        <option value="{{ $cabor }}">{{ $cabor }}</option>
+                                                @if(isset($allCabor))
+                                                    @foreach ($allCabor as $id => $nama)
+                                                        <option value="{{ $nama }}">{{ $nama }}</option>
                                                     @endforeach
                                                 @endif
                                             </select>
@@ -273,8 +273,11 @@ function sortUrl($field) {
                                             <label class="form-label fw-semibold">Jenis Kelamin</label>
                                             <select id="filter-gender" class="form-select">
                                                 <option value="">Semua</option>
-                                                <option value="L">Laki-laki</option>
-                                                <option value="P">Perempuan</option>
+                                                @if(isset($allKelamin))
+                                                    @foreach ($allKelamin as $kelamin)
+                                                        <option value="{{ $kelamin }}">{{ $kelamin }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
 
@@ -296,9 +299,6 @@ function sortUrl($field) {
                                                 <option value="">Semua</option>
                                                 <option value="ada">Ada Prestasi</option>
                                                 <option value="tidak">Tidak Ada Prestasi</option>
-                                                <option value="emas">Medali Emas</option>
-                                                <option value="perak">Medali Perak</option>
-                                                <option value="perunggu">Medali Perunggu</option>
                                             </select>
                                         </div>
 
@@ -368,12 +368,11 @@ function sortUrl($field) {
                                                 $age = $item->tanggal_lahir ? \Carbon\Carbon::parse($item->tanggal_lahir)->age : 0;
                                                 $hasPrestasi = isset($item->prestasis) && $item->prestasis->isNotEmpty() ? 'ada' : 'tidak';
                                                 $prestasiTerbaru = isset($item->prestasis) && $item->prestasis->isNotEmpty() ? $item->prestasis->first() : null;
-                                                $medali = $prestasiTerbaru && isset($prestasiTerbaru->medali) ? strtolower($prestasiTerbaru->medali) : '';
+                                                $caborNama = $item->cabangOlahraga ? $item->cabangOlahraga->nama_cabor : '-';
                                             @endphp
-                                            <tr data-cabor="{{ $item->cabor }}" data-gender="{{ $item->kelamin }}"
+                                            <tr data-cabor="{{ $caborNama }}" data-gender="{{ $item->kelamin }}"
                                                 data-age="{{ $age }}"
-                                                data-prestasi="{{ $hasPrestasi }}"
-                                                data-medali="{{ $medali }}">
+                                                data-prestasi="{{ $hasPrestasi }}">
 
                                                 <td></td> {{-- Will be populated by DataTable --}}
 
@@ -389,7 +388,7 @@ function sortUrl($field) {
                                                 <td>
                                                     <div class="d-flex flex-column">
                                                         <strong class="text-truncate-custom">{{ $item->nama }}</strong>
-                                                        <small class="text-muted">{{ $item->cabor }}</small>
+                                                        <small class="text-muted">{{ $caborNama }}</small>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -430,22 +429,9 @@ function sortUrl($field) {
                                                 </td>
                                                 <td>
                                                     @if($prestasiTerbaru)
-                                                        <div class="d-flex align-items-center">
-                                                            @if(isset($prestasiTerbaru->medali))
-                                                                <div class="me-3">
-                                                                    @if (strtolower($prestasiTerbaru->medali) === 'emas')
-                                                                        <i class="fas fa-medal fs-2x text-warning" title="Emas"></i>
-                                                                    @elseif(strtolower($prestasiTerbaru->medali) === 'perak')
-                                                                        <i class="fas fa-medal fs-2x text-secondary" title="Perak"></i>
-                                                                    @elseif(strtolower($prestasiTerbaru->medali) === 'perunggu')
-                                                                        <i class="fas fa-medal fs-2x text-bronze" title="Perunggu"></i>
-                                                                    @endif
-                                                                </div>
-                                                            @endif
-                                                            <div class="d-flex flex-column">
-                                                                <span class="text-truncate-custom">{{ $prestasiTerbaru->nama_prestasi }}</span>
-                                                                <small class="text-muted">{{ $prestasiTerbaru->tahun }}@if(isset($prestasiTerbaru->tempat)) • {{ $prestasiTerbaru->tempat }}@endif</small>
-                                                            </div>
+                                                        <div class="d-flex flex-column">
+                                                            <span class="text-truncate-custom">{{ $prestasiTerbaru->nama_prestasi }}</span>
+                                                            <small class="text-muted">{{ $prestasiTerbaru->tahun }}@if($prestasiTerbaru->tempat) • {{ $prestasiTerbaru->tempat }}@endif</small>
                                                         </div>
                                                     @else
                                                         <span class="text-muted">-</span>
@@ -601,7 +587,6 @@ function sortUrl($field) {
                     const rowGender = $row.data('gender');
                     const rowAge = parseInt($row.data('age'));
                     const rowPrestasi = $row.data('prestasi');
-                    const rowMedali = $row.data('medali');
 
                     if (caborFilter && rowCabor !== caborFilter) return false;
                     if (genderFilter && rowGender !== genderFilter) return false;
@@ -618,9 +603,6 @@ function sortUrl($field) {
                     if (prestasiFilter) {
                         if (prestasiFilter === 'ada' && rowPrestasi !== 'ada') return false;
                         if (prestasiFilter === 'tidak' && rowPrestasi !== 'tidak') return false;
-                        if (prestasiFilter === 'emas' && rowMedali !== 'emas') return false;
-                        if (prestasiFilter === 'perak' && rowMedali !== 'perak') return false;
-                        if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') return false;
                     }
 
                     return true;

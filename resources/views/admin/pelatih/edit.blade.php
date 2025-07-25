@@ -102,6 +102,14 @@
         font-weight: 700;
     }
 
+    .current-photo {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+    }
+
     </style>
                 <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 30px">
                     <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Pelatih</h3>
@@ -148,8 +156,8 @@
                     @php
                         $fields = [
                             'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Alessandro Benaya Pinem'],
-                            'cabor' => [
-                                'label' => 'Cabor',
+                            'cabor_id' => [
+                                'label' => 'Cabang Olahraga',
                                 'type' => 'select',
                                 'options' => $cabors,
                             ],
@@ -158,11 +166,6 @@
                                 'type' => 'email',
                                 'placeholder' => 'emailpelatih@gmail.com',
                             ],
-                            'ketersediaan' => [
-                                'label' => 'Ketersediaan',
-                                'type' => 'select-static',
-                                'options' => ['Tersedia', 'Tidak Tersedia'],
-                            ], // This field is for design purposes
                             'no_telepon' => [
                                 'label' => 'No Telepon',
                                 'type' => 'text',
@@ -177,14 +180,13 @@
                             'kelamin' => [
                                 'label' => 'Jenis Kelamin',
                                 'type' => 'select',
-                                'options' => ['Laki - Laki', 'Perempuan'],
+                                'options' => $allKelamin,
                             ],
                             'alamat' => [
                                 'label' => 'Alamat (Sesuai KTP)',
                                 'type' => 'text',
                                 'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
                             ],
-                            // 'prestasi' => ['label' => 'Prestasi', 'type' => 'textarea', 'placeholder' => 'Tuliskan prestasi yang diraih, pisahkan dengan baris baru...'],
                         ];
                     @endphp
 
@@ -204,17 +206,18 @@
                                     <select name="{{ $key }}" id="{{ $key }}"
                                         class="form-select @error($key) is-invalid @enderror">
                                         <option value="">Pilih {{ $field['label'] }}</option>
-                                        @foreach ($field['options'] as $option)
-                                            <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>
-                                                {{ $option }}</option>
-                                        @endforeach
+                                        @if ($key === 'cabor_id')
+                                            @foreach ($field['options'] as $id => $nama)
+                                                <option value="{{ $id }}" {{ $value == $id ? 'selected' : '' }}>
+                                                    {{ $nama }}</option>
+                                            @endforeach
+                                        @else
+                                            @foreach ($field['options'] as $option)
+                                                <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>
+                                                    {{ $option }}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
-                                @elseif ($field['type'] === 'select-static')
-                                    <select name="{{ $key }}" id="{{ $key }}" class="form-select"
-                                        disabled>
-                                        <option value="Tersedia" selected>Tersedia</option>
-                                    </select>
-                                    <small class="text-muted">Fitur ini belum diimplementasikan.</small>
                                 @elseif ($field['type'] === 'textarea')
                                     <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
                                         placeholder="{{ $field['placeholder'] }}" rows="3">{{ $value }}</textarea>

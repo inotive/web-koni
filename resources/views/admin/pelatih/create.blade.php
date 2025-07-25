@@ -78,6 +78,38 @@
         color: #6c757d;
         margin-top: 4px;
     }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+    }
+
+    .invalid-feedback {
+        font-size: 0.85rem;
+        color: #e74c3c;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+    }
 </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
@@ -94,7 +126,7 @@
                     @csrf
                     <div class="row align-items-start mb-4">
                 <div class="col-md-3">
-                    <label for="foto" class="form-label"></label>
+                    <label for="foto" class="form-label">Foto</label>
                     <p class="file-upload-hint">150x150px JPEG, PNG Image</p>
                 </div>
                 <div class="col-md-9">
@@ -119,8 +151,8 @@
                     @php
                         $fields = [
                             'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Alessandro Benaya Pinem'],
-                            'cabor' => [
-                                'label' => 'Cabor',
+                            'cabor_id' => [
+                                'label' => 'Cabang Olahraga',
                                 'type' => 'select',
                                 'options' => $cabors,
                                 ],
@@ -128,11 +160,6 @@
                                 'label' => 'Email',
                                 'type' => 'email',
                                 'placeholder' => 'emailpelatih@gmail.com',
-                            ],
-                            'ketersediaan' => [
-                                'label' => 'Ketersediaan',
-                                'type' => 'select-static',
-                                'options' => ['Tersedia', 'Tidak Tersedia'],
                             ],
                             'no_telepon' => [
                                 'label' => 'No Telepon',
@@ -148,14 +175,13 @@
                             'kelamin' => [
                                 'label' => 'Jenis Kelamin',
                                 'type' => 'select',
-                                'options' => ['Laki - Laki', 'Perempuan'],
+                                'options' => $allKelamin,
                             ],
                             'alamat' => [
                                 'label' => 'Alamat (Sesuai KTP)',
                                 'type' => 'text',
                                 'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
                             ],
-                            // 'prestasi' => ['label' => 'Prestasi', 'type' => 'textarea', 'placeholder' => 'Tuliskan prestasi yang diraih, pisahkan dengan baris baru...'],
                         ];
                     @endphp
 
@@ -169,17 +195,18 @@
                                     <select name="{{ $key }}" id="{{ $key }}"
                                         class="form-select @error($key) is-invalid @enderror">
                                         <option value="">Pilih {{ $field['label'] }}</option>
-                                        @foreach ($field['options'] as $option)
-                                            <option value="{{ $option }}"
-                                                {{ old($key) == $option ? 'selected' : '' }}>{{ $option }}</option>
-                                        @endforeach
+                                        @if ($key === 'cabor_id')
+                                            @foreach ($field['options'] as $id => $nama)
+                                                <option value="{{ $id }}" {{ old($key) == $id ? 'selected' : '' }}>
+                                                    {{ $nama }}</option>
+                                            @endforeach
+                                        @else
+                                            @foreach ($field['options'] as $option)
+                                                <option value="{{ $option }}"
+                                                    {{ old($key) == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
-                                @elseif ($field['type'] === 'select-static')
-                                    <select name="{{ $key }}" id="{{ $key }}" class="form-select"
-                                        disabled>
-                                        <option value="Tersedia">Tersedia</option>
-                                    </select>
-                                    <small class="text-muted">Fitur ini belum diimplementasikan.</small>
                                 @elseif ($field['type'] === 'textarea')
                                     <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
                                         placeholder="{{ $field['placeholder'] }}" rows="3">{{ old($key) }}</textarea>
@@ -196,8 +223,10 @@
                     @endforeach
 
                     <div class="row mt-4">
-                        <div class="col-md-9 offset-md-3">
+                        <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                             <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
+                            <a href="{{ route('admin.konfigurasi.pelatih.index') }}"
+                                class="btn btn-secondary px-4">Kembali</a>
                         </div>
                     </div>
                 </form>
@@ -240,7 +269,7 @@
 
                     reader.readAsDataURL(file);
                 } else {
-                    fileNameDisplay.textContent = '150x150px JPEG, PNG Image';
+                    fileNameDisplay.textContent = 'Seret dan lepas file di sini, atau klik untuk mengunggah.';
                     previewContainer.style.display = 'none';
                     previewContainer.innerHTML = '';
                 }
