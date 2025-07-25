@@ -39,10 +39,9 @@
                     <div class="col-5">
                         <input type="search" name="search" id="search" class="form-control" placeholder="Search">
                     </div>
-                    <a href="{{ route('admin.manajemen-pengguna.pengguna.create') }}" class="btn"
-                        style="background-color: #F8285A;">
-                        <i class="ki-duotone ki-plus fs-2" style="color: white"></i>
-                        <span class="text-white">Tambah Pengguna</span>
+                    <a href="#" class="btn text-white" style="background-color: #F8285A;" data-bs-toggle="modal"
+                        data-bs-target="#kt_modal_tambah_pengguna">
+                        <i class="ki-duotone ki-plus fs-2" style="color: white"></i>Tambah Pengguna
                     </a>
                 </div>
             </div>
@@ -93,7 +92,8 @@
 
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="{{ route('admin.manajemen-pengguna.pengguna.edit', $value->id) }}"
+                                                        <a href="#" data-bs-toggle="modal"
+                                                            data-bs-target="#modalEditPengguna{{ $value->id }}"
                                                             class="dropdown-item d-flex align-items-center gap-2">
                                                             <i class="ki-duotone ki-pencil fs-5"></i> Edit
                                                         </a>
@@ -117,8 +117,13 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    @foreach ($users as $value)
+                                        @include('admin.user.component.modal', [
+                                            'value' => $value,
+                                            'roles' => $roles,
+                                        ])
+                                    @endforeach
                                 @endforeach
-
                             </tbody>
                         </table>
                         {{-- End Table --}}
@@ -127,6 +132,8 @@
             </div>
         </div>
     </div>
+    @include('admin.user.component.modal-tambah', ['roles' => $roles])
+
 @endsection
 
 @section('script')

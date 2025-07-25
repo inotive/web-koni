@@ -21,7 +21,7 @@ class UserController extends Controller
         $view = [
             'title' => "Manajemen Pengguna",
             'users' => $users,
-            'role' => Role::all()
+            'roles' => Role::all()
         ];
 
         return view('admin.user.index', $view);
@@ -48,14 +48,14 @@ class UserController extends Controller
             'password' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg|max:2048'
         ]);
- 
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $usernameTersedia = User::where('username', $request->username)->first();
 
-            
+
         if ($usernameTersedia !== null) {
             return redirect()
                 ->back()
@@ -68,7 +68,7 @@ class UserController extends Controller
                 ->with('ERR', 'Role Tidak Boleh Kosong!');
         }
 
-        
+
         $data = [
             'email' => $request->email,
             'username' => $request->username,
@@ -81,7 +81,7 @@ class UserController extends Controller
             $gambar = $this->storeFile($request->file('image'), 'profile');
             $data['image'] = $gambar;
         }
-      
+
 
         $user = User::create($data);
         $user->syncRoles([$request->role]);
@@ -130,7 +130,7 @@ class UserController extends Controller
             // 'password' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg|max:2048'
         ]);
- 
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
@@ -138,7 +138,7 @@ class UserController extends Controller
 
         $usernameTersedia = User::where('username', $request->username)->where('id', '!=', $pengguna->id)->first();
 
-          
+
         if ($usernameTersedia !== null) {
             return redirect()
                 ->back()
@@ -150,10 +150,10 @@ class UserController extends Controller
                 ->back()
                 ->with('ERR', 'Password Harus Minimal 6 Karakter!');
         }
-        $imageProfile = $pengguna->image; 
+        $imageProfile = $pengguna->image;
 
         if ($request->hasFile('image')) {
-            Storage::disk('public')->delete('profile/' . $pengguna->image); 
+            Storage::disk('public')->delete('profile/' . $pengguna->image);
             $image = $this->storeFile($request->file('image'), 'profile');
             $imageProfile = $image;
         }
@@ -164,16 +164,16 @@ class UserController extends Controller
             // 'name' => $request->name,
             'status' => 'aktif',
         ];
-        
+
         if ($request->password !== null) {
             $data['password'] = bcrypt($request->password);
         }
-        
-        $data['image'] = $imageProfile; 
-        
+
+        $data['image'] = $imageProfile;
+
         $pengguna->fill($data);
 
-       
+
         $pengguna->update();
         $pengguna->syncRoles($request->role);
         return redirect()
