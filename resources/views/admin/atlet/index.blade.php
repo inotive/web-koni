@@ -33,6 +33,13 @@
             margin-bottom: 20px;
         }
 
+        .empty-state {
+            text-align: center;
+            color: #6c757d;
+            padding: 60px 25px;
+            background-color: white;
+        }
+
         .table-container {
             position: relative;
             overflow: hidden;
@@ -273,9 +280,9 @@
                             <div class="table-responsive-wrapper">
                                 <div class="table-responsive">
                                     @if ($atlets->isEmpty())
-                                        <div class="text-center text-muted py-10">
-                                            <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
-                                            <h4>Tidak ada data atlet.</h4>
+                                        <div class="empty-state">
+                                            <i class="fas fa-info-circle fs-3x mb-3"></i>
+                                            <h4>Tidak ada data Atlet</h4>
                                         </div>
                                     @else
                                         <table class="table table-bordered table-hover align-middle"
@@ -482,10 +489,14 @@
                                         <div class="d-flex align-items-center">
                                             <span class="me-2">Show</span>
                                             <select class="form-select form-select-sm w-auto" id="entries-per-page">
-                                                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                                                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                                                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                                                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>
+                                                    10</option>
+                                                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>
+                                                    25</option>
+                                                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>
+                                                    50</option>
+                                                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>
+                                                    100</option>
                                             </select>
                                             <span class="ms-2">per page</span>
                                         </div>
@@ -494,7 +505,8 @@
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="d-flex align-items-center">
                                             <span class="me-2">Page</span>
-                                            <select class="form-select form-select-sm" style="width: 80px;" id="page-select">
+                                            <select class="form-select form-select-sm" style="width: 80px;"
+                                                id="page-select">
                                                 <option value="1">1</option>
                                             </select>
                                             <span class="ms-2">of <span id="total-pages">1</span></span>
@@ -590,7 +602,9 @@
                     const start = api.page.info().start;
 
                     let counter = start + 1;
-                    api.column(0, { page: 'current' }).nodes().each(function(cell, i) {
+                    api.column(0, {
+                        page: 'current'
+                    }).nodes().each(function(cell, i) {
                         cell.innerHTML = counter++;
                     });
                 }
@@ -621,7 +635,8 @@
 
                     // Update navigation buttons
                     $('#prev-page').prop('disabled', info.page === 0).toggleClass('disabled', info.page === 0);
-                    $('#next-page').prop('disabled', info.page === info.pages - 1).toggleClass('disabled', info.page === info.pages - 1);
+                    $('#next-page').prop('disabled', info.page === info.pages - 1).toggleClass('disabled', info.page ===
+                        info.pages - 1);
                 }
 
                 function updateFilterInfo() {
