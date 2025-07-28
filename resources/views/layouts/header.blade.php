@@ -5,7 +5,7 @@
         <!--begin::Logo-->
         <div class="gap-3 px-4 d-flex align-items-center" style="width:220px; min-width:180px">
             <a href="/" class="d-flex align-items-center">
-                <img alt="Logo" src="{{ asset('assets/koni.png') }}" class="h-45px me-2" />
+                <img alt="Logo" src="{{ asset('assets/img/koni.png') }}" class="h-45px me-2" />
             </a>
         </div>
         <!--end::Logo-->
