@@ -23,8 +23,7 @@
                     <a class="menu-link {{ request()->routeIs('admin.dashboard.index') ? 'active bg-orange' : '' }}"
                         href="{{ route('admin.dashboard.index') }}">
                         <span class="menu-icon">
-                            <i
-                                class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                            <i class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
                         <span class="menu-title">Dashboard</span>
                     </a>
@@ -37,13 +36,11 @@
                         aria-controls="submenu-pengguna">
                         <span class="d-flex align-items-center">
                             <span class="menu-icon">
-                                <i
-                                    class="fa-solid fa-users fs-2 {{ request()->is('admin/manajemen-pengguna*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                                <i class="fa-solid fa-users fs-2 {{ request()->is('admin/manajemen-pengguna*') ? 'text-orange' : 'text-gray-600' }}"></i>
                             </span>
                             <span class="menu-title">Manajemen Pengguna</span>
                         </span>
-                        <i
-                            class="fa-solid {{ request()->is('admin/manajemen-pengguna*') ? 'fa-angle-up' : 'fa-angle-down' }} fs-4"></i>
+                        <i class="fa-solid {{ request()->is('admin/manajemen-pengguna*') ? 'fa-angle-up' : 'fa-angle-down' }} fs-4"></i>
                     </a>
                     <div class="collapse {{ request()->is('admin/manajemen-pengguna*') ? 'show' : '' }}"
                         id="submenu-pengguna">
@@ -131,8 +128,7 @@
                     <a class="menu-link {{ request()->routeIs('admin.konfigurasi.cabang-olahraga.index') ? 'active bg-orange' : '' }}"
                         href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}">
                         <span class="menu-icon">
-                            <i
-                                class="fa-solid fa-basketball fs-2 {{ request()->routeIs('admin.konfigurasi.cabang-olahraga.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                            <i class="fa-solid fa-basketball fs-2 {{ request()->routeIs('admin.konfigurasi.cabang-olahraga.index') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
                         <span class="menu-title">Cabang Olahraga</span>
                     </a>
