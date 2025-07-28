@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\AtletController;
 use App\Http\Controllers\Admin\PelatihController;
 use App\Http\Controllers\Admin\PrestasiController;
 use App\Http\Controllers\Admin\CabangOlahragaController;
+use App\Http\Controllers\Admin\KegiatanLainnyaController; // <--- Make sure this line is present!
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -60,11 +62,11 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'storeForPelatih'])
             ->name('pelatih.prestasi.store');
         Route::resource('cabang-olahraga', CabangOlahragaController::class);
+        Route::resource('kegiatan-lainnya', KegiatanLainnyaController::class); // <--- Added this line!
     });
 
     Route::post('atlets/{atlet}/prestasi', [PrestasiController::class, 'store'])->name('atlet.prestasi.store');
     Route::delete('prestasi/{prestasi}', [PrestasiController::class, 'destroy'])->name('prestasi.destroy');
-
 
     Route::get('konfigurasi/pelatih/{id}/deskripsi', [PelatihController::class, 'deskripsi'])
         ->name('konfigurasi.pelatih.deskripsi');

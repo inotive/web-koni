@@ -3,37 +3,22 @@
     data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start"
     data-kt-drawer-toggle="#kt_aside_mobile_toggle" style="box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.1);">
 
-    <!--begin::Aside Toolbar-->
-
-
-    <!--begin::Aside Toolbar-->
     <div class="aside-toolbar flex-column-auto" id="kt_aside_toolbar">
-        <!-- Placeholder for future user/profile -->
-        <!-- Placeholder for future user/profile -->
-    </div>
-    <!--end::Aside Toolbar-->
-
-    <!--end::Aside Toolbar-->
-
-    <!--begin::Aside menu-->
+        </div>
     <div class="bg-white aside-menu flex-column-fluid">
         <div class="mx-5 my-5 hover-scroll-overlay-y my-lg-5" id="kt_aside_menu_wrapper" data-kt-scroll="true"
             data-kt-scroll-height="auto"
             data-kt-scroll-dependencies="{default: '#kt_aside_toolbar, #kt_aside_footer', lg: '#kt_header, #kt_aside_toolbar, #kt_aside_footer'}"
             data-kt-scroll-wrappers="#kt_aside_menu" data-kt-scroll-offset="5px">
 
-
-            <!--begin::Menu-->
             <div class="menu-column menu-title-gray-800" id="#kt_aside_menu" data-kt-menu="true">
 
-                <!-- Menu Utama -->
                 <div class="menu-item">
                     <div class="menu-content">
                         <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Menu Utama</span>
                     </div>
                 </div>
 
-                <!-- Dashboard -->
                 <div class="menu-item">
                     <a class="menu-link {{ request()->routeIs('admin.dashboard.index') ? 'active bg-orange' : '' }}"
                         href="{{ route('admin.dashboard.index') }}">
@@ -41,14 +26,9 @@
                             <i
                                 class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
                         </span>
-                        {{-- <span class="menu-icon">
-                            <i
-                                class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
-                        </span> --}}
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </div>
-
 
                 <div class="menu-item">
                     <a class="menu-link d-flex justify-content-between {{ request()->is('admin/manajemen-pengguna*') ? 'active bg-orange' : '' }}"
@@ -86,7 +66,27 @@
                     </div>
                 </div>
 
-                <!-- Konfigurasi -->
+                ---
+
+                <div class="menu-item pt-10">
+                    <div class="menu-content">
+                        <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Laporan LPJ</span>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('admin.konfigurasi.kegiatan-lainnya.index') ? 'active bg-orange' : '' }}"
+                        href="{{ route('admin.konfigurasi.kegiatan-lainnya.index') }}">
+                        <span class="menu-icon">
+                            <i
+                                class="fa-solid fa-clipboard-list fs-2 {{ request()->routeIs('admin.konfigurasi.kegiatan-lainnya.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                        </span>
+                        <span class="menu-title">Kegiatan Lainnya</span>
+                    </a>
+                </div>
+
+                ---
+
                 <div class="menu-item pt-10">
                     <div class="menu-content">
                         <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Konfigurasi</span>
@@ -114,6 +114,7 @@
                         <span class="menu-title">Pelatih</span>
                     </a>
                 </div>
+
                 <div class="menu-item">
                     <a class="menu-link {{ request()->routeIs('admin.konfigurasi.cabang-olahraga.index') ? 'active bg-orange' : '' }}"
                         href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}">
@@ -125,9 +126,6 @@
                     </a>
                 </div>
             </div>
-            <!--end::Menu-->
-        </div>
+            </div>
     </div>
-    <!--end::Aside menu-->
-
-</div>
+    </div>
