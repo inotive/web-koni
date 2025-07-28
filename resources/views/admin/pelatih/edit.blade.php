@@ -8,21 +8,120 @@
 
 @section('content')
     <style>
-        /* CSS sama seperti di create.blade.php */
-        .current-photo {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-    </style>
+    body {
+        background-color: #f5f5f5 !important;
+    }
 
+    .main-content {
+        background-color: #f5f5f5;
+        min-height: 100vh;
+        padding: 20px 0;
+    }
+
+    .card-form {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+    }
+
+    .file-upload-wrapper {
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 2.5rem;
+        text-align: center;
+        cursor: pointer;
+        background-color: #f8f9fa;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .file-upload-wrapper:hover {
+        border-color: #e91e63;
+        background-color: #f1f1f1;
+    }
+
+    .file-upload-wrapper input[type="file"] {
+        display: none;
+    }
+
+    .file-upload-icon {
+        font-size: 2.5rem;
+        color: #e91e63;
+    }
+
+    .file-upload-text {
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .file-upload-hint {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #e91e63;
+        box-shadow: 0 0 0 0.2rem rgba(233, 30, 99, 0.2);
+    }
+
+    .invalid-feedback {
+        font-size: 0.85rem;
+        color: #e74c3c;
+    }
+
+    h3.fw-bold {
+        color: #2c3e50;
+        font-size: 1.6rem;
+        font-weight: 700;
+    }
+
+    .current-photo {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+    }
+
+    </style>
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 30px">
+                    <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Pelatih</h3>
+                </div>
+<div class="main-content">
     <div class="container mt-4">
         <div class="card card-form">
             <div class="card-body p-4 p-md-5">
                 <h3 class="fw-bold mb-4">Edit Data Pelatih</h3>
 
-                <form action="{{ route('admin.konfigurasi.pelatih.update', $pelatih->id) }}" method="POST" enctype="multipart/form-data">
+                  <form action="{{ route('admin.konfigurasi.pelatih.update', $pelatih->id) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -80,7 +179,7 @@
                             'kelamin' => [
                                 'label' => 'Jenis Kelamin',
                                 'type' => 'select',
-                                'options' => ['Laki-laki', 'Perempuan'],
+                                'options' => $allKelamin,
                             ],
                             'alamat' => [
                                 'label' => 'Alamat',
@@ -103,22 +202,28 @@
                                     }
                                 @endphp
                                 @if ($field['type'] === 'select')
-                                    <select name="{{ $key }}" id="{{ $key }}" 
-                                        class="form-select @error($key) is-invalid @enderror"
-                                        {{ $key === 'cabor_id' ? 'required' : '' }}>
+                                    <select name="{{ $key }}" id="{{ $key }}"
+                                        class="form-select @error($key) is-invalid @enderror">
                                         <option value="">Pilih {{ $field['label'] }}</option>
-                                        @foreach ($field['options'] as $id => $nama)
-                                            <option value="{{ $id }}" {{ $value == $id ? 'selected' : '' }}>
-                                                {{ $nama }}
-                                            </option>
-                                        @endforeach
+                                        @if ($key === 'cabor_id')
+                                            @foreach ($field['options'] as $id => $nama)
+                                                <option value="{{ $id }}" {{ $value == $id ? 'selected' : '' }}>
+                                                    {{ $nama }}</option>
+                                            @endforeach
+                                        @else
+                                            @foreach ($field['options'] as $option)
+                                                <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>
+                                                    {{ $option }}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
+                                @elseif ($field['type'] === 'textarea')
+                                    <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
+                                        placeholder="{{ $field['placeholder'] }}" rows="3">{{ $value }}</textarea>
                                 @else
-                                    <input type="{{ $field['type'] }}" name="{{ $key }}" id="{{ $key }}"
-                                        class="form-control @error($key) is-invalid @enderror"
-                                        placeholder="{{ $field['placeholder'] ?? '' }}" 
-                                        value="{{ $value }}"
-                                        {{ in_array($key, ['nama', 'cabor_id', 'tanggal_lahir', 'tempat_lahir', 'kelamin', 'alamat']) ? 'required' : '' }}>
+                                    <input type="{{ $field['type'] }}" name="{{ $key }}"
+                                        id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
+                                        placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}">
                                 @endif
                                 @error($key)
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -137,44 +242,13 @@
             </div>
         </div>
     </div>
+</div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const uploadInput = document.getElementById('foto');
-            const fileNameDisplay = document.getElementById('file-name-display');
-            const previewContainer = document.getElementById('imagePreviewContainer');
-
-            uploadInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    fileNameDisplay.textContent = file.name;
-
-                    if (!file.type.match('image.*')) {
-                        alert('Hanya file gambar yang diizinkan');
-                        return;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewContainer.style.display = 'block';
-                        previewContainer.innerHTML = `
-                            <div class="d-flex justify-content-center align-items-center mt-3">
-                                <img src="${e.target.result}" class="preview-image me-3" 
-                                     style="width: 150px; height: 150px; object-fit: cover; border-radius: 8px;">
-                                <div>
-                                    <p class="file-upload-text mb-1">${file.name}</p>
-                                    <p class="file-upload-hint">Klik untuk mengubah foto</p>
-                                </div>
-                            </div>
-                        `;
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    fileNameDisplay.textContent = 'Kosongkan jika tidak ingin mengubah foto';
-                    previewContainer.style.display = 'none';
-                    previewContainer.innerHTML = '';
-                }
-            });
+        document.getElementById('foto').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name :
+            'Kosongkan jika tidak ingin mengubah foto';
+            document.getElementById('file-name-display').textContent = fileName;
         });
     </script>
 @endsection
