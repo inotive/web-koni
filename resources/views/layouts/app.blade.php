@@ -11,11 +11,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 
-    <!-- Bootstrap Select CSS -->
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/custom-sidebar.css') }}" rel="stylesheet" type="text/css" />
-    <!-- Font Awesome 6 CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet"
@@ -122,11 +120,7 @@
 
 
 </head>
-<!--end::Head-->
-<!--begin::Body-->
-
 <body id="kt_body" class="aside-enabled">
-    <!--begin::Theme mode setup on page load-->
     <script>
         var defaultThemeMode = "light";
         var themeMode;
@@ -146,22 +140,12 @@
             document.documentElement.setAttribute("data-bs-theme", themeMode);
         }
     </script>
-    <!--end::Theme mode setup on page load-->
-    <!--begin::Main-->
-    <!--begin::Root-->
     <div class="d-flex flex-column flex-root">
-        <!--begin::Page-->
         <div class="flex-row page d-flex flex-column-fluid">
-            <!--begin::Aside-->
             @include('layouts.sidebar')
-            <!--end::Aside-->
-            <!--begin::Wrapper-->
             <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
-                <!--begin::Header-->
                 @include('layouts.header')
-                <!--end::Header-->
-                <!--begin::Breadcrumb (Custom)-->
-<div class="container-fluid-limited mt-5">
+                <div class="container-fluid-limited mt-5">
     <div class="mb-5">
         <h1 class="text-2xl font-semibold text-gray-800">@yield('breadcrumb-title')</h1>
         <nav class="text-sm mt-1" aria-label="Breadcrumb">
@@ -171,27 +155,56 @@
         </nav>
     </div>
 </div>
-                @yield('content')
-                <!--end::Content-->
-                <!--begin::Footer-->
-                @include('layouts.footer')
-                <!--end::Footer-->
+{{-- START NOTIFIKASI --}}
+@if (session('success'))
+    <div class="container-fluid-limited mt-0 mb-5"> {{-- Container yang sama dengan breadcrumb --}}
+        <div class="alert alert-dismissible bg-light-success border border-success d-flex flex-stack flex-row p-5 rounded">
+            <div class="d-flex flex-column justify-content-center flex-grow-1">
+                <span class="fs-2hx text-success me-4">
+                    <i class="ki-duotone ki-check-circle fs-2hx"></i> {{-- Icon Centang --}}
+                </span>
             </div>
-            <!--end::Wrapper-->
+            <div class="d-flex flex-column text-success pe-0 pe-sm-10 flex-grow-1">
+                <h4 class="fw-bold text-success mb-1">Success!</h4> {{-- Teks "Success!" --}}
+                <span>{{ session('success') }}</span> {{-- Pesan dinamis dari controller --}}
+            </div>
+            <button type="button" class="position-absolute position-sm-relative top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
+                <i class="ki-duotone ki-cross fs-1 text-success"></i> {{-- Icon Tutup --}}
+            </button>
         </div>
-        <!--end::Page-->
     </div>
-    <!--end::Root-->
+@endif
 
-    <!--end::Main-->
-    <!--begin::Scrolltop-->
+@if (session('error'))
+    <div class="container-fluid-limited mt-0 mb-5"> {{-- Container yang sama dengan breadcrumb --}}
+        <div class="alert alert-dismissible bg-light-danger border border-danger d-flex flex-stack flex-row p-5 rounded">
+            <div class="d-flex flex-column justify-content-center flex-grow-1">
+                <span class="fs-2hx text-danger me-4">
+                    <i class="ki-duotone ki-triangle-exclamation fs-2hx"></i> {{-- Icon Exclamation untuk error --}}
+                </span>
+            </div>
+            <div class="d-flex flex-column text-danger pe-0 pe-sm-10 flex-grow-1">
+                <h4 class="fw-bold text-danger mb-1">Error!</h4>
+                <span>{{ session('error') }}</span>
+            </div>
+            <button type="button" class="position-absolute position-sm-relative top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
+                <i class="ki-duotone ki-cross fs-1 text-danger"></i>
+            </button>
+        </div>
+    </div>
+@endif
+{{-- END NOTIFIKASI --}}
+                @yield('content')
+                @include('layouts.footer')
+                </div>
+            </div>
+        </div>
     <div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
         <i class="ki-duotone ki-arrow-up">
             <span class="path1"></span>
             <span class="path2"></span>
         </i>
     </div>
-    <!--end::Scrolltop-->
     @include('layouts.js-file')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -203,7 +216,6 @@
     @yield('script')
     @stack('stack-script')
 
-<!-- Tambahkan sebelum penutup </body> -->
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -214,6 +226,4 @@
 
 
 </body>
-<!--end::Body-->
-
 </html>
