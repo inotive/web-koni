@@ -213,7 +213,8 @@
                                         @else
                                             @foreach ($field['options'] as $option)
                                                 <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>
-                                                    {{ $option }}</option>
+                                                    {{ $option }}
+                                                </option>
                                             @endforeach
                                         @endif
                                     </select>

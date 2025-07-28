@@ -155,7 +155,7 @@
                             'cabor_id' => [
                                 'label' => 'Cabang Olahraga',
                                 'type' => 'select',
-                                'options' => $cabors, // Pastikan $cabors dikirim sebagai [id => nama_cabor]
+                                'options' => $cabors, 
                             ],
                             'email' => [
                                 'label' => 'Email',

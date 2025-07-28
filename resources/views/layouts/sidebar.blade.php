@@ -86,6 +86,16 @@
                     </div>
                 </div>
 
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->is('admin/bidang*') ? 'active bg-orange' : '' }}"
+                        href="{{ route('admin.bidang.index') }}">
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-layer-group fs-2 {{ request()->is('admin/bidang*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                        </span>
+                        <span class="menu-title">Bidang Bidang</span>
+                    </a>
+                </div>
+
                 <!-- Konfigurasi -->
                 <div class="menu-item pt-10">
                     <div class="menu-content">

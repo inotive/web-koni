@@ -63,7 +63,7 @@ class PelatihController extends Controller
     public function create()
     {
         $cabors = CabangOlahraga::pluck('nama_cabor', 'id');
-        $allKelamin = ['Laki-laki', 'Perempuan'];
+        $allKelamin = ['Laki-Laki', 'Perempuan'];
 
         return view('admin.pelatih.create', compact('cabors', 'allKelamin'));
     }
@@ -76,7 +76,7 @@ class PelatihController extends Controller
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
-            'kelamin' => 'required|in:Laki-laki,Perempuan',
+            'kelamin' => 'required|in:Laki-Laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'foto' => 'nullable|image|max:2048'
@@ -110,7 +110,7 @@ class PelatihController extends Controller
     {
         $pelatih = Pelatih::findOrFail($id);
         $cabors = CabangOlahraga::pluck('nama_cabor', 'id');
-        $allKelamin = ['Laki-laki', 'Perempuan'];
+        $allKelamin = ['Laki-Laki', 'Perempuan'];
 
         return view('admin.pelatih.edit', compact('pelatih', 'cabors', 'allKelamin'));
     }
@@ -123,7 +123,7 @@ class PelatihController extends Controller
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
-            'kelamin' => 'required|in:Laki-laki,Perempuan',
+            'kelamin' => 'required|in:Laki-Laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'foto' => 'nullable|image|max:2048'
