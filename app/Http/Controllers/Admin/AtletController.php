@@ -70,7 +70,7 @@ public function edit($id)
 
     $validated = $request->validate([
         'nama' => 'required|string|max:255',
-        'cabor_id' => 'required|exists:cabang_olahragas,id', // Ubah dari 'cabor' ke 'cabor_id'
+        'cabor_id' => 'required|exists:cabang_olahragas,id', 
         'tempat_lahir' => 'required|string|max:100',
         'tanggal_lahir' => 'required|date',
         'alamat' => 'required|string',

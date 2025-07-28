@@ -428,12 +428,12 @@
                                     style="width: 60px; height: 60px; background-color: #f1f1f4; display: flex; align-items: center; justify-content: center;">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
-                                        
+
                                     </svg>
                                 </div>
                             </div>
                         @endif
-                        
+
                     </div>
                 </div>
 
@@ -447,7 +447,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -462,7 +462,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -477,7 +477,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -492,7 +492,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -507,7 +507,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -522,7 +522,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -537,7 +537,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -552,7 +552,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -567,7 +567,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -580,19 +580,15 @@
                     </div>
                     <p class="detail-value">{{ $atlet->alamat ?? 'Belum ada alamat yang tercantum' }}</p>
                     <div class="add-address">
-                       
+
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="detail-card">
-            <div class="detail-card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <h2 class="detail-card-title">Informasi Kejuaraan</h2>
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#tambahPrestasiModal">
-                    + Tambah Prestasi
-                </button>
+            <div class="detail-card-header">
+                <h2 class="detail-card-title">Prestasi</h2>
             </div>
 
             <div class="detail-body" style="padding: 0;">
@@ -602,7 +598,6 @@
                             <th>Prestasi Kejuaraan</th>
                             <th>Tempat & Tahun</th>
                             <th>Medali</th>
-                            <th style="width: 100px; text-align: center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -637,19 +632,10 @@
                                         <strong>{{ $prestasi->medali }}</strong>
                                     </div>
                                 </td>
-                                <td style="text-align: center;">
-                                    <form action="{{ route('admin.prestasi.destroy', $prestasi->id) }}" method="POST"
-                                        onsubmit="return confirm('Anda yakin ingin menghapus prestasi ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                    </form>
-                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" style="text-align: center; padding: 20px;">Belum ada data prestasi.
-                                    Silakan tambahkan.</td>
+                                <td colspan="3" style="text-align: center; padding: 20px;">Belum ada data prestasi.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -659,50 +645,6 @@
 
         <div class="detail-actions">
             <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn-secondary">Kembali</a>
-        </div>
-    </div>
-
-    <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" aria-labelledby="tambahPrestasiModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tambahPrestasiModalLabel">Tambah Prestasi Baru untuk {{ $atlet->nama }}
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="{{ route('admin.atlet.prestasi.store', $atlet->id) }}" method="POST">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="nama_prestasi" class="form-label">Nama Kejuaraan</label>
-                            <input type="text" class="form-control" id="nama_prestasi" name="nama_prestasi" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="tempat" class="form-label">Tempat Lomba</label>
-                            <input type="text" class="form-control" id="tempat" name="tempat" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="tahun" class="form-label">Tahun</label>
-                            <input type="number" class="form-control" id="tahun" name="tahun" required
-                                placeholder="Contoh: 2024">
-                        </div>
-                        <div class="mb-3">
-                            <label for="medali" class="form-label">Medali</label>
-                            <select class="form-select" id="medali" name="medali" required>
-                                <option value="" disabled selected>-- Pilih Medali --</option>
-                                <option value="Emas">Emas</option>
-                                <option value="Perak">Perak</option>
-                                <option value="Perunggu">Perunggu</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan Prestasi</button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 @endsection

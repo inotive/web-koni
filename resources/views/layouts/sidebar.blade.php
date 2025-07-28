@@ -125,6 +125,16 @@
                     </a>
                 </div>
             </div>
+            <div class="menu-item">
+                <a class="menu-link {{ request()->routeIs('admin.konfigurasi.prestasi.index') ? 'active bg-orange' : '' }}"
+                    href="{{ route('admin.konfigurasi.prestasi.index') }}">
+                    <span class="menu-icon">
+                        <i
+                            class="fa-solid fa-trophy fs-2 {{ request()->routeIs('admin.konfigurasi.prestasi.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                    </span>
+                    <span class="menu-title text-gray-800">Kejuaraan</span>
+                </a>
+            </div>
             <!--end::Menu-->
         </div>
     </div>
