@@ -13,7 +13,7 @@ class AtletSeeder extends Seeder
         for ($i = 1; $i <= 12; $i++) {
             Atlet::create([
                 'nama' => "Atlet $i",
-                'cabor' => ['Renang', 'Lari', 'Bulu Tangkis', 'Sepak Bola'][rand(0, 3)],
+                'cabor_id' => ['Renang', 'Lari', 'Bulu Tangkis', 'Sepak Bola'][rand(0, 3)],
                 'tempat_lahir' => 'Kota ' . $i,
                 'tanggal_lahir' => now()->subYears(rand(17, 30))->subDays(rand(0, 365)),
                 'alamat' => "Alamat Atlet $i",

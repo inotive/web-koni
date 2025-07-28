@@ -4,7 +4,7 @@
     data-kt-drawer-toggle="#kt_aside_mobile_toggle" style="box-shadow: 4px 0 6px -4px rgba(0, 0, 0, 0.1);">
 
     <div class="aside-toolbar flex-column-auto" id="kt_aside_toolbar">
-        </div>
+    </div>
     <div class="bg-white aside-menu flex-column-fluid">
         <div class="mx-5 my-5 hover-scroll-overlay-y my-lg-5" id="kt_aside_menu_wrapper" data-kt-scroll="true"
             data-kt-scroll-height="auto"
@@ -68,21 +68,33 @@
 
                 ---
 
-                <div class="menu-item pt-10">
-                    <div class="menu-content">
-                        <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Laporan LPJ</span>
-                    </div>
-                </div>
-
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.konfigurasi.kegiatan-lainnya.index') ? 'active bg-orange' : '' }}"
-                        href="{{ route('admin.konfigurasi.kegiatan-lainnya.index') }}">
-                        <span class="menu-icon">
-                            <i
-                                class="fa-solid fa-clipboard-list fs-2 {{ request()->routeIs('admin.konfigurasi.kegiatan-lainnya.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                    <a class="menu-link d-flex justify-content-between {{ request()->is('admin/laporan-pj*') ? 'active bg-orange' : '' }}"
+                        data-bs-toggle="collapse" href="#submenu-laporan-pj" role="button"
+                        aria-expanded="{{ request()->is('admin/laporan-pj*') ? 'true' : 'false' }}"
+                        aria-controls="submenu-laporan-pj">
+                        <span class="d-flex align-items-center">
+                            <span class="menu-icon">
+                                <i
+                                    class="fa-solid fa-file-invoice fs-2 {{ request()->is('admin/laporan-pj*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                            </span>
+                            <span class="menu-title">Laporan LPJ</span>
                         </span>
-                        <span class="menu-title">Kegiatan Lainnya</span>
+                        <i
+                            class="fa-solid {{ request()->is('admin/laporan-pj*') ? 'fa-angle-up' : 'fa-angle-down' }} fs-4"></i>
                     </a>
+                    <div class="collapse {{ request()->is('admin/laporan-pj*') ? 'show' : '' }}"
+                        id="submenu-laporan-pj">
+                        <ul class="menu flex-column ms-5">
+                            <li class="menu-item">
+                                <a class="menu-link {{ request()->is('admin/laporan-pj/kegiatan-lainnya*') ? 'active' : '' }}"
+                                    href="{{ route('admin.laporan-pj.kegiatan-lainnya.index') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Kegiatan Lainnya</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 ---
@@ -126,6 +138,6 @@
                     </a>
                 </div>
             </div>
-            </div>
+        </div>
     </div>
-    </div>
+</div>

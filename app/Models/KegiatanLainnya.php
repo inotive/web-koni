@@ -9,24 +9,19 @@ class KegiatanLainnya extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'kegiatan_lainnyas'; // Make sure this matches your migration's table name
+    protected $table = 'kegiatan_lainnya'; // Pastikan nama tabelnya benar jika tidak standar Laravel
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'nama_program_kegiatan',
+        'jenis_kegiatan',
+        'tanggal_kegiatan',
         'volume',
         'jumlah_harga_satuan',
         'jumlah_harga',
-        'foto_jurnal_path',
-        'dokumen_path',
+        'foto_jurnal',
+        'dokumen_pendukung',
     ];
+
+    // Jika Anda ingin mengelola tanggal secara otomatis oleh Carbon
+    protected $dates = ['tanggal_kegiatan'];
 }

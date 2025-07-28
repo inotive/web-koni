@@ -3,128 +3,136 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\KegiatanLainnya;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // This line is correct and necessary!
+use App\Models\KegiatanLainnya;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage; // <--- PASTIKAN BARIS INI ADA!
 
 class KegiatanLainnyaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $kegiatanLainnya = KegiatanLainnya::all();
-        // Assuming your admin views are also nested, e.g., resources/views/admin/kegiatan_lainnya/index.blade.php
+        // ... (kode index method Anda)
+        $search = $request->query('search');
+        $jenis_kegiatan_filter = $request->query('jenis_kegiatan_filter');
+        $start_date = $request->query('start_date');
+        $end_date = $request->query('end_date');
+        $perPage = $request->query('per_page', 10);
+        $sortBy = $request->query('sort_by', 'created_at');
+        $sortOrder = $request->query('sort_order', 'desc');
+
+        $query = KegiatanLainnya::query();
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_program_kegiatan', 'like', '%' . $search . '%')
+                  ->orWhere('jenis_kegiatan', 'like', '%' . $search . '%')
+                  ->orWhere('volume', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($jenis_kegiatan_filter) {
+            $query->where('jenis_kegiatan', $jenis_kegiatan_filter);
+        }
+
+        if ($start_date) {
+            $query->whereDate('tanggal_kegiatan', '>=', $start_date);
+        }
+        if ($end_date) {
+            $query->whereDate('tanggal_kegiatan', '<=', $end_date);
+        }
+
+        $query->orderBy($sortBy, $sortOrder);
+
+        $kegiatanLainnya = $query->paginate($perPage)->withQueryString();
+
         return view('admin.kegiatan_lainnya.index', compact('kegiatanLainnya'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('admin.kegiatan_lainnya.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
             'nama_program_kegiatan' => 'required|string|max:255',
-            'volume' => 'nullable|integer',
-            'jumlah_harga_satuan' => 'nullable|numeric',
-            'jumlah_harga' => 'nullable|numeric',
-            'foto_jurnal' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'dokumen' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5000',
+            'jenis_kegiatan' => 'required|string|max:255',
+            'tanggal_kegiatan' => 'required|date',
+            'volume' => 'required|string|max:255',
+            'jumlah_harga_satuan' => 'required|numeric',
+            'jumlah_harga' => 'required|numeric',
+            'foto_jurnal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'dokumen_pendukung' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
         ]);
 
         $data = $request->all();
 
         if ($request->hasFile('foto_jurnal')) {
-            $data['foto_jurnal_path'] = $request->file('foto_jurnal')->store('public/kegiatan_lainnya/foto_jurnal');
+            $data['foto_jurnal'] = $request->file('foto_jurnal')->store('kegiatan_lainnya/foto_jurnal', 'public');
         }
-        if ($request->hasFile('dokumen')) {
-            $data['dokumen_path'] = $request->file('dokumen')->store('public/kegiatan_lainnya/dokumen');
+        if ($request->hasFile('dokumen_pendukung')) {
+            $data['dokumen_pendukung'] = $request->file('dokumen_pendukung')->store('kegiatan_lainnya/dokumen_pendukung', 'public');
         }
 
         KegiatanLainnya::create($data);
 
-        // IMPORTANT: Update this redirect to match your actual route name
-        // Based on your routes/web.php, it should be 'admin.konfigurasi.kegiatan-lainnya.index'
-        return redirect()->route('admin.konfigurasi.kegiatan-lainnya.index')->with('success', 'Kegiatan Lainnya berhasil ditambahkan!');
+        // PASTIKAN NAMA RUTE UNTUK REDIRECT INI BENAR!
+        return redirect()->route('admin.laporan-pj.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(KegiatanLainnya $kegiatanLainnya)
+    public function show(KegiatanLainnya $kegiatan_lainnya)
     {
-        return view('admin.kegiatan_lainnya.show', compact('kegiatanLainnya'));
+        return view('admin.kegiatan_lainnya.show', compact('kegiatan_lainnya'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(KegiatanLainnya $kegiatanLainnya)
+    public function edit(KegiatanLainnya $kegiatan_lainnya)
     {
-        return view('admin.kegiatan_lainnya.edit', compact('kegiatanLainnya'));
+        return view('admin.kegiatan_lainnya.edit', compact('kegiatan_lainnya'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, KegiatanLainnya $kegiatanLainnya)
+    public function update(Request $request, KegiatanLainnya $kegiatan_lainnya)
     {
         $request->validate([
             'nama_program_kegiatan' => 'required|string|max:255',
-            'volume' => 'nullable|integer',
-            'jumlah_harga_satuan' => 'nullable|numeric',
-            'jumlah_harga' => 'nullable|numeric',
-            'foto_jurnal' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'dokumen' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5000',
+            'jenis_kegiatan' => 'required|string|max:255',
+            'tanggal_kegiatan' => 'required|date',
+            'volume' => 'required|string|max:255',
+            'jumlah_harga_satuan' => 'required|numeric',
+            'jumlah_harga' => 'required|numeric',
+            'foto_jurnal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'dokumen_pendukung' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
         ]);
 
         $data = $request->all();
 
         if ($request->hasFile('foto_jurnal')) {
-            if ($kegiatanLainnya->foto_jurnal_path) {
-                Storage::delete($kegiatanLainnya->foto_jurnal_path); // <--- Removed backslash
+            if ($kegiatan_lainnya->foto_jurnal) {
+                Storage::disk('public')->delete($kegiatan_lainnya->foto_jurnal);
             }
-            $data['foto_jurnal_path'] = $request->file('foto_jurnal')->store('public/kegiatan_lainnya/foto_jurnal');
+            $data['foto_jurnal'] = $request->file('foto_jurnal')->store('kegiatan_lainnya/foto_jurnal', 'public');
         }
-        if ($request->hasFile('dokumen')) {
-            if ($kegiatanLainnya->dokumen_path) {
-                Storage::delete($kegiatanLainnya->dokumen_path); // <--- Removed backslash
+        if ($request->hasFile('dokumen_pendukung')) {
+            if ($kegiatan_lainnya->dokumen_pendukung) {
+                Storage::disk('public')->delete($kegiatan_lainnya->dokumen_pendukung);
             }
-            $data['dokumen_path'] = $request->file('dokumen')->store('public/kegiatan_lainnya/dokumen');
+            $data['dokumen_pendukung'] = $request->file('dokumen_pendukung')->store('kegiatan_lainnya/dokumen_pendukung', 'public');
         }
 
-        $kegiatanLainnya->update($data);
+        $kegiatan_lainnya->update($data);
 
-        // IMPORTANT: Update this redirect to match your actual route name
-        // Based on your routes/web.php, it should be 'admin.konfigurasi.kegiatan-lainnya.index'
-        return redirect()->route('admin.konfigurasi.kegiatan-lainnya.index')->with('success', 'Kegiatan Lainnya berhasil diperbarui!');
+        // PASTIKAN NAMA RUTE UNTUK REDIRECT INI BENAR!
+        return redirect()->route('admin.laporan-pj.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(KegiatanLainnya $kegiatanLainnya)
+    public function destroy(KegiatanLainnya $kegiatan_lainnya)
     {
-        if ($kegiatanLainnya->foto_jurnal_path) {
-            Storage::delete($kegiatanLainnya->foto_jurnal_path); // <--- Removed backslash
+        if ($kegiatan_lainnya->foto_jurnal) {
+            Storage::disk('public')->delete($kegiatan_lainnya->foto_jurnal);
         }
-        if ($kegiatanLainnya->dokumen_path) {
-            Storage::delete($kegiatanLainnya->dokumen_path); // <--- Removed backslash
+        if ($kegiatan_lainnya->dokumen_pendukung) {
+            Storage::disk('public')->delete($kegiatan_lainnya->dokumen_pendukung);
         }
 
-        $kegiatanLainnya->delete();
+        $kegiatan_lainnya->delete();
 
-        // IMPORTANT: Update this redirect to match your actual route name
-        // Based on your routes/web.php, it should be 'admin.konfigurasi.kegiatan-lainnya.index'
-        return redirect()->route('admin.konfigurasi.kegiatan-lainnya.index')->with('success', 'Kegiatan Lainnya berhasil dihapus!');
+        // PASTIKAN NAMA RUTE UNTUK REDIRECT INI BENAR!
+        return redirect()->route('admin.laporan-pj.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil dihapus!');
     }
 }

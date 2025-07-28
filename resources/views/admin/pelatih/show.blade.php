@@ -2,7 +2,6 @@
 
 @section('pageTitle', 'Detail Pelatih')
 @section('mainSection', 'Konfigurasi')
-@section('mainSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('subSection', 'Pelatih')
 @section('subSectionUrl', route('admin.konfigurasi.pelatih.index'))
 @section('currentSection', 'Detail Pelatih')
@@ -10,11 +9,20 @@
 
 @section('content')
     <style>
+        body {
+        background-color: #f5f5f5 !important;
+        }
+
+        .main-content {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px 10px 40px;
+        }
         .detail-container {
             gap: 30px;
             width: 100%;
             display: flex;
-            padding: 0 40px 30px;
+            padding: 0 20px 20px;
             position: relative;
             max-width: 1067px;
             margin: 0 auto;
@@ -399,7 +407,7 @@
             }
         }
     </style>
-
+<div class="main-content">
     <div class="detail-container">
         <div class="detail-header">
             <h1 class="detail-title">Profil Pelatih</h1>
@@ -586,10 +594,10 @@
 
         <div class="detail-card">
             <div class="detail-card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <h2 class="detail-card-title">Informasi Kejuaraan</h2>
+                <b><h1 class="detail-card-title">Informasi Kejuaraan</h1></b>
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                     data-bs-target="#tambahPrestasiModal">
-                    + Tambah Prestasi
+                    Tambah
                 </button>
             </div>
 
@@ -615,14 +623,12 @@
                                             if ($prestasi->medali == 'Emas') {
                                                 $medalColor = '#FFD700';
                                             }
-                                            // Gold
                                             elseif ($prestasi->medali == 'Perak') {
                                                 $medalColor = '#C0C0C0';
                                             }
-                                            // Silver
                                             elseif ($prestasi->medali == 'Perunggu') {
                                                 $medalColor = '#CD7F32';
-                                            } // Bronze
+                                            } 
                                         @endphp
                                         <svg class="achievement-icon" viewBox="0 0 24 24"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -662,9 +668,9 @@
             </div>
         </div>
 
-        <div class="detail-actions">
+        {{-- <div class="detail-actions">
             <a href="{{ route('admin.konfigurasi.pelatih.index') }}" class="btn-secondary">Kembali</a>
-        </div>
+        </div> --}}
     </div>
 
     <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" aria-labelledby="tambahPrestasiModalLabel"
@@ -710,4 +716,5 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
