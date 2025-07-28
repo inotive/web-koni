@@ -59,20 +59,13 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);
         Route::resource('pelatih', PelatihController::class);
-        Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'storeForPelatih'])
+        Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
             ->name('pelatih.prestasi.store');
         Route::resource('cabang-olahraga', CabangOlahragaController::class);
     });
 
-    // --- BLOK RUTE LAPORAN PJ UNTUK KEGIATAN LAINNYA SAJA ---
-    Route::prefix('laporan-pj')->name('laporan-pj.')->group(function () {
-        // HAPUS BARIS INI (karena resource akan membuat index juga):
-        // Route::get('/kegiatan-lainnya', [KegiatanLainnyaController::class, 'index'])->name('kegiatan-lainnya.index');
-
-        // AKTIFKAN BARIS INI UNTUK MENDAPATKAN SEMUA RUTE CRUD (termasuk .store, .show, .edit, .destroy)
-        Route::resource('kegiatan-lainnya', KegiatanLainnyaController::class);
-    });
-    // --- AKHIR BLOK RUTE LAPORAN PJ ---
+    // RUTE KEGIATAN LAINNYA YANG BARU (LANGSUNG DI BAWAH ADMIN)
+    Route::resource('kegiatan-lainnya', KegiatanLainnyaController::class);
 
     Route::post('atlets/{atlet}/prestasi', [PrestasiController::class, 'store'])->name('atlet.prestasi.store');
     Route::delete('prestasi/{prestasi}', [PrestasiController::class, 'destroy'])->name('prestasi.destroy');
