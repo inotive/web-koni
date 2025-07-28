@@ -9,13 +9,14 @@ class Prestasi extends Model
 {
     use HasFactory;
 
-    protected $table = 'prestasis'; // Make sure this matches your table name
+    protected $table = 'prestasis';
 
     protected $fillable = [
         'nama_prestasi',
         'tempat',
         'tahun',
         'medali',
+        'tingkat',
         'subject_id',
         'subject_type'
     ];
@@ -33,18 +34,27 @@ class Prestasi extends Model
     }
 
     /**
-     * Get the atlet that owns the prestasi (if applicable)
+     * Scope untuk filter berdasarkan subject type
      */
-    // public function atlet()
-    // {
-    //     return $this->morphedByMany(Atlet::class, 'subject');
-    // }
+    public function scopeForAtlet($query)
+    {
+        return $query->where('subject_type', Atlet::class);
+    }
 
-    // /**
-    //  * Get the pelatih that owns the prestasi (if applicable)
-    //  */
-    // public function pelatih()
-    // {
-    //     return $this->morphedByMany(Pelatih::class, 'subject');
-    // }
+    public function scopeForPelatih($query)
+    {
+        return $query->where('subject_type', Pelatih::class);
+    }
+
+    /**
+     * Get medal color
+     */
+    public function getMedalColorAttribute()
+    {
+        return [
+            'Emas' => 'text-warning',
+            'Perak' => 'text-secondary',
+            'Perunggu' => 'text-danger'
+        ][$this->medali] ?? 'text-primary';
+    }
 }
