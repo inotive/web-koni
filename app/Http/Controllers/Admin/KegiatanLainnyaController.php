@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin; // Namespace ini sudah benar sesuai lokasi file Anda
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\KegiatanLainnya;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage; // <--- PASTIKAN BARIS INI ADA!
+use Carbon\Carbon; // Diimpor karena Anda menggunakannya di view untuk format tanggal
+use Illuminate\Support\Facades\Storage; // Diimpor karena Anda menggunakannya untuk operasi file
 
 class KegiatanLainnyaController extends Controller
 {
     public function index(Request $request)
     {
-        // ... (kode index method Anda)
         $search = $request->query('search');
         $jenis_kegiatan_filter = $request->query('jenis_kegiatan_filter');
         $start_date = $request->query('start_date');
@@ -44,9 +43,14 @@ class KegiatanLainnyaController extends Controller
 
         $query->orderBy($sortBy, $sortOrder);
 
+        // Baris ini yang memicu peringatan Intelephense, tetapi secara fungsional benar di Laravel
         $kegiatanLainnya = $query->paginate($perPage)->withQueryString();
 
-        return view('admin.kegiatan_lainnya.index', compact('kegiatanLainnya'));
+        // Judul halaman utama (karena tidak ada model Bidang)
+        $namaBidangUntukJudul = 'Manajemen'; // Atau 'Kegiatan' atau sesuai keinginan Anda
+
+        // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/index.blade.php
+        return view('admin.kegiatan_lainnya.index', compact('kegiatanLainnya', 'namaBidangUntukJudul'));
     }
 
     public function store(Request $request)
@@ -73,17 +77,19 @@ class KegiatanLainnyaController extends Controller
 
         KegiatanLainnya::create($data);
 
-        // PASTIKAN NAMA RUTE UNTUK REDIRECT INI BENAR!
-        return redirect()->route('admin.laporan-pj.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil ditambahkan!');
+        // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
+        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
 
     public function show(KegiatanLainnya $kegiatan_lainnya)
     {
+        // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/show.blade.php
         return view('admin.kegiatan_lainnya.show', compact('kegiatan_lainnya'));
     }
 
     public function edit(KegiatanLainnya $kegiatan_lainnya)
     {
+        // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/edit.blade.php
         return view('admin.kegiatan_lainnya.edit', compact('kegiatan_lainnya'));
     }
 
@@ -117,8 +123,8 @@ class KegiatanLainnyaController extends Controller
 
         $kegiatan_lainnya->update($data);
 
-        // PASTIKAN NAMA RUTE UNTUK REDIRECT INI BENAR!
-        return redirect()->route('admin.laporan-pj.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil diperbarui!');
+        // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
+        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil diperbarui!');
     }
 
     public function destroy(KegiatanLainnya $kegiatan_lainnya)
@@ -132,7 +138,7 @@ class KegiatanLainnyaController extends Controller
 
         $kegiatan_lainnya->delete();
 
-        // PASTIKAN NAMA RUTE UNTUK REDIRECT INI BENAR!
-        return redirect()->route('admin.laporan-pj.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil dihapus!');
+        // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
+        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil dihapus!');
     }
 }
