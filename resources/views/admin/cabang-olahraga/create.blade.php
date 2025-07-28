@@ -10,7 +10,7 @@
 @endpush
 
 @section('breadcrumb-title')
-    <h1 class="text-dark fw-bold fs-3 mb-0">Tambah Cabang Olahraga</h1>
+    {{-- <h1 class="text-dark fw-bold fs-3 mb-0">Tambah Cabang Olahraga</h1> --}}
 @endsection
 
 @section('content')

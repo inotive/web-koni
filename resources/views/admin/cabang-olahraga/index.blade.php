@@ -303,7 +303,8 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="badge {{ $cabor->status == 'Aktif' ? 'badge-light-success' : 'badge-light-danger' }}">
+                                            <span
+                                                class="badge {{ $cabor->status == 'Aktif' ? 'badge-light-success' : 'badge-light-danger' }}">
                                                 {{ $cabor->status }}
                                             </span>
                                         </td>
@@ -417,13 +418,13 @@
                     paging: true,
                     pageLength: 10,
                     info: false,
-                    searching: true,
+                    searching: true, // Biarkan ini true untuk memungkinkan pencarian internal DataTables
                     ordering: true,
                     responsive: false,
                     autoWidth: false,
                     scrollX: false,
                     lengthChange: false,
-                    dom: 'rt',
+                    dom: 'rt', // Ini menyembunyikan input pencarian default yang disediakan oleh DataTables
                     columnDefs: [{
                             targets: [0, -1], // kolom No dan Aksi
                             orderable: false,
@@ -442,63 +443,69 @@
                             targets: 2
                         },
                     ],
-                    order: [], // No default sorting
+                    order: [], // Tidak ada pengurutan default
                     drawCallback: function(settings) {
-                        // Update nomor urut tetap berurutan dari 1
                         const api = this.api();
                         const start = api.page.info().start;
-                        
-                        // Reset nomor urut selalu mulai dari 1 untuk halaman pertama
+
                         let counter = start + 1;
-                        api.column(0, { page: 'current' }).nodes().each(function(cell, i) {
+                        api.column(0, {
+                            page: 'current'
+                        }).nodes().each(function(cell, i) {
                             cell.innerHTML = counter++;
                         });
-                        
+
                         updatePaginationControls();
                         updateFilterInfo();
                         updateSortIcons();
                     }
                 });
 
+                // Penting: totalCount ini harus didefinisikan setelah tabel diinisialisasi
+                // dan ini mengacu pada jumlah baris yang tersedia di DataTables, bukan hanya data yang sedang ditampilkan.
                 const totalCount = table.rows().count();
 
-                // Search functionality
+                // Fungsionalitas pencarian dengan debounce
+                let searchTimeout = null;
                 $('#search').on('keyup', function() {
-                    table.search(this.value).draw();
+                    clearTimeout(searchTimeout); // Hapus timeout sebelumnya jika ada
+                    const searchValue = this.value;
+                    searchTimeout = setTimeout(() => {
+                        table.search(searchValue).draw();
+                    }, 300); // Waktu debounce 300ms
                 });
 
-                // Custom sorting click handler
+                // Penanganan klik pengurutan kustom
                 $('.sortable').on('click', function(e) {
                     e.preventDefault();
                     const column = $(this).data('column');
-                    
-                    // Get current order
+
                     const currentOrder = table.order();
                     let newOrder = 'asc';
-                    
-                    // If currently sorting by this column, toggle order
+
+                    // Jika saat ini diurutkan berdasarkan kolom ini, ganti urutan
                     if (currentOrder.length > 0 && currentOrder[0][0] === column) {
                         newOrder = currentOrder[0][1] === 'asc' ? 'desc' : 'asc';
                     }
-                    
-                    // Apply new order
+
+                    // Terapkan urutan baru
                     table.order([column, newOrder]).draw();
                 });
 
-                // Update sort icons
+                // Perbarui ikon pengurutan
                 function updateSortIcons() {
-                    // Reset all sort icons
+                    // Reset semua ikon pengurutan
                     $('.sort-icon').removeClass('active fas fa-sort-up fa-sort-down').addClass('fas fa-sort');
-                    
-                    // Get current order
+
+                    // Dapatkan urutan saat ini
                     const currentOrder = table.order();
                     if (currentOrder.length > 0) {
                         const columnIndex = currentOrder[0][0];
                         const direction = currentOrder[0][1];
-                        
+
                         const sortIcon = $(`.sortable[data-column="${columnIndex}"] .sort-icon`);
                         sortIcon.removeClass('fas fa-sort').addClass('active');
-                        
+
                         if (direction === 'asc') {
                             sortIcon.addClass('fas fa-sort-up');
                         } else {
@@ -507,43 +514,42 @@
                     }
                 }
 
-                // Custom filter untuk status
+                // Filter kustom untuk status
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                     const row = table.row(dataIndex).node();
                     const $row = $(row);
-                    
+
                     const statusFilter = $('#filter-status').val();
                     const rowStatus = $row.data('status');
 
                     if (statusFilter && rowStatus !== statusFilter) return false;
-                    
+
                     return true;
                 });
 
-                // Apply filters
+                // Terapkan filter
                 $('#apply-filters').on('click', function() {
                     table.draw();
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
                 });
 
-                // Reset filters
+                // Reset filter
                 $('#reset-filters').on('click', function() {
                     $('#filter-status').val('');
-                    $('#search').val('');
-                    
-                    table.search('').draw();
+                    $('#search').val(''); // Tambahkan baris ini untuk mengosongkan input pencarian juga
+                    table.search('').draw(); // Ini membersihkan pencarian internal DataTables
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
                 });
 
-                // Entries per page
+                // Entri per halaman
                 $('#entries-per-page').on('change', function() {
                     const length = parseInt($(this).val());
                     table.page.len(length).draw();
                 });
 
-                // Page navigation
+                // Navigasi halaman
                 $('#page-select').on('change', function() {
                     const page = parseInt($(this).val()) - 1;
                     table.page(page).draw();
@@ -562,29 +568,26 @@
                     const currentPage = info.page + 1;
                     const totalPages = info.pages;
 
-                    // Update page select options
                     const pageSelect = $('#page-select');
                     pageSelect.empty();
                     for (let i = 1; i <= totalPages; i++) {
                         pageSelect.append(`<option value="${i}" ${i === currentPage ? 'selected' : ''}>${i}</option>`);
                     }
 
-                    // Update total pages
                     $('#total-pages').text(totalPages);
 
-                    // Update navigation buttons
                     $('#prev-page').prop('disabled', info.page === 0).toggleClass('disabled', info.page === 0);
                     $('#next-page').prop('disabled', info.page === info.pages - 1).toggleClass('disabled', info.page === info.pages - 1);
                 }
 
                 function updateFilterCount() {
                     const activeFilters = [];
-                    
+
                     if ($('#filter-status').val()) activeFilters.push('status');
-                    
+
                     const count = activeFilters.length;
                     const badge = $('#filter-count');
-                    
+
                     if (count > 0) {
                         badge.text(count).removeClass('d-none');
                     } else {
@@ -596,10 +599,12 @@
                     const info = table.page.info();
                     const showingCount = info.recordsDisplay;
                     $('#showing-count').text(showingCount);
-                    $('#total-count').text(totalCount);
+                    // totalCount di sini harus mengacu pada total baris yang *difilter* oleh DataTables
+                    // bukan total baris asli dari Blade. Untuk itu, gunakan info.recordsTotal
+                    $('#total-count').text(info.recordsTotal);
                 }
 
-                // Initialize
+                // Inisialisasi awal
                 updatePaginationControls();
                 updateFilterInfo();
                 updateFilterCount();
@@ -608,3 +613,4 @@
         </script>
     @endif
 @endsection
+
