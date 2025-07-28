@@ -4,40 +4,40 @@
 }
 
 /* Custom active state for sidebar menu (orange like Dashboard) */
-.menu-link.active, .menu-link.active.bg-orange {
+.menu-link.active, .menu-link.active.bg-red {
     background-color: transparent !important;
-    color: #fd7e14 !important;
+    color: #F8285A !important;
     border-radius: 0 !important;
 }
 .menu-link.active .menu-title,
-.menu-link.active.bg-orange .menu-title {
-    color: #fd7e14 !important;
+.menu-link.active.bg-red .menu-title {
+    color: #F8285A !important;
 }
 .menu-link.active .menu-icon i,
-.menu-link.active.bg-orange .menu-icon i {
-    color: #fd7e14 !important;
+.menu-link.active.bg-red .menu-icon i {
+    color: #F8285A !important;
 }
 
 /* Hover state for sidebar menu (orange like Dashboard) */
-.menu-link:hover:not(.active):not(.bg-orange) {
-    background-color: #fff5e5 !important;
-    color: #fd7e14 !important;
+.menu-link:hover:not(.active):not(.bg-red) {
+    background-color: #ffcad7ff !important;
+    color: #F8285A !important;
     border-radius: 12px !important;
 }
-.menu-link:hover:not(.active):not(.bg-orange) .menu-title {
-    color: #fd7e14 !important;
+.menu-link:hover:not(.active):not(.bg-red) .menu-title {
+    color: #F8285A !important;
 }
-.menu-link:hover:not(.active):not(.bg-orange) .menu-icon i {
-    color: #fd7e14 !important;
+.menu-link:hover:not(.active):not(.bg-red) .menu-icon i {
+    color: #F8285A !important;
 }
-.menu-link:hover:not(.active):not(.bg-orange) .menu-bullet .bullet {
-    background-color: #fd7e14 !important;
+.menu-link:hover:not(.active):not(.bg-red) .menu-bullet .bullet {
+    background-color: #F8285A !important;
 }
 
 /* Bullet orange for active menu */
 .menu-link.active .menu-bullet .bullet,
-.menu-link.active.bg-orange .menu-bullet .bullet {
-    background-color: #fd7e14 !important;
+.menu-link.active.bg-red .menu-bullet .bullet {
+    background-color: #F8285A !important;
 }
 
 /* Animated arrow for parent menu (rotate on open) */
@@ -52,7 +52,7 @@
 
 /* Remove default blue highlight if any */
 .menu-link.active,
-.menu-link.active.bg-orange {
+.menu-link.active.bg-red {
     box-shadow: none !important;
 }
 
@@ -60,7 +60,7 @@
 [data-kt-app-layout] .menu-column > .menu-item > .menu-link,
 [data-kt-app-layout] .menu-column > .menu-item > .menu-title {
     font-weight: 600 !important;
-    font-size: 1.1rem !important;
+    font-size: 1.2rem !important;
 }
 
 /* Sub menu normal, lebih spesifik */
@@ -71,7 +71,7 @@
 }
 
 .menu-icon i {
-    font-size: 1.3rem !important; /* lebih kecil, setara 20-21px */
+    font-size: 1.8rem !important; /* lebih kecil, setara 20-21px */
     line-height: 1.2 !important;
 }
 .menu-link {

@@ -1,16 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\AtletController;
 use App\Http\Controllers\Admin\PelatihController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PrestasiController;
+use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\CabangOlahragaController;
+use App\Http\Controllers\Admin\ManajemenRKAController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -65,6 +66,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::post('atlets/{atlet}/prestasi', [PrestasiController::class, 'store'])->name('atlet.prestasi.store');
     Route::delete('prestasi/{prestasi}', [PrestasiController::class, 'destroy'])->name('prestasi.destroy');
 
+    Route::resource('manajemen-rka', ManajemenRKAController::class);
 
     Route::get('konfigurasi/pelatih/{id}/deskripsi', [PelatihController::class, 'deskripsi'])
         ->name('konfigurasi.pelatih.deskripsi');

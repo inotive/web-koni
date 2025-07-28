@@ -7,9 +7,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>KONI Tabalong - @yield('title')</title>
 
-    <link rel="shortcut icon" href="{{ asset('assets/img/logo.png') }}" />
+    {{-- <link rel="shortcut icon" href="{{ asset('assets/koni.png') }}" /> --}}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap Select CSS -->
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
@@ -32,28 +33,28 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .justify {
-            text-align: justify;
-            line-height: 2rem;
-        }
-
-        .bg-orange {
-            background-color: #FEF9EC !important;
+        .bg-red {
+            background-color: #ffcad7ff !important;
             font-weight: bold;
         }
 
-        .bg-orange-strong {
+        .bg-red-strong {
             background-color: #F8285A !important;
             font-weight: bold;
         }
 
-        .border-orange {
+        /* .justify {
+            text-align: justify;
+            line-height: 2rem;
+        }
+
+        .border-red {
             border-color: #F8285A !important;
         }
 
         .truncate {
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* Jumlah baris maksimal */
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -94,7 +95,6 @@
             outline: none !important;
         }
 
-        /* Custom container dengan max-width 1600px */
         .container-fluid-limited {
             width: 100%;
             padding-right: var(--bs-gutter-x, 0.75rem);
@@ -105,16 +105,15 @@
         }
 
         .ck.ck-content.ck-editor__editable {
-        white-space: pre-wrap !important;
-        word-break: break-word !important;
-        min-width: 0 !important; /* Fix untuk flexbox */
-    }
-    /* Batasi lebar parent */
-    .col-12.w-100.mb-4 {
-        max-width: 100%;
-        overflow: hidden;
-    }
+            white-space: pre-wrap !important;
+            word-break: break-word !important;
+            min-width: 0 !important;
+        }
 
+        .col-12.w-100.mb-4 {
+            max-width: 100%;
+            overflow: hidden;
+        } */
     </style>
     @stack('stack-css')
 
@@ -122,12 +121,10 @@
 
 
 </head>
-<!--end::Head-->
-<!--begin::Body-->
 
 <body id="kt_body" class="aside-enabled">
     <!--begin::Theme mode setup on page load-->
-    <script>
+    {{-- <script>
         var defaultThemeMode = "light";
         var themeMode;
         if (document.documentElement) {
@@ -145,75 +142,74 @@
             }
             document.documentElement.setAttribute("data-bs-theme", themeMode);
         }
-    </script>
+    </script> --}}
     <!--end::Theme mode setup on page load-->
-    <!--begin::Main-->
-    <!--begin::Root-->
-    <div class="d-flex flex-column flex-root">
-        <!--begin::Page-->
-        <div class="flex-row page d-flex flex-column-fluid">
-            <!--begin::Aside-->
-            @include('layouts.sidebar')
-            <!--end::Aside-->
-            <!--begin::Wrapper-->
-            <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
-                <!--begin::Header-->
-                @include('layouts.header')
-                <!--end::Header-->
-                <!--begin::Breadcrumb (Custom)-->
-<div class="container-fluid-limited mt-5">
-    <div class="mb-5">
-        <h1 class="text-2xl font-semibold text-gray-800">@yield('breadcrumb-title')</h1>
-        <nav class="text-sm mt-1" aria-label="Breadcrumb">
-            <ol class="flex space-x-2 text-gray-600">
-                @yield('breadcrumb-items')
-            </ol>
-        </nav>
-    </div>
-</div>
-                @yield('content')
-                <!--end::Content-->
-                <!--begin::Footer-->
-                @include('layouts.footer')
-                <!--end::Footer-->
-            </div>
-            <!--end::Wrapper-->
-        </div>
-        <!--end::Page-->
-    </div>
-    <!--end::Root-->
 
-    <!--end::Main-->
-    <!--begin::Scrolltop-->
-    <div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
-        <i class="ki-duotone ki-arrow-up">
-            <span class="path1"></span>
-            <span class="path2"></span>
-        </i>
+    @include('layouts.sidebar')
+
+    <div id="kt_wrapper" class="wrapper d-flex flex-column min-vh-100">
+        @include('layouts.header')
+
+        <main class="flex-grow-1 overflow-auto py-4">
+            <div class="container-fluid-limited mt-5">
+                <div class="mb-5">
+                    <h1 class="text-2xl font-semibold text-gray-800">@yield('breadcrumb-title')</h1>
+                    <nav class="mt-1 text-sm" aria-label="Breadcrumb">
+                        <ol class="flex space-x-2 text-gray-600">
+                            @yield('breadcrumb-items')
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="px-10">
+                @yield('content')
+            </div>
+
+            {{-- <div id="scrolltop" class="scrolltop" data-kt-scrolltop="true">
+                <i class="ki-duotone ki-arrow-up">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+            </div> --}}
+        </main>
+
+        @include('layouts.footer')
     </div>
+
+    <!--begin::Scrolltop-->
     <!--end::Scrolltop-->
     @include('layouts.js-file')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // let myDropzone = '';
-        // let cliendId = 0;
-    </script>
     @stack('modal')
     @yield('script')
     @stack('stack-script')
 
-<!-- Tambahkan sebelum penutup </body> -->
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        lucide.createIcons();
-    });
-</script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
 
+            const content = document.querySelector('main');
+            const scrollTopBtn = document.getElementById('scrolltop');
 
+            content.addEventListener('scroll', () => {
+                if (content.scrollTop > 300) {
+                    scrollTopBtn.classList.add('show');
+                } else {
+                    scrollTopBtn.classList.remove('show');
+                }
+            });
 
+            scrollTopBtn.addEventListener('click', () => {
+                content.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
-<!--end::Body-->
 
 </html>

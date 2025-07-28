@@ -35,30 +35,33 @@
 
                 <!-- Dashboard -->
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.dashboard.index') ? 'active bg-orange' : '' }}"
+                    <a class="menu-link {{ request()->routeIs('admin.dashboard.index') ? 'active bg-red' : '' }}"
                         href="{{ route('admin.dashboard.index') }}">
                         <span class="menu-icon">
-                            <i
-                                class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
+                            <i class="ki-solid ki-category"></i>
                         </span>
-                        {{-- <span class="menu-icon">
-                            <i
-                                class="fa-solid fa-house fs-2 {{ request()->routeIs('admin.dashboard.index') ? 'text-orange' : 'text-gray-600' }}"></i>
-                        </span> --}}
                         <span class="menu-title">Dashboard</span>
                     </a>
                 </div>
-
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('admin.manajemen-rka*') ? 'active bg-red' : '' }}"
+                        href="{{ route('admin.manajemen-rka.index') }}">
+                        <span class="menu-icon">
+                            <i class="ki-solid ki-tablet-text-up"></i>
+                        </span>
+                        <span class="menu-title">Manajemen RKA</span>
+                    </a>
+                </div>
 
                 <div class="menu-item">
-                    <a class="menu-link d-flex justify-content-between {{ request()->is('admin/manajemen-pengguna*') ? 'active bg-orange' : '' }}"
+                    <a class="menu-link d-flex justify-content-between {{ request()->is('admin/manajemen-pengguna*') ? 'active bg-red' : '' }}"
                         data-bs-toggle="collapse" href="#submenu-pengguna" role="button"
                         aria-expanded="{{ request()->is('admin/manajemen-pengguna*') ? 'true' : 'false' }}"
                         aria-controls="submenu-pengguna">
                         <span class="d-flex align-items-center">
                             <span class="menu-icon">
                                 <i
-                                    class="fa-solid fa-users fs-2 {{ request()->is('admin/manajemen-pengguna*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                                    class="fa-solid fa-users {{ request()->is('admin/manajemen-pengguna*') ? 'text-orange' : 'text-gray-600' }}"></i>
                             </span>
                             <span class="menu-title">Manajemen Pengguna</span>
                         </span>
@@ -94,7 +97,7 @@
                 </div>
 
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.konfigurasi.atlet.index') ? 'active bg-orange' : '' }}"
+                    <a class="menu-link {{ request()->routeIs('admin.konfigurasi.atlet.index') ? 'active bg-red' : '' }}"
                         href="{{ route('admin.konfigurasi.atlet.index') }}">
                         <span class="menu-icon">
                             <i
@@ -105,7 +108,7 @@
                 </div>
 
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.konfigurasi.pelatih.index') ? 'active bg-orange' : '' }}"
+                    <a class="menu-link {{ request()->routeIs('admin.konfigurasi.pelatih.index') ? 'active bg-red' : '' }}"
                         href="{{ route('admin.konfigurasi.pelatih.index') }}">
                         <span class="menu-icon">
                             <i
