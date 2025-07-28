@@ -1,50 +1,45 @@
 @extends('layouts.app')
 @section('pageTitle', 'Cabang Olahraga')
+
 @section('mainSection', 'Konfigurasi')
 @section('mainSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
 @section('subSection', 'Cabang Olahraga')
 @section('subSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
-@section('currentSection', 'Detail Cabang Olahraga')
+@section('currentSection', 'Detail {{ $cabor->nama_cabor ?? "Cabang Olahraga" }}')
 
 @section('breadcrumb-title')
-    {{-- Halaman Cabang Olahraga --}}
+    {{-- Halaman Detail Cabang Olahraga --}}
 @endsection
 
 @section('content')
 <div class="container-fluid">
-    <!-- Header Section -->
-    <div class="card mb-6">
-        <div class="card-header border-0 pt-6">
-            <div class="card-title">
-                <h2 class="fw-bold text-dark">
-                    <i class="ki-duotone ki-sport fs-2 text-primary me-2">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                    Cabang Olahraga: {{ $cabor->nama_cabor ?? 'Nama Cabang Olahraga' }}
-                </h2>
-            </div>
-            <div class="card-toolbar">
-                <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}" 
-                   class="btn btn-sm btn-light-primary">
-                    <i class="ki-duotone ki-arrow-left fs-2">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                    Kembali
-                </a>
-            </div>
+    <div class="d-flex justify-content-between align-items-center mb-6">
+        <div class="flex-grow-1">
+            <h1 class="page-heading d-flex text-dark fw-bold fs-1 my-0 align-items-center">
+                <i class="ki-duotone ki-sport fs-1 text-primary me-3">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+                Detail {{ $cabor->nama_cabor ?? 'Cabang Olahraga' }}
+            </h1>
+        </div>
+        <div class="flex-shrink-0">
+            <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}" 
+               class="btn btn-light-primary">
+                <i class="ki-duotone ki-arrow-left fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+                Kembali
+            </a>
         </div>
     </div>
 
-    
-
-    <!-- Tabs Card -->
     <div class="card">
         <div class="card-header border-0">
-            <div class="card-title">
-                <div class="nav nav-tabs nav-line-tabs nav-stretch fs-6 border-0">
-                    <div class="nav-item">
+            <div class="card-title w-100">
+                <div class="nav nav-tabs nav-line-tabs nav-stretch fs-6 border-0 overflow-auto flex-nowrap">
+                    <div class="nav-item flex-shrink-0">
                         <a class="nav-link active fw-bold" data-bs-toggle="tab" href="#kt_tab_pane_atlet">
                             <i class="ki-duotone ki-people fs-2 me-2">
                                 <span class="path1"></span>
@@ -53,17 +48,17 @@
                                 <span class="path4"></span>
                                 <span class="path5"></span>
                             </i>
-                            Informasi Atlet
+                            <span class="d-none d-sm-inline">Informasi </span>Atlet
                             <span class="badge badge-light-primary ms-2">{{ $cabor->atlets->count() ?? 0 }}</span>
                         </a>
                     </div>
-                    <div class="nav-item">
+                    <div class="nav-item flex-shrink-0">
                         <a class="nav-link fw-bold" data-bs-toggle="tab" href="#kt_tab_pane_pelatih">
                             <i class="ki-duotone ki-teacher fs-2 me-2">
                                 <span class="path1"></span>
                                 <span class="path2"></span>
                             </i>
-                            Informasi Pelatih
+                            <span class="d-none d-sm-inline">Informasi </span>Pelatih
                             <span class="badge badge-light-success ms-2">{{ $cabor->pelatihs->count() ?? 0 }}</span>
                         </a>
                     </div>
@@ -71,30 +66,29 @@
             </div>
         </div>
 
-        <div class="card-body">
+        <div class="card-body p-0">
             <div class="tab-content">
-                <!-- Tab Pane Atlet -->
                 <div class="tab-pane fade show active" id="kt_tab_pane_atlet" role="tabpanel">
                     @if(($cabor->atlets ?? collect())->count() > 0)
-                        <div class="table-responsive">
-                            <table class="table table-row-dashed table-row-gray-300 gy-7">
+                        <div class="table-responsive"> 
+                            <table class="table table-row-dashed table-row-gray-300 gy-7 mb-0">
                                 <thead>
                                     <tr class="fw-semibold fs-6 text-gray-800 border-bottom-2 border-gray-200">
-                                        <th class="min-w-50px">No</th>
+                                        <th class="min-w-50px ps-6">No</th>
                                         <th class="min-w-80px">Foto</th>
                                         <th class="min-w-150px">Nama Atlet</th>
-                                        <th class="min-w-150px">Tempat & Tanggal Lahir</th>
-                                        <th class="min-w-100px">Jenis Kelamin</th>
+                                        <th class="min-w-200px">Tempat & Tanggal Lahir</th>
+                                        <th class="min-w-120px">Jenis Kelamin</th>
                                         <th class="min-w-80px">Usia</th>
-                                        <th class="min-w-150px">Prestasi Terbaru</th>
-                                        <th class="min-w-120px">Kontak</th>
-                                        <th class="min-w-80px text-end">Aksi</th>
+                                        <th class="min-w-180px">Prestasi Terbaru</th>
+                                        <th class="min-w-150px">Kontak</th>
+                                        <th class="min-w-100px text-end pe-6">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($cabor->atlets as $index => $atlet)
                                     <tr>
-                                        <td>
+                                        <td class="ps-6">
                                             <span class="text-gray-800 fw-bold">{{ $index + 1 }}</span>
                                         </td>
                                         <td>
@@ -120,24 +114,27 @@
                                         <td>
                                             <div class="d-flex flex-column">
                                                 <span class="text-gray-800 fw-bold mb-1">{{ $atlet->nama ?? '-' }}</span>
-                                                <span class="text-muted fs-7">{{ $atlet->alamat_domisili ?? '-' }}</span>
+                                                <span class="text-muted fs-7">{{ Str::limit($atlet->alamat_domisili ?? '-', 30) }}</span>
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="text-gray-800 fw-semibold">
-                                                {{ ($atlet->tempat_lahir ?? '-') . ', ' . (isset($atlet->tanggal_lahir) ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->translatedFormat('d F Y') : '-') }}
-                                            </span>
+                                            <div class="text-gray-800 fw-semibold">
+                                                <div>{{ $atlet->tempat_lahir ?? '-' }}</div>
+                                                <div class="text-muted fs-7">
+                                                    {{ isset($atlet->tanggal_lahir) ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->translatedFormat('d M Y') : '-' }}
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             <span class="badge badge-light-info">{{ ucfirst($atlet->jenis_kelamin ?? '-') }}</span>
                                         </td>
                                         <td>
                                             <span class="text-gray-800 fw-semibold">
-                                                {{ isset($atlet->tanggal_lahir) ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->age . ' tahun' : '-' }}
+                                                {{ isset($atlet->tanggal_lahir) ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->age . ' th' : '-' }}
                                             </span>
                                         </td>
                                         <td>
-                                            <span class="text-gray-600">{{ Str::limit($atlet->prestasi_terbaru ?? '-', 50) }}</span>
+                                            <span class="text-gray-600">{{ Str::limit($atlet->prestasi_terbaru ?? '-', 60) }}</span>
                                         </td>
                                         <td>
                                             <div class="d-flex flex-column">
@@ -156,12 +153,12 @@
                                                             <span class="path1"></span>
                                                             <span class="path2"></span>
                                                         </i>
-                                                        {{ $atlet->email }}
+                                                        {{ Str::limit($atlet->email, 20) }}
                                                     </span>
                                                 @endif
                                             </div>
                                         </td>
-                                        <td class="text-end">
+                                        <td class="text-end pe-6">
                                             <a href="{{ route('admin.konfigurasi.atlet.show', $atlet->id ?? '#') }}" 
                                                class="btn btn-sm btn-light-primary">
                                                 <i class="ki-duotone ki-eye fs-5">
@@ -169,7 +166,7 @@
                                                     <span class="path2"></span>
                                                     <span class="path3"></span>
                                                 </i>
-                                                Lihat
+                                                <span class="d-none d-md-inline ms-1">Lihat</span>
                                             </a>
                                         </td>
                                     </tr>
@@ -190,28 +187,27 @@
                     @endif
                 </div>
 
-                <!-- Tab Pane Pelatih -->
                 <div class="tab-pane fade" id="kt_tab_pane_pelatih" role="tabpanel">
                     @if(($cabor->pelatihs ?? collect())->count() > 0)
                         <div class="table-responsive">
-                            <table class="table table-row-dashed table-row-gray-300 gy-7">
+                            <table class="table table-row-dashed table-row-gray-300 gy-7 mb-0">
                                 <thead>
                                     <tr class="fw-semibold fs-6 text-gray-800 border-bottom-2 border-gray-200">
-                                        <th class="min-w-50px">No</th>
+                                        <th class="min-w-50px ps-6">No</th>
                                         <th class="min-w-80px">Foto</th>
                                         <th class="min-w-150px">Nama Pelatih</th>
-                                        <th class="min-w-150px">Tempat & Tanggal Lahir</th>
-                                        <th class="min-w-100px">Jenis Kelamin</th>
+                                        <th class="min-w-200px">Tempat & Tanggal Lahir</th>
+                                        <th class="min-w-120px">Jenis Kelamin</th>
                                         <th class="min-w-80px">Usia</th>
-                                        <th class="min-w-150px">Prestasi/Sertifikasi</th>
-                                        <th class="min-w-120px">Kontak</th>
-                                        <th class="min-w-80px text-end">Aksi</th>
+                                        <th class="min-w-180px">Prestasi/Sertifikasi</th>
+                                        <th class="min-w-150px">Kontak</th>
+                                        <th class="min-w-100px text-end pe-6">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($cabor->pelatihs as $index => $pelatih)
                                     <tr>
-                                        <td>
+                                        <td class="ps-6">
                                             <span class="text-gray-800 fw-bold">{{ $index + 1 }}</span>
                                         </td>
                                         <td>
@@ -237,24 +233,27 @@
                                         <td>
                                             <div class="d-flex flex-column">
                                                 <span class="text-gray-800 fw-bold mb-1">{{ $pelatih->nama ?? '-' }}</span>
-                                                <span class="text-muted fs-7">{{ $pelatih->alamat_domisili ?? '-' }}</span>
+                                                <span class="text-muted fs-7">{{ Str::limit($pelatih->alamat_domisili ?? '-', 30) }}</span>
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="text-gray-800 fw-semibold">
-                                                {{ ($pelatih->tempat_lahir ?? '-') . ', ' . (isset($pelatih->tanggal_lahir) ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->translatedFormat('d F Y') : '-') }}
-                                            </span>
+                                            <div class="text-gray-800 fw-semibold">
+                                                <div>{{ $pelatih->tempat_lahir ?? '-' }}</div>
+                                                <div class="text-muted fs-7">
+                                                    {{ isset($pelatih->tanggal_lahir) ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->translatedFormat('d M Y') : '-' }}
+                                                </div>
+                                            </div>
                                         </td>
                                         <td>
                                             <span class="badge badge-light-info">{{ ucfirst($pelatih->jenis_kelamin ?? '-') }}</span>
                                         </td>
                                         <td>
                                             <span class="text-gray-800 fw-semibold">
-                                                {{ isset($pelatih->tanggal_lahir) ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age . ' tahun' : '-' }}
+                                                {{ isset($pelatih->tanggal_lahir) ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age . ' th' : '-' }}
                                             </span>
                                         </td>
                                         <td>
-                                            <span class="text-gray-600">{{ Str::limit($pelatih->prestasi_terbaru ?? '-', 50) }}</span>
+                                            <span class="text-gray-600">{{ Str::limit($pelatih->prestasi_terbaru ?? '-', 60) }}</span>
                                         </td>
                                         <td>
                                             <div class="d-flex flex-column">
@@ -273,12 +272,12 @@
                                                             <span class="path1"></span>
                                                             <span class="path2"></span>
                                                         </i>
-                                                        {{ $pelatih->email }}
+                                                        {{ Str::limit($pelatih->email, 20) }}
                                                     </span>
                                                 @endif
                                             </div>
                                         </td>
-                                        <td class="text-end">
+                                        <td class="text-end pe-6">
                                             <a href="{{ route('admin.konfigurasi.pelatih.show', $pelatih->id ?? '#') }}" 
                                                class="btn btn-sm btn-light-success">
                                                 <i class="ki-duotone ki-eye fs-5">
@@ -286,7 +285,7 @@
                                                     <span class="path2"></span>
                                                     <span class="path3"></span>
                                                 </i>
-                                                Lihat
+                                                <span class="d-none d-md-inline ms-1">Lihat</span>
                                             </a>
                                         </td>
                                     </tr>
@@ -310,13 +309,14 @@
         </div>
     </div>
 </div>
+
 @endsection
 
 @section('script')
 <script>
 $(document).ready(function() {
     // Initialize Bootstrap tabs
-    var triggerTabList = [].slice.call(document.querySelectorAll('#myTab a'))
+    var triggerTabList = [].slice.call(document.querySelectorAll('.nav-tabs a'))
     triggerTabList.forEach(function (triggerEl) {
         var tabTrigger = new bootstrap.Tab(triggerEl)
 
@@ -327,4 +327,60 @@ $(document).ready(function() {
     })
 });
 </script>
+
+<style>
+/* Additional responsive styles */
+@media (max-width: 768px) {
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+    
+    .page-heading {
+        font-size: 1.5rem !important;
+    }
+    
+    .nav-tabs {
+        border-bottom: 1px solid #e4e6ea;
+    }
+    
+    .nav-tabs .nav-link {
+        padding: 0.75rem 1rem;
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-heading {
+        font-size: 1.25rem !important;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .symbol {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    .btn-sm {
+        padding: 0.375rem 0.5rem;
+    }
+}
+
+/* Ensure proper horizontal scrolling for table */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto; /* This line ensures horizontal scrolling for the table component */
+}
+
+/* Fix for long text overflow */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+</style>
 @endsection

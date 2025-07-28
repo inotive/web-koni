@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CabangOlahraga;
 use Illuminate\Support\Facades\Storage;
+// use Intervention\Image\Laravel\Facades\Image; // Hapus baris ini karena tidak digunakan
+// use Intervention\Image\Facades\Image; // Hapus baris ini juga
 
 class CabangOlahragaController extends Controller
 {
@@ -16,7 +18,7 @@ class CabangOlahragaController extends Controller
 
         if ($search = $request->input('search')) {
             $query->where('nama_cabor', 'like', '%' . $search . '%')
-                  ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
+                ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
         }
 
         if ($status = $request->input('filter_status')) {
@@ -52,20 +54,23 @@ class CabangOlahragaController extends Controller
             'ketua_penanggung_jawab' => 'required|string|max:100',
             'status' => 'required|in:Aktif,Tidak Aktif',
             'tanggal_pembentukan' => 'required|date',
-            'icon_cabor' => 'nullable|image|mimes:png|dimensions:width=80,height=80|max:2048',
+            'icon_cabor' => 'nullable|file|mimes:png,webp,svg|max:2048',
+        ], [
+            'icon_cabor.mimes' => 'Ikon cabang olahraga harus berupa file PNG, WebP, atau SVG.',
+            'icon_cabor.max' => 'Ukuran file ikon tidak boleh lebih dari 2MB.',
         ]);
 
         if ($request->hasFile('icon_cabor')) {
-            $path = $request->file('icon_cabor')->store('icons/cabor', 'public');
+            $path = $this->handleIconUpload($request->file('icon_cabor'));
             $validatedData['icon_cabor'] = $path;
         }
 
         $validatedData['terakhir_update'] = now();
-        
+
         CabangOlahraga::create($validatedData);
 
         return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
-            ->with('success', 'Cabang olahraga berhasil ditambahkan.');
+            ->with('cabor_created', 'Cabang olahraga berhasil ditambahkan.');
     }
 
 
@@ -92,14 +97,19 @@ class CabangOlahragaController extends Controller
             'ketua_penanggung_jawab' => 'required|string|max:100',
             'status' => 'required|in:Aktif,Tidak Aktif',
             'tanggal_pembentukan' => 'required|date',
-            'icon_cabor' => 'nullable|image|mimes:png|dimensions:width=80,height=80|max:2048',
+            'icon_cabor' => 'nullable|file|mimes:png,webp,svg|max:2048',
+        ], [
+            'icon_cabor.mimes' => 'Ikon cabang olahraga harus berupa file PNG, WebP, atau SVG.',
+            'icon_cabor.max' => 'Ukuran file ikon tidak boleh lebih dari 2MB.',
         ]);
 
         if ($request->hasFile('icon_cabor')) {
+            // Hapus icon lama jika ada
             if ($cabor->icon_cabor) {
                 Storage::disk('public')->delete($cabor->icon_cabor);
             }
-            $path = $request->file('icon_cabor')->store('icons/cabor', 'public');
+
+            $path = $this->handleIconUpload($request->file('icon_cabor'));
             $validatedData['icon_cabor'] = $path;
         }
 
@@ -108,7 +118,7 @@ class CabangOlahragaController extends Controller
         $cabor->update($validatedData);
 
         return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
-            ->with('success', 'Cabang olahraga berhasil diperbarui.');
+            ->with('cabor_updated', 'Cabang olahraga berhasil diperbarui.');
     }
 
 
@@ -124,5 +134,133 @@ class CabangOlahragaController extends Controller
 
         return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
             ->with('success', 'Cabang olahraga berhasil dihapus.');
+    }
+
+    /**
+     * Menangani upload icon dan resize ke 80x80px
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return string
+     */
+    private function handleIconUpload($file)
+    {
+        $extension = strtolower($file->getClientOriginalExtension());
+        $filename = time() . '_' . uniqid() . '.' . $extension;
+        $path = 'icons/cabor/' . $filename;
+
+        // Untuk file SVG, langsung simpan
+        if ($extension === 'svg') {
+            $file->storeAs('icons/cabor', $filename, 'public');
+            return $path;
+        }
+
+        // Gunakan library GD untuk resize
+        // Pastikan ekstensi GD di PHP sudah aktif
+        $this->resizeImageGD($file->getRealPath(), storage_path('app/public/' . $path), 80, 80);
+
+        return $path;
+    }
+
+    /**
+     * Resize gambar menggunakan library GD
+     *
+     * @param string $sourcePath
+     * @param string $destinationPath
+     * @param int $width
+     * @param int $height
+     * @return bool
+     */
+    private function resizeImageGD($sourcePath, $destinationPath, $width, $height)
+    {
+        $info = \getimagesize($sourcePath);
+        if (!$info) {
+            return false;
+        }
+
+        $mime = $info['mime'];
+
+        switch ($mime) {
+            case 'image/jpeg':
+                $source = \imagecreatefromjpeg($sourcePath);
+                break;
+            case 'image/png':
+                $source = \imagecreatefrompng($sourcePath);
+                break;
+            case 'image/webp':
+                if (\function_exists('imagecreatefromwebp')) {
+                    $source = \imagecreatefromwebp($sourcePath);
+                } else {
+                    return false;
+                }
+                break;
+            default:
+                return false;
+        }
+
+        if (!$source) {
+            return false;
+        }
+
+        // Dapatkan dimensi asli
+        $originalWidth = \imagesx($source);
+        $originalHeight = \imagesy($source);
+
+        // Hitung dimensi baru dengan mempertahankan aspect ratio
+        $aspectRatio = $originalWidth / $originalHeight;
+        if ($width / $height > $aspectRatio) {
+            $newWidth = $height * $aspectRatio;
+            $newHeight = $height;
+        } else {
+            $newWidth = $width;
+            $newHeight = $width / $aspectRatio;
+        }
+
+        // Buat canvas dengan ukuran yang diinginkan
+        $dest = \imagecreatetruecolor($width, $height);
+
+        // Set background transparan untuk PNG dan WebP
+        if ($mime == 'image/png' || $mime == 'image/webp') {
+            \imagealphablending($dest, false);
+            \imagesavealpha($dest, true);
+            $transparent = \imagecolorallocatealpha($dest, 0, 0, 0, 127);
+            \imagefill($dest, 0, 0, $transparent);
+        }
+
+        // Hitung posisi untuk center crop
+        $srcX = 0;
+        $srcY = 0;
+        $dstX = ($width - $newWidth) / 2;
+        $dstY = ($height - $newHeight) / 2;
+
+        // Resize dan copy gambar
+        \imagecopyresampled(
+            $dest, $source,
+            $dstX, $dstY, $srcX, $srcY,
+            $newWidth, $newHeight, $originalWidth, $originalHeight
+        );
+
+        // Pastikan direktori ada
+        $directory = dirname($destinationPath);
+        if (!\file_exists($directory)) {
+            \mkdir($directory, 0755, true);
+        }
+
+        // Simpan gambar sesuai format
+        $result = false;
+        if (strpos($destinationPath, '.webp') !== false) {
+            if (\function_exists('imagewebp')) {
+                $result = \imagewebp($dest, $destinationPath, 90);
+            }
+        } elseif (strpos($destinationPath, '.jpg') !== false || strpos($destinationPath, '.jpeg') !== false) {
+            $result = \imagejpeg($dest, $destinationPath, 90);
+        } else {
+            $result = \imagepng($dest, $destinationPath, 8);
+        }
+
+        // Bersihkan memory
+        \imagedestroy($source);
+        \imagedestroy($dest);
+
+        return $result;
     }
 }

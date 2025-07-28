@@ -476,23 +476,16 @@
                             </div>
 
                             @if ($atlets->isNotEmpty())
+                                {{-- Footer Pagination yang Baru --}}
                                 <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
                                     <div class="mb-2 mb-md-0">
                                         <div class="d-flex align-items-center">
                                             <span class="me-2">Show</span>
-                                            <select class="form-select form-select-sm w-auto" id="per-page-select">
-                                                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>
-                                                    10
-                                                </option>
-                                                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>
-                                                    25
-                                                </option>
-                                                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>
-                                                    50
-                                                </option>
-                                                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>
-                                                    100
-                                                </option>
+                                            <select class="form-select form-select-sm w-auto" id="entries-per-page">
+                                                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                                                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
                                             </select>
                                             <span class="ms-2">per page</span>
                                         </div>
@@ -500,20 +493,22 @@
 
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="d-flex align-items-center">
-                                            <span class="me-2">Page {{ $atlets->currentPage() }} of
-                                                {{ $atlets->lastPage() }}</span>
+                                            <span class="me-2">Page</span>
+                                            <select class="form-select form-select-sm" style="width: 80px;" id="page-select">
+                                                <option value="1">1</option>
+                                            </select>
+                                            <span class="ms-2">of <span id="total-pages">1</span></span>
                                         </div>
 
-                                        <div class="pagination-wrapper">
-                                            {{ $atlets->appends(request()->query())->links('pagination::bootstrap-4') }}
+                                        <div class="btn-group">
+                                            <button class="btn btn-outline-secondary" id="prev-page">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary" id="next-page">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </button>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="text-muted mt-2 text-center">
-                                    Showing {{ $atlets->firstItem() }} to {{ $atlets->lastItem() }} of
-                                    {{ $atlets->total() }}
-                                    results
                                 </div>
                             @endif
                         </div>
@@ -521,53 +516,62 @@
                 </div>
             </div>
         </div>
-    @endsection
+    </div>
+@endsection
 
-    @section('script')
-        @if ($atlets->isNotEmpty())
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-                $(document).ready(function() {
-                    // Inisialisasi DataTable
-                    const table = $("#kt_datatable_dom_positioning").DataTable({
-                        paging: false,
-                        info: false,
-                        searching: false,
-                        ordering: true,
-                        responsive: false,
-                        autoWidth: false,
-                        serverSide: false,
-                        deferRender: true,
-                        order: [], // Kosongkan agar tidak override urutan dari server
-                        columnDefs: [{
-                            targets: 0,
-                            orderable: false
-                        }, {
-                            targets: -1,
-                            orderable: false,
-                            searchable: false
-                        }],
-                        drawCallback: function() {
-                            updateRowNumbers();
-                        },
-                        initComplete: function() {
-                            updateDisplayCount();
-                            updateFilterCount();
-                            updateRowNumbers();
-                            toggleNoDataMessage();
-                        }
-                    });
+@section('script')
+    @if ($atlets->isNotEmpty())
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            $(document).ready(function() {
+                // Inisialisasi DataTable
+                const table = $("#kt_datatable_dom_positioning").DataTable({
+                    paging: true,
+                    pageLength: {{ request('per_page', 10) }},
+                    info: false,
+                    searching: false,
+                    ordering: true,
+                    responsive: false,
+                    autoWidth: false,
+                    serverSide: false,
+                    deferRender: true,
+                    lengthChange: false,
+                    dom: 'rt', // Hanya tabel dan tidak ada kontrol default
+                    order: [], // Kosongkan agar tidak override urutan dari server
+                    columnDefs: [{
+                        targets: 0,
+                        orderable: false
+                    }, {
+                        targets: -1,
+                        orderable: false,
+                        searchable: false
+                    }],
+                    drawCallback: function() {
+                        updateRowNumbers();
+                        updatePaginationControls();
+                        updateFilterInfo();
+                    },
+                    initComplete: function() {
+                        updateDisplayCount();
+                        updateFilterCount();
+                        updateRowNumbers();
+                        updatePaginationControls();
+                        toggleNoDataMessage();
+                    }
+                });
 
-                    // Fungsi untuk menampilkan pesan ketika tidak ada data
-                    function toggleNoDataMessage() {
-                        const tbody = $('#kt_datatable_dom_positioning tbody');
-                        const existingMessage = $('#no-data-message');
-                        const visibleRows = tbody.find('tr:visible').not('#no-data-message').length;
+                const totalCount = {{ $atlets->total() }};
 
-                        existingMessage.remove();
+                // Fungsi untuk menampilkan pesan ketika tidak ada data
+                function toggleNoDataMessage() {
+                    const tbody = $('#kt_datatable_dom_positioning tbody');
+                    const existingMessage = $('#no-data-message');
+                    const visibleRows = tbody.find('tr:visible').not('#no-data-message').length;
 
-                        if (visibleRows === 0) {
-                            const noDataHtml = `
+                    existingMessage.remove();
+
+                    if (visibleRows === 0) {
+                        const noDataHtml = `
                     <tr id="no-data-message">
                         <td colspan="12" class="text-center py-8">
                             <i class="ki-duotone ki-magnifier fs-4x text-muted mb-3"><span class="path1"></span><span class="path2"></span></i>
@@ -576,179 +580,224 @@
                         </td>
                     </tr>
                 `;
-                            tbody.append(noDataHtml);
-                        }
+                        tbody.append(noDataHtml);
+                    }
+                }
+
+                // Fungsi untuk update nomor urut baris
+                function updateRowNumbers() {
+                    const api = table;
+                    const start = api.page.info().start;
+
+                    let counter = start + 1;
+                    api.column(0, { page: 'current' }).nodes().each(function(cell, i) {
+                        cell.innerHTML = counter++;
+                    });
+                }
+
+                // Fungsi untuk update tampilan jumlah data
+                function updateDisplayCount() {
+                    const info = table.page.info();
+                    const showingCount = info.recordsDisplay;
+                    $('#showing-count').text(showingCount);
+                    $('#total-count').text(totalCount);
+                }
+
+                // Update pagination controls
+                function updatePaginationControls() {
+                    const info = table.page.info();
+                    const currentPage = info.page + 1;
+                    const totalPages = info.pages;
+
+                    // Update page select options
+                    const pageSelect = $('#page-select');
+                    pageSelect.empty();
+                    for (let i = 1; i <= totalPages; i++) {
+                        pageSelect.append(`<option value="${i}" ${i === currentPage ? 'selected' : ''}>${i}</option>`);
                     }
 
-                    // Fungsi untuk update nomor urut baris
-                    function updateRowNumbers() {
-                        let counter = 1;
-                        $('#kt_datatable_dom_positioning tbody tr:visible').not('#no-data-message').each(function() {
-                            $(this).find('.row-number').text(counter++);
-                        });
-                    }
+                    // Update total pages
+                    $('#total-pages').text(totalPages);
 
-                    // Fungsi untuk update tampilan jumlah data
-                    function updateDisplayCount() {
-                        const visibleRows = $('#kt_datatable_dom_positioning tbody tr:visible').not('#no-data-message')
-                            .length;
-                        const totalRows = {{ $atlets->total() }};
-                        $('#showing-count').text(visibleRows);
-                        $('#total-count').text(totalRows);
-                    }
+                    // Update navigation buttons
+                    $('#prev-page').prop('disabled', info.page === 0).toggleClass('disabled', info.page === 0);
+                    $('#next-page').prop('disabled', info.page === info.pages - 1).toggleClass('disabled', info.page === info.pages - 1);
+                }
 
-                    // Fungsi untuk menerapkan filter dan pencarian
-                    function applyFiltersAndSearch() {
-                        const caborFilter = $('#filter-cabor').val();
-                        const genderFilter = $('#filter-gender').val();
-                        const ageFilter = $('#filter-age').val();
-                        const prestasiFilter = $('#filter-prestasi').val();
-                        const searchTerm = $('#search').val().toLowerCase();
+                function updateFilterInfo() {
+                    const info = table.page.info();
+                    const showingCount = info.recordsDisplay;
+                    $('#showing-count').text(showingCount);
+                    $('#total-count').text(totalCount);
+                }
 
-                        $('#kt_datatable_dom_positioning tbody tr').each(function() {
-                            const $row = $(this);
-                            if ($row.attr('id') === 'no-data-message') return;
+                // Fungsi untuk menerapkan filter dan pencarian
+                function applyFiltersAndSearch() {
+                    const caborFilter = $('#filter-cabor').val();
+                    const genderFilter = $('#filter-gender').val();
+                    const ageFilter = $('#filter-age').val();
+                    const prestasiFilter = $('#filter-prestasi').val();
+                    const searchTerm = $('#search').val().toLowerCase();
 
-                            const rowCabor = $row.data('cabor') || '';
-                            const rowGender = $row.data('gender') || '';
-                            const rowAge = parseInt($row.data('age')) || 0;
-                            const rowPrestasi = $row.data('prestasi') || '';
-                            const rowMedali = $row.data('medali') || '';
-                            const rowText = $row.text().toLowerCase();
+                    // Custom filter function
+                    $.fn.dataTable.ext.search.pop(); // Remove previous custom filter if any
+                    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+                        const row = table.row(dataIndex).node();
+                        const $row = $(row);
 
-                            let show = true;
+                        if ($row.attr('id') === 'no-data-message') return false;
 
-                            // Filter pencarian
-                            if (searchTerm) {
-                                const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
-                                if (!searchWords.every(word => rowText.includes(word))) {
-                                    show = false;
-                                }
-                            }
+                        const rowCabor = $row.data('cabor') || '';
+                        const rowGender = $row.data('gender') || '';
+                        const rowAge = parseInt($row.data('age')) || 0;
+                        const rowPrestasi = $row.data('prestasi') || '';
+                        const rowMedali = $row.data('medali') || '';
+                        const rowText = $row.text().toLowerCase();
 
-                            // Filter cabang olahraga
-                            if (caborFilter && rowCabor !== caborFilter) show = false;
+                        let show = true;
 
-                            // Filter jenis kelamin
-                            if (genderFilter && rowGender !== genderFilter) show = false;
-
-                            // Filter prestasi
-                            if (prestasiFilter) {
-                                if (prestasiFilter === 'ada' && rowPrestasi !== 'ada') show = false;
-                                if (prestasiFilter === 'tidak' && rowPrestasi !== 'tidak') show = false;
-                                if (prestasiFilter === 'emas' && rowMedali !== 'emas') show = false;
-                                if (prestasiFilter === 'perak' && rowMedali !== 'perak') show = false;
-                                if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') show = false;
-                            }
-
-                            // Filter usia
-                            if (ageFilter && rowAge > 0) {
-                                if (ageFilter === '36+') {
-                                    if (rowAge < 36) show = false;
-                                } else {
-                                    const [minAge, maxAge] = ageFilter.split('-').map(age => parseInt(age));
-                                    if (rowAge < minAge || rowAge > maxAge) show = false;
-                                }
-                            } else if (ageFilter && rowAge === 0) {
+                        // Filter pencarian
+                        if (searchTerm) {
+                            const searchWords = searchTerm.split(' ').filter(word => word.length > 0);
+                            if (!searchWords.every(word => rowText.includes(word))) {
                                 show = false;
                             }
+                        }
 
-                            $row.toggle(show);
-                        });
+                        // Filter cabang olahraga
+                        if (caborFilter && rowCabor !== caborFilter) show = false;
 
-                        updateRowNumbers();
-                        updateDisplayCount();
-                        toggleNoDataMessage();
-                    }
+                        // Filter jenis kelamin
+                        if (genderFilter && rowGender !== genderFilter) show = false;
 
-                    // Fungsi untuk update jumlah filter aktif
-                    function updateFilterCount() {
-                        const count = [$('#filter-cabor').val(), $('#filter-gender').val(), $('#filter-age').val(), $(
-                                '#filter-prestasi').val()]
-                            .filter(Boolean).length;
-                        const badge = $('#filter-count');
-                        count > 0 ? badge.text(count).removeClass('d-none') : badge.addClass('d-none');
-                    }
+                        // Filter prestasi
+                        if (prestasiFilter) {
+                            if (prestasiFilter === 'ada' && rowPrestasi !== 'ada') show = false;
+                            if (prestasiFilter === 'tidak' && rowPrestasi !== 'tidak') show = false;
+                            if (prestasiFilter === 'emas' && rowMedali !== 'emas') show = false;
+                            if (prestasiFilter === 'perak' && rowMedali !== 'perak') show = false;
+                            if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') show = false;
+                        }
 
-                    // Fungsi global untuk menghapus data dengan konfirmasi SweetAlert2
-                    window.destroyItem = function(e) {
-                        const route = e.dataset.route;
-
-                        Swal.fire({
-                            title: "Apakah Anda Yakin?",
-                            html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
-                            icon: "warning",
-                            showCancelButton: true,
-                            reverseButtons: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Hapus!',
-                            cancelButtonText: 'Batalkan!'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                const form = document.createElement('form');
-                                form.method = 'POST';
-                                form.action = route;
-
-                                const token = document.createElement('input');
-                                token.type = 'hidden';
-                                token.name = '_token';
-                                token.value = '{{ csrf_token() }}';
-
-                                const method = document.createElement('input');
-                                method.type = 'hidden';
-                                method.name = '_method';
-                                method.value = 'DELETE';
-
-                                form.appendChild(token);
-                                form.appendChild(method);
-                                document.body.appendChild(form);
-                                form.submit();
+                        // Filter usia
+                        if (ageFilter && rowAge > 0) {
+                            if (ageFilter === '36+') {
+                                if (rowAge < 36) show = false;
                             } else {
-                                Swal.fire({
-                                    title: "Aksi Dibatalkan :)",
-                                    icon: "info",
-                                });
+                                const [minAge, maxAge] = ageFilter.split('-').map(age => parseInt(age));
+                                if (rowAge < minAge || rowAge > maxAge) show = false;
                             }
-                        });
-                    };
+                        } else if (ageFilter && rowAge === 0) {
+                            show = false;
+                        }
 
-                    // Event listener untuk pencarian
-                    $('#search').on('keyup', applyFiltersAndSearch);
-
-                    // Event listener untuk tombol terapkan filter
-                    $('#apply-filters').on('click', function() {
-                        applyFiltersAndSearch();
-                        updateFilterCount();
-                        $('.dropdown-toggle').dropdown('hide');
+                        return show;
                     });
 
-                    // Event listener untuk tombol reset filter
-                    $('#reset-filters').on('click', function() {
-                        $('#filter-cabor, #filter-gender, #filter-age, #filter-prestasi').val('');
-                        $('#search').val('');
+                    table.draw();
+                    toggleNoDataMessage();
+                }
 
-                        $('#kt_datatable_dom_positioning tbody tr').show();
+                // Fungsi untuk update jumlah filter aktif
+                function updateFilterCount() {
+                    const count = [$('#filter-cabor').val(), $('#filter-gender').val(), $('#filter-age').val(), $(
+                            '#filter-prestasi').val()]
+                        .filter(Boolean).length;
+                    const badge = $('#filter-count');
+                    count > 0 ? badge.text(count).removeClass('d-none') : badge.addClass('d-none');
+                }
 
-                        updateRowNumbers();
-                        updateDisplayCount();
-                        updateFilterCount();
-                        toggleNoDataMessage();
-                        $('.dropdown-toggle').dropdown('hide');
+                // Fungsi global untuk menghapus data dengan konfirmasi SweetAlert2
+                window.destroyItem = function(e) {
+                    const route = e.dataset.route;
+
+                    Swal.fire({
+                        title: "Apakah Anda Yakin?",
+                        html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
+                        icon: "warning",
+                        showCancelButton: true,
+                        reverseButtons: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Hapus!',
+                        cancelButtonText: 'Batalkan!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = route;
+
+                            const token = document.createElement('input');
+                            token.type = 'hidden';
+                            token.name = '_token';
+                            token.value = '{{ csrf_token() }}';
+
+                            const method = document.createElement('input');
+                            method.type = 'hidden';
+                            method.name = '_method';
+                            method.value = 'DELETE';
+
+                            form.appendChild(token);
+                            form.appendChild(method);
+                            document.body.appendChild(form);
+                            form.submit();
+                        } else {
+                            Swal.fire({
+                                title: "Aksi Dibatalkan :)",
+                                icon: "info",
+                            });
+                        }
                     });
+                };
 
-                    // Event listener untuk perubahan jumlah data per halaman
-                    $('#per-page-select').on('change', function() {
-                        const perPage = $(this).val();
-                        const currentUrl = new URL(window.location.href);
-                        currentUrl.searchParams.set('per_page', perPage);
-                        currentUrl.searchParams.set('page', 1);
-                        window.location.href = currentUrl.toString();
-                    });
+                // Event listener untuk pencarian
+                $('#search').on('keyup', applyFiltersAndSearch);
 
-                    // Inisialisasi awal
-                    updateRowNumbers();
+                // Event listener untuk tombol terapkan filter
+                $('#apply-filters').on('click', function() {
+                    applyFiltersAndSearch();
+                    updateFilterCount();
+                    $('.dropdown-toggle').dropdown('hide');
                 });
-            </script>
-        @endif
-    @endsection
+
+                // Event listener untuk tombol reset filter
+                $('#reset-filters').on('click', function() {
+                    $('#filter-cabor, #filter-gender, #filter-age, #filter-prestasi').val('');
+                    $('#search').val('');
+
+                    // Reset custom filter
+                    $.fn.dataTable.ext.search.pop();
+                    table.draw();
+
+                    updateFilterCount();
+                    toggleNoDataMessage();
+                    $('.dropdown-toggle').dropdown('hide');
+                });
+
+                // Entries per page
+                $('#entries-per-page').on('change', function() {
+                    const length = parseInt($(this).val());
+                    table.page.len(length).draw();
+                });
+
+                // Page navigation
+                $('#page-select').on('change', function() {
+                    const page = parseInt($(this).val()) - 1;
+                    table.page(page).draw();
+                });
+
+                $('#prev-page').on('click', function() {
+                    table.page('previous').draw();
+                });
+
+                $('#next-page').on('click', function() {
+                    table.page('next').draw();
+                });
+
+                // Inisialisasi awal
+                updateRowNumbers();
+                updatePaginationControls();
+            });
+        </script>
+    @endif
+@endsection
