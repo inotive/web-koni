@@ -17,229 +17,243 @@
 
 @section('content')
 
-<style>
-    body {
-        background-color: #f5f5f5 !important;
-    }
+    <style>
+        body {
+            background-color: #f5f5f5 !important;
+        }
 
-    .main-content {
-        background-color: #f5f5f5 !important;
-    }
+        .main-content {
+            background-color: #f5f5f5 !important;
+        }
 
-    .form-label {
-        font-weight: 500;
-        color: #495057;
-    }
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
 
-    .card-form {
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border: none;
-        background-color: white !important;
-    }
+        .card-form {
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: none;
+            background-color: white !important;
+        }
 
-    .page-header {
-        background-color: transparent;
-        margin-bottom: 15px;
-    }
+        .page-header {
+            background-color: transparent;
+            margin-bottom: 15px;
+        }
 
-    .file-upload-wrapper {
-        border: 2px dashed #dee2e6;
-        border-radius: 8px;
-        padding: 1.2rem;
-        text-align: center;
-        cursor: pointer;
-        background-color: #f8f9fa;
-        transition: all 0.2s ease-in-out;
-        position: relative;
-    }
+        .file-upload-wrapper {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
 
-    .file-upload-wrapper:hover {
-        border-color: #0d6efd;
-        background-color: #e9ecef;
-    }
+        .file-upload-wrapper:hover {
+            border-color: #0d6efd;
+            background-color: #e9ecef;
+        }
 
-    .file-upload-wrapper input[type="file"] {
-        display: none;
-    }
+        .file-upload-wrapper input[type="file"] {
+            display: none;
+        }
 
-    .file-upload-icon {
-        font-size: 2.2rem;
-        color: #0d6efd;
-    }
+        .file-upload-icon {
+            font-size: 2.2rem;
+            color: #0d6efd;
+        }
 
-    .file-upload-text {
-        color: #495057;
-        font-weight: 500;
-    }
+        .file-upload-text {
+            color: #495057;
+            font-weight: 500;
+        }
 
-    .file-upload-hint {
-        color: #6c757d;
-        font-size: 0.9em;
-    }
+        .file-upload-hint {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
 
-    .current-photo {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 8px;
-    }
+        .current-photo {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
 
-    .preview-image {
-        max-width: 100px;
-        max-height: 100px;
-        border-radius: 8px;
-        object-fit: cover;
-    }
-</style>
+        .preview-image {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+    </style>
 
-<div style="background-color: #f5f5f5; padding: 35px 0 20px;">
+    <div style="background-color: #f5f5f5; padding: 35px 0 20px;">
         <div class="container-fluid">
-        <div class="page-header mb-8">
-            <h3 class="fw-bold fs-3 mb-0">Tambah Atlet</h3>
-        </div>
+            <div class="page-header mb-8">
+                <h3 class="fw-bold fs-3 mb-0">Tambah Atlet</h3>
+            </div>
 
-        <div class="card card-form mb-0">
-            <div class="card-body p-3 p-md-4">
-                <h2 class="mb-3">Tambah Data Atlet</h2>
+            <div class="card card-form mb-0">
+                <div class="card-body p-3 p-md-4">
+                    <h2 class="mb-3">Tambah Data Atlet</h2>
 
-                <form action="{{ route('admin.konfigurasi.atlet.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
+                    <form action="{{ route('admin.konfigurasi.atlet.store') }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
 
-                    <div class="row align-items-center mb-3">
-                        <div class="col-md-3">
-                            <label for="foto_atlet" class="form-label">Foto Atlet</label>
-                        </div>
-                        <div class="col-md-9">
-                            <label for="foto_atlet" class="file-upload-wrapper" id="dropArea">
-                                <input type="file" name="foto_atlet" id="foto_atlet" accept="image/*">
-                                <div class="d-flex justify-content-center align-items-center" id="uploadContent">
-                                    <i class="fas fa-cloud-upload-alt file-upload-icon me-3" id="uploadIcon"></i>
-                                    <div id="uploadText">
-                                        <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk mengunggah</p>
-                                        <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
-                                    </div>
-                                </div>
-                                <div id="imagePreviewContainer" style="display: none;"></div>
-                            </label>
-                        </div>
-                    </div>
-
-                    @php
-                        $fields = [
-                            'nama' => [
-                                'label' => 'Nama Lengkap',
-                                'type' => 'text',
-                                'placeholder' => 'Masukkan nama lengkap',
-                                'required' => true,
-                            ],
-                            'cabor' => [
-                                'label' => 'Cabang Olahraga',
-                                'type' => 'select',
-                                'options' => $cabors,
-                                'required' => true,
-                            ],
-                            'email' => [
-                                'label' => 'Email',
-                                'type' => 'email',
-                                'placeholder' => 'emailatlet@gmail.com',
-                                'required' => false,
-                            ],
-                            'no_telepon' => [
-                                'label' => 'No Telepon',
-                                'type' => 'text',
-                                'placeholder' => '0895 9271 8263',
-                                'required' => false,
-                            ],
-                            'tanggal_lahir' => ['label' => 'Tanggal Lahir', 'type' => 'date', 'required' => true],
-                            'tempat_lahir' => [
-                                'label' => 'Tempat Lahir',
-                                'type' => 'text',
-                                'placeholder' => 'Balikpapan, Kalimantan Timur',
-                                'required' => true,
-                            ],
-                            'jenis_kelamin' => [
-                                'label' => 'Jenis Kelamin',
-                                'type' => 'select',
-                                'options' => ['Laki-laki', 'Perempuan'],
-                                'required' => true,
-                            ],
-                            'alamat' => [
-                                'label' => 'Alamat (Sesuai KTP)',
-                                'type' => 'textarea',
-                                'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
-                                'required' => true,
-                            ],
-                        ];
-                    @endphp
-
-                    @foreach ($fields as $key => $field)
                         <div class="row align-items-center mb-3">
                             <div class="col-md-3">
-                                <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
+                                <label for="foto_atlet" class="form-label">Foto Atlet</label>
                             </div>
                             <div class="col-md-9">
-                                @php
-                                    $value = old($key, '');
-                                @endphp
-                                @if ($field['type'] === 'select')
-                                    <select name="{{ $key }}" id="{{ $key }}" class="form-select @error($key) is-invalid @enderror" {{ $field['required'] ? 'required' : '' }}>
-                                        <option value="">Pilih {{ $field['label'] }}</option>
-                                        @foreach ($field['options'] as $option)
-                                            <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>{{ $option }}</option>
-                                        @endforeach
-                                    </select>
-                                @elseif ($field['type'] === 'textarea')
-                                    <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror" placeholder="{{ $field['placeholder'] }}" rows="3" {{ $field['required'] ? 'required' : '' }}>{{ $value }}</textarea>
-                                @else
-                                    <input type="{{ $field['type'] }}" name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror" placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}" {{ $field['required'] ? 'required' : '' }}>
-                                @endif
-                                @error($key)
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <label for="foto_atlet" class="file-upload-wrapper" id="dropArea">
+                                    <input type="file" name="foto_atlet" id="foto_atlet" accept="image/*">
+                                    <div class="d-flex justify-content-center align-items-center" id="uploadContent">
+                                        <i class="fas fa-cloud-upload-alt file-upload-icon me-3" id="uploadIcon"></i>
+                                        <div id="uploadText">
+                                            <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk
+                                                mengunggah</p>
+                                            <p class="file-upload-hint" id="file-name-display">150x150px JPEG, PNG Image</p>
+                                        </div>
+                                    </div>
+                                    <div id="imagePreviewContainer" style="display: none;"></div>
+                                </label>
                             </div>
                         </div>
-                    @endforeach
 
-                    <div class="row mt-3">
-                        <div class="col-md-9 offset-md-3 d-flex justify-content-between">
-                            <button type="submit" class="btn" style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">Simpan Data</button>
-                            <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn btn-secondary">Batal</a>
+                        @php
+                            $fields = [
+                                'nama' => [
+                                    'label' => 'Nama Lengkap',
+                                    'type' => 'text',
+                                    'placeholder' => 'Masukkan nama lengkap',
+                                    'required' => true,
+                                ],
+                                'cabor_id' => [
+                                    'label' => 'Cabang Olahraga',
+                                    'type' => 'select',
+                                    'options' => $cabors->pluck('nama_cabor', 'id'),
+                                    'required' => true,
+                                ],
+                                'email' => [
+                                    'label' => 'Email',
+                                    'type' => 'email',
+                                    'placeholder' => 'emailatlet@gmail.com',
+                                    'required' => false,
+                                ],
+                                'no_telepon' => [
+                                    'label' => 'No Telepon',
+                                    'type' => 'text',
+                                    'placeholder' => '0895 9271 8263',
+                                    'required' => false,
+                                ],
+                                'tanggal_lahir' => ['label' => 'Tanggal Lahir', 'type' => 'date', 'required' => true],
+                                'tempat_lahir' => [
+                                    'label' => 'Tempat Lahir',
+                                    'type' => 'text',
+                                    'placeholder' => 'Balikpapan, Kalimantan Timur',
+                                    'required' => true,
+                                ],
+                                'jenis_kelamin' => [
+                                    'label' => 'Jenis Kelamin',
+                                    'type' => 'select',
+                                    'options' => [
+                                        'Laki-laki' => 'Laki-laki',
+                                        'Perempuan' => 'Perempuan',
+                                    ],
+                                    'required' => true,
+                                ],
+                                'alamat' => [
+                                    'label' => 'Alamat (Sesuai KTP)',
+                                    'type' => 'textarea',
+                                    'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
+                                    'required' => true,
+                                ],
+                            ];
+                        @endphp
+
+                        @foreach ($fields as $key => $field)
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
+                                </div>
+                                <div class="col-md-9">
+                                    @php
+                                        $value = old($key, '');
+                                    @endphp
+                                    @if ($field['type'] === 'select')
+                                        <select name="{{ $key }}" id="{{ $key }}"
+                                            class="form-select @error($key) is-invalid @enderror"
+                                            {{ $field['required'] ? 'required' : '' }}>
+                                            <option value="">Pilih {{ $field['label'] }}</option>
+                                            @foreach ($field['options'] as $id => $nama)
+                                                <option value="{{ $id }}" {{ $value == $id ? 'selected' : '' }}>
+                                                    {{ $nama }}</option>
+                                            @endforeach
+                                        </select>
+                                    @elseif ($field['type'] === 'textarea')
+                                        <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
+                                            placeholder="{{ $field['placeholder'] }}" rows="3" {{ $field['required'] ? 'required' : '' }}>{{ $value }}</textarea>
+                                    @else
+                                        <input type="{{ $field['type'] }}" name="{{ $key }}"
+                                            id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
+                                            placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}"
+                                            {{ $field['required'] ? 'required' : '' }}>
+                                    @endif
+                                    @error($key)
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <div class="row mt-3">
+                            <div class="col-md-9 offset-md-3 d-flex justify-content-between">
+                                <button type="submit" class="btn"
+                                    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">Simpan
+                                    Data</button>
+                                <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn btn-secondary">Batal</a>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const uploadInput = document.getElementById('foto_atlet');
-        const dropArea = document.getElementById('dropArea');
-        const previewContainer = document.getElementById('imagePreviewContainer');
-
-        uploadInput.addEventListener('change', function() {
-            const file = this.files[0];
-            const uploadContent = document.getElementById('uploadContent');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadInput = document.getElementById('foto_atlet');
+            const dropArea = document.getElementById('dropArea');
             const previewContainer = document.getElementById('imagePreviewContainer');
 
-            if (file) {
-                if (!file.type.match('image.*')) {
-                    alert('Hanya file gambar yang diizinkan');
-                    return;
-                }
+            uploadInput.addEventListener('change', function() {
+                const file = this.files[0];
+                const uploadContent = document.getElementById('uploadContent');
+                const previewContainer = document.getElementById('imagePreviewContainer');
 
-                uploadContent.style.display = 'none';
-                previewContainer.style.display = 'flex';
-                previewContainer.style.justifyContent = 'center';
-                previewContainer.style.alignItems = 'center';
-                previewContainer.innerHTML = '';
+                if (file) {
+                    if (!file.type.match('image.*')) {
+                        alert('Hanya file gambar yang diizinkan');
+                        return;
+                    }
 
-                const reader = new FileReader();
+                    uploadContent.style.display = 'none';
+                    previewContainer.style.display = 'flex';
+                    previewContainer.style.justifyContent = 'center';
+                    previewContainer.style.alignItems = 'center';
+                    previewContainer.innerHTML = '';
 
-                reader.onload = function(e) {
-                    const previewContent = `
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        const previewContent = `
                         <div class="d-flex justify-content-center align-items-center">
                             <img src="${e.target.result}" class="preview-image me-3" alt="Preview Foto Atlet" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
                             <div>
@@ -248,60 +262,60 @@
                             </div>
                         </div>
                     `;
-                    previewContainer.innerHTML = previewContent;
-                };
+                        previewContainer.innerHTML = previewContent;
+                    };
 
-                reader.readAsDataURL(file);
-            } else {
-                uploadContent.style.display = 'flex';
-                previewContainer.style.display = 'none';
-                previewContainer.innerHTML = '';
-            }
-        });
-
-        dropArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = '#0d6efd';
-            dropArea.style.backgroundColor = '#e9ecef';
-        });
-
-        dropArea.addEventListener('dragleave', () => {
-            dropArea.style.borderColor = '#dee2e6';
-            dropArea.style.backgroundColor = '#f8f9fa';
-        });
-
-        dropArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = '#dee2e6';
-            dropArea.style.backgroundColor = '#f8f9fa';
-
-            if (e.dataTransfer.files.length) {
-                uploadInput.files = e.dataTransfer.files;
-                uploadInput.dispatchEvent(new Event('change'));
-            }
-        });
-
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const requiredFields = this.querySelectorAll('[required]');
-            let isValid = true;
-
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    field.style.borderColor = '#ef4444';
-                    field.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                    reader.readAsDataURL(file);
                 } else {
-                    field.style.borderColor = '#dbdfe9';
-                    field.style.boxShadow = 'none';
+                    uploadContent.style.display = 'flex';
+                    previewContainer.style.display = 'none';
+                    previewContainer.innerHTML = '';
                 }
             });
 
-            if (!isValid) {
+            dropArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                alert('Mohon lengkapi semua field yang wajib diisi!');
-            }
+                dropArea.style.borderColor = '#0d6efd';
+                dropArea.style.backgroundColor = '#e9ecef';
+            });
+
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.style.borderColor = '#dee2e6';
+                dropArea.style.backgroundColor = '#f8f9fa';
+            });
+
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = '#dee2e6';
+                dropArea.style.backgroundColor = '#f8f9fa';
+
+                if (e.dataTransfer.files.length) {
+                    uploadInput.files = e.dataTransfer.files;
+                    uploadInput.dispatchEvent(new Event('change'));
+                }
+            });
+
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const requiredFields = this.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.style.borderColor = '#ef4444';
+                        field.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                    } else {
+                        field.style.borderColor = '#dbdfe9';
+                        field.style.boxShadow = 'none';
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Mohon lengkapi semua field yang wajib diisi!');
+                }
+            });
         });
-    });
-</script>
+    </script>
 
 @endsection

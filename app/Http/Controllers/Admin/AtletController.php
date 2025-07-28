@@ -29,12 +29,11 @@ public function index(Request $request)
     return view('admin.atlet.index', compact('atlets'));
 }
 
-    public function create()
-    {
- $cabors = CabangOlahraga::all();
+public function create()
+{
+    $cabors = CabangOlahraga::select('id', 'nama_cabor')->get();
     return view('admin.atlet.create', compact('cabors'));
-    }
-
+}
     public function store(Request $request)
     {
        $validated = $request->validate([
@@ -59,13 +58,12 @@ public function index(Request $request)
         return redirect()->route('admin.konfigurasi.atlet.index')->with('success', 'Data atlet berhasil ditambahkan.');
     }
 
-    public function edit($id)
+public function edit($id)
 {
     $atlet = Atlet::findOrFail($id);
-    $cabors = CabangOlahraga::all(); 
+    $cabors = CabangOlahraga::select('id', 'nama_cabor')->get();
     return view('admin.atlet.edit', compact('atlet', 'cabors'));
 }
-
    public function update(Request $request, $id)
 {
     $atlet = Atlet::findOrFail($id);
