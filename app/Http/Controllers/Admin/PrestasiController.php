@@ -33,7 +33,7 @@ class PrestasiController extends Controller
     {
         $request->validate([
             'subject_type' => 'required|in:atlet,pelatih',
-            'subject_id' => 'required|exists:' . ($request->subject_type === 'pelatih' ? 'pelatihs' : 'atlets') . ',id',
+            'subject_id' => 'required|exists:' . ($request->subject_type === 'pelatih' ? 'pelatih' : 'atlets') . ',id',
             'nama_prestasi' => 'required|string|max:255',
             'tingkat' => 'required|string|max:255',
             'tempat' => 'required|string|max:255',
