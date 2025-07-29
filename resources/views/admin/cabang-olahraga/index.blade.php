@@ -434,6 +434,7 @@
 
 @endsection
 
+{{-- Bagian script yang diperbaiki --}}
 @section('script')
     {{-- Notifikasi untuk Create/Add --}}
     @if(session('cabor_created'))
@@ -485,13 +486,27 @@
         <script>
             $(document).ready(function() {
                 const table = $("#kt_datatable_dom_positioning").DataTable({
-                    paging: false,
-                    info: false,
+                    paging: true, // Ubah ke true
+                    pageLength: {{ request('per_page', 10) }}, // Ambil dari parameter per_page
+                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]], // Opsi per page
+                    lengthChange: false, // Disable DataTable length changer karena kita pakai custom
+                    info: true, // Enable info
                     searching: true,
                     ordering: true,
                     responsive: false,
                     autoWidth: false,
                     scrollX: false,
+                    language: {
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ cabang olahraga",
+                        infoEmpty: "Menampilkan 0 sampai 0 dari 0 cabang olahraga",
+                        infoFiltered: "(difilter dari _MAX_ total cabang olahraga)",
+                        paginate: {
+                            first: "Pertama",
+                            last: "Terakhir", 
+                            next: "Selanjutnya",
+                            previous: "Sebelumnya"
+                        }
+                    },
                     columnDefs: [
                         {
                             searchable: false,
@@ -505,25 +520,28 @@
                         },
                         { width: "250px", targets: 1 },
                         { width: "200px", targets: 2 },
-                    ]
+                    ],
+                    drawCallback: function(settings) {
+                        // Update nomor urut
+                        const api = this.api();
+                        const start = api.page.info().start;
+                        api.column(0, {page: 'current'}).nodes().each(function(cell, i) {
+                            cell.innerHTML = start + i + 1;
+                        });
+                        
+                        // Update filter info
+                        updateCustomFilterInfo();
+                    }
                 });
 
                 const totalCount = table.rows().count();
 
-                table.on('draw.dt', function () {
-                    const pageInfo = table.page.info();
-                    table.column(0, { page: 'current' }).nodes().each(function (cell, i) {
-                        cell.innerHTML = i + 1 + pageInfo.start;
-                    });
-                });
-
-                table.draw();
-
+                // Custom search
                 $('#search').on('keyup', function() {
                     table.search(this.value).draw();
-                    updateFilterInfo();
                 });
 
+                // Custom filter untuk status
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                     const row = table.row(dataIndex).node();
                     const $row = $(row);
@@ -538,7 +556,6 @@
 
                 $('#apply-filters').on('click', function() {
                     table.draw();
-                    updateFilterInfo();
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
                 });
@@ -548,7 +565,6 @@
                     $('#search').val('');
 
                     table.search('').draw();
-                    updateFilterInfo();
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
                 });
@@ -568,19 +584,32 @@
                     }
                 }
 
-                function updateFilterInfo() {
+                function updateCustomFilterInfo() {
                     const info = table.page.info();
-                    const showingCount = info.recordsDisplay;
-                    $('#showing-count').text(showingCount);
-                    $('#total-count').text(totalCount);
+                    $('#showing-count').text(info.recordsDisplay);
+                    $('#total-count').text(info.recordsTotal);
                 }
 
-                updateFilterInfo();
                 updateFilterCount();
 
                 $('#filter-status').on('change', function() {
                     updateFilterCount();
                 });
+
+                // Handle custom per page selector
+                $('select[name="per_page"]').on('change', function() {
+                    const perPage = $(this).val();
+                    // Redirect dengan parameter per_page baru
+                    const url = new URL(window.location);
+                    url.searchParams.set('per_page', perPage);
+                    url.searchParams.delete('page'); // Reset ke halaman 1
+                    window.location.href = url.toString();
+                });
+
+                // Hide default DataTable pagination karena kita pakai custom
+                $('.dataTables_paginate').hide();
+                $('.dataTables_info').hide();
+                $('.dataTables_length').hide();
             });
         </script>
     @endif

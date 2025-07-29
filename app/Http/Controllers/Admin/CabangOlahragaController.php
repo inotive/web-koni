@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CabangOlahraga;
 use Illuminate\Support\Facades\Storage;
-// use Intervention\Image\Laravel\Facades\Image; // Hapus baris ini karena tidak digunakan
-// use Intervention\Image\Facades\Image; // Hapus baris ini juga
 
 class CabangOlahragaController extends Controller
 {
@@ -16,15 +14,18 @@ class CabangOlahragaController extends Controller
     {
         $query = CabangOlahraga::query();
 
+        // Search functionality
         if ($search = $request->input('search')) {
             $query->where('nama_cabor', 'like', '%' . $search . '%')
                 ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
         }
 
+        // Status filter
         if ($status = $request->input('filter_status')) {
             $query->where('status', $status);
         }
 
+        // Sorting
         if ($sortBy = $request->input('sort_by')) {
             $order = $request->input('order', 'asc');
             $query->orderBy($sortBy, $order);
@@ -32,20 +33,29 @@ class CabangOlahragaController extends Controller
             $query->orderBy('terakhir_update', 'desc');
         }
 
-        $perPage = $request->get('perPage', 10);
+        // PERBAIKAN: Ubah parameter dari 'perPage' ke 'per_page' 
+        // untuk konsisten dengan form di view
+        $perPage = $request->get('per_page', 10);
+
+        // Pastikan perPage adalah integer dan dalam range yang valid
+        $perPage = (int) $perPage;
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
 
         /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator $cabors */
-        $cabors = $query->paginate($perPage)->appends(request()->query());
+        $cabors = $query->paginate($perPage)->appends($request->query());
+
+        // DEBUGGING: Uncomment baris ini untuk debug jika perlu
+        // dd('Per Page: ' . $perPage, 'Total Items: ' . $cabors->total(), 'Current Items: ' . $cabors->count());
 
         return view('admin.cabang-olahraga.index', compact('cabors'));
     }
-
 
     public function create()
     {
         return view('admin.cabang-olahraga.create');
     }
-
 
     public function store(Request $request)
     {
@@ -73,20 +83,17 @@ class CabangOlahragaController extends Controller
             ->with('cabor_created', 'Cabang olahraga berhasil ditambahkan.');
     }
 
-
     public function show($id)
     {
         $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
         return view('admin.cabang-olahraga.show', compact('cabor'));
     }
 
-
     public function edit($id)
     {
         $cabor = CabangOlahraga::findOrFail($id);
         return view('admin.cabang-olahraga.edit', compact('cabor'));
     }
-
 
     public function update(Request $request, $id)
     {
@@ -120,7 +127,6 @@ class CabangOlahragaController extends Controller
         return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
             ->with('cabor_updated', 'Cabang olahraga berhasil diperbarui.');
     }
-
 
     public function destroy($id)
     {
