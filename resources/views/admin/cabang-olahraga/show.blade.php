@@ -5,7 +5,7 @@
 @section('mainSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
 @section('subSection', 'Cabang Olahraga')
 @section('subSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
-@section('currentSection', 'Detail {{ $cabor->nama_cabor ?? "Cabang Olahraga" }}')
+@section('currentSection', 'Detail ')
 
 @section('breadcrumb-title')
     {{-- Halaman Detail Cabang Olahraga --}}
@@ -13,27 +13,27 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-6">
-        <div class="flex-grow-1">
-            <h1 class="page-heading d-flex text-dark fw-bold fs-1 my-0 align-items-center">
-                <i class="ki-duotone ki-sport fs-1 text-primary me-3">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                </i>
-                Detail {{ $cabor->nama_cabor ?? 'Cabang Olahraga' }}
-            </h1>
-        </div>
-        <div class="flex-shrink-0">
-            <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}" 
-               class="btn btn-light-primary">
-                <i class="ki-duotone ki-arrow-left fs-2">
-                    <span class="path1"></span>
-                    <span class="path2"></span>
-                </i>
-                Kembali
-            </a>
-        </div>
+   <div class="d-flex justify-content-between align-items-center mb-6">
+    <div class="flex-shrink-0 me-3">
+        <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}" 
+           class="btn btn-light-primary">
+            <i class="ki-duotone ki-arrow-left fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+            Kembali
+        </a>
     </div>
+    <div class="flex-grow-1">
+        <h1 class="page-heading d-flex text-dark fw-bold fs-1 my-0 align-items-center">
+            <i class="ki-duotone ki-sport fs-1 text-primary me-3">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+            Detail Cabang Olahraga
+        </h1>
+    </div>  
+</div>
 
     <div class="card">
         <div class="card-header border-0">
@@ -70,6 +70,52 @@
             <div class="tab-content">
                 <div class="tab-pane fade show active" id="kt_tab_pane_atlet" role="tabpanel">
                     @if(($cabor->atlets ?? collect())->count() > 0)
+                        {{-- Search dan Filter Atlet --}}
+                        <div class="card-header border-0 pt-6">
+                            <div class="card-title">
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                    <input type="text" id="search-atlet" class="form-control form-control-solid w-250px ps-13" placeholder="Cari atlet..." />
+                                </div>
+                            </div>
+                            <div class="card-toolbar">
+                                <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
+                                    <button type="button" class="btn btn-light-primary me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                        <i class="ki-duotone ki-filter fs-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        Filter
+                                        <span id="filter-count-atlet" class="badge badge-light-danger d-none ms-2">0</span>
+                                    </button>
+                                    <div class="menu menu-sub menu-sub-dropdown w-300px w-md-325px" data-kt-menu="true">
+                                        <div class="px-7 py-5">
+                                            <div class="fs-5 text-dark fw-bold">Filter Atlet</div>
+                                        </div>
+                                        <div class="separator border-gray-200"></div>
+                                        <div class="px-7 py-5">
+                                            <div class="mb-10">
+                                                <label class="form-label fw-semibold">Jenis Kelamin:</label>
+                                                <select id="filter-jenis-kelamin-atlet" class="form-select form-select-solid fw-bold">
+                                                    <option value="">Semua</option>
+                                                    <option value="laki-laki">Laki-laki</option>
+                                                    <option value="perempuan">Perempuan</option>
+                                                </select>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <button type="button" id="reset-filters-atlet" class="btn btn-light btn-active-light-primary fw-bold me-2 px-6">Reset</button>
+                                                <button type="button" id="apply-filters-atlet" class="btn btn-primary fw-bold px-6">Terapkan</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- End Search dan Filter Atlet --}}
+                        
                         <div class="table-responsive"> 
                             <table class="table table-row-dashed table-row-gray-300 gy-7 mb-0">
                                 <thead>
@@ -189,6 +235,52 @@
 
                 <div class="tab-pane fade" id="kt_tab_pane_pelatih" role="tabpanel">
                     @if(($cabor->pelatihs ?? collect())->count() > 0)
+                        {{-- Search dan Filter Pelatih --}}
+                        <div class="card-header border-0 pt-6">
+                            <div class="card-title">
+                                <div class="d-flex align-items-center position-relative my-1">
+                                    <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                    <input type="text" id="search-pelatih" class="form-control form-control-solid w-250px ps-13" placeholder="Cari pelatih..." />
+                                </div>
+                            </div>
+                            <div class="card-toolbar">
+                                <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
+                                    <button type="button" class="btn btn-light-success me-3" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                        <i class="ki-duotone ki-filter fs-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i>
+                                        Filter
+                                        <span id="filter-count-pelatih" class="badge badge-light-danger d-none ms-2">0</span>
+                                    </button>
+                                    <div class="menu menu-sub menu-sub-dropdown w-300px w-md-325px" data-kt-menu="true">
+                                        <div class="px-7 py-5">
+                                            <div class="fs-5 text-dark fw-bold">Filter Pelatih</div>
+                                        </div>
+                                        <div class="separator border-gray-200"></div>
+                                        <div class="px-7 py-5">
+                                            <div class="mb-10">
+                                                <label class="form-label fw-semibold">Jenis Kelamin:</label>
+                                                <select id="filter-jenis-kelamin-pelatih" class="form-select form-select-solid fw-bold">
+                                                    <option value="">Semua</option>
+                                                    <option value="laki-laki">Laki-laki</option>
+                                                    <option value="perempuan">Perempuan</option>
+                                                </select>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <button type="button" id="reset-filters-pelatih" class="btn btn-light btn-active-light-success fw-bold me-2 px-6">Reset</button>
+                                                <button type="button" id="apply-filters-pelatih" class="btn btn-success fw-bold px-6">Terapkan</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- End Search dan Filter Pelatih --}}
+                        
                         <div class="table-responsive">
                             <table class="table table-row-dashed table-row-gray-300 gy-7 mb-0">
                                 <thead>
@@ -309,7 +401,6 @@
         </div>
     </div>
 </div>
-
 @endsection
 
 @section('script')
@@ -324,7 +415,111 @@ $(document).ready(function() {
             event.preventDefault()
             tabTrigger.show()
         })
-    })
+    });
+
+    // Fungsi untuk tabel Atlet
+    const atletTable = $('table').first(); // Tabel pertama adalah tabel atlet
+    const atletRows = atletTable.find('tbody tr');
+    
+    $('#search-atlet').on('keyup', function() {
+        const searchText = $(this).val().toLowerCase();
+        filterAtletTable(searchText, $('#filter-jenis-kelamin-atlet').val());
+    });
+    
+    $('#apply-filters-atlet').on('click', function() {
+        filterAtletTable($('#search-atlet').val().toLowerCase(), $('#filter-jenis-kelamin-atlet').val());
+        updateAtletFilterCount();
+    });
+    
+    $('#reset-filters-atlet').on('click', function() {
+        $('#search-atlet').val('');
+        $('#filter-jenis-kelamin-atlet').val('');
+        filterAtletTable('', '');
+        updateAtletFilterCount();
+    });
+    
+    function filterAtletTable(searchText, jenisKelamin) {
+        atletRows.each(function() {
+            const row = $(this);
+            const nama = row.find('td:nth-child(3)').text().toLowerCase();
+            const jk = row.find('td:nth-child(5)').text().toLowerCase();
+            
+            const cocokSearch = nama.includes(searchText) || searchText === '';
+            const cocokFilter = jk.includes(jenisKelamin) || jenisKelamin === '';
+            
+            if (cocokSearch && cocokFilter) {
+                row.show();
+            } else {
+                row.hide();
+            }
+        });
+    }
+    
+    function updateAtletFilterCount() {
+        const filterAktif = [];
+        if ($('#filter-jenis-kelamin-atlet').val()) filterAktif.push('jenis_kelamin');
+        
+        const jumlah = filterAktif.length;
+        const badge = $('#filter-count-atlet');
+        
+        if (jumlah > 0) {
+            badge.text(jumlah).removeClass('d-none');
+        } else {
+            badge.addClass('d-none');
+        }
+    }
+    
+    // Fungsi untuk tabel Pelatih
+    const pelatihTable = $('table').last(); // Tabel terakhir adalah tabel pelatih
+    const pelatihRows = pelatihTable.find('tbody tr');
+    
+    $('#search-pelatih').on('keyup', function() {
+        const searchText = $(this).val().toLowerCase();
+        filterPelatihTable(searchText, $('#filter-jenis-kelamin-pelatih').val());
+    });
+    
+    $('#apply-filters-pelatih').on('click', function() {
+        filterPelatihTable($('#search-pelatih').val().toLowerCase(), $('#filter-jenis-kelamin-pelatih').val());
+        updatePelatihFilterCount();
+    });
+    
+    $('#reset-filters-pelatih').on('click', function() {
+        $('#search-pelatih').val('');
+        $('#filter-jenis-kelamin-pelatih').val('');
+        filterPelatihTable('', '');
+        updatePelatihFilterCount();
+    });
+    
+    function filterPelatihTable(searchText, jenisKelamin) {
+        pelatihRows.each(function() {
+            const row = $(this);
+            const nama = row.find('td:nth-child(3)').text().toLowerCase();
+            const jk = row.find('td:nth-child(5)').text().toLowerCase();
+            
+            const cocokSearch = nama.includes(searchText) || searchText === '';
+            const cocokFilter = jk.includes(jenisKelamin) || jenisKelamin === '';
+            
+            if (cocokSearch && cocokFilter) {
+                row.show();
+            } else {
+                row.hide();
+            }
+        });
+    }
+    
+    function updatePelatihFilterCount() {
+        const filterAktif = [];
+        if ($('#filter-jenis-kelamin-pelatih').val()) filterAktif.push('jenis_kelamin');
+        
+        const jumlah = filterAktif.length;
+        const badge = $('#filter-count-pelatih');
+        
+        if (jumlah > 0) {
+            badge.text(jumlah).removeClass('d-none');
+        } else {
+            badge.addClass('d-none');
+        }
+    }
 });
 </script>
 
@@ -373,7 +568,7 @@ $(document).ready(function() {
 /* Ensure proper horizontal scrolling for table */
 .table-responsive {
     -webkit-overflow-scrolling: touch;
-    overflow-x: auto; /* This line ensures horizontal scrolling for the table component */
+    overflow-x: auto;
 }
 
 /* Fix for long text overflow */
