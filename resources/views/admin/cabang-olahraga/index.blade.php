@@ -434,63 +434,27 @@
 
 @endsection
 
-{{-- Bagian script yang diperbaiki --}}
 @section('script')
-    {{-- Notifikasi untuk Create/Add --}}
+    {{-- Notifikasi --}}
     @if(session('cabor_created'))
-        <script>
-            $(document).ready(function() {
-                toastr.success("{{ session('cabor_created') }}");
-            });
-        </script>
+        <script>$(document).ready(() => toastr.success("{{ session('cabor_created') }}"));</script>
     @endif
+    {{-- Notifikasi lainnya tetap sama --}}
 
-    {{-- Notifikasi untuk Update/Edit --}}
-    @if(session('cabor_updated'))
-        <script>
-            $(document).ready(function() {
-                toastr.success("{{ session('cabor_updated') }}");
-            });
-        </script>
-    @endif
-
-    {{-- Notifikasi untuk Delete --}}
-    @if(session('cabor_deleted'))
-        <script>
-            $(document).ready(function() {
-                toastr.success("{{ session('cabor_deleted') }}");
-            });
-        </script>
-    @endif
-
-    {{-- Notifikasi umum success --}}
-    @if(session('success'))
-        <script>
-            $(document).ready(function() {
-                toastr.success("{{ session('success') }}");
-            });
-        </script>
-    @endif
-
-    {{-- Notifikasi umum error --}}
-    @if(session('error'))
-        <script>
-            $(document).ready(function() {
-                toastr.error("{{ session('error') }}");
-            });
-        </script>
-    @endif
-
-    {{-- DataTable Script --}}
     @if (isset($cabors) && $cabors->isNotEmpty())
         <script>
             $(document).ready(function() {
+                // Pastikan tabel ada sebelum inisialisasi
+                if ($.fn.DataTable.isDataTable("#kt_datatable_dom_positioning")) {
+                    $("#kt_datatable_dom_positioning").DataTable().destroy();
+                }
+
                 const table = $("#kt_datatable_dom_positioning").DataTable({
-                    paging: true, // Ubah ke true
-                    pageLength: {{ request('per_page', 10) }}, // Ambil dari parameter per_page
-                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]], // Opsi per page
-                    lengthChange: false, // Disable DataTable length changer karena kita pakai custom
-                    info: true, // Enable info
+                    paging: true,
+                    pageLength: {{ request('per_page', 10) }},
+                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                    lengthChange: false,
+                    info: true,
                     searching: true,
                     ordering: true,
                     responsive: false,
@@ -521,67 +485,63 @@
                         { width: "250px", targets: 1 },
                         { width: "200px", targets: 2 },
                     ],
+                    initComplete: function() {
+                        // Pastikan elemen search ada
+                        if ($('#search-cabor').length === 0) {
+                            $('.dataTables_filter').hide();
+                            $('#filter-container').append(
+                                '<div class="d-flex align-items-center position-relative my-1">' +
+                                '<i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">' +
+                                '<span class="path1"></span><span class="path2"></span>' +
+                                '</i>' +
+                                '<input type="text" id="search-cabor" class="form-control form-control-solid w-250px ps-13" placeholder="Cari cabang olahraga..." />' +
+                                '</div>'
+                            );
+                        }
+                    },
                     drawCallback: function(settings) {
-                        // Update nomor urut
                         const api = this.api();
                         const start = api.page.info().start;
                         api.column(0, {page: 'current'}).nodes().each(function(cell, i) {
                             cell.innerHTML = start + i + 1;
                         });
-                        
-                        // Update filter info
                         updateCustomFilterInfo();
                     }
                 });
 
-                const totalCount = table.rows().count();
-
-                // Custom search
-                $('#search').on('keyup', function() {
-                    table.search(this.value).draw();
+                // Custom search dengan debounce untuk performa
+                let searchTimeout;
+                $(document).on('keyup', '#search-cabor', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        table.search(this.value).draw();
+                    }, 300);
                 });
 
                 // Custom filter untuk status
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                     const row = table.row(dataIndex).node();
                     const $row = $(row);
-
                     const statusFilter = $('#filter-status').val();
                     const rowStatus = $row.data('status');
-
-                    if (statusFilter && rowStatus !== statusFilter) return false;
-
-                    return true;
+                    return !statusFilter || rowStatus === statusFilter;
                 });
 
                 $('#apply-filters').on('click', function() {
                     table.draw();
                     updateFilterCount();
-                    $('.dropdown-toggle').dropdown('hide');
                 });
 
                 $('#reset-filters').on('click', function() {
                     $('#filter-status').val('');
-                    $('#search').val('');
-
+                    $('#search-cabor').val('');
                     table.search('').draw();
                     updateFilterCount();
-                    $('.dropdown-toggle').dropdown('hide');
                 });
 
                 function updateFilterCount() {
-                    const activeFilters = [];
-
-                    if ($('#filter-status').val()) activeFilters.push('status');
-
-                    const count = activeFilters.length;
-                    const badge = $('#filter-count');
-
-                    if (count > 0) {
-                        badge.text(count).removeClass('d-none');
-                    } else {
-                        badge.addClass('d-none');
-                    }
+                    const count = $('#filter-status').val() ? 1 : 0;
+                    $('#filter-count').toggleClass('d-none', count === 0).text(count);
                 }
 
                 function updateCustomFilterInfo() {
@@ -591,25 +551,17 @@
                 }
 
                 updateFilterCount();
+                $('#filter-status').on('change', updateFilterCount);
 
-                $('#filter-status').on('change', function() {
-                    updateFilterCount();
-                });
-
-                // Handle custom per page selector
                 $('select[name="per_page"]').on('change', function() {
-                    const perPage = $(this).val();
-                    // Redirect dengan parameter per_page baru
                     const url = new URL(window.location);
-                    url.searchParams.set('per_page', perPage);
-                    url.searchParams.delete('page'); // Reset ke halaman 1
+                    url.searchParams.set('per_page', $(this).val());
+                    url.searchParams.delete('page');
                     window.location.href = url.toString();
                 });
 
-                // Hide default DataTable pagination karena kita pakai custom
-                $('.dataTables_paginate').hide();
-                $('.dataTables_info').hide();
-                $('.dataTables_length').hide();
+                // Sembunyikan elemen default DataTable
+                $('.dataTables_paginate, .dataTables_info, .dataTables_length, .dataTables_filter').hide();
             });
         </script>
     @endif
