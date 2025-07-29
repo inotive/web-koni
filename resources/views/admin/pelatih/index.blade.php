@@ -9,8 +9,10 @@
 
 
 <style>
+
+
     body {
-        background-color: #f5f5f5 !important;
+        background-color: #f5f5f5;
     }
 
     .main-content {

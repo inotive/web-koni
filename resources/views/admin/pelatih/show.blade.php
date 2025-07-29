@@ -434,12 +434,12 @@
                                     style="width: 60px; height: 60px; background-color: #f1f1f4; display: flex; align-items: center; justify-content: center;">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
-                                        
+
                                     </svg>
                                 </div>
                             </div>
                         @endif
-                        
+
                     </div>
                 </div>
 
@@ -453,7 +453,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -468,7 +468,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -483,7 +483,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -498,7 +498,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -513,7 +513,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -528,7 +528,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                           
+
                         </svg>
                     </div>
                 </div>
@@ -543,7 +543,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -558,7 +558,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -573,7 +573,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -586,7 +586,7 @@
                     </div>
                     <p class="detail-value">{{ $pelatih->alamat ?? 'Belum ada alamat yang tercantum' }}</p>
                     <div class="add-address">
-                        
+
                     </div>
                 </div>
             </div>
@@ -628,7 +628,7 @@
                                             }
                                             elseif ($prestasi->medali == 'Perunggu') {
                                                 $medalColor = '#CD7F32';
-                                            } 
+                                            }
                                         @endphp
                                         <svg class="achievement-icon" viewBox="0 0 24 24"
                                             xmlns="http://www.w3.org/2000/svg">
