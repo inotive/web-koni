@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin; // Namespace ini sudah benar
+namespace App\Http\Controllers\Admin; // Namespace ini sudah benar sesuai lokasi file Anda
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -43,12 +43,13 @@ class KegiatanLainnyaController extends Controller
 
         $query->orderBy($sortBy, $sortOrder);
 
+        // Baris ini yang memicu peringatan Intelephense, tetapi secara fungsional benar di Laravel
         $kegiatanLainnya = $query->paginate($perPage)->withQueryString();
 
         // Judul halaman utama (karena tidak ada model Bidang)
         $namaBidangUntukJudul = 'Manajemen'; // Atau 'Kegiatan' atau sesuai keinginan Anda
 
-        // Pastikan NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/kegiatan_lainnya/index.blade.php
+        // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/index.blade.php
         return view('admin.kegiatan_lainnya.index', compact('kegiatanLainnya', 'namaBidangUntukJudul'));
     }
 
@@ -65,27 +66,30 @@ class KegiatanLainnyaController extends Controller
             'dokumen_pendukung' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
         ]);
 
-        $data = $request->except(['_token', 'foto_jurnal', 'dokumen_pendukung']);
+        $data = $request->all();
 
         if ($request->hasFile('foto_jurnal')) {
             $data['foto_jurnal'] = $request->file('foto_jurnal')->store('kegiatan_lainnya/foto_jurnal', 'public');
         }
         if ($request->hasFile('dokumen_pendukung')) {
-            $data['dokumen_pendukung'] = $request->file('dokiatan_lainnya/dokumen_pendukung', 'public');
+            $data['dokumen_pendukung'] = $request->file('dokumen_pendukung')->store('kegiatan_lainnya/dokumen_pendukung', 'public');
         }
 
         KegiatanLainnya::create($data);
 
-        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan lainnya berhasil ditambahkan!');
+        // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
+        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
 
     public function show(KegiatanLainnya $kegiatan_lainnya)
     {
+        // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/show.blade.php
         return view('admin.kegiatan_lainnya.show', compact('kegiatan_lainnya'));
     }
 
     public function edit(KegiatanLainnya $kegiatan_lainnya)
     {
+        // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/edit.blade.php
         return view('admin.kegiatan_lainnya.edit', compact('kegiatan_lainnya'));
     }
 
@@ -102,7 +106,7 @@ class KegiatanLainnyaController extends Controller
             'dokumen_pendukung' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
         ]);
 
-        $data = $request->except(['_token', '_method', 'foto_jurnal', 'dokumen_pendukung']);
+        $data = $request->all();
 
         if ($request->hasFile('foto_jurnal')) {
             if ($kegiatan_lainnya->foto_jurnal) {
@@ -119,7 +123,8 @@ class KegiatanLainnyaController extends Controller
 
         $kegiatan_lainnya->update($data);
 
-        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan lainnya berhasil diperbarui!');
+        // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
+        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil diperbarui!');
     }
 
     public function destroy(KegiatanLainnya $kegiatan_lainnya)
@@ -133,6 +138,7 @@ class KegiatanLainnyaController extends Controller
 
         $kegiatan_lainnya->delete();
 
-        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan lainnya berhasil dihapus!');
+        // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
+        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil dihapus!');
     }
 }

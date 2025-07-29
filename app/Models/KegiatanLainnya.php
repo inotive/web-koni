@@ -9,8 +9,7 @@ class KegiatanLainnya extends Model
 {
     use HasFactory;
 
-    protected $table = 'kegiatan_lainnya'; // Pastikan nama tabelnya benar jika tidak standar Laravel
-
+    protected $table = 'kegiatan_lainnya';
     protected $fillable = [
         'nama_program_kegiatan',
         'jenis_kegiatan',
@@ -21,7 +20,4 @@ class KegiatanLainnya extends Model
         'foto_jurnal',
         'dokumen_pendukung',
     ];
-
-    // Jika Anda ingin mengelola tanggal secara otomatis oleh Carbon
-    protected $dates = ['tanggal_kegiatan'];
 }
