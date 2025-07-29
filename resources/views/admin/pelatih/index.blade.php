@@ -214,6 +214,13 @@
         justify-content: center;
         font-size: 0.75rem;
     }
+    .dropdown-menu.p-3.shadow {
+        min-height: 70vh;
+        max-height: 70vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
 </style>
 
 <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
@@ -448,11 +455,13 @@
                                                                 class="d-inline"
                                                                 onsubmit="return confirm('Yakin ingin menghapus pelatih ini?')">
                                                             @csrf @method('DELETE')
-                                                            <button type="submit"
-                                                                    class="btn btn-icon btn-sm btn-light-danger"
-                                                                    title="Hapus">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </button>
+                                                            <button type="button"
+                                                                class="btn btn-icon btn-sm btn-light-danger"
+                                                                data-route="{{ route('admin.konfigurasi.pelatih.destroy', $item->id) }}"
+                                                                onclick="destroyItem(this)"
+                                                                title="Hapus">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
                                                         </form>
                                                     </div>
                                                 </td>
@@ -652,6 +661,45 @@
                     updateFilterCount();
                 });
             });
+        </script>
+        <script>
+            const destroyItem = (el) => {
+                const route = $(el).data('route');
+
+                Swal.fire({
+                    title: "Apakah Anda yakin?",
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    cancelButtonText: "Batalkan!",
+                    confirmButtonText: "Hapus!",
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('<form>', {
+                            action: route,
+                            method: 'POST',
+                            style: 'display:none'
+                        });
+
+                        const csrfInput = $('<input>', {
+                            type: 'hidden',
+                            name: '_token',
+                            value: '{{ csrf_token() }}'
+                        });
+
+                        const methodInput = $('<input>', {
+                            type: 'hidden',
+                            name: '_method',
+                            value: 'DELETE'
+                        });
+
+                        form.append(csrfInput, methodInput).appendTo('body').submit();
+                    }
+                });
+            };
         </script>
     @endif
 @endsection
