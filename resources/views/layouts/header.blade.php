@@ -5,7 +5,7 @@
         <!--begin::Logo-->
         <div class="gap-3 px-4 d-flex align-items-center" style="width:220px; min-width:180px">
             <a href="/" class="d-flex align-items-center">
-                <img alt="Logo" src="{{ asset('assets/koni.png') }}" class="h-45px me-2" />
+                <img alt="Logo" src="{{ asset('assets/img/koni.png') }}" class="h-45px me-2" />
             </a>
         </div>
         <!--end::Logo-->
@@ -95,11 +95,15 @@
                 <!--begin::Info-->
                 <div class="flex-grow-1 me-2">
                     <!--begin::Username-->
-                    <a href="#" class="text-gray-400 text-hover-light fs-8 fw-bold">{{ Auth::user()->name }}</a>
+                    <!--begin::Username-->
+                    <span class="text-gray-600 fs-8 fw-bold text-capitalize">{{ Auth::user()->username }}</span>
                     <!--end::Username-->
                     <!--begin::Description-->
-                    <span
-                        class="mb-1 text-gray-400 fw-semibold d-block fs-8">{{ Auth::user()->roles()->first()->name }}</span>
+                    <span class="mb-1 text-gray-400 fw-semibold d-block fs-8 text-capitalize">
+                        {{ Auth::user()->roles()->first()->name }}
+                    </span>
+                    <!--end::Description-->
+
                     <!--end::Description-->
                 </div>
                 <!--end::Info-->
@@ -115,13 +119,9 @@
                 <img src="{{ asset('/storage/' . Auth::user()->foto) }}" alt="User foto" class="symbol-label" />
             @else
                 @php
-                    $user = Auth::user();
-                    $nameParts = explode(' ', $user->name);
-                    $initials = strtoupper(
-                        substr($nameParts[0], 0, 1) . (isset($nameParts[1]) ? substr($nameParts[1], 0, 1) : ''),
-                    );
+                    $initial = strtoupper(substr(Auth::user()->username, 0, 1));
                 @endphp
-                <div class="symbol-label fs-2 fw-semibold bg-primary text-inverse-danger">{{ $initials }}</div>
+                <div class="symbol-label fs-2 fw-semibold bg-primary text-inverse-danger">{{ $initial }}</div>
             @endif
         </a>
         <!--end::User symbol-->
@@ -130,16 +130,17 @@
         <div class="py-4 menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold fs-6 w-275px"
             data-kt-menu="true">
             <!--begin::Menu item-->
-            <div class="px-5 my-1 menu-item">
+            {{-- <div class="px-5 my-1 menu-item">
                 <a href="account/settings.html" class="px-5 menu-link">
                     Account Settings
                 </a>
-            </div>
+            </div> --}}
             <!--end::Menu item-->
             <!--begin::Menu item-->
             <div class="px-5 menu-item">
-                <a href="{{ route('logout') }}" class="px-5 menu-link">
-                    Sign Out
+                <a href="{{ route('logout') }}" class="px-5 menu-link d-flex align-items-center gap-2 text-capitalize">
+                    <i class="fa-solid fa-arrow-right-from-bracket fs-5"></i>
+                    <span>Sign Out</span>
                 </a>
             </div>
             <!--end::Menu item-->

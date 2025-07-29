@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>KONI Tabalong - @yield('title')</title>
 
-    <link rel="shortcut icon" href="{{ asset('assets/img/logo.png') }}" />
+    <link rel="shortcut icon" href="{{ asset('assets/img/logo-koni-simplified.png') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 

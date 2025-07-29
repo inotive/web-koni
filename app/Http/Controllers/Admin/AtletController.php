@@ -10,35 +10,36 @@ use Illuminate\Support\Facades\Storage;
 
 class AtletController extends Controller
 {
-public function index(Request $request)
-{
-    $perPage = $request->get('per_page', 10);
+    public function index(Request $request)
+    {
+        $perPage = $request->get('per_page', 10);
 
-    $atlets = Atlet::with('prestasiTerbaru')
-               ->select('*')
-               ->selectRaw("
-                   CASE
-                       WHEN jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
-                       WHEN jenis_kelamin = 'Perempuan' THEN 'Perempuan'
-                       ELSE jenis_kelamin
-                   END as jenis_kelamin
-               ")
-               ->orderBy('created_at', 'DESC')
-               ->paginate($perPage);
+        $atlets = Atlet::with('prestasiTerbaru')
+                   ->select('*')
+                   ->selectRaw("
+                       CASE
+                           WHEN jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
+                           WHEN jenis_kelamin = 'Perempuan' THEN 'Perempuan'
+                           ELSE jenis_kelamin
+                       END as jenis_kelamin
+                   ")
+                   ->orderBy('created_at', 'DESC')
+                   ->paginate($perPage);
 
-    return view('admin.atlet.index', compact('atlets'));
-}
+        return view('admin.atlet.index', compact('atlets'));
+    }
 
-public function create()
-{
-    $cabors = CabangOlahraga::select('id', 'nama_cabor')->get();
-    return view('admin.atlet.create', compact('cabors'));
-}
+    public function create()
+    {
+        $cabors = CabangOlahraga::select('id', 'nama_cabor')->get();
+        return view('admin.atlet.create', compact('cabors'));
+    }
+
     public function store(Request $request)
     {
-       $validated = $request->validate([
-        'nama' => 'required|string|max:255',
-        'cabor_id' => 'required|exists:cabang_olahragas,id',
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'cabor_id' => 'required|exists:cabang_olahragas,id',
             'tempat_lahir' => 'required|string|max:100',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
@@ -55,52 +56,65 @@ public function create()
 
         Atlet::create($validated);
 
-        return redirect()->route('admin.konfigurasi.atlet.index')->with('success', 'Data atlet berhasil ditambahkan.');
+return redirect()->route('admin.konfigurasi.atlet.index')
+    ->with('success', 'Atlet berhasil ditambahkan.')
+    ->with('action', 'store');
     }
 
-public function edit($id)
-{
-    $atlet = Atlet::findOrFail($id);
-    $cabors = CabangOlahraga::select('id', 'nama_cabor')->get();
-    return view('admin.atlet.edit', compact('atlet', 'cabors'));
-}
-   public function update(Request $request, $id)
-{
-    $atlet = Atlet::findOrFail($id);
+    public function edit($id)
+    {
+        $atlet = Atlet::findOrFail($id);
+        $cabors = CabangOlahraga::select('id', 'nama_cabor')->get();
+        return view('admin.atlet.edit', compact('atlet', 'cabors'));
+    }
 
-    $validated = $request->validate([
-        'nama' => 'required|string|max:255',
-        'cabor_id' => 'required|exists:cabang_olahragas,id', 
-        'tempat_lahir' => 'required|string|max:100',
-        'tanggal_lahir' => 'required|date',
-        'alamat' => 'required|string',
-        'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-        'no_telepon' => 'nullable|string|max:20',
-        'email' => 'nullable|email|max:100',
-        'foto_atlet' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-    ]);
+    public function update(Request $request, $id)
+    {
+        $atlet = Atlet::findOrFail($id);
 
-    if ($request->hasFile('foto_atlet')) {
-        // Hapus foto lama jika ada
-        if ($atlet->foto_atlet) {
-            Storage::disk('public')->delete($atlet->foto_atlet);
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'cabor_id' => 'required|exists:cabang_olahragas,id',
+            'tempat_lahir' => 'required|string|max:100',
+            'tanggal_lahir' => 'required|date',
+            'alamat' => 'required|string',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'no_telepon' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:100',
+            'foto_atlet' => 'nullable|image|memes:jpeg,png,jpg|max:2048',
+        ]);
+
+        if ($request->hasFile('foto_atlet')) {
+
+            if ($atlet->foto_atlet) {
+                Storage::disk('public')->delete($atlet->foto_atlet);
+            }
+            $foto = $request->file('foto_atlet')->store('foto_atlet', 'public');
+            $validated['foto_atlet'] = $foto;
         }
-        $foto = $request->file('foto_atlet')->store('foto_atlet', 'public');
-        $validated['foto_atlet'] = $foto;
-    }
 
-    $atlet->update($validated);
+        $atlet->update($validated);
 
     return redirect()->route('admin.konfigurasi.atlet.index')
-           ->with('success', 'Data atlet berhasil diperbarui.');
-}
+    ->with('success', 'Data atlet berhasil diperbarui.')
+    ->with('action', 'update');
+    }
 
     public function destroy($id)
     {
         $atlet = Atlet::findOrFail($id);
+
+
+        if ($atlet->foto_atlet) {
+            Storage::disk('public')->delete($atlet->foto_atlet);
+        }
+
         $atlet->delete();
 
-        return redirect()->route('admin.konfigurasi.atlet.index')->with('success', 'Data atlet berhasil dihapus.');
+
+return redirect()->route('admin.konfigurasi.atlet.index')
+    ->with('success', 'Data atlet berhasil dihapus.')
+    ->with('action', 'destroy');
     }
 
     public function show($id)
