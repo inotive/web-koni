@@ -228,7 +228,7 @@
                             <div class="d-flex align-items-center gap-2 flex-wrap">
                                 <div class="input-group" style="width: 250px;">
                                     <input type="search" name="search" id="search" class="form-control"
-                                        placeholder="Cari cabang olahraga...">
+                                        placeholder="Cari cabang olahraga..." value="">
                                     <button class="btn btn-outline-secondary" type="button">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -280,7 +280,7 @@
                         </div>
                     @else
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle" id="kt_datatable_dom_positioning">
+                            <table class="table table-hover align-middle" id="caborTable">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -305,7 +305,7 @@
                                     @if(isset($cabors))
                                         @forelse ($cabors as $index => $cabor)
                                             <tr data-status="{{ $cabor->status }}">
-                                                <td></td> {{-- Will be populated by DataTable --}}
+                                                <td>{{ $loop->iteration + ($cabors->currentPage() - 1) * $cabors->perPage() }}</td>
 
                                                 <td>
                                                     <div class="d-flex align-items-center">
@@ -435,134 +435,184 @@
 @endsection
 
 @section('script')
-    {{-- Notifikasi --}}
-    @if(session('cabor_created'))
-        <script>$(document).ready(() => toastr.success("{{ session('cabor_created') }}"));</script>
-    @endif
-    {{-- Notifikasi lainnya tetap sama --}}
+<script>
+$(document).ready(function() {
+    console.log('Initializing cabor table filters...');
+    
+    // Get the table and rows
+    const caborTable = $('#caborTable');
+    const caborRows = caborTable.find('tbody tr');
+    const totalRows = caborRows.length;
+    
+    console.log('Found table with', totalRows, 'rows');
+    
+    // Search function
+    $('#search').on('keyup', function() {
+        const searchText = $(this).val().toLowerCase();
+        console.log('Search input:', searchText);
+        filterCaborTable(searchText, $('#filter-status').val());
+        updateCaborInfo();
+    });
+    
+    // Apply filters button
+    $('#apply-filters').on('click', function() {
+        console.log('Apply filters clicked');
+        const searchText = $('#search').val().toLowerCase();
+        const statusFilter = $('#filter-status').val();
+        filterCaborTable(searchText, statusFilter);
+        updateCaborFilterCount();
+        updateCaborInfo();
+    });
+    
+    // Reset filters button
+    $('#reset-filters').on('click', function() {
+        console.log('Reset filters clicked');
+        $('#search').val('');
+        $('#filter-status').val('');
+        filterCaborTable('', '');
+        updateCaborFilterCount();
+        updateCaborInfo();
+    });
+    
+    // Auto-apply filter when status dropdown changes
+    $('#filter-status').on('change', function() {
+        console.log('Status filter changed:', $(this).val());
+        const searchText = $('#search').val().toLowerCase();
+        const statusFilter = $(this).val();
+        filterCaborTable(searchText, statusFilter);
+        updateCaborFilterCount();
+        updateCaborInfo();
+    });
+    
+    // Main filter function
+    function filterCaborTable(searchText, statusFilter) {
+        console.log('Filtering with search:', searchText, 'status:', statusFilter);
+        let visibleCount = 0;
+        
+        caborRows.each(function() {
+            const row = $(this);
+            
+            // Get data from different columns
+            const namaCabor = row.find('td:nth-child(2)').text().toLowerCase(); // Nama Cabor
+            const ketuaPj = row.find('td:nth-child(3)').text().toLowerCase();   // Ketua PJ
+            const statusBadge = row.find('td:nth-child(4) .badge').text().toLowerCase(); // Status from badge
+            
+            // Check search match (search in nama_cabor and ketua_pj)
+            const cocokSearch = namaCabor.includes(searchText) || 
+                               ketuaPj.includes(searchText) || 
+                               searchText === '';
+            
+            // Check status filter match
+            const cocokFilter = statusBadge.includes(statusFilter.toLowerCase()) || 
+                               statusFilter === '';
+            
+            // Show/hide row based on filters
+            if (cocokSearch && cocokFilter) {
+                row.show();
+                visibleCount++;
+            } else {
+                row.hide();
+            }
+        });
+        
+        console.log('Visible rows after filter:', visibleCount);
+        
+        // Update info display
+        $('#showing-count').text(visibleCount);
+        $('#total-count').text(totalRows);
+        
+        // Show "no data" message if no rows visible
+        if (visibleCount === 0) {
+            if (caborTable.find('.no-data-row').length === 0) {
+                caborTable.find('tbody').append(`
+                    <tr class="no-data-row">
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            Tidak ada data yang cocok dengan filter
+                        </td>
+                    </tr>
+                `);
+            }
+            caborTable.find('.no-data-row').show();
+        } else {
+            caborTable.find('.no-data-row').hide();
+        }
+    }
+    
+    // Update filter count badge
+    function updateCaborFilterCount() {
+        const filterAktif = [];
+        if ($('#filter-status').val()) filterAktif.push('status');
+        
+        const jumlah = filterAktif.length;
+        const badge = $('#filter-count');
+        
+        if (jumlah > 0) {
+            badge.text(jumlah).removeClass('d-none');
+        } else {
+            badge.addClass('d-none');
+        }
+        
+        console.log('Filter count updated:', jumlah);
+    }
+    
+    // Update info display
+    function updateCaborInfo() {
+        const visibleRows = caborRows.filter(':visible').length;
+        $('#showing-count').text(visibleRows);
+        $('#total-count').text(totalRows);
+    }
+    
+    // Initialize on page load
+    updateCaborFilterCount();
+    updateCaborInfo();
+    
+    console.log('Search input element:', $('#search').length);
+    console.log('Filter status element:', $('#filter-status').length);
+    console.log('Apply button element:', $('#apply-filters').length);
+    console.log('Reset button element:', $('#reset-filters').length);
+});
+</script>
 
-    @if (isset($cabors) && $cabors->isNotEmpty())
-        <script>
-            $(document).ready(function() {
-                // Pastikan tabel ada sebelum inisialisasi
-                if ($.fn.DataTable.isDataTable("#kt_datatable_dom_positioning")) {
-                    $("#kt_datatable_dom_positioning").DataTable().destroy();
-                }
+{{-- Notifikasi --}}
+@if(session('cabor_created'))
+    <script>$(document).ready(() => toastr.success("{{ session('cabor_created') }}"));</script>
+@endif
 
-                const table = $("#kt_datatable_dom_positioning").DataTable({
-                    paging: true,
-                    pageLength: {{ request('per_page', 10) }},
-                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-                    lengthChange: false,
-                    info: true,
-                    searching: true,
-                    ordering: true,
-                    responsive: false,
-                    autoWidth: false,
-                    scrollX: false,
-                    language: {
-                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ cabang olahraga",
-                        infoEmpty: "Menampilkan 0 sampai 0 dari 0 cabang olahraga",
-                        infoFiltered: "(difilter dari _MAX_ total cabang olahraga)",
-                        paginate: {
-                            first: "Pertama",
-                            last: "Terakhir", 
-                            next: "Selanjutnya",
-                            previous: "Sebelumnya"
-                        }
-                    },
-                    columnDefs: [
-                        {
-                            searchable: false,
-                            orderable: false,
-                            targets: 0
-                        },
-                        {
-                            targets: -1,
-                            orderable: false,
-                            searchable: false
-                        },
-                        { width: "250px", targets: 1 },
-                        { width: "200px", targets: 2 },
-                    ],
-                    initComplete: function() {
-                        // Pastikan elemen search ada
-                        if ($('#search-cabor').length === 0) {
-                            $('.dataTables_filter').hide();
-                            $('#filter-container').append(
-                                '<div class="d-flex align-items-center position-relative my-1">' +
-                                '<i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">' +
-                                '<span class="path1"></span><span class="path2"></span>' +
-                                '</i>' +
-                                '<input type="text" id="search-cabor" class="form-control form-control-solid w-250px ps-13" placeholder="Cari cabang olahraga..." />' +
-                                '</div>'
-                            );
-                        }
-                    },
-                    drawCallback: function(settings) {
-                        const api = this.api();
-                        const start = api.page.info().start;
-                        api.column(0, {page: 'current'}).nodes().each(function(cell, i) {
-                            cell.innerHTML = start + i + 1;
-                        });
-                        updateCustomFilterInfo();
-                    }
-                });
+<style>
+/* Additional responsive styles */
+@media (max-width: 768px) {
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
 
-                // Custom search dengan debounce untuk performa
-                let searchTimeout;
-                $(document).on('keyup', '#search-cabor', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        table.search(this.value).draw();
-                    }, 300);
-                });
+@media (max-width: 576px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .btn-sm {
+        padding: 0.375rem 0.5rem;
+    }
+}
 
-                // Custom filter untuk status
-                $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                    const row = table.row(dataIndex).node();
-                    const $row = $(row);
-                    const statusFilter = $('#filter-status').val();
-                    const rowStatus = $row.data('status');
-                    return !statusFilter || rowStatus === statusFilter;
-                });
+/* Ensure proper horizontal scrolling for table */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+}
 
-                $('#apply-filters').on('click', function() {
-                    table.draw();
-                    updateFilterCount();
-                });
-
-                $('#reset-filters').on('click', function() {
-                    $('#filter-status').val('');
-                    $('#search-cabor').val('');
-                    table.search('').draw();
-                    updateFilterCount();
-                });
-
-                function updateFilterCount() {
-                    const count = $('#filter-status').val() ? 1 : 0;
-                    $('#filter-count').toggleClass('d-none', count === 0).text(count);
-                }
-
-                function updateCustomFilterInfo() {
-                    const info = table.page.info();
-                    $('#showing-count').text(info.recordsDisplay);
-                    $('#total-count').text(info.recordsTotal);
-                }
-
-                updateFilterCount();
-                $('#filter-status').on('change', updateFilterCount);
-
-                $('select[name="per_page"]').on('change', function() {
-                    const url = new URL(window.location);
-                    url.searchParams.set('per_page', $(this).val());
-                    url.searchParams.delete('page');
-                    window.location.href = url.toString();
-                });
-
-                // Sembunyikan elemen default DataTable
-                $('.dataTables_paginate, .dataTables_info, .dataTables_length, .dataTables_filter').hide();
-            });
-        </script>
-    @endif
+/* Fix for long text overflow */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+</style>
 @endsection
