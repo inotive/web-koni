@@ -31,34 +31,7 @@
 
              
 
-                <div class="menu-item">
-                    <a class="menu-link d-flex justify-content-between {{ request()->is('admin/laporan-pj*') ? 'active bg-orange' : '' }}"
-                        data-bs-toggle="collapse" href="#submenu-laporan-lpj" role="button"
-                        aria-expanded="{{ request()->is('admin/laporan-pj*') ? 'true' : 'false' }}"
-                        aria-controls="submenu-laporan-lpj">
-                        <span class="d-flex align-items-center">
-                            <span class="menu-icon">
-                                <i
-                                    class="fa-solid fa-file-invoice fs-2 {{ request()->is('admin/laporan-pj*') ? 'text-orange' : 'text-gray-600' }}"></i>
-                            </span>
-                            <span class="menu-title">Laporan LPJ</span>
-                        </span>
-                        <i
-                            class="fa-solid {{ request()->is('admin/kegiatan-lainnya*') ? 'fa-angle-up' : 'fa-angle-down' }} fs-4"></i>
-                    </a>
-                    <div class="collapse {{ request()->is('admin/kegiatan-lainnya*') ? 'show' : '' }}"
-                        id="submenu-laporan-lpj">
-                        <ul class="menu flex-column ms-5">
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/laporan-pj/kegiatan-lainnya*') ? 'active' : '' }}"
-                                    href="{{ route('admin.kegiatan-lainnya.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Kegiatan Lainnya</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                
 
                
 
@@ -102,4 +75,31 @@
             </div>
         </div>
     </div>
-</div>
+</div><div class="menu-item">
+                    <a class="menu-link d-flex justify-content-between {{ request()->is('admin/laporan-pj*') ? 'active bg-orange' : '' }}"
+                        data-bs-toggle="collapse" href="#submenu-laporan-lpj" role="button"
+                        aria-expanded="{{ request()->is('admin/laporan-pj*') ? 'true' : 'false' }}"
+                        aria-controls="submenu-laporan-lpj">
+                        <span class="d-flex align-items-center">
+                            <span class="menu-icon">
+                                <i
+                                    class="fa-solid fa-file-invoice fs-2 {{ request()->is('admin/laporan-pj*') ? 'text-orange' : 'text-gray-600' }}"></i>
+                            </span>
+                            <span class="menu-title">Laporan LPJ</span>
+                        </span>
+                        <i
+                            class="fa-solid {{ request()->is('admin/kegiatan-lainnya*') ? 'fa-angle-up' : 'fa-angle-down' }} fs-4"></i>
+                    </a>
+                    <div class="collapse {{ request()->is('admin/kegiatan-lainnya*') ? 'show' : '' }}"
+                        id="submenu-laporan-lpj">
+                        <ul class="menu flex-column ms-5">
+                            <li class="menu-item">
+                                <a class="menu-link {{ request()->is('admin/laporan-pj/kegiatan-lainnya*') ? 'active' : '' }}"
+                                    href="{{ route('admin.kegiatan-lainnya.index') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Kegiatan Lainnya</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
