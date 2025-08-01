@@ -10,7 +10,7 @@
 @endpush
 
 @section('breadcrumb-title')
-    <h1 class="text-dark fw-bold fs-3 mb-0">Edit Cabang Olahraga</h1>
+    {{-- <h1 class="text-dark fw-bold fs-3 mb-0">Edit Cabang Olahraga</h1> --}}
 @endsection
 
 @section('content')
@@ -160,20 +160,7 @@
                         'required' => true, 
                         'value' => $cabor->tanggal_pembentukan
                     ],
-                    'jumlah_atlet' => [
-                        'label' => 'Jumlah Atlet', 
-                        'type' => 'number', 
-                        'placeholder' => 'Masukkan jumlah atlet', 
-                        'required' => true, 
-                        'value' => $cabor->jumlah_atlet
-                    ],
-                    'jumlah_pelatih' => [
-                        'label' => 'Jumlah Pelatih', 
-                        'type' => 'number', 
-                        'placeholder' => 'Masukkan jumlah pelatih', 
-                        'required' => true, 
-                        'value' => $cabor->jumlah_pelatih
-                    ],
+                    
                 ];
                 @endphp
 
