@@ -4,6 +4,41 @@
 @section('mainSection', 'Konfigurasi')
 @section('currentSection', 'Cabang Olahraga')
 
+@php
+    if (!function_exists('sortIcon')) {
+    function sortIcon($field)
+    {
+        $currentSort = request('sort_by');
+        $currentOrder = request('order');
+
+        if ($currentSort === $field) {
+            return $currentOrder === 'asc'
+                ? '<i class="fas fa-sort-up"></i>'
+                : '<i class="fas fa-sort-down"></i>';
+        }
+
+        return '<i class="fas fa-sort text-muted"></i>';
+    }
+}
+
+if (!function_exists('sortUrl')) {
+    function sortUrl($field)
+    {
+        $currentSort = request('sort_by');
+        $currentOrder = request('order');
+
+        $order = ($currentSort === $field && $currentOrder === 'asc')
+            ? 'desc'
+            : 'asc';
+
+        return request()->fullUrlWithQuery([
+            'sort_by' => $field,
+            'order' => $order
+        ]);
+    }
+}
+@endphp
+
 @section('content')
 
 <style>
@@ -438,14 +473,14 @@
 <script>
 $(document).ready(function() {
     console.log('Initializing cabor table filters...');
-    
+
     // Get the table and rows
     const caborTable = $('#caborTable');
     const caborRows = caborTable.find('tbody tr');
     const totalRows = caborRows.length;
-    
+
     console.log('Found table with', totalRows, 'rows');
-    
+
     // Search function
     $('#search').on('keyup', function() {
         const searchText = $(this).val().toLowerCase();
@@ -453,7 +488,7 @@ $(document).ready(function() {
         filterCaborTable(searchText, $('#filter-status').val());
         updateCaborInfo();
     });
-    
+
     // Apply filters button
     $('#apply-filters').on('click', function() {
         console.log('Apply filters clicked');
@@ -463,7 +498,7 @@ $(document).ready(function() {
         updateCaborFilterCount();
         updateCaborInfo();
     });
-    
+
     // Reset filters button
     $('#reset-filters').on('click', function() {
         console.log('Reset filters clicked');
@@ -473,7 +508,7 @@ $(document).ready(function() {
         updateCaborFilterCount();
         updateCaborInfo();
     });
-    
+
     // Auto-apply filter when status dropdown changes
     $('#filter-status').on('change', function() {
         console.log('Status filter changed:', $(this).val());
@@ -483,29 +518,29 @@ $(document).ready(function() {
         updateCaborFilterCount();
         updateCaborInfo();
     });
-    
+
     // Main filter function
     function filterCaborTable(searchText, statusFilter) {
         console.log('Filtering with search:', searchText, 'status:', statusFilter);
         let visibleCount = 0;
-        
+
         caborRows.each(function() {
             const row = $(this);
-            
+
             // Get data from different columns
             const namaCabor = row.find('td:nth-child(2)').text().toLowerCase(); // Nama Cabor
             const ketuaPj = row.find('td:nth-child(3)').text().toLowerCase();   // Ketua PJ
             const statusBadge = row.find('td:nth-child(4) .badge').text().toLowerCase(); // Status from badge
-            
+
             // Check search match (search in nama_cabor and ketua_pj)
-            const cocokSearch = namaCabor.includes(searchText) || 
-                               ketuaPj.includes(searchText) || 
+            const cocokSearch = namaCabor.includes(searchText) ||
+                               ketuaPj.includes(searchText) ||
                                searchText === '';
-            
+
             // Check status filter match
-            const cocokFilter = statusBadge.includes(statusFilter.toLowerCase()) || 
+            const cocokFilter = statusBadge.includes(statusFilter.toLowerCase()) ||
                                statusFilter === '';
-            
+
             // Show/hide row based on filters
             if (cocokSearch && cocokFilter) {
                 row.show();
@@ -514,13 +549,13 @@ $(document).ready(function() {
                 row.hide();
             }
         });
-        
+
         console.log('Visible rows after filter:', visibleCount);
-        
+
         // Update info display
         $('#showing-count').text(visibleCount);
         $('#total-count').text(totalRows);
-        
+
         // Show "no data" message if no rows visible
         if (visibleCount === 0) {
             if (caborTable.find('.no-data-row').length === 0) {
@@ -537,35 +572,35 @@ $(document).ready(function() {
             caborTable.find('.no-data-row').hide();
         }
     }
-    
+
     // Update filter count badge
     function updateCaborFilterCount() {
         const filterAktif = [];
         if ($('#filter-status').val()) filterAktif.push('status');
-        
+
         const jumlah = filterAktif.length;
         const badge = $('#filter-count');
-        
+
         if (jumlah > 0) {
             badge.text(jumlah).removeClass('d-none');
         } else {
             badge.addClass('d-none');
         }
-        
+
         console.log('Filter count updated:', jumlah);
     }
-    
+
     // Update info display
     function updateCaborInfo() {
         const visibleRows = caborRows.filter(':visible').length;
         $('#showing-count').text(visibleRows);
         $('#total-count').text(totalRows);
     }
-    
+
     // Initialize on page load
     updateCaborFilterCount();
     updateCaborInfo();
-    
+
     console.log('Search input element:', $('#search').length);
     console.log('Filter status element:', $('#filter-status').length);
     console.log('Apply button element:', $('#apply-filters').length);
@@ -586,7 +621,7 @@ $(document).ready(function() {
         align-items: stretch !important;
         gap: 1rem;
     }
-    
+
     .table-responsive {
         font-size: 0.875rem;
     }
@@ -596,7 +631,7 @@ $(document).ready(function() {
     .table-responsive {
         font-size: 0.875rem;
     }
-    
+
     .btn-sm {
         padding: 0.375rem 0.5rem;
     }
