@@ -214,28 +214,28 @@
         /* Usia */
         .table th:nth-child(8),
         .table td:nth-child(8) {
-            width: 80px;
+            width: 110px;
             text-align: center;
         }
 
         /* Telepon */
         .table th:nth-child(9),
         .table td:nth-child(9) {
-            width: 110px;
+            width: 120px;
             text-align: center;
         }
 
         /* Email */
         .table th:nth-child(10),
         .table td:nth-child(10) {
-            width: 120px;
+            width: 90px;
             text-align: center;
         }
 
         /* Prestasi */
         .table th:nth-child(11),
         .table td:nth-child(11) {
-            width: 90px;
+            width: 80px;
             text-align: center;
         }
 
@@ -351,22 +351,6 @@
         }
     </style>
 
-    <div class="notification-toast">
-        @if (session('success'))
-            <div class="toast show align-items-center text-white border-0 @if (session('action') === 'store') toast-success @elseif(session('action') === 'update') toast-warning @elseif(session('action') === 'destroy') toast-error @endif"
-                role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i
-                            class="fas @if (session('action') === 'store') fa-check-circle @elseif(session('action') === 'update') fa-exclamation-circle @elseif(session('action') === 'destroy') fa-trash-alt @endif me-2"></i>
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        @endif
-    </div>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Atlet</h2>
@@ -647,17 +631,12 @@
                                                                 title="Edit">
                                                                 <i class="fa-solid fa-pen-to-square"></i>
                                                             </a>
-                                                            <form
-                                                                action="{{ route('admin.konfigurasi.atlet.destroy', $item->id) }}"
-                                                                method="POST" class="d-inline"
-                                                                onsubmit="return confirm('Yakin ingin menghapus atlet ini?')">
-                                                                @csrf @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn btn-icon btn-sm btn-light-danger"
-                                                                    title="Hapus">
-                                                                    <i class="fa-solid fa-trash"></i>
-                                                                </button>
-                                                            </form>
+                                                            <button type="button"
+                                                                class="btn btn-icon btn-sm btn-light-danger"
+                                                                data-route="{{ route('admin.konfigurasi.atlet.destroy', $item->id) }}"
+                                                                onclick="destroyItem(this)" title="Hapus">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -730,6 +709,7 @@
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (isset($atlets) && $atlets->isNotEmpty())
         <script>
             $(document).ready(function() {
@@ -875,6 +855,44 @@
                     updateFilterCount();
                 });
             });
+
+            // SweetAlert2 untuk konfirmasi hapus
+            const destroyItem = (el) => {
+                const route = $(el).data('route');
+
+                Swal.fire({
+                    title: "Apakah Anda yakin?",
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    cancelButtonText: "Batalkan!",
+                    confirmButtonText: "Hapus!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = $('<form>', {
+                            action: route,
+                            method: 'POST',
+                            style: 'display:none'
+                        });
+
+                        const csrfInput = $('<input>', {
+                            type: 'hidden',
+                            name: '_token',
+                            value: '{{ csrf_token() }}'
+                        });
+
+                        const methodInput = $('<input>', {
+                            type: 'hidden',
+                            name: '_method',
+                            value: 'DELETE'
+                        });
+
+                        form.append(csrfInput, methodInput).appendTo('body').submit();
+                    }
+                });
+            };
         </script>
     @endif
 @endsection
