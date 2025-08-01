@@ -404,10 +404,12 @@ if (!function_exists('sortUrl')) {
                                                 $hasPrestasi = isset($item->prestasis) && $item->prestasis->isNotEmpty() ? 'ada' : 'tidak';
                                                 $prestasiTerbaru = isset($item->prestasis) && $item->prestasis->isNotEmpty() ? $item->prestasis->first() : null;
                                                 $caborNama = $item->cabangOlahraga ? $item->cabangOlahraga->nama_cabor : '-';
+                                                $medaliType = $prestasiTerbaru ? strtolower($prestasiTerbaru->medali) : '';
                                             @endphp
                                             <tr data-cabor="{{ $caborNama }}" data-gender="{{ $item->kelamin }}"
                                                 data-age="{{ $age }}"
-                                                data-prestasi="{{ $hasPrestasi }}">
+                                                data-prestasi="{{ $hasPrestasi }}"
+                                                data-medali="{{ $medaliType }}">
 
                                                 <td></td> {{-- Will be populated by DataTable --}}
 
@@ -464,6 +466,16 @@ if (!function_exists('sortUrl')) {
                                                 </td>
                                                 <td>
                                                     @if($prestasiTerbaru)
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="me-2">
+                                                                @if($medaliType === 'emas')
+                                                                    <i class="fas fa-medal text-warning"></i>
+                                                                @elseif($medaliType === 'perak')
+                                                                    <i class="fas fa-medal text-secondary"></i>
+                                                                @elseif($medaliType === 'perunggu')
+                                                                    <i class="fas fa-medal text-bronze"></i>
+                                                                @endif
+                                                            </div>
                                                         <div class="d-flex flex-column">
                                                             <span class="text-truncate-custom">{{ $prestasiTerbaru->nama_prestasi }}</span>
                                                             <small class="text-muted">{{ $prestasiTerbaru->tahun }}@if($prestasiTerbaru->tempat) • {{ $prestasiTerbaru->tempat }}@endif</small>
