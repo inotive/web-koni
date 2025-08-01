@@ -3,7 +3,7 @@
 @section('pageTitle', 'Pelatih')
 @section('mainSection', 'Konfigurasi')
 @section('currentSection', 'Pelatih')
-@php
+{{-- @php
     if (!function_exists('sortIcon')) {
     function sortIcon($field)
     {
@@ -36,7 +36,7 @@ if (!function_exists('sortUrl')) {
         ]);
     }
 }
-@endphp
+@endphp --}}
 
 @section('content')
 
@@ -384,6 +384,20 @@ if (!function_exists('sortUrl')) {
             transform: none !important;
         }
     }
+
+    .pagination .page-link {
+        border: none;
+        color: #6c757d;
+        margin: 0 2px;
+        border-radius: 6px;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #f1f3f5;
+        color: #000;
+        font-weight: bold;
+    }
+
 </style>
 
 <!-- Page Header - This should be outside main-content for full responsiveness -->
@@ -504,26 +518,41 @@ if (!function_exists('sortUrl')) {
                                 <tr>
                                     <th>No</th>
                                     <th>Foto</th>
-                                    <th><a href="{{ sortUrl('nama') }}" class="text-dark text-decoration-none">Nama Pelatih & Cabor
-                                            {!! sortIcon('nama') !!}</a></th>
-                                    <th><a href="{{ sortUrl('tanggal_lahir') }}"
-                                            class="text-dark text-decoration-none">Tempat & Tanggal Lahir
-                                            {!! sortIcon('tanggal_lahir') !!}</a></th>
-                                    <th><a href="{{ sortUrl('alamat') }}"
-                                            class="text-dark text-decoration-none">Alamat {!! sortIcon('alamat') !!}</a></th>
-                                    <th><a href="{{ sortUrl('kelamin') }}"
-                                            class="text-dark text-decoration-none">Kelamin {!! sortIcon('kelamin') !!}</a></th>
-                                    <th><a href="{{ sortUrl('tanggal_lahir') }}"
-                                            class="text-dark text-decoration-none">Usia {!! sortIcon('tanggal_lahir') !!}</a></th>
-                                    <th><a href="{{ sortUrl('no_telepon') }}"
-                                            class="text-dark text-decoration-none">Telepon {!! sortIcon('no_telepon') !!}</a></th>
-                                    <th><a href="{{ sortUrl('email') }}"
-                                            class="text-dark text-decoration-none">Email {!! sortIcon('email') !!}</a></th>
-                                    <th><a href="{{ sortUrl('prestasi') }}"
-                                            class="text-dark text-decoration-none">Prestasi Terbaru {!! sortIcon('prestasi') !!}</a>
+                                    <th>
+                                        Nama Pelatih & Cabor
+                                        <i class="fas fa-sort text-muted"></i>
                                     </th>
-                                    <th><a href="{{ sortUrl('updated_at') }}"
-                                            class="text-dark text-decoration-none">Terakhir Diupdate {!! sortIcon('updated_at') !!}</a>
+                                    <th>
+                                        Tempat & Tanggal Lahir
+                                        <i class="fas fa-sort text-muted"></i>
+                                    </th>
+                                    <th>
+                                        Alamat
+                                        <i class="fas fa-sort text-muted"></i>
+                                    </th>
+                                    <th>
+                                        Kelamin
+                                        <i class="fas fa-sort text-muted"></i>
+                                    </th>
+                                    <th>
+                                        Usia
+                                        <i class="fas fa-sort text-muted"></i>
+                                    </th>
+                                    <th>
+                                        Telepon
+                                        <i class="fas fa-sort text-muted"></i>
+                                    </th>
+                                    <th>
+                                        Email
+                                        <i class="fas fa-sort text-muted"></i>
+                                    </th>
+                                    <th>
+                                        Prestasi Terbaru
+                                        <i class="fas fa-sort text-muted"></i>
+                                    </th>
+                                    <th>
+                                        Terakhir Diupdate
+                                        <i class="fas fa-sort text-muted"></i>
                                     </th>
                                     <th>Aksi</th>
                                 </tr>
@@ -673,33 +702,31 @@ if (!function_exists('sortUrl')) {
                                 </form>
                             </div>
 
-                            @if(isset($pelatih) && method_exists($pelatih, 'hasPages'))
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="d-flex align-items-center">
-                                        <span class="me-2">Page</span>
-                                        <select class="form-select form-select-sm" style="width: 80px;"
-                                                onchange="window.location.href = this.value">
-                                            @for ($i = 1; $i <= $pelatih->lastPage(); $i++)
-                                                <option value="{{ $pelatih->url($i) }}"
-                                                        {{ $pelatih->currentPage() == $i ? 'selected' : '' }}>
-                                                    {{ $i }}
-                                                </option>
-                                            @endfor
-                                        </select>
-                                        <span class="ms-2">of {{ $pelatih->lastPage() }}</span>
-                                    </div>
+                            @if ($pelatih->hasPages())
+                                <nav class="d-flex justify-content-end">
+                                    <ul class="pagination mb-0">
+                                        {{-- Previous Page Link --}}
+                                        <li class="page-item {{ $pelatih->onFirstPage() ? 'disabled' : '' }}">
+                                            <a class="page-link" href="{{ $pelatih->previousPageUrl() }}" tabindex="-1">
+                                                <i class="fas fa-chevron-left"></i>
+                                            </a>
+                                        </li>
 
-                                    <div class="btn-group">
-                                        <a href="{{ $pelatih->previousPageUrl() }}"
-                                        class="btn btn-outline-secondary {{ $pelatih->onFirstPage() ? 'disabled' : '' }}">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </a>
-                                        <a href="{{ $pelatih->nextPageUrl() }}"
-                                        class="btn btn-outline-secondary {{ !$pelatih->hasMorePages() ? 'disabled' : '' }}">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
+                                        {{-- Pagination Elements --}}
+                                        @foreach ($pelatih->getUrlRange(1, $pelatih->lastPage()) as $page => $url)
+                                            <li class="page-item {{ $page == $pelatih->currentPage() ? 'active' : '' }}">
+                                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                            </li>
+                                        @endforeach
+
+                                        {{-- Next Page Link --}}
+                                        <li class="page-item {{ !$pelatih->hasMorePages() ? 'disabled' : '' }}">
+                                            <a class="page-link" href="{{ $pelatih->nextPageUrl() }}">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             @endif
                         </div>
                     </div>
@@ -723,14 +750,19 @@ if (!function_exists('sortUrl')) {
                     responsive: false,
                     autoWidth: false,
                     scrollX: false,
+                    order: [], // No initial sort
                     columnDefs: [
                         {
                             searchable: false,
                             orderable: false,
-                            targets: 0
+                            targets: 0 // No column
                         },
                         {
-                            targets: -1,
+                            targets: 1, // Foto column
+                            orderable: false
+                        },
+                        {
+                            targets: -1, // Aksi column
                             orderable: false,
                             searchable: false
                         },
@@ -740,6 +772,38 @@ if (!function_exists('sortUrl')) {
                 });
 
                 const totalCount = table.rows().count();
+
+                // SIMPLIFIED APPROACH: Let DataTables handle all sorting
+                // Remove custom click handlers and just listen to DataTables events
+                table.on('order.dt', function() {
+                    updateSortIcons();
+                });
+
+                function updateSortIcons() {
+                    // Reset all icons first
+                    $('th i').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
+
+                    // Get current order from DataTables
+                    const currentOrder = table.order();
+
+                    if (currentOrder.length > 0) {
+                        const columnIndex = currentOrder[0][0];
+                        const direction = currentOrder[0][1];
+
+                        // Find the th element for this column and update its icon
+                        const thElement = $('th').eq(columnIndex);
+                        const icon = thElement.find('i');
+
+                        if (icon.length > 0) {
+                            icon.removeClass('fa-sort text-muted');
+                            if (direction === 'asc') {
+                                icon.addClass('fa-sort-up');
+                            } else {
+                                icon.addClass('fa-sort-down');
+                            }
+                        }
+                    }
+                }
 
                 table.on('draw.dt', function () {
                     const pageInfo = table.page.info();
@@ -755,6 +819,7 @@ if (!function_exists('sortUrl')) {
                     updateFilterInfo();
                 });
 
+                // Custom filter function
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                     const row = table.row(dataIndex).node();
                     const $row = $(row);
@@ -806,6 +871,11 @@ if (!function_exists('sortUrl')) {
                     table.search('').draw();
                     updateFilterInfo();
                     updateFilterCount();
+
+                    // Clear any sorting and reset icons
+                    table.order([]).draw();
+                    $('th i').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
+
                     $('.dropdown-toggle').dropdown('hide');
                 });
 
