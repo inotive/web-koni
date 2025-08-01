@@ -206,6 +206,96 @@
         justify-content: center;
         font-size: 0.75rem;
     }
+
+    .pagination-sm .page-link {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    color: #6c757d;
+    margin: 0 2px;
+}
+
+.pagination-sm .page-item.active .page-link {
+    background-color: #F8285A;
+    border-color: #F8285A;
+    color: white;
+}
+
+.pagination-sm .page-link:hover {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #495057;
+}
+
+.pagination-sm .page-item.disabled .page-link {
+    color: #6c757d;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.pagination {
+    margin-bottom: 0;
+}
+
+.pagination .page-item {
+    margin: 0 1px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .d-flex.justify-content-between.align-items-center.flex-wrap {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center !important;
+    }
+    
+    .pagination-sm .page-link {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .d-flex.align-items-center.gap-3 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .pagination-sm .page-link {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+    
+    .text-muted {
+        font-size: 0.875rem;
+    }
+}
+
+.simple-pagination .page-link {
+    border: none !important;
+    margin: 0 2px;
+    border-radius: 4px !important;
+    padding: 6px 12px !important;
+    color: #6c757d !important;
+    background-color: #f8f9fa !important;
+    transition: all 0.2s ease;
+}
+
+.simple-pagination .page-link:hover {
+    background-color: #e9ecef !important;
+    color: #495057 !important;
+}
+
+.simple-pagination .page-item.active .page-link {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+.simple-pagination .page-link:focus {
+    box-shadow: none !important;
+}
+
 </style>
 
 <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
@@ -223,22 +313,27 @@
                 <div class="table-container">
                     <div class="table-header">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="mb-0 fw-semibold text-dark">Informasi Cabang Olahraga</h3>
+                            <h2 class="mb-0 fw-semibold text-dark">Table Daftar Cabor Tabalong</h2>
 
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <div class="input-group" style="width: 250px;">
-                                    <input type="search" name="search" id="search" class="form-control"
-                                        placeholder="Cari cabang olahraga..." value="">
-                                    <button class="btn btn-outline-secondary" type="button">
+                            <div class="d-flex align-items-center gap-9 flex-wrap">
+                                <!-- Search Box -->
+                                <div class="input-group border rounded" style="width: 230px;">
+                                    <span class="input-group-text bg-transparent border-0">
                                         <i class="fas fa-search"></i>
-                                    </button>
+                                    </span>
+                                    <input type="search" name="search" id="search" class="form-control border-0 py-2"
+                                        placeholder="Search Teams..." value="">
                                 </div>
 
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                <!-- Filter Button with Icon on Right -->
+                                <div class="border rounded" style="width: 120px; border-width: 1px !important;">
+                                    <button class="btn bg-white dropdown-toggle w-100 text-start border-0 py-2 d-flex justify-content-between align-items-center" type="button"
                                         data-bs-toggle="dropdown">
-                                        <i class="fas fa-filter me-1"></i> Filter
-                                        <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                        <span>Filter</span>
+                                        <div>
+                                            <i class="fas fa-filter ms-1"></i>
+                                            <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                        </div>
                                     </button>
                                     <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
                                         <div class="mb-3">
@@ -262,13 +357,9 @@
                                 </div>
                             </div>
                         </div>
-
+                        
                         @if (!(isset($cabors) && $cabors->isEmpty()))
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div id="filter-info" class="text-muted">
-                                    Menampilkan <span id="showing-count">{{ isset($cabors) ? $cabors->count() : 0 }}</span> dari <span
-                                        id="total-count">{{ isset($cabors) ? $cabors->count() : 0 }}</span> cabang olahraga
-                                </div>
+                            <div class="d-flex justify-content-between align-items-center mb">
                             </div>
                         @endif
                     </div>
@@ -380,51 +471,138 @@
                         </div>
 
                         <div class="table-footer">
-                            <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-                                <div class="mb-2 mb-md-0">
-                                    <form method="GET" class="d-flex align-items-center">
-                                        <span class="me-2">Show</span>
-                                        <select name="per_page" onchange="this.form.submit()" class="form-select form-select-sm w-auto">
-                                            @foreach ([10, 25, 50, 100] as $limit)
-                                                <option value="{{ $limit }}" {{ request('per_page') == $limit ? 'selected' : '' }}>
-                                                    {{ $limit }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <span class="ms-2">per page</span>
-                                    </form>
-                                </div>
+    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+        <!-- Left side - Show per page dropdown -->
+        <div class="mb-2 mb-md-0">
+            <form method="GET" class="d-flex align-items-center">
+                <span class="me-2">Show</span>
+                <select name="per_page" onchange="this.form.submit()" class="form-select form-select-sm w-auto">
+                    @foreach ([10, 25, 50, 100] as $limit)
+                        <option value="{{ $limit }}" {{ request('per_page') == $limit ? 'selected' : '' }}>
+                            {{ $limit }}
+                        </option>
+                    @endforeach
+                </select>
+                <span class="ms-2">per page</span>
+            </form>
+        </div>
 
-                                @if(isset($cabors) && method_exists($cabors, 'hasPages'))
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="d-flex align-items-center">
-                                            <span class="me-2">Page</span>
-                                            <select class="form-select form-select-sm" style="width: 80px;"
-                                                    onchange="window.location.href = this.value">
-                                                @for ($i = 1; $i <= $cabors->lastPage(); $i++)
-                                                    <option value="{{ $cabors->url($i) }}"
-                                                            {{ $cabors->currentPage() == $i ? 'selected' : '' }}>
-                                                        {{ $i }}
-                                                    </option>
-                                                @endfor
-                                            </select>
-                                            <span class="ms-2">of {{ $cabors->lastPage() }}</span>
-                                        </div>
+        <!-- Right side - Pagination info and navigation -->
+        @if(isset($cabors) && method_exists($cabors, 'hasPages') && $cabors->hasPages())
+            <div class="d-flex align-items-center gap-3">
+                <!-- Pagination info -->
+                <div class="text-muted small">
+                    {{ $cabors->firstItem() }}-{{ $cabors->lastItem() }} of {{ $cabors->total() }}
+                </div>
 
-                                        <div class="btn-group">
-                                            <a href="{{ $cabors->previousPageUrl() }}"
-                                            class="btn btn-outline-secondary {{ $cabors->onFirstPage() ? 'disabled' : '' }}">
-                                                <i class="fas fa-chevron-left"></i>
-                                            </a>
-                                            <a href="{{ $cabors->nextPageUrl() }}"
-                                            class="btn btn-outline-secondary {{ !$cabors->hasMorePages() ? 'disabled' : '' }}">
-                                                <i class="fas fa-chevron-right"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+                <!-- Navigation with previous/next arrows and page numbers -->
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Previous page arrow -->
+                    @if($cabors->onFirstPage())
+                        <span class="pagination-arrow disabled">&lt;</span>
+                    @else
+                        <a href="{{ $cabors->previousPageUrl() }}" class="pagination-arrow" aria-label="Previous">&lt;</a>
+                    @endif
+
+                    @php
+                        // Show maximum 5 pages around current page
+                        $current = $cabors->currentPage();
+                        $total = $cabors->lastPage();
+                        $start = max(1, $current - 2);
+                        $end = min($total, $current + 2);
+                        
+                        // Adjust if we're at the beginning or end
+                        if ($end - $start < 4) {
+                            if ($start == 1) {
+                                $end = min($total, $start + 4);
+                            } else {
+                                $start = max(1, $end - 4);
+                            }
+                        }
+                    @endphp
+
+                    <!-- Page numbers -->
+                    <div class="d-flex align-items-center">
+                        @for($i = $start; $i <= $end; $i++)
+                            @if($i == $current)
+                                <span class="pagination-number active">{{ $i }}</span>
+                            @else
+                                <a href="{{ $cabors->url($i) }}" class="pagination-number">{{ $i }}</a>
+                            @endif
+                        @endfor
+                    </div>
+
+                    <!-- Next page arrow -->
+                    @if($cabors->hasMorePages())
+                        <a href="{{ $cabors->nextPageUrl() }}" class="pagination-arrow" aria-label="Next">&gt;</a>
+                    @else
+                        <span class="pagination-arrow disabled">&gt;</span>
+                    @endif
+                </div>
+            </div>
+        @elseif(isset($cabors) && method_exists($cabors, 'hasPages'))
+            <!-- Show simple info when there's only one page -->
+            <div class="text-muted small">
+                1-{{ $cabors->count() }} of {{ $cabors->total() }}
+            </div>
+        @endif
+    </div>
+</div>
+
+<style>
+/* Custom pagination styles */
+.pagination-arrow {
+    color: #6c757d;
+    text-decoration: none;
+    padding: 6px 8px;
+    transition: color 0.2s ease;
+    cursor: pointer;
+}
+
+.pagination-arrow:hover {
+    color: #1b1d1e;
+    text-decoration: none;
+}
+
+.pagination-arrow.disabled {
+    color: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.pagination-number {
+    color: #6c757d;
+    text-decoration: none;
+    padding: 6px 10px;
+    margin: 0 1px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    background-color: #f8f9fa;
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+}
+
+.pagination-number:hover {
+    color: #495057;
+    background-color: #e9ecef;
+    text-decoration: none;
+}
+
+.pagination-number.active {
+    background-color: #e4e6e9;
+    color: rgb(4, 4, 4);
+    border-color: #e0e1e4;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .pagination-arrow,
+    .pagination-number {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+    }
+}
+</style>
                     @endif
                 </div>
             </div>
@@ -495,16 +673,19 @@ $(document).ready(function() {
             // Get data from different columns
             const namaCabor = row.find('td:nth-child(2)').text().toLowerCase(); // Nama Cabor
             const ketuaPj = row.find('td:nth-child(3)').text().toLowerCase();   // Ketua PJ
-            const statusBadge = row.find('td:nth-child(4) .badge').text().toLowerCase(); // Status from badge
+            const statusBadge = row.find('td:nth-child(4) .badge').text().trim(); // Status from badge - tanpa toLowerCase()
+            
+            console.log('Row status badge text:', statusBadge); // Debug log
             
             // Check search match (search in nama_cabor and ketua_pj)
             const cocokSearch = namaCabor.includes(searchText) || 
                                ketuaPj.includes(searchText) || 
                                searchText === '';
             
-            // Check status filter match
-            const cocokFilter = statusBadge.includes(statusFilter.toLowerCase()) || 
-                               statusFilter === '';
+            // Check status filter match - PERBAIKAN DI SINI
+            const cocokFilter = statusFilter === '' || statusBadge === statusFilter;
+            
+            console.log('Row:', namaCabor, 'Status:', statusBadge, 'Filter:', statusFilter, 'Match:', cocokFilter);
             
             // Show/hide row based on filters
             if (cocokSearch && cocokFilter) {
@@ -576,6 +757,22 @@ $(document).ready(function() {
 {{-- Notifikasi --}}
 @if(session('cabor_created'))
     <script>$(document).ready(() => toastr.success("{{ session('cabor_created') }}"));</script>
+@endif
+
+@if(session('cabor_updated'))
+    <script>$(document).ready(() => toastr.success("{{ session('cabor_updated') }}"));</script>
+@endif
+
+@if(session('cabor_deleted'))
+    <script>$(document).ready(() => toastr.success("{{ session('cabor_deleted') }}"));</script>
+@endif
+
+@if(session('error'))
+    <script>$(document).ready(() => toastr.error("{{ session('error') }}"));</script>
+@endif
+
+@if(session('success'))
+    <script>$(document).ready(() => toastr.success("{{ session('success') }}"));</script>
 @endif
 
 <style>
