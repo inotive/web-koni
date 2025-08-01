@@ -40,11 +40,7 @@ if (!function_exists('sortUrl')) {
 
 @section('content')
 
-
-
 <style>
-
-
     body {
         background-color: #f5f5f5;
     }
@@ -55,24 +51,37 @@ if (!function_exists('sortUrl')) {
         padding: 20px 0;
     }
 
+    .container-fluid {
+        padding: 0 15px;
+        max-width: none;
+    }
+
+    .d-flex.justify-content-between.align-items-center.flex-wrap {
+        flex-wrap: wrap !important;
+        gap: 15px;
+    }
+
     .table-container {
         background-color: white;
-        border-radius: 12px;
+        border-radius: 0px 0px 20px 20px;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         border: 1px solid #e9ecef;
         overflow: hidden;
+        width: 100%;
     }
 
     .table-header {
         background-color: white;
         padding: 20px 25px;
         border-bottom: 1px solid #e9ecef;
+        overflow: visible;
     }
 
     .table-footer {
         background-color: white;
         padding: 15px 25px;
         border-top: 1px solid #e9ecef;
+        overflow: visible;
     }
 
     .empty-state {
@@ -109,12 +118,14 @@ if (!function_exists('sortUrl')) {
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
     }
+
     .table-responsive {
-        overflow-x: auto;
-        overflow-y: visible;
+        overflow-x: auto !important;
+        overflow-y: visible !important;
         -webkit-overflow-scrolling: touch;
         border-radius: 0;
         border: none;
+        width: 100%;
     }
 
     .table {
@@ -123,7 +134,7 @@ if (!function_exists('sortUrl')) {
         margin: 0 !important;
         background-color: white;
         width: 100%;
-        min-width: 1200px;
+        min-width: 1200px !important;
     }
 
     .table thead th {
@@ -202,23 +213,6 @@ if (!function_exists('sortUrl')) {
         text-align: center;
     }
 
-    @media (max-width: 768px) {
-        .table-header,
-        .table-footer {
-            padding: 15px;
-        }
-
-        .d-flex.justify-content-between.align-items-center.flex-wrap {
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .d-flex.align-items-center.gap-2.flex-wrap {
-            justify-content: center;
-            width: 100%;
-        }
-    }
-
     .dropdown-menu {
         border: none;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -250,328 +244,466 @@ if (!function_exists('sortUrl')) {
         justify-content: center;
         font-size: 0.75rem;
     }
-    .dropdown-menu.p-3.shadow {
-        min-height: 70vh;
-        max-height: 70vh;
+
+    /* Updated filter dropdown styles */
+    .dropdown-menu.filter-dropdown {
+        min-height: auto !important;
+        max-height: min(50vh, 350px) !important;
         overflow-y: auto;
         overflow-x: hidden;
+        width: 320px;
     }
 
+    .table thead th {
+        text-align: center !important;
+    }
+
+    .table tbody td {
+        text-align: left !important;
+    }
+
+    /* Ensure search and filter controls are responsive */
+    .d-flex.align-items-center.gap-2.flex-wrap {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .input-group {
+        min-width: 200px;
+        flex: 1;
+        max-width: 300px;
+    }
+
+    /* Improved filter dropdown scrollbar */
+    .dropdown-menu.filter-dropdown::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .dropdown-menu.filter-dropdown::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .dropdown-menu.filter-dropdown::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .dropdown-menu.filter-dropdown::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    /* Improved filter dropdown spacing */
+    .dropdown-menu .form-label {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .dropdown-menu .form-select {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .dropdown-menu .mb-3 {
+        margin-bottom: 1rem !important;
+    }
+
+    .dropdown-menu .d-flex.gap-2 {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    /* Responsive breakpoints for better mobile experience */
+    @media (max-width: 1200px) {
+        .d-flex.justify-content-between.align-items-center.flex-wrap {
+            padding: 10px 15px; /* Reduce padding on smaller screens */
+        }
+
+        .table-header,
+        .table-footer {
+            padding: 15px 20px; /* Reduce padding */
+        }
+    }
+
+    @media (max-width: 768px) {
+        .d-flex.justify-content-between.align-items-center.flex-wrap {
+            padding: 10px;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .d-flex.justify-content-between.align-items-center.flex-wrap h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .table-header,
+        .table-footer {
+            padding: 15px;
+        }
+
+        .d-flex.justify-content-between.align-items-center.mb-3 {
+            flex-direction: column;
+            gap: 15px;
+            align-items: stretch;
+        }
+
+        .d-flex.align-items-center.gap-2.flex-wrap {
+            justify-content: center;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            width: 100% !important;
+            max-width: none !important;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .d-flex.align-items-center.gap-2.flex-wrap {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .dropdown-menu.filter-dropdown {
+            width: calc(100vw - 30px);
+            max-width: 350px;
+            left: 15px !important;
+            right: 15px !important;
+            transform: none !important;
+        }
+    }
 </style>
 
-<div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
-    <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
-    <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
-        style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
-        <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Pelatih
-    </a>
+<!-- Page Header - This should be outside main-content for full responsiveness -->
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
+        <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
+        <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
+            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
+            <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Pelatih
+        </a>
+    </div>
 </div>
 
 <div class="main-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="table-container">
-                    <div class="table-header">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>
+        <div class="col-12">
+            <!-- Table Header - This is responsive -->
+            <div class="table-header" style="border-radius: 20px 20px 0px 0px">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>
 
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <div class="input-group" style="width: 250px;">
-                                    <input type="search" name="search" id="search" class="form-control"
-                                        placeholder="Cari pelatih...">
-                                    <button class="btn btn-outline-secondary" type="button">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <div class="input-group" style="width: 250px;">
+                            <input type="search" name="search" id="search" class="form-control"
+                                placeholder="Cari pelatih...">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown">
+                                <i class="fas fa-filter me-1"></i> Filter
+                                <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                            </button>
+                            <div class="dropdown-menu filter-dropdown p-3 shadow" style="min-width: 320px;">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Cabang Olahraga</label>
+                                    <select id="filter-cabor" class="form-select">
+                                        <option value="">Semua Cabor</option>
+                                        @if(isset($allCabor))
+                                            @foreach ($allCabor as $id => $nama)
+                                                <option value="{{ $nama }}">{{ $nama }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
                                 </div>
 
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                        data-bs-toggle="dropdown">
-                                        <i class="fas fa-filter me-1"></i> Filter
-                                        <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Jenis Kelamin</label>
+                                    <select id="filter-gender" class="form-select">
+                                        <option value="">Semua</option>
+                                        @if(isset($allKelamin))
+                                            @foreach ($allKelamin as $kelamin)
+                                                <option value="{{ $kelamin }}">{{ $kelamin }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Rentang Usia</label>
+                                    <select id="filter-age" class="form-select">
+                                        <option value="">Semua Usia</option>
+                                        <option value="20-30">20-30 tahun</option>
+                                        <option value="31-40">31-40 tahun</option>
+                                        <option value="41-50">41-50 tahun</option>
+                                        <option value="51-60">51-60 tahun</option>
+                                        <option value="60+">60+ tahun</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Status Prestasi</label>
+                                    <select id="filter-prestasi" class="form-select">
+                                        <option value="">Semua</option>
+                                        <option value="ada">Ada Prestasi</option>
+                                        <option value="tidak">Tidak Ada Prestasi</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="button" id="apply-filters" class="btn btn-primary btn-sm flex-fill">
+                                        <i class="fas fa-check"></i> Terapkan
                                     </button>
-                                    <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Cabang Olahraga</label>
-                                            <select id="filter-cabor" class="form-select">
-                                                <option value="">Semua Cabor</option>
-                                                @if(isset($allCabor))
-                                                    @foreach ($allCabor as $id => $nama)
-                                                        <option value="{{ $nama }}">{{ $nama }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Jenis Kelamin</label>
-                                            <select id="filter-gender" class="form-select">
-                                                <option value="">Semua</option>
-                                                @if(isset($allKelamin))
-                                                    @foreach ($allKelamin as $kelamin)
-                                                        <option value="{{ $kelamin }}">{{ $kelamin }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Rentang Usia</label>
-                                            <select id="filter-age" class="form-select">
-                                                <option value="">Semua Usia</option>
-                                                <option value="20-30">20-30 tahun</option>
-                                                <option value="31-40">31-40 tahun</option>
-                                                <option value="41-50">41-50 tahun</option>
-                                                <option value="51-60">51-60 tahun</option>
-                                                <option value="60+">60+ tahun</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Status Prestasi</label>
-                                            <select id="filter-prestasi" class="form-select">
-                                                <option value="">Semua</option>
-                                                <option value="ada">Ada Prestasi</option>
-                                                <option value="tidak">Tidak Ada Prestasi</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="d-flex gap-2">
-                                            <button type="button" id="apply-filters" class="btn btn-primary btn-sm flex-fill">
-                                                <i class="fas fa-check"></i> Terapkan
-                                            </button>
-                                            <button type="button" id="reset-filters" class="btn btn-light btn-sm flex-fill">
-                                                <i class="fas fa-redo"></i> Reset
-                                            </button>
-                                        </div>
-                                    </div>
+                                    <button type="button" id="reset-filters" class="btn btn-light btn-sm flex-fill">
+                                        <i class="fas fa-redo"></i> Reset
+                                    </button>
                                 </div>
                             </div>
                         </div>
-
-                        @if (!(isset($pelatih) && $pelatih->isEmpty()))
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div id="filter-info" class="text-muted">
-                                    Menampilkan <span id="showing-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span> dari <span
-                                        id="total-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span> pelatih
-                                </div>
-                            </div>
-                        @endif
                     </div>
+                </div>
 
-                    @if (isset($pelatih) && $pelatih->isEmpty())
-                        <div class="empty-state">
-                            <i class="fas fa-info-circle fs-3x mb-3"></i>
-                            <h4>Tidak ada data pelatih.</h4>
+                @if (!(isset($pelatih) && $pelatih->isEmpty()))
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div id="filter-info" class="text-muted">
+                            Menampilkan <span id="showing-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span> dari <span
+                                id="total-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span> pelatih
                         </div>
-                    @else
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle" id="kt_datatable_dom_positioning">
-                                <thead>
-                                    <tr>
-                                        <th>No</th>
-                                        <th>Foto</th>
-                                        <th><a href="{{ sortUrl('nama') }}" class="text-dark text-decoration-none">Nama Pelatih & Cabor
-                                                {!! sortIcon('nama') !!}</a></th>
-                                        <th><a href="{{ sortUrl('tanggal_lahir') }}"
-                                                class="text-dark text-decoration-none">Tempat & Tanggal Lahir
-                                                {!! sortIcon('tanggal_lahir') !!}</a></th>
-                                        <th><a href="{{ sortUrl('alamat') }}"
-                                                class="text-dark text-decoration-none">Alamat {!! sortIcon('alamat') !!}</a></th>
-                                        <th><a href="{{ sortUrl('kelamin') }}"
-                                                class="text-dark text-decoration-none">Kelamin {!! sortIcon('kelamin') !!}</a></th>
-                                        <th><a href="{{ sortUrl('tanggal_lahir') }}"
-                                                class="text-dark text-decoration-none">Usia {!! sortIcon('tanggal_lahir') !!}</a></th>
-                                        <th><a href="{{ sortUrl('no_telepon') }}"
-                                                class="text-dark text-decoration-none">Telepon {!! sortIcon('no_telepon') !!}</a></th>
-                                        <th><a href="{{ sortUrl('email') }}"
-                                                class="text-dark text-decoration-none">Email {!! sortIcon('email') !!}</a></th>
-                                        <th><a href="{{ sortUrl('prestasi') }}"
-                                                class="text-dark text-decoration-none">Prestasi Terbaru {!! sortIcon('prestasi') !!}</a>
-                                        </th>
-                                        <th><a href="{{ sortUrl('updated_at') }}"
-                                                class="text-dark text-decoration-none">Terakhir Diupdate {!! sortIcon('updated_at') !!}</a>
-                                        </th>
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if(isset($pelatih))
-                                        @forelse ($pelatih as $index => $item)
-                                            @php
-                                                $age = $item->tanggal_lahir ? \Carbon\Carbon::parse($item->tanggal_lahir)->age : 0;
-                                                $hasPrestasi = isset($item->prestasis) && $item->prestasis->isNotEmpty() ? 'ada' : 'tidak';
-                                                $prestasiTerbaru = isset($item->prestasis) && $item->prestasis->isNotEmpty() ? $item->prestasis->first() : null;
-                                                $caborNama = $item->cabangOlahraga ? $item->cabangOlahraga->nama_cabor : '-';
-                                                $medaliType = $prestasiTerbaru ? strtolower($prestasiTerbaru->medali) : '';
-                                            @endphp
-                                            <tr data-cabor="{{ $caborNama }}" data-gender="{{ $item->kelamin }}"
-                                                data-age="{{ $age }}"
-                                                data-prestasi="{{ $hasPrestasi }}"
-                                                data-medali="{{ $medaliType }}">
+                    </div>
+                @endif
+            </div>
 
-                                                <td></td> {{-- Will be populated by DataTable --}}
+            <!-- Table Container - Only this part scrolls horizontally -->
+            <div class="table-container">
+                @if (isset($pelatih) && $pelatih->isEmpty())
+                    <div class="empty-state">
+                        <i class="fas fa-info-circle fs-3x mb-3"></i>
+                        <h4>Tidak ada data pelatih.</h4>
+                    </div>
+                @else
+                    <!-- Only this div has horizontal scroll -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle" id="kt_datatable_dom_positioning">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Foto</th>
+                                    <th><a href="{{ sortUrl('nama') }}" class="text-dark text-decoration-none">Nama Pelatih & Cabor
+                                            {!! sortIcon('nama') !!}</a></th>
+                                    <th><a href="{{ sortUrl('tanggal_lahir') }}"
+                                            class="text-dark text-decoration-none">Tempat & Tanggal Lahir
+                                            {!! sortIcon('tanggal_lahir') !!}</a></th>
+                                    <th><a href="{{ sortUrl('alamat') }}"
+                                            class="text-dark text-decoration-none">Alamat {!! sortIcon('alamat') !!}</a></th>
+                                    <th><a href="{{ sortUrl('kelamin') }}"
+                                            class="text-dark text-decoration-none">Kelamin {!! sortIcon('kelamin') !!}</a></th>
+                                    <th><a href="{{ sortUrl('tanggal_lahir') }}"
+                                            class="text-dark text-decoration-none">Usia {!! sortIcon('tanggal_lahir') !!}</a></th>
+                                    <th><a href="{{ sortUrl('no_telepon') }}"
+                                            class="text-dark text-decoration-none">Telepon {!! sortIcon('no_telepon') !!}</a></th>
+                                    <th><a href="{{ sortUrl('email') }}"
+                                            class="text-dark text-decoration-none">Email {!! sortIcon('email') !!}</a></th>
+                                    <th><a href="{{ sortUrl('prestasi') }}"
+                                            class="text-dark text-decoration-none">Prestasi Terbaru {!! sortIcon('prestasi') !!}</a>
+                                    </th>
+                                    <th><a href="{{ sortUrl('updated_at') }}"
+                                            class="text-dark text-decoration-none">Terakhir Diupdate {!! sortIcon('updated_at') !!}</a>
+                                    </th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(isset($pelatih))
+                                    @forelse ($pelatih as $index => $item)
+                                        @php
+                                            $age = $item->tanggal_lahir ? \Carbon\Carbon::parse($item->tanggal_lahir)->age : 0;
+                                            $hasPrestasi = isset($item->prestasis) && $item->prestasis->isNotEmpty() ? 'ada' : 'tidak';
+                                            $prestasiTerbaru = isset($item->prestasis) && $item->prestasis->isNotEmpty() ? $item->prestasis->first() : null;
+                                            $caborNama = $item->cabangOlahraga ? $item->cabangOlahraga->nama_cabor : '-';
+                                            $medaliType = $prestasiTerbaru ? strtolower($prestasiTerbaru->medali) : '';
+                                        @endphp
+                                        <tr data-cabor="{{ $caborNama }}" data-gender="{{ $item->kelamin }}"
+                                            data-age="{{ $age }}"
+                                            data-prestasi="{{ $hasPrestasi }}"
+                                            data-medali="{{ $medaliType }}">
 
-                                                <td>
-                                                    @if ($item->foto)
-                                                        <img src="{{ Storage::url($item->foto) }}" width="40" height="40" class="rounded-circle object-fit-cover">
-                                                    @else
-                                                        <div class="rounded-circle bg-secondary text-white text-center fw-bold" style="width: 40px; height: 40px; line-height: 40px;">
-                                                            {{ strtoupper(substr($item->nama, 0, 1)) }}
-                                                        </div>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex flex-column">
-                                                        <strong class="text-truncate-custom">{{ $item->nama }}</strong>
-                                                        <small class="text-muted">{{ $caborNama }}</small>
+                                            <td></td> {{-- Will be populated by DataTable --}}
+
+                                            <td>
+                                                @if ($item->foto)
+                                                    <img src="{{ Storage::url($item->foto) }}" width="40" height="40" class="rounded-circle object-fit-cover">
+                                                @else
+                                                    <div class="rounded-circle bg-secondary text-white text-center fw-bold" style="width: 40px; height: 40px; line-height: 40px;">
+                                                        {{ strtoupper(substr($item->nama, 0, 1)) }}
                                                     </div>
-                                                </td>
-                                                <td>
-                                                    @if($item->tanggal_lahir)
-                                                        <div class="d-flex flex-column">
-                                                            <span class="text-truncate-custom">{{ \Carbon\Carbon::parse($item->tanggal_lahir)->format('d M Y') }}</span>
-                                                            @if($item->tempat_lahir)
-                                                                <small class="text-muted text-truncate-custom">{{ $item->tempat_lahir }}</small>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <strong class="text-truncate-custom">{{ $item->nama }}</strong>
+                                                    <small class="text-muted">{{ $caborNama }}</small>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @if($item->tanggal_lahir)
+                                                    <div class="d-flex flex-column">
+                                                        <span class="text-truncate-custom">{{ \Carbon\Carbon::parse($item->tanggal_lahir)->format('d M Y') }}</span>
+                                                        @if($item->tempat_lahir)
+                                                            <small class="text-muted text-truncate-custom">{{ $item->tempat_lahir }}</small>
+                                                        @endif
+                                                    </div>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($item->alamat)
+                                                    @php
+                                                        $alamatParts = explode(' ', $item->alamat);
+                                                        $lastWord = array_pop($alamatParts);
+                                                        $restOfAddress = implode(' ', $alamatParts);
+                                                    @endphp
+                                                    <div class="d-flex flex-column">
+                                                        <strong><span class="fw-bold text-dark text-truncate-custom">{{ $lastWord }}</span></strong>
+                                                        <span class="text-muted small text-truncate-custom">{{ $restOfAddress }}</span>
+                                                    </div>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $item->kelamin }}</td>
+                                            <td>{{ $age }} Tahun</td>
+                                            <td>
+                                                <div class="text-truncate-custom">{{ $item->no_telepon ?? '-' }}</div>
+                                            </td>
+                                            <td>
+                                                <div class="text-truncate-custom" title="{{ $item->email }}">
+                                                    {{ $item->email ?? '-' }}</div>
+                                            </td>
+                                            <td>
+                                                @if($prestasiTerbaru)
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="me-2">
+                                                            @if($medaliType === 'emas')
+                                                                <i class="fas fa-medal text-warning"></i>
+                                                            @elseif($medaliType === 'perak')
+                                                                <i class="fas fa-medal text-secondary"></i>
+                                                            @elseif($medaliType === 'perunggu')
+                                                                <i class="fas fa-medal text-bronze"></i>
                                                             @endif
                                                         </div>
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($item->alamat)
-                                                        @php
-                                                            $alamatParts = explode(' ', $item->alamat);
-                                                            $lastWord = array_pop($alamatParts);
-                                                            $restOfAddress = implode(' ', $alamatParts);
-                                                        @endphp
-                                                        <div class="d-flex flex-column">
-                                                            <strong><span class="fw-bold text-dark text-truncate-custom">{{ $lastWord }}</span></strong>
-                                                            <span class="text-muted small text-truncate-custom">{{ $restOfAddress }}</span>
-                                                        </div>
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $item->kelamin }}</td>
-                                                <td>{{ $age }} Tahun</td>
-                                                <td>
-                                                    <div class="text-truncate-custom">{{ $item->no_telepon ?? '-' }}</div>
-                                                </td>
-                                                <td>
-                                                    <div class="text-truncate-custom" title="{{ $item->email }}">
-                                                        {{ $item->email ?? '-' }}</div>
-                                                </td>
-                                                <td>
-                                                    @if($prestasiTerbaru)
-                                                        <div class="d-flex align-items-center">
-                                                            <div class="me-2">
-                                                                @if($medaliType === 'emas')
-                                                                    <i class="fas fa-medal text-warning"></i>
-                                                                @elseif($medaliType === 'perak')
-                                                                    <i class="fas fa-medal text-secondary"></i>
-                                                                @elseif($medaliType === 'perunggu')
-                                                                    <i class="fas fa-medal text-bronze"></i>
-                                                                @endif
-                                                            </div>
-                                                        <div class="d-flex flex-column">
-                                                            <span class="text-truncate-custom">{{ $prestasiTerbaru->nama_prestasi }}</span>
-                                                            <small class="text-muted">{{ $prestasiTerbaru->tahun }}@if($prestasiTerbaru->tempat) • {{ $prestasiTerbaru->tempat }}@endif</small>
-                                                        </div>
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    {{ \Carbon\Carbon::parse($item->updated_at)->format('M d, Y') }}</td>
-                                                <td class="text-center">
-                                                    <div class="d-flex justify-content-center gap-1">
-                                                        <a href="{{ route('admin.konfigurasi.pelatih.show', $item->id) }}"
-                                                        class="btn btn-icon btn-sm btn-light-primary"
-                                                        title="Detail">
-                                                            <i class="fa-solid fa-eye"></i>
-                                                        </a>
-                                                        <a href="{{ route('admin.konfigurasi.pelatih.edit', $item->id) }}"
-                                                        class="btn btn-icon btn-sm btn-light-warning"
-                                                        title="Edit">
-                                                            <i class="fa-solid fa-pen-to-square"></i>
-                                                        </a>
-                                                        <form action="{{ route('admin.konfigurasi.pelatih.destroy', $item->id) }}"
-                                                                method="POST"
-                                                                class="d-inline"
-                                                                onsubmit="return confirm('Yakin ingin menghapus pelatih ini?')">
-                                                            @csrf @method('DELETE')
-                                                            <button type="button"
-                                                                class="btn btn-icon btn-sm btn-light-danger"
-                                                                data-route="{{ route('admin.konfigurasi.pelatih.destroy', $item->id) }}"
-                                                                onclick="destroyItem(this)"
-                                                                title="Hapus">
-                                                            <i class="fa-solid fa-trash"></i>
-                                                        </button>
-                                                        </form>
+                                                    <div class="d-flex flex-column">
+                                                        <span class="text-truncate-custom">{{ $prestasiTerbaru->nama_prestasi }}</span>
+                                                        <small class="text-muted">{{ $prestasiTerbaru->tahun }}@if($prestasiTerbaru->tempat) • {{ $prestasiTerbaru->tempat }}@endif</small>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="12" class="text-center py-5 text-muted">Data tidak ditemukan</td>
-                                            </tr>
-                                        @endforelse
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="table-footer">
-                            <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-                                <div class="mb-2 mb-md-0">
-                                    <form method="GET" class="d-flex align-items-center">
-                                        <span class="me-2">Show</span>
-                                        <select name="per_page" onchange="this.form.submit()" class="form-select form-select-sm w-auto">
-                                            @foreach ([10, 25, 50, 100] as $limit)
-                                                <option value="{{ $limit }}" {{ request('per_page') == $limit ? 'selected' : '' }}>
-                                                    {{ $limit }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <span class="ms-2">per page</span>
-                                    </form>
-                                </div>
-
-                                @if(isset($pelatih) && method_exists($pelatih, 'hasPages'))
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="d-flex align-items-center">
-                                            <span class="me-2">Page</span>
-                                            <select class="form-select form-select-sm" style="width: 80px;"
-                                                    onchange="window.location.href = this.value">
-                                                @for ($i = 1; $i <= $pelatih->lastPage(); $i++)
-                                                    <option value="{{ $pelatih->url($i) }}"
-                                                            {{ $pelatih->currentPage() == $i ? 'selected' : '' }}>
-                                                        {{ $i }}
-                                                    </option>
-                                                @endfor
-                                            </select>
-                                            <span class="ms-2">of {{ $pelatih->lastPage() }}</span>
-                                        </div>
-
-                                        <div class="btn-group">
-                                            <a href="{{ $pelatih->previousPageUrl() }}"
-                                            class="btn btn-outline-secondary {{ $pelatih->onFirstPage() ? 'disabled' : '' }}">
-                                                <i class="fas fa-chevron-left"></i>
-                                            </a>
-                                            <a href="{{ $pelatih->nextPageUrl() }}"
-                                            class="btn btn-outline-secondary {{ !$pelatih->hasMorePages() ? 'disabled' : '' }}">
-                                                <i class="fas fa-chevron-right"></i>
-                                            </a>
-                                        </div>
-                                    </div>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                {{ \Carbon\Carbon::parse($item->updated_at)->format('M d, Y') }}</td>
+                                            <td class="text-center">
+                                                <div class="d-flex justify-content-center gap-1">
+                                                    <a href="{{ route('admin.konfigurasi.pelatih.show', $item->id) }}"
+                                                    class="btn btn-icon btn-sm btn-light-primary"
+                                                    title="Detail">
+                                                        <i class="fa-solid fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ route('admin.konfigurasi.pelatih.edit', $item->id) }}"
+                                                    class="btn btn-icon btn-sm btn-light-warning"
+                                                    title="Edit">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </a>
+                                                    <form action="{{ route('admin.konfigurasi.pelatih.destroy', $item->id) }}"
+                                                            method="POST"
+                                                            class="d-inline"
+                                                            onsubmit="return confirm('Yakin ingin menghapus pelatih ini?')">
+                                                        @csrf @method('DELETE')
+                                                        <button type="button"
+                                                            class="btn btn-icon btn-sm btn-light-danger"
+                                                            data-route="{{ route('admin.konfigurasi.pelatih.destroy', $item->id) }}"
+                                                            onclick="destroyItem(this)"
+                                                            title="Hapus">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="12" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                                        </tr>
+                                    @endforelse
                                 @endif
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Table Footer - This is responsive -->
+                    <div class="table-footer">
+                        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+                            <div class="mb-2 mb-md-0">
+                                <form method="GET" class="d-flex align-items-center">
+                                    <span class="me-2">Show</span>
+                                    <select name="per_page" onchange="this.form.submit()" class="form-select form-select-sm w-auto">
+                                        @foreach ([10, 25, 50, 100] as $limit)
+                                            <option value="{{ $limit }}" {{ request('per_page') == $limit ? 'selected' : '' }}>
+                                                {{ $limit }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <span class="ms-2">per page</span>
+                                </form>
                             </div>
+
+                            @if(isset($pelatih) && method_exists($pelatih, 'hasPages'))
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2">Page</span>
+                                        <select class="form-select form-select-sm" style="width: 80px;"
+                                                onchange="window.location.href = this.value">
+                                            @for ($i = 1; $i <= $pelatih->lastPage(); $i++)
+                                                <option value="{{ $pelatih->url($i) }}"
+                                                        {{ $pelatih->currentPage() == $i ? 'selected' : '' }}>
+                                                    {{ $i }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <span class="ms-2">of {{ $pelatih->lastPage() }}</span>
+                                    </div>
+
+                                    <div class="btn-group">
+                                        <a href="{{ $pelatih->previousPageUrl() }}"
+                                        class="btn btn-outline-secondary {{ $pelatih->onFirstPage() ? 'disabled' : '' }}">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                        <a href="{{ $pelatih->nextPageUrl() }}"
+                                        class="btn btn-outline-secondary {{ !$pelatih->hasMorePages() ? 'disabled' : '' }}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
