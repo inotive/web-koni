@@ -10,24 +10,26 @@ use Illuminate\Support\Facades\Storage;
 
 class AtletController extends Controller
 {
-    public function index(Request $request)
-    {
-        $perPage = $request->get('per_page', 10);
+  public function index(Request $request)
+{
+    $perPage = $request->get('per_page', 10);
 
-        $atlets = Atlet::with('prestasiTerbaru')
-                   ->select('*')
-                   ->selectRaw("
-                       CASE
-                           WHEN jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
-                           WHEN jenis_kelamin = 'Perempuan' THEN 'Perempuan'
-                           ELSE jenis_kelamin
-                       END as jenis_kelamin
-                   ")
-                   ->orderBy('created_at', 'DESC')
-                   ->paginate($perPage);
+    $atlets = Atlet::with('prestasiTerbaru')
+               ->select('*')
+               ->selectRaw("
+                   CASE
+                       WHEN jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
+                       WHEN jenis_kelamin = 'Perempuan' THEN 'Perempuan'
+                       ELSE jenis_kelamin
+                   END as jenis_kelamin
+               ")
+               ->orderBy('created_at', 'DESC')
+               ->paginate($perPage);
 
-        return view('admin.atlet.index', compact('atlets'));
-    }
+    $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
+
+    return view('admin.atlet.index', compact('atlets', 'allCabor'));
+}
 
     public function create()
     {
@@ -81,7 +83,7 @@ return redirect()->route('admin.konfigurasi.atlet.index')
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:100',
-            'foto_atlet' => 'nullable|image|memes:jpeg,png,jpg|max:2048',
+            'foto_atlet' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($request->hasFile('foto_atlet')) {
