@@ -686,48 +686,85 @@ if (!function_exists('sortUrl')) {
                     </div>
 
                     <!-- Table Footer - This is responsive -->
-                    <div class="table-footer">
-                        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-                            <div class="mb-2 mb-md-0">
-                                <form method="GET" class="d-flex align-items-center">
-                                    <span class="me-2">Show</span>
-                                    <select name="per_page" onchange="this.form.submit()" class="form-select form-select-sm w-auto">
-                                        @foreach ([10, 25, 50, 100] as $limit)
-                                            <option value="{{ $limit }}" {{ request('per_page') == $limit ? 'selected' : '' }}>
-                                                {{ $limit }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <span class="ms-2">per page</span>
-                                </form>
+                    <div class="table-footer mt-3">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+
+                            {{-- Left: Show per page --}}
+                            <div class="d-flex align-items-center mb-2 mb-md-0">
+                                <span class="me-2">Show</span>
+                                <select class="form-select form-select-sm w-auto me-2" onchange="window.location.href='?perPage='+this.value">
+                                    @foreach([10,25,50,100] as $size)
+                                        <option value="{{ $size }}" {{ request('perPage', 10) == $size ? 'selected' : '' }}>
+                                            {{ $size }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <span>per page</span>
                             </div>
 
-                            @if ($pelatih->hasPages())
-                                <nav class="d-flex justify-content-end">
-                                    <ul class="pagination mb-0">
-                                        {{-- Previous Page Link --}}
-                                        <li class="page-item {{ $pelatih->onFirstPage() ? 'disabled' : '' }}">
-                                            <a class="page-link" href="{{ $pelatih->previousPageUrl() }}" tabindex="-1">
-                                                <i class="fas fa-chevron-left"></i>
-                                            </a>
-                                        </li>
+                            {{-- Right: X–Y of Z + compact pagination --}}
+                            <div class="d-flex align-items-center gap-3 mb-2 mb-md-0">
 
-                                        {{-- Pagination Elements --}}
-                                        @foreach ($pelatih->getUrlRange(1, $pelatih->lastPage()) as $page => $url)
-                                            <li class="page-item {{ $page == $pelatih->currentPage() ? 'active' : '' }}">
-                                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                {{-- Showing X–Y of Z --}}
+                                <div class="text-muted small">
+                                    @if($pelatih->total() > 0)
+                                        {{ $pelatih->firstItem() }}–{{ $pelatih->lastItem() }} of {{ $pelatih->total() }}
+                                    @else
+                                        0 of 0
+                                    @endif
+                                </div>
+
+                                {{-- Compact pagination --}}
+                                @if($pelatih->hasPages())
+                                    <nav>
+                                        <ul class="pagination mb-0 justify-content-end flex-wrap">
+
+                                            {{-- Previous --}}
+                                            <li class="page-item {{ $pelatih->onFirstPage() ? 'disabled' : '' }}">
+                                                <a class="page-link" href="{{ $pelatih->previousPageUrl() }}" aria-label="Previous">
+                                                    <span aria-hidden="true">&lsaquo;</span>
+                                                </a>
                                             </li>
-                                        @endforeach
 
-                                        {{-- Next Page Link --}}
-                                        <li class="page-item {{ !$pelatih->hasMorePages() ? 'disabled' : '' }}">
-                                            <a class="page-link" href="{{ $pelatih->nextPageUrl() }}">
-                                                <i class="fas fa-chevron-right"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            @endif
+                                            {{-- Page Numbers --}}
+                                            @php
+                                                $current = $pelatih->currentPage();
+                                                $last = $pelatih->lastPage();
+                                                $start = max($current - 2, 1);
+                                                $end = min($current + 2, $last);
+                                            @endphp
+
+                                            @if($start > 1)
+                                                <li class="page-item"><a class="page-link" href="{{ $pelatih->url(1) }}">1</a></li>
+                                                @if($start > 2)
+                                                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                                                @endif
+                                            @endif
+
+                                            @for ($i = $start; $i <= $end; $i++)
+                                                <li class="page-item {{ $current == $i ? 'active' : '' }}">
+                                                    <a class="page-link" href="{{ $pelatih->url($i) }}">{{ $i }}</a>
+                                                </li>
+                                            @endfor
+
+                                            @if($end < $last)
+                                                @if($end < $last - 1)
+                                                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                                                @endif
+                                                <li class="page-item"><a class="page-link" href="{{ $pelatih->url($last) }}">{{ $last }}</a></li>
+                                            @endif
+
+                                            {{-- Next --}}
+                                            <li class="page-item {{ !$pelatih->hasMorePages() ? 'disabled' : '' }}">
+                                                <a class="page-link" href="{{ $pelatih->nextPageUrl() }}" aria-label="Next">
+                                                    <span aria-hidden="true">&rsaquo;</span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </nav>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @endif
@@ -773,24 +810,19 @@ if (!function_exists('sortUrl')) {
 
                 const totalCount = table.rows().count();
 
-                // SIMPLIFIED APPROACH: Let DataTables handle all sorting
-                // Remove custom click handlers and just listen to DataTables events
                 table.on('order.dt', function() {
                     updateSortIcons();
                 });
 
                 function updateSortIcons() {
-                    // Reset all icons first
                     $('th i').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
 
-                    // Get current order from DataTables
                     const currentOrder = table.order();
 
                     if (currentOrder.length > 0) {
                         const columnIndex = currentOrder[0][0];
                         const direction = currentOrder[0][1];
 
-                        // Find the th element for this column and update its icon
                         const thElement = $('th').eq(columnIndex);
                         const icon = thElement.find('i');
 
@@ -819,7 +851,6 @@ if (!function_exists('sortUrl')) {
                     updateFilterInfo();
                 });
 
-                // Custom filter function
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                     const row = table.row(dataIndex).node();
                     const $row = $(row);
@@ -872,7 +903,6 @@ if (!function_exists('sortUrl')) {
                     updateFilterInfo();
                     updateFilterCount();
 
-                    // Clear any sorting and reset icons
                     table.order([]).draw();
                     $('th i').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
 
