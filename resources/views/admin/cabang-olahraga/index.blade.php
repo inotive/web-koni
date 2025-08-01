@@ -4,6 +4,41 @@
 @section('mainSection', 'Konfigurasi')
 @section('currentSection', 'Cabang Olahraga')
 
+@php
+    if (!function_exists('sortIcon')) {
+    function sortIcon($field)
+    {
+        $currentSort = request('sort_by');
+        $currentOrder = request('order');
+
+        if ($currentSort === $field) {
+            return $currentOrder === 'asc'
+                ? '<i class="fas fa-sort-up"></i>'
+                : '<i class="fas fa-sort-down"></i>';
+        }
+
+        return '<i class="fas fa-sort text-muted"></i>';
+    }
+}
+
+if (!function_exists('sortUrl')) {
+    function sortUrl($field)
+    {
+        $currentSort = request('sort_by');
+        $currentOrder = request('order');
+
+        $order = ($currentSort === $field && $currentOrder === 'asc')
+            ? 'desc'
+            : 'asc';
+
+        return request()->fullUrlWithQuery([
+            'sort_by' => $field,
+            'order' => $order
+        ]);
+    }
+}
+@endphp
+
 @section('breadcrumb-title')
     {{-- <h1 class="d-flex flex-column text-dark fw-bold fs-3 mb-0">Halaman Cabang Olahraga</h1> --}}
 @endsection
@@ -447,13 +482,13 @@
                         // Update nomor urut tetap berurutan dari 1
                         const api = this.api();
                         const start = api.page.info().start;
-                        
+
                         // Reset nomor urut selalu mulai dari 1 untuk halaman pertama
                         let counter = start + 1;
                         api.column(0, { page: 'current' }).nodes().each(function(cell, i) {
                             cell.innerHTML = counter++;
                         });
-                        
+
                         updatePaginationControls();
                         updateFilterInfo();
                         updateSortIcons();
@@ -471,16 +506,16 @@
                 $('.sortable').on('click', function(e) {
                     e.preventDefault();
                     const column = $(this).data('column');
-                    
+
                     // Get current order
                     const currentOrder = table.order();
                     let newOrder = 'asc';
-                    
+
                     // If currently sorting by this column, toggle order
                     if (currentOrder.length > 0 && currentOrder[0][0] === column) {
                         newOrder = currentOrder[0][1] === 'asc' ? 'desc' : 'asc';
                     }
-                    
+
                     // Apply new order
                     table.order([column, newOrder]).draw();
                 });
@@ -489,16 +524,16 @@
                 function updateSortIcons() {
                     // Reset all sort icons
                     $('.sort-icon').removeClass('active fas fa-sort-up fa-sort-down').addClass('fas fa-sort');
-                    
+
                     // Get current order
                     const currentOrder = table.order();
                     if (currentOrder.length > 0) {
                         const columnIndex = currentOrder[0][0];
                         const direction = currentOrder[0][1];
-                        
+
                         const sortIcon = $(`.sortable[data-column="${columnIndex}"] .sort-icon`);
                         sortIcon.removeClass('fas fa-sort').addClass('active');
-                        
+
                         if (direction === 'asc') {
                             sortIcon.addClass('fas fa-sort-up');
                         } else {
@@ -511,12 +546,12 @@
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                     const row = table.row(dataIndex).node();
                     const $row = $(row);
-                    
+
                     const statusFilter = $('#filter-status').val();
                     const rowStatus = $row.data('status');
 
                     if (statusFilter && rowStatus !== statusFilter) return false;
-                    
+
                     return true;
                 });
 
@@ -531,7 +566,7 @@
                 $('#reset-filters').on('click', function() {
                     $('#filter-status').val('');
                     $('#search').val('');
-                    
+
                     table.search('').draw();
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
@@ -579,12 +614,12 @@
 
                 function updateFilterCount() {
                     const activeFilters = [];
-                    
+
                     if ($('#filter-status').val()) activeFilters.push('status');
-                    
+
                     const count = activeFilters.length;
                     const badge = $('#filter-count');
-                    
+
                     if (count > 0) {
                         badge.text(count).removeClass('d-none');
                     } else {
