@@ -13,8 +13,7 @@
 
             if ($currentSort === $field) {
                 return $currentOrder === 'asc'
-                    ? '<i class="fas fa-sort-up">
-</i>'
+                    ? '<i class="fas fa-sort-up"></i>'
                     : '<i class="fas fa-sort-down"></i>';
             }
 
@@ -135,6 +134,43 @@
             white-space: nowrap;
             padding: 12px 8px !important;
             position: static;
+        }
+
+        /* Sorting header styles */
+        .table thead th a {
+            color: #495057;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: color 0.2s ease;
+            width: 100%;
+            padding: 4px 0;
+            min-height: 24px;
+        }
+
+        .table thead th a:hover {
+            color: #F8285A;
+        }
+
+        /* Active sort column */
+        .table thead th.sorted-asc a,
+        .table thead th.sorted-desc a {
+            color: #F8285A;
+            font-weight: 600;
+        }
+
+        /* Sort icons */
+        .table thead th a i {
+            margin-left: 4px;
+            font-size: 0.8rem;
+            transition: color 0.2s ease;
+        }
+
+        /* Highlight active sort icons */
+        .table thead th.sorted-asc a i,
+        .table thead th.sorted-desc a i {
+            color: #F8285A;
         }
 
         .table tbody tr td {
@@ -370,11 +406,16 @@
 
                             <div class="d-flex align-items-center gap-2 flex-wrap">
                                 <div class="input-group" style="width: 250px;">
-                                    <input type="search" name="search" id="search" class="form-control"
-                                        placeholder="Cari atlet...">
-                                    <button class="btn btn-outline-secondary" type="button">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                                    <form method="GET" class="input-group">
+                                        <input type="search" name="search" id="search" class="form-control"
+                                            placeholder="Cari atlet..." value="{{ request('search') }}">
+                                        <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                                        <input type="hidden" name="order" value="{{ request('order') }}">
+                                        <input type="hidden" name="per_page" value="{{ request('per_page') }}">
+                                        <button class="btn btn-outline-secondary" type="submit">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </form>
                                 </div>
 
                                 <div class="dropdown">
@@ -468,34 +509,50 @@
                                         <tr>
                                             <th>No</th>
                                             <th>Foto</th>
-                                            <th><a href="{{ sortUrl('nama') }}"
-                                                    class="text-dark text-decoration-none">Nama Atlet & Cabor
-                                                    {!! sortIcon('nama') !!}</a></th>
-                                            <th><a href="{{ sortUrl('tanggal_lahir') }}"
-                                                    class="text-dark text-decoration-none">Tempat & Tanggal Lahir
-                                                    {!! sortIcon('tanggal_lahir') !!}</a></th>
-                                            <th><a href="{{ sortUrl('alamat') }}"
-                                                    class="text-dark text-decoration-none">Alamat
-                                                    {!! sortIcon('alamat') !!}</a></th>
-                                            <th><a href="{{ sortUrl('jenis_kelamin') }}"
-                                                    class="text-dark text-decoration-none">Kelamin
-                                                    {!! sortIcon('jenis_kelamin') !!}</a></th>
-                                            <th><a href="{{ sortUrl('tanggal_lahir') }}"
-                                                    class="text-dark text-decoration-none">Usia {!! sortIcon('tanggal_lahir') !!}</a>
+                                            <th class="{{ request('sort_by') === 'nama' ? 'sorted-' . request('order', 'asc') : '' }}">
+                                                <a href="{{ sortUrl('nama') }}" class="text-dark text-decoration-none">
+                                                    Nama Atlet & Cabor {!! sortIcon('nama') !!}
+                                                </a>
                                             </th>
-                                            <th><a href="{{ sortUrl('no_telepon') }}"
-                                                    class="text-dark text-decoration-none">Telepon
-                                                    {!! sortIcon('no_telepon') !!}</a></th>
-                                            <th><a href="{{ sortUrl('email') }}"
-                                                    class="text-dark text-decoration-none">Email
-                                                    {!! sortIcon('email') !!}</a></th>
-                                            <th><a href="{{ sortUrl('prestasi') }}"
-                                                    class="text-dark text-decoration-none">Prestasi Terbaru
-                                                    {!! sortIcon('prestasi') !!}</a>
+                                            <th class="{{ request('sort_by') === 'tanggal_lahir' ? 'sorted-' . request('order', 'asc') : '' }}">
+                                                <a href="{{ sortUrl('tanggal_lahir') }}" class="text-dark text-decoration-none">
+                                                    Tempat & Tanggal Lahir {!! sortIcon('tanggal_lahir') !!}
+                                                </a>
                                             </th>
-                                            <th><a href="{{ sortUrl('updated_at') }}"
-                                                    class="text-dark text-decoration-none">Terakhir Diupdate
-                                                    {!! sortIcon('updated_at') !!}</a>
+                                            <th class="{{ request('sort_by') === 'alamat' ? 'sorted-' . request('order', 'asc') : '' }}">
+                                                <a href="{{ sortUrl('alamat') }}" class="text-dark text-decoration-none">
+                                                    Alamat {!! sortIcon('alamat') !!}
+                                                </a>
+                                            </th>
+                                            <th class="{{ request('sort_by') === 'jenis_kelamin' ? 'sorted-' . request('order', 'asc') : '' }}">
+                                                <a href="{{ sortUrl('jenis_kelamin') }}" class="text-dark text-decoration-none">
+                                                    Kelamin {!! sortIcon('jenis_kelamin') !!}
+                                                </a>
+                                            </th>
+                                            <th class="{{ request('sort_by') === 'tanggal_lahir' ? 'sorted-' . request('order', 'asc') : '' }}">
+                                                <a href="{{ sortUrl('tanggal_lahir') }}" class="text-dark text-decoration-none">
+                                                    Usia {!! sortIcon('tanggal_lahir') !!}
+                                                </a>
+                                            </th>
+                                            <th class="{{ request('sort_by') === 'no_telepon' ? 'sorted-' . request('order', 'asc') : '' }}">
+                                                <a href="{{ sortUrl('no_telepon') }}" class="text-dark text-decoration-none">
+                                                    Telepon {!! sortIcon('no_telepon') !!}
+                                                </a>
+                                            </th>
+                                            <th class="{{ request('sort_by') === 'email' ? 'sorted-' . request('order', 'asc') : '' }}">
+                                                <a href="{{ sortUrl('email') }}" class="text-dark text-decoration-none">
+                                                    Email {!! sortIcon('email') !!}
+                                                </a>
+                                            </th>
+                                            <th class="{{ request('sort_by') === 'prestasi' ? 'sorted-' . request('order', 'asc') : '' }}">
+                                                <a href="{{ sortUrl('prestasi') }}" class="text-dark text-decoration-none">
+                                                    Prestasi Terbaru {!! sortIcon('prestasi') !!}
+                                                </a>
+                                            </th>
+                                            <th class="{{ request('sort_by') === 'updated_at' ? 'sorted-' . request('order', 'asc') : '' }}">
+                                                <a href="{{ sortUrl('updated_at') }}" class="text-dark text-decoration-none">
+                                                    Terakhir Diupdate {!! sortIcon('updated_at') !!}
+                                                </a>
                                             </th>
                                             <th>Aksi</th>
                                         </tr>
@@ -656,11 +713,13 @@
                                     <div class="mb-2 mb-md-0">
                                         <form method="GET" class="d-flex align-items-center">
                                             <span class="me-2">Show</span>
+                                            <input type="hidden" name="search" value="{{ request('search') }}">
+                                            <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                                            <input type="hidden" name="order" value="{{ request('order') }}">
                                             <select name="per_page" onchange="this.form.submit()"
                                                 class="form-select form-select-sm w-auto">
                                                 @foreach ([10, 25, 50, 100] as $limit)
-                                                    <option value="{{ $limit }}"
-                                                        {{ request('per_page') == $limit ? 'selected' : '' }}>
+                                                    <option value="{{ $limit }}" {{ request('per_page') == $limit ? 'selected' : '' }}>
                                                         {{ $limit }}
                                                     </option>
                                                 @endforeach
@@ -713,11 +772,12 @@
     @if (isset($atlets) && $atlets->isNotEmpty())
         <script>
             $(document).ready(function() {
+                // Initialize DataTable with server-side sorting disabled
                 const table = $("#kt_datatable_dom_positioning").DataTable({
                     paging: false,
                     info: false,
-                    searching: true,
-                    ordering: true,
+                    searching: false, // Disable client-side search since we use server-side
+                    ordering: false,  // Disable DataTables sorting to use server-side sorting
                     responsive: false,
                     autoWidth: false,
                     scrollX: false,
@@ -742,24 +802,55 @@
                     ]
                 });
 
-                const totalCount = table.rows().count();
+                const totalCount = {{ isset($atlets) ? $atlets->total() : 0 }};
 
+                // Add row numbers based on pagination
                 table.on('draw.dt', function() {
-                    const pageInfo = table.page.info();
-                    table.column(0, {
-                        page: 'current'
-                    }).nodes().each(function(cell, i) {
-                        cell.innerHTML = i + 1 + pageInfo.start;
+                    const currentPage = {{ isset($atlets) ? $atlets->currentPage() : 1 }};
+                    const perPage = {{ isset($atlets) ? $atlets->perPage() : 10 }};
+                    const startNumber = (currentPage - 1) * perPage;
+
+                    table.column(0).nodes().each(function(cell, i) {
+                        cell.innerHTML = startNumber + i + 1;
                     });
                 });
 
                 table.draw();
 
-                $('#search').on('keyup', function() {
-                    table.search(this.value).draw();
-                    updateFilterInfo();
+                // Handle server-side sorting clicks
+                $('th a[href*="sort_by"]').on('click', function(e) {
+                    e.preventDefault();
+
+                    // Show loading indicator
+                    $(this).find('i').removeClass().addClass('fas fa-spinner fa-spin');
+
+                    // Get current URL parameters
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sortUrl = new URL($(this).attr('href'), window.location.origin);
+                    const sortParams = new URLSearchParams(sortUrl.search);
+
+                    // Preserve current filters and pagination settings
+                    const currentPerPage = urlParams.get('per_page') || '{{ request("per_page", 10) }}';
+                    const currentSearch = urlParams.get('search') || '';
+
+                    // Build new URL with sort parameters
+                    const newUrl = new URL(window.location.pathname, window.location.origin);
+                    newUrl.searchParams.set('sort_by', sortParams.get('sort_by'));
+                    newUrl.searchParams.set('order', sortParams.get('order'));
+                    newUrl.searchParams.set('per_page', currentPerPage);
+
+                    if (currentSearch) {
+                        newUrl.searchParams.set('search', currentSearch);
+                    }
+
+                    // Always reset to page 1 when sorting
+                    newUrl.searchParams.set('page', '1');
+
+                    // Redirect to new URL
+                    window.location.href = newUrl.toString();
                 });
 
+                // Custom filter function for client-side filtering (for dropdown filters)
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
                     const row = table.row(dataIndex).node();
                     const $row = $(row);
@@ -798,6 +889,7 @@
                     return true;
                 });
 
+                // Apply filters (client-side for dropdown filters)
                 $('#apply-filters').on('click', function() {
                     table.draw();
                     updateFilterInfo();
@@ -805,17 +897,27 @@
                     $('.dropdown-toggle').dropdown('hide');
                 });
 
+                // Reset filters
                 $('#reset-filters').on('click', function() {
                     $('#filter-cabor').val('');
                     $('#filter-gender').val('');
                     $('#filter-age').val('');
                     $('#filter-prestasi').val('');
+
+                    // Also clear server-side search
                     $('#search').val('');
 
-                    table.search('').draw();
+                    table.draw();
                     updateFilterInfo();
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
+                });
+
+                // Handle search form submission with Enter key
+                $('#search').on('keypress', function(e) {
+                    if (e.which === 13) { // Enter key
+                        $(this).closest('form').submit();
+                    }
                 });
 
                 function updateFilterCount() {

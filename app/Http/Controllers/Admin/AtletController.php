@@ -13,11 +13,10 @@ class AtletController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 10);
-        $sortBy = $request->get('sort_by', 'created_at');
+        $sortBy = $request->get('sort_by', 'updated_at');
         $order = $request->get('order', 'desc');
         $search = $request->get('search');
 
-        // Validate sort fields to prevent SQL injection
         $allowedSortFields = [
             'nama',
             'tanggal_lahir',
@@ -26,7 +25,8 @@ class AtletController extends Controller
             'no_telepon',
             'email',
             'updated_at',
-            'created_at'
+            'created_at',
+            'prestasi'
         ];
 
         if (!in_array($sortBy, $allowedSortFields)) {
@@ -37,12 +37,10 @@ class AtletController extends Controller
             $order = 'desc';
         }
 
-        // Start building the query
         $query = Atlet::with(['cabangOlahraga', 'prestasis' => function($q) {
             $q->orderBy('created_at', 'desc')->limit(1);
         }]);
 
-        // Apply search if provided
         if ($search) {
             $query->where(function($q) use ($search) {
                 $q->where('nama', 'LIKE', "%{$search}%")
@@ -56,35 +54,26 @@ class AtletController extends Controller
             });
         }
 
-        // Apply sorting with special cases
         if ($sortBy === 'prestasi') {
-            // Special handling for prestasi sorting
             $query->leftJoin('prestasis', function($join) {
                 $join->on('atlets.id', '=', 'prestasis.atlet_id')
                      ->whereRaw('prestasis.id = (
-                         SELECT MAX(id) FROM prestasis p2
+                         SELECT MAX(p2.id) FROM prestasis p2
                          WHERE p2.atlet_id = atlets.id
                      )');
-            })->orderBy('prestasis.nama_prestasi', $order)
-              ->select('atlets.*');
-        } elseif ($sortBy === 'cabor') {
-            // Sort by cabang olahraga name
-            $query->join('cabang_olahragas', 'atlets.cabor_id', '=', 'cabang_olahragas.id')
-                  ->orderBy('cabang_olahragas.nama_cabor', $order)
-                  ->select('atlets.*');
+            })
+            ->orderByRaw('prestasis.nama_prestasi IS NULL, prestasis.nama_prestasi ' . $order)
+            ->select('atlets.*');
         } else {
-            // Regular sorting
             $query->orderBy($sortBy, $order);
         }
 
-        // Add secondary sort to ensure consistent ordering
-        if ($sortBy !== 'created_at') {
-            $query->orderBy('created_at', 'desc');
+        if ($sortBy !== 'updated_at') {
+            $query->orderBy('updated_at', 'desc');
         }
 
         $atlets = $query->paginate($perPage);
 
-        // Preserve query parameters in pagination links
         $atlets->appends($request->query());
 
         $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
@@ -108,7 +97,7 @@ class AtletController extends Controller
             'alamat' => 'required|string',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:100',
+            'email' => 'nullable|email|max:100|unique:atlets,email',
             'foto_atlet' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -143,7 +132,7 @@ class AtletController extends Controller
             'alamat' => 'required|string',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:100',
+            'email' => 'nullable|email|max:100|unique:atlets,email,' . $id,
             'foto_atlet' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -179,7 +168,10 @@ class AtletController extends Controller
 
     public function show($id)
     {
-        $atlet = Atlet::with('prestasis')->findOrFail($id);
+        $atlet = Atlet::with(['prestasis' => function($q) {
+            $q->orderBy('tahun', 'desc');
+        }, 'cabangOlahraga'])->findOrFail($id);
+
         return view('admin.atlet.show', compact('atlet'));
     }
 }
