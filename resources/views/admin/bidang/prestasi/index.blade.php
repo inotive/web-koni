@@ -285,7 +285,7 @@
         <!-- Cabor Grid -->
         <div class="cabor-grid" id="caborGrid">
             <!-- Cabor Terukur -->
-            <a href="#" class="cabor-card" data-title="cabor terukur">
+            <a href="prestasi/cabor-terukur" class="cabor-card" data-title="cabor terukur">
                 <div class="cabor-icon icon-terukur">
                     <i class="fas fa-ruler-combined"></i>
                 </div>
@@ -294,7 +294,7 @@
             </a>
 
             <!-- Cabor Akurasi -->
-            <a href="#" class="cabor-card" data-title="cabor akurasi">
+            <a href="prestasi/cabor-akurasi" class="cabor-card" data-title="cabor akurasi">
                 <div class="cabor-icon icon-akurasi">
                     <i class="fas fa-bullseye"></i>
                 </div>
@@ -303,7 +303,7 @@
             </a>
 
             <!-- Cabor Permainan -->
-            <a href="#" class="cabor-card" data-title="cabor permainan">
+            <a href="prestasi/cabor-permainan" class="cabor-card" data-title="cabor permainan">
                 <div class="cabor-icon icon-permainan">
                     <i class="fas fa-trophy"></i>
                 </div>
@@ -312,7 +312,7 @@
             </a>
 
             <!-- Cabor Beladiri -->
-            <a href="#" class="cabor-card" data-title="cabor beladiri">
+            <a href="prestasi/cabor-beladiri" class="cabor-card" data-title="cabor beladiri">
                 <div class="cabor-icon icon-beladiri">
                     <i class="fas fa-fist-raised"></i>
                 </div>
