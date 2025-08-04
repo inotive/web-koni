@@ -14,7 +14,7 @@
                 {{ __('menu.cta.description') }}
             </div>
             <a href="{{ route('contact.index') }}"
-                class="h-12 w-full lg:w-48 bg-Orange-Primary text-white border border-Orange-Primary rounded-xl font-bold flex justify-center items-center gap-2 lg:mx-auto">
+                class="h-12 w-full lg:w-48 bg-Red-Primary text-white border border-Orange-Primary rounded-xl font-bold flex justify-center items-center gap-2 lg:mx-auto">
                 <div class="text-sm font-bold">{{ __('button.contact_us') }}</div>
             </a>
         </div>

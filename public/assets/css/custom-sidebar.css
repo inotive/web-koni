@@ -3,42 +3,41 @@
     font-size: 14px !important;
 }
 
-.menu-link.active {
+/* Custom active state for sidebar menu (orange like Dashboard) */
+.menu-link.active, .menu-link.active.bg-red {
     background-color: transparent !important;
-    color: #D20A11 !important;
+    color: #F8285A !important;
     border-radius: 0 !important;
 }
-
-.menu-link.active .menu-title {
-    color: #D20A11 !important;
-    font-weight: 600 !important;
+.menu-link.active .menu-title,
+.menu-link.active.bg-red .menu-title {
+    color: #F8285A !important;
+}
+.menu-link.active .menu-icon i,
+.menu-link.active.bg-red .menu-icon i {
+    color: #F8285A !important;
 }
 
-.menu-link.active .menu-icon i {
-    color: #D20A11 !important;
-}
-
-/* Hover state (merah terang) */
-.menu-link:hover:not(.active) {
-    background-color: #fde8e9 !important;
-    color: #D20A11 !important;
+/* Hover state for sidebar menu (orange like Dashboard) */
+.menu-link:hover:not(.active):not(.bg-red) {
+    background-color: #ffcad7ff !important;
+    color: #F8285A !important;
     border-radius: 12px !important;
 }
-
-.menu-link:hover:not(.active) .menu-title {
-    color: #D20A11 !important;
+.menu-link:hover:not(.active):not(.bg-red) .menu-title {
+    color: #F8285A !important;
+}
+.menu-link:hover:not(.active):not(.bg-red) .menu-icon i {
+    color: #F8285A !important;
+}
+.menu-link:hover:not(.active):not(.bg-red) .menu-bullet .bullet {
+    background-color: #F8285A !important;
 }
 
-.menu-link:hover:not(.active) .menu-icon i {
-    color: #D20A11 !important;
-}
-
-.menu-link:hover:not(.active) .menu-bullet .bullet {
-    background-color: #D20A11 !important;
-}
-
-.menu-link.active .menu-bullet .bullet {
-    background-color: #D20A11 !important;
+/* Bullet orange for active menu */
+.menu-link.active .menu-bullet .bullet,
+.menu-link.active.bg-red .menu-bullet .bullet {
+    background-color: #F8285A !important;
 }
 
 .menu-link .fa-angle-down,
@@ -51,14 +50,16 @@
     transform: rotate(-180deg);
 }
 
-.menu-link.active {
+/* Remove default blue highlight if any */
+.menu-link.active,
+.menu-link.active.bg-red {
     box-shadow: none !important;
 }
 
 [data-kt-app-layout] .menu-column>.menu-item>.menu-link,
 [data-kt-app-layout] .menu-column>.menu-item>.menu-title {
     font-weight: 600 !important;
-    font-size: 1.1rem !important;
+    font-size: 1.2rem !important;
 }
 
 [data-kt-app-layout] .menu ul.menu .menu-link,
@@ -68,7 +69,6 @@
 }
 
 .menu-icon i {
-    font-size: 1.3rem !important;
     line-height: 1.2 !important;
 }
 
