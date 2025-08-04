@@ -692,13 +692,13 @@ if (!function_exists('sortUrl')) {
                             {{-- Left: Show per page --}}
                             <div class="d-flex align-items-center mb-2 mb-md-0">
                                 <span class="me-2">Show</span>
-                                <select class="form-select form-select-sm w-auto me-2" onchange="window.location.href='?perPage='+this.value">
-                                    @foreach([10,25,50,100] as $size)
-                                        <option value="{{ $size }}" {{ request('perPage', 10) == $size ? 'selected' : '' }}>
-                                            {{ $size }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                    <select class="form-select form-select-sm w-auto me-2" id="perPageSelect">
+                                        @foreach([10,25,50,100] as $size)
+                                            <option value="{{ $size }}" {{ request('perPage', 10) == $size ? 'selected' : '' }}>
+                                                {{ $size }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 <span>per page</span>
                             </div>
 
@@ -980,6 +980,14 @@ if (!function_exists('sortUrl')) {
                     }
                 });
             };
+        </script>
+        <script>
+            document.getElementById('perPageSelect').addEventListener('change', function() {
+                let url = new URL(window.location.href);
+                url.searchParams.set('perPage', this.value); 
+                url.searchParams.delete('page');
+                window.location.href = url.toString();
+            });
         </script>
     @endif
 @endsection

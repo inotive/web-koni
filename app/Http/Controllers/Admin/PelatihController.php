@@ -12,6 +12,8 @@ class PelatihController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = $request->input('perPage', 10);
+
         $query = Pelatih::with(['cabangOlahraga', 'prestasis' => function ($q) {
             $q->orderByDesc('tahun');
         }]);
@@ -42,7 +44,7 @@ class PelatihController extends Controller
         // Only keep a consistent default order for initial load
         $query->orderByDesc('pelatih.created_at');
 
-        $pelatih = $query->paginate($request->per_page ?? 10);
+        $pelatih = $query->paginate($perPage)->withQueryString();
 
         // Preserve query parameters in pagination links
         $pelatih->appends($request->query());

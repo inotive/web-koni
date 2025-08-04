@@ -74,4 +74,20 @@ class BidangController extends Controller
         // Placeholder for Perencanaan Program page
         return view('admin.bidang.perencanaan-program.index');
     }
+
+    public function caborAkurasi(){
+        return view ('admin.bidang.prestasi.Akurasi.index');
+    }
+
+    public function caborBeladiri(){
+        return view ('admin.bidang.prestasi.Beladiri.index');
+    }
+
+    public function caborPermainan(){
+        return view ('admin.bidang.prestasi.Permainan.index');
+    }
+
+    public function caborTerukur(){
+        return view ('admin.bidang.prestasi.Terukur.index');
+    }
 }

@@ -11,9 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('SumberDaya', function (Blueprint $table) {
+        Schema::create('sumber_daya', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+            $table->string('nama_program');
+            $table->string('nama_kegiatan');
+            $table->string('volume');
+            $table->bigInteger('jumlah_harga_satuan');
+            $table->bigInteger('jumlah_harga');
+            $table->json('dokumen_lpj')->nullable();
+            $table->json('foto_jurnal')->nullable();
+            $table->text('keterangan_tambahan')->nullable();
             $table->timestamps();
         });
     }
@@ -23,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('SumberDaya');
+        Schema::dropIfExists('sumber_daya');
     }
 };
