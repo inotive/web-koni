@@ -40,11 +40,11 @@
     background-color: #F8285A !important;
 }
 
-/* Animated arrow for parent menu (rotate on open) */
 .menu-link .fa-angle-down,
 .menu-link .fa-angle-up {
-    transition: transform 0.3s cubic-bezier(.4,2,.6,1);
+    transition: transform 0.3s cubic-bezier(.4, 2, .6, 1);
 }
+
 .menu-link[aria-expanded="true"] .fa-angle-down,
 .menu-link.active .fa-angle-down {
     transform: rotate(-180deg);
@@ -56,14 +56,12 @@
     box-shadow: none !important;
 }
 
-/* Menu utama bold, lebih spesifik */
-[data-kt-app-layout] .menu-column > .menu-item > .menu-link,
-[data-kt-app-layout] .menu-column > .menu-item > .menu-title {
+[data-kt-app-layout] .menu-column>.menu-item>.menu-link,
+[data-kt-app-layout] .menu-column>.menu-item>.menu-title {
     font-weight: 600 !important;
     font-size: 1.2rem !important;
 }
 
-/* Sub menu normal, lebih spesifik */
 [data-kt-app-layout] .menu ul.menu .menu-link,
 [data-kt-app-layout] .menu ul.menu .menu-title {
     font-weight: normal !important;
@@ -74,6 +72,7 @@
     font-size: 1.8rem !important; /* lebih kecil, setara 20-21px */
     line-height: 1.2 !important;
 }
+
 .menu-link {
     min-height: 48px;
     padding-top: 10px;

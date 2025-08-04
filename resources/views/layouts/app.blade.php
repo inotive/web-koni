@@ -7,16 +7,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>KONI Tabalong - @yield('title')</title>
 
-    {{-- <link rel="shortcut icon" href="{{ asset('assets/koni.png') }}" /> --}}
+    <link rel="shortcut icon" href="{{ asset('assets/img/logo-koni-simplified.png') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
         rel="stylesheet">
 
-    <!-- Bootstrap Select CSS -->
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/custom-sidebar.css') }}" rel="stylesheet" type="text/css" />
-    <!-- Font Awesome 6 CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet"
@@ -150,7 +148,7 @@
     <div id="kt_wrapper" class="wrapper d-flex flex-column min-vh-100">
         @include('layouts.header')
 
-        <main class="flex-grow-1 overflow-auto">
+        <main class="flex-grow-1 overflow-auto py-4">
             <div class="container-fluid-limited mt-5">
                 <div class="mb-5">
                     <h1 class="text-2xl font-semibold text-gray-800">@yield('breadcrumb-title')</h1>
@@ -162,7 +160,7 @@
                 </div>
             </div>
 
-            <div class="px-5">
+            <div class="px-10">
                 @yield('content')
             </div>
 
@@ -188,27 +186,27 @@
 
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     lucide.createIcons();
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
 
-        //     const content = document.querySelector('main');
-        //     const scrollTopBtn = document.getElementById('scrolltop');
+            const content = document.querySelector('main');
+            const scrollTopBtn = document.getElementById('scrolltop');
 
-        //     content.addEventListener('scroll', () => {
-        //         if (content.scrollTop > 300) {
-        //             scrollTopBtn.classList.add('show');
-        //         } else {
-        //             scrollTopBtn.classList.remove('show');
-        //         }
-        //     });
+            content.addEventListener('scroll', () => {
+                if (content.scrollTop > 300) {
+                    scrollTopBtn.classList.add('show');
+                } else {
+                    scrollTopBtn.classList.remove('show');
+                }
+            });
 
-        //     scrollTopBtn.addEventListener('click', () => {
-        //         content.scrollTo({
-        //             top: 0,
-        //             behavior: 'smooth'
-        //         });
-        //     });
-        // });
+            scrollTopBtn.addEventListener('click', () => {
+                content.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
     </script>
 </body>
 

@@ -24,7 +24,13 @@ class Atlet extends Model
         'foto_atlet'
     ];
 
-    
+    protected $casts = [
+    'tanggal_lahir' => 'date',
+    'created_at'    => 'datetime',
+    'updated_at'    => 'datetime',
+];
+
+
     public function getUmurAttribute()
     {
         if ($this->tanggal_lahir) {
