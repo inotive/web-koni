@@ -9,7 +9,8 @@
 
     <link rel="shortcut icon" href="{{ asset('assets/img/logo-koni-simplified.png') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+        rel="stylesheet">
 
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
@@ -30,28 +31,28 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .justify {
-            text-align: justify;
-            line-height: 2rem;
-        }
-
-        .bg-orange {
-            background-color: #FEF9EC !important;
+        .bg-red {
+            background-color: #ffcad7ff !important;
             font-weight: bold;
         }
 
-        .bg-orange-strong {
+        .bg-red-strong {
             background-color: #F8285A !important;
             font-weight: bold;
         }
 
-        .border-orange {
+        /* .justify {
+            text-align: justify;
+            line-height: 2rem;
+        }
+
+        .border-red {
             border-color: #F8285A !important;
         }
 
         .truncate {
             display: -webkit-box;
-            -webkit-line-clamp: 2; /* Jumlah baris maksimal */
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -92,7 +93,6 @@
             outline: none !important;
         }
 
-        /* Custom container dengan max-width 1600px */
         .container-fluid-limited {
             width: 100%;
             padding-right: var(--bs-gutter-x, 0.75rem);
@@ -103,16 +103,15 @@
         }
 
         .ck.ck-content.ck-editor__editable {
-        white-space: pre-wrap !important;
-        word-break: break-word !important;
-        min-width: 0 !important; /* Fix untuk flexbox */
-    }
-    /* Batasi lebar parent */
-    .col-12.w-100.mb-4 {
-        max-width: 100%;
-        overflow: hidden;
-    }
+            white-space: pre-wrap !important;
+            word-break: break-word !important;
+            min-width: 0 !important;
+        }
 
+        .col-12.w-100.mb-4 {
+            max-width: 100%;
+            overflow: hidden;
+        } */
     </style>
     @stack('stack-css')
 
@@ -120,8 +119,10 @@
 
 
 </head>
+
 <body id="kt_body" class="aside-enabled">
-    <script>
+    <!--begin::Theme mode setup on page load-->
+    {{-- <script>
         var defaultThemeMode = "light";
         var themeMode;
         if (document.documentElement) {
@@ -139,91 +140,74 @@
             }
             document.documentElement.setAttribute("data-bs-theme", themeMode);
         }
-    </script>
-    <div class="d-flex flex-column flex-root">
-        <div class="flex-row page d-flex flex-column-fluid">
-            @include('layouts.sidebar')
-            <div class="wrapper d-flex flex-column flex-row-fluid" id="kt_wrapper">
-                @include('layouts.header')
-                <div class="container-fluid-limited mt-5">
-    <div class="mb-5">
-        <h1 class="text-2xl font-semibold text-gray-800">@yield('breadcrumb-title')</h1>
-        <nav class="text-sm mt-1" aria-label="Breadcrumb">
-            <ol class="flex space-x-2 text-gray-600">
-                @yield('breadcrumb-items')
-            </ol>
-        </nav>
-    </div>
-</div>
-{{-- START NOTIFIKASI --}}
-@if (session('success'))
-    <div class="container-fluid-limited mt-0 mb-5"> {{-- Container yang sama dengan breadcrumb --}}
-        <div class="alert alert-dismissible bg-light-success border border-success d-flex flex-stack flex-row p-5 rounded">
-            <div class="d-flex flex-column justify-content-center flex-grow-1">
-                <span class="fs-2hx text-success me-4">
-                    <i class="ki-duotone ki-check-circle fs-2hx"></i> {{-- Icon Centang --}}
-                </span>
-            </div>
-            <div class="d-flex flex-column text-success pe-0 pe-sm-10 flex-grow-1">
-                <h4 class="fw-bold text-success mb-1">Success!</h4> {{-- Teks "Success!" --}}
-                <span>{{ session('success') }}</span> {{-- Pesan dinamis dari controller --}}
-            </div>
-            <button type="button" class="position-absolute position-sm-relative top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
-                <i class="ki-duotone ki-cross fs-1 text-success"></i> {{-- Icon Tutup --}}
-            </button>
-        </div>
-    </div>
-@endif
+    </script> --}}
+    <!--end::Theme mode setup on page load-->
 
-@if (session('error'))
-    <div class="container-fluid-limited mt-0 mb-5"> {{-- Container yang sama dengan breadcrumb --}}
-        <div class="alert alert-dismissible bg-light-danger border border-danger d-flex flex-stack flex-row p-5 rounded">
-            <div class="d-flex flex-column justify-content-center flex-grow-1">
-                <span class="fs-2hx text-danger me-4">
-                    <i class="ki-duotone ki-triangle-exclamation fs-2hx"></i> {{-- Icon Exclamation untuk error --}}
-                </span>
-            </div>
-            <div class="d-flex flex-column text-danger pe-0 pe-sm-10 flex-grow-1">
-                <h4 class="fw-bold text-danger mb-1">Error!</h4>
-                <span>{{ session('error') }}</span>
-            </div>
-            <button type="button" class="position-absolute position-sm-relative top-0 end-0 btn btn-icon ms-sm-auto" data-bs-dismiss="alert">
-                <i class="ki-duotone ki-cross fs-1 text-danger"></i>
-            </button>
-        </div>
-    </div>
-@endif
-{{-- END NOTIFIKASI --}}
-                @yield('content')
-                @include('layouts.footer')
+    @include('layouts.sidebar')
+
+    <div id="kt_wrapper" class="wrapper d-flex flex-column min-vh-100">
+        @include('layouts.header')
+
+        <main class="flex-grow-1 overflow-auto py-4">
+            <div class="container-fluid-limited mt-5">
+                <div class="mb-5">
+                    <h1 class="text-2xl font-semibold text-gray-800">@yield('breadcrumb-title')</h1>
+                    <nav class="mt-1 text-sm" aria-label="Breadcrumb">
+                        <ol class="flex space-x-2 text-gray-600">
+                            @yield('breadcrumb-items')
+                        </ol>
+                    </nav>
                 </div>
             </div>
-        </div>
-    <div id="kt_scrolltop" class="scrolltop" data-kt-scrolltop="true">
-        <i class="ki-duotone ki-arrow-up">
-            <span class="path1"></span>
-            <span class="path2"></span>
-        </i>
+
+            <div class="px-10">
+                @yield('content')
+            </div>
+
+            {{-- <div id="scrolltop" class="scrolltop" data-kt-scrolltop="true">
+                <i class="ki-duotone ki-arrow-up">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                </i>
+            </div> --}}
+        </main>
+
+        @include('layouts.footer')
     </div>
+
+    <!--begin::Scrolltop-->
+    <!--end::Scrolltop-->
     @include('layouts.js-file')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        // let myDropzone = '';
-        // let cliendId = 0;
-    </script>
     @stack('modal')
     @yield('script')
     @stack('stack-script')
 
-<script src="https://unpkg.com/lucide@latest"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        lucide.createIcons();
-    });
-</script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
 
+            const content = document.querySelector('main');
+            const scrollTopBtn = document.getElementById('scrolltop');
 
+            content.addEventListener('scroll', () => {
+                if (content.scrollTop > 300) {
+                    scrollTopBtn.classList.add('show');
+                } else {
+                    scrollTopBtn.classList.remove('show');
+                }
+            });
 
+            scrollTopBtn.addEventListener('click', () => {
+                content.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>
