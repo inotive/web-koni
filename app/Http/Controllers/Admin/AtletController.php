@@ -10,76 +10,26 @@ use Illuminate\Support\Facades\Storage;
 
 class AtletController extends Controller
 {
-    public function index(Request $request)
-    {
-        $perPage = $request->get('per_page', 10);
-        $sortBy = $request->get('sort_by', 'updated_at');
-        $order = $request->get('order', 'desc');
-        $search = $request->get('search');
+   public function index(Request $request)
+{
+    $perPage = $request->get('per_page', 10);
 
-        $allowedSortFields = [
-            'nama',
-            'tanggal_lahir',
-            'alamat',
-            'jenis_kelamin',
-            'no_telepon',
-            'email',
-            'updated_at',
-            'created_at',
-            'prestasi'
-        ];
+    $atlets = Atlet::with('prestasiTerbaru')
+               ->select('*')
+               ->selectRaw("
+                   CASE
+                       WHEN jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
+                       WHEN jenis_kelamin = 'Perempuan' THEN 'Perempuan'
+                       ELSE jenis_kelamin
+                   END as jenis_kelamin
+               ")
+               ->orderBy('created_at', 'DESC')
+               ->paginate($perPage);
 
-        if (!in_array($sortBy, $allowedSortFields)) {
-            $sortBy = 'created_at';
-        }
+    $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
 
-        if (!in_array($order, ['asc', 'desc'])) {
-            $order = 'desc';
-        }
-
-        $query = Atlet::with(['cabangOlahraga', 'prestasis' => function($q) {
-            $q->orderBy('created_at', 'desc')->limit(1);
-        }]);
-
-        if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('nama', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%")
-                  ->orWhere('no_telepon', 'LIKE', "%{$search}%")
-                  ->orWhere('alamat', 'LIKE', "%{$search}%")
-                  ->orWhere('tempat_lahir', 'LIKE', "%{$search}%")
-                  ->orWhereHas('cabangOlahraga', function($subQ) use ($search) {
-                      $subQ->where('nama_cabor', 'LIKE', "%{$search}%");
-                  });
-            });
-        }
-
-        if ($sortBy === 'prestasi') {
-            $query->leftJoin('prestasis', function($join) {
-                $join->on('atlets.id', '=', 'prestasis.atlet_id')
-                     ->whereRaw('prestasis.id = (
-                         SELECT MAX(p2.id) FROM prestasis p2
-                         WHERE p2.atlet_id = atlets.id
-                     )');
-            })
-            ->orderByRaw('prestasis.nama_prestasi IS NULL, prestasis.nama_prestasi ' . $order)
-            ->select('atlets.*');
-        } else {
-            $query->orderBy($sortBy, $order);
-        }
-
-        if ($sortBy !== 'updated_at') {
-            $query->orderBy('updated_at', 'desc');
-        }
-
-        $atlets = $query->paginate($perPage);
-
-        $atlets->appends($request->query());
-
-        $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
-
-        return view('admin.atlet.index', compact('atlets', 'allCabor'));
-    }
+    return view('admin.atlet.index', compact('atlets', 'allCabor'));
+}
 
     public function create()
     {
@@ -97,7 +47,7 @@ class AtletController extends Controller
             'alamat' => 'required|string',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:100|unique:atlets,email',
+            'email' => 'nullable|email|max:100',
             'foto_atlet' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
@@ -108,9 +58,9 @@ class AtletController extends Controller
 
         Atlet::create($validated);
 
-        return redirect()->route('admin.konfigurasi.atlet.index')
-            ->with('OK', 'Atlet berhasil ditambahkan.')
-            ->with('action', 'store');
+return redirect()->route('admin.konfigurasi.atlet.index')
+    ->with('OK', 'Atlet berhasil ditambahkan.')
+    ->with('action', 'store');
     }
 
     public function edit($id)
@@ -132,11 +82,12 @@ class AtletController extends Controller
             'alamat' => 'required|string',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:100|unique:atlets,email,' . $id,
+            'email' => 'nullable|email|max:100',
             'foto_atlet' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($request->hasFile('foto_atlet')) {
+
             if ($atlet->foto_atlet) {
                 Storage::disk('public')->delete($atlet->foto_atlet);
             }
@@ -146,14 +97,15 @@ class AtletController extends Controller
 
         $atlet->update($validated);
 
-        return redirect()->route('admin.konfigurasi.atlet.index')
-            ->with('OK', 'Data atlet berhasil diperbarui.')
-            ->with('action', 'update');
+    return redirect()->route('admin.konfigurasi.atlet.index')
+    ->with('OK', 'Data atlet berhasil diperbarui.')
+    ->with('action', 'update');
     }
 
     public function destroy($id)
     {
         $atlet = Atlet::findOrFail($id);
+
 
         if ($atlet->foto_atlet) {
             Storage::disk('public')->delete($atlet->foto_atlet);
@@ -161,17 +113,15 @@ class AtletController extends Controller
 
         $atlet->delete();
 
-        return redirect()->route('admin.konfigurasi.atlet.index')
-            ->with('OK', 'Data atlet berhasil dihapus.')
-            ->with('action', 'destroy');
+
+return redirect()->route('admin.konfigurasi.atlet.index')
+    ->with('OK', 'Data atlet berhasil dihapus.')
+    ->with('action', 'destroy');
     }
 
     public function show($id)
     {
-        $atlet = Atlet::with(['prestasis' => function($q) {
-            $q->orderBy('tahun', 'desc');
-        }, 'cabangOlahraga'])->findOrFail($id);
-
+        $atlet = Atlet::with('prestasis')->findOrFail($id);
         return view('admin.atlet.show', compact('atlet'));
     }
 }

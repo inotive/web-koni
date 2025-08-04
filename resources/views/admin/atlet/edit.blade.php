@@ -196,7 +196,9 @@
                                     'label' => 'Tanggal Lahir',
                                     'type' => 'date',
                                     'required' => true,
-                                    'value' => optional($atlet->tanggal_lahir)->format('Y-m-d'),
+                                    'value' => $atlet->tanggal_lahir
+                                        ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->format('Y-m-d')
+                                        : '',
                                 ],
                                 'tempat_lahir' => [
                                     'label' => 'Tempat Lahir',
