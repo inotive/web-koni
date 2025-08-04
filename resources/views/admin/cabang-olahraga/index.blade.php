@@ -362,7 +362,7 @@
                 <div class="col-12">
                     <div class="table-container">
                         <div class="table-header">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-">
                                 <h2 class="mb-0 fw-semibold text-dark">Table Daftar Cabor Tabalong</h2>
 
                                 <div class="d-flex align-items-center gap-9 flex-wrap">
@@ -480,6 +480,8 @@
                                                             title="{{ $cabor->ketua_penanggung_jawab }}">
                                                             {{ $cabor->ketua_penanggung_jawab }}
                                                         </div>
+
+
                                                     </td>
                                                     <td>
                                                         <span
@@ -568,10 +570,10 @@
                                             <div class="d-flex align-items-center gap-2">
                                                 <!-- Previous page arrow -->
                                                 @if ($cabors->onFirstPage())
-                                                    <span class="pagination-arrow disabled">&lt;</span>
+                                                    <span class="pagination-arrow disabled">←</span>
                                                 @else
                                                     <a href="{{ $cabors->previousPageUrl() }}" class="pagination-arrow"
-                                                        aria-label="Previous">&lt;</a>
+                                                        aria-label="Previous">←</a>
                                                 @endif
 
                                                 @php
@@ -607,81 +609,81 @@
                                                 <!-- Next page arrow -->
                                                 @if ($cabors->hasMorePages())
                                                     <a href="{{ $cabors->nextPageUrl() }}" class="pagination-arrow"
-                                                        aria-label="Next">&gt;</a>
+                                                        aria-label="Next">→</a>
                                                 @else
-                                                    <span class="pagination-arrow disabled">&gt;</span>
+                                                    <span class="pagination-arrow disabled">→</span>
                                                 @endif
                                             </div>
-                                        </div>
-                                    @elseif(isset($cabors) && method_exists($cabors, 'hasPages'))
-                                        <!-- Show simple info when there's only one page -->
-                                        <div class="text-muted small">
-                                            1-{{ $cabors->count() }} of {{ $cabors->total() }}
-                                        </div>
-                                    @endif
                                 </div>
-                            </div>
-
-                            <style>
-                                /* Custom pagination styles */
-                                .pagination-arrow {
-                                    color: #6c757d;
-                                    text-decoration: none;
-                                    padding: 6px 8px;
-                                    transition: color 0.2s ease;
-                                    cursor: pointer;
-                                }
-
-                                .pagination-arrow:hover {
-                                    color: #1b1d1e;
-                                    text-decoration: none;
-                                }
-
-                                .pagination-arrow.disabled {
-                                    color: #adb5bd;
-                                    cursor: not-allowed;
-                                    opacity: 0.6;
-                                }
-
-                                .pagination-number {
-                                    color: #6c757d;
-                                    text-decoration: none;
-                                    padding: 6px 10px;
-                                    margin: 0 1px;
-                                    border-radius: 4px;
-                                    transition: all 0.2s ease;
-                                    background-color: #f8f9fa;
-                                    border: 1px solid transparent;
-                                    font-size: 0.875rem;
-                                }
-
-                                .pagination-number:hover {
-                                    color: #495057;
-                                    background-color: #e9ecef;
-                                    text-decoration: none;
-                                }
-
-                                .pagination-number.active {
-                                    background-color: #e4e6e9;
-                                    color: rgb(4, 4, 4);
-                                    border-color: #e0e1e4;
-                                }
-
-                                /* Responsive adjustments */
-                                @media (max-width: 768px) {
-
-                                    .pagination-arrow,
-                                    .pagination-number {
-                                        padding: 4px 6px;
-                                        font-size: 0.75rem;
-                                    }
-                                }
-                            </style>
+                            @elseif(isset($cabors) && method_exists($cabors, 'hasPages'))
+                                <!-- Show simple info when there's only one page -->
+                                <div class="text-muted small">
+                                    1-{{ $cabors->count() }} of {{ $cabors->total() }}
+                                </div>
                         @endif
                     </div>
                 </div>
+
+                <style>
+                    /* Custom pagination styles */
+                    .pagination-arrow {
+                        color: #6c757d;
+                        text-decoration: none;
+                        padding: 6px 8px;
+                        transition: color 0.2s ease;
+                        cursor: pointer;
+                    }
+
+                    .pagination-arrow:hover {
+                        color: #0b0b0b;
+                        text-decoration: none;
+                    }
+
+                    .pagination-arrow.disabled {
+                        color: #adb5bd;
+                        cursor: not-allowed;
+                        opacity: 0.6;
+                    }
+
+                    .pagination-number {
+                        color: #6c757d;
+                        text-decoration: none;
+                        padding: 6px 10px;
+                        margin: 0 1px;
+                        border-radius: 4px;
+                        transition: all 0.2s ease;
+                        background-color: #f8f9fa;
+                        border: 1px solid transparent;
+                        font-size: 0.875rem;
+                    }
+
+                    .pagination-number:hover {
+                        color: #89add1;
+                        background-color: #e9ecef;
+                        text-decoration: none;
+                    }
+
+                    .pagination-number.active {
+                        background-color: #e4e6e9;
+                        color: rgb(4, 4, 4);
+                        border-color: #e0e1e4;
+                    }
+
+                    /* Responsive adjustments */
+                    @media (max-width: 768px) {
+
+                        .pagination-arrow,
+                        .pagination-number {
+                            padding: 4px 6px;
+                            font-size: 0.75rem;
+                        }
+                    }
+                </style>
+                @endif
             </div>
         </div>
+    </div>
+    </div>
     </div>
 
 @endsection
@@ -748,7 +750,7 @@
                     const namaCabor = row.find('td:nth-child(2)').text().toLowerCase(); // Nama Cabor
                     const ketuaPj = row.find('td:nth-child(3)').text().toLowerCase(); // Ketua PJ
                     const statusBadge = row.find('td:nth-child(4) .badge').text()
-                .trim(); // Status from badge - tanpa toLowerCase()
+                        .trim(); // Status from badge - tanpa toLowerCase()
 
                     console.log('Row status badge text:', statusBadge); // Debug log
 

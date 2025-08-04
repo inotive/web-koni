@@ -14,62 +14,62 @@
 @section('content')
 
     <style>
-/* Gaya Tab Baru - Kotak Penuh */
-.nav-tabs .nav-link {
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 0.75rem 1.5rem !important;
-    margin-right: 0.5rem !important;
-    color: #6c757d !important;
-    background-color: #f8f9fa !important;
-    transition: all 0.3s ease !important;
-    position: relative;
-    display: flex;
-    align-items: center;
-}
+        /* Gaya Tab Baru - Kotak Penuh */
+        .nav-tabs .nav-link {
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 0.75rem 1.5rem !important;
+            margin-right: 0.5rem !important;
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            transition: all 0.3s ease !important;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
 
-.nav-tabs .nav-link.active {
-    background-color: #3e66e0 !important;
-    color: white !important;
-    box-shadow: 0 4px 8px rgba(248, 40, 90, 0.2);
-}
+        .nav-tabs .nav-link.active {
+            background-color: #4772f4 !important;
+            color: white !important;
+            box-shadow: 0 4px 8px rgba(248, 40, 90, 0.2);
+        }
 
-.nav-tabs .nav-link:hover:not(.active) {
-    background-color: #e9ecef !important;
-    color: #495057 !important;
-}
+        .nav-tabs .nav-link:hover:not(.active) {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
 
-/* Icon dan Teks dalam Tab */
-.nav-tabs .nav-link i {
-    margin-right: 8px;
-    font-size: 1.2rem;
-}
+        /* Icon dan Teks dalam Tab */
+        .nav-tabs .nav-link i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
 
-.nav-tabs .nav-link .badge {
-    margin-left: 8px;
-    font-weight: 500;
-}
+        .nav-tabs .nav-link .badge {
+            margin-left: 8px;
+            font-weight: 500;
+        }
 
-/* Badge khusus untuk tab aktif */
-.nav-tabs .nav-link.active .badge {
-    background-color: rgba(255,255,255,0.2) !important;
-    color: white !important;
-    border: 1px solid rgba(255,255,255,0.3);
-}
+        /* Badge khusus untuk tab aktif */
+        .nav-tabs .nav-link.active .badge {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
 
-/* Responsif untuk mobile */
-@media (max-width: 768px) {
-    .nav-tabs .nav-link {
-        padding: 0.5rem 1rem !important;
-        font-size: 0.875rem;
-    }
-    
-    .nav-tabs .nav-link i {
-        font-size: 1rem;
-        margin-right: 6px;
-    }
-}
-</style>
+        /* Responsif untuk mobile */
+        @media (max-width: 768px) {
+            .nav-tabs .nav-link {
+                padding: 0.5rem 1rem !important;
+                font-size: 0.875rem;
+            }
+
+            .nav-tabs .nav-link i {
+                font-size: 1rem;
+                margin-right: 6px;
+            }
+        }
+    </style>
 
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-6">
@@ -131,20 +131,24 @@
                             {{-- Search dan Filter Atlet --}}
                             <div class="card-header border-0 pt-6">
                                 <div class="card-title">
-                                    <div class="d-flex align-items-center position-relative my-1">
-                                        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
-                                            <span class="path1"></span>
-                                            <span class="path2"></span>
-                                        </i>
-                                        <input type="text" id="search-atlet"
-                                            class="form-control form-control-solid w-250px ps-13"
-                                            placeholder="Cari atlet..." />
-                                    </div>
+                                    <h3 class="fw-bold">Data Atlet</h3>
                                 </div>
                                 <div class="card-toolbar">
-                                    <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                                        <button type="button" class="btn btn-light-primary me-3"
-                                            data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
+                                    <div class="d-flex justify-content-end align-items-center"
+                                        data-kt-user-table-toolbar="base">
+                                        {{-- Search Input --}}
+                                        <div class="d-flex align-items-center position-relative me-3">
+                                            <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                            </i>
+                                            <input type="text" id="search-atlet"
+                                                class="form-control form-control-solid w-250px ps-13"
+                                                placeholder="Cari atlet..." />
+                                        </div>
+                                        {{-- Filter Button --}}
+                                        <button type="button" class="btn btn-light-primary" data-kt-menu-trigger="click"
+                                            data-kt-menu-placement="bottom-end">
                                             <i class="ki-duotone ki-filter fs-2">
                                                 <span class="path1"></span>
                                                 <span class="path2"></span>
@@ -281,7 +285,7 @@
                                                             <span class="path2"></span>
                                                             <span class="path3"></span>
                                                         </i>
-                                                        <span class="d-none d-md-inline ms-1">Lihat</span>
+                                                        <span class="d-none d-md-inline ms-1">Lihat Profil</span>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -306,53 +310,48 @@
                     <div class="tab-pane fade" id="kt_tab_pane_pelatih" role="tabpanel">
                         @if (($cabor->pelatihs ?? collect())->count() > 0)
                             {{-- Search dan Filter Pelatih --}}
-                            <div class="card-header border-0 pt-6">
-                                <div class="card-title">
-                                    <div class="d-flex align-items-center position-relative my-1">
-                                        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
-                                            <span class="path1"></span>
-                                            <span class="path2"></span>
-                                        </i>
-                                        <input type="text" id="search-pelatih"
-                                            class="form-control form-control-solid w-250px ps-13"
-                                            placeholder="Cari pelatih..." />
-                                    </div>
+                            <div class="d-flex justify-content-end align-items-center p-6 border-bottom"
+                                data-kt-user-table-toolbar="base">
+                                {{-- Search Input --}}
+                                <div class="d-flex align-items-center position-relative me-3">
+                                    <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                    <input type="text" id="search-pelatih"
+                                        class="form-control form-control-solid w-250px ps-13"
+                                        placeholder="Cari pelatih..." />
                                 </div>
-                                <div class="card-toolbar">
-                                    <div class="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                                        <button type="button" class="btn btn-light-success me-3"
-                                            data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end">
-                                            <i class="ki-duotone ki-filter fs-2">
-                                                <span class="path1"></span>
-                                                <span class="path2"></span>
-                                            </i>
-                                            Filter
-                                            <span id="filter-count-pelatih"
-                                                class="badge badge-light-danger d-none ms-2">0</span>
-                                        </button>
-                                        <div class="menu menu-sub menu-sub-dropdown w-300px w-md-325px"
-                                            data-kt-menu="true">
-                                            <div class="px-7 py-5">
-                                                <div class="fs-5 text-dark fw-bold">Filter Pelatih</div>
-                                            </div>
-                                            <div class="separator border-gray-200"></div>
-                                            <div class="px-7 py-5">
-                                                <div class="mb-10">
-                                                    <label class="form-label fw-semibold">Jenis Kelamin:</label>
-                                                    <select id="filter-jenis-kelamin-pelatih"
-                                                        class="form-select form-select-solid fw-bold">
-                                                        <option value="">Semua</option>
-                                                        <option value="laki-laki">Laki-laki</option>
-                                                        <option value="perempuan">Perempuan</option>
-                                                    </select>
-                                                </div>
-                                                <div class="d-flex justify-content-end">
-                                                    <button type="button" id="reset-filters-pelatih"
-                                                        class="btn btn-light btn-active-light-success fw-bold me-2 px-6">Reset</button>
-                                                    <button type="button" id="apply-filters-pelatih"
-                                                        class="btn btn-success fw-bold px-6">Terapkan</button>
-                                                </div>
-                                            </div>
+                                {{-- Filter Button --}}
+                                <button type="button" class="btn btn-light-primary" data-kt-menu-trigger="click"
+                                    data-kt-menu-placement="bottom-end">
+                                    <i class="ki-duotone ki-filter fs-2">
+                                        <span class="path1"></span>
+                                        <span class="path2"></span>
+                                    </i>
+                                    Filter
+                                    <span id="filter-count-pelatih" class="badge badge-light-danger d-none ms-2">0</span>
+                                </button>
+                                <div class="menu menu-sub menu-sub-dropdown w-300px w-md-325px" data-kt-menu="true">
+                                    <div class="px-7 py-5">
+                                        <div class="fs-5 text-dark fw-bold">Filter Pelatih</div>
+                                    </div>
+                                    <div class="separator border-gray-200"></div>
+                                    <div class="px-7 py-5">
+                                        <div class="mb-10">
+                                            <label class="form-label fw-semibold">Jenis Kelamin:</label>
+                                            <select id="filter-jenis-kelamin-pelatih"
+                                                class="form-select form-select-solid fw-bold">
+                                                <option value="">Semua</option>
+                                                <option value="laki-laki">Laki-laki</option>
+                                                <option value="perempuan">Perempuan</option>
+                                            </select>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <button type="button" id="reset-filters-pelatih"
+                                                class="btn btn-light btn-active-light-success fw-bold me-2 px-6">Reset</button>
+                                            <button type="button" id="apply-filters-pelatih"
+                                                class="btn btn-success fw-bold px-6">Terapkan</button>
                                         </div>
                                     </div>
                                 </div>
@@ -453,13 +452,13 @@
                                                 </td>
                                                 <td class="text-end pe-6">
                                                     <a href="{{ route('admin.konfigurasi.pelatih.show', $pelatih->id ?? '#') }}"
-                                                        class="btn btn-sm btn-light-success">
+                                                        class="btn btn-sm btn-light-primary ">
                                                         <i class="ki-duotone ki-eye fs-5">
                                                             <span class="path1"></span>
                                                             <span class="path2"></span>
                                                             <span class="path3"></span>
                                                         </i>
-                                                        <span class="d-none d-md-inline ms-1">Lihat</span>
+                                                        <span class="d-none d-md-inline ms-1">Lihat Profil</span>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -629,6 +628,21 @@
                 padding: 0.75rem 1rem;
                 white-space: nowrap;
             }
+
+            /* Mobile responsive untuk search dan filter */
+            .card-toolbar .d-flex {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 0.75rem;
+            }
+
+            .card-toolbar .d-flex .position-relative {
+                width: 100% !important;
+            }
+
+            .card-toolbar .d-flex .form-control {
+                width: 100% !important;
+            }
         }
 
         @media (max-width: 576px) {
@@ -648,6 +662,16 @@
             .btn-sm {
                 padding: 0.375rem 0.5rem;
             }
+
+            .card-header {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 1rem;
+            }
+
+            .card-title {
+                margin-bottom: 0;
+            }
         }
 
         /* Ensure proper horizontal scrolling for table */
@@ -661,6 +685,11 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        /* Better alignment for search and filter */
+        .card-toolbar .d-flex.align-items-center {
+            gap: 0.75rem;
         }
     </style>
 @endsection
