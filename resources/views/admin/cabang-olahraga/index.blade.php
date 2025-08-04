@@ -263,7 +263,7 @@ if (!function_exists('sortUrl')) {
                             <div class="d-flex align-items-center gap-2 flex-wrap">
                                 <div class="input-group" style="width: 250px;">
                                     <input type="search" name="search" id="search" class="form-control"
-                                        placeholder="Cari cabang olahraga..." value="">
+                                        placeholder="Cari cabang olahraga...">
                                     <button class="btn btn-outline-secondary" type="button">
                                         <i class="fas fa-search"></i>
                                     </button>
@@ -315,7 +315,7 @@ if (!function_exists('sortUrl')) {
                         </div>
                     @else
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle" id="caborTable">
+                            <table class="table table-hover align-middle" id="kt_datatable_dom_positioning">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -340,7 +340,7 @@ if (!function_exists('sortUrl')) {
                                     @if(isset($cabors))
                                         @forelse ($cabors as $index => $cabor)
                                             <tr data-status="{{ $cabor->status }}">
-                                                <td>{{ $loop->iteration + ($cabors->currentPage() - 1) * $cabors->perPage() }}</td>
+                                                <td></td> {{-- Will be populated by DataTable --}}
 
                                                 <td>
                                                     <div class="d-flex align-items-center">
@@ -469,7 +469,36 @@ if (!function_exists('sortUrl')) {
 
 @endsection
 
+{{-- Bagian script yang diperbaiki --}}
 @section('script')
+    {{-- Notifikasi untuk Create/Add --}}
+    @if(session('cabor_created'))
+        <script>
+            $(document).ready(function() {
+                toastr.success("{{ session('cabor_created') }}");
+            });
+        </script>
+    @endif
+
+    {{-- Notifikasi untuk Update/Edit --}}
+    @if(session('cabor_updated'))
+        <script>
+            $(document).ready(function() {
+                toastr.success("{{ session('cabor_updated') }}");
+            });
+        </script>
+    @endif
+
+    {{-- Notifikasi untuk Delete --}}
+    @if(session('cabor_deleted'))
+        <script>
+            $(document).ready(function() {
+                toastr.success("{{ session('cabor_deleted') }}");
+            });
+        </script>
+    @endif
+
+    {{-- Notifikasi umum success --}}
     @if(session('success'))
         <script>
             $(document).ready(function() {
@@ -478,6 +507,7 @@ if (!function_exists('sortUrl')) {
         </script>
     @endif
 
+    {{-- Notifikasi umum error --}}
     @if(session('error'))
         <script>
             $(document).ready(function() {
@@ -486,102 +516,65 @@ if (!function_exists('sortUrl')) {
         </script>
     @endif
 
-    @if ($cabors->isNotEmpty())
+    {{-- DataTable Script --}}
+    @if (isset($cabors) && $cabors->isNotEmpty())
         <script>
             $(document).ready(function() {
                 const table = $("#kt_datatable_dom_positioning").DataTable({
-                    paging: true,
-                    pageLength: 10,
-                    info: false,
+                    paging: true, // Ubah ke true
+                    pageLength: {{ request('per_page', 10) }}, // Ambil dari parameter per_page
+                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]], // Opsi per page
+                    lengthChange: false, // Disable DataTable length changer karena kita pakai custom
+                    info: true, // Enable info
                     searching: true,
                     ordering: true,
                     responsive: false,
                     autoWidth: false,
                     scrollX: false,
-                    lengthChange: false,
-                    dom: 'rt',
-                    columnDefs: [{
-                            targets: [0, -1], // kolom No dan Aksi
-                            orderable: false,
-                            searchable: false
-                        },
+                    language: {
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ cabang olahraga",
+                        infoEmpty: "Menampilkan 0 sampai 0 dari 0 cabang olahraga",
+                        infoFiltered: "(difilter dari _MAX_ total cabang olahraga)",
+                        paginate: {
+                            first: "Pertama",
+                            last: "Terakhir",
+                            next: "Selanjutnya",
+                            previous: "Sebelumnya"
+                        }
+                    },
+                    columnDefs: [
                         {
-                            width: "60px",
+                            searchable: false,
+                            orderable: false,
                             targets: 0
                         },
                         {
-                            width: "250px",
-                            targets: 1
+                            targets: -1,
+                            orderable: false,
+                            searchable: false
                         },
-                        {
-                            width: "200px",
-                            targets: 2
-                        },
+                        { width: "250px", targets: 1 },
+                        { width: "200px", targets: 2 },
                     ],
-                    order: [], // No default sorting
                     drawCallback: function(settings) {
-                        // Update nomor urut tetap berurutan dari 1
+                        // Update nomor urut
                         const api = this.api();
                         const start = api.page.info().start;
-
-                        // Reset nomor urut selalu mulai dari 1 untuk halaman pertama
-                        let counter = start + 1;
-                        api.column(0, { page: 'current' }).nodes().each(function(cell, i) {
-                            cell.innerHTML = counter++;
+                        api.column(0, {page: 'current'}).nodes().each(function(cell, i) {
+                            cell.innerHTML = start + i + 1;
                         });
 
-                        updatePaginationControls();
-                        updateFilterInfo();
-                        updateSortIcons();
+                        // Update filter info
+                        updateCustomFilterInfo();
                     }
                 });
 
                 const totalCount = table.rows().count();
 
-                // Search functionality
+                // Custom search
                 $('#search').on('keyup', function() {
                     table.search(this.value).draw();
                 });
-
-                // Custom sorting click handler
-                $('.sortable').on('click', function(e) {
-                    e.preventDefault();
-                    const column = $(this).data('column');
-
-                    // Get current order
-                    const currentOrder = table.order();
-                    let newOrder = 'asc';
-
-                    // If currently sorting by this column, toggle order
-                    if (currentOrder.length > 0 && currentOrder[0][0] === column) {
-                        newOrder = currentOrder[0][1] === 'asc' ? 'desc' : 'asc';
-                    }
-
-                    // Apply new order
-                    table.order([column, newOrder]).draw();
-                });
-
-                // Update sort icons
-                function updateSortIcons() {
-                    // Reset all sort icons
-                    $('.sort-icon').removeClass('active fas fa-sort-up fa-sort-down').addClass('fas fa-sort');
-
-                    // Get current order
-                    const currentOrder = table.order();
-                    if (currentOrder.length > 0) {
-                        const columnIndex = currentOrder[0][0];
-                        const direction = currentOrder[0][1];
-
-                        const sortIcon = $(`.sortable[data-column="${columnIndex}"] .sort-icon`);
-                        sortIcon.removeClass('fas fa-sort').addClass('active');
-
-                        if (direction === 'asc') {
-                            sortIcon.addClass('fas fa-sort-up');
-                        } else {
-                            sortIcon.addClass('fas fa-sort-down');
-                        }
-                    }
-                }
 
                 // Custom filter untuk status
                 $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
@@ -596,14 +589,12 @@ if (!function_exists('sortUrl')) {
                     return true;
                 });
 
-                // Apply filters
                 $('#apply-filters').on('click', function() {
                     table.draw();
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
                 });
 
-                // Reset filters
                 $('#reset-filters').on('click', function() {
                     $('#filter-status').val('');
                     $('#search').val('');
@@ -612,46 +603,6 @@ if (!function_exists('sortUrl')) {
                     updateFilterCount();
                     $('.dropdown-toggle').dropdown('hide');
                 });
-
-                // Entries per page
-                $('#entries-per-page').on('change', function() {
-                    const length = parseInt($(this).val());
-                    table.page.len(length).draw();
-                });
-
-                // Page navigation
-                $('#page-select').on('change', function() {
-                    const page = parseInt($(this).val()) - 1;
-                    table.page(page).draw();
-                });
-
-                $('#prev-page').on('click', function() {
-                    table.page('previous').draw();
-                });
-
-                $('#next-page').on('click', function() {
-                    table.page('next').draw();
-                });
-
-                function updatePaginationControls() {
-                    const info = table.page.info();
-                    const currentPage = info.page + 1;
-                    const totalPages = info.pages;
-
-                    // Update page select options
-                    const pageSelect = $('#page-select');
-                    pageSelect.empty();
-                    for (let i = 1; i <= totalPages; i++) {
-                        pageSelect.append(`<option value="${i}" ${i === currentPage ? 'selected' : ''}>${i}</option>`);
-                    }
-
-                    // Update total pages
-                    $('#total-pages').text(totalPages);
-
-                    // Update navigation buttons
-                    $('#prev-page').prop('disabled', info.page === 0).toggleClass('disabled', info.page === 0);
-                    $('#next-page').prop('disabled', info.page === info.pages - 1).toggleClass('disabled', info.page === info.pages - 1);
-                }
 
                 function updateFilterCount() {
                     const activeFilters = [];
@@ -668,190 +619,33 @@ if (!function_exists('sortUrl')) {
                     }
                 }
 
-                function updateFilterInfo() {
+                function updateCustomFilterInfo() {
                     const info = table.page.info();
-                    const showingCount = info.recordsDisplay;
-                    $('#showing-count').text(showingCount);
-                    $('#total-count').text(totalCount);
+                    $('#showing-count').text(info.recordsDisplay);
+                    $('#total-count').text(info.recordsTotal);
                 }
-<script>
-$(document).ready(function() {
-    console.log('Initializing cabor table filters...');
 
-    // Get the table and rows
-    const caborTable = $('#caborTable');
-    const caborRows = caborTable.find('tbody tr');
-    const totalRows = caborRows.length;
+                updateFilterCount();
 
-    console.log('Found table with', totalRows, 'rows');
+                $('#filter-status').on('change', function() {
+                    updateFilterCount();
+                });
 
-    // Search function
-    $('#search').on('keyup', function() {
-        const searchText = $(this).val().toLowerCase();
-        console.log('Search input:', searchText);
-        filterCaborTable(searchText, $('#filter-status').val());
-        updateCaborInfo();
-    });
+                // Handle custom per page selector
+                $('select[name="per_page"]').on('change', function() {
+                    const perPage = $(this).val();
+                    // Redirect dengan parameter per_page baru
+                    const url = new URL(window.location);
+                    url.searchParams.set('per_page', perPage);
+                    url.searchParams.delete('page'); // Reset ke halaman 1
+                    window.location.href = url.toString();
+                });
 
-    // Apply filters button
-    $('#apply-filters').on('click', function() {
-        console.log('Apply filters clicked');
-        const searchText = $('#search').val().toLowerCase();
-        const statusFilter = $('#filter-status').val();
-        filterCaborTable(searchText, statusFilter);
-        updateCaborFilterCount();
-        updateCaborInfo();
-    });
-
-    // Reset filters button
-    $('#reset-filters').on('click', function() {
-        console.log('Reset filters clicked');
-        $('#search').val('');
-        $('#filter-status').val('');
-        filterCaborTable('', '');
-        updateCaborFilterCount();
-        updateCaborInfo();
-    });
-
-    // Auto-apply filter when status dropdown changes
-    $('#filter-status').on('change', function() {
-        console.log('Status filter changed:', $(this).val());
-        const searchText = $('#search').val().toLowerCase();
-        const statusFilter = $(this).val();
-        filterCaborTable(searchText, statusFilter);
-        updateCaborFilterCount();
-        updateCaborInfo();
-    });
-
-    // Main filter function
-    function filterCaborTable(searchText, statusFilter) {
-        console.log('Filtering with search:', searchText, 'status:', statusFilter);
-        let visibleCount = 0;
-
-        caborRows.each(function() {
-            const row = $(this);
-
-            // Get data from different columns
-            const namaCabor = row.find('td:nth-child(2)').text().toLowerCase(); // Nama Cabor
-            const ketuaPj = row.find('td:nth-child(3)').text().toLowerCase();   // Ketua PJ
-            const statusBadge = row.find('td:nth-child(4) .badge').text().toLowerCase(); // Status from badge
-
-            // Check search match (search in nama_cabor and ketua_pj)
-            const cocokSearch = namaCabor.includes(searchText) ||
-                               ketuaPj.includes(searchText) ||
-                               searchText === '';
-
-            // Check status filter match
-            const cocokFilter = statusBadge.includes(statusFilter.toLowerCase()) ||
-                               statusFilter === '';
-
-            // Show/hide row based on filters
-            if (cocokSearch && cocokFilter) {
-                row.show();
-                visibleCount++;
-            } else {
-                row.hide();
-            }
-        });
-
-        console.log('Visible rows after filter:', visibleCount);
-
-        // Update info display
-        $('#showing-count').text(visibleCount);
-        $('#total-count').text(totalRows);
-
-        // Show "no data" message if no rows visible
-        if (visibleCount === 0) {
-            if (caborTable.find('.no-data-row').length === 0) {
-                caborTable.find('tbody').append(`
-                    <tr class="no-data-row">
-                        <td colspan="9" class="text-center py-5 text-muted">
-                            Tidak ada data yang cocok dengan filter
-                        </td>
-                    </tr>
-                `);
-            }
-            caborTable.find('.no-data-row').show();
-        } else {
-            caborTable.find('.no-data-row').hide();
-        }
-    }
-
-    // Update filter count badge
-    function updateCaborFilterCount() {
-        const filterAktif = [];
-        if ($('#filter-status').val()) filterAktif.push('status');
-
-        const jumlah = filterAktif.length;
-        const badge = $('#filter-count');
-
-        if (jumlah > 0) {
-            badge.text(jumlah).removeClass('d-none');
-        } else {
-            badge.addClass('d-none');
-        }
-
-        console.log('Filter count updated:', jumlah);
-    }
-
-    // Update info display
-    function updateCaborInfo() {
-        const visibleRows = caborRows.filter(':visible').length;
-        $('#showing-count').text(visibleRows);
-        $('#total-count').text(totalRows);
-    }
-
-    // Initialize on page load
-    updateCaborFilterCount();
-    updateCaborInfo();
-
-    console.log('Search input element:', $('#search').length);
-    console.log('Filter status element:', $('#filter-status').length);
-    console.log('Apply button element:', $('#apply-filters').length);
-    console.log('Reset button element:', $('#reset-filters').length);
-});
-</script>
-
-{{-- Notifikasi --}}
-@if(session('cabor_created'))
-    <script>$(document).ready(() => toastr.success("{{ session('cabor_created') }}"));</script>
-@endif
-
-<style>
-/* Additional responsive styles */
-@media (max-width: 768px) {
-    .d-flex.justify-content-between {
-        flex-direction: column;
-        align-items: stretch !important;
-        gap: 1rem;
-    }
-
-    .table-responsive {
-        font-size: 0.875rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .table-responsive {
-        font-size: 0.875rem;
-    }
-
-    .btn-sm {
-        padding: 0.375rem 0.5rem;
-    }
-}
-
-/* Ensure proper horizontal scrolling for table */
-.table-responsive {
-    -webkit-overflow-scrolling: touch;
-    overflow-x: auto;
-}
-
-/* Fix for long text overflow */
-.text-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-</style>
+                // Hide default DataTable pagination karena kita pakai custom
+                $('.dataTables_paginate').hide();
+                $('.dataTables_info').hide();
+                $('.dataTables_length').hide();
+            });
+        </script>
+    @endif
 @endsection
