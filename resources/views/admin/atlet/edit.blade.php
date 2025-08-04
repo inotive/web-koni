@@ -196,7 +196,7 @@
                                     'label' => 'Tanggal Lahir',
                                     'type' => 'date',
                                     'required' => true,
-                                    'value' => $atlet->tanggal_lahir,
+                                    'value' => optional($atlet->tanggal_lahir)->format('Y-m-d'),
                                 ],
                                 'tempat_lahir' => [
                                     'label' => 'Tempat Lahir',
