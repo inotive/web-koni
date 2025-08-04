@@ -118,7 +118,7 @@
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.konfigurasi.cabang-olahraga.index') ? 'active bg-orange' : '' }}"
+                    <a class="menu-link {{ request()->routeIs('admin.konfigurasi.cabang-olahraga.index') ? 'active bg-red' : '' }}"
                         href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}">
                         <span class="menu-icon">
                             <i

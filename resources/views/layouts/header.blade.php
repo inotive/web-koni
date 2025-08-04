@@ -34,7 +34,7 @@
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb breadcrumb-separatorless fs-7 fw-semibold">
+                        <ol class="breadcrumb breadcrumb-separatorless fs-6 fw-semibold">
                             {{-- Main Section - Selalu clickable --}}
                             <li class="breadcrumb-item mx-0 px-0">
                                 @if (View::hasSection('mainSectionUrl'))
