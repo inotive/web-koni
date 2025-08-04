@@ -598,10 +598,10 @@
         <div class="detail-card">
             <div class="detail-card-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <b><h1 class="detail-card-title">Informasi Kejuaraan</h1></b>
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                {{-- <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                     data-bs-target="#tambahPrestasiModal">
                     Tambah
-                </button>
+                </button> --}}
             </div>
 
             <div class="detail-body" style="padding: 0;">
@@ -653,17 +653,17 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
                                     </form> --}}
-                                    <form action="{{ route('admin.prestasi.destroy', $prestasi->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus prestasi ini?')">
+                                    {{-- <form action="{{ route('admin.konfigurasi.prestasi.destroy', $prestasi->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus prestasi ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                    </form>
+                                    </form> --}}
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="4" style="text-align: center; padding: 20px;">Belum ada data prestasi.
-                                    Silakan tambahkan.</td>
+                                    Silakan tambahkan di menu kejuaraan.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -676,7 +676,7 @@
         </div> --}}
     </div>
 
-    <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" aria-labelledby="tambahPrestasiModalLabel"
+    {{-- <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" aria-labelledby="tambahPrestasiModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -718,6 +718,6 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 @endsection
