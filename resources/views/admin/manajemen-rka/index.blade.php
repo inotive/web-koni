@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-{{-- @section('pageTitle', 'Rencana Kegiatan Anggaran') --}}
+@section('pageTitle', 'Rencana Kegiatan Anggaran')
 @section('mainSection', 'Manajemen RKA')
 @section('currentSection', 'Daftar RKA')
 

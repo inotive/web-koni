@@ -1,7 +1,7 @@
 {{-- File: resources/views/layouts/partials/header.blade.php --}}
 <div id="kt_header" class="header align-items-stretch">
     <!--begin::Brand-->
-    <div class="px-4 d-flex justify-content-between">
+    <div class="px-5 py-2 bg-white d-flex justify-content-between">
         <!--begin::Logo-->
         <div class="gap-3 px-4 d-flex align-items-center" style="width:220px; min-width:180px">
             <a href="/" class="d-flex align-items-center">
@@ -10,7 +10,7 @@
         </div>
         <!--end::Logo-->
         <!--begin::Aside toggle-->
-        <div class="d-flex align-items-center d-lg-none" title="Show aside menu">
+        <div class="d-flex align-items-center d-lg-none me-n2" title="Show aside menu">
             <div class="btn btn-icon btn-active-color-primary w-30px h-30px" id="kt_aside_mobile_toggle">
                 <i class="ki-duotone ki-abstract-14 fs-1">
                     <span class="path1"></span>
@@ -30,11 +30,14 @@
                 <!--begin::Text Content-->
                 <div class="mx-2 d-flex flex-column">
                     <!--begin::Title-->
+                    <h1 class="mb-0 fw-bold fs-3" style="color: #F8285A;">
+                        @yield('pageTitle')
+                    </h1>
 
                     <!--end::Title-->
                     <!--begin::Breadcrumb-->
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb breadcrumb-separatorless fs-6 fw-semibold">
+                        <ol class="breadcrumb breadcrumb-separatorless fs-7 fw-semibold">
                             {{-- Main Section - Selalu clickable --}}
                             <li class="breadcrumb-item mx-0 px-0">
                                 @if (View::hasSection('mainSectionUrl'))

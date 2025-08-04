@@ -4,194 +4,32 @@
 @section('mainSection', 'Konfigurasi')
 @section('currentSection', 'Cabang Olahraga')
 
-@php
-    if (!function_exists('sortIcon')) {
-    function sortIcon($field)
-    {
-        $currentSort = request('sort_by');
-        $currentOrder = request('order');
-
-        if ($currentSort === $field) {
-            return $currentOrder === 'asc'
-                ? '<i class="fas fa-sort-up"></i>'
-                : '<i class="fas fa-sort-down"></i>';
-        }
-
-        return '<i class="fas fa-sort text-muted"></i>';
-    }
-}
-
-if (!function_exists('sortUrl')) {
-    function sortUrl($field)
-    {
-        $currentSort = request('sort_by');
-        $currentOrder = request('order');
-
-        $order = ($currentSort === $field && $currentOrder === 'asc')
-            ? 'desc'
-            : 'asc';
-
-        return request()->fullUrlWithQuery([
-            'sort_by' => $field,
-            'order' => $order
-        ]);
-    }
-}
-@endphp
-
 @section('content')
 
-<style>
-    body {
-        background-color: #f5f5f5 !important;
-    }
+    <style>
+        body {
+            background-color: #f5f5f5 !important;
+        }
 
-    .main-content {
-        background-color: #f5f5f5;
-        min-height: 100vh;
-        padding: 20px 0;
-    }
+        .main-content {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
 
-    .table-container {
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e9ecef;
-        overflow: hidden;
-    }
+        .table-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
 
-    .table-header {
-        background-color: white;
-        padding: 20px 25px;
-        border-bottom: 1px solid #e9ecef;
-    }
-
-    .table-footer {
-        background-color: white;
-        padding: 15px 25px;
-        border-top: 1px solid #e9ecef;
-    }
-
-    .empty-state {
-        text-align: center;
-        color: #6c757d;
-        padding: 60px 25px;
-        background-color: white;
-    }
-
-    .page-header {
-        background-color: transparent;
-        padding: 0;
-        margin-bottom: 20px;
-    }
-
-    .page-header h3 {
-        color: #2c3e50;
-        font-size: 1.8rem;
-        font-weight: 700;
-    }
-
-    .btn-add-cabor {
-        background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
-        border: none;
-        border-radius: 8px;
-        padding: 12px 24px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
-    }
-
-    .btn-add-cabor:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
-    }
-
-    .table-responsive {
-        overflow-x: auto;
-        overflow-y: visible;
-        -webkit-overflow-scrolling: touch;
-        border-radius: 0;
-        border: none;
-    }
-
-    .table {
-        border-collapse: collapse !important;
-        border-spacing: 0 !important;
-        margin: 0 !important;
-        background-color: white;
-        width: 100%;
-        min-width: 1200px;
-    }
-
-    .table thead th {
-        background-color: #f8f9fa;
-        border-bottom: 2px solid #dee2e6;
-        border-left: none !important;
-        border-right: none !important;
-        border-top: none !important;
-        font-weight: 600;
-        font-size: 0.875rem;
-        color: #495057;
-        white-space: nowrap;
-        padding: 12px 8px !important;
-        position: static;
-    }
-
-    .table tbody tr td {
-        border-left: none !important;
-        border-right: none !important;
-        padding: 8px !important;
-        font-size: 0.875rem;
-        border-bottom: 1px solid #e9ecef;
-        white-space: nowrap;
-        vertical-align: middle;
-        word-wrap: break-word;
-        max-width: 200px;
-    }
-
-    .table tbody tr:last-child td {
-        border-bottom: none;
-    }
-
-    .table td:first-child,
-    .table th:first-child {
-        padding-left: 12px !important;
-    }
-
-    .table td:last-child,
-    .table th:last-child {
-        padding-right: 12px !important;
-    }
-
-    .table th:nth-child(1), .table td:nth-child(1) { width: 40px; text-align: center; } /* No */
-    .table th:nth-child(2), .table td:nth-child(2) { width: 250px; } /* Nama Cabor */
-    .table th:nth-child(3), .table td:nth-child(3) { width: 200px; } /* Ketua Penanggung Jawab */
-    .table th:nth-child(4), .table td:nth-child(4) { width: 120px; text-align: center; } /* Status */
-    .table th:nth-child(5), .table td:nth-child(5) { width: 150px; } /* Tanggal Pembentukan */
-    .table th:nth-child(6), .table td:nth-child(6) { width: 100px; text-align: center; } /* Jumlah Atlet */
-    .table th:nth-child(7), .table td:nth-child(7) { width: 100px; text-align: center; } /* Jumlah Pelatih */
-    .table th:nth-child(8), .table td:nth-child(8) { width: 150px; } /* Terakhir Update */
-    .table th:nth-child(9), .table td:nth-child(9) { width: 120px; text-align: center; } /* Aksi */
-
-    .text-truncate-custom {
-        max-width: 180px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .object-fit-cover {
-        object-fit: cover;
-    }
-
-    .table td:nth-child(1),
-    .table td:nth-child(4),
-    .table td:nth-child(6),
-    .table td:nth-child(7),
-    .table td:nth-child(9) {
-        text-align: center;
-    }
+        .table-header {
+            background-color: white;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+        }
 
     @media (max-width: 768px) {
         .table-header,
@@ -471,164 +309,89 @@ if (!function_exists('sortUrl')) {
 
 {{-- Bagian script yang diperbaiki --}}
 @section('script')
-    {{-- Notifikasi untuk Create/Add --}}
-    @if(session('cabor_created'))
-        <script>
-            $(document).ready(function() {
-                toastr.success("{{ session('cabor_created') }}");
+    <script>
+        $(document).ready(function() {
+            console.log('Initializing cabor table filters...');
+
+            // Get the table and rows
+            const caborTable = $('#caborTable');
+            const caborRows = caborTable.find('tbody tr');
+            const totalRows = caborRows.length;
+
+            console.log('Found table with', totalRows, 'rows');
+
+            // Search function
+            $('#search').on('keyup', function() {
+                const searchText = $(this).val().toLowerCase();
+                console.log('Search input:', searchText);
+                filterCaborTable(searchText, $('#filter-status').val());
+                updateCaborInfo();
             });
-        </script>
-    @endif
 
-    {{-- Notifikasi untuk Update/Edit --}}
-    @if(session('cabor_updated'))
-        <script>
-            $(document).ready(function() {
-                toastr.success("{{ session('cabor_updated') }}");
+            // Apply filters button
+            $('#apply-filters').on('click', function() {
+                console.log('Apply filters clicked');
+                const searchText = $('#search').val().toLowerCase();
+                const statusFilter = $('#filter-status').val();
+                filterCaborTable(searchText, statusFilter);
+                updateCaborFilterCount();
+                updateCaborInfo();
             });
-        </script>
-    @endif
 
-    {{-- Notifikasi untuk Delete --}}
-    @if(session('cabor_deleted'))
-        <script>
-            $(document).ready(function() {
-                toastr.success("{{ session('cabor_deleted') }}");
+            // Reset filters button
+            $('#reset-filters').on('click', function() {
+                console.log('Reset filters clicked');
+                $('#search').val('');
+                $('#filter-status').val('');
+                filterCaborTable('', '');
+                updateCaborFilterCount();
+                updateCaborInfo();
             });
-        </script>
-    @endif
 
-    {{-- Notifikasi umum success --}}
-    @if(session('success'))
-        <script>
-            $(document).ready(function() {
-                toastr.success("{{ session('success') }}");
+            // Auto-apply filter when status dropdown changes
+            $('#filter-status').on('change', function() {
+                console.log('Status filter changed:', $(this).val());
+                const searchText = $('#search').val().toLowerCase();
+                const statusFilter = $(this).val();
+                filterCaborTable(searchText, statusFilter);
+                updateCaborFilterCount();
+                updateCaborInfo();
             });
-        </script>
-    @endif
 
-    {{-- Notifikasi umum error --}}
-    @if(session('error'))
-        <script>
-            $(document).ready(function() {
-                toastr.error("{{ session('error') }}");
-            });
-        </script>
-    @endif
+            // Main filter function
+            function filterCaborTable(searchText, statusFilter) {
+                console.log('Filtering with search:', searchText, 'status:', statusFilter);
+                let visibleCount = 0;
 
-    {{-- DataTable Script --}}
-    @if (isset($cabors) && $cabors->isNotEmpty())
-        <script>
-            $(document).ready(function() {
-                const table = $("#kt_datatable_dom_positioning").DataTable({
-                    paging: true, // Ubah ke true
-                    pageLength: {{ request('per_page', 10) }}, // Ambil dari parameter per_page
-                    lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]], // Opsi per page
-                    lengthChange: false, // Disable DataTable length changer karena kita pakai custom
-                    info: true, // Enable info
-                    searching: true,
-                    ordering: true,
-                    responsive: false,
-                    autoWidth: false,
-                    scrollX: false,
-                    language: {
-                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ cabang olahraga",
-                        infoEmpty: "Menampilkan 0 sampai 0 dari 0 cabang olahraga",
-                        infoFiltered: "(difilter dari _MAX_ total cabang olahraga)",
-                        paginate: {
-                            first: "Pertama",
-                            last: "Terakhir",
-                            next: "Selanjutnya",
-                            previous: "Sebelumnya"
-                        }
-                    },
-                    columnDefs: [
-                        {
-                            searchable: false,
-                            orderable: false,
-                            targets: 0
-                        },
-                        {
-                            targets: -1,
-                            orderable: false,
-                            searchable: false
-                        },
-                        { width: "250px", targets: 1 },
-                        { width: "200px", targets: 2 },
-                    ],
-                    drawCallback: function(settings) {
-                        // Update nomor urut
-                        const api = this.api();
-                        const start = api.page.info().start;
-                        api.column(0, {page: 'current'}).nodes().each(function(cell, i) {
-                            cell.innerHTML = start + i + 1;
-                        });
+                caborRows.each(function() {
+                    const row = $(this);
 
-                        // Update filter info
-                        updateCustomFilterInfo();
-                    }
-                });
+                    // Get data from different columns
+                    const namaCabor = row.find('td:nth-child(2)').text().toLowerCase(); // Nama Cabor
+                    const ketuaPj = row.find('td:nth-child(3)').text().toLowerCase(); // Ketua PJ
+                    const statusBadge = row.find('td:nth-child(4) .badge').text()
+                .trim(); // Status from badge - tanpa toLowerCase()
 
-                const totalCount = table.rows().count();
+                    console.log('Row status badge text:', statusBadge); // Debug log
 
-                // Custom search
-                $('#search').on('keyup', function() {
-                    table.search(this.value).draw();
-                });
+                    // Check search match (search in nama_cabor and ketua_pj)
+                    const cocokSearch = namaCabor.includes(searchText) ||
+                        ketuaPj.includes(searchText) ||
+                        searchText === '';
 
-                // Custom filter untuk status
-                $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                    const row = table.row(dataIndex).node();
-                    const $row = $(row);
+                    // Check status filter match - PERBAIKAN DI SINI
+                    const cocokFilter = statusFilter === '' || statusBadge === statusFilter;
 
-                    const statusFilter = $('#filter-status').val();
-                    const rowStatus = $row.data('status');
+                    console.log('Row:', namaCabor, 'Status:', statusBadge, 'Filter:', statusFilter,
+                        'Match:', cocokFilter);
 
-                    if (statusFilter && rowStatus !== statusFilter) return false;
-
-                    return true;
-                });
-
-                $('#apply-filters').on('click', function() {
-                    table.draw();
-                    updateFilterCount();
-                    $('.dropdown-toggle').dropdown('hide');
-                });
-
-                $('#reset-filters').on('click', function() {
-                    $('#filter-status').val('');
-                    $('#search').val('');
-
-                    table.search('').draw();
-                    updateFilterCount();
-                    $('.dropdown-toggle').dropdown('hide');
-                });
-
-                function updateFilterCount() {
-                    const activeFilters = [];
-
-                    if ($('#filter-status').val()) activeFilters.push('status');
-
-                    const count = activeFilters.length;
-                    const badge = $('#filter-count');
-
-                    if (count > 0) {
-                        badge.text(count).removeClass('d-none');
+                    // Show/hide row based on filters
+                    if (cocokSearch && cocokFilter) {
+                        row.show();
+                        visibleCount++;
                     } else {
-                        badge.addClass('d-none');
+                        row.hide();
                     }
-                }
-
-                function updateCustomFilterInfo() {
-                    const info = table.page.info();
-                    $('#showing-count').text(info.recordsDisplay);
-                    $('#total-count').text(info.recordsTotal);
-                }
-
-                updateFilterCount();
-
-                $('#filter-status').on('change', function() {
-                    updateFilterCount();
                 });
 
                 // Handle custom per page selector
@@ -641,11 +404,128 @@ if (!function_exists('sortUrl')) {
                     window.location.href = url.toString();
                 });
 
-                // Hide default DataTable pagination karena kita pakai custom
-                $('.dataTables_paginate').hide();
-                $('.dataTables_info').hide();
-                $('.dataTables_length').hide();
-            });
+                // Update info display
+                $('#showing-count').text(visibleCount);
+                $('#total-count').text(totalRows);
+
+                // Show "no data" message if no rows visible
+                if (visibleCount === 0) {
+                    if (caborTable.find('.no-data-row').length === 0) {
+                        caborTable.find('tbody').append(`
+                    <tr class="no-data-row">
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            Tidak ada data yang cocok dengan filter
+                        </td>
+                    </tr>
+                `);
+                    }
+                    caborTable.find('.no-data-row').show();
+                } else {
+                    caborTable.find('.no-data-row').hide();
+                }
+            }
+
+            // Update filter count badge
+            function updateCaborFilterCount() {
+                const filterAktif = [];
+                if ($('#filter-status').val()) filterAktif.push('status');
+
+                const jumlah = filterAktif.length;
+                const badge = $('#filter-count');
+
+                if (jumlah > 0) {
+                    badge.text(jumlah).removeClass('d-none');
+                } else {
+                    badge.addClass('d-none');
+                }
+
+                console.log('Filter count updated:', jumlah);
+            }
+
+            // Update info display
+            function updateCaborInfo() {
+                const visibleRows = caborRows.filter(':visible').length;
+                $('#showing-count').text(visibleRows);
+                $('#total-count').text(totalRows);
+            }
+
+            // Initialize on page load
+            updateCaborFilterCount();
+            updateCaborInfo();
+
+            console.log('Search input element:', $('#search').length);
+            console.log('Filter status element:', $('#filter-status').length);
+            console.log('Apply button element:', $('#apply-filters').length);
+            console.log('Reset button element:', $('#reset-filters').length);
+        });
+    </script>
+
+    {{-- Notifikasi --}}
+    @if (session('cabor_created'))
+        <script>
+            $(document).ready(() => toastr.success("{{ session('cabor_created') }}"));
         </script>
     @endif
+
+    @if (session('cabor_updated'))
+        <script>
+            $(document).ready(() => toastr.success("{{ session('cabor_updated') }}"));
+        </script>
+    @endif
+
+    @if (session('cabor_deleted'))
+        <script>
+            $(document).ready(() => toastr.success("{{ session('cabor_deleted') }}"));
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            $(document).ready(() => toastr.error("{{ session('error') }}"));
+        </script>
+    @endif
+
+    @if (session('success'))
+        <script>
+            $(document).ready(() => toastr.success("{{ session('success') }}"));
+        </script>
+    @endif
+
+    <style>
+        /* Additional responsive styles */
+        @media (max-width: 768px) {
+            .d-flex.justify-content-between {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 1rem;
+            }
+
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+
+            .btn-sm {
+                padding: 0.375rem 0.5rem;
+            }
+        }
+
+        /* Ensure proper horizontal scrolling for table */
+        .table-responsive {
+            -webkit-overflow-scrolling: touch;
+            overflow-x: auto;
+        }
+
+        /* Fix for long text overflow */
+        .text-truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
 @endsection
