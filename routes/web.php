@@ -91,9 +91,6 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
         });
 
-        Route::prefix('bidang')->name('bidang.')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'index'])->name('index');
-
             // Prestasi routes
             Route::prefix('prestasi')->name('prestasi.')->group(function () {
                 Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
@@ -111,4 +108,3 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
         });
     });
-});
