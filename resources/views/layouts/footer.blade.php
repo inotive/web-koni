@@ -1,9 +1,8 @@
-<div class="py-4 footer d-flex flex-lg-column" id="kt_footer">
+<div class="footer d-flex flex-lg-column" id="kt_footer">
     <!--begin::Container-->
     <div class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between">
-        <!--begin::Copyright-->
-        <div class="text-dark order-2 order-md-1">
-            <span class="text-muted fw-semibold me-1">
+        <div class="text-dark order-md-1 order-2">
+            <span class="text-muted fw-semibold">
                 <script>
                     document.write(new Date().getFullYear())
                 </script>
@@ -13,38 +12,12 @@
             <a href="#" class="text-orange fw-bold text-hover-primary"></a>
             <span class="text-muted ms-1"></span>
         </div>
-        <!--end::Copyright-->
 
-        <!--begin::Menu-->
-        <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1 order-md-2">
+        <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-md-2 order-1">
             <li class="menu-item">
                 <span class="menu-link px-2"></span>
             </li>
         </ul>
-        <!--end::Menu-->
     </div>
     <!--end::Container-->
 </div>
-
-<style>
-    /* Memastikan footer selalu berada di bawah */
-    html,
-    body {
-        height: 100%;
-    }
-
-    body {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .wrapper {
-        flex: 1 0 auto;
-        min-height: calc(100vh - 70px);
-    }
-
-    #kt_footer {
-        flex-shrink: 0;
-        margin-top: auto;
-    }
-</style>

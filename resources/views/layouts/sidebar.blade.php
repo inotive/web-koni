@@ -29,9 +29,20 @@
                     <a class="menu-link {{ request()->routeIs('admin.dashboard.index') ? 'active bg-red' : '' }}"
                         href="{{ route('admin.dashboard.index') }}">
                         <span class="menu-icon">
-                            <i class="ki-solid ki-category"></i>
+                            <i class="fs-1 ki-solid ki-category"></i>
                         </span>
                         <span class="menu-title">Dashboard</span>
+                    </a>
+                </div>
+
+                <!-- Manajemen RKA -->
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->routeIs('admin.manajemen-rka.index') ? 'active bg-red' : '' }}"
+                        href="{{ route('admin.manajemen-rka.index') }}">
+                        <span class="menu-icon">
+                            <i class="fs-1 ki-solid ki-tablet-text-up"></i>
+                        </span>
+                        <span class="menu-title">Manajemen RKA</span>
                     </a>
                 </div>
 
