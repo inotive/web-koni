@@ -510,4 +510,4 @@
             });
         </script>
     @endif
-@endsection
+@endsection 

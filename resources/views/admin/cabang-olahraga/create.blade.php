@@ -82,7 +82,8 @@
             <div class="card-body p-4 p-md-5">
                 <h3 class="fw-bold mb-4">Tambah Data Cabang Olahraga</h3>
 
-                <form action="{{ route('admin.konfigurasi.cabang-olahraga.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.konfigurasi.cabang-olahraga.store') }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
 
                     <div class="row align-items-center mb-4">
@@ -91,7 +92,8 @@
                         </div>
                         <div class="col-md-9">
                             <label for="icon_cabor" class="file-upload-wrapper" id="dropArea">
-                                <input type="file" name="icon_cabor" id="icon_cabor" accept=".png,.webp,.svg,image/png,image/webp,image/svg+xml">
+                                <input type="file" name="icon_cabor" id="icon_cabor"
+                                    accept=".png,.webp,.svg,image/png,image/webp,image/svg+xml">
                                 <div class="d-flex justify-content-center align-items-center" id="uploadContent">
                                     <i class="fas fa-cloud-upload-alt file-upload-icon me-3" id="uploadIcon"></i>
                                     <div id="uploadText">
@@ -163,7 +165,7 @@
                                         id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
                                         placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}"
                                         {{ $field['required'] ? 'required' : '' }}
-                                        @if($field['type'] === 'number') min="0" @endif>
+                                        @if ($field['type'] === 'number') min="0" @endif>
                                 @endif
                                 @error($key)
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -175,7 +177,8 @@
                     <div class="row mt-4">
                         <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                             <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
-                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}" class="btn btn-secondary px-4">Batal</a>
+                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}"
+                                class="btn btn-secondary px-4">Batal</a>
                         </div>
                     </div>
                 </form>
@@ -197,12 +200,12 @@
             function isValidFileType(file) {
                 const fileType = file.type;
                 const fileName = file.name.toLowerCase();
-                
+
                 // Check MIME type
                 if (allowedTypes.includes(fileType)) {
                     return true;
                 }
-                
+
                 // Check file extension as fallback
                 return allowedExtensions.some(ext => fileName.endsWith(ext));
             }
@@ -218,27 +221,27 @@
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 const img = new Image();
-                
+
                 img.onload = function() {
                     // Set canvas size to 80x80
                     canvas.width = 80;
                     canvas.height = 80;
-                    
+
                     // Calculate scaling to fit image in 80x80 while maintaining aspect ratio
                     const scale = Math.min(80 / img.width, 80 / img.height);
                     const scaledWidth = img.width * scale;
                     const scaledHeight = img.height * scale;
-                    
+
                     // Center the image
                     const x = (80 - scaledWidth) / 2;
                     const y = (80 - scaledHeight) / 2;
-                    
+
                     // Fill background with transparent
                     ctx.clearRect(0, 0, 80, 80);
-                    
+
                     // Draw the resized image
                     ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
-                    
+
                     // Convert canvas to blob
                     canvas.toBlob(function(blob) {
                         // Create new File object with resized image
@@ -249,7 +252,7 @@
                         callback(resizedFile);
                     }, file.type === 'image/webp' ? 'image/webp' : 'image/png', 0.9);
                 };
-                
+
                 img.src = URL.createObjectURL(file);
             }
 
@@ -335,17 +338,17 @@
 
                 if (e.dataTransfer.files.length) {
                     const file = e.dataTransfer.files[0];
-                    
+
                     if (!isValidFileType(file)) {
                         alert('Hanya file PNG, WebP, atau SVG yang diizinkan');
                         return;
                     }
-                    
+
                     // Create DataTransfer object and set it to input
                     const dt = new DataTransfer();
                     dt.items.add(file);
                     uploadInput.files = dt.files;
-                    
+
                     // Trigger change event
                     uploadInput.dispatchEvent(new Event('change'));
                 }
