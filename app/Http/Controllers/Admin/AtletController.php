@@ -59,7 +59,7 @@ class AtletController extends Controller
         Atlet::create($validated);
 
 return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('success', 'Atlet berhasil ditambahkan.')
+    ->with('OK', 'Atlet berhasil ditambahkan.')
     ->with('action', 'store');
     }
 
@@ -83,7 +83,7 @@ return redirect()->route('admin.konfigurasi.atlet.index')
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:100',
-            'foto_atlet' => 'nullable|image|memes:jpeg,png,jpg|max:2048',
+            'foto_atlet' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         if ($request->hasFile('foto_atlet')) {
@@ -98,7 +98,7 @@ return redirect()->route('admin.konfigurasi.atlet.index')
         $atlet->update($validated);
 
     return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('success', 'Data atlet berhasil diperbarui.')
+    ->with('OK', 'Data atlet berhasil diperbarui.')
     ->with('action', 'update');
     }
 
@@ -115,7 +115,7 @@ return redirect()->route('admin.konfigurasi.atlet.index')
 
 
 return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('success', 'Data atlet berhasil dihapus.')
+    ->with('OK', 'Data atlet berhasil dihapus.')
     ->with('action', 'destroy');
     }
 

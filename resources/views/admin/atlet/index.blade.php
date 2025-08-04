@@ -460,22 +460,13 @@
     }
     </style>
 
-    <div class="notification-toast">
-        @if (session('success'))
-            <div class="toast show align-items-center text-white border-0 @if (session('action') === 'store') toast-success @elseif(session('action') === 'update') toast-warning @elseif(session('action') === 'destroy') toast-error @endif"
-                role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i
-                            class="fas @if (session('action') === 'store') fa-check-circle @elseif(session('action') === 'update') fa-exclamation-circle @elseif(session('action') === 'destroy') fa-trash-alt @endif me-2"></i>
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        @endif
+    @if (session('success'))
+    <div class="alert alert-{{ session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger') }} alert-dismissible fade show" role="alert">
+        <i class="fas {{ session('action') === 'store' ? 'fa-check-circle' : (session('action') === 'update' ? 'fa-exclamation-circle' : 'fa-trash-alt') }} me-2"></i>
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
+@endif
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Atlet</h2>

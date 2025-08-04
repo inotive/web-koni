@@ -558,9 +558,8 @@
                                                                 : 'Perempuan';
                                                     }
                                                 @endphp
-                                                <tr data-tahun="{{ $prestasi->tahun }}"
-                                                    data-nama="{{ $prestasi->subject->nama }}">
-
+                                                <tr data-tahun="{{ $prestasi->tahun }}" <tr
+                                                    data-nama="{{ $prestasi->subject?->nama ?? '-' }}">
                                                     <td></td>
 
                                                     <td>
@@ -591,10 +590,12 @@
                                                         <div class="text-truncate-custom">{{ $prestasi->nama_prestasi }}
                                                         </div>
                                                     </td>
-
                                                     <td>
-                                                        <div class="text-truncate-custom">{{ $caborNama }}</div>
+                                                        <div class="text-truncate-custom">
+                                                            {{ $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-' }}
+                                                        </div>
                                                     </td>
+
 
                                                     <td>{{ $prestasi->tingkat }}</td>
 
