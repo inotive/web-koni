@@ -773,7 +773,16 @@
                                         </div>
 
                                         <!-- Pagination - HANYA TAMPIL JIKA ADA MULTIPLE PAGES, ATAU PLACEHOLDER -->
-                                        <div class="d-flex align-items-center gap-2">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <!-- Range Info (1-10 of 52) -->
+                                            <div class="text-muted">
+                                                @php
+                                                    $from = ($cabors->currentPage() - 1) * $cabors->perPage() + 1;
+                                                    $to = min($from + $cabors->count() - 1, $cabors->total());
+                                                @endphp
+                                                <span id="range-info">{{ $from }}-{{ $to }}</span> of {{ $cabors->total() }}
+                                            </div>
+                                            
                                             @if ($cabors->hasPages())
                                                 <!-- Previous Page Link -->
                                                 @if ($cabors->onFirstPage())
@@ -1037,6 +1046,13 @@
                 
                 $('#showing-count').text(visibleRows);
                 $('#total-count').text(totalRows);
+                
+                // Update range info untuk client-side filtering
+                if (visibleRows > 0) {
+                    $('#range-info').text('1-' + visibleRows);
+                } else {
+                    $('#range-info').text('0-0');
+                }
             }
 
             // Initialize on page load
