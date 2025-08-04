@@ -315,6 +315,144 @@
             background-color: #2f96b4;
             color: white;
         }
+
+        .pagination-arrow {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .pagination-arrow:hover {
+            color: #0b0b0b;
+            text-decoration: none;
+        }
+
+        .pagination-arrow.disabled {
+            color: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .pagination-number {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 10px;
+            margin: 0 1px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+            border: 1px solid transparent;
+            font-size: 0.875rem;
+        }
+
+        .pagination-number:hover {
+            color: #89add1;
+            background-color: #e9ecef;
+            text-decoration: none;
+        }
+
+        .pagination-number.active {
+            background-color: #e4e6e9;
+            color: rgb(4, 4, 4);
+            border-color: #e0e1e4;
+        }
+
+        .pagination-sm .page-link {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            margin: 0 2px;
+        }
+
+        .pagination-sm .page-item.active .page-link {
+            background-color: #F8285A;
+            border-color: #F8285A;
+            color: white;
+        }
+
+        .pagination-sm .page-link:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #495057;
+        }
+
+        .pagination-sm .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 1px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .d-flex.justify-content-between.align-items-center.flex-wrap {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center !important;
+            }
+
+            .pagination-sm .page-link {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .d-flex.align-items-center.gap-3 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+
+            .pagination-arrow,
+            .pagination-number {
+                padding: 4px 6px;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .pagination-sm .page-link {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.7rem;
+            }
+
+            .text-muted {
+                font-size: 0.875rem;
+            }
+        }
+
+        .simple-pagination .page-link {
+            border: none !important;
+            margin: 0 2px;
+            border-radius: 4px !important;
+            padding: 6px 12px !important;
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            transition: all 0.2s ease;
+        }
+
+        .simple-pagination .page-link:hover {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+        .simple-pagination .page-item.active .page-link {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+
+        .simple-pagination .page-link:focus {
+            box-shadow: none !important;
+        }
     </style>
 
     <div class="notification-toast">
@@ -617,9 +755,9 @@
                                     </tbody>
                                 </table>
                             </div>
-
                             <div class="table-footer">
                                 <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+                                    <!-- Left side - Show per page dropdown -->
                                     <div class="mb-2 mb-md-0">
                                         <form method="GET" class="d-flex align-items-center">
                                             <span class="me-2">Show</span>
@@ -636,32 +774,68 @@
                                         </form>
                                     </div>
 
-                                    @if (isset($atlets) && method_exists($atlets, 'hasPages'))
+                                    <!-- Right side - Pagination info and navigation -->
+                                    @if (isset($atlets) && method_exists($atlets, 'hasPages') && $atlets->hasPages())
                                         <div class="d-flex align-items-center gap-3">
-                                            <div class="d-flex align-items-center">
-                                                <span class="me-2">Page</span>
-                                                <select class="form-select form-select-sm" style="width: 80px;"
-                                                    onchange="window.location.href = this.value">
-                                                    @for ($i = 1; $i <= $atlets->lastPage(); $i++)
-                                                        <option value="{{ $atlets->url($i) }}"
-                                                            {{ $atlets->currentPage() == $i ? 'selected' : '' }}>
-                                                            {{ $i }}
-                                                        </option>
-                                                    @endfor
-                                                </select>
-                                                <span class="ms-2">of {{ $atlets->lastPage() }}</span>
+                                            <!-- Pagination info -->
+                                            <div class="text-muted small">
+                                                {{ $atlets->firstItem() }}-{{ $atlets->lastItem() }} of
+                                                {{ $atlets->total() }}
                                             </div>
 
-                                            <div class="btn-group">
-                                                <a href="{{ $atlets->previousPageUrl() }}"
-                                                    class="btn btn-outline-secondary {{ $atlets->onFirstPage() ? 'disabled' : '' }}">
-                                                    <i class="fas fa-chevron-left"></i>
-                                                </a>
-                                                <a href="{{ $atlets->nextPageUrl() }}"
-                                                    class="btn btn-outline-secondary {{ !$atlets->hasMorePages() ? 'disabled' : '' }}">
-                                                    <i class="fas fa-chevron-right"></i>
-                                                </a>
+                                            <!-- Navigation with previous/next arrows and page numbers -->
+                                            <div class="d-flex align-items-center gap-2">
+                                                <!-- Previous page arrow -->
+                                                @if ($atlets->onFirstPage())
+                                                    <span class="pagination-arrow disabled">←</span>
+                                                @else
+                                                    <a href="{{ $atlets->previousPageUrl() }}" class="pagination-arrow"
+                                                        aria-label="Previous">←</a>
+                                                @endif
+
+                                                @php
+                                                    // Show maximum 5 pages around current page
+                                                    $current = $atlets->currentPage();
+                                                    $total = $atlets->lastPage();
+                                                    $start = max(1, $current - 2);
+                                                    $end = min($total, $current + 2);
+
+                                                    // Adjust if we're at the beginning or end
+                                                    if ($end - $start < 4) {
+                                                        if ($start == 1) {
+                                                            $end = min($total, $start + 4);
+                                                        } else {
+                                                            $start = max(1, $end - 4);
+                                                        }
+                                                    }
+                                                @endphp
+
+                                                <!-- Page numbers -->
+                                                <div class="d-flex align-items-center">
+                                                    @for ($i = $start; $i <= $end; $i++)
+                                                        @if ($i == $current)
+                                                            <span
+                                                                class="pagination-number active">{{ $i }}</span>
+                                                        @else
+                                                            <a href="{{ $atlets->url($i) }}"
+                                                                class="pagination-number">{{ $i }}</a>
+                                                        @endif
+                                                    @endfor
+                                                </div>
+
+                                                <!-- Next page arrow -->
+                                                @if ($atlets->hasMorePages())
+                                                    <a href="{{ $atlets->nextPageUrl() }}" class="pagination-arrow"
+                                                        aria-label="Next">→</a>
+                                                @else
+                                                    <span class="pagination-arrow disabled">→</span>
+                                                @endif
                                             </div>
+                                        </div>
+                                    @elseif(isset($atlets) && method_exists($atlets, 'hasPages'))
+                                        <!-- Show simple info when there's only one page -->
+                                        <div class="text-muted small">
+                                            1-{{ $atlets->count() }} of {{ $atlets->total() }}
                                         </div>
                                     @endif
                                 </div>
