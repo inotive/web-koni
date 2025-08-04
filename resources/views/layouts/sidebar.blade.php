@@ -106,8 +106,15 @@
                     <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
                         <ul class="menu flex-column ms-5">
                             <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/bidang*') ? 'active' : '' }}"
-                                    href="{{ route('admin.bidang.index') }}">
+                                <a class="menu-link {{ request()->is('admin/laporan-lpj/sekretariat*') ? 'active' : '' }}"
+                                    href="{{ route('admin.laporan-lpj.sekretariat.index') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">sekretariat</span>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="menu-link {{ request()->is('admin/laporan-lpj/bidang*') ? 'active' : '' }}"
+                                    href="{{ route('admin.laporan-lpj.bidang.index') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Bidang Bidang</span>
                                 </a>

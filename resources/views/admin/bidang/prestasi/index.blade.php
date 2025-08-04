@@ -3,7 +3,7 @@
 @section('pageTitle', 'Pembinaan Prestasi')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
-@section('subSectionUrl', route('admin.bidang.index') )
+@section('subSectionUrl', route('admin.laporan-lpj.bidang.index') )
 @section('currentSection', 'Pembinaan Prestasi')
 
 @section('content')
