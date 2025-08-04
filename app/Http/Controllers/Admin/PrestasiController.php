@@ -10,141 +10,132 @@ use Illuminate\Http\Request;
 
 class PrestasiController extends Controller
 {
-    // Store prestasi for Atlet
-    public function storeForAtlet(Request $request, $atletId)
+    public function index()
     {
-        $request->validate([
-            'nama_prestasi' => 'required|string|max:255',
-            'tempat' => 'required|string|max:255',
-            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
-            'medali' => 'required|in:Emas,Perak,Perunggu'
-        ]);
-
-        $atlet = Atlet::findOrFail($atletId);
-
-        // Create prestasi with polymorphic relationship
-        $prestasi = new Prestasi([
-            'nama_prestasi' => $request->nama_prestasi,
-            'tempat' => $request->tempat,
-            'tahun' => $request->tahun,
-            'medali' => $request->medali,
-        ]);
-
-        // Set the polymorphic relationship for Atlet
-        $prestasi->subject()->associate($atlet);
-        $prestasi->save();
-
-        return redirect()->route('admin.konfigurasi.atlet.show', $atletId)
-            ->with('success', 'Prestasi berhasil ditambahkan!');
+        $prestasis = Prestasi::with('subject')->latest()->paginate(10);
+        return view('admin.prestasi.index', compact('prestasis'));
     }
 
-    // Store prestasi for Pelatih
-    public function storeForPelatih(Request $request, $pelatihId)
+    public function create()
     {
-        $request->validate([
-            'nama_prestasi' => 'required|string|max:255',
-            'tempat' => 'required|string|max:255',
-            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
-            'medali' => 'required|in:Emas,Perak,Perunggu'
-        ]);
+        $atlets = Atlet::with('cabangOlahraga:id,nama_cabor')
+                       ->select('id', 'nama', 'jenis_kelamin', 'cabor_id')
+                       ->get();
 
-        $pelatih = Pelatih::findOrFail($pelatihId);
+        $pelatihs = Pelatih::with('cabangOlahraga:id,nama_cabor')
+                           ->select('id', 'nama', 'kelamin', 'cabor_id')
+                           ->get();
 
-        // Create prestasi with polymorphic relationship
-        $prestasi = new Prestasi([
-            'nama_prestasi' => $request->nama_prestasi,
-            'tempat' => $request->tempat,
-            'tahun' => $request->tahun,
-            'medali' => $request->medali,
-        ]);
-
-        // Set the polymorphic relationship for Pelatih
-        $prestasi->subject()->associate($pelatih);
-        $prestasi->save();
-
-        return redirect()->route('admin.konfigurasi.pelatih.show', $pelatihId)
-            ->with('success', 'Prestasi berhasil ditambahkan!');
+        return view('admin.prestasi.create', compact('atlets', 'pelatihs'));
     }
 
-    // Generic store method (if you want to keep one method)
-    public function store(Request $request, $id, $type = 'atlet')
+    public function store(Request $request)
     {
         $request->validate([
+            'subject_type' => 'required|in:atlet,pelatih',
+            'subject_id' => 'required|exists:' . ($request->subject_type === 'pelatih' ? 'pelatih' : 'atlets') . ',id',
             'nama_prestasi' => 'required|string|max:255',
+            'tingkat' => 'required|string|max:255',
             'tempat' => 'required|string|max:255',
             'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
             'medali' => 'required|in:Emas,Perak,Perunggu'
         ]);
 
-        // Determine the model based on type
-        if ($type === 'pelatih') {
-            $subject = Pelatih::findOrFail($id);
-            $redirectRoute = 'admin.konfigurasi.pelatih.show';
-        } else {
-            $subject = Atlet::findOrFail($id);
-            $redirectRoute = 'admin.konfigurasi.atlet.show';
-        }
+        $subject = $request->subject_type === 'pelatih'
+            ? Pelatih::find($request->subject_id)
+            : Atlet::find($request->subject_id);
 
-        // Create prestasi with polymorphic relationship
-        $prestasi = new Prestasi([
-            'nama_prestasi' => $request->nama_prestasi,
-            'tempat' => $request->tempat,
-            'tahun' => $request->tahun,
-            'medali' => $request->medali,
-        ]);
+        $prestasi = new Prestasi($request->only([
+            'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali'
+        ]));
 
-        // Set the polymorphic relationship
         $prestasi->subject()->associate($subject);
         $prestasi->save();
 
-        return redirect()->route($redirectRoute, $id)
-            ->with('success', 'Prestasi berhasil ditambahkan!');
+        return redirect()->route('admin.konfigurasi.prestasi.index')
+            ->with('OK', 'Prestasi berhasil ditambahkan!');
+    }
+
+    public function edit(Prestasi $prestasi)
+    {
+        $atlets = Atlet::all();
+        $pelatihs = Pelatih::all();
+        return view('admin.prestasi.edit', compact('prestasi', 'atlets', 'pelatihs'));
+    }
+
+    public function update(Request $request, Prestasi $prestasi)
+    {
+        $request->validate([
+            'nama_prestasi' => 'required|string|max:255',
+            'tingkat' => 'required|string|max:255',
+            'tempat' => 'required|string|max:255',
+            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'medali' => 'required|in:Emas,Perak,Perunggu'
+        ]);
+
+        $prestasi->update($request->only([
+            'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali'
+        ]));
+
+        return redirect()->route('admin.konfigurasi.prestasi.index')
+            ->with('OK', 'Prestasi berhasil diperbarui!');
     }
 
     public function destroy(Prestasi $prestasi)
     {
-        try {
-            // Get the subject info before deleting for redirect
-            $subjectType = $prestasi->subject_type;
-            $subjectId = $prestasi->subject_id;
-
-            $prestasi->delete();
-
-            // Determine redirect route based on subject type
-            if (str_contains($subjectType, 'Pelatih')) {
-                $redirectRoute = 'admin.konfigurasi.pelatih.show';
-            } else {
-                $redirectRoute = 'admin.konfigurasi.atlet.show';
-            }
-
-            return redirect()->route($redirectRoute, $subjectId)
-                ->with('success', 'Prestasi berhasil dihapus.');
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan saat menghapus prestasi.');
-        }
+        $prestasi->delete();
+        return back()->with('OK', 'Prestasi berhasil dihapus!');
     }
 
-    // Alternative destroy method if you know the context
-    public function destroyForAtlet(Prestasi $prestasi, $atletId)
+    public function createForAtlet(Atlet $atlet)
     {
-        try {
-            $prestasi->delete();
-            return redirect()->route('admin.konfigurasi.atlet.show', $atletId)
-                ->with('success', 'Prestasi berhasil dihapus.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan saat menghapus prestasi.');
-        }
+        return view('admin.prestasi.create-atlet', compact('atlet'));
     }
 
-    public function destroyForPelatih(Prestasi $prestasi, $pelatihId)
+    public function storeForAtlet(Request $request, Atlet $atlet)
     {
-        try {
-            $prestasi->delete();
-            return redirect()->route('admin.konfigurasi.pelatih.show', $pelatihId)
-                ->with('success', 'Prestasi berhasil dihapus.');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan saat menghapus prestasi.');
-        }
+        $request->validate([
+            'nama_prestasi' => 'required|string|max:255',
+            'tingkat' => 'required|string|max:255',
+            'tempat' => 'required|string|max:255',
+            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'medali' => 'required|in:Emas,Perak,Perunggu'
+        ]);
+
+        $prestasi = new Prestasi($request->only([
+            'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali'
+        ]));
+
+        $prestasi->subject()->associate($atlet);
+        $prestasi->save();
+
+        return redirect()->route('admin.konfigurasi.atlet.show', $atlet)
+            ->with('OK', 'Prestasi atlet berhasil ditambahkan!');
+    }
+
+    public function createForPelatih(Pelatih $pelatih)
+    {
+        return view('admin.prestasi.create-pelatih', compact('pelatih'));
+    }
+
+    public function storeForPelatih(Request $request, Pelatih $pelatih)
+    {
+        $request->validate([
+            'nama_prestasi' => 'required|string|max:255',
+            'tingkat' => 'required|string|max:255',
+            'tempat' => 'required|string|max:255',
+            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+            'medali' => 'required|in:Emas,Perak,Perunggu'
+        ]);
+
+        $prestasi = new Prestasi($request->only([
+            'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali'
+        ]));
+
+        $prestasi->subject()->associate($pelatih);
+        $prestasi->save();
+
+        return redirect()->route('admin.konfigurasi.pelatih.show', $pelatih)
+            ->with('OK', 'Prestasi pelatih berhasil ditambahkan!');
     }
 }

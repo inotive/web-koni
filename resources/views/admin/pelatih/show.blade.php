@@ -112,6 +112,7 @@
 
         .detail-body {
             width: 100%;
+            margin-bottom: 20px;
             max-width: 987px;
             box-sizing: border-box;
             align-items: flex-start;
@@ -434,12 +435,14 @@
                                     style="width: 60px; height: 60px; background-color: #f1f1f4; display: flex; align-items: center; justify-content: center;">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
-                                        
+
                                     </svg>
                                 </div>
                             </div>
                         @endif
-                        
+                    @php
+                        $caborNama = $pelatih->cabangOlahraga ? $pelatih->cabangOlahraga->nama_cabor : '-';
+                    @endphp
                     </div>
                 </div>
 
@@ -453,7 +456,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -464,11 +467,11 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Cabor</p>
                     </div>
-                    <p class="detail-value">{{ $pelatih->cabor }}</p>
+                    <p class="detail-value">{{ $caborNama }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -483,7 +486,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -498,7 +501,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -513,7 +516,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -528,7 +531,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                           
+
                         </svg>
                     </div>
                 </div>
@@ -543,7 +546,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -558,7 +561,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -573,7 +576,7 @@
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
-                            
+
                         </svg>
                     </div>
                 </div>
@@ -586,7 +589,7 @@
                     </div>
                     <p class="detail-value">{{ $pelatih->alamat ?? 'Belum ada alamat yang tercantum' }}</p>
                     <div class="add-address">
-                        
+
                     </div>
                 </div>
             </div>
@@ -595,10 +598,10 @@
         <div class="detail-card">
             <div class="detail-card-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <b><h1 class="detail-card-title">Informasi Kejuaraan</h1></b>
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                {{-- <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                     data-bs-target="#tambahPrestasiModal">
                     Tambah
-                </button>
+                </button> --}}
             </div>
 
             <div class="detail-body" style="padding: 0;">
@@ -628,7 +631,7 @@
                                             }
                                             elseif ($prestasi->medali == 'Perunggu') {
                                                 $medalColor = '#CD7F32';
-                                            } 
+                                            }
                                         @endphp
                                         <svg class="achievement-icon" viewBox="0 0 24 24"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -650,17 +653,17 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
                                     </form> --}}
-                                    <form action="{{ route('admin.prestasi.destroy', $prestasi->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus prestasi ini?')">
+                                    {{-- <form action="{{ route('admin.konfigurasi.prestasi.destroy', $prestasi->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus prestasi ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                    </form>
+                                    </form> --}}
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="4" style="text-align: center; padding: 20px;">Belum ada data prestasi.
-                                    Silakan tambahkan.</td>
+                                    Silakan tambahkan di menu kejuaraan.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -673,7 +676,7 @@
         </div> --}}
     </div>
 
-    <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" aria-labelledby="tambahPrestasiModalLabel"
+    {{-- <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" aria-labelledby="tambahPrestasiModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -715,6 +718,6 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 @endsection

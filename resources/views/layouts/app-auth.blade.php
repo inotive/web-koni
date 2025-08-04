@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ config('app.name', 'KONI Tabalong') }} | {{ $title ?? 'Login' }}</title>
-    <meta name="description" content="Portal Manajemen Konten Perumda Varia Niaga Samarinda" />
+    <meta name="description" content="Web Koni Tabalong" />
     <link rel="shortcut icon" href="{{ asset('landing-assets/img/logo.png') }}" />
 
     <!-- Fonts -->

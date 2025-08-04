@@ -12,20 +12,13 @@ class PelatihController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = $request->input('perPage', 10);
+
         $query = Pelatih::with(['cabangOlahraga', 'prestasis' => function ($q) {
             $q->orderByDesc('tahun');
         }]);
 
-        // Sorting berdasarkan prestasi terbaru
-        if ($request->filled('sort') && $request->sort === 'prestasi') {
-            $query->with(['prestasis' => function ($q) {
-                $q->orderByDesc('tahun')->limit(1);
-            }])->leftJoin('prestasis', 'pelatih.id', '=', 'prestasis.pelatih_id')
-                ->select('pelatih.*')
-                ->orderBy('prestasis.tahun', $request->order === 'desc' ? 'desc' : 'asc');
-        }
-
-        // Pencarian
+        // Search functionality (server-side search is still useful for large datasets)
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('pelatih.nama', 'like', "%{$request->search}%")
@@ -47,12 +40,14 @@ class PelatihController extends Controller
             $query->where('cabor_id', $request->cabor_id);
         }
 
-        // Sorting
-        if ($request->filled('sort') && in_array($request->sort, ['nama', 'tanggal_lahir', 'kelamin', 'alamat', 'updated_at'])) {
-            $query->orderBy($request->sort, $request->order === 'desc' ? 'desc' : 'asc');
-        }
+        // REMOVED ALL SORTING LOGIC - Let DataTables handle it on client-side
+        // Only keep a consistent default order for initial load
+        $query->orderByDesc('pelatih.created_at');
 
-        $pelatih = $query->paginate($request->per_page ?? 10);
+        $pelatih = $query->paginate($perPage)->withQueryString();
+
+        // Preserve query parameters in pagination links
+        $pelatih->appends($request->query());
 
         $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
         $allKelamin = Pelatih::select('kelamin')->distinct()->pluck('kelamin');
@@ -63,7 +58,7 @@ class PelatihController extends Controller
     public function create()
     {
         $cabors = CabangOlahraga::pluck('nama_cabor', 'id');
-        $allKelamin = ['Laki-laki', 'Perempuan'];
+        $allKelamin = ['Laki-Laki', 'Perempuan'];
 
         return view('admin.pelatih.create', compact('cabors', 'allKelamin'));
     }
@@ -76,7 +71,7 @@ class PelatihController extends Controller
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
-            'kelamin' => 'required|in:Laki-laki,Perempuan',
+            'kelamin' => 'required|in:Laki-Laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'foto' => 'nullable|image|max:2048'
@@ -110,7 +105,7 @@ class PelatihController extends Controller
     {
         $pelatih = Pelatih::findOrFail($id);
         $cabors = CabangOlahraga::pluck('nama_cabor', 'id');
-        $allKelamin = ['Laki-laki', 'Perempuan'];
+        $allKelamin = ['Laki-Laki', 'Perempuan'];
 
         return view('admin.pelatih.edit', compact('pelatih', 'cabors', 'allKelamin'));
     }
@@ -123,7 +118,7 @@ class PelatihController extends Controller
             'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
-            'kelamin' => 'required|in:Laki-laki,Perempuan',
+            'kelamin' => 'required|in:Laki-Laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
             'email' => 'nullable|email|max:255',
             'foto' => 'nullable|image|max:2048'
@@ -131,7 +126,6 @@ class PelatihController extends Controller
 
         try {
             if ($request->hasFile('foto')) {
-                // Hapus foto lama jika ada
                 if ($pelatih->foto) {
                     Storage::disk('public')->delete($pelatih->foto);
                 }
@@ -151,7 +145,6 @@ class PelatihController extends Controller
     public function destroy(Pelatih $pelatih)
     {
         try {
-            // Hapus foto jika ada
             if ($pelatih->foto) {
                 Storage::disk('public')->delete($pelatih->foto);
             }

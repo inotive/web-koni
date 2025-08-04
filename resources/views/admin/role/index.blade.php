@@ -1,8 +1,51 @@
 @extends('layouts.app')
 
-
 @push('stack-css')
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+    <style>
+        table.table th,
+        table.table td {
+            border: 0.5px solid #F1F1F4 !important;
+            vertical-align: middle;
+        }
+
+        table.dataTable thead th {
+            color: #4B5675 !important;
+            position: relative;
+        }
+
+        table.dataTable thead>tr>th:nth-child(1)::before,
+        table.dataTable thead>tr>th:nth-child(1)::after {
+            content: "" !important;
+            display: none !important;
+        }
+
+        table.dataTable thead th.sorting,
+        table.dataTable thead th.sorting_asc,
+        table.dataTable thead th.sorting_desc {
+            background-image: none !important;
+        }
+
+        .sort-header {
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .sort-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .rotate-asc {
+            transform: rotate(180deg);
+        }
+
+        .rotate-desc {
+            transform: rotate(0deg);
+        }
+    </style>
 @endpush
+
 @section('pageTitle', 'Jabatan')
 @section('mainSection', 'Manajemen Pengguna')
 @section('currentSection', 'Jabatan & Hak Akses')
@@ -27,25 +70,49 @@
             <div class="card-body ">
                 <div class="row g-12 g-xl-12">
                     <div class="col-xl-12">
-                        <table id="kt_datatable_dom_positioning" class="table table-row-bordered gy-5 gs-7 border rounded">
-                            <thead>
-                                <tr class="fw-bold fs-6 text-gray-800 px-7">
-                                    <th class="col-1">No</th>
-                                    <th class="col-4 text-start">Name</th>
-                                    <th class="col-3 text-start">Total Pengguna</th>
-                                    <th class="col-3 text-start">Jumlah Hak Akses</th>
-                                    <th class="col-1 text-start">Aksi</th>
+                        <table id="kt_datatable_dom_positioning"
+                            class="table table-bordered align-middle text-gray-800 fs-6 gy-5">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="text-center fw-semibold text-gray-700">No</th>
+                                    <th class="text-start fw-semibold text-gray-700 cursor-pointer sort-header"
+                                        data-column="1">
+                                        <span>Nama Jabatan</span>
+                                        <svg class="sort-icon ms-2" width="16" height="16" stroke="currentColor"
+                                            fill="none" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+                                        </svg>
+                                    </th>
+                                    <th class="text-center fw-semibold text-gray-700 cursor-pointer sort-header"
+                                        data-column="2">
+                                        <span>Total Pengguna</span>
+                                        <svg class="sort-icon ms-2" width="16" height="16" stroke="currentColor"
+                                            fill="none" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+                                        </svg>
+                                    </th>
+                                    <th class="text-center fw-semibold text-gray-700 cursor-pointer sort-header"
+                                        data-column="3">
+                                        <span>Jumlah Hak Akses</span>
+                                        <svg class="sort-icon ms-2" width="16" height="16" stroke="currentColor"
+                                            fill="none" stroke-width="1.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
+                                        </svg>
+                                    </th>
+                                    <th class="text-center fw-semibold text-gray-700">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-body" class="text-center">
+                            <tbody>
                                 @foreach ($data as $value)
                                     <tr id="{{ $value->id }}">
                                         <td class="text-center">{{ $loop->iteration }}</td>
                                         <td class="text-start">{{ $value->name }}</td>
-                                        <td class="text-start">{{ $value->assignedUsers->count() }} Pengguna</td>
-                                        <td class="text-start">{{ $value->permissions->count() }} Hak Akses</td>
-                                        {{-- <td>{{ $value->model_has_role_count }} User</td> --}}
-                                        <td class="text-start">
+                                        <td class="text-center">{{ $value->assignedUsers->count() }} Pengguna</td>
+                                        <td class="text-center">{{ $value->permissions->count() }} Hak Akses</td>
+                                        <td class="text-center">
                                             <div class="dropdown">
                                                 <button class="btn btn-sm" type="button" data-bs-toggle="dropdown"
                                                     aria-expanded="false"
@@ -59,19 +126,15 @@
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <div>
-                                                            <a href="{{ route('admin.manajemen-pengguna.role.show', $value->id) }}"
-                                                                class="dropdown-item d-flex align-items-center gap-2">
-                                                                {{-- <i class="ki-duotone ki-pencil fs-5"></i> --}}
-                                                                Atur Hak Akses
-                                                            </a>
-                                                        </div>
+                                                        <a href="{{ route('admin.manajemen-pengguna.role.show', $value->id) }}"
+                                                            class="dropdown-item d-flex align-items-center gap-2">
+                                                            Atur Hak Akses
+                                                        </a>
                                                     </li>
                                                     <li>
                                                         <button class="dropdown-item d-flex align-items-center gap-2"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#kt_modal_{{ $value->id }}">
-                                                            {{-- <i class="ki-duotone ki-pencil fs-5"></i>  --}}
                                                             Edit Jabatan
                                                         </button>
                                                     </li>
@@ -80,7 +143,6 @@
                                                             class="dropdown-item d-flex align-items-center gap-2 text-danger"
                                                             onclick="destroyItem(this)"
                                                             data-route="{{ route('admin.manajemen-pengguna.role.destroy', $value->id) }}">
-                                                            {{-- <i class="ki-duotone ki-trash fs-5"></i>  --}}
                                                             Hapus
                                                         </button>
                                                     </li>
@@ -89,7 +151,6 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
                         {{-- End Table --}}
@@ -107,7 +168,42 @@
 
 @section('script')
     <script>
-        const table = $("#kt_datatable_dom_positioning").DataTable();
+        let table;
+
+        $(document).ready(function() {
+            table = $('#kt_datatable_dom_positioning').DataTable({
+                paging: true,
+                info: true,
+                ordering: true,
+                columnDefs: [{
+                    orderable: false,
+                    targets: [0, 4]
+                }],
+                initComplete: function() {
+                    $('#kt_datatable_dom_positioning thead th').removeClass(
+                        'sorting sorting_asc sorting_desc');
+                }
+            });
+            table.on('order.dt', function() {
+                $('.sort-icon').removeClass('rotate-asc rotate-desc');
+
+                const order = table.order();
+                if (order.length > 0) {
+                    const colIndex = order[0][0];
+                    const direction = order[0][1];
+
+                    const th = $('th[data-column="' + colIndex + '"]');
+                    const icon = th.find('.sort-icon');
+
+                    if (direction === 'asc') {
+                        icon.addClass('rotate-asc');
+                    } else if (direction === 'desc') {
+                        icon.addClass('rotate-desc');
+                    }
+                }
+            });
+
+        });
         $('#search').on('keyup', function() {
             table.search(this.value).draw();
         });
