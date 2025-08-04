@@ -433,22 +433,15 @@
         }
     </style>
 
-    <div class="notification-toast">
-        @if (session('success'))
-            <div class="toast show align-items-center text-white border-0 @if (session('action') === 'store') toast-success @elseif(session('action') === 'update') toast-warning @elseif(session('action') === 'destroy') toast-error @endif"
-                role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <i
-                            class="fas @if (session('action') === 'store') fa-check-circle @elseif(session('action') === 'update') fa-exclamation-circle @elseif(session('action') === 'destroy') fa-trash-alt @endif me-2"></i>
-                        {{ session('success') }}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-                </div>
-            </div>
-        @endif
-    </div>
+     @if (session('success'))
+        <div class="alert alert-{{ session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger') }} alert-dismissible fade show"
+            role="alert">
+            <i
+                class="fas {{ session('action') === 'store' ? 'fa-check-circle' : (session('action') === 'update' ? 'fa-exclamation-circle' : 'fa-trash-alt') }} me-2"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     <div class="main-content">
         <div class="container-fluid">
@@ -638,18 +631,11 @@
                                                                 title="Edit">
                                                                 <i class="fa-solid fa-pen-to-square"></i>
                                                             </a>
-                                                            <form
-                                                                action="{{ route('admin.konfigurasi.prestasi.destroy', $prestasi->id) }}"
-                                                                method="POST" class="d-inline"
-                                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn btn-icon btn-sm btn-light-danger"
-                                                                    title="Hapus">
-                                                                    <i class="fa-solid fa-trash"></i>
-                                                                </button>
-                                                            </form>
+                                                           <button class="btn btn-icon btn-sm btn-light-danger"
+                                                                title="Hapus" onclick="destroyItem(this)"
+                                                                data-route="{{ route('admin.konfigurasi.atlet.destroy', $prestasi->id) }}">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -859,6 +845,48 @@
                     new bootstrap.Tooltip(this);
                 });
             });
+
+                        window.destroyItem = function(button) {
+                const route = button.dataset.route;
+
+                Swal.fire({
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
+                    icon: "warning",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = route;
+
+                        const token = document.createElement('input');
+                        token.type = 'hidden';
+                        token.name = '_token';
+                        token.value = '{{ csrf_token() }}';
+
+                        const method = document.createElement('input');
+                        method.type = 'hidden';
+                        method.name = '_method';
+                        method.value = 'DELETE';
+
+                        form.appendChild(token);
+                        form.appendChild(method);
+                        document.body.appendChild(form);
+                        form.submit();
+                    } else {
+                        Swal.fire({
+                            title: "Aksi Dibatalkan :)",
+                            icon: "info",
+                        });
+                    }
+                });
+            };
         </script>
     @endif
 @endsection

@@ -321,152 +321,154 @@
             color: white;
         }
 
-          .pagination-arrow {
-        color: #6c757d;
-        text-decoration: none;
-        padding: 6px 8px;
-        transition: color 0.2s ease;
-        cursor: pointer;
-    }
-
-    .pagination-arrow:hover {
-        color: #0b0b0b;
-        text-decoration: none;
-    }
-
-    .pagination-arrow.disabled {
-        color: #adb5bd;
-        cursor: not-allowed;
-        opacity: 0.6;
-    }
-
-    .pagination-number {
-        color: #6c757d;
-        text-decoration: none;
-        padding: 6px 10px;
-        margin: 0 1px;
-        border-radius: 4px;
-        transition: all 0.2s ease;
-        background-color: #f8f9fa;
-        border: 1px solid transparent;
-        font-size: 0.875rem;
-    }
-
-    .pagination-number:hover {
-        color: #89add1;
-        background-color: #e9ecef;
-        text-decoration: none;
-    }
-
-    .pagination-number.active {
-        background-color: #e4e6e9;
-        color: rgb(4, 4, 4);
-        border-color: #e0e1e4;
-    }
-
-    .pagination-sm .page-link {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.875rem;
-        border-radius: 4px;
-        border: 1px solid #dee2e6;
-        color: #6c757d;
-        margin: 0 2px;
-    }
-
-    .pagination-sm .page-item.active .page-link {
-        background-color: #F8285A;
-        border-color: #F8285A;
-        color: white;
-    }
-
-    .pagination-sm .page-link:hover {
-        background-color: #f8f9fa;
-        border-color: #dee2e6;
-        color: #495057;
-    }
-
-    .pagination-sm .page-item.disabled .page-link {
-        color: #6c757d;
-        background-color: #fff;
-        border-color: #dee2e6;
-    }
-
-    .pagination {
-        margin-bottom: 0;
-    }
-
-    .pagination .page-item {
-        margin: 0 1px;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .d-flex.justify-content-between.align-items-center.flex-wrap {
-            flex-direction: column;
-            gap: 1rem;
-            align-items: center !important;
+        .pagination-arrow {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: color 0.2s ease;
+            cursor: pointer;
         }
 
-        .pagination-sm .page-link {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
+        .pagination-arrow:hover {
+            color: #0b0b0b;
+            text-decoration: none;
         }
 
-        .d-flex.align-items-center.gap-3 {
-            flex-direction: column;
-            gap: 0.5rem !important;
+        .pagination-arrow.disabled {
+            color: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
 
-        .pagination-arrow,
         .pagination-number {
-            padding: 4px 6px;
-            font-size: 0.75rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .pagination-sm .page-link {
-            padding: 0.2rem 0.4rem;
-            font-size: 0.7rem;
-        }
-
-        .text-muted {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 10px;
+            margin: 0 1px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+            border: 1px solid transparent;
             font-size: 0.875rem;
         }
-    }
 
-    .simple-pagination .page-link {
-        border: none !important;
-        margin: 0 2px;
-        border-radius: 4px !important;
-        padding: 6px 12px !important;
-        color: #6c757d !important;
-        background-color: #f8f9fa !important;
-        transition: all 0.2s ease;
-    }
+        .pagination-number:hover {
+            color: #89add1;
+            background-color: #e9ecef;
+            text-decoration: none;
+        }
 
-    .simple-pagination .page-link:hover {
-        background-color: #e9ecef !important;
-        color: #495057 !important;
-    }
+        .pagination-number.active {
+            background-color: #e4e6e9;
+            color: rgb(4, 4, 4);
+            border-color: #e0e1e4;
+        }
 
-    .simple-pagination .page-item.active .page-link {
-        background-color: #007bff !important;
-        color: white !important;
-    }
+        .pagination-sm .page-link {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            margin: 0 2px;
+        }
 
-    .simple-pagination .page-link:focus {
-        box-shadow: none !important;
-    }
+        .pagination-sm .page-item.active .page-link {
+            background-color: #F8285A;
+            border-color: #F8285A;
+            color: white;
+        }
+
+        .pagination-sm .page-link:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #495057;
+        }
+
+        .pagination-sm .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 1px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .d-flex.justify-content-between.align-items-center.flex-wrap {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center !important;
+            }
+
+            .pagination-sm .page-link {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .d-flex.align-items-center.gap-3 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+
+            .pagination-arrow,
+            .pagination-number {
+                padding: 4px 6px;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .pagination-sm .page-link {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.7rem;
+            }
+
+            .text-muted {
+                font-size: 0.875rem;
+            }
+        }
+
+        .simple-pagination .page-link {
+            border: none !important;
+            margin: 0 2px;
+            border-radius: 4px !important;
+            padding: 6px 12px !important;
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            transition: all 0.2s ease;
+        }
+
+        .simple-pagination .page-link:hover {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+        .simple-pagination .page-item.active .page-link {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+
+        .simple-pagination .page-link:focus {
+            box-shadow: none !important;
+        }
     </style>
 
     @if (session('success'))
-    <div class="alert alert-{{ session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger') }} alert-dismissible fade show" role="alert">
-        <i class="fas {{ session('action') === 'store' ? 'fa-check-circle' : (session('action') === 'update' ? 'fa-exclamation-circle' : 'fa-trash-alt') }} me-2"></i>
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+        <div class="alert alert-{{ session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger') }} alert-dismissible fade show"
+            role="alert">
+            <i
+                class="fas {{ session('action') === 'store' ? 'fa-check-circle' : (session('action') === 'update' ? 'fa-exclamation-circle' : 'fa-trash-alt') }} me-2"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Atlet</h2>
@@ -727,17 +729,11 @@
                                                                 title="Edit">
                                                                 <i class="fa-solid fa-pen-to-square"></i>
                                                             </a>
-                                                            <form
-                                                                action="{{ route('admin.konfigurasi.atlet.destroy', $item->id) }}"
-                                                                method="POST" class="d-inline"
-                                                                onsubmit="return confirm('Yakin ingin menghapus atlet ini?')">
-                                                                @csrf @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="btn btn-icon btn-sm btn-light-danger"
-                                                                    title="Hapus">
-                                                                    <i class="fa-solid fa-trash"></i>
-                                                                </button>
-                                                            </form>
+                                                            <button class="btn btn-icon btn-sm btn-light-danger"
+                                                                title="Hapus" onclick="destroyItem(this)"
+                                                                data-route="{{ route('admin.konfigurasi.atlet.destroy', $item->id) }}">
+                                                                <i class="fa-solid fa-trash"></i>
+                                                            </button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -846,6 +842,7 @@
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (isset($atlets) && $atlets->isNotEmpty())
         <script>
             $(document).ready(function() {
@@ -989,6 +986,48 @@
                     updateFilterCount();
                 });
             });
+
+            window.destroyItem = function(button) {
+                const route = button.dataset.route;
+
+                Swal.fire({
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
+                    icon: "warning",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = route;
+
+                        const token = document.createElement('input');
+                        token.type = 'hidden';
+                        token.name = '_token';
+                        token.value = '{{ csrf_token() }}';
+
+                        const method = document.createElement('input');
+                        method.type = 'hidden';
+                        method.name = '_method';
+                        method.value = 'DELETE';
+
+                        form.appendChild(token);
+                        form.appendChild(method);
+                        document.body.appendChild(form);
+                        form.submit();
+                    } else {
+                        Swal.fire({
+                            title: "Aksi Dibatalkan :)",
+                            icon: "info",
+                        });
+                    }
+                });
+            };
         </script>
     @endif
 @endsection
