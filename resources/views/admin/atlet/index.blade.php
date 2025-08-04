@@ -749,7 +749,6 @@
                             </div>
                             <div class="table-footer">
                                 <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-                                    <!-- Left side - Show per page dropdown -->
                                     <div class="mb-2 mb-md-0">
                                         <form method="GET" class="d-flex align-items-center">
                                             <span class="me-2">Show</span>
@@ -766,18 +765,14 @@
                                         </form>
                                     </div>
 
-                                    <!-- Right side - Pagination info and navigation -->
                                     @if (isset($atlets) && method_exists($atlets, 'hasPages') && $atlets->hasPages())
                                         <div class="d-flex align-items-center gap-3">
-                                            <!-- Pagination info -->
                                             <div class="text-muted small">
                                                 {{ $atlets->firstItem() }}-{{ $atlets->lastItem() }} of
                                                 {{ $atlets->total() }}
                                             </div>
 
-                                            <!-- Navigation with previous/next arrows and page numbers -->
                                             <div class="d-flex align-items-center gap-2">
-                                                <!-- Previous page arrow -->
                                                 @if ($atlets->onFirstPage())
                                                     <span class="pagination-arrow disabled">←</span>
                                                 @else
@@ -786,13 +781,12 @@
                                                 @endif
 
                                                 @php
-                                                    // Show maximum 5 pages around current page
                                                     $current = $atlets->currentPage();
                                                     $total = $atlets->lastPage();
                                                     $start = max(1, $current - 2);
                                                     $end = min($total, $current + 2);
 
-                                                    // Adjust if we're at the beginning or end
+
                                                     if ($end - $start < 4) {
                                                         if ($start == 1) {
                                                             $end = min($total, $start + 4);
@@ -802,7 +796,6 @@
                                                     }
                                                 @endphp
 
-                                                <!-- Page numbers -->
                                                 <div class="d-flex align-items-center">
                                                     @for ($i = $start; $i <= $end; $i++)
                                                         @if ($i == $current)
@@ -815,7 +808,6 @@
                                                     @endfor
                                                 </div>
 
-                                                <!-- Next page arrow -->
                                                 @if ($atlets->hasMorePages())
                                                     <a href="{{ $atlets->nextPageUrl() }}" class="pagination-arrow"
                                                         aria-label="Next">→</a>
@@ -825,7 +817,6 @@
                                             </div>
                                         </div>
                                     @elseif(isset($atlets) && method_exists($atlets, 'hasPages'))
-                                        <!-- Show simple info when there's only one page -->
                                         <div class="text-muted small">
                                             1-{{ $atlets->count() }} of {{ $atlets->total() }}
                                         </div>
@@ -842,7 +833,6 @@
 @endsection
 
 @section('script')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (isset($atlets) && $atlets->isNotEmpty())
         <script>
             $(document).ready(function() {
@@ -875,7 +865,7 @@
                     ],
                     order: [
                         [1, 'asc']
-                    ], // Default order by the second column (Nama Atlet & Cabor)
+                    ],
                 });
 
                 const totalCount = table.rows().count();
