@@ -433,6 +433,9 @@
                                 </div>
                             </div>
                         @endif
+                                           @php
+                        $caborNama = $atlet->cabangOlahraga ? $atlet->cabangOlahraga->nama_cabor : '-';
+                    @endphp
 
                     </div>
                 </div>
@@ -458,7 +461,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Cabor</p>
                     </div>
-                    <p class="detail-value">{{ $atlet->cabor }}</p>
+                    <p class="detail-value">{{ $caborNama }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
