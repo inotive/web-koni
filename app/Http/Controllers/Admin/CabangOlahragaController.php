@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\CabangOlahraga;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CabangOlahragaController extends Controller
 {
@@ -15,37 +16,72 @@ class CabangOlahragaController extends Controller
         // Tambahkan eager loading untuk menghindari N+1 query problem
         $query = CabangOlahraga::with(['atlets', 'pelatihs']);
 
-        // Search functionality
+        // PERBAIKAN: Search functionality - Konsisten menggunakan 'search'
         if ($search = $request->input('search')) {
-            $query->where('nama_cabor', 'like', '%' . $search . '%')
-                ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
+            $query->where(function($q) use ($search) {
+                $q->where('nama_cabor', 'like', '%' . $search . '%')
+                  ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
+            });
         }
 
-        // Status filter
-        if ($status = $request->input('filter_status')) {
+        // PERBAIKAN: Status filter - Konsisten menggunakan 'status' (bukan 'filter_status')
+        if ($status = $request->input('status')) {
             $query->where('status', $status);
         }
 
-        // Sorting
-        if ($sortBy = $request->input('sort_by')) {
-            $order = $request->input('order', 'asc');
+        // PERBAIKAN: Sorting dengan default yang lebih baik
+        $sortBy = $request->input('sort_by', 'terakhir_update');
+        $order = $request->input('order', 'desc');
+        
+        // Validasi sort field untuk keamanan
+        $allowedSortFields = [
+            'nama_cabor', 
+            'ketua_penanggung_jawab', 
+            'status', 
+            'tanggal_pembentukan', 
+            'terakhir_update'
+        ];
+        
+        if (in_array($sortBy, $allowedSortFields)) {
             $query->orderBy($sortBy, $order);
         } else {
             $query->orderBy('terakhir_update', 'desc');
         }
 
-        // PERBAIKAN: Ubah parameter dari 'perPage' ke 'per_page' 
-        // untuk konsisten dengan form di view
-        $perPage = $request->get('per_page', 10);
-
-        // Pastikan perPage adalah integer dan dalam range yang valid
-        $perPage = (int) $perPage;
-        if (!in_array($perPage, [10, 25, 50, 100])) {
+        // PERBAIKAN: Per page handling yang lebih robust
+        $perPage = (int) $request->get('per_page', 10);
+        
+        // Validasi perPage
+        $allowedPerPage = [10, 25, 50, 100];
+        if (!in_array($perPage, $allowedPerPage)) {
             $perPage = 10;
         }
 
+        // PERBAIKAN: Paginate dengan append query yang konsisten
         /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator $cabors */
-        $cabors = $query->paginate($perPage)->appends($request->query());
+        $cabors = $query->paginate($perPage);
+        
+        // Tambahkan semua query parameters ke pagination links
+        $cabors->appends($request->only([
+            'search', 
+            'status', 
+            'sort_by', 
+            'order', 
+            'per_page'
+        ]));
+
+        // PERBAIKAN: Debug logging untuk development (bisa dihapus di production)
+        if (config('app.debug')) {
+            Log::info('CabangOlahraga Index Query', [
+                'search' => $request->input('search'),
+                'status' => $request->input('status'),
+                'sort_by' => $sortBy,
+                'order' => $order,
+                'per_page' => $perPage,
+                'total_results' => $cabors->total(),
+                'current_page' => $cabors->currentPage()
+            ]);
+        }
 
         return view('admin.cabang-olahraga.index', compact('cabors'));
     }
@@ -181,6 +217,12 @@ class CabangOlahragaController extends Controller
         }
     }
 
+    // TAMBAHAN: Method untuk reset filter dan search
+    public function resetFilters()
+    {
+        return redirect()->route('admin.konfigurasi.cabang-olahraga.index');
+    }
+
     // Method baru untuk nonaktifkan cabor (sebagai alternatif)
     public function deactivate($id)
     {
@@ -267,6 +309,32 @@ class CabangOlahragaController extends Controller
             DB::rollback();
             return redirect()->back()->with('error', 'Gagal menghapus: ' . $e->getMessage());
         }
+    }
+
+    // TAMBAHAN: Method untuk export/import (opsional untuk future enhancement)
+    public function export(Request $request)
+    {
+        // Logic untuk export data berdasarkan filter aktif
+        // Bisa menggunakan Excel/CSV
+        
+        $query = CabangOlahraga::with(['atlets', 'pelatihs']);
+        
+        // Terapkan filter yang sama seperti di index
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_cabor', 'like', '%' . $search . '%')
+                  ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
+            });
+        }
+        
+        if ($status = $request->input('status')) {
+            $query->where('status', $status);
+        }
+        
+        $cabors = $query->get();
+        
+        // Return export file (implementasi sesuai kebutuhan)
+        // return Excel::download(new CabangOlahragaExport($cabors), 'cabang-olahraga.xlsx');
     }
 
     /**
