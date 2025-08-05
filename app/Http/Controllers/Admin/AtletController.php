@@ -14,9 +14,23 @@ class AtletController extends Controller
 {
     $perPage = $request->get('per_page', 10);
 
-    // Eager-load relasi yang dibutuhkan
-    $query = Atlet::with(['cabangOlahraga', 'prestasis'])
-                  ->orderBy('created_at', 'DESC');
+$allowedSorts = [
+    'nama', 'tanggal_lahir', 'jenis_kelamin', 'alamat',
+    'no_telepon', 'email', 'updated_at', 'created_at'
+];
+
+$sortBy   = $request->get('sort_by', 'created_at');
+$order    = strtolower($request->get('order', 'desc'));
+
+if (!in_array($sortBy, $allowedSorts)) {
+    $sortBy = 'created_at';
+}
+if (!in_array($order, ['asc', 'desc'])) {
+    $order = 'desc';
+}
+
+$query = Atlet::with(['cabangOlahraga', 'prestasis'])
+              ->orderBy($sortBy, $order);
 
     if ($request->filled('search')) {
         $query->where('nama', 'like', '%' . $request->search . '%');
