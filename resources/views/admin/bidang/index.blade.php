@@ -197,7 +197,7 @@
         <!-- Bidang Grid -->
         <div class="bidang-grid" id="bidangGrid">
             <!-- Mobilisasi Sumberdaya -->
-            <a href="{{ route('admin.bidang.mobilisasi-sumberdaya') }}" class="bidang-card" data-title="mobilisasi sumberdaya">
+            <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya') }}" class="bidang-card" data-title="mobilisasi sumberdaya">
                 <div class="bidang-icon icon-mobilisasi">
                     <i class="fas fa-building"></i>
                 </div>
@@ -206,7 +206,7 @@
             </a>
 
             <!-- Hubungan Antar Lembaga -->
-            <a href="{{ route('admin.bidang.hubungan-antar-lembaga') }}" class="bidang-card" data-title="hubungan antar lembaga">
+            <a href="{{ route('admin.laporan-lpj.bidang.hubungan-antar-lembaga') }}" class="bidang-card" data-title="hubungan antar lembaga">
                 <div class="bidang-icon icon-hubungan">
                     <i class="fas fa-handshake"></i>
                 </div>
@@ -215,7 +215,7 @@
             </a>
 
             <!-- Kesehatan -->
-            <a href="{{ route('admin.bidang.kesehatan') }}" class="bidang-card" data-title="kesehatan">
+            <a href="{{ route('admin.laporan-lpj.bidang.kesehatan') }}" class="bidang-card" data-title="kesehatan">
                 <div class="bidang-icon icon-kesehatan">
                     <i class="fas fa-heartbeat"></i>
                 </div>
@@ -224,7 +224,7 @@
             </a>
 
             <!-- Organisasi -->
-            <a href="{{ route('admin.bidang.organisasi') }}" class="bidang-card" data-title="organisasi">
+            <a href="{{ route('admin.laporan-lpj.bidang.organisasi') }}" class="bidang-card" data-title="organisasi">
                 <div class="bidang-icon icon-organisasi">
                     <i class="fas fa-sitemap"></i>
                 </div>
@@ -233,7 +233,7 @@
             </a>
 
             <!-- Pembinaan Hukum Olahraga -->
-            <a href="{{ route('admin.bidang.pembinaan-hukum') }}" class="bidang-card" data-title="pembinaan hukum olahraga">
+            <a href="{{ route('admin.laporan-lpj.bidang.pembinaan-hukum') }}" class="bidang-card" data-title="pembinaan hukum olahraga">
                 <div class="bidang-icon icon-hukum">
                     <i class="fas fa-gavel"></i>
                 </div>
@@ -242,7 +242,7 @@
             </a>
 
             <!-- Pembinaan Prestasi -->
-            <a href="{{ route('admin.bidang.prestasi.index') }}" class="bidang-card" data-title="pembinaan prestasi">
+            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.index') }}" class="bidang-card" data-title="pembinaan prestasi">
                 <div class="bidang-icon icon-prestasi">
                     <i class="fas fa-trophy"></i>
                 </div>
@@ -251,7 +251,7 @@
             </a>
 
             <!-- Sport Science & Iptek -->
-            <a href="{{ route('admin.bidang.sport-science') }}" class="bidang-card" data-title="sport science iptek">
+            <a href="{{ route('admin.laporan-lpj.bidang.sport-science') }}" class="bidang-card" data-title="sport science iptek">
                 <div class="bidang-icon icon-science">
                     <i class="fas fa-flask"></i>
                 </div>
@@ -260,7 +260,7 @@
             </a>
 
             <!-- Perencanaan Program dan Anggaran -->
-            <a href="{{ route('admin.bidang.perencanaan-program') }}" class="bidang-card" data-title="perencanaan program anggaran">
+            <a href="{{ route('admin.laporan-lpj.bidang.perencanaan-program') }}" class="bidang-card" data-title="perencanaan program anggaran">
                 <div class="bidang-icon icon-perencanaan">
                     <i class="fas fa-chart-line"></i>
                 </div>

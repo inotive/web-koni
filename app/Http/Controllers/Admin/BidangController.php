@@ -90,4 +90,9 @@ class BidangController extends Controller
     public function caborTerukur(){
         return view ('admin.bidang.prestasi.Terukur.index');
     }
+
+    //placeholder sekretariat
+    public function indexSekretariat(){
+        return view ('admin.sekretariat.index');
+    }
 }

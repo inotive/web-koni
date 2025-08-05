@@ -398,6 +398,144 @@ if (!function_exists('sortUrl')) {
         font-weight: bold;
     }
 
+    .pagination-arrow {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .pagination-arrow:hover {
+            color: #0b0b0b;
+            text-decoration: none;
+        }
+
+        .pagination-arrow.disabled {
+            color: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .pagination-number {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 10px;
+            margin: 0 1px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+            border: 1px solid transparent;
+            font-size: 0.875rem;
+        }
+
+        .pagination-number:hover {
+            color: #89add1;
+            background-color: #e9ecef;
+            text-decoration: none;
+        }
+
+        .pagination-number.active {
+            background-color: #e4e6e9;
+            color: rgb(4, 4, 4);
+            border-color: #e0e1e4;
+        }
+
+        .pagination-sm .page-link {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            margin: 0 2px;
+        }
+
+        .pagination-sm .page-item.active .page-link {
+            background-color: #F8285A;
+            border-color: #F8285A;
+            color: white;
+        }
+
+        .pagination-sm .page-link:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #495057;
+        }
+
+        .pagination-sm .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 1px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .d-flex.justify-content-between.align-items-center.flex-wrap {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center !important;
+            }
+
+            .pagination-sm .page-link {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .d-flex.align-items-center.gap-3 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+
+            .pagination-arrow,
+            .pagination-number {
+                padding: 4px 6px;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .pagination-sm .page-link {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.7rem;
+            }
+
+            .text-muted {
+                font-size: 0.875rem;
+            }
+        }
+
+        .simple-pagination .page-link {
+            border: none !important;
+            margin: 0 2px;
+            border-radius: 4px !important;
+            padding: 6px 12px !important;
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            transition: all 0.2s ease;
+        }
+
+        .simple-pagination .page-link:hover {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+        .simple-pagination .page-item.active .page-link {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+
+        .simple-pagination .page-link:focus {
+            box-shadow: none !important;
+        } */
+
 </style>
 
 <!-- Page Header - This should be outside main-content for full responsiveness -->
@@ -686,92 +824,87 @@ if (!function_exists('sortUrl')) {
                     </div>
 
                     <!-- Table Footer - This is responsive -->
-                    <div class="table-footer mt-3">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                <div class="table-footer">
+                                <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+                                    <div class="mb-2 mb-md-0">
+                                        <form method="GET" class="d-flex align-items-center">
+                                            <span class="me-2">Show</span>
+                                            <select name="per_page" onchange="this.form.submit()"
+                                                class="form-select form-select-sm w-auto">
+                                                @foreach ([10, 25, 50, 100] as $limit)
+                                                    <option value="{{ $limit }}"
+                                                        {{ request('per_page') == $limit ? 'selected' : '' }}>
+                                                        {{ $limit }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <span class="ms-2">per page</span>
+                                        </form>
+                                    </div>
 
-                            {{-- Left: Show per page --}}
-                            <div class="d-flex align-items-center mb-2 mb-md-0">
-                                <span class="me-2">Show</span>
-                                    <select class="form-select form-select-sm w-auto me-2" id="perPageSelect">
-                                        @foreach([10,25,50,100] as $size)
-                                            <option value="{{ $size }}" {{ request('perPage', 10) == $size ? 'selected' : '' }}>
-                                                {{ $size }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                <span>per page</span>
-                            </div>
+                                    @if (isset($pelatih) && method_exists($pelatih, 'hasPages') && $pelatih->hasPages())
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="text-muted small">
+                                                {{ $pelatih->firstItem() }}-{{ $pelatih->lastItem() }} of
+                                                {{ $pelatih->total() }}
+                                            </div>
 
-                            {{-- Right: X–Y of Z + compact pagination --}}
-                            <div class="d-flex align-items-center gap-3 mb-2 mb-md-0">
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if ($pelatih->onFirstPage())
+                                                    <span class="pagination-arrow disabled">←</span>
+                                                @else
+                                                    <a href="{{ $pelatih->previousPageUrl() }}" class="pagination-arrow"
+                                                        aria-label="Previous">←</a>
+                                                @endif
 
-                                {{-- Showing X–Y of Z --}}
-                                <div class="text-muted small">
-                                    @if($pelatih->total() > 0)
-                                        {{ $pelatih->firstItem() }}–{{ $pelatih->lastItem() }} of {{ $pelatih->total() }}
-                                    @else
-                                        0 of 0
+                                                @php
+                                                    $current = $pelatih->currentPage();
+                                                    $total = $pelatih->lastPage();
+                                                    $start = max(1, $current - 2);
+                                                    $end = min($total, $current + 2);
+
+                                                    if ($end - $start < 4) {
+                                                        if ($start == 1) {
+                                                            $end = min($total, $start + 4);
+                                                        } else {
+                                                            $start = max(1, $end - 4);
+                                                        }
+                                                    }
+                                                @endphp
+
+                                                <div class="d-flex align-items-center">
+                                                    @for ($i = $start; $i <= $end; $i++)
+                                                        @if ($i == $current)
+                                                            <span
+                                                                class="pagination-number active">{{ $i }}</span>
+                                                        @else
+                                                            <a href="{{ $pelatih->url($i) }}"
+                                                                class="pagination-number">{{ $i }}</a>
+                                                        @endif
+                                                    @endfor
+                                                </div>
+
+                                                @if ($pelatih->hasMorePages())
+                                                    <a href="{{ $pelatih->nextPageUrl() }}" class="pagination-arrow"
+                                                        aria-label="Next">→</a>
+                                                @else
+                                                    <span class="pagination-arrow disabled">→</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @elseif(isset($pelatih) && method_exists($pelatih, 'hasPages'))
+                                        <div class="text-muted small">
+                                            1-{{ $pelatih->count() }} of {{ $pelatih->total() }}
+                                        </div>
                                     @endif
                                 </div>
-
-                                {{-- Compact pagination --}}
-                                @if($pelatih->hasPages())
-                                    <nav>
-                                        <ul class="pagination mb-0 justify-content-end flex-wrap">
-
-                                            {{-- Previous --}}
-                                            <li class="page-item {{ $pelatih->onFirstPage() ? 'disabled' : '' }}">
-                                                <a class="page-link" href="{{ $pelatih->previousPageUrl() }}" aria-label="Previous">
-                                                    <span aria-hidden="true">&lsaquo;</span>
-                                                </a>
-                                            </li>
-
-                                            {{-- Page Numbers --}}
-                                            @php
-                                                $current = $pelatih->currentPage();
-                                                $last = $pelatih->lastPage();
-                                                $start = max($current - 2, 1);
-                                                $end = min($current + 2, $last);
-                                            @endphp
-
-                                            @if($start > 1)
-                                                <li class="page-item"><a class="page-link" href="{{ $pelatih->url(1) }}">1</a></li>
-                                                @if($start > 2)
-                                                    <li class="page-item disabled"><span class="page-link">…</span></li>
-                                                @endif
-                                            @endif
-
-                                            @for ($i = $start; $i <= $end; $i++)
-                                                <li class="page-item {{ $current == $i ? 'active' : '' }}">
-                                                    <a class="page-link" href="{{ $pelatih->url($i) }}">{{ $i }}</a>
-                                                </li>
-                                            @endfor
-
-                                            @if($end < $last)
-                                                @if($end < $last - 1)
-                                                    <li class="page-item disabled"><span class="page-link">…</span></li>
-                                                @endif
-                                                <li class="page-item"><a class="page-link" href="{{ $pelatih->url($last) }}">{{ $last }}</a></li>
-                                            @endif
-
-                                            {{-- Next --}}
-                                            <li class="page-item {{ !$pelatih->hasMorePages() ? 'disabled' : '' }}">
-                                                <a class="page-link" href="{{ $pelatih->nextPageUrl() }}" aria-label="Next">
-                                                    <span aria-hidden="true">&rsaquo;</span>
-                                                </a>
-                                            </li>
-
-                                        </ul>
-                                    </nav>
-                                @endif
                             </div>
-                        </div>
-                    </div>
                 @endif
             </div>
         </div>
     </div>
 </div>
+
 
 @endsection
 
@@ -943,40 +1076,44 @@ if (!function_exists('sortUrl')) {
             });
         </script>
         <script>
-            const destroyItem = (el) => {
-                const route = $(el).data('route');
+            window.destroyItem = function(button) {
+                const route = button.dataset.route;
 
                 Swal.fire({
-                    title: "Apakah Anda yakin?",
-                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#d33",
-                    cancelButtonColor: "#3085d6",
-                    cancelButtonText: "Batalkan!",
-                    confirmButtonText: "Hapus!",
-
+                    reverseButtons: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const form = $('<form>', {
-                            action: route,
-                            method: 'POST',
-                            style: 'display:none'
-                        });
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = route;
 
-                        const csrfInput = $('<input>', {
-                            type: 'hidden',
-                            name: '_token',
-                            value: '{{ csrf_token() }}'
-                        });
+                        const token = document.createElement('input');
+                        token.type = 'hidden';
+                        token.name = '_token';
+                        token.value = '{{ csrf_token() }}';
 
-                        const methodInput = $('<input>', {
-                            type: 'hidden',
-                            name: '_method',
-                            value: 'DELETE'
-                        });
+                        const method = document.createElement('input');
+                        method.type = 'hidden';
+                        method.name = '_method';
+                        method.value = 'DELETE';
 
-                        form.append(csrfInput, methodInput).appendTo('body').submit();
+                        form.appendChild(token);
+                        form.appendChild(method);
+                        document.body.appendChild(form);
+                        form.submit();
+                    } else {
+                        Swal.fire({
+                            title: "Aksi Dibatalkan :)",
+                            icon: "info",
+                        });
                     }
                 });
             };
@@ -984,7 +1121,7 @@ if (!function_exists('sortUrl')) {
         <script>
             document.getElementById('perPageSelect').addEventListener('change', function() {
                 let url = new URL(window.location.href);
-                url.searchParams.set('perPage', this.value); 
+                url.searchParams.set('perPage', this.value);
                 url.searchParams.delete('page');
                 window.location.href = url.toString();
             });
