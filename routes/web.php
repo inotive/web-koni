@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PrestasiController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\CabangOlahragaController;
 use App\Http\Controllers\Admin\ManajemenRKAController;
+use App\Http\Controllers\Admin\SekretariatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -83,10 +84,12 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::get('pelatih/{id}/deskripsi', [PelatihController::class, 'deskripsi'])
             ->name('pelatih.deskripsi');
     });
-    route::prefix('laporan-lpj') -> name('laporan-lpj.')->group(function(){
-        route::prefix('sekretariat') -> name('sekretariat.')->group(function(){
-        Route::get('/', [App\Http\Controllers\Admin\bidangController::class, 'indexSekretariat'])->name('index');
-        });
+  Route::prefix('laporan-lpj')
+     ->name('laporan-lpj.')
+     ->group(function () {
+         Route::resource('sekretariat', SekretariatController::class);
+
+
         Route::prefix('bidang')->name('bidang.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'index'])->name('index');
 
@@ -112,4 +115,4 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
                 Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
             });
         });
-    });
+ });

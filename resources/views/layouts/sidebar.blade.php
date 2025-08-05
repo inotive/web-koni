@@ -109,7 +109,7 @@
                                 <a class="menu-link {{ request()->is('admin/laporan-lpj/sekretariat*') ? 'active' : '' }}"
                                     href="{{ route('admin.laporan-lpj.sekretariat.index') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">sekretariat</span>
+                                    <span class="menu-title">Sekretariat</span>
                                 </a>
                             </li>
                             <li class="menu-item">

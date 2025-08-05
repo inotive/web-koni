@@ -1,0 +1,1 @@
+Baru bisa nambah data
