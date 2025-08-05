@@ -6,13 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CabangOlahraga;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class CabangOlahragaController extends Controller
 {
-
     public function index(Request $request)
     {
-        $query = CabangOlahraga::query();
+        // Tambahkan eager loading untuk menghindari N+1 query problem
+        $query = CabangOlahraga::with(['atlets', 'pelatihs']);
 
         // Search functionality
         if ($search = $request->input('search')) {
@@ -45,9 +46,6 @@ class CabangOlahragaController extends Controller
 
         /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator $cabors */
         $cabors = $query->paginate($perPage)->appends($request->query());
-
-        // DEBUGGING: Uncomment baris ini untuk debug jika perlu
-        // dd('Per Page: ' . $perPage, 'Total Items: ' . $cabors->total(), 'Current Items: ' . $cabors->count());
 
         return view('admin.cabang-olahraga.index', compact('cabors'));
     }
@@ -130,16 +128,145 @@ class CabangOlahragaController extends Controller
 
     public function destroy($id)
     {
-        $cabor = CabangOlahraga::findOrFail($id);
-
-        if ($cabor->icon_cabor) {
-            Storage::disk('public')->delete($cabor->icon_cabor);
+        try {
+            $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
+            
+            // Cek apakah masih ada atlet yang terkait
+            $jumlahAtlet = $cabor->atlets()->count();
+            $jumlahPelatih = $cabor->pelatihs()->count();
+            $totalData = $jumlahAtlet + $jumlahPelatih;
+            
+            if ($totalData > 0) {
+                $pesanError = "Tidak dapat menghapus cabang olahraga '{$cabor->nama_cabor}' karena masih ada data terkait:";
+                
+                if ($jumlahAtlet > 0) {
+                    $pesanError .= " {$jumlahAtlet} atlet";
+                }
+                
+                if ($jumlahPelatih > 0) {
+                    if ($jumlahAtlet > 0) {
+                        $pesanError .= " dan {$jumlahPelatih} pelatih";
+                    } else {
+                        $pesanError .= " {$jumlahPelatih} pelatih";
+                    }
+                }
+                
+                $pesanError .= " yang terdaftar. Silakan pindahkan atau hapus data tersebut terlebih dahulu, atau nonaktifkan cabang olahraga ini.";
+                
+                return redirect()->back()->with('error', $pesanError);
+            }
+            
+            // Jika tidak ada data terkait, lanjutkan penghapusan
+            if ($cabor->icon_cabor) {
+                Storage::disk('public')->delete($cabor->icon_cabor);
+            }
+            
+            $cabor->delete();
+            
+            return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
+                ->with('cabor_deleted', 'Cabang olahraga berhasil dihapus.');
+                
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Tangkap error foreign key constraint dari database
+            if ($e->getCode() == '23000') {
+                return redirect()->back()->with('error', 
+                    'Tidak dapat menghapus cabang olahraga ini karena masih ada data terkait. Silakan hapus data terkait terlebih dahulu.'
+                );
+            }
+            
+            return redirect()->back()->with('error', 'Gagal menghapus cabang olahraga: ' . $e->getMessage());
+            
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus: ' . $e->getMessage());
         }
+    }
 
-        $cabor->delete();
+    // Method baru untuk nonaktifkan cabor (sebagai alternatif)
+    public function deactivate($id)
+    {
+        try {
+            $cabor = CabangOlahraga::findOrFail($id);
+            
+            $cabor->update([
+                'status' => 'Tidak Aktif',
+                'terakhir_update' => now()
+            ]);
+            
+            return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
+                ->with('cabor_updated', "Cabang olahraga '{$cabor->nama_cabor}' berhasil dinonaktifkan.");
+                
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menonaktifkan cabang olahraga: ' . $e->getMessage());
+        }
+    }
 
-        return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
-            ->with('success', 'Cabang olahraga berhasil dihapus.');
+    // Method untuk cek dependency (untuk AJAX call jika diperlukan)
+    public function checkDependencies($id)
+    {
+        try {
+            $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
+            
+            $jumlahAtlet = $cabor->atlets()->count();
+            $jumlahPelatih = $cabor->pelatihs()->count();
+            $totalData = $jumlahAtlet + $jumlahPelatih;
+            
+            return response()->json([
+                'can_delete' => $totalData === 0,
+                'dependencies' => [
+                    'atlet' => $jumlahAtlet,
+                    'pelatih' => $jumlahPelatih,
+                    'total' => $totalData
+                ],
+                'message' => $totalData > 0 ? 
+                    "Masih ada {$jumlahAtlet} atlet dan {$jumlahPelatih} pelatih yang terkait" : 
+                    'Dapat dihapus'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Method untuk force delete dengan cascade (gunakan dengan hati-hati)
+    public function forceDestroy($id)
+    {
+        try {
+            DB::beginTransaction();
+            
+            $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
+            
+            // Hitung jumlah data yang akan dihapus
+            $jumlahAtlet = $cabor->atlets()->count();
+            $jumlahPelatih = $cabor->pelatihs()->count();
+            
+            // Hapus semua atlet terkait
+            $cabor->atlets()->delete();
+            
+            // Hapus semua pelatih terkait  
+            $cabor->pelatihs()->delete();
+            
+            // Hapus ikon
+            if ($cabor->icon_cabor) {
+                Storage::disk('public')->delete($cabor->icon_cabor);
+            }
+            
+            // Hapus cabor
+            $cabor->delete();
+            
+            DB::commit();
+            
+            $pesan = "Cabang olahraga '{$cabor->nama_cabor}' beserta {$jumlahAtlet} atlet dan {$jumlahPelatih} pelatih berhasil dihapus.";
+            
+            return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
+                ->with('cabor_deleted', $pesan);
+                
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Gagal menghapus: ' . $e->getMessage());
+        }
     }
 
     /**

@@ -5,42 +5,37 @@
 @section('currentSection', 'Cabang Olahraga')
 @php
 
+    if (!function_exists('sortIcon')) {
+        function sortIcon($field)
+        {
+            $currentSort = request('sort_by');
+            $currentOrder = request('order');
 
-if (!function_exists('sortIcon')) {
-    function sortIcon($field)
-    {
-        $currentSort = request('sort_by');
-        $currentOrder = request('order');
-        
-        if ($currentSort === $field) {
-            return $currentOrder === 'asc' 
-                ? '<i class="fas fa-sort-up"></i>'
-                : '<i class="fas fa-sort-down"></i>';
+            if ($currentSort === $field) {
+                return $currentOrder === 'asc' ? '<i class="fas fa-sort-up"></i>' : '<i class="fas fa-sort-down"></i>';
+            }
+
+            return '<i class="fas fa-sort text-muted"></i>';
         }
-        
-        return '<i class="fas fa-sort text-muted"></i>';
     }
-}
 
-if (!function_exists('sortUrl')) {
-    function sortUrl($field)
-    {
-        $currentSort = request('sort_by');
-        $currentOrder = request('order');
-        
-        $order = ($currentSort === $field && $currentOrder === 'asc') 
-            ? 'desc' 
-            : 'asc';
-            
-        return request()->fullUrlWithQuery([
-            'sort_by' => $field,
-            'order' => $order
-        ]);
+    if (!function_exists('sortUrl')) {
+        function sortUrl($field)
+        {
+            $currentSort = request('sort_by');
+            $currentOrder = request('order');
+
+            $order = $currentSort === $field && $currentOrder === 'asc' ? 'desc' : 'asc';
+
+            return request()->fullUrlWithQuery([
+                'sort_by' => $field,
+                'order' => $order,
+            ]);
+        }
     }
-}
 @endphp
-@section('content')
 
+@section('content')
     <style>
         body {
             background-color: #f5f5f5 !important;
@@ -381,6 +376,167 @@ if (!function_exists('sortUrl')) {
         .simple-pagination .page-link:focus {
             box-shadow: none !important;
         }
+
+        /* Custom pagination styles */
+        .pagination-arrow {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .pagination-arrow:hover {
+            color: #0b0b0b;
+            text-decoration: none;
+        }
+
+        .pagination-arrow.disabled {
+            color: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .pagination-number {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 10px;
+            margin: 0 1px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+            border: 1px solid transparent;
+            font-size: 0.875rem;
+        }
+
+        .pagination-number:hover {
+            color: #89add1;
+            background-color: #e9ecef;
+            text-decoration: none;
+        }
+
+        .pagination-number.active {
+            background-color: #e4e6e9;
+            color: rgb(4, 4, 4);
+            border-color: #e0e1e4;
+        }
+
+        /* Pagination dots style */
+        .pagination-dots {
+            color: #6c757d;
+            padding: 6px 4px;
+            font-size: 0.875rem;
+        }
+
+        /* Per page selector styling */
+        .form-select-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            border-radius: 0.375rem;
+            border: 1px solid #dee2e6;
+            background-color: #fff;
+            min-width: 70px;
+        }
+
+        .form-select-sm:focus {
+            border-color: #F8285A;
+            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+        }
+
+        /* Additional responsive styles */
+        @media (max-width: 768px) {
+            .d-flex.justify-content-between {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 1rem;
+            }
+
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+
+            .pagination-arrow,
+            .pagination-number {
+                padding: 4px 6px;
+                font-size: 0.75rem;
+            }
+            
+            .table-footer .d-flex.justify-content-between {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center !important;
+            }
+            
+            .d-flex.align-items-center.gap-2.flex-wrap {
+                flex-direction: column;
+                align-items: center !important;
+                gap: 0.5rem !important;
+            }
+            
+            .form-select-sm {
+                min-width: 60px;
+                font-size: 0.75rem;
+                padding: 0.2rem 0.4rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+
+            .btn-sm {
+                padding: 0.375rem 0.5rem;
+            }
+            
+            .table-footer {
+                padding: 10px 15px;
+            }
+            
+            .text-muted {
+                font-size: 0.8rem;
+                text-align: center;
+            }
+            
+            .form-label {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Ensure proper horizontal scrolling for table */
+        .table-responsive {
+            -webkit-overflow-scrolling: touch;
+            overflow-x: auto;
+        }
+
+        /* Fix for long text overflow */
+        .text-truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .btn-icon.btn-sm {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .btn-light-danger[style*="opacity"] {
+            cursor: not-allowed;
+        }
+
+        #dependencyList {
+            padding-left: 1.5rem;
+        }
+
+        #dependencyList li {
+            margin-bottom: 0.25rem;
+            color: #dc3545;
+        }
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
@@ -515,8 +671,6 @@ if (!function_exists('sortUrl')) {
                                                             title="{{ $cabor->ketua_penanggung_jawab }}">
                                                             {{ $cabor->ketua_penanggung_jawab }}
                                                         </div>
-
-
                                                     </td>
                                                     <td>
                                                         <span
@@ -548,24 +702,46 @@ if (!function_exists('sortUrl')) {
                                                                 title="Edit">
                                                                 <i class="fa-solid fa-pen-to-square"></i>
                                                             </a>
-                                                            <form
-                                                                action="{{ route('admin.konfigurasi.cabang-olahraga.destroy', $cabor->id) }}"
-                                                                method="POST" class="d-inline"
-                                                                onsubmit="return confirm('Yakin ingin menghapus cabang olahraga ini?')">
-                                                                @csrf @method('DELETE')
-                                                                <button type="submit"
+
+                                                            @php
+                                                                $jumlahAtlet = $cabor->atlets
+                                                                    ? $cabor->atlets->count()
+                                                                    : 0;
+                                                                $jumlahPelatih = $cabor->pelatihs
+                                                                    ? $cabor->pelatihs->count()
+                                                                    : 0;
+                                                                $totalData = $jumlahAtlet + $jumlahPelatih;
+                                                            @endphp
+
+                                                            @if ($totalData > 0)
+                                                                <button type="button"
                                                                     class="btn btn-icon btn-sm btn-light-danger"
-                                                                    title="Hapus">
+                                                                    title="Tidak dapat dihapus - Ada {{ $totalData }} data terkait"
+                                                                    onclick="showDeleteWarning('{{ $cabor->nama_cabor }}', {{ $jumlahAtlet }}, {{ $jumlahPelatih }})"
+                                                                    style="opacity: 0.6;">
                                                                     <i class="fa-solid fa-trash"></i>
                                                                 </button>
-                                                            </form>
+                                                            @else
+                                                                <form
+                                                                    action="{{ route('admin.konfigurasi.cabang-olahraga.destroy', $cabor->id) }}"
+                                                                    method="POST" class="d-inline"
+                                                                    onsubmit="return confirmDelete('{{ $cabor->nama_cabor }}')">
+                                                                    @csrf @method('DELETE')
+                                                                    <button type="submit"
+                                                                        class="btn btn-icon btn-sm btn-light-danger"
+                                                                        title="Hapus">
+                                                                        <i class="fa-solid fa-trash"></i>
+                                                                    </button>
+                                                                </form>
+                                                            @endif
                                                         </div>
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="9" class="text-center py-5 text-muted">Data tidak
-                                                        ditemukan</td>
+                                                    <td colspan="9" class="text-center py-5 text-muted">
+                                                        Tidak ada data cabang olahraga
+                                                    </td>
                                                 </tr>
                                             @endforelse
                                         @endif
@@ -573,158 +749,172 @@ if (!function_exists('sortUrl')) {
                                 </table>
                             </div>
 
-                            <div class="table-footer">
-                                <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-                                    <!-- Left side - Show per page dropdown -->
-                                    <div class="mb-2 mb-md-0">
-                                        <form method="GET" class="d-flex align-items-center">
-                                            <span class="me-2">Show</span>
-                                            <select name="per_page" onchange="this.form.submit()"
-                                                class="form-select form-select-sm w-auto">
-                                                @foreach ([10, 25, 50, 100] as $limit)
-                                                    <option value="{{ $limit }}"
-                                                        {{ request('per_page') == $limit ? 'selected' : '' }}>
-                                                        {{ $limit }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <span class="ms-2">per page</span>
-                                        </form>
-                                    </div>
-
-                                    <!-- Right side - Pagination info and navigation -->
-                                    @if (isset($cabors) && method_exists($cabors, 'hasPages') && $cabors->hasPages())
-                                        <div class="d-flex align-items-center gap-3">
-                                            <!-- Pagination info -->
-                                            <div class="text-muted small">
-                                                {{ $cabors->firstItem() }}-{{ $cabors->lastItem() }} of
-                                                {{ $cabors->total() }}
-                                            </div>
-
-                                            <!-- Navigation with previous/next arrows and page numbers -->
+                            <!-- Pagination Section - DIPERBAIKI -->
+                            @if (isset($cabors) && $cabors->total() > 0)
+                                <div class="table-footer">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                                        <!-- Per page selector & Info - SELALU TAMPIL -->
+                                        <div class="d-flex align-items-center gap-2 flex-wrap">
                                             <div class="d-flex align-items-center gap-2">
-                                                <!-- Previous page arrow -->
+                                                <label class="form-label mb-0">Tampilkan:</label>
+                                                <select class="form-select form-select-sm" style="width: auto;" onchange="changePerPage(this.value)">
+                                                    <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                                                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                                                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                                                </select>
+                                                <span class="text-muted">data per halaman</span>
+                                            </div>
+                                            
+                                            <div class="text-muted">
+                                                Menampilkan <span id="showing-count">{{ $cabors->count() }}</span> dari
+                                                <span id="total-count">{{ $cabors->total() }}</span> total data
+                                            </div>
+                                        </div>
+
+                                        <!-- Pagination - HANYA TAMPIL JIKA ADA MULTIPLE PAGES, ATAU PLACEHOLDER -->
+                                        <div class="d-flex align-items-center gap-3">
+                                            <!-- Range Info (1-10 of 52) -->
+                                            <div class="text-muted">
+                                                @php
+                                                    $from = ($cabors->currentPage() - 1) * $cabors->perPage() + 1;
+                                                    $to = min($from + $cabors->count() - 1, $cabors->total());
+                                                @endphp
+                                                <span id="range-info">{{ $from }}-{{ $to }}</span> of {{ $cabors->total() }}
+                                            </div>
+                                            
+                                            @if ($cabors->hasPages())
+                                                <!-- Previous Page Link -->
                                                 @if ($cabors->onFirstPage())
-                                                    <span class="pagination-arrow disabled">←</span>
+                                                    <span class="pagination-arrow disabled">
+                                                        <i class="fas fa-chevron-left"></i>
+                                                    </span>
                                                 @else
-                                                    <a href="{{ $cabors->previousPageUrl() }}" class="pagination-arrow"
-                                                        aria-label="Previous">←</a>
+                                                    <a href="{{ $cabors->previousPageUrl() }}" class="pagination-arrow">
+                                                        <i class="fas fa-chevron-left"></i>
+                                                    </a>
                                                 @endif
 
+                                                <!-- Pagination Elements -->
                                                 @php
-                                                    // Show maximum 5 pages around current page
-                                                    $current = $cabors->currentPage();
-                                                    $total = $cabors->lastPage();
-                                                    $start = max(1, $current - 2);
-                                                    $end = min($total, $current + 2);
-
-                                                    // Adjust if we're at the beginning or end
-                                                    if ($end - $start < 4) {
-                                                        if ($start == 1) {
-                                                            $end = min($total, $start + 4);
-                                                        } else {
-                                                            $start = max(1, $end - 4);
-                                                        }
-                                                    }
+                                                    $start = max(1, $cabors->currentPage() - 2);
+                                                    $end = min($cabors->lastPage(), $cabors->currentPage() + 2);
                                                 @endphp
 
-                                                <!-- Page numbers -->
-                                                <div class="d-flex align-items-center">
-                                                    @for ($i = $start; $i <= $end; $i++)
-                                                        @if ($i == $current)
-                                                            <span
-                                                                class="pagination-number active">{{ $i }}</span>
-                                                        @else
-                                                            <a href="{{ $cabors->url($i) }}"
-                                                                class="pagination-number">{{ $i }}</a>
-                                                        @endif
-                                                    @endfor
-                                                </div>
-
-                                                <!-- Next page arrow -->
-                                                @if ($cabors->hasMorePages())
-                                                    <a href="{{ $cabors->nextPageUrl() }}" class="pagination-arrow"
-                                                        aria-label="Next">→</a>
-                                                @else
-                                                    <span class="pagination-arrow disabled">→</span>
+                                                @if($start > 1)
+                                                    <a href="{{ $cabors->url(1) }}" class="pagination-number">1</a>
+                                                    @if($start > 2)
+                                                        <span class="pagination-dots">...</span>
+                                                    @endif
                                                 @endif
-                                            </div>
+
+                                                @for ($page = $start; $page <= $end; $page++)
+                                                    @if ($page == $cabors->currentPage())
+                                                        <span class="pagination-number active">{{ $page }}</span>
+                                                    @else
+                                                        <a href="{{ $cabors->url($page) }}" class="pagination-number">{{ $page }}</a>
+                                                    @endif
+                                                @endfor
+
+                                                @if($end < $cabors->lastPage())
+                                                    @if($end < $cabors->lastPage() - 1)
+                                                        <span class="pagination-dots">...</span>
+                                                    @endif
+                                                    <a href="{{ $cabors->url($cabors->lastPage()) }}" class="pagination-number">{{ $cabors->lastPage() }}</a>
+                                                @endif
+
+                                                <!-- Next Page Link -->
+                                                @if ($cabors->hasMorePages())
+                                                    <a href="{{ $cabors->nextPageUrl() }}" class="pagination-arrow">
+                                                        <i class="fas fa-chevron-right"></i>
+                                                    </a>
+                                                @else
+                                                    <span class="pagination-arrow disabled">
+                                                        <i class="fas fa-chevron-right"></i>
+                                                    </span>
+                                                @endif
+                                            @else
+                                                <!-- Placeholder when no pagination needed -->
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="pagination-arrow disabled">
+                                                        <i class="fas fa-chevron-left"></i>
+                                                    </span>
+                                                    <span class="pagination-number active">1</span>
+                                                    <span class="pagination-arrow disabled">
+                                                        <i class="fas fa-chevron-right"></i>
+                                                    </span>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
-                            @elseif(isset($cabors) && method_exists($cabors, 'hasPages'))
-                                <!-- Show simple info when there's only one page -->
-                                <div class="text-muted small">
-                                    1-{{ $cabors->count() }} of {{ $cabors->total() }}
-                                </div>
+                            @endif
                         @endif
                     </div>
                 </div>
-
-                <style>
-                    /* Custom pagination styles */
-                    .pagination-arrow {
-                        color: #6c757d;
-                        text-decoration: none;
-                        padding: 6px 8px;
-                        transition: color 0.2s ease;
-                        cursor: pointer;
-                    }
-
-                    .pagination-arrow:hover {
-                        color: #0b0b0b;
-                        text-decoration: none;
-                    }
-
-                    .pagination-arrow.disabled {
-                        color: #adb5bd;
-                        cursor: not-allowed;
-                        opacity: 0.6;
-                    }
-
-                    .pagination-number {
-                        color: #6c757d;
-                        text-decoration: none;
-                        padding: 6px 10px;
-                        margin: 0 1px;
-                        border-radius: 4px;
-                        transition: all 0.2s ease;
-                        background-color: #f8f9fa;
-                        border: 1px solid transparent;
-                        font-size: 0.875rem;
-                    }
-
-                    .pagination-number:hover {
-                        color: #89add1;
-                        background-color: #e9ecef;
-                        text-decoration: none;
-                    }
-
-                    .pagination-number.active {
-                        background-color: #e4e6e9;
-                        color: rgb(4, 4, 4);
-                        border-color: #e0e1e4;
-                    }
-
-                    /* Responsive adjustments */
-                    @media (max-width: 768px) {
-
-                        .pagination-arrow,
-                        .pagination-number {
-                            padding: 4px 6px;
-                            font-size: 0.75rem;
-                        }
-                    }
-                </style>
-                @endif
             </div>
         </div>
     </div>
-    </div>
-    </div>
 
+    <!-- Delete Warning Modal -->
+    <div class="modal fade" id="deleteWarningModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        Tidak Dapat Menghapus
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Cabang olahraga <strong id="caborName"></strong>
+                        tidak dapat dihapus karena masih memiliki:</p>
+                    <ul id="dependencyList"></ul>
+                    <p class="text-muted">Silakan pindahkan atau hapus data
+                        tersebut terlebih dahulu, atau nonaktifkan cabang
+                        olahraga ini.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-warning" id="deactivateBtn">
+                        <i class="fas fa-ban me-1"></i>Nonaktifkan Saja
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
     <script>
+        // Function untuk mengubah per page
+        function changePerPage(perPage) {
+            // Get current URL
+            const url = new URL(window.location.href);
+            
+            // Update per_page parameter
+            url.searchParams.set('per_page', perPage);
+            
+            // Reset to first page when changing per page
+            url.searchParams.set('page', '1');
+            
+            // Preserve existing search and filter parameters
+            const currentSearch = $('#search').val();
+            const currentStatusFilter = $('#filter-status').val();
+            
+            if (currentSearch) {
+                url.searchParams.set('search', currentSearch);
+            }
+            
+            if (currentStatusFilter) {
+                url.searchParams.set('status', currentStatusFilter);
+            }
+            
+            // Redirect to new URL
+            window.location.href = url.toString();
+        }
+
         $(document).ready(function() {
             console.log('Initializing cabor table filters...');
 
@@ -849,11 +1039,20 @@ if (!function_exists('sortUrl')) {
                 console.log('Filter count updated:', jumlah);
             }
 
-            // Update info display
+            // Update info display for client-side filtering
             function updateCaborInfo() {
-                const visibleRows = caborRows.filter(':visible').length;
+                const visibleRows = caborRows.filter(':visible').not('.no-data-row').length;
+                const totalRows = caborRows.not('.no-data-row').length;
+                
                 $('#showing-count').text(visibleRows);
                 $('#total-count').text(totalRows);
+                
+                // Update range info untuk client-side filtering
+                if (visibleRows > 0) {
+                    $('#range-info').text('1-' + visibleRows);
+                } else {
+                    $('#range-info').text('0-0');
+                }
             }
 
             // Initialize on page load
@@ -864,6 +1063,35 @@ if (!function_exists('sortUrl')) {
             console.log('Filter status element:', $('#filter-status').length);
             console.log('Apply button element:', $('#apply-filters').length);
             console.log('Reset button element:', $('#reset-filters').length);
+        });
+
+        function showDeleteWarning(namaCabor, jumlahAtlet, jumlahPelatih) {
+            document.getElementById('caborName').textContent = namaCabor;
+
+            const dependencyList = document.getElementById('dependencyList');
+            dependencyList.innerHTML = '';
+
+            if (jumlahAtlet > 0) {
+                dependencyList.innerHTML += `<li>${jumlahAtlet} atlet yang terdaftar</li>`;
+            }
+
+            if (jumlahPelatih > 0) {
+                dependencyList.innerHTML += `<li>${jumlahPelatih} pelatih yang terdaftar</li>`;
+            }
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('deleteWarningModal'));
+            modal.show();
+        }
+
+        function confirmDelete(namaCabor) {
+            return confirm(`Yakin ingin menghapus cabang olahraga "${namaCabor}"?\nTindakan ini tidak dapat dibatalkan.`);
+        }
+
+        // Handle deactivate button
+        document.getElementById('deactivateBtn').addEventListener('click', function() {
+            // Implement deactivate functionality
+            alert('Fitur nonaktifkan belum diimplementasikan');
         });
     </script>
 
@@ -897,42 +1125,4 @@ if (!function_exists('sortUrl')) {
             $(document).ready(() => toastr.success("{{ session('success') }}"));
         </script>
     @endif
-
-    <style>
-        /* Additional responsive styles */
-        @media (max-width: 768px) {
-            .d-flex.justify-content-between {
-                flex-direction: column;
-                align-items: stretch !important;
-                gap: 1rem;
-            }
-
-            .table-responsive {
-                font-size: 0.875rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .table-responsive {
-                font-size: 0.875rem;
-            }
-
-            .btn-sm {
-                padding: 0.375rem 0.5rem;
-            }
-        }
-
-        /* Ensure proper horizontal scrolling for table */
-        .table-responsive {
-            -webkit-overflow-scrolling: touch;
-            overflow-x: auto;
-        }
-
-        /* Fix for long text overflow */
-        .text-truncate {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    </style>
 @endsection

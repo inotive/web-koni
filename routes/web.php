@@ -68,9 +68,14 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/', [PrestasiController::class, 'index'])->name('index');
             Route::get('/create', [PrestasiController::class, 'create'])->name('create');
             Route::post('/', [PrestasiController::class, 'store'])->name('store');
+            Route::get('/{id}', [CabangOlahragaController::class, 'show'])->name('admin.konfigurasi.cabang-olahraga.show');
             Route::get('/{prestasi}/edit', [PrestasiController::class, 'edit'])->name('edit');
             Route::put('/{prestasi}', [PrestasiController::class, 'update'])->name('update');
             Route::delete('/{prestasi}', [PrestasiController::class, 'destroy'])->name('destroy');
+
+            Route::patch('/{id}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('admin.konfigurasi.cabang-olahraga.deactivate');
+            Route::get('/{id}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('admin.konfigurasi.cabang-olahraga.check-dependencies');
+            Route::delete('/{id}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('admin.konfigurasi.cabang-olahraga.force-destroy');
 
             Route::get('/atlet/{atlet}/create', [PrestasiController::class, 'createForAtlet'])->name('atlet.create');
             Route::post('/atlet/{atlet}', [PrestasiController::class, 'storeForAtlet'])->name('atlet.store');
