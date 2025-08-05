@@ -580,172 +580,8 @@
                                 <h4>Tidak ada data atlet.</h4>
                             </div>
                         @else
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle" id="kt_datatable_dom_positioning">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Foto</th>
-                                            <th>Nama Atlet & Cabor <i class="fas fa-sort text-muted"></i></th>
-                                            <th>Tempat & Tanggal Lahir <i class="fas fa-sort text-muted"></i></th>
-                                            <th>Alamat <i class="fas fa-sort text-muted"></i></th>
-                                            <th>Kelamin <i class="fas fa-sort text-muted"></i></th>
-                                            <th>Usia <i class="fas fa-sort text-muted"></i></th>
-                                            <th>Telepon <i class="fas fa-sort text-muted"></i></th>
-                                            <th>Email <i class="fas fa-sort text-muted"></i></th>
-                                            <th>Prestasi Terbaru <i class="fas fa-sort text-muted"></i></th>
-                                            <th>Terakhir Diupdate <i class="fas fa-sort text-muted"></i></th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (isset($atlets))
-                                            @forelse ($atlets as $index => $item)
-                                                @php
-                                                    $age = $item->tanggal_lahir
-                                                        ? \Carbon\Carbon::parse($item->tanggal_lahir)->age
-                                                        : 0;
-                                                    $hasPrestasi =
-                                                        isset($item->prestasis) && $item->prestasis->isNotEmpty()
-                                                            ? 'ada'
-                                                            : 'tidak';
-                                                    $prestasiTerbaru =
-                                                        isset($item->prestasis) && $item->prestasis->isNotEmpty()
-                                                            ? $item->prestasis->first()
-                                                            : null;
-                                                    $caborNama = $item->cabangOlahraga
-                                                        ? $item->cabangOlahraga->nama_cabor
-                                                        : '-';
-                                                    $medaliType = $prestasiTerbaru
-                                                        ? strtolower($prestasiTerbaru->medali)
-                                                        : '';
-                                                @endphp
-                                                <tr data-cabor="{{ $caborNama }}"
-                                                    data-gender="{{ $item->jenis_kelamin }}"
-                                                    data-age="{{ $age }}" data-prestasi="{{ $hasPrestasi }}"
-                                                    data-medali="{{ $medaliType }}">
-
-                                                    <td></td> {{-- Will be populated by DataTable --}}
-
-                                                    <td>
-                                                        @if ($item->foto_atlet)
-                                                            <img src="{{ Storage::url($item->foto_atlet) }}"
-                                                                width="40" height="40"
-                                                                class="rounded-circle object-fit-cover">
-                                                        @else
-                                                            <div class="rounded-circle bg-secondary text-white text-center fw-bold"
-                                                                style="width: 40px; height: 40px; line-height: 40px;">
-                                                                {{ strtoupper(substr($item->nama, 0, 1)) }}
-                                                            </div>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex flex-column">
-                                                            <strong
-                                                                class="text-truncate-custom">{{ $item->nama }}</strong>
-                                                            <small class="text-muted">{{ $caborNama }}</small>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        @if ($item->tanggal_lahir)
-                                                            <div class="d-flex flex-column">
-                                                                <span
-                                                                    class="text-truncate-custom">{{ \Carbon\Carbon::parse($item->tanggal_lahir)->format('d M Y') }}</span>
-                                                                @if ($item->tempat_lahir)
-                                                                    <small
-                                                                        class="text-muted text-truncate-custom">{{ $item->tempat_lahir }}</small>
-                                                                @endif
-                                                            </div>
-                                                        @else
-                                                            <span class="text-muted">-</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if ($item->alamat)
-                                                            @php
-                                                                $alamatParts = explode(' ', $item->alamat);
-                                                                $lastWord = array_pop($alamatParts);
-                                                                $restOfAddress = implode(' ', $alamatParts);
-                                                            @endphp
-                                                            <div class="d-flex flex-column">
-                                                                <strong><span
-                                                                        class="fw-bold text-dark text-truncate-custom">{{ $lastWord }}</span></strong>
-                                                                <span
-                                                                    class="text-muted small text-truncate-custom">{{ $restOfAddress }}</span>
-                                                            </div>
-                                                        @else
-                                                            <span class="text-muted">-</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ $item->jenis_kelamin }}</td>
-                                                    <td>{{ $age }} Tahun</td>
-                                                    <td>
-                                                        <div class="text-truncate-custom">{{ $item->no_telepon ?? '-' }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="text-truncate-custom" title="{{ $item->email }}">
-                                                            {{ $item->email ?? '-' }}</div>
-                                                    </td>
-                                                    <td>
-                                                        @if ($prestasiTerbaru)
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="me-2">
-                                                                    @if ($medaliType === 'emas')
-                                                                        <i class="fas fa-medal text-warning"></i>
-                                                                    @elseif($medaliType === 'perak')
-                                                                        <i class="fas fa-medal text-secondary"></i>
-                                                                    @elseif($medaliType === 'perunggu')
-                                                                        <i class="fas fa-medal text-bronze"></i>
-                                                                    @endif
-                                                                </div>
-                                                                <div class="d-flex flex-column">
-                                                                    <span
-                                                                        class="text-truncate-custom">{{ $prestasiTerbaru->nama_prestasi }}</span>
-                                                                    <small
-                                                                        class="text-muted">{{ $prestasiTerbaru->tahun }}
-                                                                        @if ($prestasiTerbaru->tempat)
-                                                                            • {{ $prestasiTerbaru->tempat }}
-                                                                        @endif
-                                                                    </small>
-                                                                </div>
-                                                            </div>
-                                                        @else
-                                                            <span class="text-muted">-</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        {{ \Carbon\Carbon::parse($item->updated_at)->format('M d, Y') }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <div class="d-flex justify-content-center gap-1">
-                                                            <a href="{{ route('admin.konfigurasi.atlet.show', $item->id) }}"
-                                                                class="btn btn-icon btn-sm btn-light-primary"
-                                                                title="Detail">
-                                                                <i class="fa-solid fa-eye"></i>
-                                                            </a>
-                                                            <a href="{{ route('admin.konfigurasi.atlet.edit', $item->id) }}"
-                                                                class="btn btn-icon btn-sm btn-light-warning"
-                                                                title="Edit">
-                                                                <i class="fa-solid fa-pen-to-square"></i>
-                                                            </a>
-                                                            <button class="btn btn-icon btn-sm btn-light-danger"
-                                                                title="Hapus" onclick="destroyItem(this)"
-                                                                data-route="{{ route('admin.konfigurasi.atlet.destroy', $item->id) }}">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="12" class="text-center py-5 text-muted">Data tidak
-                                                        ditemukan</td>
-                                                </tr>
-                                            @endforelse
-                                        @endif
-                                    </tbody>
-                                </table>
+                            <div class="table-container">
+                                @include('admin.atlet._table')
                             </div>
                             <div class="table-footer">
                                 <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
@@ -785,7 +621,6 @@
                                                     $total = $atlets->lastPage();
                                                     $start = max(1, $current - 2);
                                                     $end = min($total, $current + 2);
-
 
                                                     if ($end - $start < 4) {
                                                         if ($start == 1) {
@@ -835,189 +670,274 @@
 @section('script')
     @if (isset($atlets) && $atlets->isNotEmpty())
         <script>
-            $(document).ready(function() {
-                const table = $("#kt_datatable_dom_positioning").DataTable({
-                    paging: false,
-                    info: false,
-                    searching: true,
-                    ordering: true,
-                    responsive: false,
-                    autoWidth: false,
-                    scrollX: false,
-                    columnDefs: [{
-                            searchable: false,
-                            orderable: false,
-                            targets: 0
-                        },
-                        {
-                            targets: -1,
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            width: "60px",
-                            targets: 1
-                        },
-                        {
-                            width: "150px",
-                            targets: 2
-                        },
-                    ],
-                    order: [
-                        [1, 'asc']
-                    ],
+  $(document).ready(function() {
+    // Fungsi untuk memuat tabel via AJAX
+    function loadTable(url) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            beforeSend: function() {
+                // Tampilkan loading indicator
+                $('.table-container').html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
+            },
+            success: function(response) {
+                $('.table-container').html(response);
+                initTableFunctions();
+                initDataTable();
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                Swal.fire({
+                    title: "Error!",
+                    text: "Gagal memuat data",
+                    icon: "error"
                 });
+            }
+        });
+    }
 
-                const totalCount = table.rows().count();
+    // Inisialisasi DataTable
+    function initDataTable() {
+        const table = $("#kt_datatable_dom_positioning").DataTable({
+            paging: false,
+            info: false,
+            searching: true,
+            ordering: true,
+            responsive: false,
+            autoWidth: false,
+            scrollX: false,
+            columnDefs: [{
+                    searchable: false,
+                    orderable: false,
+                    targets: 0
+                },
+                {
+                    targets: -1,
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    width: "60px",
+                    targets: 1
+                },
+                {
+                    width: "150px",
+                    targets: 2
+                },
+            ],
+            order: [
+                [1, 'asc']
+            ],
+        });
 
-                table.on('draw.dt', function() {
-                    const pageInfo = table.page.info();
-                    table.column(0, {
-                        page: 'current'
-                    }).nodes().each(function(cell, i) {
-                        cell.innerHTML = i + 1 + pageInfo.start;
-                    });
-                });
+        // Update nomor urut setelah sorting
+        table.on('order.dt', function() {
+            const info = table.page.info();
+            const start = info.start;
+            table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function(cell, i) {
+                cell.innerHTML = start + i + 1;
+            });
+        }).draw();
 
-                table.draw();
+        // Handle pencarian di DataTable
+        $('#search').on('keyup', function() {
+            table.search(this.value).draw();
+            updateFilterInfo(table);
+        });
 
-                $('#search').on('keyup', function() {
-                    table.search(this.value).draw();
-                    updateFilterInfo();
-                });
+        // Custom filter untuk DataTable
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            const row = table.row(dataIndex).node();
+            const $row = $(row);
 
-                $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                    const row = table.row(dataIndex).node();
-                    const $row = $(row);
+            const caborFilter = $('#filter-cabor').val();
+            const genderFilter = $('#filter-gender').val();
+            const ageFilter = $('#filter-age').val();
+            const prestasiFilter = $('#filter-prestasi').val();
 
-                    const caborFilter = $('#filter-cabor').val();
-                    const genderFilter = $('#filter-gender').val();
-                    const ageFilter = $('#filter-age').val();
-                    const prestasiFilter = $('#filter-prestasi').val();
+            const rowCabor = $row.data('cabor');
+            const rowGender = $row.data('gender');
+            const rowAge = parseInt($row.data('age'));
+            const rowPrestasi = $row.data('prestasi');
+            const rowMedali = $row.data('medali');
 
-                    const rowCabor = $row.data('cabor');
-                    const rowGender = $row.data('gender');
-                    const rowAge = parseInt($row.data('age'));
-                    const rowPrestasi = $row.data('prestasi');
-                    const rowMedali = $row.data('medali');
+            if (caborFilter && rowCabor !== caborFilter) return false;
+            if (genderFilter && rowGender !== genderFilter) return false;
 
-                    if (caborFilter && rowCabor !== caborFilter) return false;
-                    if (genderFilter && rowGender !== genderFilter) return false;
-
-                    if (ageFilter) {
-                        if (ageFilter === '36+') {
-                            if (rowAge < 36) return false;
-                        } else {
-                            const [minAge, maxAge] = ageFilter.split('-').map(age => parseInt(age));
-                            if (rowAge < minAge || rowAge > maxAge) return false;
-                        }
-                    }
-
-                    if (prestasiFilter) {
-                        if (prestasiFilter === 'ada' && rowPrestasi !== 'ada') return false;
-                        if (prestasiFilter === 'tidak' && rowPrestasi !== 'tidak') return false;
-                        if (prestasiFilter === 'emas' && rowMedali !== 'emas') return false;
-                        if (prestasiFilter === 'perak' && rowMedali !== 'perak') return false;
-                        if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') return false;
-                    }
-
-                    return true;
-                });
-
-                $('#apply-filters').on('click', function() {
-                    table.draw();
-                    updateFilterInfo();
-                    updateFilterCount();
-                    $('.dropdown-toggle').dropdown('hide');
-                });
-
-                $('#reset-filters').on('click', function() {
-                    $('#filter-cabor').val('');
-                    $('#filter-gender').val('');
-                    $('#filter-age').val('');
-                    $('#filter-prestasi').val('');
-                    $('#search').val('');
-
-                    table.search('').draw();
-                    updateFilterInfo();
-                    updateFilterCount();
-                    $('.dropdown-toggle').dropdown('hide');
-                });
-
-                function updateFilterCount() {
-                    const activeFilters = [];
-
-                    if ($('#filter-cabor').val()) activeFilters.push('cabor');
-                    if ($('#filter-gender').val()) activeFilters.push('gender');
-                    if ($('#filter-age').val()) activeFilters.push('age');
-                    if ($('#filter-prestasi').val()) activeFilters.push('prestasi');
-
-                    const count = activeFilters.length;
-                    const badge = $('#filter-count');
-
-                    if (count > 0) {
-                        badge.text(count).removeClass('d-none');
-                    } else {
-                        badge.addClass('d-none');
-                    }
+            if (ageFilter) {
+                if (ageFilter === '36+') {
+                    if (rowAge < 36) return false;
+                } else {
+                    const [minAge, maxAge] = ageFilter.split('-').map(age => parseInt(age));
+                    if (rowAge < minAge || rowAge > maxAge) return false;
                 }
+            }
 
-                function updateFilterInfo() {
-                    const info = table.page.info();
-                    const showingCount = info.recordsDisplay;
-                    $('#showing-count').text(showingCount);
-                    $('#total-count').text(totalCount);
+            if (prestasiFilter) {
+                if (prestasiFilter === 'ada' && rowPrestasi !== 'ada') return false;
+                if (prestasiFilter === 'tidak' && rowPrestasi !== 'tidak') return false;
+                if (prestasiFilter === 'emas' && rowMedali !== 'emas') return false;
+                if (prestasiFilter === 'perak' && rowMedali !== 'perak') return false;
+                if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') return false;
+            }
+
+            return true;
+        });
+
+        return table;
+    }
+
+    // Inisialisasi fungsi-fungsi tabel setelah dimuat via AJAX
+    function initTableFunctions() {
+        // Event handler untuk pagination link
+        $(document).off('click', '.pagination-link').on('click', '.pagination-link', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            if (url) {
+                loadTable(url);
+                history.pushState(null, null, url);
+            }
+        });
+
+        // Event handler untuk per page select
+        $(document).off('change', 'select[name="per_page"]').on('change', 'select[name="per_page"]', function() {
+            const perPage = $(this).val();
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('per_page', perPage);
+            loadTable(currentUrl.toString());
+            history.pushState(null, null, currentUrl.toString());
+        });
+
+        // Event handler untuk tombol filter
+        $(document).off('click', '#apply-filters, #reset-filters').on('click', '#apply-filters, #reset-filters', function() {
+            const isReset = $(this).attr('id') === 'reset-filters';
+
+            if (isReset) {
+                $('#filter-cabor').val('');
+                $('#filter-gender').val('');
+                $('#filter-age').val('');
+                $('#filter-prestasi').val('');
+                $('#search').val('');
+            }
+
+            const formData = {
+                cabor: $('#filter-cabor').val(),
+                gender: $('#filter-gender').val(),
+                age: $('#filter-age').val(),
+                prestasi: $('#filter-prestasi').val(),
+                search: $('#search').val(),
+                per_page: $('select[name="per_page"]').val()
+            };
+
+            const currentUrl = new URL(window.location.href);
+            Object.keys(formData).forEach(key => {
+                if (formData[key]) {
+                    currentUrl.searchParams.set(key, formData[key]);
+                } else {
+                    currentUrl.searchParams.delete(key);
                 }
-
-                updateFilterInfo();
-                updateFilterCount();
-
-                $('#filter-cabor, #filter-gender, #filter-age, #filter-prestasi').on('change', function() {
-                    updateFilterCount();
-                });
             });
 
-            window.destroyItem = function(button) {
-                const route = button.dataset.route;
+            loadTable(currentUrl.toString());
+            history.pushState(null, null, currentUrl.toString());
+            $('.dropdown-toggle').dropdown('hide');
+        });
 
-                Swal.fire({
-                    title: "Apakah Anda Yakin?",
-                    html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
-                    icon: "warning",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus!',
-                    cancelButtonText: 'Batalkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = route;
+        // Event handler untuk tombol search
+        $(document).off('keyup', '#search').on('keyup', '#search', function(e) {
+            if (e.key === 'Enter') {
+                $('#apply-filters').click();
+            }
+        });
 
-                        const token = document.createElement('input');
-                        token.type = 'hidden';
-                        token.name = '_token';
-                        token.value = '{{ csrf_token() }}';
+        // Update filter count
+        updateFilterCount();
+    }
 
-                        const method = document.createElement('input');
-                        method.type = 'hidden';
-                        method.name = '_method';
-                        method.value = 'DELETE';
+    // Update filter info
+    function updateFilterInfo(table) {
+        const showingCount = table.rows({ search: 'applied' }).count();
+        const totalCount = table.rows().count();
+        $('#showing-count').text(showingCount);
+        $('#total-count').text(totalCount);
+    }
 
-                        form.appendChild(token);
-                        form.appendChild(method);
-                        document.body.appendChild(form);
-                        form.submit();
-                    } else {
-                        Swal.fire({
-                            title: "Aksi Dibatalkan :)",
-                            icon: "info",
-                        });
-                    }
-                });
-            };
+    // Update filter count badge
+    function updateFilterCount() {
+        const activeFilters = [];
+
+        if ($('#filter-cabor').val()) activeFilters.push('cabor');
+        if ($('#filter-gender').val()) activeFilters.push('gender');
+        if ($('#filter-age').val()) activeFilters.push('age');
+        if ($('#filter-prestasi').val()) activeFilters.push('prestasi');
+
+        const count = activeFilters.length;
+        const badge = $('#filter-count');
+
+        if (count > 0) {
+            badge.text(count).removeClass('d-none');
+        } else {
+            badge.addClass('d-none');
+        }
+    }
+
+    // Handle perubahan filter dropdown
+    $(document).on('change', '#filter-cabor, #filter-gender, #filter-age, #filter-prestasi', function() {
+        updateFilterCount();
+    });
+
+    // Handle browser back/forward buttons
+    window.onpopstate = function() {
+        loadTable(window.location.href);
+    };
+
+    // Inisialisasi pertama kali
+    initTableFunctions();
+    initDataTable();
+});
+
+// Fungsi destroyItem
+window.destroyItem = function(button) {
+    const route = button.dataset.route;
+
+    Swal.fire({
+        title: "Apakah Anda Yakin?",
+        html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
+        icon: "warning",
+        showCancelButton: true,
+        reverseButtons: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Hapus!',
+        cancelButtonText: 'Batalkan!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = route;
+
+            const token = document.createElement('input');
+            token.type = 'hidden';
+            token.name = '_token';
+            token.value = '{{ csrf_token() }}';
+
+            const method = document.createElement('input');
+            method.type = 'hidden';
+            method.name = '_method';
+            method.value = 'DELETE';
+
+            form.appendChild(token);
+            form.appendChild(method);
+            document.body.appendChild(form);
+            form.submit();
+        } else {
+            Swal.fire({
+                title: "Aksi Dibatalkan :)",
+                icon: "info",
+            });
+        }
+    });
+};
         </script>
     @endif
 @endsection

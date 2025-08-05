@@ -28,6 +28,10 @@ class AtletController extends Controller
 
     $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
 
+        if ($request->ajax()) {
+        return view('admin.atlet._table', compact('atlets'));
+    }
+
     return view('admin.atlet.index', compact('atlets', 'allCabor'));
 }
 
