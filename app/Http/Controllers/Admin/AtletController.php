@@ -70,6 +70,38 @@ $query = Atlet::with(['cabangOlahraga', 'prestasis'])
                 $query->whereHas('prestasis', fn($q) => $q->where('medali', ucfirst($request->prestasi)));
                 break;
         }
+        $latestPrestasiSub = DB::table('prestasis')
+    ->select('atlet_id', DB::raw('MAX(updated_at) as latest_prestasi_at'))
+    ->groupBy('atlet_id');
+
+$query = Atlet::with(['cabangOlahraga', 'prestasis'])
+    ->leftJoinSub($latestPrestasiSub, 'latest_prestasi', function ($join) {
+        $join->on('atlets.id', '=', 'latest_prestasi.atlet_id');
+    });
+
+$allowedSorts = [
+    'nama', 'tanggal_lahir', 'jenis_kelamin', 'alamat',
+    'no_telepon', 'email', 'updated_at', 'created_at',
+    'latest_prestasi_at' 
+];
+
+$sortBy   = $request->get('sort_by', 'created_at');
+$order    = strtolower($request->get('order', 'desc'));
+
+if (!in_array($sortBy, $allowedSorts)) {
+    $sortBy = 'created_at';
+}
+if (!in_array($order, ['asc', 'desc'])) {
+    $order = 'desc';
+}
+if ($sortBy === 'latest_prestasi_at') {
+    // kalau sort by prestasi terbaru
+    $query->orderByRaw('latest_prestasi.latest_prestasi_at ' . $order . ' NULLS LAST');
+} else {
+    $query->orderBy('atlets.' . $sortBy, $order);
+}
+
+$query->select('atlets.*');
     }
 
     $atlets = $query->paginate($perPage);

@@ -70,11 +70,13 @@
 
         {{-- Prestasi Terbaru (sort via updated_at) --}}
         <th>
-            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'updated_at', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-               class="text-dark text-decoration-none">
-                Prestasi Terbaru
-                <i class="fas fa-sort{{ request('sort_by') == 'updated_at' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-            </a>
+           <a href="{{ request()->fullUrlWithQuery([
+        'sort_by' => 'latest_prestasi_at',
+        'order'   => request('order') == 'asc' ? 'desc' : 'asc'
+]) }}" class="text-dark text-decoration-none">
+    Prestasi Terbaru
+    <i class="fas fa-sort{{ request('sort_by') == 'latest_prestasi_at' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+</a>
         </th>
 
         {{-- Terakhir Diupdate --}}
