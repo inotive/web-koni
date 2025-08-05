@@ -537,6 +537,39 @@
             margin-bottom: 0.25rem;
             color: #dc3545;
         }
+
+        /* Loading state styles */
+        .table-loading {
+            position: relative;
+        }
+
+        .table-loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .loading-spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #F8285A;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
@@ -557,14 +590,22 @@
                                 <h2 class="mb-0 fw-semibold text-dark">Table Daftar Cabor Tabalong</h2>
 
                                 <div class="d-flex align-items-center gap-9 flex-wrap">
-                                    <!-- Search Box -->
-                                    <div class="input-group border rounded" style="width: 230px;">
-                                        <span class="input-group-text bg-transparent border-0">
-                                            <i class="fas fa-search"></i>
-                                        </span>
-                                        <input type="search" name="search" id="search"
-                                            class="form-control border-0 py-2" placeholder="Search Teams..." value="">
-                                    </div>
+                                    <!-- Search Box Form -->
+                                    <form method="GET" action="{{ request()->url() }}" id="searchForm" class="d-flex">
+                                        <div class="input-group border rounded" style="width: 230px;">
+                                            <span class="input-group-text bg-transparent border-0">
+                                                <i class="fas fa-search"></i>
+                                            </span>
+                                            <input type="search" name="search" id="search"
+                                                class="form-control border-0 py-2" placeholder="Search Teams..." 
+                                                value="{{ request('search') }}">
+                                        </div>
+                                        <!-- Hidden inputs to preserve other parameters -->
+                                        <input type="hidden" name="status" value="{{ request('status') }}">
+                                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+                                        <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                                        <input type="hidden" name="order" value="{{ request('order') }}">
+                                    </form>
 
                                     <!-- Filter Button with Icon on Right -->
                                     <div class="border rounded" style="width: 120px; border-width: 1px !important;">
@@ -575,29 +616,39 @@
                                             <div>
                                                 <i class="fas fa-filter ms-1"></i>
                                                 <span id="filter-count"
-                                                    class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                                    class="badge badge-circle badge-danger ms-1 {{ request('status') ? '' : 'd-none' }}">
+                                                    {{ request('status') ? '1' : '0' }}
+                                                </span>
                                             </div>
                                         </button>
                                         <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">Status Keaktifan</label>
-                                                <select id="filter-status" class="form-select">
-                                                    <option value="">Semua Status</option>
-                                                    <option value="Aktif">Aktif</option>
-                                                    <option value="Tidak Aktif">Tidak Aktif</option>
-                                                </select>
-                                            </div>
+                                            <form method="GET" action="{{ request()->url() }}" id="filterForm">
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Status Keaktifan</label>
+                                                    <select id="filter-status" name="status" class="form-select">
+                                                        <option value="">Semua Status</option>
+                                                        <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                                                        <option value="Tidak Aktif" {{ request('status') == 'Tidak Aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                                                    </select>
+                                                </div>
 
-                                            <div class="d-flex gap-2">
-                                                <button type="button" id="apply-filters"
-                                                    class="btn btn-primary btn-sm flex-fill">
-                                                    <i class="fas fa-check"></i> Terapkan
-                                                </button>
-                                                <button type="button" id="reset-filters"
-                                                    class="btn btn-light btn-sm flex-fill">
-                                                    <i class="fas fa-redo"></i> Reset
-                                                </button>
-                                            </div>
+                                                <!-- Hidden inputs to preserve other parameters -->
+                                                <input type="hidden" name="search" value="{{ request('search') }}">
+                                                <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+                                                <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                                                <input type="hidden" name="order" value="{{ request('order') }}">
+
+                                                <div class="d-flex gap-2">
+                                                    <button type="button" id="apply-filters"
+                                                        class="btn btn-primary btn-sm flex-fill">
+                                                        <i class="fas fa-check"></i> Terapkan
+                                                    </button>
+                                                    <button type="button" id="reset-filters"
+                                                        class="btn btn-light btn-sm flex-fill">
+                                                        <i class="fas fa-redo"></i> Reset
+                                                    </button>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -615,7 +666,7 @@
                                 <h4>Tidak ada data cabang olahraga.</h4>
                             </div>
                         @else
-                            <div class="table-responsive">
+                            <div class="table-responsive" id="tableContainer">
                                 <table class="table table-hover align-middle" id="caborTable">
                                     <thead>
                                         <tr>
@@ -740,7 +791,13 @@
                                             @empty
                                                 <tr>
                                                     <td colspan="9" class="text-center py-5 text-muted">
-                                                        Tidak ada data cabang olahraga
+                                                        @if(request('search') || request('status'))
+                                                            <i class="fas fa-search fs-3x mb-3 text-muted"></i>
+                                                            <h4>Tidak ada data yang cocok dengan pencarian</h4>
+                                                            <p class="mb-0">Coba ubah kata kunci atau filter yang digunakan</p>
+                                                        @else
+                                                            Tidak ada data cabang olahraga
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforelse
@@ -749,38 +806,56 @@
                                 </table>
                             </div>
 
-                            <!-- Pagination Section - DIPERBAIKI -->
+                            <!-- Pagination Section -->
                             @if (isset($cabors) && $cabors->total() > 0)
                                 <div class="table-footer">
                                     <div class="d-flex justify-content-between align-items-center flex-wrap">
-                                        <!-- Per page selector & Info - SELALU TAMPIL -->
+                                        <!-- Per page selector & Info -->
                                         <div class="d-flex align-items-center gap-2 flex-wrap">
                                             <div class="d-flex align-items-center gap-2">
                                                 <label class="form-label mb-0">Tampilkan:</label>
-                                                <select class="form-select form-select-sm" style="width: auto;" onchange="changePerPage(this.value)">
-                                                    <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
-                                                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                                                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                                                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                                                </select>
+                                                <form method="GET" action="{{ request()->url() }}" id="perPageForm">
+                                                    <select class="form-select form-select-sm" style="width: auto;" name="per_page" onchange="this.form.submit()">
+                                                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                                                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                                                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                                                    </select>
+                                                    <!-- Preserve current parameters -->
+                                                    <input type="hidden" name="search" value="{{ request('search') }}">
+                                                    <input type="hidden" name="status" value="{{ request('status') }}">
+                                                    <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                                                    <input type="hidden" name="order" value="{{ request('order') }}">
+                                                </form>
                                                 <span class="text-muted">data per halaman</span>
                                             </div>
                                             
                                             <div class="text-muted">
-                                                Menampilkan <span id="showing-count">{{ $cabors->count() }}</span> dari
-                                                <span id="total-count">{{ $cabors->total() }}</span> total data
+                                                Menampilkan {{ $cabors->count() }} dari {{ $cabors->total() }} total data
+                                                @if(request('search') || request('status'))
+                                                    <br><small class="text-info">
+                                                        (Hasil pencarian/filter: 
+                                                        @if(request('search'))
+                                                            "{{ request('search') }}"
+                                                        @endif
+                                                        @if(request('status'))
+                                                            Status: {{ request('status') }}
+                                                        @endif
+                                                        )
+                                                    </small>
+                                                @endif
                                             </div>
                                         </div>
 
-                                        <!-- Pagination - HANYA TAMPIL JIKA ADA MULTIPLE PAGES, ATAU PLACEHOLDER -->
+                                        <!-- Pagination Controls -->
                                         <div class="d-flex align-items-center gap-3">
-                                            <!-- Range Info (1-10 of 52) -->
+                                            <!-- Range Info -->
                                             <div class="text-muted">
                                                 @php
                                                     $from = ($cabors->currentPage() - 1) * $cabors->perPage() + 1;
                                                     $to = min($from + $cabors->count() - 1, $cabors->total());
                                                 @endphp
-                                                <span id="range-info">{{ $from }}-{{ $to }}</span> of {{ $cabors->total() }}
+                                                {{ $from }}-{{ $to }} of {{ $cabors->total() }}
                                             </div>
                                             
                                             @if ($cabors->hasPages())
@@ -790,7 +865,7 @@
                                                         <i class="fas fa-chevron-left"></i>
                                                     </span>
                                                 @else
-                                                    <a href="{{ $cabors->previousPageUrl() }}" class="pagination-arrow">
+                                                    <a href="{{ $cabors->appends(request()->query())->previousPageUrl() }}" class="pagination-arrow">
                                                         <i class="fas fa-chevron-left"></i>
                                                     </a>
                                                 @endif
@@ -802,7 +877,7 @@
                                                 @endphp
 
                                                 @if($start > 1)
-                                                    <a href="{{ $cabors->url(1) }}" class="pagination-number">1</a>
+                                                    <a href="{{ $cabors->appends(request()->query())->url(1) }}" class="pagination-number">1</a>
                                                     @if($start > 2)
                                                         <span class="pagination-dots">...</span>
                                                     @endif
@@ -812,7 +887,7 @@
                                                     @if ($page == $cabors->currentPage())
                                                         <span class="pagination-number active">{{ $page }}</span>
                                                     @else
-                                                        <a href="{{ $cabors->url($page) }}" class="pagination-number">{{ $page }}</a>
+                                                        <a href="{{ $cabors->appends(request()->query())->url($page) }}" class="pagination-number">{{ $page }}</a>
                                                     @endif
                                                 @endfor
 
@@ -820,12 +895,12 @@
                                                     @if($end < $cabors->lastPage() - 1)
                                                         <span class="pagination-dots">...</span>
                                                     @endif
-                                                    <a href="{{ $cabors->url($cabors->lastPage()) }}" class="pagination-number">{{ $cabors->lastPage() }}</a>
+                                                    <a href="{{ $cabors->appends(request()->query())->url($cabors->lastPage()) }}" class="pagination-number">{{ $cabors->lastPage() }}</a>
                                                 @endif
 
                                                 <!-- Next Page Link -->
                                                 @if ($cabors->hasMorePages())
-                                                    <a href="{{ $cabors->nextPageUrl() }}" class="pagination-arrow">
+                                                    <a href="{{ $cabors->appends(request()->query())->nextPageUrl() }}" class="pagination-arrow">
                                                         <i class="fas fa-chevron-right"></i>
                                                     </a>
                                                 @else
@@ -877,9 +952,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="button" class="btn btn-warning" id="deactivateBtn">
-                        <i class="fas fa-ban me-1"></i>Nonaktifkan Saja
-                    </button>
                 </div>
             </div>
         </div>
@@ -888,183 +960,94 @@
 
 @section('script')
     <script>
-        // Function untuk mengubah per page
-        function changePerPage(perPage) {
-            // Get current URL
-            const url = new URL(window.location.href);
-            
-            // Update per_page parameter
-            url.searchParams.set('per_page', perPage);
-            
-            // Reset to first page when changing per page
-            url.searchParams.set('page', '1');
-            
-            // Preserve existing search and filter parameters
-            const currentSearch = $('#search').val();
-            const currentStatusFilter = $('#filter-status').val();
-            
-            if (currentSearch) {
-                url.searchParams.set('search', currentSearch);
-            }
-            
-            if (currentStatusFilter) {
-                url.searchParams.set('status', currentStatusFilter);
-            }
-            
-            // Redirect to new URL
-            window.location.href = url.toString();
-        }
-
         $(document).ready(function() {
-            console.log('Initializing cabor table filters...');
+            console.log('Initializing server-side search and filter...');
 
-            // Get the table and rows
-            const caborTable = $('#caborTable');
-            const caborRows = caborTable.find('tbody tr');
-            const totalRows = caborRows.length;
-
-            console.log('Found table with', totalRows, 'rows');
-
-            // Search function
-            $('#search').on('keyup', function() {
-                const searchText = $(this).val().toLowerCase();
-                console.log('Search input:', searchText);
-                filterCaborTable(searchText, $('#filter-status').val());
-                updateCaborInfo();
+            // Auto-submit search with debounce
+            let searchTimeout;
+            $('#search').on('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    console.log('Submitting search form...');
+                    $('#searchForm').submit();
+                }, 500); // 500ms delay untuk menghindari request berlebihan
             });
 
             // Apply filters button
             $('#apply-filters').on('click', function() {
-                console.log('Apply filters clicked');
-                const searchText = $('#search').val().toLowerCase();
-                const statusFilter = $('#filter-status').val();
-                filterCaborTable(searchText, statusFilter);
-                updateCaborFilterCount();
-                updateCaborInfo();
+                console.log('Applying filters...');
+                
+                // Update the search form with filter values
+                const statusValue = $('#filter-status').val();
+                $('#searchForm input[name="status"]').val(statusValue);
+                
+                // Submit the search form
+                $('#searchForm').submit();
             });
 
             // Reset filters button
             $('#reset-filters').on('click', function() {
-                console.log('Reset filters clicked');
+                console.log('Resetting filters...');
+                
+                // Clear search input
                 $('#search').val('');
                 $('#filter-status').val('');
-                filterCaborTable('', '');
-                updateCaborFilterCount();
-                updateCaborInfo();
+                
+                // Clear hidden inputs
+                $('#searchForm input[name="search"]').val('');
+                $('#searchForm input[name="status"]').val('');
+                
+                // Submit to reset all filters
+                window.location.href = "{{ route('admin.konfigurasi.cabang-olahraga.index') }}";
             });
 
             // Auto-apply filter when status dropdown changes
             $('#filter-status').on('change', function() {
-                console.log('Status filter changed:', $(this).val());
-                const searchText = $('#search').val().toLowerCase();
-                const statusFilter = $(this).val();
-                filterCaborTable(searchText, statusFilter);
-                updateCaborFilterCount();
-                updateCaborInfo();
+                console.log('Status filter changed, auto-applying...');
+                $('#apply-filters').click();
             });
 
-            // Main filter function
-            function filterCaborTable(searchText, statusFilter) {
-                console.log('Filtering with search:', searchText, 'status:', statusFilter);
-                let visibleCount = 0;
+            // Update filter count badge on page load
+            updateFilterCountBadge();
 
-                caborRows.each(function() {
-                    const row = $(this);
+            // Show active search/filter indicators
+            showActiveFilters();
 
-                    // Get data from different columns
-                    const namaCabor = row.find('td:nth-child(2)').text().toLowerCase(); // Nama Cabor
-                    const ketuaPj = row.find('td:nth-child(3)').text().toLowerCase(); // Ketua PJ
-                    const statusBadge = row.find('td:nth-child(4) .badge').text()
-                        .trim(); // Status from badge - tanpa toLowerCase()
-
-                    console.log('Row status badge text:', statusBadge); // Debug log
-
-                    // Check search match (search in nama_cabor and ketua_pj)
-                    const cocokSearch = namaCabor.includes(searchText) ||
-                        ketuaPj.includes(searchText) ||
-                        searchText === '';
-
-                    // Check status filter match - PERBAIKAN DI SINI
-                    const cocokFilter = statusFilter === '' || statusBadge === statusFilter;
-
-                    console.log('Row:', namaCabor, 'Status:', statusBadge, 'Filter:', statusFilter,
-                        'Match:', cocokFilter);
-
-                    // Show/hide row based on filters
-                    if (cocokSearch && cocokFilter) {
-                        row.show();
-                        visibleCount++;
-                    } else {
-                        row.hide();
-                    }
-                });
-
-                console.log('Visible rows after filter:', visibleCount);
-
-                // Update info display
-                $('#showing-count').text(visibleCount);
-                $('#total-count').text(totalRows);
-
-                // Show "no data" message if no rows visible
-                if (visibleCount === 0) {
-                    if (caborTable.find('.no-data-row').length === 0) {
-                        caborTable.find('tbody').append(`
-                    <tr class="no-data-row">
-                        <td colspan="9" class="text-center py-5 text-muted">
-                            Tidak ada data yang cocok dengan filter
-                        </td>
-                    </tr>
-                `);
-                    }
-                    caborTable.find('.no-data-row').show();
-                } else {
-                    caborTable.find('.no-data-row').hide();
-                }
-            }
-
-            // Update filter count badge
-            function updateCaborFilterCount() {
-                const filterAktif = [];
-                if ($('#filter-status').val()) filterAktif.push('status');
-
-                const jumlah = filterAktif.length;
-                const badge = $('#filter-count');
-
-                if (jumlah > 0) {
-                    badge.text(jumlah).removeClass('d-none');
-                } else {
-                    badge.addClass('d-none');
-                }
-
-                console.log('Filter count updated:', jumlah);
-            }
-
-            // Update info display for client-side filtering
-            function updateCaborInfo() {
-                const visibleRows = caborRows.filter(':visible').not('.no-data-row').length;
-                const totalRows = caborRows.not('.no-data-row').length;
-                
-                $('#showing-count').text(visibleRows);
-                $('#total-count').text(totalRows);
-                
-                // Update range info untuk client-side filtering
-                if (visibleRows > 0) {
-                    $('#range-info').text('1-' + visibleRows);
-                } else {
-                    $('#range-info').text('0-0');
-                }
-            }
-
-            // Initialize on page load
-            updateCaborFilterCount();
-            updateCaborInfo();
-
-            console.log('Search input element:', $('#search').length);
-            console.log('Filter status element:', $('#filter-status').length);
-            console.log('Apply button element:', $('#apply-filters').length);
-            console.log('Reset button element:', $('#reset-filters').length);
+            console.log('Search and filter initialization complete');
         });
 
+        // Function to update filter count badge
+        function updateFilterCountBadge() {
+            const activeFilters = [];
+            
+            if ($('#filter-status').val()) {
+                activeFilters.push('status');
+            }
+            
+            const count = activeFilters.length;
+            const badge = $('#filter-count');
+            
+            if (count > 0) {
+                badge.text(count).removeClass('d-none');
+            } else {
+                badge.addClass('d-none');
+            }
+        }
+
+        // Function to show active search/filter indicators
+        function showActiveFilters() {
+            const hasSearch = "{{ request('search') }}" !== "";
+            const hasFilter = "{{ request('status') }}" !== "";
+            
+            if (hasSearch || hasFilter) {
+                console.log('Active filters detected:', {
+                    search: "{{ request('search') }}",
+                    status: "{{ request('status') }}"
+                });
+            }
+        }
+
+        // Delete warning modal functions
         function showDeleteWarning(namaCabor, jumlahAtlet, jumlahPelatih) {
             document.getElementById('caborName').textContent = namaCabor;
 
@@ -1088,10 +1071,36 @@
             return confirm(`Yakin ingin menghapus cabang olahraga "${namaCabor}"?\nTindakan ini tidak dapat dibatalkan.`);
         }
 
-        // Handle deactivate button
-        document.getElementById('deactivateBtn').addEventListener('click', function() {
-            // Implement deactivate functionality
-            alert('Fitur nonaktifkan belum diimplementasikan');
+        // Loading state management for better UX
+        function showTableLoading() {
+            const tableContainer = document.getElementById('tableContainer');
+            if (tableContainer) {
+                tableContainer.classList.add('table-loading');
+                const spinner = document.createElement('div');
+                spinner.className = 'loading-spinner';
+                tableContainer.appendChild(spinner);
+            }
+        }
+
+        function hideTableLoading() {
+            const tableContainer = document.getElementById('tableContainer');
+            if (tableContainer) {
+                tableContainer.classList.remove('table-loading');
+                const spinner = tableContainer.querySelector('.loading-spinner');
+                if (spinner) {
+                    spinner.remove();
+                }
+            }
+        }
+
+        // Form submission handling with loading state
+        $('#searchForm, #filterForm, #perPageForm').on('submit', function() {
+            showTableLoading();
+        });
+
+        // Handle browser back/forward buttons
+        window.addEventListener('pageshow', function() {
+            hideTableLoading();
         });
     </script>
 

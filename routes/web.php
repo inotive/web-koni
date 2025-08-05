@@ -1,4 +1,4 @@
-<?php
+a<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -63,28 +63,51 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::resource('pelatih', PelatihController::class);
         Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
             ->name('pelatih.prestasi.store');
-        Route::resource('cabang-olahraga', CabangOlahragaController::class);
 
+        // PERBAIKAN: Cabang Olahraga Routes - Dipisahkan dan Diperbaiki
+        Route::prefix('cabang-olahraga')->name('cabang-olahraga.')->group(function () {
+            // Standard CRUD routes
+            Route::get('/', [CabangOlahragaController::class, 'index'])->name('index');
+            Route::get('/create', [CabangOlahragaController::class, 'create'])->name('create');
+            Route::post('/', [CabangOlahragaController::class, 'store'])->name('store');
+            Route::get('/{cabang_olahraga}', [CabangOlahragaController::class, 'show'])->name('show');
+            Route::get('/{cabang_olahraga}/edit', [CabangOlahragaController::class, 'edit'])->name('edit');
+            Route::put('/{cabang_olahraga}', [CabangOlahragaController::class, 'update'])->name('update');
+            Route::delete('/{cabang_olahraga}', [CabangOlahragaController::class, 'destroy'])->name('destroy');
+
+            // TAMBAHAN: Routes untuk fitur khusus CabangOlahraga
+            Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
+            Route::get('/export', [CabangOlahragaController::class, 'export'])->name('export');
+            Route::patch('/{cabang_olahraga}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
+            Route::get('/{cabang_olahraga}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('check-dependencies');
+            Route::delete('/{cabang_olahraga}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('force-destroy');
+        });
+
+        // Prestasi Routes - Diperbaiki struktur
         Route::prefix('prestasi')->name('prestasi.')->group(function () {
+            // Main prestasi routes
             Route::get('/', [PrestasiController::class, 'index'])->name('index');
             Route::get('/create', [PrestasiController::class, 'create'])->name('create');
             Route::post('/', [PrestasiController::class, 'store'])->name('store');
-            Route::get('/{id}', [CabangOlahragaController::class, 'show'])->name('admin.konfigurasi.cabang-olahraga.show');
+            Route::get('/{prestasi}', [PrestasiController::class, 'show'])->name('show');
             Route::get('/{prestasi}/edit', [PrestasiController::class, 'edit'])->name('edit');
             Route::put('/{prestasi}', [PrestasiController::class, 'update'])->name('update');
             Route::delete('/{prestasi}', [PrestasiController::class, 'destroy'])->name('destroy');
 
-            Route::patch('/{id}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('admin.konfigurasi.cabang-olahraga.deactivate');
-            Route::get('/{id}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('admin.konfigurasi.cabang-olahraga.check-dependencies');
-            Route::delete('/{id}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('admin.konfigurasi.cabang-olahraga.force-destroy');
+            // Prestasi untuk Atlet
+            Route::prefix('atlet')->name('atlet.')->group(function () {
+                Route::get('/{atlet}/create', [PrestasiController::class, 'createForAtlet'])->name('create');
+                Route::post('/{atlet}', [PrestasiController::class, 'storeForAtlet'])->name('store');
+            });
 
-            Route::get('/atlet/{atlet}/create', [PrestasiController::class, 'createForAtlet'])->name('atlet.create');
-            Route::post('/atlet/{atlet}', [PrestasiController::class, 'storeForAtlet'])->name('atlet.store');
-
-            Route::get('/pelatih/{pelatih}/create', [PrestasiController::class, 'createForPelatih'])->name('pelatih.create');
-            Route::post('/pelatih/{pelatih}', [PrestasiController::class, 'storeForPelatih'])->name('pelatih.store');
+            // Prestasi untuk Pelatih
+            Route::prefix('pelatih')->name('pelatih.')->group(function () {
+                Route::get('/{pelatih}/create', [PrestasiController::class, 'createForPelatih'])->name('create');
+                Route::post('/{pelatih}', [PrestasiController::class, 'storeForPelatih'])->name('store');
+            });
         });
 
+        // Pelatih additional routes
         Route::get('pelatih/{id}/deskripsi', [PelatihController::class, 'deskripsi'])
             ->name('pelatih.deskripsi');
     });
@@ -99,22 +122,21 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::prefix('prestasi')->name('prestasi.')->group(function () {
                 Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
             });
-
-                // Prestasi routes
-                Route::prefix('prestasi')->name('prestasi.')->group(function () {
-                    Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
-                    Route::get('/cabor-terukur', [App\Http\Controllers\Admin\BidangController::class, 'caborTerukur'])->name('Cabor Terukur');
-                    Route::get('/cabor-permainan', [App\Http\Controllers\Admin\BidangController::class, 'caborPermainan'])->name('Cabor Permainan');
-                    Route::get('/cabor-beladiri', [App\Http\Controllers\Admin\BidangController::class, 'caborBeladiri'])->name('Cabor Beladiri');
-                    Route::get('/cabor-akurasi', [App\Http\Controllers\Admin\BidangController::class, 'caborAkurasi'])->name('Cabor Akurasi');
-                });
-                Route::get('/mobilisasi-sumberdaya', [App\Http\Controllers\Admin\BidangController::class, 'mobilisasiSumberdayaIndex'])->name('mobilisasi-sumberdaya');
-                Route::get('/hubungan-antar-lembaga', [App\Http\Controllers\Admin\BidangController::class, 'hubunganAntarLembaga'])->name('hubungan-antar-lembaga');
-                Route::get('/kesehatan', [App\Http\Controllers\Admin\BidangController::class, 'kesehatan'])->name('kesehatan');
-                Route::get('/organisasi', [App\Http\Controllers\Admin\BidangController::class, 'organisasi'])->name('organisasi');
-                Route::get('/pembinaan-hukum', [App\Http\Controllers\Admin\BidangController::class, 'pembinaanHukum'])->name('pembinaan-hukum');
-                Route::get('/sport-science', [App\Http\Controllers\Admin\BidangController::class, 'sportScience'])->name('sport-science');
-                Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
-            });
+            Route::get('/mobilisasi-sumberdaya', [App\Http\Controllers\Admin\BidangController::class, 'mobilisasiSumberdayaIndex'])->name('mobilisasi-sumberdaya');
+            Route::get('/hubungan-antar-lembaga', [App\Http\Controllers\Admin\BidangController::class, 'hubunganAntarLembaga'])->name('hubungan-antar-lembaga');
+            Route::get('/kesehatan', [App\Http\Controllers\Admin\BidangController::class, 'kesehatan'])->name('kesehatan');
+            Route::get('/organisasi', [App\Http\Controllers\Admin\BidangController::class, 'organisasi'])->name('organisasi');
+            Route::get('/pembinaan-hukum', [App\Http\Controllers\Admin\BidangController::class, 'pembinaanHukum'])->name('pembinaan-hukum');
+            Route::get('/sport-science', [App\Http\Controllers\Admin\BidangController::class, 'sportScience'])->name('sport-science');
+            Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanana-program');
         });
     });
+});
+
+// TAMBAHAN: Route untuk API calls jika diperlukan (opsional)
+Route::prefix('api/admin')->name('api.admin.')->middleware('auth')->group(function () {
+    Route::prefix('cabang-olahraga')->name('cabang-olahraga.')->group(function () {
+        Route::get('/search', [CabangOlahragaController::class, 'search'])->name('search');
+        Route::get('/{id}/dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('dependencies');
+    });
+});
