@@ -37,6 +37,9 @@
                         $medaliType = $prestasiTerbaru
                             ? strtolower($prestasiTerbaru->medali)
                             : '';
+
+                        // Hitung jumlah prestasi untuk logic delete
+                        $jumlahPrestasi = $item->prestasis ? $item->prestasis->count() : 0;
                     @endphp
                     <tr data-cabor="{{ $caborNama }}"
                         data-gender="{{ $item->jenis_kelamin }}"
@@ -147,12 +150,24 @@
                                     title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                               <button type="button"
-        class="btn btn-icon btn-sm btn-light-danger btn-delete"
-        data-route="{{ route('admin.konfigurasi.atlet.destroy', $item->id) }}"
-        title="Hapus">
-    <i class="fa-solid fa-trash"></i>
-</button>
+
+                                {{-- Logic untuk tombol delete dengan peringatan prestasi --}}
+                                @if ($jumlahPrestasi > 0)
+                                    <button type="button"
+                                        class="btn btn-icon btn-sm btn-light-danger"
+                                        title="Tidak dapat dihapus - Atlet memiliki {{ $jumlahPrestasi }} prestasi"
+                                        onclick="showAtletDeleteWarning('{{ $item->nama }}', {{ $jumlahPrestasi }})"
+                                        style="opacity: 0.6;">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                @else
+                                    <button type="button"
+                                        class="btn btn-icon btn-sm btn-light-danger btn-delete"
+                                        data-route="{{ route('admin.konfigurasi.atlet.destroy', $item->id) }}"
+                                        title="Hapus">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -166,6 +181,8 @@
         </tbody>
     </table>
 </div>
+
+{{-- Pagination section tetap sama --}}
 <div class="table-footer">
     <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
         <div class="mb-2 mb-md-0">
