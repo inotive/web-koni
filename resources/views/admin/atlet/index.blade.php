@@ -572,372 +572,116 @@
                         @endif
                     </div>
                     <div class="table-container">
-
-
-                        @if (isset($atlets) && $atlets->isEmpty())
-                            <div class="empty-state">
-                                <i class="fas fa-info-circle fs-3x mb-3"></i>
-                                <h4>Tidak ada data atlet.</h4>
-                            </div>
-                        @else
-                            <div class="table-container">
-                                @include('admin.atlet._table')
-                            </div>
-                            <div class="table-footer">
-                                <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-                                    <div class="mb-2 mb-md-0">
-                                        <form method="GET" class="d-flex align-items-center">
-                                            <span class="me-2">Show</span>
-                                            <select name="per_page" onchange="this.form.submit()"
-                                                class="form-select form-select-sm w-auto">
-                                                @foreach ([10, 25, 50, 100] as $limit)
-                                                    <option value="{{ $limit }}"
-                                                        {{ request('per_page') == $limit ? 'selected' : '' }}>
-                                                        {{ $limit }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <span class="ms-2">per page</span>
-                                        </form>
-                                    </div>
-
-                                    @if (isset($atlets) && method_exists($atlets, 'hasPages') && $atlets->hasPages())
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="text-muted small">
-                                                {{ $atlets->firstItem() }}-{{ $atlets->lastItem() }} of
-                                                {{ $atlets->total() }}
-                                            </div>
-
-                                            <div class="d-flex align-items-center gap-2">
-                                                @if ($atlets->onFirstPage())
-                                                    <span class="pagination-arrow disabled">←</span>
-                                                @else
-                                                    <a href="{{ $atlets->previousPageUrl() }}" class="pagination-arrow"
-                                                        aria-label="Previous">←</a>
-                                                @endif
-
-                                                @php
-                                                    $current = $atlets->currentPage();
-                                                    $total = $atlets->lastPage();
-                                                    $start = max(1, $current - 2);
-                                                    $end = min($total, $current + 2);
-
-                                                    if ($end - $start < 4) {
-                                                        if ($start == 1) {
-                                                            $end = min($total, $start + 4);
-                                                        } else {
-                                                            $start = max(1, $end - 4);
-                                                        }
-                                                    }
-                                                @endphp
-
-                                                <div class="d-flex align-items-center">
-                                                    @for ($i = $start; $i <= $end; $i++)
-                                                        @if ($i == $current)
-                                                            <span
-                                                                class="pagination-number active">{{ $i }}</span>
-                                                        @else
-                                                            <a href="{{ $atlets->url($i) }}"
-                                                                class="pagination-number">{{ $i }}</a>
-                                                        @endif
-                                                    @endfor
-                                                </div>
-
-                                                @if ($atlets->hasMorePages())
-                                                    <a href="{{ $atlets->nextPageUrl() }}" class="pagination-arrow"
-                                                        aria-label="Next">→</a>
-                                                @else
-                                                    <span class="pagination-arrow disabled">→</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @elseif(isset($atlets) && method_exists($atlets, 'hasPages'))
-                                        <div class="text-muted small">
-                                            1-{{ $atlets->count() }} of {{ $atlets->total() }}
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        @endif
+                        @include('admin.atlet._table')
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-@endsection
 
-@section('script')
-    @if (isset($atlets) && $atlets->isNotEmpty())
-        <script>
-  $(document).ready(function() {
-    // Fungsi untuk memuat tabel via AJAX
-    function loadTable(url) {
-        $.ajax({
-            url: url,
-            type: 'GET',
-            beforeSend: function() {
-                // Tampilkan loading indicator
-                $('.table-container').html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>');
-            },
-            success: function(response) {
-                $('.table-container').html(response);
-                initTableFunctions();
-                initDataTable();
-            },
-            error: function(xhr) {
-                console.error(xhr.responseText);
-                Swal.fire({
-                    title: "Error!",
-                    text: "Gagal memuat data",
-                    icon: "error"
-                });
-            }
-        });
-    }
+                @endsection
 
-    // Inisialisasi DataTable
-    function initDataTable() {
-        const table = $("#kt_datatable_dom_positioning").DataTable({
-            paging: false,
-            info: false,
-            searching: true,
-            ordering: true,
-            responsive: false,
-            autoWidth: false,
-            scrollX: false,
-            columnDefs: [{
-                    searchable: false,
-                    orderable: false,
-                    targets: 0
-                },
-                {
-                    targets: -1,
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    width: "60px",
-                    targets: 1
-                },
-                {
-                    width: "150px",
-                    targets: 2
-                },
-            ],
-            order: [
-                [1, 'asc']
-            ],
-        });
+                @section('script')
+                    @if (isset($atlets) && $atlets->isNotEmpty())
+                        <script>
+                            $(document).ready(function() {
 
-        // Update nomor urut setelah sorting
-        table.on('order.dt', function() {
-            const info = table.page.info();
-            const start = info.start;
-            table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function(cell, i) {
-                cell.innerHTML = start + i + 1;
-            });
-        }).draw();
+                                function loadTable(url) {
+                                    $.ajax({
+                                        url: url,
+                                        type: 'GET',
+                                        beforeSend: function() {
+                                            $('.table-container').html(
+                                                '<div class="text-center py-5">' +
+                                                '<div class="spinner-border text-primary" role="status">' +
+                                                '<span class="visually-hidden">Loading...</span>' +
+                                                '</div></div>'
+                                            );
+                                        },
+                                        success: function(response) {
+                                            $('.table-container').html(response);
+                                            bindEvents();
+                                        },
+                                        error: function(xhr) {
+                                            console.error(xhr.responseText);
+                                            Swal.fire({
+                                                title: 'Error!',
+                                                text: 'Gagal memuat data',
+                                                icon: 'error'
+                                            });
+                                        }
+                                    });
+                                }
 
-        // Handle pencarian di DataTable
-        $('#search').on('keyup', function() {
-            table.search(this.value).draw();
-            updateFilterInfo(table);
-        });
+                                function bindEvents() {
+                                    $(document).off('click', '.pagination-link')
+                                        .on('click', '.pagination-link', function(e) {
+                                            e.preventDefault();
+                                            const url = $(this).attr('href');
+                                            if (url) loadTable(url);
+                                        });
 
-        // Custom filter untuk DataTable
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            const row = table.row(dataIndex).node();
-            const $row = $(row);
+                                    $(document).off('change', 'select[name="per_page"]')
+                                        .on('change', 'select[name="per_page"]', function() {
+                                            const url = new URL(window.location.href);
+                                            url.searchParams.set('per_page', $(this).val());
+                                            loadTable(url.toString());
+                                        });
 
-            const caborFilter = $('#filter-cabor').val();
-            const genderFilter = $('#filter-gender').val();
-            const ageFilter = $('#filter-age').val();
-            const prestasiFilter = $('#filter-prestasi').val();
+                                    $(document).off('click', '#apply-filters, #reset-filters')
+                                        .on('click', '#apply-filters, #reset-filters', function() {
+                                            const isReset = this.id === 'reset-filters';
+                                            if (isReset) {
+                                                $('#filter-cabor, #filter-gender, #filter-age, #filter-prestasi, #search').val('');
+                                            }
 
-            const rowCabor = $row.data('cabor');
-            const rowGender = $row.data('gender');
-            const rowAge = parseInt($row.data('age'));
-            const rowPrestasi = $row.data('prestasi');
-            const rowMedali = $row.data('medali');
+                                            const params = new URLSearchParams();
+                                            const add = (key, val) => {
+                                                if (val) params.set(key, val);
+                                                else params.delete(key);
+                                            };
 
-            if (caborFilter && rowCabor !== caborFilter) return false;
-            if (genderFilter && rowGender !== genderFilter) return false;
+                                            add('search', $('#search').val());
+                                            add('cabor', $('#filter-cabor').val());
+                                            add('gender', $('#filter-gender').val());
+                                            add('age', $('#filter-age').val());
+                                            add('prestasi', $('#filter-prestasi').val());
+                                            add('per_page', $('select[name="per_page"]').val());
 
-            if (ageFilter) {
-                if (ageFilter === '36+') {
-                    if (rowAge < 36) return false;
-                } else {
-                    const [minAge, maxAge] = ageFilter.split('-').map(age => parseInt(age));
-                    if (rowAge < minAge || rowAge > maxAge) return false;
-                }
-            }
+                                            const url = new URL(window.location.href);
+                                            url.search = params.toString();
+                                            loadTable(url.toString());
+                                            $('.dropdown-toggle').dropdown('hide');
+                                        });
 
-            if (prestasiFilter) {
-                if (prestasiFilter === 'ada' && rowPrestasi !== 'ada') return false;
-                if (prestasiFilter === 'tidak' && rowPrestasi !== 'tidak') return false;
-                if (prestasiFilter === 'emas' && rowMedali !== 'emas') return false;
-                if (prestasiFilter === 'perak' && rowMedali !== 'perak') return false;
-                if (prestasiFilter === 'perunggu' && rowMedali !== 'perunggu') return false;
-            }
+                                    let searchTimeout;
+                                    $(document).off('input', '#search')
+                                        .on('input', '#search', function() {
+                                            clearTimeout(searchTimeout);
+                                            searchTimeout = setTimeout(() => {
+                                                const url = new URL(window.location.href);
+                                                url.searchParams.set('search', $(this).val());
+                                                loadTable(url.toString());
+                                            }, 300);
+                                        });
 
-            return true;
-        });
+                                    updateFilterBadge();
+                                }
 
-        return table;
-    }
+                                function updateFilterBadge() {
+                                    const active = [
+                                        $('#filter-cabor').val(),
+                                        $('#filter-gender').val(),
+                                        $('#filter-age').val(),
+                                        $('#filter-prestasi').val()
+                                    ].filter(Boolean).length;
 
-    // Inisialisasi fungsi-fungsi tabel setelah dimuat via AJAX
-    function initTableFunctions() {
-        // Event handler untuk pagination link
-        $(document).off('click', '.pagination-link').on('click', '.pagination-link', function(e) {
-            e.preventDefault();
-            const url = $(this).attr('href');
-            if (url) {
-                loadTable(url);
-                history.pushState(null, null, url);
-            }
-        });
+                                    const badge = $('#filter-count');
+                                    active ? badge.text(active).removeClass('d-none') :
+                                        badge.addClass('d-none');
+                                }
 
-        // Event handler untuk per page select
-        $(document).off('change', 'select[name="per_page"]').on('change', 'select[name="per_page"]', function() {
-            const perPage = $(this).val();
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('per_page', perPage);
-            loadTable(currentUrl.toString());
-            history.pushState(null, null, currentUrl.toString());
-        });
+                                window.onpopstate = () => loadTable(window.location.href);
 
-        // Event handler untuk tombol filter
-        $(document).off('click', '#apply-filters, #reset-filters').on('click', '#apply-filters, #reset-filters', function() {
-            const isReset = $(this).attr('id') === 'reset-filters';
-
-            if (isReset) {
-                $('#filter-cabor').val('');
-                $('#filter-gender').val('');
-                $('#filter-age').val('');
-                $('#filter-prestasi').val('');
-                $('#search').val('');
-            }
-
-            const formData = {
-                cabor: $('#filter-cabor').val(),
-                gender: $('#filter-gender').val(),
-                age: $('#filter-age').val(),
-                prestasi: $('#filter-prestasi').val(),
-                search: $('#search').val(),
-                per_page: $('select[name="per_page"]').val()
-            };
-
-            const currentUrl = new URL(window.location.href);
-            Object.keys(formData).forEach(key => {
-                if (formData[key]) {
-                    currentUrl.searchParams.set(key, formData[key]);
-                } else {
-                    currentUrl.searchParams.delete(key);
-                }
-            });
-
-            loadTable(currentUrl.toString());
-            history.pushState(null, null, currentUrl.toString());
-            $('.dropdown-toggle').dropdown('hide');
-        });
-
-        // Event handler untuk tombol search
-        $(document).off('keyup', '#search').on('keyup', '#search', function(e) {
-            if (e.key === 'Enter') {
-                $('#apply-filters').click();
-            }
-        });
-
-        // Update filter count
-        updateFilterCount();
-    }
-
-    // Update filter info
-    function updateFilterInfo(table) {
-        const showingCount = table.rows({ search: 'applied' }).count();
-        const totalCount = table.rows().count();
-        $('#showing-count').text(showingCount);
-        $('#total-count').text(totalCount);
-    }
-
-    // Update filter count badge
-    function updateFilterCount() {
-        const activeFilters = [];
-
-        if ($('#filter-cabor').val()) activeFilters.push('cabor');
-        if ($('#filter-gender').val()) activeFilters.push('gender');
-        if ($('#filter-age').val()) activeFilters.push('age');
-        if ($('#filter-prestasi').val()) activeFilters.push('prestasi');
-
-        const count = activeFilters.length;
-        const badge = $('#filter-count');
-
-        if (count > 0) {
-            badge.text(count).removeClass('d-none');
-        } else {
-            badge.addClass('d-none');
-        }
-    }
-
-    // Handle perubahan filter dropdown
-    $(document).on('change', '#filter-cabor, #filter-gender, #filter-age, #filter-prestasi', function() {
-        updateFilterCount();
-    });
-
-    // Handle browser back/forward buttons
-    window.onpopstate = function() {
-        loadTable(window.location.href);
-    };
-
-    // Inisialisasi pertama kali
-    initTableFunctions();
-    initDataTable();
-});
-
-// Fungsi destroyItem
-window.destroyItem = function(button) {
-    const route = button.dataset.route;
-
-    Swal.fire({
-        title: "Apakah Anda Yakin?",
-        html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
-        icon: "warning",
-        showCancelButton: true,
-        reverseButtons: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Hapus!',
-        cancelButtonText: 'Batalkan!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = route;
-
-            const token = document.createElement('input');
-            token.type = 'hidden';
-            token.name = '_token';
-            token.value = '{{ csrf_token() }}';
-
-            const method = document.createElement('input');
-            method.type = 'hidden';
-            method.name = '_method';
-            method.value = 'DELETE';
-
-            form.appendChild(token);
-            form.appendChild(method);
-            document.body.appendChild(form);
-            form.submit();
-        } else {
-            Swal.fire({
-                title: "Aksi Dibatalkan :)",
-                icon: "info",
-            });
-        }
-    });
-};
-        </script>
-    @endif
-@endsection
+                                bindEvents();
+                            });
+                        </script>
+                    @endif
+                @endsection

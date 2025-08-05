@@ -10,26 +10,60 @@ use Illuminate\Support\Facades\Storage;
 
 class AtletController extends Controller
 {
-   public function index(Request $request)
+  public function index(Request $request)
 {
     $perPage = $request->get('per_page', 10);
 
-    $atlets = Atlet::with('prestasiTerbaru')
-               ->select('*')
-               ->selectRaw("
-                   CASE
-                       WHEN jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
-                       WHEN jenis_kelamin = 'Perempuan' THEN 'Perempuan'
-                       ELSE jenis_kelamin
-                   END as jenis_kelamin
-               ")
-               ->orderBy('created_at', 'DESC')
-               ->paginate($perPage);
+    // Eager-load relasi yang dibutuhkan
+    $query = Atlet::with(['cabangOlahraga', 'prestasis'])
+                  ->orderBy('created_at', 'DESC');
+
+    if ($request->filled('search')) {
+        $query->where('nama', 'like', '%' . $request->search . '%');
+    }
+
+    if ($request->filled('cabor')) {
+        $query->whereHas('cabangOlahraga', function ($q) use ($request) {
+            $q->where('nama_cabor', $request->cabor);
+        });
+    }
+
+    if ($request->filled('gender')) {
+        $query->where('jenis_kelamin', $request->gender);
+    }
+
+    if ($request->filled('age')) {
+        $age = $request->age;
+        if ($age === '36+') {
+            $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) >= 36');
+        } else {
+            [$min, $max] = array_map('intval', explode('-', $age));
+            $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) BETWEEN ? AND ?', [$min, $max]);
+        }
+    }
+
+    if ($request->filled('prestasi')) {
+        switch ($request->prestasi) {
+            case 'ada':
+                $query->has('prestasis');
+                break;
+            case 'tidak':
+                $query->doesntHave('prestasis');
+                break;
+            case 'emas':
+            case 'perak':
+            case 'perunggu':
+                $query->whereHas('prestasis', fn($q) => $q->where('medali', ucfirst($request->prestasi)));
+                break;
+        }
+    }
+
+    $atlets = $query->paginate($perPage);
 
     $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
 
-        if ($request->ajax()) {
-        return view('admin.atlet._table', compact('atlets'));
+    if ($request->ajax()) {
+        return view('admin.atlet._table', compact('atlets'))->render();
     }
 
     return view('admin.atlet.index', compact('atlets', 'allCabor'));
