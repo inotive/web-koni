@@ -460,19 +460,19 @@
                 padding: 4px 6px;
                 font-size: 0.75rem;
             }
-            
+
             .table-footer .d-flex.justify-content-between {
                 flex-direction: column;
                 gap: 1rem;
                 align-items: center !important;
             }
-            
+
             .d-flex.align-items-center.gap-2.flex-wrap {
                 flex-direction: column;
                 align-items: center !important;
                 gap: 0.5rem !important;
             }
-            
+
             .form-select-sm {
                 min-width: 60px;
                 font-size: 0.75rem;
@@ -488,16 +488,16 @@
             .btn-sm {
                 padding: 0.375rem 0.5rem;
             }
-            
+
             .table-footer {
                 padding: 10px 15px;
             }
-            
+
             .text-muted {
                 font-size: 0.8rem;
                 text-align: center;
             }
-            
+
             .form-label {
                 font-size: 0.8rem;
             }
@@ -567,8 +567,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 
@@ -597,7 +602,7 @@
                                                 <i class="fas fa-search"></i>
                                             </span>
                                             <input type="search" name="search" id="search"
-                                                class="form-control border-0 py-2" placeholder="Search Teams..." 
+                                                class="form-control border-0 py-2" placeholder="Search Teams..."
                                                 value="{{ request('search') }}">
                                         </div>
                                         <!-- Hidden inputs to preserve other parameters -->
@@ -627,14 +632,19 @@
                                                     <label class="form-label fw-semibold">Status Keaktifan</label>
                                                     <select id="filter-status" name="status" class="form-select">
                                                         <option value="">Semua Status</option>
-                                                        <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                                                        <option value="Tidak Aktif" {{ request('status') == 'Tidak Aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                                                        <option value="Aktif"
+                                                            {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif
+                                                        </option>
+                                                        <option value="Tidak Aktif"
+                                                            {{ request('status') == 'Tidak Aktif' ? 'selected' : '' }}>
+                                                            Tidak Aktif</option>
                                                     </select>
                                                 </div>
 
                                                 <!-- Hidden inputs to preserve other parameters -->
                                                 <input type="hidden" name="search" value="{{ request('search') }}">
-                                                <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+                                                <input type="hidden" name="per_page"
+                                                    value="{{ request('per_page', 10) }}">
                                                 <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
                                                 <input type="hidden" name="order" value="{{ request('order') }}">
 
@@ -791,10 +801,11 @@
                                             @empty
                                                 <tr>
                                                     <td colspan="9" class="text-center py-5 text-muted">
-                                                        @if(request('search') || request('status'))
+                                                        @if (request('search') || request('status'))
                                                             <i class="fas fa-search fs-3x mb-3 text-muted"></i>
                                                             <h4>Tidak ada data yang cocok dengan pencarian</h4>
-                                                            <p class="mb-0">Coba ubah kata kunci atau filter yang digunakan</p>
+                                                            <p class="mb-0">Coba ubah kata kunci atau filter yang
+                                                                digunakan</p>
                                                         @else
                                                             Tidak ada data cabang olahraga
                                                         @endif
@@ -815,30 +826,39 @@
                                             <div class="d-flex align-items-center gap-2">
                                                 <label class="form-label mb-0">Tampilkan:</label>
                                                 <form method="GET" action="{{ request()->url() }}" id="perPageForm">
-                                                    <select class="form-select form-select-sm" style="width: auto;" name="per_page" onchange="this.form.submit()">
-                                                        <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
-                                                        <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                                                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                                                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                                                    <select class="form-select form-select-sm" style="width: auto;"
+                                                        name="per_page" onchange="this.form.submit()">
+                                                        <option value="10"
+                                                            {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
+                                                        </option>
+                                                        <option value="25"
+                                                            {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                                                        <option value="50"
+                                                            {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                                        <option value="100"
+                                                            {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
                                                     </select>
                                                     <!-- Preserve current parameters -->
-                                                    <input type="hidden" name="search" value="{{ request('search') }}">
-                                                    <input type="hidden" name="status" value="{{ request('status') }}">
-                                                    <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
+                                                    <input type="hidden" name="search"
+                                                        value="{{ request('search') }}">
+                                                    <input type="hidden" name="status"
+                                                        value="{{ request('status') }}">
+                                                    <input type="hidden" name="sort_by"
+                                                        value="{{ request('sort_by') }}">
                                                     <input type="hidden" name="order" value="{{ request('order') }}">
                                                 </form>
                                                 <span class="text-muted">data per halaman</span>
                                             </div>
-                                            
+
                                             <div class="text-muted">
                                                 Menampilkan {{ $cabors->count() }} dari {{ $cabors->total() }} total data
-                                                @if(request('search') || request('status'))
+                                                @if (request('search') || request('status'))
                                                     <br><small class="text-info">
-                                                        (Hasil pencarian/filter: 
-                                                        @if(request('search'))
+                                                        (Hasil pencarian/filter:
+                                                        @if (request('search'))
                                                             "{{ request('search') }}"
                                                         @endif
-                                                        @if(request('status'))
+                                                        @if (request('status'))
                                                             Status: {{ request('status') }}
                                                         @endif
                                                         )
@@ -857,7 +877,7 @@
                                                 @endphp
                                                 {{ $from }}-{{ $to }} of {{ $cabors->total() }}
                                             </div>
-                                            
+
                                             @if ($cabors->hasPages())
                                                 <!-- Previous Page Link -->
                                                 @if ($cabors->onFirstPage())
@@ -865,7 +885,8 @@
                                                         <i class="fas fa-chevron-left"></i>
                                                     </span>
                                                 @else
-                                                    <a href="{{ $cabors->appends(request()->query())->previousPageUrl() }}" class="pagination-arrow">
+                                                    <a href="{{ $cabors->appends(request()->query())->previousPageUrl() }}"
+                                                        class="pagination-arrow">
                                                         <i class="fas fa-chevron-left"></i>
                                                     </a>
                                                 @endif
@@ -876,9 +897,10 @@
                                                     $end = min($cabors->lastPage(), $cabors->currentPage() + 2);
                                                 @endphp
 
-                                                @if($start > 1)
-                                                    <a href="{{ $cabors->appends(request()->query())->url(1) }}" class="pagination-number">1</a>
-                                                    @if($start > 2)
+                                                @if ($start > 1)
+                                                    <a href="{{ $cabors->appends(request()->query())->url(1) }}"
+                                                        class="pagination-number">1</a>
+                                                    @if ($start > 2)
                                                         <span class="pagination-dots">...</span>
                                                     @endif
                                                 @endif
@@ -887,20 +909,23 @@
                                                     @if ($page == $cabors->currentPage())
                                                         <span class="pagination-number active">{{ $page }}</span>
                                                     @else
-                                                        <a href="{{ $cabors->appends(request()->query())->url($page) }}" class="pagination-number">{{ $page }}</a>
+                                                        <a href="{{ $cabors->appends(request()->query())->url($page) }}"
+                                                            class="pagination-number">{{ $page }}</a>
                                                     @endif
                                                 @endfor
 
-                                                @if($end < $cabors->lastPage())
-                                                    @if($end < $cabors->lastPage() - 1)
+                                                @if ($end < $cabors->lastPage())
+                                                    @if ($end < $cabors->lastPage() - 1)
                                                         <span class="pagination-dots">...</span>
                                                     @endif
-                                                    <a href="{{ $cabors->appends(request()->query())->url($cabors->lastPage()) }}" class="pagination-number">{{ $cabors->lastPage() }}</a>
+                                                    <a href="{{ $cabors->appends(request()->query())->url($cabors->lastPage()) }}"
+                                                        class="pagination-number">{{ $cabors->lastPage() }}</a>
                                                 @endif
 
                                                 <!-- Next Page Link -->
                                                 @if ($cabors->hasMorePages())
-                                                    <a href="{{ $cabors->appends(request()->query())->nextPageUrl() }}" class="pagination-arrow">
+                                                    <a href="{{ $cabors->appends(request()->query())->nextPageUrl() }}"
+                                                        class="pagination-arrow">
                                                         <i class="fas fa-chevron-right"></i>
                                                     </a>
                                                 @else
@@ -976,27 +1001,27 @@
             // Apply filters button
             $('#apply-filters').on('click', function() {
                 console.log('Applying filters...');
-                
+
                 // Update the search form with filter values
                 const statusValue = $('#filter-status').val();
                 $('#searchForm input[name="status"]').val(statusValue);
-                
+
                 // Submit the search form
-                $('#searchForm').submit();
+                $('#searchForm').submit(); // <-- INI JUGA MENYEBABKAN RELOAD
             });
 
             // Reset filters button
             $('#reset-filters').on('click', function() {
                 console.log('Resetting filters...');
-                
+
                 // Clear search input
                 $('#search').val('');
                 $('#filter-status').val('');
-                
+
                 // Clear hidden inputs
                 $('#searchForm input[name="search"]').val('');
                 $('#searchForm input[name="status"]').val('');
-                
+
                 // Submit to reset all filters
                 window.location.href = "{{ route('admin.konfigurasi.cabang-olahraga.index') }}";
             });
@@ -1019,14 +1044,14 @@
         // Function to update filter count badge
         function updateFilterCountBadge() {
             const activeFilters = [];
-            
+
             if ($('#filter-status').val()) {
                 activeFilters.push('status');
             }
-            
+
             const count = activeFilters.length;
             const badge = $('#filter-count');
-            
+
             if (count > 0) {
                 badge.text(count).removeClass('d-none');
             } else {
@@ -1038,7 +1063,7 @@
         function showActiveFilters() {
             const hasSearch = "{{ request('search') }}" !== "";
             const hasFilter = "{{ request('status') }}" !== "";
-            
+
             if (hasSearch || hasFilter) {
                 console.log('Active filters detected:', {
                     search: "{{ request('search') }}",

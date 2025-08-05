@@ -10,26 +10,26 @@ use Illuminate\Support\Facades\Storage;
 
 class AtletController extends Controller
 {
-   public function index(Request $request)
-{
-    $perPage = $request->get('per_page', 10);
+    public function index(Request $request)
+    {
+        $perPage = $request->get('per_page', 10);
 
-    $atlets = Atlet::with('prestasiTerbaru')
-               ->select('*')
-               ->selectRaw("
+        $atlets = Atlet::with('prestasiTerbaru')
+            ->select('*')
+            ->selectRaw("
                    CASE
                        WHEN jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
                        WHEN jenis_kelamin = 'Perempuan' THEN 'Perempuan'
                        ELSE jenis_kelamin
                    END as jenis_kelamin
                ")
-               ->orderBy('created_at', 'DESC')
-               ->paginate($perPage);
+            ->orderBy('created_at', 'DESC')
+            ->paginate($perPage);
 
-    $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
+        $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
 
-    return view('admin.atlet.index', compact('atlets', 'allCabor'));
-}
+        return view('admin.atlet.index', compact('atlets', 'allCabor'));
+    }
 
     public function create()
     {
@@ -58,9 +58,9 @@ class AtletController extends Controller
 
         Atlet::create($validated);
 
-return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('OK', 'Atlet berhasil ditambahkan.')
-    ->with('action', 'store');
+        return redirect()->route('admin.konfigurasi.atlet.index')
+            ->with('OK', 'Atlet berhasil ditambahkan.')
+            ->with('action', 'store');
     }
 
     public function edit($id)
@@ -97,9 +97,9 @@ return redirect()->route('admin.konfigurasi.atlet.index')
 
         $atlet->update($validated);
 
-    return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('OK', 'Data atlet berhasil diperbarui.')
-    ->with('action', 'update');
+        return redirect()->route('admin.konfigurasi.atlet.index')
+            ->with('OK', 'Data atlet berhasil diperbarui.')
+            ->with('action', 'update');
     }
 
     public function destroy($id)
@@ -114,14 +114,20 @@ return redirect()->route('admin.konfigurasi.atlet.index')
         $atlet->delete();
 
 
-return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('OK', 'Data atlet berhasil dihapus.')
-    ->with('action', 'destroy');
+        return redirect()->route('admin.konfigurasi.atlet.index')
+            ->with('OK', 'Data atlet berhasil dihapus.')
+            ->with('action', 'destroy');
     }
 
     public function show($id)
     {
         $atlet = Atlet::with('prestasis')->findOrFail($id);
-        return view('admin.atlet.show', compact('atlet'));
+
+        // Tentukan URL kembali
+        $backUrl = request('back') === 'cabor'
+            ? route('admin.konfigurasi.cabang-olahraga.show', $atlet->cabor_id)
+            : route('admin.konfigurasi.atlet.index');
+
+        return view('admin.atlet.show', compact('atlet', 'backUrl'));
     }
 }

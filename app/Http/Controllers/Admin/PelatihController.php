@@ -44,7 +44,9 @@ class PelatihController extends Controller
         // Only keep a consistent default order for initial load
         $query->orderByDesc('pelatih.created_at');
 
-        $pelatih = $query->paginate($perPage)->withQueryString();
+        $pelatih = Pelatih::orderByDesc('created_at')
+            ->paginate($perPage)
+            ->withQueryString();
 
         // Preserve query parameters in pagination links
         $pelatih->appends($request->query());
@@ -93,13 +95,15 @@ class PelatihController extends Controller
     }
 
     public function show($id)
-    {
-        $pelatih = Pelatih::with(['cabangOlahraga', 'prestasis' => function ($q) {
-            $q->orderByDesc('tahun');
-        }])->findOrFail($id);
+{
+    $pelatih = Pelatih::with('prestasis')->findOrFail($id);
 
-        return view('admin.pelatih.show', compact('pelatih'));
-    }
+    $backUrl = request('back') === 'cabor'
+        ? route('admin.konfigurasi.cabang-olahraga.show', $pelatih->cabor_id)
+        : route('admin.konfigurasi.pelatih.index');
+
+    return view('admin.pelatih.show', compact('pelatih', 'backUrl'));
+}
 
     public function edit($id)
     {

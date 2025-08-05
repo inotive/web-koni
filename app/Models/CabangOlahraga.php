@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class CabangOlahraga extends Model
 {
@@ -17,23 +18,47 @@ class CabangOlahraga extends Model
         'terakhir_update',
     ];
 
+    protected $casts = [
+        'tanggal_pembentukan' => 'date',
+        'terakhir_update' => 'datetime'
+    ];
+
+    // ✅ Relasi dengan foreign key yang konsisten
     public function atlets()
     {
         return $this->hasMany(Atlet::class, 'cabor_id');
+        return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
     }
 
     public function pelatihs()
     {
         return $this->hasMany(Pelatih::class, 'cabor_id');
+        return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
     }
 
-        public function getJumlahAtletAttribute()
+    // ✅ Accessor dengan eager loading untuk optimasi
+    public function jumlahAtlet(): Attribute
     {
-        return $this->atlets()->count();
+        return Attribute::make(
+            get: fn () => $this->atlets()->count(),
+        )->shouldCache();
     }
 
-    public function getJumlahPelatihAttribute()
+    public function jumlahPelatih(): Attribute
     {
-        return $this->pelatihs()->count();
+        return Attribute::make(
+            get: fn () => $this->pelatihs()->count(),
+        )->shouldCache();
+    }
+
+    // ✅ Relasi ke prestasi jika diperlukan
+    public function prestasis()
+    {
+        return $this->hasManyThrough(
+            Prestasi::class,
+            Atlet::class,
+            'cabang_olahraga_id',
+            'atlet_id'
+        );
     }
 }

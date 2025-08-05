@@ -18,9 +18,9 @@ class CabangOlahragaController extends Controller
 
         // PERBAIKAN: Search functionality - Konsisten menggunakan 'search'
         if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nama_cabor', 'like', '%' . $search . '%')
-                  ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
+                    ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
             });
         }
 
@@ -32,16 +32,16 @@ class CabangOlahragaController extends Controller
         // PERBAIKAN: Sorting dengan default yang lebih baik
         $sortBy = $request->input('sort_by', 'terakhir_update');
         $order = $request->input('order', 'desc');
-        
+
         // Validasi sort field untuk keamanan
         $allowedSortFields = [
-            'nama_cabor', 
-            'ketua_penanggung_jawab', 
-            'status', 
-            'tanggal_pembentukan', 
+            'nama_cabor',
+            'ketua_penanggung_jawab',
+            'status',
+            'tanggal_pembentukan',
             'terakhir_update'
         ];
-        
+
         if (in_array($sortBy, $allowedSortFields)) {
             $query->orderBy($sortBy, $order);
         } else {
@@ -50,7 +50,7 @@ class CabangOlahragaController extends Controller
 
         // PERBAIKAN: Per page handling yang lebih robust
         $perPage = (int) $request->get('per_page', 10);
-        
+
         // Validasi perPage
         $allowedPerPage = [10, 25, 50, 100];
         if (!in_array($perPage, $allowedPerPage)) {
@@ -60,13 +60,13 @@ class CabangOlahragaController extends Controller
         // PERBAIKAN: Paginate dengan append query yang konsisten
         /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator $cabors */
         $cabors = $query->paginate($perPage);
-        
+
         // Tambahkan semua query parameters ke pagination links
         $cabors->appends($request->only([
-            'search', 
-            'status', 
-            'sort_by', 
-            'order', 
+            'search',
+            'status',
+            'sort_by',
+            'order',
             'per_page'
         ]));
 
@@ -117,11 +117,21 @@ class CabangOlahragaController extends Controller
             ->with('cabor_created', 'Cabang olahraga berhasil ditambahkan.');
     }
 
-    public function show($id)
-    {
-        $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
-        return view('admin.cabang-olahraga.show', compact('cabor'));
-    }
+    public function show($id, Request $request)
+{
+    $cabor = CabangOlahraga::findOrFail($id);
+
+    // Pagination untuk atlet
+    $atlets = $cabor->atlets()
+        ->with('prestasiTerbaru')
+        ->paginate(10, ['*'], 'atlet_page');
+
+    // Pagination untuk pelatih
+    $pelatihs = $cabor->pelatihs()
+        ->paginate(10, ['*'], 'pelatih_page');
+
+    return view('admin.cabang-olahraga.show', compact('cabor', 'atlets', 'pelatihs'));
+}
 
     public function edit($id)
     {
@@ -166,19 +176,19 @@ class CabangOlahragaController extends Controller
     {
         try {
             $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
-            
+
             // Cek apakah masih ada atlet yang terkait
             $jumlahAtlet = $cabor->atlets()->count();
             $jumlahPelatih = $cabor->pelatihs()->count();
             $totalData = $jumlahAtlet + $jumlahPelatih;
-            
+
             if ($totalData > 0) {
                 $pesanError = "Tidak dapat menghapus cabang olahraga '{$cabor->nama_cabor}' karena masih ada data terkait:";
-                
+
                 if ($jumlahAtlet > 0) {
                     $pesanError .= " {$jumlahAtlet} atlet";
                 }
-                
+
                 if ($jumlahPelatih > 0) {
                     if ($jumlahAtlet > 0) {
                         $pesanError .= " dan {$jumlahPelatih} pelatih";
@@ -186,32 +196,31 @@ class CabangOlahragaController extends Controller
                         $pesanError .= " {$jumlahPelatih} pelatih";
                     }
                 }
-                
+
                 $pesanError .= " yang terdaftar. Silakan pindahkan atau hapus data tersebut terlebih dahulu, atau nonaktifkan cabang olahraga ini.";
-                
+
                 return redirect()->back()->with('error', $pesanError);
             }
-            
+
             // Jika tidak ada data terkait, lanjutkan penghapusan
             if ($cabor->icon_cabor) {
                 Storage::disk('public')->delete($cabor->icon_cabor);
             }
-            
+
             $cabor->delete();
-            
+
             return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
                 ->with('cabor_deleted', 'Cabang olahraga berhasil dihapus.');
-                
         } catch (\Illuminate\Database\QueryException $e) {
             // Tangkap error foreign key constraint dari database
             if ($e->getCode() == '23000') {
-                return redirect()->back()->with('error', 
+                return redirect()->back()->with(
+                    'error',
                     'Tidak dapat menghapus cabang olahraga ini karena masih ada data terkait. Silakan hapus data terkait terlebih dahulu.'
                 );
             }
-            
+
             return redirect()->back()->with('error', 'Gagal menghapus cabang olahraga: ' . $e->getMessage());
-            
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus: ' . $e->getMessage());
         }
@@ -228,15 +237,14 @@ class CabangOlahragaController extends Controller
     {
         try {
             $cabor = CabangOlahraga::findOrFail($id);
-            
+
             $cabor->update([
                 'status' => 'Tidak Aktif',
                 'terakhir_update' => now()
             ]);
-            
+
             return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
                 ->with('cabor_updated', "Cabang olahraga '{$cabor->nama_cabor}' berhasil dinonaktifkan.");
-                
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menonaktifkan cabang olahraga: ' . $e->getMessage());
         }
@@ -247,11 +255,11 @@ class CabangOlahragaController extends Controller
     {
         try {
             $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
-            
+
             $jumlahAtlet = $cabor->atlets()->count();
             $jumlahPelatih = $cabor->pelatihs()->count();
             $totalData = $jumlahAtlet + $jumlahPelatih;
-            
+
             return response()->json([
                 'can_delete' => $totalData === 0,
                 'dependencies' => [
@@ -259,11 +267,10 @@ class CabangOlahragaController extends Controller
                     'pelatih' => $jumlahPelatih,
                     'total' => $totalData
                 ],
-                'message' => $totalData > 0 ? 
-                    "Masih ada {$jumlahAtlet} atlet dan {$jumlahPelatih} pelatih yang terkait" : 
+                'message' => $totalData > 0 ?
+                    "Masih ada {$jumlahAtlet} atlet dan {$jumlahPelatih} pelatih yang terkait" :
                     'Dapat dihapus'
             ]);
-            
         } catch (\Exception $e) {
             return response()->json([
                 'error' => true,
@@ -277,34 +284,33 @@ class CabangOlahragaController extends Controller
     {
         try {
             DB::beginTransaction();
-            
+
             $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
-            
+
             // Hitung jumlah data yang akan dihapus
             $jumlahAtlet = $cabor->atlets()->count();
             $jumlahPelatih = $cabor->pelatihs()->count();
-            
+
             // Hapus semua atlet terkait
             $cabor->atlets()->delete();
-            
+
             // Hapus semua pelatih terkait  
             $cabor->pelatihs()->delete();
-            
+
             // Hapus ikon
             if ($cabor->icon_cabor) {
                 Storage::disk('public')->delete($cabor->icon_cabor);
             }
-            
+
             // Hapus cabor
             $cabor->delete();
-            
+
             DB::commit();
-            
+
             $pesan = "Cabang olahraga '{$cabor->nama_cabor}' beserta {$jumlahAtlet} atlet dan {$jumlahPelatih} pelatih berhasil dihapus.";
-            
+
             return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
                 ->with('cabor_deleted', $pesan);
-                
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->back()->with('error', 'Gagal menghapus: ' . $e->getMessage());
@@ -316,23 +322,23 @@ class CabangOlahragaController extends Controller
     {
         // Logic untuk export data berdasarkan filter aktif
         // Bisa menggunakan Excel/CSV
-        
+
         $query = CabangOlahraga::with(['atlets', 'pelatihs']);
-        
+
         // Terapkan filter yang sama seperti di index
         if ($search = $request->input('search')) {
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('nama_cabor', 'like', '%' . $search . '%')
-                  ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
+                    ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
             });
         }
-        
+
         if ($status = $request->input('status')) {
             $query->where('status', $status);
         }
-        
+
         $cabors = $query->get();
-        
+
         // Return export file (implementasi sesuai kebutuhan)
         // return Excel::download(new CabangOlahragaExport($cabors), 'cabang-olahraga.xlsx');
     }
@@ -435,9 +441,16 @@ class CabangOlahragaController extends Controller
 
         // Resize dan copy gambar
         \imagecopyresampled(
-            $dest, $source,
-            $dstX, $dstY, $srcX, $srcY,
-            $newWidth, $newHeight, $originalWidth, $originalHeight
+            $dest,
+            $source,
+            $dstX,
+            $dstY,
+            $srcX,
+            $srcY,
+            $newWidth,
+            $newHeight,
+            $originalWidth,
+            $originalHeight
         );
 
         // Pastikan direktori ada

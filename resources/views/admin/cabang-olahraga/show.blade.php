@@ -7,6 +7,7 @@
 @section('subSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
 @section('currentSection', 'Detail ')
 
+
 @section('breadcrumb-title')
     {{-- Halaman Detail Cabang Olahraga --}}
 @endsection
@@ -193,6 +194,7 @@
                                             <th class="min-w-80px">Foto</th>
                                             <th class="min-w-150px">Nama Atlet</th>
                                             <th class="min-w-200px">Tempat & Tanggal Lahir</th>
+                                            <th class="min-w-200px">Alamat Domisili</th>
                                             <th class="min-w-120px">Jenis Kelamin</th>
                                             <th class="min-w-80px">Usia</th>
                                             <th class="min-w-180px">Prestasi Terbaru</th>
@@ -227,12 +229,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div class="d-flex flex-column">
-                                                        <span
-                                                            class="text-gray-800 fw-bold mb-1">{{ $atlet->nama ?? '-' }}</span>
-                                                        <span
-                                                            class="text-muted fs-7">{{ Str::limit($atlet->alamat_domisili ?? '-', 30) }}</span>
-                                                    </div>
+                                                    <span class="text-gray-800 fw-bold">{{ $atlet->nama ?? '-' }}</span>
                                                 </td>
                                                 <td>
                                                     <div class="text-gray-800 fw-semibold">
@@ -240,6 +237,14 @@
                                                         <div class="text-muted fs-7">
                                                             {{ isset($atlet->tanggal_lahir) ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->translatedFormat('d M Y') : '-' }}
                                                         </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-start">
+                                                        <i class="ki-duotone ki-geolocation fs-5 text-muted mt-1 me-2"></i>
+                                                        <span class="text-gray-600 fs-7">
+                                                            {{ Str::limit($atlet->alamat ?? '-', 60) }}
+                                                        </span>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -252,39 +257,30 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span
-                                                        class="text-gray-600">{{ Str::limit($atlet->prestasi_terbaru ?? '-', 60) }}</span>
+                                                    <span class="text-gray-600">
+                                                        {{ Str::limit(optional($atlet->prestasiTerbaru)->nama_prestasi ?? '-', 60) }}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex flex-column">
                                                         @if ($atlet->no_telepon)
                                                             <span class="text-gray-800 fs-7 mb-1">
-                                                                <i class="ki-duotone ki-phone fs-6 me-1">
-                                                                    <span class="path1"></span>
-                                                                    <span class="path2"></span>
-                                                                </i>
+                                                                <i class="ki-duotone ki-phone fs-6 me-1"></i>
                                                                 {{ $atlet->no_telepon }}
                                                             </span>
                                                         @endif
                                                         @if ($atlet->email)
                                                             <span class="text-gray-600 fs-7">
-                                                                <i class="ki-duotone ki-sms fs-6 me-1">
-                                                                    <span class="path1"></span>
-                                                                    <span class="path2"></span>
-                                                                </i>
+                                                                <i class="ki-duotone ki-sms fs-6 me-1"></i>
                                                                 {{ Str::limit($atlet->email, 20) }}
                                                             </span>
                                                         @endif
                                                     </div>
                                                 </td>
                                                 <td class="text-end pe-6">
-                                                    <a href="{{ route('admin.konfigurasi.atlet.show', $atlet->id ?? '#') }}"
+                                                    <a href="{{ route('admin.konfigurasi.atlet.show', [$atlet->id, 'back' => 'cabor']) }}"
                                                         class="btn btn-sm btn-light-primary">
-                                                        <i class="ki-duotone ki-eye fs-5">
-                                                            <span class="path1"></span>
-                                                            <span class="path2"></span>
-                                                            <span class="path3"></span>
-                                                        </i>
+                                                        <i class="ki-duotone ki-eye fs-5"></i>
                                                         <span class="d-none d-md-inline ms-1">Lihat Profil</span>
                                                     </a>
                                                 </td>
@@ -366,6 +362,7 @@
                                             <th class="min-w-80px">Foto</th>
                                             <th class="min-w-150px">Nama Pelatih</th>
                                             <th class="min-w-200px">Tempat & Tanggal Lahir</th>
+                                            <th class="min-w-200px">Alamat Domisili</th>
                                             <th class="min-w-120px">Jenis Kelamin</th>
                                             <th class="min-w-80px">Usia</th>
                                             <th class="min-w-180px">Prestasi/Sertifikasi</th>
@@ -403,8 +400,7 @@
                                                     <div class="d-flex flex-column">
                                                         <span
                                                             class="text-gray-800 fw-bold mb-1">{{ $pelatih->nama ?? '-' }}</span>
-                                                        <span
-                                                            class="text-muted fs-7">{{ Str::limit($pelatih->alamat_domisili ?? '-', 30) }}</span>
+                                                        
                                                     </div>
                                                 </td>
                                                 <td>
@@ -413,6 +409,14 @@
                                                         <div class="text-muted fs-7">
                                                             {{ isset($pelatih->tanggal_lahir) ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->translatedFormat('d M Y') : '-' }}
                                                         </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-start">
+                                                        <i class="ki-duotone ki-geolocation fs-5 text-muted mt-1 me-2"></i>
+                                                        <span class="text-gray-600 fs-7">
+                                                            {{ Str::limit($pelatih->alamat_domisili ?? '-', 60) }}
+                                                        </span>
                                                     </div>
                                                 </td>
                                                 <td>

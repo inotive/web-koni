@@ -635,7 +635,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" style="text-align: center; padding: 20px;">Belum ada data prestasi.</td>
+                                <td colspan="3" style="text-align: center; padding: 20px;">Belum ada data prestasi.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -644,7 +645,9 @@
         </div>
 
         <div class="detail-actions">
-            <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn-secondary">Kembali</a>
+            <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn btn-light-primary">
+                <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
+            </a>
         </div>
     </div>
 @endsection

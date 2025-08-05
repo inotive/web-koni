@@ -10,7 +10,7 @@
 @section('content')
     <style>
         body {
-        background-color: #f5f5f5 !important;
+            background-color: #f5f5f5 !important;
         }
 
         .main-content {
@@ -18,6 +18,7 @@
             min-height: 100vh;
             padding: 20px 10px 40px;
         }
+
         .detail-container {
             gap: 30px;
             width: 100%;
@@ -408,244 +409,246 @@
             }
         }
     </style>
-<div class="main-content">
-    <div class="detail-container">
-        <div class="detail-header">
-            <h1 class="detail-title">Profil Pelatih</h1>
-        </div>
-
-        <div class="detail-card">
-            <div class="detail-card-header">
-                <h2 class="detail-card-title">Personal Info</h2>
+    <div class="main-content">
+        <div class="detail-container">
+            <div class="detail-header">
+                <h1 class="detail-title">Profil Pelatih</h1>
             </div>
 
-            <div class="detail-body">
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Foto</p>
-                    </div>
-                    <div class="detail-photo-container">
-                        @if ($pelatih->foto)
-                            <div class="detail-photo-wrapper">
-                                <img src="{{ asset('storage/' . $pelatih->foto) }}" alt="Foto Pelatih" class="detail-photo">
-                            </div>
-                        @else
-                            <div class="detail-photo-wrapper">
-                                <div
-                                    style="width: 60px; height: 60px; background-color: #f1f1f4; display: flex; align-items: center; justify-content: center;">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h2 class="detail-card-title">Personal Info</h2>
+                </div>
 
-                                    </svg>
+                <div class="detail-body">
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Foto</p>
+                        </div>
+                        <div class="detail-photo-container">
+                            @if ($pelatih->foto)
+                                <div class="detail-photo-wrapper">
+                                    <img src="{{ asset('storage/' . $pelatih->foto) }}" alt="Foto Pelatih"
+                                        class="detail-photo">
                                 </div>
-                            </div>
-                        @endif
-                    @php
-                        $caborNama = $pelatih->cabangOlahraga ? $pelatih->cabangOlahraga->nama_cabor : '-';
-                    @endphp
+                            @else
+                                <div class="detail-photo-wrapper">
+                                    <div
+                                        style="width: 60px; height: 60px; background-color: #f1f1f4; display: flex; align-items: center; justify-content: center;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+
+                                        </svg>
+                                    </div>
+                                </div>
+                            @endif
+                            @php
+                                $caborNama = $pelatih->cabangOlahraga ? $pelatih->cabangOlahraga->nama_cabor : '-';
+                            @endphp
+                        </div>
                     </div>
-                </div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Nama</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Nama</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->nama }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <p class="detail-value">{{ $pelatih->nama }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
+                    <div class="detail-divider"></div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Cabor</p>
+                        </div>
+                        <p class="detail-value">{{ $caborNama }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                </div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Cabor</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Email</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->email ?? '<span class="empty-value">-</span>' }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <p class="detail-value">{{ $caborNama }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
+                    <div class="detail-divider"></div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Ketersediaan</p>
+                        </div>
+                        <span class="availability-badge">Tersedia sekarang</span>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                </div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Email</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">No Telepon</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->no_telepon ?? '<span class="empty-value">-</span>' }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <p class="detail-value">{{ $pelatih->email ?? '<span class="empty-value">-</span>' }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
+                    <div class="detail-divider"></div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Tempat Lahir</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->tempat_lahir }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                </div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Ketersediaan</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Tanggal Lahir</p>
+                        </div>
+                        <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d M Y') }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <span class="availability-badge">Tersedia sekarang</span>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
+                    <div class="detail-divider"></div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Umur</p>
+                        </div>
+                        <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age }} Tahun</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                </div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">No Telepon</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Kelamin</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <p class="detail-value">{{ $pelatih->no_telepon ?? '<span class="empty-value">-</span>' }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
-                    </div>
-                </div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Alamat</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->alamat ?? 'Belum ada alamat yang tercantum' }}</p>
+                        <div class="add-address">
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Tempat Lahir</p>
-                    </div>
-                    <p class="detail-value">{{ $pelatih->tempat_lahir }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-divider"></div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Tanggal Lahir</p>
-                    </div>
-                    <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d M Y') }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-divider"></div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Umur</p>
-                    </div>
-                    <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age }} Tahun</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-divider"></div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Kelamin</p>
-                    </div>
-                    <p class="detail-value">{{ $pelatih->kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-divider"></div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Alamat</p>
-                    </div>
-                    <p class="detail-value">{{ $pelatih->alamat ?? 'Belum ada alamat yang tercantum' }}</p>
-                    <div class="add-address">
-
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="detail-card">
-            <div class="detail-card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <b><h1 class="detail-card-title">Informasi Kejuaraan</h1></b>
-                {{-- <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+            <div class="detail-card">
+                <div class="detail-card-header"
+                    style="display: flex; justify-content: space-between; align-items: center;">
+                    <b>
+                        <h1 class="detail-card-title">Informasi Kejuaraan</h1>
+                    </b>
+                    {{-- <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                     data-bs-target="#tambahPrestasiModal">
                     Tambah
                 </button> --}}
-            </div>
+                </div>
 
-            <div class="detail-body" style="padding: 0;">
-                <table class="achievement-table">
-                    <thead>
-                        <tr>
-                            <th>Prestasi Kejuaraan</th>
-                            <th>Tempat & Tahun</th>
-                            <th>Medali</th>
-                            <th style="width: 100px; text-align: center;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($pelatih->prestasis as $prestasi)
+                <div class="detail-body" style="padding: 0;">
+                    <table class="achievement-table">
+                        <thead>
                             <tr>
-                                <td>{{ $prestasi->nama_prestasi }}</td>
-                                <td>{{ $prestasi->tempat }} - <strong>{{ $prestasi->tahun }}</strong></td>
-                                <td>
-                                    <div style="display: flex; align-items: center; gap: 8px;">
-                                        @php
-                                            $medalColor = '';
-                                            if ($prestasi->medali == 'Emas') {
-                                                $medalColor = '#FFD700';
-                                            }
-                                            elseif ($prestasi->medali == 'Perak') {
-                                                $medalColor = '#C0C0C0';
-                                            }
-                                            elseif ($prestasi->medali == 'Perunggu') {
-                                                $medalColor = '#CD7F32';
-                                            }
-                                        @endphp
-                                        <svg class="achievement-icon" viewBox="0 0 24 24"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="12" cy="12" r="10" fill="{{ $medalColor }}"
-                                                stroke="#4A5568" stroke-width="0.5" />
-                                            <path
-                                                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                                                fill="white" opacity="0.8" />
-                                        </svg>
-                                        <strong>{{ $prestasi->medali }}</strong>
-                                    </div>
-                                </td>
-                                <td style="text-align: center;">
-                                    {{-- <form
+                                <th>Prestasi Kejuaraan</th>
+                                <th>Tempat & Tahun</th>
+                                <th>Medali</th>
+                                <th style="width: 100px; text-align: center;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($pelatih->prestasis as $prestasi)
+                                <tr>
+                                    <td>{{ $prestasi->nama_prestasi }}</td>
+                                    <td>{{ $prestasi->tempat }} - <strong>{{ $prestasi->tahun }}</strong></td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            @php
+                                                $medalColor = '';
+                                                if ($prestasi->medali == 'Emas') {
+                                                    $medalColor = '#FFD700';
+                                                } elseif ($prestasi->medali == 'Perak') {
+                                                    $medalColor = '#C0C0C0';
+                                                } elseif ($prestasi->medali == 'Perunggu') {
+                                                    $medalColor = '#CD7F32';
+                                                }
+                                            @endphp
+                                            <svg class="achievement-icon" viewBox="0 0 24 24"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <circle cx="12" cy="12" r="10" fill="{{ $medalColor }}"
+                                                    stroke="#4A5568" stroke-width="0.5" />
+                                                <path
+                                                    d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                                                    fill="white" opacity="0.8" />
+                                            </svg>
+                                            <strong>{{ $prestasi->medali }}</strong>
+                                        </div>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        {{-- <form
                                         action="{{ route('admin.prestasi.destroy', [$pelatih->id, $prestasi->id]) }}"
                                         method="POST"
                                         onsubmit="return confirm('Anda yakin ingin menghapus prestasi ini?');">
@@ -653,30 +656,32 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
                                     </form> --}}
-                                    {{-- <form action="{{ route('admin.konfigurasi.prestasi.destroy', $prestasi->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus prestasi ini?')">
+                                        {{-- <form action="{{ route('admin.konfigurasi.prestasi.destroy', $prestasi->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus prestasi ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
                                     </form> --}}
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" style="text-align: center; padding: 20px;">Belum ada data prestasi.
-                                    Silakan tambahkan di menu kejuaraan.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" style="text-align: center; padding: 20px;">Belum ada data prestasi.
+                                        Silakan tambahkan di menu kejuaraan.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="detail-actions">
+                <a href="{{ route('admin.konfigurasi.pelatih.index') }}" class="btn btn-light-primary">
+                    <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
+                </a>
             </div>
         </div>
 
-        {{-- <div class="detail-actions">
-            <a href="{{ route('admin.konfigurasi.pelatih.index') }}" class="btn-secondary">Kembali</a>
-        </div> --}}
-    </div>
-
-    {{-- <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" aria-labelledby="tambahPrestasiModalLabel"
+        {{-- <div class="modal fade" id="tambahPrestasiModal" tabindex="-1" aria-labelledby="tambahPrestasiModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -719,5 +724,5 @@
             </div>
         </div>
     </div> --}}
-</div>
+    </div>
 @endsection

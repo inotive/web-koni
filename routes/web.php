@@ -18,9 +18,9 @@ use App\Http\Controllers\Admin\ManajemenRKAController;
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| Di sini Anda dapat mendaftarkan rute web untuk aplikasi Anda. Rute-rute ini
+| akan dimuat oleh RouteServiceProvider dan semuanya akan ditetapkan ke
+| grup middleware "web". Buat sesuatu yang hebat!
 |
 */
 
@@ -64,9 +64,9 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
             ->name('pelatih.prestasi.store');
 
-        // PERBAIKAN: Cabang Olahraga Routes - Dipisahkan dan Diperbaiki
+        // PERBAIKAN: Rute Cabang Olahraga - Dipisahkan dan Diperbaiki
         Route::prefix('cabang-olahraga')->name('cabang-olahraga.')->group(function () {
-            // Standard CRUD routes
+            // Rute CRUD standar
             Route::get('/', [CabangOlahragaController::class, 'index'])->name('index');
             Route::get('/create', [CabangOlahragaController::class, 'create'])->name('create');
             Route::post('/', [CabangOlahragaController::class, 'store'])->name('store');
@@ -75,7 +75,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::put('/{cabang_olahraga}', [CabangOlahragaController::class, 'update'])->name('update');
             Route::delete('/{cabang_olahraga}', [CabangOlahragaController::class, 'destroy'])->name('destroy');
 
-            // TAMBAHAN: Routes untuk fitur khusus CabangOlahraga
+            // TAMBAHAN: Rute untuk fitur khusus CabangOlahraga
             Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
             Route::get('/export', [CabangOlahragaController::class, 'export'])->name('export');
             Route::patch('/{cabang_olahraga}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
@@ -83,9 +83,9 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::delete('/{cabang_olahraga}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('force-destroy');
         });
 
-        // Prestasi Routes - Diperbaiki struktur
+        // Rute Prestasi - Diperbaiki struktur
         Route::prefix('prestasi')->name('prestasi.')->group(function () {
-            // Main prestasi routes
+            // Rute utama prestasi
             Route::get('/', [PrestasiController::class, 'index'])->name('index');
             Route::get('/create', [PrestasiController::class, 'create'])->name('create');
             Route::post('/', [PrestasiController::class, 'store'])->name('store');
@@ -107,7 +107,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             });
         });
 
-        // Pelatih additional routes
+        // Rute tambahan Pelatih
         Route::get('pelatih/{id}/deskripsi', [PelatihController::class, 'deskripsi'])
             ->name('pelatih.deskripsi');
     });
@@ -115,7 +115,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::prefix('bidang')->name('bidang.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'index'])->name('index');
 
-        // Prestasi routes
+        // Rute prestasi
         Route::prefix('prestasi')->name('prestasi.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
         });
@@ -123,7 +123,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::prefix('bidang')->name('bidang.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'index'])->name('index');
 
-            // Prestasi routes
+            // Rute prestasi
             Route::prefix('prestasi')->name('prestasi.')->group(function () {
                 Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
                 Route::get('/cabor-terukur', [App\Http\Controllers\Admin\BidangController::class, 'caborTerukur'])->name('Cabor Terukur');
@@ -142,7 +142,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     });
 });
 
-// TAMBAHAN: Route untuk API calls jika diperlukan (opsional)
+// TAMBAHAN: Rute untuk panggilan API jika diperlukan (opsional)
 Route::prefix('api/admin')->name('api.admin.')->middleware('auth')->group(function () {
     Route::prefix('cabang-olahraga')->name('cabang-olahraga.')->group(function () {
         Route::get('/search', [CabangOlahragaController::class, 'search'])->name('search');
