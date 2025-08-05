@@ -141,21 +141,26 @@ return redirect()->route('admin.konfigurasi.atlet.index')
     }
 
     public function destroy($id)
-    {
-        $atlet = Atlet::findOrFail($id);
+{
+    $atlet = Atlet::withCount('prestasis')->findOrFail($id);
 
-
-        if ($atlet->foto_atlet) {
-            Storage::disk('public')->delete($atlet->foto_atlet);
-        }
-
-        $atlet->delete();
-
-
-return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('OK', 'Data atlet berhasil dihapus.')
-    ->with('action', 'destroy');
+    if ($atlet->prestasis_count > 0) {
+        return redirect()
+            ->route('admin.konfigurasi.atlet.index')
+            ->with('error', "Gagal dihapus – atlet ini masih memiliki {$atlet->prestasis_count} prestasi.");
     }
+
+    if ($atlet->foto_atlet) {
+        Storage::disk('public')->delete($atlet->foto_atlet);
+    }
+
+    $atlet->delete();
+
+    return redirect()
+        ->route('admin.konfigurasi.atlet.index')
+        ->with('OK', 'Data atlet berhasil dihapus.')
+        ->with('action', 'destroy');
+}
 
     public function show($id)
     {

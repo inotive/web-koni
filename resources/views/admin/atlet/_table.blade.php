@@ -147,11 +147,12 @@
                                     title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <button class="btn btn-icon btn-sm btn-light-danger"
-                                    title="Hapus" onclick="destroyItem(this)"
-                                    data-route="{{ route('admin.konfigurasi.atlet.destroy', $item->id) }}">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
+                               <button type="button"
+        class="btn btn-icon btn-sm btn-light-danger btn-delete"
+        data-route="{{ route('admin.konfigurasi.atlet.destroy', $item->id) }}"
+        title="Hapus">
+    <i class="fa-solid fa-trash"></i>
+</button>
                             </div>
                         </td>
                     </tr>

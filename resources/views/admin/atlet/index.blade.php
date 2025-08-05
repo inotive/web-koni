@@ -661,6 +661,12 @@
                                                 loadTable(url.toString());
                                             }, 300);
                                         });
+                                    $(document).off('click', '.btn-delete')
+                                        .on('click', '.btn-delete', function(e) {
+                                            e.preventDefault();
+                                            const route = $(this).data('route');
+                                            destroyItem(this); // atau langsung panggil fungsi
+                                        });
 
                                     updateFilterBadge();
                                 }
@@ -682,6 +688,39 @@
 
                                 bindEvents();
                             });
+
+                            // Global function agar bisa dipanggil dari onclick
+                            window.destroyItem = function(button) {
+                                const route = $(button).data('route');
+                                Swal.fire({
+                                    title: "Apakah Anda Yakin?",
+                                    html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
+                                    icon: "warning",
+                                    showCancelButton: true,
+                                    reverseButtons: true,
+                                    confirmButtonColor: '#d33',
+                                    cancelButtonColor: '#3085d6',
+                                    confirmButtonText: 'Hapus!',
+                                    cancelButtonText: 'Batalkan!'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        const form = document.createElement('form');
+                                        form.method = 'POST';
+                                        form.action = route;
+                                        form.innerHTML = `
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="_method" value="DELETE">
+            `;
+                                        document.body.appendChild(form);
+                                        form.submit();
+                                    } else {
+                                        Swal.fire({
+                                            title: "Aksi Dibatalkan :)",
+                                            icon: "info",
+                                        });
+                                    }
+                                });
+                            };
                         </script>
                     @endif
                 @endsection
