@@ -945,6 +945,27 @@
     @include('admin.pelatih._tableprestasi')
 </div>
 
+<div class="detail-actions">
+    @php
+        $backUrl = route('admin.konfigurasi.pelatih.index');
+        $backText = 'Kembali ke Pelatih';
+
+        $referer = request()->headers->get('referer');
+
+        if (str_contains($referer, route('admin.konfigurasi.pelatih.index'))) {
+            $backUrl = route('admin.konfigurasi.prestasi.index');
+            $backText = 'Kembali ke Prestasi';
+        }
+
+        elseif (str_contains($referer, 'kejuaraan')) {
+            $backUrl = route('admin.konfigurasi.kejuaraan.index');
+            $backText = 'Kembali ke Kejuaraan';
+        }
+    @endphp
+
+    <a href="{{ $backUrl }}" class="btn-secondary">{{ $backText }}</a>
+</div>
+
 @endsection
 
 @section('script')
