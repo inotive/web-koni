@@ -61,6 +61,8 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);
         Route::resource('pelatih', PelatihController::class);
+        Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
+            ->name('pelatih.updateKetersediaan');
         Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
             ->name('pelatih.prestasi.store');
         Route::resource('cabang-olahraga', CabangOlahragaController::class);
@@ -85,7 +87,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     });
     route::prefix('laporan-lpj') -> name('laporan-lpj.')->group(function(){
         route::prefix('sekretariat') -> name('sekretariat.')->group(function(){
-        Route::get('/', [App\Http\Controllers\Admin\bidangController::class, 'indexSekretariat'])->name('index');
+        Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'indexSekretariat'])->name('index');
         });
         Route::prefix('bidang')->name('bidang.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'index'])->name('index');
