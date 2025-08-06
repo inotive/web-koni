@@ -6,7 +6,6 @@
 
 @section('content')
 
-    {{-- CSS styles tetap sama seperti sebelumnya --}}
     <style>
         body {
             background-color: #f5f5f5;
@@ -177,7 +176,7 @@
             color: #dc3545;
         }
 
-.pagination-arrow {
+        .pagination-arrow {
             color: #6c757d;
             text-decoration: none;
             padding: 6px 8px;
@@ -435,7 +434,6 @@
         </div>
     </div>
 
-    {{-- Modal Peringatan Delete untuk Atlet --}}
     <div class="modal fade" id="atletDeleteWarningModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -510,6 +508,13 @@
                             loadTable(url.toString());
                         });
 
+                    $(document).off('click', '.sort-link')
+                        .on('click', '.sort-link', function(e) {
+                            e.preventDefault();
+                            const url = $(this).attr('href');
+                            if (url) loadTable(url);
+                        });
+
                     $(document).off('click', '#apply-filters, #reset-filters')
                         .on('click', '#apply-filters, #reset-filters', function() {
                             const isReset = this.id === 'reset-filters';
@@ -575,7 +580,6 @@
                 bindEvents();
             });
 
-            // Global function untuk handle delete dengan peringatan prestasi
             window.destroyItem = function(button) {
                 const route = $(button).data('route');
                 Swal.fire({
@@ -608,7 +612,6 @@
                 });
             };
 
-            // Global function untuk menampilkan peringatan delete atlet dengan prestasi
             window.showAtletDeleteWarning = function(namaAtlet, jumlahPrestasi) {
                 document.getElementById('atletName').textContent = namaAtlet;
 
@@ -619,11 +622,8 @@
                     prestasiList.innerHTML += `<li>${jumlahPrestasi} prestasi yang tercatat</li>`;
                 }
 
-                // Set link untuk melihat prestasi (opsional - bisa disesuaikan dengan route Anda)
                 const viewBtn = document.getElementById('viewPrestasiBtn');
-                // viewBtn.href = route untuk melihat detail atlet atau prestasi
 
-                // Show modal
                 const modal = new bootstrap.Modal(document.getElementById('atletDeleteWarningModal'));
                 modal.show();
             };
