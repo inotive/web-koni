@@ -82,7 +82,7 @@ $query = Atlet::with(['cabangOlahraga', 'prestasis'])
 $allowedSorts = [
     'nama', 'tanggal_lahir', 'jenis_kelamin', 'alamat',
     'no_telepon', 'email', 'updated_at', 'created_at',
-    'latest_prestasi_at' 
+    'latest_prestasi_at'
 ];
 
 $sortBy   = $request->get('sort_by', 'created_at');
@@ -208,9 +208,21 @@ return redirect()->route('admin.konfigurasi.atlet.index')
         ->with('action', 'destroy');
 }
 
-    public function show($id)
-    {
-        $atlet = Atlet::with('prestasis')->findOrFail($id);
-        return view('admin.atlet.show', compact('atlet'));
+public function show(Atlet $atlet, Request $request)
+{
+    if ($request->has('from')) {
+        session(['detail_referrer' => $request->get('from')]);
+    } elseif (!session()->has('detail_referrer') && $request->header('referer')) {
+        $referrer = $request->header('referer');
+        if (str_contains($referrer, 'prestasi')) {
+            session(['detail_referrer' => 'prestasi']);
+        } else {
+            session(['detail_referrer' => 'atlet']);
+        }
     }
+
+    $atlet->load(['cabangOlahraga', 'prestasis']);
+
+    return view('admin.atlet.show', compact('atlet'));
+}
 }

@@ -1,4 +1,3 @@
-
 <div id="prestasi-table-container">
     @if (isset($prestasis) && $prestasis->isEmpty())
         <div class="empty-state">
@@ -40,8 +39,20 @@
                                             ? 'Laki-laki'
                                             : 'Perempuan';
                                 }
-                                // Calculate the row number correctly based on pagination
                                 $rowNumber = ($prestasis->currentPage() - 1) * $prestasis->perPage() + $loop->iteration;
+
+                                $detailRoute = '';
+                                if ($prestasi->subject_type === 'App\Models\Atlet') {
+                                    $detailRoute = route('admin.konfigurasi.atlet.show', [
+                                        'atlet' => $prestasi->subject->id,
+                                        'from' => 'prestasi'
+                                    ]);
+                                } elseif ($prestasi->subject_type === 'App\Models\Pelatih') {
+                                    $detailRoute = route('admin.konfigurasi.pelatih.show', [
+                                        'pelatih' => $prestasi->subject->id,
+                                        'from' => 'prestasi'
+                                    ]);
+                                }
                             @endphp
                             <tr data-tahun="{{ $prestasi->tahun }}" data-nama="{{ $prestasi->subject?->nama ?? '-' }}">
                                 <td>{{ $rowNumber }}</td>
@@ -114,13 +125,23 @@
 
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-1">
+                                        @if($detailRoute)
+                                            <a href="{{ $detailRoute }}"
+                                                class="btn btn-icon btn-sm btn-light-info"
+                                                title="Lihat Detail {{ class_basename($prestasi->subject_type) }}"
+                                                data-bs-toggle="tooltip">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+                                        @endif
                                         <a href="{{ route('admin.konfigurasi.prestasi.edit', $prestasi->id) }}"
                                             class="btn btn-icon btn-sm btn-light-warning"
-                                            title="Edit">
+                                            title="Edit"
+                                            data-bs-toggle="tooltip">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
                                         <button class="btn btn-icon btn-sm btn-light-danger btn-delete"
                                             title="Hapus"
+                                            data-bs-toggle="tooltip"
                                             data-route="{{ route('admin.konfigurasi.prestasi.destroy', $prestasi->id) }}">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>

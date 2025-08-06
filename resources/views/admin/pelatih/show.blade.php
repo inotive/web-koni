@@ -671,6 +671,8 @@
             </div>
         </div>
 
+
+
         {{-- <div class="detail-actions">
             <a href="{{ route('admin.konfigurasi.pelatih.index') }}" class="btn-secondary">Kembali</a>
         </div> --}}
