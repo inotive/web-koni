@@ -46,62 +46,27 @@
                     </a>
                 </div>
 
-                <!-- Manajemen Pengguna -->
-                @php
-                    $isManajemenPenggunaActive = request()->is('admin/manajemen-pengguna*') ||
-                                                 (isset($mainSection) && $mainSection == 'Manajemen Pengguna');
-                @endphp
-                <div class="menu-item">
-                    <a class="menu-link d-flex justify-content-between {{ $isManajemenPenggunaActive ? 'active bg-orange' : '' }}"
-                        data-bs-toggle="collapse" href="#submenu-pengguna" role="button"
-                        aria-expanded="{{ $isManajemenPenggunaActive ? 'true' : 'false' }}"
-                        aria-controls="submenu-pengguna">
-                        <span class="d-flex align-items-center">
-                            <span class="menu-icon">
-                                <i class="fa-solid fa-users fs-2 {{ $isManajemenPenggunaActive ? 'text-orange' : 'text-gray-600' }}"></i>
-                            </span>
-                            <span class="menu-title {{ $isManajemenPenggunaActive ? 'text-orange' : 'text-gray-800' }}">Manajemen Pengguna</span>
-                        </span>
-                        <i class="fa-solid {{ $isManajemenPenggunaActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isManajemenPenggunaActive ? 'text-orange' : 'text-gray-600' }}"></i>
-                    </a>
-                    <div class="collapse {{ $isManajemenPenggunaActive ? 'show' : '' }}" id="submenu-pengguna">
-                        <ul class="menu flex-column ms-5">
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'active' : '' }}"
-                                    href="{{ route('admin.manajemen-pengguna.pengguna.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Pengguna</span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active' : '' }}"
-                                    href="{{ route('admin.manajemen-pengguna.role.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Jabatan</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
                 <!-- Laporan LPJ -->
                 @php
-                    $isLaporanLPJActive = request()->is('admin/laporan-lpj*') ||
-                                         request()->is('admin/bidang*') ||
-                                         (isset($mainSection) && $mainSection == 'Laporan LPJ');
+                    $isLaporanLPJActive =
+                        request()->is('admin/laporan-lpj*') ||
+                        request()->is('admin/bidang*') ||
+                        (isset($mainSection) && $mainSection == 'Laporan LPJ');
                 @endphp
                 <div class="menu-item">
                     <a class="menu-link d-flex justify-content-between {{ $isLaporanLPJActive ? 'active bg-orange' : '' }}"
                         data-bs-toggle="collapse" href="#submenu-laporan" role="button"
-                        aria-expanded="{{ $isLaporanLPJActive ? 'true' : 'false' }}"
-                        aria-controls="submenu-laporan">
+                        aria-expanded="{{ $isLaporanLPJActive ? 'true' : 'false' }}" aria-controls="submenu-laporan">
                         <span class="d-flex align-items-center">
                             <span class="menu-icon">
-                                <i class="fa-solid fa-money-bill fs-2 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
+                                <i
+                                    class="fa-solid fa-money-bill fs-2 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
                             </span>
-                            <span class="menu-title {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-800' }}">Laporan LPJ</span>
+                            <span class="menu-title {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-800' }}">Laporan
+                                LPJ</span>
                         </span>
-                        <i class="fa-solid {{ $isLaporanLPJActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
+                        <i
+                            class="fa-solid {{ $isLaporanLPJActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
                     </a>
                     <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
                         <ul class="menu flex-column ms-5">
@@ -132,8 +97,9 @@
 
                 <!-- Atlet -->
                 @php
-                    $isAtletActive = request()->routeIs('admin.konfigurasi.atlet*') ||
-                                    (isset($mainSection) && $mainSection == 'Atlet');
+                    $isAtletActive =
+                        request()->routeIs('admin.konfigurasi.atlet*') ||
+                        (isset($mainSection) && $mainSection == 'Atlet');
                 @endphp
                 <div class="menu-item">
                     <a class="menu-link {{ $isAtletActive ? 'active' : '' }}"
@@ -149,8 +115,9 @@
 
                 <!-- Pelatih -->
                 @php
-                    $isPelatihActive = request()->routeIs('admin.konfigurasi.pelatih*') ||
-                                      (isset($mainSection) && $mainSection == 'Pelatih');
+                    $isPelatihActive =
+                        request()->routeIs('admin.konfigurasi.pelatih*') ||
+                        (isset($mainSection) && $mainSection == 'Pelatih');
                 @endphp
                 <div class="menu-item">
                     <a class="menu-link {{ $isPelatihActive ? 'active' : '' }}"
@@ -166,8 +133,9 @@
 
                 <!-- Cabang Olahraga -->
                 @php
-                    $isCabangOlahragaActive = request()->routeIs('admin.konfigurasi.cabang-olahraga*') ||
-                                             (isset($mainSection) && $mainSection == 'Cabang Olahraga');
+                    $isCabangOlahragaActive =
+                        request()->routeIs('admin.konfigurasi.cabang-olahraga*') ||
+                        (isset($mainSection) && $mainSection == 'Cabang Olahraga');
                 @endphp
                 <div class="menu-item">
                     <a class="menu-link {{ $isCabangOlahragaActive ? 'active' : '' }}"
@@ -177,14 +145,16 @@
                             <i class="fa-solid fa-basketball fs-2"
                                 style="color: {{ $isCabangOlahragaActive ? '#ffffff' : '#6c757d' }}"></i>
                         </span>
-                        <span class="menu-title {{ $isCabangOlahragaActive ? 'text-white' : 'text-gray-800' }}">Cabang Olahraga</span>
+                        <span class="menu-title {{ $isCabangOlahragaActive ? 'text-white' : 'text-gray-800' }}">Cabang
+                            Olahraga</span>
                     </a>
                 </div>
 
                 <!-- Kejuaraan/Prestasi -->
                 @php
-                    $isPrestasiActive = request()->routeIs('admin.konfigurasi.prestasi*') ||
-                                       (isset($mainSection) && $mainSection == 'Kejuaraan');
+                    $isPrestasiActive =
+                        request()->routeIs('admin.konfigurasi.prestasi*') ||
+                        (isset($mainSection) && $mainSection == 'Kejuaraan');
                 @endphp
                 <div class="menu-item">
                     <a class="menu-link {{ $isPrestasiActive ? 'active' : '' }}"
@@ -194,10 +164,32 @@
                             <i class="fa-solid fa-trophy fs-2"
                                 style="color: {{ $isPrestasiActive ? '#ffffff' : '#6c757d' }}"></i>
                         </span>
-                        <span class="menu-title {{ $isPrestasiActive ? 'text-white' : 'text-gray-800' }}">Kejuaraan</span>
+                        <span
+                            class="menu-title {{ $isPrestasiActive ? 'text-white' : 'text-gray-800' }}">Kejuaraan</span>
                     </a>
                 </div>
-
+                @php
+                    $isManajemenPenggunaActive =
+                        request()->is('admin/manajemen-pengguna*') ||
+                        (isset($mainSection) && $mainSection == 'Manajemen Pengguna');
+                @endphp
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'active' : '' }}"
+                        href="{{ route('admin.manajemen-pengguna.pengguna.index') }}">
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-users fs-2"></i>
+                        </span>
+                        <span class="menu-title">Pengguna</span>
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active' : '' }}"
+                        href="{{ route('admin.manajemen-pengguna.role.index') }}">
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-diagram-project fs-2"></i>
+                        </span> <span class="menu-title">Jabatan</span>
+                    </a>
+                </div>
             </div>
             <!--end::Menu-->
         </div>
