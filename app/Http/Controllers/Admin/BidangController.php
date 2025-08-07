@@ -19,7 +19,7 @@ class BidangController extends Controller
      */
     public function index()
     {
-        return view('admin.bidang.index');
+        return view('admin.laporan-lpj.bidang.index');
     }
 
     /**
@@ -27,7 +27,7 @@ class BidangController extends Controller
      */
     public function prestasiIndex()
     {
-        return view('admin.bidang.prestasi.index');
+        return view('admin.laporan-lpj.bidang.prestasi.index');
     }
 
     /**
@@ -36,58 +36,60 @@ class BidangController extends Controller
     public function mobilisasiSumberdayaIndex()
     {
         // Placeholder for Mobilisasi Sumberdaya page
-        return view('admin.bidang.mobilisasi-sumberdaya.index');
+        return view('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index');
     }
 
     public function hubunganAntarLembaga()
     {
         // Placeholder for Hubungan Antar Lembaga page
-        return view('admin.bidang.hubungan-antar-lembaga.index');
+        return view('admin.laporan-lpj.bidang.hubungan-antar-lembaga.index');
     }
 
     public function kesehatan()
     {
         // Placeholder for Kesehatan page
-        return view('admin.bidang.kesehatan.index');
+        return view('admin.laporan-lpj.bidang.kesehatan.index');
     }
 
     public function organisasi()
     {
         // Placeholder for Organisasi page
-        return view('admin.bidang.organisasi.index');
+        return view('admin.laporan-lpj.bidang.organisasi.index');
     }
 
     public function pembinaanHukum()
     {
         // Placeholder for Pembinaan Hukum page
-        return view('admin.bidang.pembinaan-hukum.index');
+        return view('admin.laporan-lpj.bidang.pembinaan-hukum.index');
     }
 
     public function sportScience()
     {
         // Placeholder for Sport Science & Iptek page
-        return view('admin.bidang.sport-science.index');
+        return view('admin.laporan-lpj.bidang.sport-science.index');
     }
 
     public function perencanaanProgram()
     {
         // Placeholder for Perencanaan Program page
-        return view('admin.bidang.perencanaan-program.index');
+        return view('admin.laporan-lpj.bidang.perencanaan-program.index');
     }
 
     public function caborAkurasi(){
-        return view ('admin.bidang.prestasi.Akurasi.index');
+        return view ('admin.laporan-lpj.bidang.prestasi.Akurasi.index');
     }
 
     public function caborBeladiri(){
-        return view ('admin.bidang.prestasi.Beladiri.index');
+        return view ('admin.laporan-lpj.bidang.prestasi.Beladiri.index');
     }
 
     public function caborPermainan(){
-        return view ('admin.bidang.prestasi.Permainan.index');
+        return view ('admin.laporan-lpj.bidang.prestasi.Permainan.index');
     }
 
     public function caborTerukur(){
-        return view ('admin.bidang.prestasi.Terukur.index');
+        return view ('admin.laporan-lpj.bidang.prestasi.Terukur.index');
     }
+
+
 }

@@ -21,7 +21,10 @@ class Pelatih extends Model
         'tanggal_lahir',
         'kelamin',
         'alamat',
-        'foto'
+        'foto',
+        'alamatkota',
+        'alamatprovinsi',
+        'ketersediaan'
     ];
 
     protected $casts = [
