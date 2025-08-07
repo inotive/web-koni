@@ -1,11 +1,11 @@
 {{-- File: resources/views/layouts/partials/header.blade.php --}}
 <div id="kt_header" class="header align-items-stretch">
     <!--begin::Brand-->
-    <div class="px-5 py-2 bg-white d-flex justify-content-between">
+    <div class="d-flex justify-content-between bg-white px-5 py-2">
         <!--begin::Logo-->
-        <div class="gap-3 px-4 d-flex align-items-center" style="width:220px; min-width:180px">
+        <div class="d-flex align-items-center gap-3 px-4" style="width:220px; min-width:180px">
             <a href="/" class="d-flex align-items-center">
-                <img alt="Logo" src="{{ asset('assets/img/koni.png') }}" class="h-45px me-2" />
+                <img alt="Logo" src="{{ asset('assets/img/koni.png') }}" class="h-60px" />
             </a>
         </div>
         <!--end::Logo-->
@@ -28,9 +28,9 @@
             <!--begin::Page title-->
             <div class="page-title d-flex align-items-center justify-content-start me-5">
                 <!--begin::Text Content-->
-                <div class="mx-2 d-flex flex-column">
+                <div class="d-flex flex-column mx-2">
                     <!--begin::Title-->
-                    <h1 class="mb-0 fw-bold fs-3" style="color: #F8285A;">
+                    <h1 class="fw-bold fs-3 mb-0" style="color: #F8285A;">
                         @yield('pageTitle')
                     </h1>
 
@@ -50,7 +50,7 @@
                             </li>
 
                             {{-- Separator --}}
-                            <i class="ki-duotone ki-right mx-1 px-0 text-muted"></i>
+                            <i class="ki-duotone ki-right text-muted mx-1 px-0"></i>
 
                             {{-- Sub Section - Conditional --}}
                             @hasSection('subSection')
@@ -63,11 +63,11 @@
                                         <span class="text-muted">@yield('subSection')</span>
                                     @endif
                                 </li>
-                                <i class="ki-duotone ki-right mx-1 px-0 text-muted"></i>
+                                <i class="ki-duotone ki-right text-muted mx-1 px-0"></i>
                             @endif
 
                             {{-- Current Section - Active (tidak clickable) --}}
-                            <li class="breadcrumb-item mx-0 px-0 active" aria-current="page">
+                            <li class="breadcrumb-item active mx-0 px-0" aria-current="page">
                                 <span style="color: #071437; font-weight: 500;">@yield('currentSection')</span>
                             </li>
                         </ol>
@@ -78,7 +78,7 @@
             </div>
             <!--end::Page title-->
             <!--begin::Action group-->
-            <div class="overflow-auto pt-3 d-flex align-items-stretch pt-lg-0">
+            <div class="d-flex align-items-stretch pt-lg-0 overflow-auto pt-3">
                 <!-- Your existing Action group content here -->
             </div>
             <!--end::Action group-->
@@ -87,19 +87,19 @@
     </div>
 
     {{-- User Profile Section --}}
-    <div class="p-5 aside-user d-none d-lg-flex align-items-center justify-content-end" style="border: none;">
+    <div class="aside-user d-none d-lg-flex align-items-center justify-content-end p-5" style="border: none;">
         <!--begin::Wrapper-->
-        <div class="flex-wrap aside-user-info flex-row-fluid ms-5">
+        <div class="aside-user-info flex-row-fluid ms-5 flex-wrap">
             <!--begin::Section-->
             <div class="d-flex">
                 <!--begin::Info-->
                 <div class="flex-grow-1 me-2">
                     <!--begin::Username-->
                     <!--begin::Username-->
-                    <span class="text-gray-600 fs-8 fw-bold text-capitalize">{{ Auth::user()->username }}</span>
+                    <span class="fs-8 fw-bold text-capitalize text-gray-600">{{ Auth::user()->username }}</span>
                     <!--end::Username-->
                     <!--begin::Description-->
-                    <span class="mb-1 text-gray-400 fw-semibold d-block fs-8 text-capitalize">
+                    <span class="fw-semibold d-block fs-8 text-capitalize mb-1 text-gray-400">
                         {{ Auth::user()->roles()->first()->name }}
                     </span>
                     <!--end::Description-->
@@ -127,7 +127,7 @@
         <!--end::User symbol-->
 
         <!--begin::User account menu-->
-        <div class="py-4 menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold fs-6 w-275px"
+        <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg menu-state-color fw-semibold fs-6 w-275px py-4"
             data-kt-menu="true">
             <!--begin::Menu item-->
             {{-- <div class="px-5 my-1 menu-item">
@@ -137,8 +137,8 @@
             </div> --}}
             <!--end::Menu item-->
             <!--begin::Menu item-->
-            <div class="px-5 menu-item">
-                <a href="{{ route('logout') }}" class="px-5 menu-link d-flex align-items-center gap-2 text-capitalize">
+            <div class="menu-item px-5">
+                <a href="{{ route('logout') }}" class="menu-link d-flex align-items-center text-capitalize gap-2 px-5">
                     <i class="fa-solid fa-arrow-right-from-bracket fs-5"></i>
                     <span>Sign Out</span>
                 </a>
