@@ -436,206 +436,251 @@
 
 @section('script')
     @if (isset($prestasis) && $prestasis->isNotEmpty())
-        <script>
-            $(document).ready(function() {
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
+<script>
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
 
-                function loadTable(url) {
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        beforeSend: function() {
-                            $('#prestasi-table-container').html(
-                                '<div class="text-center py-5">' +
-                                '<div class="spinner-border text-primary" role="status">' +
-                                '<span class="visually-hidden">Loading...</span>' +
-                                '</div></div>'
-                            );
-                        },
-                        success: function(response) {
-                            $('#prestasi-table-container').html(response);
-                            updateFilterInfo();
-                            bindEvents();
-                        },
-                        error: function(xhr) {
-                            console.error('Error:', xhr.responseText);
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'Gagal memuat data. Silakan coba lagi.',
-                                icon: 'error'
-                            });
-                        }
+        function loadTable(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                beforeSend: function() {
+                    $('#prestasi-table-container').html(
+                        '<div class="text-center py-5">' +
+                        '<div class="spinner-border text-primary" role="status">' +
+                        '<span class="visually-hidden">Loading...</span>' +
+                        '</div></div>'
+                    );
+                },
+                success: function(response) {
+                    $('#prestasi-table-container').html(response);
+                    updateFilterInfo();
+                    bindEvents();
+                    updateSortingIcons();
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr.responseText);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Gagal memuat data. Silakan coba lagi.',
+                        icon: 'error'
                     });
                 }
-
-                function bindEvents() {
-                    $(document).off('click', '.pagination-link')
-                        .on('click', '.pagination-link', function(e) {
-                            e.preventDefault();
-                            const url = $(this).attr('href');
-                            if (url && url !== '#') {
-                                loadTable(url);
-                                window.history.pushState({}, '', url);
-                            }
-                        });
-
-                    $(document).off('change', 'select[name="per_page"]')
-                        .on('change', 'select[name="per_page"]', function() {
-                            const url = new URL(window.location.href);
-                            url.searchParams.set('per_page', $(this).val());
-                            url.searchParams.delete('page'); // Reset to first page
-                            loadTable(url.toString());
-                            window.history.pushState({}, '', url.toString());
-                        });
-
-                    $(document).off('click', '#apply-filters, #reset-filters')
-                        .on('click', '#apply-filters, #reset-filters', function() {
-                            const isReset = this.id === 'reset-filters';
-
-                            if (isReset) {
-                                $('#filter-tahun, #filter-medali, #filter-tingkat').val('');
-                            }
-
-                            const params = new URLSearchParams();
-                            const add = (key, val) => {
-                                if (val && val.trim() !== '') {
-                                    params.set(key, val);
-                                }
-                            };
-
-                            add('search', $('#search').val());
-                            add('tahun', $('#filter-tahun').val());
-                            add('medali', $('#filter-medali').val());
-                            add('tingkat', $('#filter-tingkat').val());
-                            add('per_page', $('select[name="per_page"]').val() || '10');
-
-                            const url = new URL(window.location.href);
-                            url.search = params.toString();
-
-                            loadTable(url.toString());
-                            window.history.pushState({}, '', url.toString());
-
-                            $('.dropdown-toggle').dropdown('hide');
-                        });
-
-                    let searchTimeout;
-                    $(document).off('input', '#search')
-                        .on('input', '#search', function() {
-                            clearTimeout(searchTimeout);
-                            const searchTerm = $(this).val();
-
-                            searchTimeout = setTimeout(() => {
-                                const url = new URL(window.location.href);
-                                if (searchTerm.trim()) {
-                                    url.searchParams.set('search', searchTerm);
-                                } else {
-                                    url.searchParams.delete('search');
-                                }
-                                url.searchParams.delete('page'); // Reset to first page
-
-                                loadTable(url.toString());
-                                window.history.pushState({}, '', url.toString());
-                            }, 300);
-                        });
-
-                    $(document).off('click', '.btn-delete')
-                        .on('click', '.btn-delete', function(e) {
-                            e.preventDefault();
-                            destroyItem(this);
-                        });
-
-                    updateFilterBadge();
-                }
-
-                function updateFilterBadge() {
-                    const activeFilters = [
-                        $('#filter-tahun').val(),
-                        $('#filter-medali').val(),
-                        $('#filter-tingkat').val(),
-                        $('#search').val()
-                    ].filter(val => val && val.trim() !== '').length;
-
-                    const badge = $('#filter-count');
-                    if (activeFilters > 0) {
-                        badge.text(activeFilters).removeClass('d-none');
-                    } else {
-                        badge.addClass('d-none');
-                    }
-                }
-
-                function updateFilterInfo() {
-                    const tableContainer = $('#prestasi-table-container');
-                    const rows = tableContainer.find('tbody tr:not(:has(td[colspan]))').length;
-                    $('#showing-count').text(rows);
-                }
-
-                window.destroyItem = function(button) {
-                const route = $(button).data('route');
-                Swal.fire({
-                    title: "Apakah Anda Yakin?",
-                    html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
-                    icon: "warning",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus!',
-                    cancelButtonText: 'Batalkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = route;
-                        form.innerHTML = `
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <input type="hidden" name="_method" value="DELETE">
-                        `;
-                        document.body.appendChild(form);
-                        form.submit();
-                    } else {
-                        Swal.fire({
-                            title: "Aksi Dibatalkan :)",
-                            icon: "info",
-                        });
-                    }
-                });
-            };
-
-                function populateTahunDropdown() {
-                    const tahunSelect = $('#filter-tahun');
-                    const currentTahun = new URLSearchParams(window.location.search).get('tahun');
-
-                    $.ajax({
-                        url: "{{ route('admin.konfigurasi.prestasi.index') }}",
-                        type: 'GET',
-                        data: { get_tahun: 1 },
-                        success: function(data) {
-                            tahunSelect.empty().append('<option value="">Semua Tahun</option>');
-                            if (Array.isArray(data)) {
-                                data.forEach(function(year) {
-                                    const selected = year == currentTahun ? 'selected' : '';
-                                    tahunSelect.append(`<option value="${year}" ${selected}>${year}</option>`);
-                                });
-                            }
-                        },
-                        error: function(xhr) {
-                            console.error('Error loading years:', xhr.responseText);
-                        }
-                    });
-                }
-
-                window.onpopstate = function(event) {
-                    loadTable(window.location.href);
-                };
-
-                populateTahunDropdown();
-                bindEvents();
-                updateFilterBadge();
             });
-        </script>
+        }
+
+        function bindEvents() {
+            $(document).off('click', '.pagination-link')
+                .on('click', '.pagination-link', function(e) {
+                    e.preventDefault();
+                    const url = $(this).attr('href');
+                    if (url && url !== '#') {
+                        loadTable(url);
+                        window.history.pushState({}, '', url);
+                    }
+                });
+
+            $(document).off('change', 'select[name="per_page"]')
+                .on('change', 'select[name="per_page"]', function() {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('per_page', $(this).val());
+                    url.searchParams.delete('page');
+                    loadTable(url.toString());
+                    window.history.pushState({}, '', url.toString());
+                });
+
+            $(document).off('click', '.sort-link')
+                .on('click', '.sort-link', function(e) {
+                    e.preventDefault();
+                    const url = $(this).attr('href');
+                    if (url && url !== '#') {
+                        loadTable(url);
+                        window.history.pushState({}, '', url);
+                    }
+                });
+
+            $(document).off('click', '#apply-filters, #reset-filters')
+                .on('click', '#apply-filters, #reset-filters', function() {
+                    const isReset = this.id === 'reset-filters';
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const currentSortBy = urlParams.get('sort_by');
+                    const currentOrder = urlParams.get('order');
+
+                    if (isReset) {
+                        $('#filter-tahun, #filter-medali, #filter-tingkat').val('');
+                    }
+
+                    const params = new URLSearchParams();
+
+                    if (currentSortBy) params.set('sort_by', currentSortBy);
+                    if (currentOrder) params.set('order', currentOrder);
+
+                    const add = (key, val) => {
+                        if (val && val.trim() !== '') {
+                            params.set(key, val);
+                        }
+                    };
+
+                    add('search', $('#search').val());
+                    add('tahun', $('#filter-tahun').val());
+                    add('medali', $('#filter-medali').val());
+                    add('tingkat', $('#filter-tingkat').val());
+                    add('per_page', $('select[name="per_page"]').val() || '10');
+
+                    const url = new URL(window.location.href);
+                    url.search = params.toString();
+
+                    loadTable(url.toString());
+                    window.history.pushState({}, '', url.toString());
+
+                    $('.dropdown-toggle').dropdown('hide');
+                });
+
+            let searchTimeout;
+            $(document).off('input', '#search')
+                .on('input', '#search', function() {
+                    clearTimeout(searchTimeout);
+                    const searchTerm = $(this).val();
+
+                    searchTimeout = setTimeout(() => {
+                        const url = new URL(window.location.href);
+                        const urlParams = new URLSearchParams(url.search);
+                        const currentSortBy = urlParams.get('sort_by');
+                        const currentOrder = urlParams.get('order');
+
+                        if (searchTerm.trim()) {
+                            url.searchParams.set('search', searchTerm);
+                        } else {
+                            url.searchParams.delete('search');
+                        }
+
+                        if (currentSortBy) url.searchParams.set('sort_by', currentSortBy);
+                        if (currentOrder) url.searchParams.set('order', currentOrder);
+
+                        url.searchParams.delete('page'); 
+
+                        loadTable(url.toString());
+                        window.history.pushState({}, '', url.toString());
+                    }, 300);
+                });
+
+            $(document).off('click', '.btn-delete')
+                .on('click', '.btn-delete', function(e) {
+                    e.preventDefault();
+                    destroyItem(this);
+                });
+
+            updateFilterBadge();
+        }
+
+        function updateFilterBadge() {
+            const activeFilters = [
+                $('#filter-tahun').val(),
+                $('#filter-medali').val(),
+                $('#filter-tingkat').val(),
+                $('#search').val()
+            ].filter(val => val && val.trim() !== '').length;
+
+            const badge = $('#filter-count');
+            if (activeFilters > 0) {
+                badge.text(activeFilters).removeClass('d-none');
+            } else {
+                badge.addClass('d-none');
+            }
+        }
+
+        function updateFilterInfo() {
+            const tableContainer = $('#prestasi-table-container');
+            const rows = tableContainer.find('tbody tr:not(:has(td[colspan]))').length;
+            $('#showing-count').text(rows);
+            $('#total-count').text(tableContainer.find('.pagination-info').data('total') || rows);
+        }
+
+        function updateSortingIcons() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sortBy = urlParams.get('sort_by');
+            const order = urlParams.get('order');
+
+            $('.sort-link i').removeClass('fa-sort-up fa-sort-down').addClass('fa-sort');
+
+            if (sortBy) {
+                const sortLink = $(`.sort-link[href*="sort_by=${sortBy}"]`);
+                if (sortLink.length) {
+                    const icon = sortLink.find('i');
+                    icon.removeClass('fa-sort');
+                    icon.addClass(order === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+                }
+            }
+        }
+
+        window.destroyItem = function(button) {
+            const route = $(button).data('route');
+            Swal.fire({
+                title: "Apakah Anda Yakin?",
+                html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
+                icon: "warning",
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Hapus!',
+                cancelButtonText: 'Batalkan!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = route;
+                    form.innerHTML = `
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="_method" value="DELETE">
+                    `;
+                    document.body.appendChild(form);
+                    form.submit();
+                } else {
+                    Swal.fire({
+                        title: "Aksi Dibatalkan :)",
+                        icon: "info",
+                    });
+                }
+            });
+        };
+
+        function populateTahunDropdown() {
+            const tahunSelect = $('#filter-tahun');
+            const currentTahun = new URLSearchParams(window.location.search).get('tahun');
+
+            $.ajax({
+                url: "{{ route('admin.konfigurasi.prestasi.index') }}",
+                type: 'GET',
+                data: { get_tahun: 1 },
+                success: function(data) {
+                    tahunSelect.empty().append('<option value="">Semua Tahun</option>');
+                    if (Array.isArray(data)) {
+                        data.forEach(function(year) {
+                            const selected = year == currentTahun ? 'selected' : '';
+                            tahunSelect.append(`<option value="${year}" ${selected}>${year}</option>`);
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error loading years:', xhr.responseText);
+                }
+            });
+        }
+
+        window.onpopstate = function(event) {
+            loadTable(window.location.href);
+        };
+
+        populateTahunDropdown();
+        bindEvents();
+        updateFilterBadge();
+        updateSortingIcons();
+    });
+</script>
     @endif
 @endsection
