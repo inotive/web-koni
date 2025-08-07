@@ -17,19 +17,19 @@ class Atlet extends Model
         'cabor_id',
         'tempat_lahir',
         'tanggal_lahir',
-        'alamat',
+        'alamat',                // ✅ Sesuai migration
         'jenis_kelamin',
+        'prestasi_terbaru',      // ✅ TAMBAHKAN INI!
         'no_telepon',
         'email',
         'foto_atlet'
     ];
 
     protected $casts = [
-    'tanggal_lahir' => 'date',
-    'created_at'    => 'datetime',
-    'updated_at'    => 'datetime',
-];
-
+        'tanggal_lahir' => 'date',
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
+    ];
 
     public function getUmurAttribute()
     {
@@ -39,19 +39,22 @@ class Atlet extends Model
         return '-';
     }
 
-
+    // Di model Atlet.php
     public function prestasiTerbaru()
     {
-        return $this->morphOne(Prestasi::class, 'subject')->latestOfMany('tahun');
+        return $this->morphOne(Prestasi::class, 'subject')
+            ->orderBy('tahun', 'desc')
+            ->limit(1);
     }
 
     public function prestasis()
     {
-        return $this->morphMany(Prestasi::class, 'subject');
+        return $this->morphMany(Prestasi::class, 'subject')
+            ->orderBy('tahun', 'desc');
     }
 
-public function cabangOlahraga()
-{
-    return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
-}
+    public function cabangOlahraga()
+    {
+        return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
+    }
 }

@@ -112,8 +112,8 @@ $query->select('atlets.*');
         return view('admin.atlet._table', compact('atlets'))->render();
     }
 
-    return view('admin.atlet.index', compact('atlets', 'allCabor'));
-}
+        return view('admin.atlet.index', compact('atlets', 'allCabor'));
+    }
 
     public function create()
     {
@@ -142,9 +142,9 @@ $query->select('atlets.*');
 
         Atlet::create($validated);
 
-return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('OK', 'Atlet berhasil ditambahkan.')
-    ->with('action', 'store');
+        return redirect()->route('admin.konfigurasi.atlet.index')
+            ->with('OK', 'Atlet berhasil ditambahkan.')
+            ->with('action', 'store');
     }
 
     public function edit($id)
@@ -181,9 +181,9 @@ return redirect()->route('admin.konfigurasi.atlet.index')
 
         $atlet->update($validated);
 
-    return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('OK', 'Data atlet berhasil diperbarui.')
-    ->with('action', 'update');
+        return redirect()->route('admin.konfigurasi.atlet.index')
+            ->with('OK', 'Data atlet berhasil diperbarui.')
+            ->with('action', 'update');
     }
 
     public function destroy($id)

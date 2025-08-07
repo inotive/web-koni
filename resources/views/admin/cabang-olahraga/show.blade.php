@@ -1,18 +1,14 @@
 @extends('layouts.app')
-@section('pageTitle', 'Cabang Olahraga')
+@section('title', 'Detail Cabang Olahraga')
 
+{{-- Menggunakan pola yang sama seperti index --}}
+@section('pageTitle', 'Detail ' . $cabor->nama_cabor)
 @section('mainSection', 'Konfigurasi')
-@section('mainSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
-@section('subSection', 'Cabang Olahraga')
-@section('subSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
-@section('currentSection', 'Detail ')
+@section('currentSection', 'Detail Cabang Olahraga ' . $cabor->nama_cabor)
 
-@section('breadcrumb-title')
-    {{-- Halaman Detail Cabang Olahraga --}}
-@endsection
+{{-- Hapus bagian breadcrumb-title dan breadcrumb-items karena sudah ditangani oleh layout --}}
 
 @section('content')
-
     <style>
         /* Gaya Tab Baru - Kotak Penuh */
         .nav-tabs .nav-link {
@@ -39,7 +35,6 @@
             color: #495057 !important;
         }
 
-        /* Icon dan Teks dalam Tab */
         .nav-tabs .nav-link i {
             margin-right: 8px;
             font-size: 1.2rem;
@@ -50,14 +45,12 @@
             font-weight: 500;
         }
 
-        /* Badge khusus untuk tab aktif */
         .nav-tabs .nav-link.active .badge {
             background-color: rgba(255, 255, 255, 0.2) !important;
             color: white !important;
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Responsif untuk mobile */
         @media (max-width: 768px) {
             .nav-tabs .nav-link {
                 padding: 0.5rem 1rem !important;
@@ -72,6 +65,7 @@
     </style>
 
     <div class="container-fluid">
+        {{-- Header Section --}}
         <div class="d-flex justify-content-between align-items-center mb-6">
             <div class="flex-shrink-0 me-3">
                 <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}" class="btn btn-light-primary">
@@ -84,15 +78,38 @@
             </div>
             <div class="flex-grow-1">
                 <h1 class="page-heading d-flex text-dark fw-bold fs-1 my-0 align-items-center">
-                    <i class="ki-duotone ki-sport fs-1 text-primary me-3">
-                        <span class="path1"></span>
-                        <span class="path2"></span>
-                    </i>
-                    Detail Cabang Olahraga
+                    {{-- Tampilkan icon jika ada --}}
+                    @if ($cabor->icon_cabor)
+                        <div class="symbol symbol-40px me-3">
+                            <img src="{{ asset('storage/' . $cabor->icon_cabor) }}" alt="{{ $cabor->nama_cabor }}"
+                                class="rounded">
+                        </div>
+                    @else
+                        <i class="ki-duotone ki-sport fs-1 text-primary me-3">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    @endif
+                    Detail {{ $cabor->nama_cabor }}
                 </h1>
+                {{-- Info tambahan --}}
+                <div class="text-muted fs-6 mt-2">
+                    <span class="me-3">
+                        <i class="ki-duotone ki-user fs-6 me-1"></i>
+                        PJ: {{ $cabor->ketua_penanggung_jawab }}
+                    </span>
+                    <span class="me-3">
+                        <i class="ki-duotone ki-calendar fs-6 me-1"></i>
+                        Dibentuk: {{ \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->format('d M Y') }}
+                    </span>
+                    <span class="badge badge-{{ $cabor->status === 'Aktif' ? 'success' : 'danger' }}">
+                        {{ $cabor->status }}
+                    </span>
+                </div>
             </div>
         </div>
 
+        {{-- Main Card --}}
         <div class="card">
             <div class="card-header border-0">
                 <div class="card-title w-100">
@@ -107,7 +124,7 @@
                                     <span class="path5"></span>
                                 </i>
                                 <span class="d-none d-sm-inline">Informasi </span>Atlet
-                                <span class="badge badge-light-primary ms-2">{{ $cabor->atlets->count() ?? 0 }}</span>
+                                <span class="badge badge-light-primary ms-2">{{ $atlets->total() ?? 0 }}</span>
                             </a>
                         </div>
                         <div class="nav-item flex-shrink-0">
@@ -117,7 +134,7 @@
                                     <span class="path2"></span>
                                 </i>
                                 <span class="d-none d-sm-inline">Informasi </span>Pelatih
-                                <span class="badge badge-light-success ms-2">{{ $cabor->pelatihs->count() ?? 0 }}</span>
+                                <span class="badge badge-light-success ms-2">{{ $pelatihs->total() ?? 0 }}</span>
                             </a>
                         </div>
                     </div>
@@ -126,8 +143,9 @@
 
             <div class="card-body p-0">
                 <div class="tab-content">
+                    {{-- Tab Atlet --}}
                     <div class="tab-pane fade show active" id="kt_tab_pane_atlet" role="tabpanel">
-                        @if (($cabor->atlets ?? collect())->count() > 0)
+                        @if ($atlets->count() > 0)
                             {{-- Search dan Filter Atlet --}}
                             <div class="card-header border-0 pt-6">
                                 <div class="card-title">
@@ -183,7 +201,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- End Search dan Filter Atlet --}}
 
                             <div class="table-responsive">
                                 <table class="table table-row-dashed table-row-gray-300 gy-7 mb-0">
@@ -193,6 +210,7 @@
                                             <th class="min-w-80px">Foto</th>
                                             <th class="min-w-150px">Nama Atlet</th>
                                             <th class="min-w-200px">Tempat & Tanggal Lahir</th>
+                                            <th class="min-w-200px">Alamat Domisili</th>
                                             <th class="min-w-120px">Jenis Kelamin</th>
                                             <th class="min-w-80px">Usia</th>
                                             <th class="min-w-180px">Prestasi Terbaru</th>
@@ -201,10 +219,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($cabor->atlets as $index => $atlet)
+                                        @foreach ($atlets as $index => $atlet)
                                             <tr>
                                                 <td class="ps-6">
-                                                    <span class="text-gray-800 fw-bold">{{ $index + 1 }}</span>
+                                                    <span class="text-gray-800 fw-bold">
+                                                        {{ ($atlets->currentPage() - 1) * $atlets->perPage() + $index + 1 }}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
@@ -227,12 +247,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div class="d-flex flex-column">
-                                                        <span
-                                                            class="text-gray-800 fw-bold mb-1">{{ $atlet->nama ?? '-' }}</span>
-                                                        <span
-                                                            class="text-muted fs-7">{{ Str::limit($atlet->alamat_domisili ?? '-', 30) }}</span>
-                                                    </div>
+                                                    <span class="text-gray-800 fw-bold">{{ $atlet->nama ?? '-' }}</span>
                                                 </td>
                                                 <td>
                                                     <div class="text-gray-800 fw-semibold">
@@ -240,6 +255,14 @@
                                                         <div class="text-muted fs-7">
                                                             {{ isset($atlet->tanggal_lahir) ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->translatedFormat('d M Y') : '-' }}
                                                         </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-start">
+                                                        <i class="ki-duotone ki-geolocation fs-5 text-muted mt-1 me-2"></i>
+                                                        <span class="text-gray-600 fs-7">
+                                                            {{ Str::limit($atlet->alamat ?? '-', 60) }}
+                                                        </span>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -252,39 +275,30 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    <span
-                                                        class="text-gray-600">{{ Str::limit($atlet->prestasi_terbaru ?? '-', 60) }}</span>
+                                                    <span class="text-gray-600">
+                                                        {{ Str::limit(optional($atlet->prestasiTerbaru)->nama_prestasi ?? '-', 60) }}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex flex-column">
                                                         @if ($atlet->no_telepon)
                                                             <span class="text-gray-800 fs-7 mb-1">
-                                                                <i class="ki-duotone ki-phone fs-6 me-1">
-                                                                    <span class="path1"></span>
-                                                                    <span class="path2"></span>
-                                                                </i>
+                                                                <i class="ki-duotone ki-phone fs-6 me-1"></i>
                                                                 {{ $atlet->no_telepon }}
                                                             </span>
                                                         @endif
                                                         @if ($atlet->email)
                                                             <span class="text-gray-600 fs-7">
-                                                                <i class="ki-duotone ki-sms fs-6 me-1">
-                                                                    <span class="path1"></span>
-                                                                    <span class="path2"></span>
-                                                                </i>
+                                                                <i class="ki-duotone ki-sms fs-6 me-1"></i>
                                                                 {{ Str::limit($atlet->email, 20) }}
                                                             </span>
                                                         @endif
                                                     </div>
                                                 </td>
                                                 <td class="text-end pe-6">
-                                                    <a href="{{ route('admin.konfigurasi.atlet.show', $atlet->id ?? '#') }}"
+                                                    <a href="{{ route('admin.konfigurasi.atlet.show', [$atlet->id, 'back' => 'cabor']) }}"
                                                         class="btn btn-sm btn-light-primary">
-                                                        <i class="ki-duotone ki-eye fs-5">
-                                                            <span class="path1"></span>
-                                                            <span class="path2"></span>
-                                                            <span class="path3"></span>
-                                                        </i>
+                                                        <i class="ki-duotone ki-eye fs-5"></i>
                                                         <span class="d-none d-md-inline ms-1">Lihat Profil</span>
                                                     </a>
                                                 </td>
@@ -293,6 +307,13 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            {{-- Pagination untuk atlet --}}
+                            @if ($atlets->hasPages())
+                                <div class="d-flex justify-content-center mt-5">
+                                    {{ $atlets->appends(['pelatih_page' => $pelatihs->currentPage()])->links() }}
+                                </div>
+                            @endif
                         @else
                             <div class="d-flex flex-column flex-center text-center p-10">
                                 <img src="{{ asset('assets/media/illustrations/sketchy-1/2.png') }}" alt=""
@@ -300,15 +321,16 @@
                                 <div class="pt-10 pb-10">
                                     <h2 class="fs-2 fw-bold text-gray-600">Belum Ada Atlet</h2>
                                     <p class="text-gray-400 fs-6 fw-semibold">
-                                        Belum ada atlet yang terdaftar untuk cabang olahraga ini.
+                                        Belum ada atlet yang terdaftar untuk cabang olahraga {{ $cabor->nama_cabor }}.
                                     </p>
                                 </div>
                             </div>
                         @endif
                     </div>
 
+                    {{-- Tab Pelatih --}}
                     <div class="tab-pane fade" id="kt_tab_pane_pelatih" role="tabpanel">
-                        @if (($cabor->pelatihs ?? collect())->count() > 0)
+                        @if ($pelatihs->count() > 0)
                             {{-- Search dan Filter Pelatih --}}
                             <div class="d-flex justify-content-end align-items-center p-6 border-bottom"
                                 data-kt-user-table-toolbar="base">
@@ -356,7 +378,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- End Search dan Filter Pelatih --}}
 
                             <div class="table-responsive">
                                 <table class="table table-row-dashed table-row-gray-300 gy-7 mb-0">
@@ -366,6 +387,7 @@
                                             <th class="min-w-80px">Foto</th>
                                             <th class="min-w-150px">Nama Pelatih</th>
                                             <th class="min-w-200px">Tempat & Tanggal Lahir</th>
+                                            <th class="min-w-200px">Alamat Domisili</th>
                                             <th class="min-w-120px">Jenis Kelamin</th>
                                             <th class="min-w-80px">Usia</th>
                                             <th class="min-w-180px">Prestasi/Sertifikasi</th>
@@ -374,10 +396,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($cabor->pelatihs as $index => $pelatih)
+                                        @foreach ($pelatihs as $index => $pelatih)
                                             <tr>
                                                 <td class="ps-6">
-                                                    <span class="text-gray-800 fw-bold">{{ $index + 1 }}</span>
+                                                    <span class="text-gray-800 fw-bold">
+                                                        {{ ($pelatihs->currentPage() - 1) * $pelatihs->perPage() + $index + 1 }}
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
@@ -400,12 +424,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div class="d-flex flex-column">
-                                                        <span
-                                                            class="text-gray-800 fw-bold mb-1">{{ $pelatih->nama ?? '-' }}</span>
-                                                        <span
-                                                            class="text-muted fs-7">{{ Str::limit($pelatih->alamat_domisili ?? '-', 30) }}</span>
-                                                    </div>
+                                                    <span class="text-gray-800 fw-bold">{{ $pelatih->nama ?? '-' }}</span>
                                                 </td>
                                                 <td>
                                                     <div class="text-gray-800 fw-semibold">
@@ -413,6 +432,15 @@
                                                         <div class="text-muted fs-7">
                                                             {{ isset($pelatih->tanggal_lahir) ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->translatedFormat('d M Y') : '-' }}
                                                         </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-start">
+                                                        <i class="ki-duotone ki-geolocation fs-5 text-muted mt-1 me-2"></i>
+                                                        <span class="text-gray-600 fs-7">
+                                                            {{-- FIXED: Use 'alamat' instead of 'alamat_domisili' --}}
+                                                            {{ Str::limit($pelatih->alamat ?? '-', 60) }}
+                                                        </span>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -452,7 +480,7 @@
                                                 </td>
                                                 <td class="text-end pe-6">
                                                     <a href="{{ route('admin.konfigurasi.pelatih.show', $pelatih->id ?? '#') }}"
-                                                        class="btn btn-sm btn-light-primary ">
+                                                        class="btn btn-sm btn-light-primary">
                                                         <i class="ki-duotone ki-eye fs-5">
                                                             <span class="path1"></span>
                                                             <span class="path2"></span>
@@ -466,6 +494,13 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            {{-- Pagination untuk pelatih --}}
+                            @if ($pelatihs->hasPages())
+                                <div class="d-flex justify-content-center mt-5">
+                                    {{ $pelatihs->appends(['atlet_page' => $atlets->currentPage()])->links() }}
+                                </div>
+                            @endif
                         @else
                             <div class="d-flex flex-column flex-center text-center p-10">
                                 <img src="{{ asset('assets/media/illustrations/sketchy-1/2.png') }}" alt=""
@@ -473,7 +508,7 @@
                                 <div class="pt-10 pb-10">
                                     <h2 class="fs-2 fw-bold text-gray-600">Belum Ada Pelatih</h2>
                                     <p class="text-gray-400 fs-6 fw-semibold">
-                                        Belum ada pelatih yang terdaftar untuk cabang olahraga ini.
+                                        Belum ada pelatih yang terdaftar untuk cabang olahraga {{ $cabor->nama_cabor }}.
                                     </p>
                                 </div>
                             </div>

@@ -746,84 +746,85 @@
             <h1 class="detail-title">Profil Pelatih</h1>
         </div>
 
-        <div class="detail-card">
-            <div class="detail-card-header">
-                <h2 class="detail-card-title">Personal Info</h2>
-            </div>
+            <div class="detail-card">
+                <div class="detail-card-header">
+                    <h2 class="detail-card-title">Personal Info</h2>
+                </div>
 
-            <div class="detail-body">
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Foto</p>
-                    </div>
-                    <div class="detail-photo-container">
-                        @if ($pelatih->foto)
-                            <div class="detail-photo-wrapper">
-                                <img src="{{ asset('storage/' . $pelatih->foto) }}" alt="Foto Pelatih" class="detail-photo">
-                            </div>
-                        @else
-                            <div class="detail-photo-wrapper">
-                                <div
-                                    style="width: 60px; height: 60px; background-color: #f1f1f4; display: flex; align-items: center; justify-content: center;">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-
-                                    </svg>
+                <div class="detail-body">
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Foto</p>
+                        </div>
+                        <div class="detail-photo-container">
+                            @if ($pelatih->foto)
+                                <div class="detail-photo-wrapper">
+                                    <img src="{{ asset('storage/' . $pelatih->foto) }}" alt="Foto Pelatih"
+                                        class="detail-photo">
                                 </div>
-                            </div>
-                        @endif
-                    @php
-                        $caborNama = $pelatih->cabangOlahraga ? $pelatih->cabangOlahraga->nama_cabor : '-';
-                    @endphp
+                            @else
+                                <div class="detail-photo-wrapper">
+                                    <div
+                                        style="width: 60px; height: 60px; background-color: #f1f1f4; display: flex; align-items: center; justify-content: center;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+
+                                        </svg>
+                                    </div>
+                                </div>
+                            @endif
+                            @php
+                                $caborNama = $pelatih->cabangOlahraga ? $pelatih->cabangOlahraga->nama_cabor : '-';
+                            @endphp
+                        </div>
                     </div>
-                </div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Nama</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Nama</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->nama }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <p class="detail-value">{{ $pelatih->nama }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
+                    <div class="detail-divider"></div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Cabor</p>
+                        </div>
+                        <p class="detail-value">{{ $caborNama }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                </div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Cabor</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Email</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->email ?? '<span class="empty-value">-</span>' }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <p class="detail-value">{{ $caborNama }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-divider"></div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Email</p>
-                    </div>
-                    <p class="detail-value">{{ $pelatih->email ?? '<span class="empty-value">-</span>' }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
                 <div class="detail-row">
                     <div class="detail-label">
@@ -840,80 +841,80 @@
                 </div>
                 <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">No Telepon</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">No Telepon</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->no_telepon ?? '<span class="empty-value">-</span>' }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <p class="detail-value">{{ $pelatih->no_telepon ?? '<span class="empty-value">-</span>' }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
+                    <div class="detail-divider"></div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Tempat Lahir</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->tempat_lahir }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                </div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Tempat Lahir</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Tanggal Lahir</p>
+                        </div>
+                        <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d M Y') }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <p class="detail-value">{{ $pelatih->tempat_lahir }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
+                    <div class="detail-divider"></div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Umur</p>
+                        </div>
+                        <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age }} Tahun</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                </div>
 
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Tanggal Lahir</p>
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <p class="detail-label-text">Kelamin</p>
+                        </div>
+                        <p class="detail-value">{{ $pelatih->kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+                        <div class="edit-icon">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+
+                            </svg>
+                        </div>
                     </div>
-                    <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d M Y') }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
 
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-divider"></div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Umur</p>
-                    </div>
-                    <p class="detail-value">{{ \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age }} Tahun</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-divider"></div>
-
-                <div class="detail-row">
-                    <div class="detail-label">
-                        <p class="detail-label-text">Kelamin</p>
-                    </div>
-                    <p class="detail-value">{{ $pelatih->kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
-                    <div class="edit-icon">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="detail-divider"></div>
+                    <div class="detail-divider"></div>
 
                 <div class="detail-row">
                 <div class="detail-label">
