@@ -164,12 +164,12 @@
                 @yield('content')
             </div>
 
-            {{-- <div id="scrolltop" class="scrolltop" data-kt-scrolltop="true">
+            <div id="scrolltop" class="scrolltop" data-kt-scrolltop="true">
                 <i class="ki-duotone ki-arrow-up">
                     <span class="path1"></span>
                     <span class="path2"></span>
                 </i>
-            </div> --}}
+            </div>
         </main>
 
         @include('layouts.footer')

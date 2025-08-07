@@ -26,7 +26,7 @@
 
                 <!-- Dashboard -->
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.dashboard.index') ? 'active bg-red' : '' }}"
+                    <a class="menu-link {{ request()->is('admin/dashboard') ? 'active bg-red' : '' }}"
                         href="{{ route('admin.dashboard.index') }}">
                         <span class="menu-icon">
                             <i class="fs-1 ki-solid ki-category"></i>
@@ -37,7 +37,7 @@
 
                 <!-- Manajemen RKA -->
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->routeIs('admin.manajemen-rka.index') ? 'active bg-red' : '' }}"
+                    <a class="menu-link {{ request()->is('admin/manajemen-rka*') ? 'active bg-red' : '' }}"
                         href="{{ route('admin.manajemen-rka.index') }}">
                         <span class="menu-icon">
                             <i class="fs-1 ki-solid ki-tablet-text-up"></i>
