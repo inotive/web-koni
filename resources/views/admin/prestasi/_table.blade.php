@@ -12,57 +12,64 @@
 
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama', 'order' => request('sort_by') == 'nama' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                           class="text-dark text-decoration-none sort-link">
+                            class="text-dark text-decoration-none sort-link">
                             Nama
-                            <i class="fas fa-sort{{ request('sort_by') == 'nama' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            <i
+                                class="fas fa-sort{{ request('sort_by') == 'nama' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
                         </a>
                     </th>
 
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'jenis_kelamin', 'order' => request('sort_by') == 'jenis_kelamin' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                           class="text-dark text-decoration-none sort-link">
+                            class="text-dark text-decoration-none sort-link">
                             Jenis Kelamin
-                            <i class="fas fa-sort{{ request('sort_by') == 'jenis_kelamin' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            <i
+                                class="fas fa-sort{{ request('sort_by') == 'jenis_kelamin' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
                         </a>
                     </th>
 
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama_prestasi', 'order' => request('sort_by') == 'nama_prestasi' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                           class="text-dark text-decoration-none sort-link">
+                            class="text-dark text-decoration-none sort-link">
                             Prestasi
-                            <i class="fas fa-sort{{ request('sort_by') == 'nama_prestasi' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            <i
+                                class="fas fa-sort{{ request('sort_by') == 'nama_prestasi' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
                         </a>
                     </th>
 
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'cabor', 'order' => request('sort_by') == 'cabor' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                           class="text-dark text-decoration-none sort-link">
+                            class="text-dark text-decoration-none sort-link">
                             Cabor
-                            <i class="fas fa-sort{{ request('sort_by') == 'cabor' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            <i
+                                class="fas fa-sort{{ request('sort_by') == 'cabor' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
                         </a>
                     </th>
 
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'tingkat', 'order' => request('sort_by') == 'tingkat' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                           class="text-dark text-decoration-none sort-link">
+                            class="text-dark text-decoration-none sort-link">
                             Tingkat
-                            <i class="fas fa-sort{{ request('sort_by') == 'tingkat' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            <i
+                                class="fas fa-sort{{ request('sort_by') == 'tingkat' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
                         </a>
                     </th>
 
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'tahun', 'order' => request('sort_by') == 'tahun' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                           class="text-dark text-decoration-none sort-link">
+                            class="text-dark text-decoration-none sort-link">
                             Tempat & Tahun
-                            <i class="fas fa-sort{{ request('sort_by') == 'tahun' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            <i
+                                class="fas fa-sort{{ request('sort_by') == 'tahun' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
                         </a>
                     </th>
 
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'medali', 'order' => request('sort_by') == 'medali' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                           class="text-dark text-decoration-none sort-link">
+                            class="text-dark text-decoration-none sort-link">
                             Medali
-                            <i class="fas fa-sort{{ request('sort_by') == 'medali' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            <i
+                                class="fas fa-sort{{ request('sort_by') == 'medali' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
                         </a>
                     </th>
 
@@ -122,8 +129,7 @@
                                     @if ($prestasi->subject->foto_atlet ?? ($prestasi->subject->foto_pelatih ?? null))
                                         <img src="{{ asset('storage/' . ($prestasi->subject->foto_atlet ?? $prestasi->subject->foto_pelatih)) }}"
                                             alt="{{ $prestasi->subject->nama }}"
-                                            class="rounded-circle me-2 object-fit-cover" width="40"
-                                            height="40">
+                                            class="rounded-circle me-2 object-fit-cover" width="40" height="40">
                                     @else
                                         <div class="rounded-circle bg-light me-2 d-flex align-items-center justify-content-center"
                                             style="width: 40px; height: 40px;">
@@ -192,7 +198,7 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
                                     @if ($detailRoute)
-                                        <a href="{{ $detailRoute }}" class="btn btn-icon btn-sm btn-light-info"
+                                        <a href="{{ $detailRoute }}" class="btn btn-icon btn-sm btn-light-primary"
                                             title="Lihat Detail {{ class_basename($prestasi->subject_type) }}"
                                             data-bs-toggle="tooltip">
                                             <i class="fa-solid fa-eye"></i>
