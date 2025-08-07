@@ -200,3 +200,4 @@ $query->select('atlets.*');
         Storage::disk('public')->delete($atlet->foto_atlet);
     }
 }
+}
