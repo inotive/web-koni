@@ -336,7 +336,7 @@ class PelatihController extends Controller
         $request->validate([
             'tahun' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
             'tempat' => 'required|string|max:255',
-            'nama_prestasi' => 'required|string|max:255',   
+            'nama_prestasi' => 'required|string|max:255',
         ]);
 
         try {

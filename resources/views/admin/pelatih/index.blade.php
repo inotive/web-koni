@@ -11,12 +11,6 @@
             background-color: #f5f5f5;
         }
 
-        .table-wrapper-gilaaa {
-            background-color: white;
-            display: flex;
-            padding: 20px 0;
-        }
-
         .main-content {
             background-color: #f5f5f5;
             min-height: 100vh;

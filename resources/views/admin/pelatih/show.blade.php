@@ -1013,7 +1013,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">Email</p>
                         </div>
-                        <p class="detail-value">{{ $pelatih->email ?? '<span class="empty-value">-</span>' }}</p>
+                        <p class="detail-value">{{ $pelatih->email ?? '-' }}</p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1043,7 +1043,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">No Telepon</p>
                         </div>
-                        <p class="detail-value">{{ $pelatih->no_telepon ?? '<span class="empty-value">-</span>' }}</p>
+                        <p class="detail-value">{{ $pelatih->no_telepon ?? '-' }}</p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
