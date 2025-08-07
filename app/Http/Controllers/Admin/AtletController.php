@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Atlet;
 use App\Models\CabangOlahraga;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class AtletController extends Controller
 {
@@ -188,15 +189,32 @@ $query->select('atlets.*');
 
     public function destroy($id)
     {
-        $atlet = Atlet::findOrFail($id);
+        $atlet = Atlet::withCount('prestasis')->findOrFail($id);
 
-    if ($atlet->prestasis_count > 0) {
-        return redirect()
-            ->route('admin.konfigurasi.atlet.index')
-            ->with('error', "Gagal dihapus – atlet ini masih memiliki {$atlet->prestasis_count} prestasi.");
+        if ($atlet->prestasis_count > 0) {
+            return redirect()
+                ->route('admin.konfigurasi.atlet.index')
+                ->with('error', "Gagal dihapus – atlet ini masih memiliki {$atlet->prestasis_count} prestasi.");
+        }
+
+        if ($atlet->foto_atlet) {
+            Storage::disk('public')->delete($atlet->foto_atlet);
+        }
+
+        $atlet->delete();
+
+        return redirect()->route('admin.konfigurasi.atlet.index')
+            ->with('OK', 'Atlet berhasil dihapus.');
     }
 
-    if ($atlet->foto_atlet) {
-        Storage::disk('public')->delete($atlet->foto_atlet);
+    public function show($id)
+    {
+        $atlet = Atlet::with('prestasis')->findOrFail($id);
+
+        $backUrl = request('back') === 'cabor'
+            ? route('admin.konfigurasi.cabang-olahraga.show', $atlet->cabor_id)
+            : route('admin.konfigurasi.atlet.index');
+
+        return view('admin.atlet.show', compact('atlet', 'backUrl'));
     }
 }
