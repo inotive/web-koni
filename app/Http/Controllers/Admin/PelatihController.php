@@ -44,9 +44,48 @@ class PelatihController extends Controller
         // Only keep a consistent default order for initial load
         $query->orderByDesc('pelatih.created_at');
 
-        $pelatih = Pelatih::orderByDesc('created_at')
-            ->paginate($perPage)
-            ->withQueryString();
+            if ($ageValue === '60+' || $ageValue === '36+') {
+                $minAge = $ageValue === '60+' ? 60 : 36;
+                $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) >= ?', [$minAge]);
+            } else {
+                [$min, $max] = array_map('intval', explode('-', $ageValue));
+                $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) BETWEEN ? AND ?', [$min, $max]);
+            }
+        }
+
+        if ($request->filled('prestasi') || $request->filled('filter_prestasi')) {
+            $prestasiValue = $request->filled('prestasi') ? $request->prestasi : $request->filter_prestasi;
+
+            switch ($prestasiValue) {
+                case 'ada':
+                    $query->has('prestasis');
+                    break;
+                case 'tidak':
+                    $query->doesntHave('prestasis');
+                    break;
+                case 'emas':
+                case 'perak':
+                case 'perunggu':
+                    $query->whereHas('prestasis', function ($q) use ($prestasiValue) {
+                        $q->where('medali', ucfirst($prestasiValue));
+                    });
+                    break;
+            }
+        }
+
+        if ($request->filled('filter_ketersediaan')) {
+            $query->where('ketersediaan', $request->filter_ketersediaan);
+        }
+
+        // Add secondary sorting for non-prestasi sorts
+        if ($sortBy !== 'created_at' && $sortBy !== 'prestasi') {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // Add final ordering by ID for consistency
+        $query->orderBy('id', 'desc');
+
+        $pelatih = $query->paginate($perPage);
 
         // Preserve query parameters in pagination links
         $pelatih->appends($request->query());
@@ -94,16 +133,61 @@ class PelatihController extends Controller
         }
     }
 
-    public function show($id)
-{
-    $pelatih = Pelatih::with('prestasis')->findOrFail($id);
+    public function show($id, Request $request)
+    {
+        $pelatih = Pelatih::with(['cabangOlahraga', 'prestasis'])->findOrFail($id);
 
-    $backUrl = request('back') === 'cabor'
-        ? route('admin.konfigurasi.cabang-olahraga.show', $pelatih->cabor_id)
-        : route('admin.konfigurasi.pelatih.index');
+        if ($request->ajax() || $request->get('ajax')) {
+            $perPage = $request->get('per_page', 3);
+            $sortBy = $request->get('sort_by', 'created_at');
+            $order = $request->get('order', 'desc');
 
-    return view('admin.pelatih.show', compact('pelatih', 'backUrl'));
-}
+            $allowedSortColumns = ['created_at', 'nama_prestasi', 'tahun', 'tempat', 'medali'];
+            if (!in_array($sortBy, $allowedSortColumns)) {
+                $sortBy = 'created_at';
+            }
+
+            $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
+
+            try {
+                $prestasis = $pelatih->prestasis()
+                    ->orderBy($sortBy, $order)
+                    ->paginate($perPage);
+
+                $response = [
+                    'success' => true,
+                    'prestasis' => $prestasis->items(),
+                    'pagination' => [
+                        'current_page' => $prestasis->currentPage(),
+                        'last_page' => $prestasis->lastPage(),
+                        'per_page' => $prestasis->perPage(),
+                        'total' => $prestasis->total(),
+                        'from' => $prestasis->firstItem(),
+                        'to' => $prestasis->lastItem(),
+                        'has_more_pages' => $prestasis->hasMorePages()
+                    ]
+                ];
+
+                return response()->json($response);
+
+            } catch (\Exception $e) {
+                \Log::error('Error loading prestasi: ' . $e->getMessage());
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error loading prestasi data',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
+
+        $prestasis = $pelatih->prestasis()
+            ->orderBy('created_at', 'desc')
+            ->paginate(3);
+
+        return view('admin.pelatih.show', compact('pelatih', 'prestasis'));
+    }
+
 
     public function edit($id)
     {
