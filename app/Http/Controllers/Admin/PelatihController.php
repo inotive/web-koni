@@ -225,7 +225,7 @@ class PelatihController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(3);
 
-        return view('admin.pelatih.show', compact('pelatih', 'prestasis'));
+        return view('admin.pelatih.show', compact('pelatih', 'prestasis','backUrl'));
     }
 
 
