@@ -11,17 +11,35 @@
             background-color: #f5f5f5;
         }
 
+        .table-wrapper-gilaaa {
+            background-color: white;
+            display: flex;
+            padding: 20px 0;
+        }
+
         .main-content {
             background-color: #f5f5f5;
             min-height: 100vh;
             padding: 20px 0;
         }
 
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
+
+        .card-body {
+            padding: 0;
+        }
+
         .table-container {
             background-color: white;
             border-radius: 0px 0px 12px 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e9ecef;
+            box-shadow: none;
+            border: none;
             overflow: hidden;
         }
 
@@ -480,106 +498,113 @@
         </a>
     </div>
 
+
+
     <div class="main-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="table-header" style="border-radius: 12px 12px 0px 0px">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>
+                    <div class="card">
+                        <div class="card-body">
+                        <div class="table-header" style="border-radius: 12px 12px 0px 0px">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>
 
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <div class="input-group" style="width: 250px;">
-                                    <input type="search" name="search" id="search" class="form-control"
-                                        placeholder="Cari pelatih...">
-                                    <button class="btn btn-outline-secondary" type="button">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <div class="input-group" style="width: 250px;">
+                                        <input type="search" name="search" id="search" class="form-control"
+                                            placeholder="Cari pelatih...">
+                                        <button class="btn btn-outline-secondary" type="button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
 
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                        data-bs-toggle="dropdown">
-                                        <i class="fas fa-filter me-1"></i> Filter
-                                        <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
-                                    </button>
-                                    <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Cabang Olahraga</label>
-                                            <select id="filter-cabor" class="form-select">
-                                                <option value="">Semua Cabor</option>
-                                                @if (isset($allCabor))
-                                                    @foreach ($allCabor as $id => $nama)
-                                                        <option value="{{ $nama }}">{{ $nama }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown">
+                                            <i class="fas fa-filter me-1"></i> Filter
+                                            <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                        </button>
+                                        <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Cabang Olahraga</label>
+                                                <select id="filter-cabor" class="form-select">
+                                                    <option value="">Semua Cabor</option>
+                                                    @if (isset($allCabor))
+                                                        @foreach ($allCabor as $id => $nama)
+                                                            <option value="{{ $nama }}">{{ $nama }}</option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                            </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Jenis Kelamin</label>
-                                            <select id="filter-gender" class="form-select">
-                                                <option value="">Semua</option>
-                                                <option value="Laki-laki">Laki-laki</option>
-                                                <option value="Perempuan">Perempuan</option>
-                                            </select>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Jenis Kelamin</label>
+                                                <select id="filter-gender" class="form-select">
+                                                    <option value="">Semua</option>
+                                                    <option value="Laki-laki">Laki-laki</option>
+                                                    <option value="Perempuan">Perempuan</option>
+                                                </select>
+                                            </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Rentang Usia</label>
-                                            <select id="filter-age" class="form-select">
-                                                <option value="">Semua Usia</option>
-                                                <option value="20-30">20-30 tahun</option>
-                                                <option value="31-40">31-40 tahun</option>
-                                                <option value="41-50">41-50 tahun</option>
-                                                <option value="51-60">51-60 tahun</option>
-                                                <option value="60+">60+ tahun</option>
-                                            </select>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Rentang Usia</label>
+                                                <select id="filter-age" class="form-select">
+                                                    <option value="">Semua Usia</option>
+                                                    <option value="20-30">20-30 tahun</option>
+                                                    <option value="31-40">31-40 tahun</option>
+                                                    <option value="41-50">41-50 tahun</option>
+                                                    <option value="51-60">51-60 tahun</option>
+                                                    <option value="60+">60+ tahun</option>
+                                                </select>
+                                            </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Status Prestasi</label>
-                                            <select id="filter-prestasi" class="form-select">
-                                                <option value="">Semua</option>
-                                                <option value="ada">Ada Prestasi</option>
-                                                <option value="tidak">Tidak Ada Prestasi</option>
-                                                <option value="emas">Medali Emas</option>
-                                                <option value="perak">Medali Perak</option>
-                                                <option value="perunggu">Medali Perunggu</option>
-                                            </select>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Status Prestasi</label>
+                                                <select id="filter-prestasi" class="form-select">
+                                                    <option value="">Semua</option>
+                                                    <option value="ada">Ada Prestasi</option>
+                                                    <option value="tidak">Tidak Ada Prestasi</option>
+                                                    <option value="emas">Medali Emas</option>
+                                                    <option value="perak">Medali Perak</option>
+                                                    <option value="perunggu">Medali Perunggu</option>
+                                                </select>
+                                            </div>
 
-                                        <div class="d-flex gap-2">
-                                            <button type="button" id="apply-filters"
-                                                class="btn btn-primary btn-sm flex-fill">
-                                                <i class="fas fa-check"></i> Terapkan
-                                            </button>
-                                            <button type="button" id="reset-filters"
-                                                class="btn btn-light btn-sm flex-fill">
-                                                <i class="fas fa-redo"></i> Reset
-                                            </button>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" id="apply-filters"
+                                                    class="btn btn-primary btn-sm flex-fill">
+                                                    <i class="fas fa-check"></i> Terapkan
+                                                </button>
+                                                <button type="button" id="reset-filters"
+                                                    class="btn btn-light btn-sm flex-fill">
+                                                    <i class="fas fa-redo"></i> Reset
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        @if (!(isset($pelatih) && $pelatih->isEmpty()))
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div id="filter-info" class="text-muted">
-                                    Menampilkan <span id="showing-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span>
-                                    dari <span id="total-count">{{ isset($pelatih) ? $pelatih->total() : 0 }}</span> pelatih
+                            @if (!(isset($pelatih) && $pelatih->isEmpty()))
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div id="filter-info" class="text-muted">
+                                        Menampilkan <span id="showing-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span>
+                                        dari <span id="total-count">{{ isset($pelatih) ? $pelatih->total() : 0 }}</span> pelatih
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="table-container">
-                        @include('admin.pelatih._table')
+                            @endif
+                        </div>
+                        <div class="table-container">
+                            @include('admin.pelatih._table')
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 
 @endsection
 

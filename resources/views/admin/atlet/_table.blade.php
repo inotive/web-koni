@@ -105,7 +105,6 @@
                             ? strtolower($prestasiTerbaru->medali)
                             : '';
 
-                        // Hitung jumlah prestasi untuk logic delete
                         $jumlahPrestasi = $item->prestasis ? $item->prestasis->count() : 0;
                     @endphp
                     <tr data-cabor="{{ $caborNama }}"

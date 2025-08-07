@@ -13,11 +13,12 @@ class Prestasi extends Model
 
     protected $fillable = [
         'nama_prestasi',
+        'kejuaraan',
         'tempat',
         'tahun',
         'medali',
         'tingkat',
-        'cabor-id',
+        'cabor_id',
         'subject_id',
         'subject_type'
     ];

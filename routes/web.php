@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PrestasiController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\CabangOlahragaController;
 use App\Http\Controllers\Admin\ManajemenRKAController;
+use App\Http\Controllers\LaporanRKAController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +58,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     });
 
     Route::resource('manajemen-rka', ManajemenRKAController::class);
+    Route::resource('laporan-rka', LaporanRKAController::class);
 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);

@@ -3,11 +3,22 @@
 @section('pageTitle', 'Rencana Kegiatan Anggaran')
 @section('mainSection', 'Manajemen RKA')
 @section('currentSection', 'Daftar RKA')
+@section('style')
+    <style>
+        .edit:hover {
+            background-color: rgb(249, 245, 172) !important;
+        }
+
+        .delete:hover {
+            background-color: #ffcad7ff !important;
+        }
+    </style>
+@endsection
 
 @section('content')
     <div class="d-grid gap-5 border-0">
         <div class="d-flex justify-content-between align-items-center container">
-            <div>
+            <div class="d-none d-md-block">
                 <h1>Manajemen RKA</h1>
                 <span>Pemusatan Rencana Kegiatan Anggaran</span>
             </div>
@@ -28,7 +39,7 @@
             @include('admin.manajemen-rka.components.table-grid', compact('data'))
         </div>
 
-        <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+        <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 gap-5 px-10 py-8">
                     <div class="d-flex justify-content-between align-items-center">
@@ -37,14 +48,16 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form id="form" action="{{ route('admin.manajemen-rka.store') }}" method="POST" class="d-grid gap-2">
+                    <form id="formAdd" action="{{ route('admin.manajemen-rka.store') }}" method="POST"
+                        class="d-grid gap-2">
+                        @csrf
                         <div class="fs-4 fw-bold">Judul RKA</div>
                         <textarea id="judul" name="judul" class="form-control border border-gray-600" placeholder="Masukkan judul RKA"></textarea>
                     </form>
 
                     <div class="d-grid py-4">
-                        <button type="button" onclick="submitForm()"
-                            class="bg-success d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                        <button type="button" onclick="submitForm('formAdd')"
+                            class="bg-success fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                             Tambah Folder
                         </button>
                     </div>
@@ -56,55 +69,8 @@
 
 @section('script')
     <script>
-        // const table = $("#kt_datatable_dom_positioning").DataTable();
-        // $('#search').on('keyup', function() {
-        //     table.search(this.value).draw();
-        // });
-
-        // // Fungsi global untuk menghapus data
-        // window.destroyItem = function(e) {
-        //     const route = e.dataset.route;
-
-        //     Swal.fire({
-        //         title: "Apakah Anda Yakin?",
-        //         html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
-        //         icon: "warning",
-        //         showCancelButton: true,
-        //         reverseButtons: true,
-        //         confirmButtonColor: '#d33',
-        //         cancelButtonColor: '#3085d6',
-        //         confirmButtonText: 'Hapus!',
-        //         cancelButtonText: 'Batalkan!'
-        //     }).then((result) => {
-        //         if (result.isConfirmed) {
-        //             const form = document.createElement('form');
-        //             form.method = 'POST';
-        //             form.action = route;
-
-        //             const token = document.createElement('input');
-        //             token.type = 'hidden';
-        //             token.name = '_token';
-        //             token.value = '{{ csrf_token() }}';
-
-        //             const method = document.createElement('input');
-        //             method.type = 'hidden';
-        //             method.name = '_method';
-        //             method.value = 'DELETE';
-
-        //             form.appendChild(token);
-        //             form.appendChild(method);
-        //             document.body.appendChild(form);
-        //             form.submit();
-        //         } else {
-        //             Swal.fire({
-        //                 title: "Aksi Dibatalkan :)",
-        //                 icon: "info",
-        //             });
-        //         }
-        //     });
-        // };
-        function submitForm() {
-            let form = document.getElementById('form');
+        function submitForm(formId) {
+            let form = document.getElementById(formId);
             let formData = new FormData(form);
 
             fetch(form.action, {

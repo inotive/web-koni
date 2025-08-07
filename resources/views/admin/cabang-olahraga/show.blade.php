@@ -296,7 +296,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-end pe-6">
-                                                    <a href="{{ route('admin.konfigurasi.atlet.show', [$atlet->id, 'back' => 'cabor']) }}"
+                                                    <a href="{{ route('admin.konfigurasi.atlet.show', $atlet->id) }}?back=cabor&cabor_id={{ $cabor->id }}"
                                                         class="btn btn-sm btn-light-primary">
                                                         <i class="ki-duotone ki-eye fs-5"></i>
                                                         <span class="d-none d-md-inline ms-1">Lihat Profil</span>
@@ -479,7 +479,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-end pe-6">
-                                                    <a href="{{ route('admin.konfigurasi.pelatih.show', $pelatih->id ?? '#') }}"
+                                                    <a href="{{ route('admin.konfigurasi.pelatih.show', $pelatih->id) }}?back=cabor&cabor_id={{ $cabor->id }}"
                                                         class="btn btn-sm btn-light-primary">
                                                         <i class="ki-duotone ki-eye fs-5">
                                                             <span class="path1"></span>

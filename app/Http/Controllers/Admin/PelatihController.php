@@ -135,6 +135,13 @@ class PelatihController extends Controller
 
         return view('admin.pelatih.index', compact('pelatih', 'allCabor', 'allKelamin'));
 }
+    public function create()
+    {
+        $cabors = CabangOlahraga::pluck('nama_cabor', 'id');
+        $allKelamin = ['Laki-Laki', 'Perempuan'];
+
+        return view('admin.pelatih.create', compact('cabors', 'allKelamin'));
+    }
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -160,7 +167,7 @@ class PelatihController extends Controller
             $pelatih = Pelatih::create($data);
 
             return redirect()->route('admin.konfigurasi.pelatih.index')
-                ->with('success', 'Data pelatih berhasil disimpan.')
+                ->with('OK', 'Data pelatih berhasil disimpan.')
                 ->with('action', 'store');
         } catch (\Exception $e) {
             return back()->withInput()
@@ -171,6 +178,11 @@ class PelatihController extends Controller
     public function show($id, Request $request)
     {
         $pelatih = Pelatih::with(['cabangOlahraga', 'prestasis'])->findOrFail($id);
+
+        $backUrl = request('back') === 'cabor'
+        ? route('admin.konfigurasi.cabang-olahraga.show', $pelatih->cabor_id)
+        : route('admin.konfigurasi.pelatih.index');
+
 
         if ($request->ajax() || $request->get('ajax')) {
             $perPage = $request->get('per_page', 3);
@@ -206,7 +218,7 @@ class PelatihController extends Controller
                 return response()->json($response);
 
             } catch (\Exception $e) {
-                \Log::error('Error loading prestasi: ' . $e->getMessage());
+                Log::error('Error loading prestasi: ' . $e->getMessage());
 
                 return response()->json([
                     'success' => false,
@@ -220,7 +232,7 @@ class PelatihController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(3);
 
-        return view('admin.pelatih.show', compact('pelatih', 'prestasis'));
+        return view('admin.pelatih.show', compact('pelatih', 'prestasis','backUrl'));
     }
 
 
@@ -261,7 +273,7 @@ class PelatihController extends Controller
             $pelatih->update($data);
 
             return redirect()->route('admin.konfigurasi.pelatih.index')
-                ->with('success', 'Data pelatih berhasil diubah.')
+                ->with('OK', 'Data pelatih berhasil diubah.')
                 ->with('action', 'update');
         } catch (\Exception $e) {
             return back()->withInput()
@@ -304,13 +316,13 @@ class PelatihController extends Controller
             }
 
             return redirect()->route('admin.konfigurasi.pelatih.index')
-                ->with('success', 'Data pelatih berhasil dihapus.')
+                ->with('OK', 'Data pelatih berhasil dihapus.')
                 ->with('action', 'destroy');
 
         } catch (\Exception $e) {
             if ($request->ajax()) {
                 return response()->json([
-                    'success' => false,
+                    'OK' => false,
                     'message' => 'Gagal menghapus data pelatih. Error: ' . $e->getMessage()
                 ], 500);
             }
@@ -324,7 +336,7 @@ class PelatihController extends Controller
         $request->validate([
             'tahun' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
             'tempat' => 'required|string|max:255',
-            'nama_prestasi' => 'required|string|max:255',
+            'nama_prestasi' => 'required|string|max:255',   
         ]);
 
         try {
@@ -385,7 +397,7 @@ class PelatihController extends Controller
                 return response()->json($response);
             }
 
-            return redirect()->back()->with('success', 'Ketersediaan berhasil diperbarui');
+            return redirect()->back()->with('OK', 'Ketersediaan berhasil diperbarui');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             Log::error('Validation error', ['errors' => $e->errors()]);
