@@ -433,9 +433,6 @@
                                 </div>
                             </div>
                         @endif
-                                           @php
-                        $caborNama = $atlet->cabangOlahraga ? $atlet->cabangOlahraga->nama_cabor : '-';
-                    @endphp
 
                     </div>
                 </div>
@@ -461,7 +458,7 @@
                     <div class="detail-label">
                         <p class="detail-label-text">Cabor</p>
                     </div>
-                    <p class="detail-value">{{ $caborNama }}</p>
+                    <p class="detail-value">{{ $atlet->cabor }}</p>
                     <div class="edit-icon">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -638,7 +635,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="3" style="text-align: center; padding: 20px;">Belum ada data prestasi.</td>
+                                <td colspan="3" style="text-align: center; padding: 20px;">Belum ada data prestasi.
+                                </td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -646,23 +644,10 @@
             </div>
         </div>
 
-<div class="detail-actions">
-    @php
-        $backUrl = route('admin.konfigurasi.atlet.index');
-        $backText = 'Kembali ke Atlet';
-
-        $referer = request()->headers->get('referer');
-
-        if (str_contains($referer, route('admin.konfigurasi.prestasi.index'))) {
-            $backUrl = route('admin.konfigurasi.prestasi.index');
-            $backText = 'Kembali ke Prestasi';
-        }
-        elseif (str_contains($referer, 'kejuaraan')) {
-            $backUrl = route('admin.konfigurasi.kejuaraan.index');
-            $backText = 'Kembali ke Kejuaraan';
-        }
-    @endphp
-
-    <a href="{{ $backUrl }}" class="btn-secondary">{{ $backText }}</a>
-</div>
+        <div class="detail-actions">
+            <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn btn-light-primary">
+                <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
+            </a>
+        </div>
+    </div>
 @endsection
