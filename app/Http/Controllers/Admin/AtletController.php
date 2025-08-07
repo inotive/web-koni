@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Atlet;
 use App\Models\CabangOlahraga;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Admin\DB;
 
 class AtletController extends Controller
 {
