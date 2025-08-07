@@ -675,7 +675,7 @@
             </div>
 
             <div class="detail-actions">
-                <a href="{{ route('admin.konfigurasi.pelatih.index') }}" class="btn btn-light-primary">
+                <a href="{{ $backUrl ?? route('admin.konfigurasi.pelatih.index') }}" class="btn btn-light-primary">
                     <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
                 </a>
             </div>
