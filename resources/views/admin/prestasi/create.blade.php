@@ -287,35 +287,21 @@
 
   <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Inisialisasi Select2 untuk select atlet dan pelatih
     const atletSelect = $('#subject_atlet');
     const pelatihSelect = $('#subject_pelatih');
-
-    $('#subject_atlet, #subject_pelatih').select2({
-        theme: 'bootstrap-5',
-        placeholder: function() {
-            return $(this).attr('id') === 'subject_atlet' ? 'Cari atlet...' : 'Cari pelatih...';
-        },
-        allowClear: true,
-        width: '100%',
-        dropdownParent: $('.card-form')
-    });
-
     const subjectTypeSelect = document.getElementById('subject_type');
     const caborInput = $('#cabor');
     const form = document.querySelector('form');
 
-    // Tambahkan hidden input untuk subject_id
+
     const hiddenSubjectInput = document.createElement('input');
     hiddenSubjectInput.type = 'hidden';
     hiddenSubjectInput.name = 'subject_id';
     form.appendChild(hiddenSubjectInput);
 
-    // Fungsi untuk mengupdate pilihan cabang olahraga
     function updateCabor(selectedOption) {
         if (selectedOption.length && selectedOption.data('cabor')) {
             const caborName = selectedOption.data('cabor');
-            // Cari option yang text-nya sama dengan nama cabang olahraga
             const caborOption = $('#cabor option').filter(function() {
                 return $(this).text().trim() === caborName;
             });
@@ -330,41 +316,70 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Fungsi untuk toggle select atlet/pelatih
     function toggleOptions() {
-        const selectedType = subjectTypeSelect.value;
+        const type = subjectTypeSelect.value;
 
-        // Sembunyikan semua select terlebih dahulu
-        atletSelect.hide().next('.select2-container').hide();
-        pelatihSelect.hide().next('.select2-container').hide();
+        if (atletSelect.hasClass("select2-hidden-accessible")) {
+            atletSelect.select2('destroy');
+        }
+        if (pelatihSelect.hasClass("select2-hidden-accessible")) {
+            pelatihSelect.select2('destroy');
+        }
 
-        // Hapus event listener sebelumnya untuk menghindari duplikasi
-        atletSelect.off('change');
-        pelatihSelect.off('change');
+        atletSelect.hide().next('.select2-container').remove();
+        pelatihSelect.hide().next('.select2-container').remove();
 
-        // Reset nilai
-        atletSelect.val(null).trigger('change');
-        pelatihSelect.val(null).trigger('change');
+        atletSelect.val('');
+        pelatihSelect.val('');
         hiddenSubjectInput.value = '';
 
-        if (selectedType === 'atlet') {
-            atletSelect.show().next('.select2-container').show();
-            // Set nilai ke hidden input ketika atlet dipilih
-            atletSelect.on('change', function() {
-                hiddenSubjectInput.value = this.value;
-                updateCabor($(this).find(':selected'));
+        atletSelect.off('change.prestasi');
+        pelatihSelect.off('change.prestasi');
+
+        if (type === 'atlet') {
+            atletSelect.show();
+            atletSelect.select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Cari atlet...',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('.card-form')
             });
-        } else if (selectedType === 'pelatih') {
-            pelatihSelect.show().next('.select2-container').show();
-            // Set nilai ke hidden input ketika pelatih dipilih
-            pelatihSelect.on('change', function() {
-                hiddenSubjectInput.value = this.value;
-                updateCabor($(this).find(':selected'));
+
+            atletSelect.on('change.prestasi', function() {
+                const selectedValue = $(this).val();
+                hiddenSubjectInput.value = selectedValue || '';
+
+                if (selectedValue) {
+                    updateCabor($(this).find(':selected'));
+                } else {
+                    caborInput.val('').trigger('change');
+                }
+            });
+
+        } else if (type === 'pelatih') {
+            pelatihSelect.show();
+            pelatihSelect.select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Cari pelatih...',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('.card-form')
+            });
+
+            pelatihSelect.on('change.prestasi', function() {
+                const selectedValue = $(this).val();
+                hiddenSubjectInput.value = selectedValue || '';
+
+                if (selectedValue) {
+                    updateCabor($(this).find(':selected'));
+                } else {
+                    caborInput.val('').trigger('change');
+                }
             });
         }
     }
 
-    // Inisialisasi Select2 untuk cabang olahraga
     caborInput.select2({
         theme: 'bootstrap-5',
         placeholder: 'Pilih Cabang Olahraga',
@@ -372,11 +387,24 @@ document.addEventListener('DOMContentLoaded', function() {
         width: '100%'
     });
 
-    // Event listener untuk perubahan jenis pemilik
     subjectTypeSelect.addEventListener('change', toggleOptions);
 
-    // Panggil pertama kali untuk inisialisasi
     toggleOptions();
+
+    form.addEventListener('submit', function(e) {
+        const type = subjectTypeSelect.value;
+        let selectedValue = '';
+
+        if (type === 'atlet') {
+            selectedValue = atletSelect.val();
+        } else if (type === 'pelatih') {
+            selectedValue = pelatihSelect.val();
+        }
+
+        hiddenSubjectInput.value = selectedValue || '';
+
+        console.log('Form submitted with subject_id:', hiddenSubjectInput.value);
+    });
 });
 </script>
 

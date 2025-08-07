@@ -334,8 +334,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="table-container">
-                        <div class="table-header">
+                    <div class="table-header">
                             <div class="header-wrapper">
                                 <h3 class="header-title fw-semibold text-dark">Daftar Kejuaraan</h3>
                                 <div class="header-controls">
@@ -421,6 +420,8 @@
                                 </div>
                             @endif
                         </div>
+                    <div class="table-container">
+
 
                         <div id="prestasi-table-container">
                             @include('admin.prestasi._table')
