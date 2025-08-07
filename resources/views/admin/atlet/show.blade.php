@@ -644,23 +644,10 @@
             </div>
         </div>
 
-<div class="detail-actions">
-    @php
-        $backUrl = route('admin.konfigurasi.atlet.index');
-        $backText = 'Kembali ke Atlet';
-
-        $referer = request()->headers->get('referer');
-
-        if (str_contains($referer, route('admin.konfigurasi.prestasi.index'))) {
-            $backUrl = route('admin.konfigurasi.prestasi.index');
-            $backText = 'Kembali ke Prestasi';
-        }
-        elseif (str_contains($referer, 'kejuaraan')) {
-            $backUrl = route('admin.konfigurasi.kejuaraan.index');
-            $backText = 'Kembali ke Kejuaraan';
-        }
-    @endphp
-
-    <a href="{{ $backUrl }}" class="btn-secondary">{{ $backText }}</a>
-</div>
+        <div class="detail-actions">
+            <a href="{{ $backUrl ?? route('admin.konfigurasi.atlet.index') }}" class="btn btn-light-primary">
+                <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
+            </a>
+        </div>
+    </div>
 @endsection

@@ -179,6 +179,11 @@ class PelatihController extends Controller
     {
         $pelatih = Pelatih::with(['cabangOlahraga', 'prestasis'])->findOrFail($id);
 
+        $backUrl = request('back') === 'cabor'
+        ? route('admin.konfigurasi.cabang-olahraga.show', $pelatih->cabor_id)
+        : route('admin.konfigurasi.pelatih.index');
+
+
         if ($request->ajax() || $request->get('ajax')) {
             $perPage = $request->get('per_page', 3);
             $sortBy = $request->get('sort_by', 'created_at');
@@ -213,7 +218,7 @@ class PelatihController extends Controller
                 return response()->json($response);
 
             } catch (\Exception $e) {
-                \Log::error('Error loading prestasi: ' . $e->getMessage());
+                Log::error('Error loading prestasi: ' . $e->getMessage());
 
                 return response()->json([
                     'success' => false,
@@ -227,7 +232,7 @@ class PelatihController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(3);
 
-        return view('admin.pelatih.show', compact('pelatih', 'prestasis'));
+        return view('admin.pelatih.show', compact('pelatih', 'prestasis','backUrl'));
     }
 
 
@@ -331,7 +336,7 @@ class PelatihController extends Controller
         $request->validate([
             'tahun' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
             'tempat' => 'required|string|max:255',
-            'nama_prestasi' => 'required|string|max:255',
+            'nama_prestasi' => 'required|string|max:255',   
         ]);
 
         try {

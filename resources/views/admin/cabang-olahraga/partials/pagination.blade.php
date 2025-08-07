@@ -111,35 +111,44 @@
 </div>
 
 {{-- CSS Styling untuk Pagination --}}
+{{-- CSS Styling untuk Pagination --}}
 <style>
-.pagination-arrow, .pagination-number {
-    border: 1px solid #dee2e6;
-    background: white;
-    color: #6c757d;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 14px;
-    min-width: 40px;
-    text-align: center;
-    text-decoration: none;
+.pagination-arrow,
+.pagination-number,
+.pagination-dots {
+    margin: 0 -2px; /* Overlap border untuk tampilan rapat */
+    font-size: 11px;
+    padding: 2px 6px;
+    min-width: 26px;
+    height: 24px;
+    line-height: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #6c757d;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
 }
 
-.pagination-arrow:hover:not(.disabled), 
+.pagination-arrow:hover:not(.disabled),
 .pagination-number:hover:not(.active) {
     background-color: #e9ecef;
     border-color: #adb5bd;
     color: #495057;
 }
 
+.pagination-arrow.disabled,
+.pagination-number.active {
+    cursor: default;
+}
+
 .pagination-arrow.disabled {
     background-color: #f8f9fa;
     color: #ced4da;
-    cursor: not-allowed;
     border-color: #e9ecef;
 }
 
@@ -151,9 +160,10 @@
 }
 
 .pagination-dots {
-    color: #6c757d;
-    padding: 8px 4px;
-    font-weight: bold;
+    background: none;
+    border: none;
+    cursor: default;
+    padding: 2px 2px;
 }
 
 .pagination-arrow.processing,
