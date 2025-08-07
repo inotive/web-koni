@@ -170,9 +170,23 @@
                                     @enderror
                                 </div>
                             </div>
+
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="nama_prestasi" class="form-label">Kejuaraan</label>
+                                    <label for="kejuaraan" class="form-label">Kejuaraan</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control @error('kejuaraan') is-invalid @enderror"
+                                        id="kejuaraan" name="kejuaraan" value="{{ old('kejuaraan') }}" required>
+                                    @error('kejuaraan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <div class="form-hint">Contoh: Kejuaraan Nasional Bulutangkis 2023</div>
+                                </div>
+                            </div>
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="nama_prestasi" class="form-label">Nama Prestasi</label>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" class="form-control @error('nama_prestasi') is-invalid @enderror"
@@ -285,99 +299,127 @@
         </div>
     </div>
 
-  <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Inisialisasi Select2 untuk select atlet dan pelatih
-    const atletSelect = $('#subject_atlet');
-    const pelatihSelect = $('#subject_pelatih');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const atletSelect = $('#subject_atlet');
+            const pelatihSelect = $('#subject_pelatih');
+            const subjectTypeSelect = document.getElementById('subject_type');
+            const caborInput = $('#cabor');
+            const form = document.querySelector('form');
 
-    $('#subject_atlet, #subject_pelatih').select2({
-        theme: 'bootstrap-5',
-        placeholder: function() {
-            return $(this).attr('id') === 'subject_atlet' ? 'Cari atlet...' : 'Cari pelatih...';
-        },
-        allowClear: true,
-        width: '100%',
-        dropdownParent: $('.card-form')
-    });
 
-    const subjectTypeSelect = document.getElementById('subject_type');
-    const caborInput = $('#cabor');
-    const form = document.querySelector('form');
+            const hiddenSubjectInput = document.createElement('input');
+            hiddenSubjectInput.type = 'hidden';
+            hiddenSubjectInput.name = 'subject_id';
+            form.appendChild(hiddenSubjectInput);
 
-    // Tambahkan hidden input untuk subject_id
-    const hiddenSubjectInput = document.createElement('input');
-    hiddenSubjectInput.type = 'hidden';
-    hiddenSubjectInput.name = 'subject_id';
-    form.appendChild(hiddenSubjectInput);
+            function updateCabor(selectedOption) {
+                if (selectedOption.length && selectedOption.data('cabor')) {
+                    const caborName = selectedOption.data('cabor');
+                    const caborOption = $('#cabor option').filter(function() {
+                        return $(this).text().trim() === caborName;
+                    });
 
-    // Fungsi untuk mengupdate pilihan cabang olahraga
-    function updateCabor(selectedOption) {
-        if (selectedOption.length && selectedOption.data('cabor')) {
-            const caborName = selectedOption.data('cabor');
-            // Cari option yang text-nya sama dengan nama cabang olahraga
-            const caborOption = $('#cabor option').filter(function() {
-                return $(this).text().trim() === caborName;
-            });
-
-            if (caborOption.length) {
-                caborInput.val(caborOption.val()).trigger('change');
-            } else {
-                caborInput.val('').trigger('change');
+                    if (caborOption.length) {
+                        caborInput.val(caborOption.val()).trigger('change');
+                    } else {
+                        caborInput.val('').trigger('change');
+                    }
+                } else {
+                    caborInput.val('').trigger('change');
+                }
             }
-        } else {
-            caborInput.val('').trigger('change');
-        }
-    }
 
-    // Fungsi untuk toggle select atlet/pelatih
-    function toggleOptions() {
-        const selectedType = subjectTypeSelect.value;
+            function toggleOptions() {
+                const type = subjectTypeSelect.value;
 
-        // Sembunyikan semua select terlebih dahulu
-        atletSelect.hide().next('.select2-container').hide();
-        pelatihSelect.hide().next('.select2-container').hide();
+                if (atletSelect.hasClass("select2-hidden-accessible")) {
+                    atletSelect.select2('destroy');
+                }
+                if (pelatihSelect.hasClass("select2-hidden-accessible")) {
+                    pelatihSelect.select2('destroy');
+                }
 
-        // Hapus event listener sebelumnya untuk menghindari duplikasi
-        atletSelect.off('change');
-        pelatihSelect.off('change');
+                atletSelect.hide().next('.select2-container').remove();
+                pelatihSelect.hide().next('.select2-container').remove();
 
-        // Reset nilai
-        atletSelect.val(null).trigger('change');
-        pelatihSelect.val(null).trigger('change');
-        hiddenSubjectInput.value = '';
+                atletSelect.val('');
+                pelatihSelect.val('');
+                hiddenSubjectInput.value = '';
 
-        if (selectedType === 'atlet') {
-            atletSelect.show().next('.select2-container').show();
-            // Set nilai ke hidden input ketika atlet dipilih
-            atletSelect.on('change', function() {
-                hiddenSubjectInput.value = this.value;
-                updateCabor($(this).find(':selected'));
+                atletSelect.off('change.prestasi');
+                pelatihSelect.off('change.prestasi');
+
+                if (type === 'atlet') {
+                    atletSelect.show();
+                    atletSelect.select2({
+                        theme: 'bootstrap-5',
+                        placeholder: 'Cari atlet...',
+                        allowClear: true,
+                        width: '100%',
+                        dropdownParent: $('.card-form')
+                    });
+
+                    atletSelect.on('change.prestasi', function() {
+                        const selectedValue = $(this).val();
+                        hiddenSubjectInput.value = selectedValue || '';
+
+                        if (selectedValue) {
+                            updateCabor($(this).find(':selected'));
+                        } else {
+                            caborInput.val('').trigger('change');
+                        }
+                    });
+
+                } else if (type === 'pelatih') {
+                    pelatihSelect.show();
+                    pelatihSelect.select2({
+                        theme: 'bootstrap-5',
+                        placeholder: 'Cari pelatih...',
+                        allowClear: true,
+                        width: '100%',
+                        dropdownParent: $('.card-form')
+                    });
+
+                    pelatihSelect.on('change.prestasi', function() {
+                        const selectedValue = $(this).val();
+                        hiddenSubjectInput.value = selectedValue || '';
+
+                        if (selectedValue) {
+                            updateCabor($(this).find(':selected'));
+                        } else {
+                            caborInput.val('').trigger('change');
+                        }
+                    });
+                }
+            }
+
+            caborInput.select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Pilih Cabang Olahraga',
+                allowClear: true,
+                width: '100%'
             });
-        } else if (selectedType === 'pelatih') {
-            pelatihSelect.show().next('.select2-container').show();
-            // Set nilai ke hidden input ketika pelatih dipilih
-            pelatihSelect.on('change', function() {
-                hiddenSubjectInput.value = this.value;
-                updateCabor($(this).find(':selected'));
+
+            subjectTypeSelect.addEventListener('change', toggleOptions);
+
+            toggleOptions();
+
+            form.addEventListener('submit', function(e) {
+                const type = subjectTypeSelect.value;
+                let selectedValue = '';
+
+                if (type === 'atlet') {
+                    selectedValue = atletSelect.val();
+                } else if (type === 'pelatih') {
+                    selectedValue = pelatihSelect.val();
+                }
+
+                hiddenSubjectInput.value = selectedValue || '';
+
+                console.log('Form submitted with subject_id:', hiddenSubjectInput.value);
             });
-        }
-    }
-
-    // Inisialisasi Select2 untuk cabang olahraga
-    caborInput.select2({
-        theme: 'bootstrap-5',
-        placeholder: 'Pilih Cabang Olahraga',
-        allowClear: true,
-        width: '100%'
-    });
-
-    // Event listener untuk perubahan jenis pemilik
-    subjectTypeSelect.addEventListener('change', toggleOptions);
-
-    // Panggil pertama kali untuk inisialisasi
-    toggleOptions();
-});
-</script>
+        });
+    </script>
 
 @endsection
