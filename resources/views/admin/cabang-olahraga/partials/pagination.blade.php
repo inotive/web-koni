@@ -111,14 +111,16 @@
 </div>
 
 {{-- CSS Styling untuk Pagination --}}
+{{-- CSS Styling untuk Pagination --}}
 <style>
 .pagination-arrow,
 .pagination-number,
 .pagination-dots {
-    font-size: 12px;
-    padding: 4px 8px;
-    min-width: 32px;
-    height: 28px;
+    margin: 0 -2px; /* Overlap border untuk tampilan rapat */
+    font-size: 11px;
+    padding: 2px 6px;
+    min-width: 26px;
+    height: 24px;
     line-height: 1;
     display: inline-flex;
     align-items: center;
@@ -126,7 +128,7 @@
     border: 1px solid #dee2e6;
     background: white;
     color: #6c757d;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
     transition: all 0.2s;
     text-decoration: none;
@@ -161,7 +163,7 @@
     background: none;
     border: none;
     cursor: default;
-    padding: 4px 2px;
+    padding: 2px 2px;
 }
 
 .pagination-arrow.processing,
