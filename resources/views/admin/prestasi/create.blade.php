@@ -170,9 +170,23 @@
                                     @enderror
                                 </div>
                             </div>
+
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="nama_prestasi" class="form-label">Kejuaraan</label>
+                                    <label for="kejuaraan" class="form-label">Kejuaraan</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control @error('kejuaraan') is-invalid @enderror"
+                                        id="kejuaraan" name="kejuaraan" value="{{ old('kejuaraan') }}" required>
+                                    @error('kejuaraan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <div class="form-hint">Contoh: Kejuaraan Nasional Bulutangkis 2023</div>
+                                </div>
+                            </div>
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="nama_prestasi" class="form-label">Nama Prestasi</label>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" class="form-control @error('nama_prestasi') is-invalid @enderror"
@@ -285,127 +299,127 @@
         </div>
     </div>
 
-  <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const atletSelect = $('#subject_atlet');
-    const pelatihSelect = $('#subject_pelatih');
-    const subjectTypeSelect = document.getElementById('subject_type');
-    const caborInput = $('#cabor');
-    const form = document.querySelector('form');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const atletSelect = $('#subject_atlet');
+            const pelatihSelect = $('#subject_pelatih');
+            const subjectTypeSelect = document.getElementById('subject_type');
+            const caborInput = $('#cabor');
+            const form = document.querySelector('form');
 
 
-    const hiddenSubjectInput = document.createElement('input');
-    hiddenSubjectInput.type = 'hidden';
-    hiddenSubjectInput.name = 'subject_id';
-    form.appendChild(hiddenSubjectInput);
+            const hiddenSubjectInput = document.createElement('input');
+            hiddenSubjectInput.type = 'hidden';
+            hiddenSubjectInput.name = 'subject_id';
+            form.appendChild(hiddenSubjectInput);
 
-    function updateCabor(selectedOption) {
-        if (selectedOption.length && selectedOption.data('cabor')) {
-            const caborName = selectedOption.data('cabor');
-            const caborOption = $('#cabor option').filter(function() {
-                return $(this).text().trim() === caborName;
-            });
+            function updateCabor(selectedOption) {
+                if (selectedOption.length && selectedOption.data('cabor')) {
+                    const caborName = selectedOption.data('cabor');
+                    const caborOption = $('#cabor option').filter(function() {
+                        return $(this).text().trim() === caborName;
+                    });
 
-            if (caborOption.length) {
-                caborInput.val(caborOption.val()).trigger('change');
-            } else {
-                caborInput.val('').trigger('change');
+                    if (caborOption.length) {
+                        caborInput.val(caborOption.val()).trigger('change');
+                    } else {
+                        caborInput.val('').trigger('change');
+                    }
+                } else {
+                    caborInput.val('').trigger('change');
+                }
             }
-        } else {
-            caborInput.val('').trigger('change');
-        }
-    }
 
-    function toggleOptions() {
-        const type = subjectTypeSelect.value;
+            function toggleOptions() {
+                const type = subjectTypeSelect.value;
 
-        if (atletSelect.hasClass("select2-hidden-accessible")) {
-            atletSelect.select2('destroy');
-        }
-        if (pelatihSelect.hasClass("select2-hidden-accessible")) {
-            pelatihSelect.select2('destroy');
-        }
+                if (atletSelect.hasClass("select2-hidden-accessible")) {
+                    atletSelect.select2('destroy');
+                }
+                if (pelatihSelect.hasClass("select2-hidden-accessible")) {
+                    pelatihSelect.select2('destroy');
+                }
 
-        atletSelect.hide().next('.select2-container').remove();
-        pelatihSelect.hide().next('.select2-container').remove();
+                atletSelect.hide().next('.select2-container').remove();
+                pelatihSelect.hide().next('.select2-container').remove();
 
-        atletSelect.val('');
-        pelatihSelect.val('');
-        hiddenSubjectInput.value = '';
+                atletSelect.val('');
+                pelatihSelect.val('');
+                hiddenSubjectInput.value = '';
 
-        atletSelect.off('change.prestasi');
-        pelatihSelect.off('change.prestasi');
+                atletSelect.off('change.prestasi');
+                pelatihSelect.off('change.prestasi');
 
-        if (type === 'atlet') {
-            atletSelect.show();
-            atletSelect.select2({
+                if (type === 'atlet') {
+                    atletSelect.show();
+                    atletSelect.select2({
+                        theme: 'bootstrap-5',
+                        placeholder: 'Cari atlet...',
+                        allowClear: true,
+                        width: '100%',
+                        dropdownParent: $('.card-form')
+                    });
+
+                    atletSelect.on('change.prestasi', function() {
+                        const selectedValue = $(this).val();
+                        hiddenSubjectInput.value = selectedValue || '';
+
+                        if (selectedValue) {
+                            updateCabor($(this).find(':selected'));
+                        } else {
+                            caborInput.val('').trigger('change');
+                        }
+                    });
+
+                } else if (type === 'pelatih') {
+                    pelatihSelect.show();
+                    pelatihSelect.select2({
+                        theme: 'bootstrap-5',
+                        placeholder: 'Cari pelatih...',
+                        allowClear: true,
+                        width: '100%',
+                        dropdownParent: $('.card-form')
+                    });
+
+                    pelatihSelect.on('change.prestasi', function() {
+                        const selectedValue = $(this).val();
+                        hiddenSubjectInput.value = selectedValue || '';
+
+                        if (selectedValue) {
+                            updateCabor($(this).find(':selected'));
+                        } else {
+                            caborInput.val('').trigger('change');
+                        }
+                    });
+                }
+            }
+
+            caborInput.select2({
                 theme: 'bootstrap-5',
-                placeholder: 'Cari atlet...',
+                placeholder: 'Pilih Cabang Olahraga',
                 allowClear: true,
-                width: '100%',
-                dropdownParent: $('.card-form')
+                width: '100%'
             });
 
-            atletSelect.on('change.prestasi', function() {
-                const selectedValue = $(this).val();
+            subjectTypeSelect.addEventListener('change', toggleOptions);
+
+            toggleOptions();
+
+            form.addEventListener('submit', function(e) {
+                const type = subjectTypeSelect.value;
+                let selectedValue = '';
+
+                if (type === 'atlet') {
+                    selectedValue = atletSelect.val();
+                } else if (type === 'pelatih') {
+                    selectedValue = pelatihSelect.val();
+                }
+
                 hiddenSubjectInput.value = selectedValue || '';
 
-                if (selectedValue) {
-                    updateCabor($(this).find(':selected'));
-                } else {
-                    caborInput.val('').trigger('change');
-                }
+                console.log('Form submitted with subject_id:', hiddenSubjectInput.value);
             });
-
-        } else if (type === 'pelatih') {
-            pelatihSelect.show();
-            pelatihSelect.select2({
-                theme: 'bootstrap-5',
-                placeholder: 'Cari pelatih...',
-                allowClear: true,
-                width: '100%',
-                dropdownParent: $('.card-form')
-            });
-
-            pelatihSelect.on('change.prestasi', function() {
-                const selectedValue = $(this).val();
-                hiddenSubjectInput.value = selectedValue || '';
-
-                if (selectedValue) {
-                    updateCabor($(this).find(':selected'));
-                } else {
-                    caborInput.val('').trigger('change');
-                }
-            });
-        }
-    }
-
-    caborInput.select2({
-        theme: 'bootstrap-5',
-        placeholder: 'Pilih Cabang Olahraga',
-        allowClear: true,
-        width: '100%'
-    });
-
-    subjectTypeSelect.addEventListener('change', toggleOptions);
-
-    toggleOptions();
-
-    form.addEventListener('submit', function(e) {
-        const type = subjectTypeSelect.value;
-        let selectedValue = '';
-
-        if (type === 'atlet') {
-            selectedValue = atletSelect.val();
-        } else if (type === 'pelatih') {
-            selectedValue = pelatihSelect.val();
-        }
-
-        hiddenSubjectInput.value = selectedValue || '';
-
-        console.log('Form submitted with subject_id:', hiddenSubjectInput.value);
-    });
-});
-</script>
+        });
+    </script>
 
 @endsection

@@ -103,33 +103,34 @@ class PrestasiController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'subject_type' => 'required|in:atlet,pelatih',
-            'subject_id' => 'required|exists:' . ($request->subject_type === 'pelatih' ? 'pelatih' : 'atlets') . ',id',
-            'nama_prestasi' => 'required|string|max:255',
-            'tingkat' => 'required|string|max:255',
-            'tempat' => 'required|string|max:255',
-            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
-            'medali' => 'required|in:Emas,Perak,Perunggu',
-            'cabor_id' => 'required|exists:cabang_olahragas,id',
-        ]);
+{
+    $request->validate([
+        'subject_type' => 'required|in:atlet,pelatih',
+        'subject_id' => 'required|exists:' . ($request->subject_type === 'pelatih' ? 'pelatih' : 'atlets') . ',id',
+        'nama_prestasi' => 'required|string|max:255',
+        'kejuaraan' => 'required|string|max:255',
+        'tingkat' => 'required|string|max:255',
+        'tempat' => 'required|string|max:255',
+        'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+        'medali' => 'required|in:Emas,Perak,Perunggu',
+        'cabor_id' => 'required|exists:cabang_olahragas,id',
+    ]);
 
-        $subject = $request->subject_type === 'pelatih'
-            ? Pelatih::find($request->subject_id)
-            : Atlet::find($request->subject_id);
+    $subject = $request->subject_type === 'pelatih'
+        ? Pelatih::find($request->subject_id)
+        : Atlet::find($request->subject_id);
 
-        $prestasi = new Prestasi($request->only([
-            'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id'
-        ]));
+    $prestasi = new Prestasi($request->only([
+        'nama_prestasi', 'kejuaraan', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id' // Tambahkan 'kejuaraan'
+    ]));
 
-        $prestasi->subject()->associate($subject);
-        $prestasi->save();
+    $prestasi->subject()->associate($subject);
+    $prestasi->save();
 
-        return redirect()->route('admin.konfigurasi.prestasi.index')
-            ->with('OK', 'Prestasi berhasil ditambahkan!')
-            ->with('action', 'store');
-    }
+    return redirect()->route('admin.konfigurasi.prestasi.index')
+        ->with('OK', 'Prestasi berhasil ditambahkan!')
+        ->with('action', 'store');
+}
 public function edit(Prestasi $prestasi)
 {
     $prestasi->load(['subject', 'cabangOlahraga']);
@@ -138,18 +139,14 @@ public function edit(Prestasi $prestasi)
     $pelatihs = Pelatih::all();
     $cabors = CabangOlahraga::orderBy('nama_cabor', 'asc')->get();
 
-    // PERBAIKAN: Jika cabor_id NULL, ambil dari subject
     if (!$prestasi->cabor_id && $prestasi->subject && $prestasi->subject->cabor_id) {
         \Log::info('Prestasi cabor_id is NULL, using subject cabor_id', [
             'prestasi_id' => $prestasi->id,
             'subject_cabor_id' => $prestasi->subject->cabor_id
         ]);
 
-        // Set cabor_id dari subject untuk tampilan
         $prestasi->cabor_id = $prestasi->subject->cabor_id;
 
-        // OPSIONAL: Update database juga
-        // $prestasi->update(['cabor_id' => $prestasi->subject->cabor_id]);
     }
 
     \Log::info('Final prestasi data for edit:', [
@@ -166,6 +163,7 @@ public function update(Request $request, Prestasi $prestasi)
 {
     $request->validate([
         'nama_prestasi' => 'required|string|max:255',
+        'kejuaraan' => 'required|string|max:255',
         'tingkat' => 'required|string|max:255',
         'tempat' => 'required|string|max:255',
         'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
@@ -174,7 +172,7 @@ public function update(Request $request, Prestasi $prestasi)
     ]);
 
     $prestasi->update($request->only([
-        'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id'
+        'nama_prestasi', 'kejuaraan', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id'
     ]));
 
     return redirect()->route('admin.konfigurasi.prestasi.index')
@@ -195,52 +193,55 @@ public function update(Request $request, Prestasi $prestasi)
     return view('admin.prestasi.create-atlet', compact('atlet', 'cabors'));
 }
 
-    public function storeForAtlet(Request $request, Atlet $atlet)
-    {
-        $request->validate([
-            'nama_prestasi' => 'required|string|max:255',
-            'tingkat' => 'required|string|max:255',
-            'tempat' => 'required|string|max:255',
-            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
-            'medali' => 'required|in:Emas,Perak,Perunggu',
-             'cabor_id' => 'required|exists:cabang_olahragas,id',
-        ]);
+   public function storeForAtlet(Request $request, Atlet $atlet)
+{
+    $request->validate([
+        'nama_prestasi' => 'required|string|max:255',
+        'kejuaraan' => 'required|string|max:255',
+        'tingkat' => 'required|string|max:255',
+        'tempat' => 'required|string|max:255',
+        'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+        'medali' => 'required|in:Emas,Perak,Perunggu',
+        'cabor_id' => 'required|exists:cabang_olahragas,id',
+    ]);
 
-        $prestasi = new Prestasi($request->only([
-            'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id'
-        ]));
+    $prestasi = new Prestasi($request->only([
+        'nama_prestasi', 'kejuaraan', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id'
+    ]));
 
-        $prestasi->subject()->associate($atlet);
-        $prestasi->save();
+    $prestasi->subject()->associate($atlet);
+    $prestasi->save();
 
-        return redirect()->route('admin.konfigurasi.atlet.show', $atlet)
-            ->with('OK', 'Prestasi atlet berhasil ditambahkan!');
-    }
+    return redirect()->route('admin.konfigurasi.atlet.show', $atlet)
+        ->with('OK', 'Prestasi atlet berhasil ditambahkan!');
+}
 
    public function createForPelatih(Pelatih $pelatih)
 {
     $cabors = CabangOlahraga::orderBy('nama_cabor')->get();
-    return view('admin.prestasi.create-pelatih', compact('pelatih', 'cabors'));
+    return view('admin.prestasi.create-pelatih', compact('pelatihs', 'cabors'));
 }
 
     public function storeForPelatih(Request $request, Pelatih $pelatih)
-    {
-        $request->validate([
-            'nama_prestasi' => 'required|string|max:255',
-            'tingkat' => 'required|string|max:255',
-            'tempat' => 'required|string|max:255',
-            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
-            'medali' => 'required|in:Emas,Perak,Perunggu'
-        ]);
+{
+    $request->validate([
+        'nama_prestasi' => 'required|string|max:255',
+        'kejuaraan' => 'required|string|max:255',
+        'tingkat' => 'required|string|max:255',
+        'tempat' => 'required|string|max:255',
+        'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+        'medali' => 'required|in:Emas,Perak,Perunggu',
+        'cabor_id' => 'required|exists:cabang_olahragas,id', // Tambahkan validasi cabor_id
+    ]);
 
-        $prestasi = new Prestasi($request->only([
-            'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali'
-        ]));
+    $prestasi = new Prestasi($request->only([
+        'nama_prestasi', 'kejuaraan', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id' // Tambahkan 'kejuaraan' dan 'cabor_id'
+    ]));
 
-        $prestasi->subject()->associate($pelatih);
-        $prestasi->save();
+    $prestasi->subject()->associate($pelatih);
+    $prestasi->save();
 
-        return redirect()->route('admin.konfigurasi.pelatih.show', $pelatih)
-            ->with('OK', 'Prestasi pelatih berhasil ditambahkan!');
-    }
+    return redirect()->route('admin.konfigurasi.pelatih.show', $pelatih)
+        ->with('OK', 'Prestasi pelatih berhasil ditambahkan!');
+}
 }

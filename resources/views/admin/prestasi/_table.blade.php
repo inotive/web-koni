@@ -1,3 +1,4 @@
+<!-- TEMPLATE YANG SUDAH DIPERBAIKI -->
 <div id="prestasi-table-container">
     @if (isset($prestasis) && $prestasis->isEmpty())
         <div class="empty-state">
@@ -27,33 +28,45 @@
                                 $caborNama = $prestasi->subject->cabangOlahraga
                                     ? $prestasi->subject->cabangOlahraga->nama_cabor
                                     : '-';
+
+                                // PERBAIKAN: Logika jenis kelamin yang benar
                                 $jenisKelamin = '';
                                 if ($prestasi->subject_type === 'App\Models\Atlet') {
-                                    $jenisKelamin =
-                                        $prestasi->subject->jenis_kelamin == 'L'
-                                            ? 'Laki-laki'
-                                            : 'Perempuan';
+                                    $gender = $prestasi->subject->jenis_kelamin;
+                                    if ($gender === 'Laki-laki' || $gender === 'L') {
+                                        $jenisKelamin = 'Laki-laki';
+                                    } elseif ($gender === 'Perempuan' || $gender === 'P') {
+                                        $jenisKelamin = 'Perempuan';
+                                    } else {
+                                        $jenisKelamin = $gender ?? '-';
+                                    }
                                 } elseif ($prestasi->subject_type === 'App\Models\Pelatih') {
-                                    $jenisKelamin =
-                                        $prestasi->subject->kelamin == 'L'
-                                            ? 'Laki-laki'
-                                            : 'Perempuan';
+                                    $gender = $prestasi->subject->kelamin;
+                                    if ($gender === 'Laki-laki' || $gender === 'L') {
+                                        $jenisKelamin = 'Laki-laki';
+                                    } elseif ($gender === 'Perempuan' || $gender === 'P') {
+                                        $jenisKelamin = 'Perempuan';
+                                    } else {
+                                        $jenisKelamin = $gender ?? '-';
+                                    }
                                 }
+
                                 $rowNumber = ($prestasis->currentPage() - 1) * $prestasis->perPage() + $loop->iteration;
 
                                 $detailRoute = '';
                                 if ($prestasi->subject_type === 'App\Models\Atlet') {
                                     $detailRoute = route('admin.konfigurasi.atlet.show', [
                                         'atlet' => $prestasi->subject->id,
-                                        'from' => 'prestasi'
+                                        'from' => 'prestasi',
                                     ]);
                                 } elseif ($prestasi->subject_type === 'App\Models\Pelatih') {
                                     $detailRoute = route('admin.konfigurasi.pelatih.show', [
                                         'pelatih' => $prestasi->subject->id,
-                                        'from' => 'prestasi'
+                                        'from' => 'prestasi',
                                     ]);
                                 }
                             @endphp
+
                             <tr data-tahun="{{ $prestasi->tahun }}" data-nama="{{ $prestasi->subject?->nama ?? '-' }}">
                                 <td>{{ $rowNumber }}</td>
 
@@ -62,8 +75,8 @@
                                         @if ($prestasi->subject->foto_atlet ?? ($prestasi->subject->foto_pelatih ?? null))
                                             <img src="{{ asset('storage/' . ($prestasi->subject->foto_atlet ?? $prestasi->subject->foto_pelatih)) }}"
                                                 alt="{{ $prestasi->subject->nama }}"
-                                                class="rounded-circle me-2 object-fit-cover"
-                                                width="40" height="40">
+                                                class="rounded-circle me-2 object-fit-cover" width="40"
+                                                height="40">
                                         @else
                                             <div class="rounded-circle bg-light me-2 d-flex align-items-center justify-content-center"
                                                 style="width: 40px; height: 40px;">
@@ -82,8 +95,14 @@
                                 <td>{{ $jenisKelamin }}</td>
 
                                 <td>
-                                    <div class="text-truncate-custom">{{ $prestasi->nama_prestasi }}</div>
+                                    <div>
+                                        <strong>{{ $prestasi->nama_prestasi }}</strong><br>
+                                        <small class="text-muted">
+                                            {{ $prestasi->kejuaraan }}
+                                        </small>
+                                    </div>
                                 </td>
+
                                 <td>
                                     <div class="text-truncate-custom">
                                         {{ $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-' }}
@@ -125,22 +144,19 @@
 
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-1">
-                                        @if($detailRoute)
-                                            <a href="{{ $detailRoute }}"
-                                                class="btn btn-icon btn-sm btn-light-info"
+                                        @if ($detailRoute)
+                                            <a href="{{ $detailRoute }}" class="btn btn-icon btn-sm btn-light-info"
                                                 title="Lihat Detail {{ class_basename($prestasi->subject_type) }}"
                                                 data-bs-toggle="tooltip">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
                                         @endif
                                         <a href="{{ route('admin.konfigurasi.prestasi.edit', $prestasi->id) }}"
-                                            class="btn btn-icon btn-sm btn-light-warning"
-                                            title="Edit"
+                                            class="btn btn-icon btn-sm btn-light-warning" title="Edit"
                                             data-bs-toggle="tooltip">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
-                                        <button class="btn btn-icon btn-sm btn-light-danger btn-delete"
-                                            title="Hapus"
+                                        <button class="btn btn-icon btn-sm btn-light-danger btn-delete" title="Hapus"
                                             data-bs-toggle="tooltip"
                                             data-route="{{ route('admin.konfigurasi.prestasi.destroy', $prestasi->id) }}">
                                             <i class="fa-solid fa-trash"></i>
@@ -158,6 +174,7 @@
             </table>
         </div>
 
+        <!-- Pagination section tetap sama -->
         <div class="table-footer">
             <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
                 <div class="mb-2 mb-md-0">

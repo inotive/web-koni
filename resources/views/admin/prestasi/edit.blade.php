@@ -128,7 +128,21 @@
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="nama_prestasi" class="form-label">Kejuaraan</label>
+                                    <label for="kejuaraan" class="form-label">Kejuaraan</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control @error('kejuaraan') is-invalid @enderror"
+                                        id="kejuaraan" name="kejuaraan"
+                                        value="{{ old('kejuaraan', $prestasi->kejuaraan) }}" required>
+                                    @error('kejuaraan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="nama_prestasi" class="form-label">Nama Prestasi</label>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" class="form-control @error('nama_prestasi') is-invalid @enderror"
