@@ -15,6 +15,7 @@ Schema::create('prestasis', function (Blueprint $table) {
     $table->integer('tahun');
     $table->enum('medali', ['Emas', 'Perak', 'Perunggu']);
     $table->string('tingkat');
+    $table->unsignedBigInteger('cabor_id')->nullable();
 
     $table->unsignedBigInteger('subject_id');
     $table->string('subject_type');

@@ -6,87 +6,79 @@
         <th>Foto</th>
 
         {{-- Nama & Cabor --}}
-        <th>
-            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-               class="text-dark text-decoration-none">
-                Nama & Cabor
-                <i class="fas fa-sort{{ request('sort_by') == 'nama' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-            </a>
-        </th>
+       <th>
+    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+       class="text-dark text-decoration-none sort-link">
+        Nama & Cabor
+        <i class="fas fa-sort{{ request('sort_by') == 'nama' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+    </a>
+</th>
 
-        {{-- Tempat & Tgl Lahir --}}
-        <th>
-            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'tanggal_lahir', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-               class="text-dark text-decoration-none">
-                Tempat & Tgl Lahir
-                <i class="fas fa-sort{{ request('sort_by') == 'tanggal_lahir' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-            </a>
-        </th>
+<th>
+    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'tanggal_lahir', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+       class="text-dark text-decoration-none sort-link">
+        Tempat & Tgl Lahir
+        <i class="fas fa-sort{{ request('sort_by') == 'tanggal_lahir' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+    </a>
+</th>
 
-        {{-- Alamat --}}
-        <th>
-            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'alamat', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-               class="text-dark text-decoration-none">
-                Alamat
-                <i class="fas fa-sort{{ request('sort_by') == 'alamat' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-            </a>
-        </th>
+<th>
+    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'alamat', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+       class="text-dark text-decoration-none sort-link">
+        Alamat
+        <i class="fas fa-sort{{ request('sort_by') == 'alamat' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+    </a>
+</th>
 
-        {{-- Jenis Kelamin --}}
-        <th>
-            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'jenis_kelamin', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-               class="text-dark text-decoration-none">
-                Jenis Kelamin
-                <i class="fas fa-sort{{ request('sort_by') == 'jenis_kelamin' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-            </a>
-        </th>
+<th>
+    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'jenis_kelamin', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+       class="text-dark text-decoration-none sort-link">
+        Jenis Kelamin
+        <i class="fas fa-sort{{ request('sort_by') == 'jenis_kelamin' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+    </a>
+</th>
 
-        {{-- Usia (sort via tanggal_lahir) --}}
-        <th>
-            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'tanggal_lahir', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-               class="text-dark text-decoration-none">
-                Usia
-                <i class="fas fa-sort{{ request('sort_by') == 'tanggal_lahir' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-            </a>
-        </th>
+<th>
+    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'tanggal_lahir', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+       class="text-dark text-decoration-none sort-link">
+        Usia
+        <i class="fas fa-sort{{ request('sort_by') == 'tanggal_lahir' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+    </a>
+</th>
 
-        {{-- Telepon --}}
-        <th>
-            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'no_telepon', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-               class="text-dark text-decoration-none">
-                Telepon
-                <i class="fas fa-sort{{ request('sort_by') == 'no_telepon' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-            </a>
-        </th>
+<th>
+    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'no_telepon', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+       class="text-dark text-decoration-none sort-link">
+        Telepon
+        <i class="fas fa-sort{{ request('sort_by') == 'no_telepon' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+    </a>
+</th>
 
-        {{-- Email --}}
-        <th>
-            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'email', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-               class="text-dark text-decoration-none">
-                Email
-                <i class="fas fa-sort{{ request('sort_by') == 'email' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-            </a>
-        </th>
+<th>
+    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'email', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+       class="text-dark text-decoration-none sort-link">
+        Email
+        <i class="fas fa-sort{{ request('sort_by') == 'email' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+    </a>
+</th>
 
-        {{-- Prestasi Terbaru (sort via updated_at) --}}
-        <th>
-           <a href="{{ request()->fullUrlWithQuery([
+<th>
+    <a href="{{ request()->fullUrlWithQuery([
         'sort_by' => 'latest_prestasi_at',
         'order'   => request('order') == 'asc' ? 'desc' : 'asc'
-]) }}" class="text-dark text-decoration-none">
-    Prestasi Terbaru
-    <i class="fas fa-sort{{ request('sort_by') == 'latest_prestasi_at' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-</a>
-        </th>
+    ]) }}" class="text-dark text-decoration-none sort-link">
+        Prestasi Terbaru
+        <i class="fas fa-sort{{ request('sort_by') == 'latest_prestasi_at' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+    </a>
+</th>
 
-        {{-- Terakhir Diupdate --}}
-        <th>
-            <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'updated_at', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-               class="text-dark text-decoration-none">
-                Terakhir Diupdate
-                <i class="fas fa-sort{{ request('sort_by') == 'updated_at' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
-            </a>
-        </th>
+<th>
+    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'updated_at', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+       class="text-dark text-decoration-none sort-link">
+        Terakhir Diupdate
+        <i class="fas fa-sort{{ request('sort_by') == 'updated_at' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+    </a>
+</th>
 
         <th>Aksi</th>
     </tr>

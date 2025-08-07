@@ -646,8 +646,23 @@
             </div>
         </div>
 
-        <div class="detail-actions">
-            <a href="{{ route('admin.konfigurasi.atlet.index') }}" class="btn-secondary">Kembali</a>
-        </div>
-    </div>
+<div class="detail-actions">
+    @php
+        $backUrl = route('admin.konfigurasi.atlet.index');
+        $backText = 'Kembali ke Atlet';
+
+        $referer = request()->headers->get('referer');
+
+        if (str_contains($referer, route('admin.konfigurasi.prestasi.index'))) {
+            $backUrl = route('admin.konfigurasi.prestasi.index');
+            $backText = 'Kembali ke Prestasi';
+        }
+        elseif (str_contains($referer, 'kejuaraan')) {
+            $backUrl = route('admin.konfigurasi.kejuaraan.index');
+            $backText = 'Kembali ke Kejuaraan';
+        }
+    @endphp
+
+    <a href="{{ $backUrl }}" class="btn-secondary">{{ $backText }}</a>
+</div>
 @endsection

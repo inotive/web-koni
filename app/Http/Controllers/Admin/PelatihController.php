@@ -92,14 +92,23 @@ class PelatihController extends Controller
         }
     }
 
-    public function show($id)
-    {
-        $pelatih = Pelatih::with(['cabangOlahraga', 'prestasis' => function ($q) {
-            $q->orderByDesc('tahun');
-        }])->findOrFail($id);
-
-        return view('admin.pelatih.show', compact('pelatih'));
+    public function show(Pelatih $pelatih, Request $request)
+{
+    if ($request->has('from')) {
+        session(['detail_referrer' => $request->get('from')]);
+    } elseif (!session()->has('detail_referrer') && $request->header('referer')) {
+        $referrer = $request->header('referer');
+        if (str_contains($referrer, 'prestasi')) {
+            session(['detail_referrer' => 'prestasi']);
+        } else {
+            session(['detail_referrer' => 'pelatih']);
+        }
     }
+
+    $pelatih->load(['cabangOlahraga', 'prestasis']);
+
+    return view('admin.pelatih.show', compact('pelatih'));
+}
 
     public function edit($id)
     {

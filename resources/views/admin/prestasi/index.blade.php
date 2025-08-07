@@ -7,7 +7,6 @@
 @section('currentSection', 'Daftar Prestasi')
 
 @section('content')
-
     <style>
         body {
             background-color: #f5f5f5;
@@ -60,40 +59,6 @@
             color: white !important;
         }
 
-        @media (max-width: 768px) {
-            .d-flex.justify-content-between.align-items-center.flex-wrap {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-
-            .d-flex.align-items-center.gap-3 {
-                width: 100%;
-                flex-wrap: wrap;
-                gap: 10px !important;
-            }
-
-            .btn-add-prestasi {
-                order: 1;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .input-group {
-                order: 2;
-                width: 100% !important;
-            }
-
-            .dropdown {
-                order: 3;
-                width: 100%;
-            }
-
-            .dropdown-toggle {
-                width: 100%;
-            }
-        }
-
         .empty-state {
             text-align: center;
             color: #6c757d;
@@ -111,22 +76,6 @@
             color: #2c3e50;
             font-size: 1.8rem;
             font-weight: 700;
-        }
-
-        .btn-add-prestasi {
-            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 12px 24px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
-        }
-
-        .btn-add-prestasi:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
         }
 
         .table-responsive {
@@ -158,6 +107,7 @@
             white-space: nowrap;
             padding: 12px 8px !important;
             position: static;
+            text-align: center !important;
         }
 
         .table tbody tr td {
@@ -170,6 +120,7 @@
             vertical-align: middle;
             word-wrap: break-word;
             max-width: 200px;
+            text-align: left !important;
         }
 
         .table tbody tr:last-child td {
@@ -188,56 +139,8 @@
 
         .table th:nth-child(1),
         .table td:nth-child(1) {
-            width: 50px;
-            text-align: center;
-        }
-
-        .table th:nth-child(2),
-        .table td:nth-child(2) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .table th:nth-child(3),
-        .table td:nth-child(3) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .table th:nth-child(4),
-        .table td:nth-child(4) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .table th:nth-child(5),
-        .table td:nth-child(5) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .table th:nth-child(6),
-        .table td:nth-child(6) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .table th:nth-child(7),
-        .table td:nth-child(7) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .table th:nth-child(8),
-        .table td:nth-child(8) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .table th:nth-child(9),
-        .table td:nth-child(9) {
-            width: 120px;
-            text-align: center;
+            width: 40px;
+            text-align: center !important;
         }
 
         .text-truncate-custom {
@@ -256,43 +159,11 @@
         }
 
         .table td:nth-child(1),
-        .table td:nth-child(3),
-        .table td:nth-child(5),
+        .table td:nth-child(2),
         .table td:nth-child(6),
-        .table td:nth-child(8),
+        .table td:nth-child(7),
         .table td:nth-child(9) {
             text-align: center;
-        }
-
-        @media (max-width: 768px) {
-
-            .table-header,
-            .table-footer {
-                padding: 15px;
-            }
-
-            .d-flex.justify-content-between.align-items-center.flex-wrap {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .d-flex.align-items-center.gap-2.flex-wrap {
-                justify-content: center;
-                width: 100%;
-            }
-
-            .stats-cards {
-                flex-direction: column !important;
-            }
-
-            .stats-card {
-                margin-bottom: 15px;
-            }
-
-            .control-section {
-                flex-direction: column;
-                gap: 15px;
-            }
         }
 
         .dropdown-menu {
@@ -327,85 +198,6 @@
             font-size: 0.75rem;
         }
 
-        .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            padding: 20px;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: none;
-            min-width: 280px;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        }
-
-        .stats-card .card-icon {
-            width: 50px;
-            height: 50px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-
-        .stats-card .card-icon i {
-            font-size: 24px;
-            color: white;
-        }
-
-        .stats-card .card-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            opacity: 0.9;
-            margin-bottom: 5px;
-        }
-
-        .stats-card .card-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0;
-        }
-
-        .stats-card .card-subtitle {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-
-        .notification-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            min-width: 300px;
-        }
-
-        .toast-success {
-            background-color: #51a351;
-            color: white;
-        }
-
-        .toast-error {
-            background-color: #bd362f;
-            color: white;
-        }
-
-        .toast-warning {
-            background-color: #f89406;
-            color: white;
-        }
-
-        .toast-info {
-            background-color: #2f96b4;
-            color: white;
-        }
-
         .control-section {
             display: flex;
             align-items: center;
@@ -432,7 +224,7 @@
             flex-wrap: wrap;
         }
 
-         .pagination-arrow {
+        .pagination-arrow {
             color: #6c757d;
             text-decoration: none;
             padding: 6px 8px;
@@ -475,103 +267,60 @@
             border-color: #e0e1e4;
         }
 
-        .pagination-sm .page-link {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-            color: #6c757d;
-            margin: 0 2px;
-        }
-
-        .pagination-sm .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
-            color: white;
-        }
-
-        .pagination-sm .page-link:hover {
-            background-color: #f8f9fa;
-            border-color: #dee2e6;
-            color: #495057;
-        }
-
-        .pagination-sm .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: #fff;
-            border-color: #dee2e6;
-        }
-
-        .pagination {
-            margin-bottom: 0;
-        }
-
-        .pagination .page-item {
-            margin: 0 1px;
-        }
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .d-flex.justify-content-between.align-items-center.flex-wrap {
                 flex-direction: column;
-                gap: 1rem;
-                align-items: center !important;
-            }
-
-            .pagination-sm .page-link {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.75rem;
+                align-items: flex-start;
+                gap: 15px;
             }
 
             .d-flex.align-items-center.gap-3 {
+                width: 100%;
+                flex-wrap: wrap;
+                gap: 10px !important;
+            }
+
+            .btn-add-prestasi {
+                order: 1;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .input-group {
+                order: 2;
+                width: 100% !important;
+            }
+
+            .dropdown {
+                order: 3;
+                width: 100%;
+            }
+
+            .dropdown-toggle {
+                width: 100%;
+            }
+
+            .table-header,
+            .table-footer {
+                padding: 15px;
+            }
+
+            .stats-cards {
+                flex-direction: column !important;
+            }
+
+            .stats-card {
+                margin-bottom: 15px;
+            }
+
+            .control-section {
                 flex-direction: column;
-                gap: 0.5rem !important;
+                gap: 15px;
             }
-
-            .pagination-arrow,
-            .pagination-number {
-                padding: 4px 6px;
-                font-size: 0.75rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .pagination-sm .page-link {
-                padding: 0.2rem 0.4rem;
-                font-size: 0.7rem;
-            }
-
-            .text-muted {
-                font-size: 0.875rem;
-            }
-        }
-
-        .simple-pagination .page-link {
-            border: none !important;
-            margin: 0 2px;
-            border-radius: 4px !important;
-            padding: 6px 12px !important;
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            transition: all 0.2s ease;
-        }
-
-        .simple-pagination .page-link:hover {
-            background-color: #e9ecef !important;
-            color: #495057 !important;
-        }
-
-        .simple-pagination .page-item.active .page-link {
-            background-color: #007bff !important;
-            color: white !important;
-        }
-
-        .simple-pagination .page-link:focus {
-            box-shadow: none !important;
         }
     </style>
 
-     @if (session('success'))
+    @if (session('success'))
         <div class="alert alert-{{ session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger') }} alert-dismissible fade show"
             role="alert">
             <i
@@ -598,7 +347,7 @@
 
                                     <div class="input-group" style="width: 280px;">
                                         <input type="search" name="search" id="search" class="form-control"
-                                            placeholder="Cari berdasarkan nama...">
+                                            placeholder="Cari berdasarkan nama..." value="{{ request('search') }}">
                                         <button class="btn btn-outline-secondary" type="button">
                                             <i class="fas fa-search"></i>
                                         </button>
@@ -618,6 +367,31 @@
                                                 </label>
                                                 <select id="filter-tahun" class="form-select">
                                                     <option value="">Semua Tahun</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">
+                                                    <i class="fas fa-medal me-1"></i>Medali
+                                                </label>
+                                                <select id="filter-medali" class="form-select">
+                                                    <option value="">Semua Medali</option>
+                                                    <option value="Emas" {{ request('medali') == 'Emas' ? 'selected' : '' }}>Emas</option>
+                                                    <option value="Perak" {{ request('medali') == 'Perak' ? 'selected' : '' }}>Perak</option>
+                                                    <option value="Perunggu" {{ request('medali') == 'Perunggu' ? 'selected' : '' }}>Perunggu</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">
+                                                    <i class="fas fa-layer-group me-1"></i>Tingkat
+                                                </label>
+                                                <select id="filter-tingkat" class="form-select">
+                                                    <option value="">Semua Tingkat</option>
+                                                    <option value="Nasional" {{ request('tingkat') == 'Nasional' ? 'selected' : '' }}>Nasional</option>
+                                                    <option value="Regional" {{ request('tingkat') == 'Regional' ? 'selected' : '' }}>Regional</option>
+                                                    <option value="Provinsi" {{ request('tingkat') == 'Provinsi' ? 'selected' : '' }}>Provinsi</option>
+                                                    <option value="Kota/Kabupaten" {{ request('tingkat') == 'Kota/Kabupaten' ? 'selected' : '' }}>Kota/Kabupaten</option>
                                                 </select>
                                             </div>
 
@@ -648,223 +422,9 @@
                             @endif
                         </div>
 
-                        @if (isset($prestasis) && $prestasis->isEmpty())
-                            <div class="empty-state">
-                                <i class="fas fa-trophy fs-3x mb-3"></i>
-                                <h4>Belum ada data prestasi.</h4>
-                            </div>
-                        @else
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle" id="kt_datatable_prestasi">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Nama</th>
-                                            <th>Jenis Kelamin</th>
-                                            <th>Prestasi</th>
-                                            <th>Cabor</th>
-                                            <th>Tingkat</th>
-                                            <th>Tempat & Tahun</th>
-                                            <th>Medali</th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (isset($prestasis))
-                                            @forelse ($prestasis as $key => $prestasi)
-                                                @php
-                                                    $caborNama = $prestasi->subject->cabangOlahraga
-                                                        ? $prestasi->subject->cabangOlahraga->nama_cabor
-                                                        : '-';
-                                                    $jenisKelamin = '';
-                                                    if ($prestasi->subject_type === 'App\Models\Atlet') {
-                                                        $jenisKelamin =
-                                                            $prestasi->subject->jenis_kelamin == 'L'
-                                                                ? 'Laki-laki'
-                                                                : 'Perempuan';
-                                                    } elseif ($prestasi->subject_type === 'App\Models\Pelatih') {
-                                                        $jenisKelamin =
-                                                            $prestasi->subject->kelamin == 'L'
-                                                                ? 'Laki-laki'
-                                                                : 'Perempuan';
-                                                    }
-                                                @endphp
-                                                <tr data-tahun="{{ $prestasi->tahun }}" <tr
-                                                    data-nama="{{ $prestasi->subject?->nama ?? '-' }}">
-                                                    <td></td>
-
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            @if ($prestasi->subject->foto_atlet ?? ($prestasi->subject->foto_pelatih ?? null))
-                                                                <img src="{{ asset('storage/' . ($prestasi->subject->foto_atlet ?? $prestasi->subject->foto_pelatih)) }}"
-                                                                    alt="{{ $prestasi->subject->nama }}"
-                                                                    class="rounded-circle me-2 object-fit-cover"
-                                                                    width="40" height="40">
-                                                            @else
-                                                                <div class="rounded-circle bg-light me-2 d-flex align-items-center justify-content-center"
-                                                                    style="width: 40px; height: 40px;">
-                                                                    <i class="fas fa-user text-muted"></i>
-                                                                </div>
-                                                            @endif
-                                                            <div>
-                                                                <strong>{{ $prestasi->subject->nama }}</strong><br>
-                                                                <small class="text-muted">
-                                                                    {{ class_basename($prestasi->subject_type) }}
-                                                                </small>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-
-                                                    <td>{{ $jenisKelamin }}</td>
-
-                                                    <td>
-                                                        <div class="text-truncate-custom">{{ $prestasi->nama_prestasi }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="text-truncate-custom">
-                                                            {{ $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-' }}
-                                                        </div>
-                                                    </td>
-
-
-                                                    <td>{{ $prestasi->tingkat }}</td>
-
-                                                    <td>
-                                                        <div class="d-flex flex-column">
-                                                            <span
-                                                                class="text-truncate-custom">{{ $prestasi->tempat }}</span>
-                                                            <small class="text-muted">{{ $prestasi->tahun }}</small>
-                                                        </div>
-                                                    </td>
-
-                                                    <td>
-                                                        @php
-                                                            $iconColor = '';
-                                                            switch ($prestasi->medali) {
-                                                                case 'Emas':
-                                                                    $iconColor = 'text-warning';
-                                                                    break;
-                                                                case 'Perak':
-                                                                    $iconColor = 'text-secondary';
-                                                                    break;
-                                                                case 'Perunggu':
-                                                                    $iconColor = 'text-bronze';
-                                                                    break;
-                                                                default:
-                                                                    $iconColor = 'text-primary';
-                                                                    break;
-                                                            }
-                                                        @endphp
-                                                        <span>
-                                                            <i class="fas fa-medal me-1 {{ $iconColor }}"></i>
-                                                            {{ $prestasi->medali }}
-                                                        </span>
-                                                    </td>
-
-                                                    <td class="text-center">
-                                                        <div class="d-flex justify-content-center gap-1">
-                                                            <a href="{{ route('admin.konfigurasi.prestasi.edit', $prestasi->id) }}"
-                                                                class="btn btn-icon btn-sm btn-light-warning"
-                                                                title="Edit">
-                                                                <i class="fa-solid fa-pen-to-square"></i>
-                                                            </a>
-                                                           <button class="btn btn-icon btn-sm btn-light-danger"
-                                                                title="Hapus" onclick="destroyItem(this)"
-                                                                data-route="{{ route('admin.konfigurasi.atlet.destroy', $prestasi->id) }}">
-                                                                <i class="fa-solid fa-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="9" class="text-center py-5 text-muted">Data tidak
-                                                        ditemukan</td>
-                                                </tr>
-                                            @endforelse
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
-
-                             <div class="table-footer">
-                                <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-                                    <div class="mb-2 mb-md-0">
-                                        <form method="GET" class="d-flex align-items-center">
-                                            <span class="me-2">Show</span>
-                                            <select name="per_page" onchange="this.form.submit()"
-                                                class="form-select form-select-sm w-auto">
-                                                @foreach ([10, 25, 50, 100] as $limit)
-                                                    <option value="{{ $limit }}"
-                                                        {{ request('per_page') == $limit ? 'selected' : '' }}>
-                                                        {{ $limit }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <span class="ms-2">per page</span>
-                                        </form>
-                                    </div>
-
-                                    @if (isset($prestasis) && method_exists($prestasis, 'hasPages') && $prestasis->hasPages())
-                                        <div class="d-flex align-items-center gap-3">
-                                            <div class="text-muted small">
-                                                {{ $prestasis->firstItem() }}-{{ $prestasis->lastItem() }} of
-                                                {{ $prestasis->total() }}
-                                            </div>
-
-                                            <div class="d-flex align-items-center gap-2">
-                                                @if ($prestasis->onFirstPage())
-                                                    <span class="pagination-arrow disabled">←</span>
-                                                @else
-                                                    <a href="{{ $prestasis->previousPageUrl() }}" class="pagination-arrow"
-                                                        aria-label="Previous">←</a>
-                                                @endif
-
-                                                @php
-                                                    $current = $prestasis->currentPage();
-                                                    $total = $prestasis->lastPage();
-                                                    $start = max(1, $current - 2);
-                                                    $end = min($total, $current + 2);
-
-
-                                                    if ($end - $start < 4) {
-                                                        if ($start == 1) {
-                                                            $end = min($total, $start + 4);
-                                                        } else {
-                                                            $start = max(1, $end - 4);
-                                                        }
-                                                    }
-                                                @endphp
-
-                                                <div class="d-flex align-items-center">
-                                                    @for ($i = $start; $i <= $end; $i++)
-                                                        @if ($i == $current)
-                                                            <span
-                                                                class="pagination-number active">{{ $i }}</span>
-                                                        @else
-                                                            <a href="{{ $prestasis->url($i) }}"
-                                                                class="pagination-number">{{ $i }}</a>
-                                                        @endif
-                                                    @endfor
-                                                </div>
-
-                                                @if ($prestasis->hasMorePages())
-                                                    <a href="{{ $prestasis->nextPageUrl() }}" class="pagination-arrow"
-                                                        aria-label="Next">→</a>
-                                                @else
-                                                    <span class="pagination-arrow disabled">→</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    @elseif(isset($prestasis) && method_exists($prestasis, 'hasPages'))
-                                        <div class="text-muted small">
-                                            1-{{ $prestasis->count() }} of {{ $prestasis->total() }}
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        @endif
+                        <div id="prestasi-table-container">
+                            @include('admin.prestasi._table')
+                        </div>
                     </div>
                 </div>
             </div>
@@ -874,185 +434,229 @@
 @endsection
 
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (isset($prestasis) && $prestasis->isNotEmpty())
         <script>
             $(document).ready(function() {
-                const table = $("#kt_datatable_prestasi").DataTable({
-                    paging: false,
-                    info: false,
-                    searching: true,
-                    ordering: true,
-                    responsive: false,
-                    autoWidth: false,
-                    scrollX: false,
-                    columnDefs: [{
-                            searchable: false,
-                            orderable: false,
-                            targets: 0
-                        },
-                        {
-                            targets: -1,
-                            orderable: false,
-                            searchable: false
-                        }
-                    ]
-                });
-
-                const totalCount = table.rows().count();
-
-                const uniqueYears = new Set();
-                table.rows().every(function() {
-                    const tahun = $(this.node()).data('tahun');
-                    if (tahun) {
-                        uniqueYears.add(tahun);
+                // Set CSRF token for AJAX requests
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
                 });
 
-                const sortedYears = Array.from(uniqueYears).sort().reverse();
-                const filterTahun = $('#filter-tahun');
-                sortedYears.forEach(function(year) {
-                    filterTahun.append(new Option(year, year));
-                });
-
-                table.on('draw.dt', function() {
-                    const pageInfo = table.page.info();
-                    table.column(0, {
-                        page: 'current'
-                    }).nodes().each(function(cell, i) {
-                        cell.innerHTML = i + 1 + pageInfo.start;
-                    });
-                });
-
-                table.draw();
-
-                $('#search').on('keyup', function() {
-                    const searchValue = this.value.toLowerCase();
-
-                    table.rows().every(function() {
-                        const row = this.node();
-                        const $row = $(row);
-                        const nama = $row.data('nama').toLowerCase();
-
-                        if (nama.includes(searchValue)) {
-                            $(row).show();
-                        } else {
-                            $(row).hide();
+                function loadTable(url) {
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        beforeSend: function() {
+                            $('#prestasi-table-container').html(
+                                '<div class="text-center py-5">' +
+                                '<div class="spinner-border text-primary" role="status">' +
+                                '<span class="visually-hidden">Loading...</span>' +
+                                '</div></div>'
+                            );
+                        },
+                        success: function(response) {
+                            $('#prestasi-table-container').html(response);
+                            updateFilterInfo();
+                            bindEvents();
+                        },
+                        error: function(xhr) {
+                            console.error('Error:', xhr.responseText);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Gagal memuat data. Silakan coba lagi.',
+                                icon: 'error'
+                            });
                         }
                     });
+                }
 
-                    updateFilterInfo();
-                });
+                function bindEvents() {
+                    // Pagination
+                    $(document).off('click', '.pagination-link')
+                        .on('click', '.pagination-link', function(e) {
+                            e.preventDefault();
+                            const url = $(this).attr('href');
+                            if (url && url !== '#') {
+                                loadTable(url);
+                                // Update URL without page reload
+                                window.history.pushState({}, '', url);
+                            }
+                        });
 
-                $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-                    const row = table.row(dataIndex).node();
-                    const $row = $(row);
+                    // Per page change
+                    $(document).off('change', 'select[name="per_page"]')
+                        .on('change', 'select[name="per_page"]', function() {
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('per_page', $(this).val());
+                            url.searchParams.delete('page'); // Reset to first page
+                            loadTable(url.toString());
+                            window.history.pushState({}, '', url.toString());
+                        });
 
-                    const tahunFilter = $('#filter-tahun').val();
-                    const rowTahun = $row.data('tahun');
+                    // Filter buttons
+                    $(document).off('click', '#apply-filters, #reset-filters')
+                        .on('click', '#apply-filters, #reset-filters', function() {
+                            const isReset = this.id === 'reset-filters';
 
-                    if (tahunFilter && rowTahun !== tahunFilter) return false;
+                            if (isReset) {
+                                // Reset all filter inputs
+                                $('#filter-tahun, #filter-medali, #filter-tingkat').val('');
+                            }
 
-                    return true;
-                });
+                            const params = new URLSearchParams();
+                            const add = (key, val) => {
+                                if (val && val.trim() !== '') {
+                                    params.set(key, val);
+                                }
+                            };
 
-                $('#apply-filters').on('click', function() {
-                    table.draw();
-                    updateFilterInfo();
-                    updateFilterCount();
-                    $('.dropdown-toggle').dropdown('hide');
-                });
+                            // Add current parameters
+                            add('search', $('#search').val());
+                            add('tahun', $('#filter-tahun').val());
+                            add('medali', $('#filter-medali').val());
+                            add('tingkat', $('#filter-tingkat').val());
+                            add('per_page', $('select[name="per_page"]').val() || '10');
 
-                $('#reset-filters').on('click', function() {
-                    $('#filter-tahun').val('');
-                    $('#search').val('');
+                            const url = new URL(window.location.href);
+                            url.search = params.toString();
 
-                    table.rows().every(function() {
-                        $(this.node()).show();
-                    });
+                            loadTable(url.toString());
+                            window.history.pushState({}, '', url.toString());
 
-                    table.search('').draw();
-                    updateFilterInfo();
-                    updateFilterCount();
-                    $('.dropdown-toggle').dropdown('hide');
-                });
+                            // Close dropdown
+                            $('.dropdown-toggle').dropdown('hide');
+                        });
 
-                function updateFilterCount() {
-                    const activeFilters = [];
+                    // Search with debounce
+                    let searchTimeout;
+                    $(document).off('input', '#search')
+                        .on('input', '#search', function() {
+                            clearTimeout(searchTimeout);
+                            const searchTerm = $(this).val();
 
-                    if ($('#filter-tahun').val()) activeFilters.push('tahun');
+                            searchTimeout = setTimeout(() => {
+                                const url = new URL(window.location.href);
+                                if (searchTerm.trim()) {
+                                    url.searchParams.set('search', searchTerm);
+                                } else {
+                                    url.searchParams.delete('search');
+                                }
+                                url.searchParams.delete('page'); // Reset to first page
 
-                    const count = activeFilters.length;
+                                loadTable(url.toString());
+                                window.history.pushState({}, '', url.toString());
+                            }, 300);
+                        });
+
+                    // Delete button
+                    $(document).off('click', '.btn-delete')
+                        .on('click', '.btn-delete', function(e) {
+                            e.preventDefault();
+                            destroyItem(this);
+                        });
+
+                    updateFilterBadge();
+                }
+
+                function updateFilterBadge() {
+                    const activeFilters = [
+                        $('#filter-tahun').val(),
+                        $('#filter-medali').val(),
+                        $('#filter-tingkat').val(),
+                        $('#search').val()
+                    ].filter(val => val && val.trim() !== '').length;
+
                     const badge = $('#filter-count');
-
-                    if (count > 0) {
-                        badge.text(count).removeClass('d-none');
+                    if (activeFilters > 0) {
+                        badge.text(activeFilters).removeClass('d-none');
                     } else {
                         badge.addClass('d-none');
                     }
                 }
 
                 function updateFilterInfo() {
-                    const visibleRows = table.rows(':visible').count();
-                    $('#showing-count').text(visibleRows);
-                    $('#total-count').text(totalCount);
+                    // Update the showing count in header
+                    const tableContainer = $('#prestasi-table-container');
+                    const rows = tableContainer.find('tbody tr:not(:has(td[colspan]))').length;
+                    $('#showing-count').text(rows);
                 }
 
-                setTimeout(function() {
-                    $('.notification-toast .toast').toast('hide');
-                }, 5000);
+                // Delete function
+                window.destroyItem = function(button) {
+                    const route = $(button).data('route');
 
-                updateFilterInfo();
-                updateFilterCount();
+                    Swal.fire({
+                        title: "Apakah Anda Yakin?",
+                        html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
+                        icon: "warning",
+                        showCancelButton: true,
+                        reverseButtons: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Hapus!',
+                        cancelButtonText: 'Batalkan!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Show loading
+                            Swal.fire({
+                                title: 'Menghapus...',
+                                allowOutsideClick: false,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
 
-                $('#filter-tahun').on('change', function() {
-                    updateFilterCount();
-                });
-                $('[data-bs-toggle="tooltip"]').each(function() {
-                    new bootstrap.Tooltip(this);
-                });
+                            // Create form and submit
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = route;
+                            form.innerHTML = `
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="_method" value="DELETE">
+                            `;
+                            document.body.appendChild(form);
+                            form.submit();
+                        }
+                    });
+                };
+
+                // Populate year dropdown
+                function populateTahunDropdown() {
+                    const tahunSelect = $('#filter-tahun');
+                    const currentTahun = new URLSearchParams(window.location.search).get('tahun');
+
+                    $.ajax({
+                        url: "{{ route('admin.konfigurasi.prestasi.index') }}",
+                        type: 'GET',
+                        data: { get_tahun: 1 },
+                        success: function(data) {
+                            tahunSelect.empty().append('<option value="">Semua Tahun</option>');
+                            if (Array.isArray(data)) {
+                                data.forEach(function(year) {
+                                    const selected = year == currentTahun ? 'selected' : '';
+                                    tahunSelect.append(`<option value="${year}" ${selected}>${year}</option>`);
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error('Error loading years:', xhr.responseText);
+                        }
+                    });
+                }
+
+                // Handle browser back/forward buttons
+                window.onpopstate = function(event) {
+                    loadTable(window.location.href);
+                };
+
+                // Initialize
+                populateTahunDropdown();
+                bindEvents();
+                updateFilterBadge();
             });
-
-                        window.destroyItem = function(button) {
-                const route = button.dataset.route;
-
-                Swal.fire({
-                    title: "Apakah Anda Yakin?",
-                    html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
-                    icon: "warning",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus!',
-                    cancelButtonText: 'Batalkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = route;
-
-                        const token = document.createElement('input');
-                        token.type = 'hidden';
-                        token.name = '_token';
-                        token.value = '{{ csrf_token() }}';
-
-                        const method = document.createElement('input');
-                        method.type = 'hidden';
-                        method.name = '_method';
-                        method.value = 'DELETE';
-
-                        form.appendChild(token);
-                        form.appendChild(method);
-                        document.body.appendChild(form);
-                        form.submit();
-                    } else {
-                        Swal.fire({
-                            title: "Aksi Dibatalkan :)",
-                            icon: "info",
-                        });
-                    }
-                });
-            };
         </script>
     @endif
 @endsection
