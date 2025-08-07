@@ -61,7 +61,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);
         Route::resource('pelatih', PelatihController::class);
-        Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
+         Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
             ->name('pelatih.updateKetersediaan');
         Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
             ->name('pelatih.prestasi.store');
