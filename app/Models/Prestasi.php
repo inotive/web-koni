@@ -17,7 +17,7 @@ class Prestasi extends Model
         'tahun',
         'medali',
         'tingkat',
-        'cabor-id',
+        'cabor_id',
         'subject_id',
         'subject_type'
     ];

@@ -93,12 +93,10 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::prefix('bidang')->name('bidang.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'index'])->name('index');
 
-            // Prestasi routes
             Route::prefix('prestasi')->name('prestasi.')->group(function () {
                 Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
             });
 
-                // Prestasi routes
                 Route::prefix('prestasi')->name('prestasi.')->group(function () {
                     Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
                     Route::get('/cabor-terukur', [App\Http\Controllers\Admin\BidangController::class, 'caborTerukur'])->name('Cabor Terukur');

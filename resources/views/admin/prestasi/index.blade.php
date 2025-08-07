@@ -435,11 +435,9 @@
 @endsection
 
 @section('script')
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (isset($prestasis) && $prestasis->isNotEmpty())
         <script>
             $(document).ready(function() {
-                // Set CSRF token for AJAX requests
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -475,19 +473,16 @@
                 }
 
                 function bindEvents() {
-                    // Pagination
                     $(document).off('click', '.pagination-link')
                         .on('click', '.pagination-link', function(e) {
                             e.preventDefault();
                             const url = $(this).attr('href');
                             if (url && url !== '#') {
                                 loadTable(url);
-                                // Update URL without page reload
                                 window.history.pushState({}, '', url);
                             }
                         });
 
-                    // Per page change
                     $(document).off('change', 'select[name="per_page"]')
                         .on('change', 'select[name="per_page"]', function() {
                             const url = new URL(window.location.href);
@@ -497,13 +492,11 @@
                             window.history.pushState({}, '', url.toString());
                         });
 
-                    // Filter buttons
                     $(document).off('click', '#apply-filters, #reset-filters')
                         .on('click', '#apply-filters, #reset-filters', function() {
                             const isReset = this.id === 'reset-filters';
 
                             if (isReset) {
-                                // Reset all filter inputs
                                 $('#filter-tahun, #filter-medali, #filter-tingkat').val('');
                             }
 
@@ -514,7 +507,6 @@
                                 }
                             };
 
-                            // Add current parameters
                             add('search', $('#search').val());
                             add('tahun', $('#filter-tahun').val());
                             add('medali', $('#filter-medali').val());
@@ -527,11 +519,9 @@
                             loadTable(url.toString());
                             window.history.pushState({}, '', url.toString());
 
-                            // Close dropdown
                             $('.dropdown-toggle').dropdown('hide');
                         });
 
-                    // Search with debounce
                     let searchTimeout;
                     $(document).off('input', '#search')
                         .on('input', '#search', function() {
@@ -552,7 +542,6 @@
                             }, 300);
                         });
 
-                    // Delete button
                     $(document).off('click', '.btn-delete')
                         .on('click', '.btn-delete', function(e) {
                             e.preventDefault();
@@ -579,52 +568,43 @@
                 }
 
                 function updateFilterInfo() {
-                    // Update the showing count in header
                     const tableContainer = $('#prestasi-table-container');
                     const rows = tableContainer.find('tbody tr:not(:has(td[colspan]))').length;
                     $('#showing-count').text(rows);
                 }
 
-                // Delete function
                 window.destroyItem = function(button) {
-                    const route = $(button).data('route');
+                const route = $(button).data('route');
+                Swal.fire({
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
+                    icon: "warning",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = route;
+                        form.innerHTML = `
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                        `;
+                        document.body.appendChild(form);
+                        form.submit();
+                    } else {
+                        Swal.fire({
+                            title: "Aksi Dibatalkan :)",
+                            icon: "info",
+                        });
+                    }
+                });
+            };
 
-                    Swal.fire({
-                        title: "Apakah Anda Yakin?",
-                        html: "<p style='text-align:center'>Setelah data dihapus, Anda tidak bisa mengembalikannya!</p>",
-                        icon: "warning",
-                        showCancelButton: true,
-                        reverseButtons: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Hapus!',
-                        cancelButtonText: 'Batalkan!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Show loading
-                            Swal.fire({
-                                title: 'Menghapus...',
-                                allowOutsideClick: false,
-                                didOpen: () => {
-                                    Swal.showLoading();
-                                }
-                            });
-
-                            // Create form and submit
-                            const form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = route;
-                            form.innerHTML = `
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <input type="hidden" name="_method" value="DELETE">
-                            `;
-                            document.body.appendChild(form);
-                            form.submit();
-                        }
-                    });
-                };
-
-                // Populate year dropdown
                 function populateTahunDropdown() {
                     const tahunSelect = $('#filter-tahun');
                     const currentTahun = new URLSearchParams(window.location.search).get('tahun');
@@ -648,12 +628,10 @@
                     });
                 }
 
-                // Handle browser back/forward buttons
                 window.onpopstate = function(event) {
                     loadTable(window.location.href);
                 };
 
-                // Initialize
                 populateTahunDropdown();
                 bindEvents();
                 updateFilterBadge();

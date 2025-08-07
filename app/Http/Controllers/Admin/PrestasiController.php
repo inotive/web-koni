@@ -34,7 +34,6 @@ class PrestasiController extends Controller
             ->select('prestasis.*')
             ->orderBy($sortBy, $order);
 
-        // Search functionality
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -47,27 +46,22 @@ class PrestasiController extends Controller
             });
         }
 
-        // Medal filter
         if ($request->filled('medali')) {
             $query->where('medali', $request->medali);
         }
 
-        // Year filter - Fixed logic
         if ($request->filled('tahun')) {
             $query->where('tahun', $request->tahun);
         }
 
-        // Level filter
         if ($request->filled('tingkat')) {
             $query->where('tingkat', $request->tingkat);
         }
 
-        // Subject type filter
         if ($request->filled('subject_type')) {
             $query->where('subject_type', $request->subject_type === 'atlet' ? Atlet::class : Pelatih::class);
         }
 
-        // Sport category filter
         if ($request->filled('cabor')) {
               $query->whereHasMorph('subject', [Atlet::class, Pelatih::class], function ($q) use ($request) {
         $q->where('cabor_id', $request->cabor);
@@ -77,19 +71,16 @@ class PrestasiController extends Controller
         $prestasis = $query->paginate($perPage);
         $prestasis->appends($request->except('page'));
 
-        // Get filter data
         $allCabors = DB::table('cabang_olahragas')->pluck('nama_cabor', 'id');
         $allTingkats = ['Nasional', 'Regional', 'Provinsi', 'Kota/Kabupaten'];
         $allMedalis = ['Emas', 'Perak', 'Perunggu'];
         $allYears = range(date('Y'), 2015);
 
-        // Special endpoint for getting years
         if ($request->get('get_tahun')) {
             $years = Prestasi::distinct()->pluck('tahun')->sortDesc()->values();
             return response()->json($years);
         }
 
-        // AJAX request - return only table partial
         if ($request->ajax()) {
             return view('admin.prestasi._table', compact('prestasis'))->render();
         }
@@ -139,33 +130,57 @@ class PrestasiController extends Controller
             ->with('OK', 'Prestasi berhasil ditambahkan!')
             ->with('action', 'store');
     }
+public function edit(Prestasi $prestasi)
+{
+    $prestasi->load(['subject', 'cabangOlahraga']);
 
-    public function edit(Prestasi $prestasi)
-    {
-        $atlets = Atlet::all();
-        $pelatihs = Pelatih::all();
-        return view('admin.prestasi.edit', compact('prestasi', 'atlets', 'pelatihs'));
-    }
+    $atlets = Atlet::all();
+    $pelatihs = Pelatih::all();
+    $cabors = CabangOlahraga::orderBy('nama_cabor', 'asc')->get();
 
-    public function update(Request $request, Prestasi $prestasi)
-    {
-        $request->validate([
-            'nama_prestasi' => 'required|string|max:255',
-            'tingkat' => 'required|string|max:255',
-            'tempat' => 'required|string|max:255',
-            'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
-            'medali' => 'required|in:Emas,Perak,Perunggu',
-             'cabor_id' => 'required|exists:cabang_olahragas,id',
+    // PERBAIKAN: Jika cabor_id NULL, ambil dari subject
+    if (!$prestasi->cabor_id && $prestasi->subject && $prestasi->subject->cabor_id) {
+        \Log::info('Prestasi cabor_id is NULL, using subject cabor_id', [
+            'prestasi_id' => $prestasi->id,
+            'subject_cabor_id' => $prestasi->subject->cabor_id
         ]);
 
-        $prestasi->update($request->only([
-            'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali'
-        ]));
+        // Set cabor_id dari subject untuk tampilan
+        $prestasi->cabor_id = $prestasi->subject->cabor_id;
 
-        return redirect()->route('admin.konfigurasi.prestasi.index')
-            ->with('OK', 'Prestasi berhasil diperbarui!')
-            ->with('action', 'update');
+        // OPSIONAL: Update database juga
+        // $prestasi->update(['cabor_id' => $prestasi->subject->cabor_id]);
     }
+
+    \Log::info('Final prestasi data for edit:', [
+        'prestasi_id' => $prestasi->id,
+        'prestasi_cabor_id' => $prestasi->cabor_id,
+        'subject_cabor_id' => $prestasi->subject->cabor_id ?? null,
+        'subject_name' => $prestasi->subject->nama ?? null,
+    ]);
+
+    return view('admin.prestasi.edit', compact('prestasi', 'atlets', 'pelatihs', 'cabors'));
+}
+
+public function update(Request $request, Prestasi $prestasi)
+{
+    $request->validate([
+        'nama_prestasi' => 'required|string|max:255',
+        'tingkat' => 'required|string|max:255',
+        'tempat' => 'required|string|max:255',
+        'tahun' => 'required|integer|min:1900|max:' . (date('Y') + 1),
+        'medali' => 'required|in:Emas,Perak,Perunggu',
+        'cabor_id' => 'required|exists:cabang_olahragas,id',
+    ]);
+
+    $prestasi->update($request->only([
+        'nama_prestasi', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id'
+    ]));
+
+    return redirect()->route('admin.konfigurasi.prestasi.index')
+        ->with('OK', 'Prestasi berhasil diperbarui!')
+        ->with('action', 'update');
+}
 
     public function destroy(Prestasi $prestasi)
     {
