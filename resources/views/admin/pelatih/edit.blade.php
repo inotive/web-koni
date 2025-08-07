@@ -177,6 +177,8 @@
                             'tempat_lahir' => ['label' => 'Tempat Lahir', 'type' => 'text', 'placeholder' => 'Balikpapan, Kalimantan Timur'],
                             'kelamin' => ['label' => 'Jenis Kelamin', 'type' => 'select', 'options' => $allKelamin],
                             'alamat' => ['label' => 'Alamat', 'type' => 'text', 'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan'],
+                            'alamatprovinsi' => ['label' => 'Provinsi', 'type' => 'text', 'placeholder' => 'Contoh: Kalimantan Timur'],
+                            'alamatkota' => ['label' => 'Kota/Kabupaten', 'type' => 'text', 'placeholder' => 'Contoh: Balikpapan'],
                         ];
                     @endphp
 
@@ -210,6 +212,7 @@
                                     <input type="{{ $field['type'] }}" name="{{ $key }}" id="{{ $key }}"
                                            class="form-control @error($key) is-invalid @enderror"
                                            placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}">
+                                            {{ in_array($key, ['nama','cabor_id','tanggal_lahir','tempat_lahir','kelamin','alamat','alamatprovinsi','alamatkota']) ? '' : '' }}
                                 @endif
                                 @error($key)
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -217,7 +220,7 @@
                             </div>
                         </div>
                     @endforeach
-
+                    <input type="hidden" name="ketersediaan" value="Tersedia">
                     <div class="row mt-4">
                         <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                             <button type="submit" class="btn btn-danger px-4">Simpan Perubahan</button>

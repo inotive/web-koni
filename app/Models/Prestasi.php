@@ -17,6 +17,7 @@ class Prestasi extends Model
         'tahun',
         'medali',
         'tingkat',
+        'cabor-id',
         'subject_id',
         'subject_type'
     ];
@@ -57,4 +58,9 @@ class Prestasi extends Model
             'Perunggu' => 'text-danger'
         ][$this->medali] ?? 'text-primary';
     }
+
+    public function cabangOlahraga()
+{
+    return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
+}
 }

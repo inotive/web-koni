@@ -27,6 +27,11 @@ class CabangOlahraga extends Model
         return $this->hasMany(Pelatih::class, 'cabor_id');
     }
 
+     public function pretasis()
+    {
+        return $this->hasMany(Prestasi::class, 'cabor_id');
+    }
+
         public function getJumlahAtletAttribute()
     {
         return $this->atlets()->count();

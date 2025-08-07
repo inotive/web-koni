@@ -99,7 +99,7 @@
 
                         <div class="row align-items-center mb-3">
                             <div class="col-md-3">
-                                <label for="nama_prestasi" class="form-label">Nama Prestasi</label>
+                                <label for="nama_prestasi" class="form-label">Kejuaraan</label>
                             </div>
                             <div class="col-md-9">
                                 <input type="text" class="form-control @error('nama_prestasi') is-invalid @enderror"
