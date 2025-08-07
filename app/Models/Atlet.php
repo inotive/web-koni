@@ -39,20 +39,22 @@ class Atlet extends Model
         return '-';
     }
 
+    // Di model Atlet.php
     public function prestasiTerbaru()
     {
-        return $this->morphOne(Prestasi::class, 'subject')->latestOfMany('tahun');
+        return $this->morphOne(Prestasi::class, 'subject')
+            ->orderBy('tahun', 'desc')
+            ->limit(1);
     }
 
     public function prestasis()
     {
-        return $this->morphMany(Prestasi::class, 'subject');
+        return $this->morphMany(Prestasi::class, 'subject')
+            ->orderBy('tahun', 'desc');
     }
 
     public function cabangOlahraga()
     {
         return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
     }
-
-    
 }

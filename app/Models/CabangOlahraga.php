@@ -27,38 +27,37 @@ class CabangOlahraga extends Model
     public function atlets()
     {
         return $this->hasMany(Atlet::class, 'cabor_id');
-        return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
     }
 
     public function pelatihs()
     {
         return $this->hasMany(Pelatih::class, 'cabor_id');
-        return $this->belongsTo(CabangOlahraga::class, 'cabor_id');
     }
 
     // ✅ Accessor dengan eager loading untuk optimasi
     public function jumlahAtlet(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->atlets()->count(),
+            get: fn() => $this->atlets()->count(),
         )->shouldCache();
     }
 
     public function jumlahPelatih(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->pelatihs()->count(),
+            get: fn() => $this->pelatihs()->count(),
         )->shouldCache();
     }
 
-    // ✅ Relasi ke prestasi jika diperlukan
     public function prestasis()
-    {
-        return $this->hasManyThrough(
-            Prestasi::class,
-            Atlet::class,
-            'cabang_olahraga_id',
-            'atlet_id'
-        );
-    }
+{
+    return $this->hasManyThrough(
+        Prestasi::class,
+        Atlet::class,
+        'cabor_id',  // foreign key di tabel atlets
+        'atlet_id',  // foreign key di tabel prestasis (asumsi memang ada)
+        'id',
+        'id'
+    );
+}
 }

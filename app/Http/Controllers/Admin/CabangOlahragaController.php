@@ -17,23 +17,24 @@ class CabangOlahragaController extends Controller
         $query = CabangOlahraga::with(['atlets', 'pelatihs']);
 
         // PERBAIKAN: Search functionality - Konsisten menggunakan 'search'
-        if ($search = $request->input('search')) {
+        if ($request->filled('search')) {
+            $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('nama_cabor', 'like', '%' . $search . '%')
-                    ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
+                $q->where('nama_cabor', 'LIKE', "%{$search}%")
+                    ->orWhere('ketua_penanggung_jawab', 'LIKE', "%{$search}%");
             });
         }
 
-        // PERBAIKAN: Status filter - Konsisten menggunakan 'status' (bukan 'filter_status')
-        if ($status = $request->input('status')) {
-            $query->where('status', $status);
+        // Apply status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
-        // PERBAIKAN: Sorting dengan default yang lebih baik
-        $sortBy = $request->input('sort_by', 'terakhir_update');
-        $order = $request->input('order', 'desc');
+        // Apply sorting
+        $sortBy = $request->get('sort_by', 'nama_cabor');
+        $order = $request->get('order', 'asc');
 
-        // Validasi sort field untuk keamanan
+        // Validate sort fields
         $allowedSortFields = [
             'nama_cabor',
             'ketua_penanggung_jawab',
@@ -83,6 +84,40 @@ class CabangOlahragaController extends Controller
             ]);
         }
 
+        // TAMBAHAN: Handle AJAX requests untuk compatibility dengan frontend
+        if ($request->ajax() || $request->wantsJson()) {
+            try {
+                // Render table partial
+                $tableHtml = view('admin.cabang-olahraga.partials.table', compact('cabors'))->render();
+
+                // Render pagination partial
+                $paginationHtml = view('admin.cabang-olahraga.partials.pagination', compact('cabors'))->render();
+
+                return response()->json([
+                    'success' => true,
+                    'html' => $tableHtml,
+                    'pagination' => $paginationHtml,
+                    'total' => $cabors->total(),
+                    'current_page' => $cabors->currentPage(),
+                    'last_page' => $cabors->lastPage(),
+                    'per_page' => $cabors->perPage(),
+                    'from' => $cabors->firstItem(),
+                    'to' => $cabors->lastItem(),
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Error rendering AJAX response: ' . $e->getMessage(), [
+                    'request' => $request->all(),
+                    'exception' => $e->getTraceAsString()
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan saat memuat data.',
+                    'error' => config('app.debug') ? $e->getMessage() : null
+                ], 500);
+            }
+        }
+
         return view('admin.cabang-olahraga.index', compact('cabors'));
     }
 
@@ -117,21 +152,16 @@ class CabangOlahragaController extends Controller
             ->with('cabor_created', 'Cabang olahraga berhasil ditambahkan.');
     }
 
-    public function show($id, Request $request)
-{
-    $cabor = CabangOlahraga::findOrFail($id);
+    public function show($id)
+    {
+        $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
 
-    // Pagination untuk atlet
-    $atlets = $cabor->atlets()
-        ->with('prestasiTerbaru')
-        ->paginate(10, ['*'], 'atlet_page');
+        // Tambahkan paginate untuk atlet dan pelatih
+        $atlets = $cabor->atlets()->paginate(10, ['*'], 'atlet_page');
+        $pelatihs = $cabor->pelatihs()->paginate(10, ['*'], 'pelatih_page');
 
-    // Pagination untuk pelatih
-    $pelatihs = $cabor->pelatihs()
-        ->paginate(10, ['*'], 'pelatih_page');
-
-    return view('admin.cabang-olahraga.show', compact('cabor', 'atlets', 'pelatihs'));
-}
+        return view('admin.cabang-olahraga.show', compact('cabor', 'atlets', 'pelatihs'));
+    }
 
     public function edit($id)
     {

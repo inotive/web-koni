@@ -12,11 +12,14 @@ return new class extends Migration
 public function up(): void
 {
     Schema::table('atlets', function (Blueprint $table) {
-        $table->dropColumn('prestasi_terbaru');
+        // Pastikan tidak ada data penting sebelum menghapus
+        if (Schema::hasColumn('atlets', 'prestasi_terbaru')) {
+            $table->dropColumn('prestasi_terbaru');
+        }
     });
 }
 
-public function down(): void // Jika Anda perlu membatalkan (rollback)
+public function down(): void
 {
     Schema::table('atlets', function (Blueprint $table) {
         $table->text('prestasi_terbaru')->nullable();

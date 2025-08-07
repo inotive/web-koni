@@ -28,9 +28,10 @@ class Prestasi extends Model
     /**
      * Get the owning subject (Atlet or Pelatih)
      */
+    // App\Models\Prestasi
     public function subject()
     {
-        return $this->morphTo();
+        return $this->morphTo('subject', 'subject_type', 'subject_id');
     }
 
     /**

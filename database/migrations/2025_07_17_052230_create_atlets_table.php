@@ -19,9 +19,9 @@ Schema::create('atlets', function (Blueprint $table) {
     $table->date('tanggal_lahir');
     $table->text('alamat');
     $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
-    $table->text('prestasi_terbaru')->nullable();
     $table->string('no_telepon')->nullable();
     $table->string('email')->nullable();
+    $table->string('foto_atlet')->nullable(); // Tambahkan ini jika diperlukan
     $table->timestamps();
 });
 

@@ -4,7 +4,6 @@
 @section('mainSection', 'Konfigurasi')
 @section('currentSection', 'Cabang Olahraga')
 @php
-
     if (!function_exists('sortIcon')) {
         function sortIcon($field)
         {
@@ -165,59 +164,49 @@
             text-align: center;
         }
 
-        /* No */
         .table th:nth-child(2),
         .table td:nth-child(2) {
             width: 250px;
         }
 
-        /* Nama Cabor */
         .table th:nth-child(3),
         .table td:nth-child(3) {
             width: 200px;
         }
 
-        /* Ketua Penanggung Jawab */
         .table th:nth-child(4),
         .table td:nth-child(4) {
             width: 120px;
             text-align: center;
         }
 
-        /* Status */
         .table th:nth-child(5),
         .table td:nth-child(5) {
             width: 150px;
         }
 
-        /* Tanggal Pembentukan */
         .table th:nth-child(6),
         .table td:nth-child(6) {
             width: 100px;
             text-align: center;
         }
 
-        /* Jumlah Atlet */
         .table th:nth-child(7),
         .table td:nth-child(7) {
             width: 100px;
             text-align: center;
         }
 
-        /* Jumlah Pelatih */
         .table th:nth-child(8),
         .table td:nth-child(8) {
             width: 150px;
         }
 
-        /* Terakhir Update */
         .table th:nth-child(9),
         .table td:nth-child(9) {
             width: 120px;
             text-align: center;
         }
-
-        /* Aksi */
 
         .text-truncate-custom {
             max-width: 180px;
@@ -323,7 +312,6 @@
             margin: 0 1px;
         }
 
-        /* Responsive adjustments */
         @media (max-width: 768px) {
             .d-flex.justify-content-between.align-items-center.flex-wrap {
                 flex-direction: column;
@@ -377,13 +365,14 @@
             box-shadow: none !important;
         }
 
-        /* Custom pagination styles */
         .pagination-arrow {
             color: #6c757d;
             text-decoration: none;
             padding: 6px 8px;
             transition: color 0.2s ease;
             cursor: pointer;
+            background: none;
+            border: none;
         }
 
         .pagination-arrow:hover {
@@ -407,6 +396,9 @@
             background-color: #f8f9fa;
             border: 1px solid transparent;
             font-size: 0.875rem;
+            cursor: pointer;
+            background: none;
+            border: none;
         }
 
         .pagination-number:hover {
@@ -421,14 +413,12 @@
             border-color: #e0e1e4;
         }
 
-        /* Pagination dots style */
         .pagination-dots {
             color: #6c757d;
             padding: 6px 4px;
             font-size: 0.875rem;
         }
 
-        /* Per page selector styling */
         .form-select-sm {
             padding: 0.25rem 0.5rem;
             font-size: 0.875rem;
@@ -443,7 +433,6 @@
             box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
         }
 
-        /* Additional responsive styles */
         @media (max-width: 768px) {
             .d-flex.justify-content-between {
                 flex-direction: column;
@@ -503,13 +492,11 @@
             }
         }
 
-        /* Ensure proper horizontal scrolling for table */
         .table-responsive {
             -webkit-overflow-scrolling: touch;
             overflow-x: auto;
         }
 
-        /* Fix for long text overflow */
         .text-truncate {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -543,20 +530,6 @@
             position: relative;
         }
 
-        .table-loading::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-
         .loading-spinner {
             border: 2px solid #f3f3f3;
             border-top: 2px solid #F8285A;
@@ -574,6 +547,21 @@
             100% {
                 transform: rotate(360deg);
             }
+        }
+
+        /* AJAX Loading Overlay */
+        .loading-overlay {
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            border-radius: 8px;
         }
     </style>
 
@@ -595,24 +583,17 @@
                                 <h2 class="mb-0 fw-semibold text-dark">Table Daftar Cabor Tabalong</h2>
 
                                 <div class="d-flex align-items-center gap-9 flex-wrap">
-                                    <!-- Search Box Form -->
-                                    <form method="GET" action="{{ request()->url() }}" id="searchForm" class="d-flex">
-                                        <div class="input-group border rounded" style="width: 230px;">
-                                            <span class="input-group-text bg-transparent border-0">
-                                                <i class="fas fa-search"></i>
-                                            </span>
-                                            <input type="search" name="search" id="search"
-                                                class="form-control border-0 py-2" placeholder="Search Teams..."
-                                                value="{{ request('search') }}">
-                                        </div>
-                                        <!-- Hidden inputs to preserve other parameters -->
-                                        <input type="hidden" name="status" value="{{ request('status') }}">
-                                        <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
-                                        <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
-                                        <input type="hidden" name="order" value="{{ request('order') }}">
-                                    </form>
+                                    <!-- Search Box -->
+                                    <div class="input-group border rounded" style="width: 230px;">
+                                        <span class="input-group-text bg-transparent border-0">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                        <input type="search" name="search" id="search"
+                                            class="form-control border-0 py-2" placeholder="Search Teams..."
+                                            value="{{ request('search') }}">
+                                    </div>
 
-                                    <!-- Filter Button with Icon on Right -->
+                                    <!-- Filter Button -->
                                     <div class="border rounded" style="width: 120px; border-width: 1px !important;">
                                         <button
                                             class="btn bg-white dropdown-toggle w-100 text-start border-0 py-2 d-flex justify-content-between align-items-center"
@@ -621,53 +602,39 @@
                                             <div>
                                                 <i class="fas fa-filter ms-1"></i>
                                                 <span id="filter-count"
-                                                    class="badge badge-circle badge-danger ms-1 {{ request('status') ? '' : 'd-none' }}">
-                                                    {{ request('status') ? '1' : '0' }}
+                                                    class="badge badge-circle badge-danger ms-1 {{ request('status') || request('search') ? '' : 'd-none' }}">
+                                                    {{ (request('status') ? 1 : 0) + (request('search') ? 1 : 0) }}
                                                 </span>
                                             </div>
                                         </button>
                                         <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
-                                            <form method="GET" action="{{ request()->url() }}" id="filterForm">
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-semibold">Status Keaktifan</label>
-                                                    <select id="filter-status" name="status" class="form-select">
-                                                        <option value="">Semua Status</option>
-                                                        <option value="Aktif"
-                                                            {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif
-                                                        </option>
-                                                        <option value="Tidak Aktif"
-                                                            {{ request('status') == 'Tidak Aktif' ? 'selected' : '' }}>
-                                                            Tidak Aktif</option>
-                                                    </select>
-                                                </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Status Keaktifan</label>
+                                                <select id="filter-status" name="status" class="form-select">
+                                                    <option value="">Semua Status</option>
+                                                    <option value="Aktif"
+                                                        {{ request('status') == 'Aktif' ? 'selected' : '' }}>Aktif
+                                                    </option>
+                                                    <option value="Tidak Aktif"
+                                                        {{ request('status') == 'Tidak Aktif' ? 'selected' : '' }}>
+                                                        Tidak Aktif</option>
+                                                </select>
+                                            </div>
 
-                                                <!-- Hidden inputs to preserve other parameters -->
-                                                <input type="hidden" name="search" value="{{ request('search') }}">
-                                                <input type="hidden" name="per_page"
-                                                    value="{{ request('per_page', 10) }}">
-                                                <input type="hidden" name="sort_by" value="{{ request('sort_by') }}">
-                                                <input type="hidden" name="order" value="{{ request('order') }}">
-
-                                                <div class="d-flex gap-2">
-                                                    <button type="button" id="apply-filters"
-                                                        class="btn btn-primary btn-sm flex-fill">
-                                                        <i class="fas fa-check"></i> Terapkan
-                                                    </button>
-                                                    <button type="button" id="reset-filters"
-                                                        class="btn btn-light btn-sm flex-fill">
-                                                        <i class="fas fa-redo"></i> Reset
-                                                    </button>
-                                                </div>
-                                            </form>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" id="apply-filters"
+                                                    class="btn btn-primary btn-sm flex-fill">
+                                                    <i class="fas fa-check"></i> Terapkan
+                                                </button>
+                                                <button type="button" id="reset-filters"
+                                                    class="btn btn-light btn-sm flex-fill">
+                                                    <i class="fas fa-redo"></i> Reset
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            @if (!(isset($cabors) && $cabors->isEmpty()))
-                                <div class="d-flex justify-content-between align-items-center mb">
-                                </div>
-                            @endif
                         </div>
 
                         @if (isset($cabors) && $cabors->isEmpty())
@@ -677,276 +644,15 @@
                             </div>
                         @else
                             <div class="table-responsive" id="tableContainer">
-                                <table class="table table-hover align-middle" id="caborTable">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th><a href="{{ sortUrl('nama_cabor') }}"
-                                                    class="text-dark text-decoration-none">Nama Cabor
-                                                    {!! sortIcon('nama_cabor') !!}</a></th>
-                                            <th><a href="{{ sortUrl('ketua_penanggung_jawab') }}"
-                                                    class="text-dark text-decoration-none">Ketua Penanggung Jawab
-                                                    {!! sortIcon('ketua_penanggung_jawab') !!}</a></th>
-                                            <th><a href="{{ sortUrl('status') }}"
-                                                    class="text-dark text-decoration-none">Status
-                                                    {!! sortIcon('status') !!}</a></th>
-                                            <th><a href="{{ sortUrl('tanggal_pembentukan') }}"
-                                                    class="text-dark text-decoration-none">Tanggal Pembentukan
-                                                    {!! sortIcon('tanggal_pembentukan') !!}</a></th>
-                                            <th>Jumlah Atlet</th>
-                                            <th>Jumlah Pelatih</th>
-                                            <th><a href="{{ sortUrl('terakhir_update') }}"
-                                                    class="text-dark text-decoration-none">Terakhir Update
-                                                    {!! sortIcon('terakhir_update') !!}</a>
-                                            </th>
-                                            <th>Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if (isset($cabors))
-                                            @forelse ($cabors as $index => $cabor)
-                                                <tr data-status="{{ $cabor->status }}">
-                                                    <td>{{ $loop->iteration + ($cabors->currentPage() - 1) * $cabors->perPage() }}
-                                                    </td>
-
-                                                    <td>
-                                                        <div class="d-flex align-items-center">
-                                                            @if ($cabor->icon_cabor)
-                                                                <img src="{{ asset('storage/' . $cabor->icon_cabor) }}"
-                                                                    width="40" height="40"
-                                                                    class="rounded object-fit-cover me-3">
-                                                            @else
-                                                                <div class="rounded bg-secondary text-white text-center fw-bold d-flex align-items-center justify-content-center me-3"
-                                                                    style="width: 40px; height: 40px;">
-                                                                    {{ strtoupper(substr($cabor->nama_cabor, 0, 1)) }}
-                                                                </div>
-                                                            @endif
-                                                            <div class="d-flex flex-column">
-                                                                <strong
-                                                                    class="text-truncate-custom">{{ $cabor->nama_cabor }}</strong>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="text-truncate-custom"
-                                                            title="{{ $cabor->ketua_penanggung_jawab }}">
-                                                            {{ $cabor->ketua_penanggung_jawab }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span
-                                                            class="badge {{ $cabor->status == 'Aktif' ? 'badge-light-success' : 'badge-light-danger' }}">
-                                                            {{ $cabor->status }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        {{ \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->format('d M Y') }}
-                                                    </td>
-                                                    <td>
-                                                        {{ $cabor->atlets ? $cabor->atlets->count() : 0 }}
-                                                    </td>
-                                                    <td>
-                                                        {{ $cabor->pelatihs ? $cabor->pelatihs->count() : 0 }}
-                                                    </td>
-                                                    <td>
-                                                        {{ $cabor->terakhir_update ? \Carbon\Carbon::parse($cabor->terakhir_update)->format('M d, Y') : '-' }}
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <div class="d-flex justify-content-center gap-1">
-                                                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.show', $cabor->id) }}"
-                                                                class="btn btn-icon btn-sm btn-light-primary"
-                                                                title="Detail">
-                                                                <i class="fa-solid fa-eye"></i>
-                                                            </a>
-                                                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.edit', $cabor->id) }}"
-                                                                class="btn btn-icon btn-sm btn-light-warning"
-                                                                title="Edit">
-                                                                <i class="fa-solid fa-pen-to-square"></i>
-                                                            </a>
-
-                                                            @php
-                                                                $jumlahAtlet = $cabor->atlets
-                                                                    ? $cabor->atlets->count()
-                                                                    : 0;
-                                                                $jumlahPelatih = $cabor->pelatihs
-                                                                    ? $cabor->pelatihs->count()
-                                                                    : 0;
-                                                                $totalData = $jumlahAtlet + $jumlahPelatih;
-                                                            @endphp
-
-                                                            @if ($totalData > 0)
-                                                                <button type="button"
-                                                                    class="btn btn-icon btn-sm btn-light-danger"
-                                                                    title="Tidak dapat dihapus - Ada {{ $totalData }} data terkait"
-                                                                    onclick="showDeleteWarning('{{ $cabor->nama_cabor }}', {{ $jumlahAtlet }}, {{ $jumlahPelatih }})"
-                                                                    style="opacity: 0.6;">
-                                                                    <i class="fa-solid fa-trash"></i>
-                                                                </button>
-                                                            @else
-                                                                <form
-                                                                    action="{{ route('admin.konfigurasi.cabang-olahraga.destroy', $cabor->id) }}"
-                                                                    method="POST" class="d-inline"
-                                                                    onsubmit="return confirmDelete('{{ $cabor->nama_cabor }}')">
-                                                                    @csrf @method('DELETE')
-                                                                    <button type="submit"
-                                                                        class="btn btn-icon btn-sm btn-light-danger"
-                                                                        title="Hapus">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="9" class="text-center py-5 text-muted">
-                                                        @if (request('search') || request('status'))
-                                                            <i class="fas fa-search fs-3x mb-3 text-muted"></i>
-                                                            <h4>Tidak ada data yang cocok dengan pencarian</h4>
-                                                            <p class="mb-0">Coba ubah kata kunci atau filter yang
-                                                                digunakan</p>
-                                                        @else
-                                                            Tidak ada data cabang olahraga
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        @endif
-                                    </tbody>
-                                </table>
+                                @include('admin.cabang-olahraga.partials.table', ['cabors' => $cabors])
                             </div>
 
                             <!-- Pagination Section -->
                             @if (isset($cabors) && $cabors->total() > 0)
                                 <div class="table-footer">
-                                    <div class="d-flex justify-content-between align-items-center flex-wrap">
-                                        <!-- Per page selector & Info -->
-                                        <div class="d-flex align-items-center gap-2 flex-wrap">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <label class="form-label mb-0">Tampilkan:</label>
-                                                <form method="GET" action="{{ request()->url() }}" id="perPageForm">
-                                                    <select class="form-select form-select-sm" style="width: auto;"
-                                                        name="per_page" onchange="this.form.submit()">
-                                                        <option value="10"
-                                                            {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
-                                                        </option>
-                                                        <option value="25"
-                                                            {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                                                        <option value="50"
-                                                            {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                                                        <option value="100"
-                                                            {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                                                    </select>
-                                                    <!-- Preserve current parameters -->
-                                                    <input type="hidden" name="search"
-                                                        value="{{ request('search') }}">
-                                                    <input type="hidden" name="status"
-                                                        value="{{ request('status') }}">
-                                                    <input type="hidden" name="sort_by"
-                                                        value="{{ request('sort_by') }}">
-                                                    <input type="hidden" name="order" value="{{ request('order') }}">
-                                                </form>
-                                                <span class="text-muted">data per halaman</span>
-                                            </div>
-
-                                            <div class="text-muted">
-                                                Menampilkan {{ $cabors->count() }} dari {{ $cabors->total() }} total data
-                                                @if (request('search') || request('status'))
-                                                    <br><small class="text-info">
-                                                        (Hasil pencarian/filter:
-                                                        @if (request('search'))
-                                                            "{{ request('search') }}"
-                                                        @endif
-                                                        @if (request('status'))
-                                                            Status: {{ request('status') }}
-                                                        @endif
-                                                        )
-                                                    </small>
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                        <!-- Pagination Controls -->
-                                        <div class="d-flex align-items-center gap-3">
-                                            <!-- Range Info -->
-                                            <div class="text-muted">
-                                                @php
-                                                    $from = ($cabors->currentPage() - 1) * $cabors->perPage() + 1;
-                                                    $to = min($from + $cabors->count() - 1, $cabors->total());
-                                                @endphp
-                                                {{ $from }}-{{ $to }} of {{ $cabors->total() }}
-                                            </div>
-
-                                            @if ($cabors->hasPages())
-                                                <!-- Previous Page Link -->
-                                                @if ($cabors->onFirstPage())
-                                                    <span class="pagination-arrow disabled">
-                                                        <i class="fas fa-chevron-left"></i>
-                                                    </span>
-                                                @else
-                                                    <a href="{{ $cabors->appends(request()->query())->previousPageUrl() }}"
-                                                        class="pagination-arrow">
-                                                        <i class="fas fa-chevron-left"></i>
-                                                    </a>
-                                                @endif
-
-                                                <!-- Pagination Elements -->
-                                                @php
-                                                    $start = max(1, $cabors->currentPage() - 2);
-                                                    $end = min($cabors->lastPage(), $cabors->currentPage() + 2);
-                                                @endphp
-
-                                                @if ($start > 1)
-                                                    <a href="{{ $cabors->appends(request()->query())->url(1) }}"
-                                                        class="pagination-number">1</a>
-                                                    @if ($start > 2)
-                                                        <span class="pagination-dots">...</span>
-                                                    @endif
-                                                @endif
-
-                                                @for ($page = $start; $page <= $end; $page++)
-                                                    @if ($page == $cabors->currentPage())
-                                                        <span class="pagination-number active">{{ $page }}</span>
-                                                    @else
-                                                        <a href="{{ $cabors->appends(request()->query())->url($page) }}"
-                                                            class="pagination-number">{{ $page }}</a>
-                                                    @endif
-                                                @endfor
-
-                                                @if ($end < $cabors->lastPage())
-                                                    @if ($end < $cabors->lastPage() - 1)
-                                                        <span class="pagination-dots">...</span>
-                                                    @endif
-                                                    <a href="{{ $cabors->appends(request()->query())->url($cabors->lastPage()) }}"
-                                                        class="pagination-number">{{ $cabors->lastPage() }}</a>
-                                                @endif
-
-                                                <!-- Next Page Link -->
-                                                @if ($cabors->hasMorePages())
-                                                    <a href="{{ $cabors->appends(request()->query())->nextPageUrl() }}"
-                                                        class="pagination-arrow">
-                                                        <i class="fas fa-chevron-right"></i>
-                                                    </a>
-                                                @else
-                                                    <span class="pagination-arrow disabled">
-                                                        <i class="fas fa-chevron-right"></i>
-                                                    </span>
-                                                @endif
-                                            @else
-                                                <!-- Placeholder when no pagination needed -->
-                                                <div class="d-flex align-items-center gap-2">
-                                                    <span class="pagination-arrow disabled">
-                                                        <i class="fas fa-chevron-left"></i>
-                                                    </span>
-                                                    <span class="pagination-number active">1</span>
-                                                    <span class="pagination-arrow disabled">
-                                                        <i class="fas fa-chevron-right"></i>
-                                                    </span>
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
+                                    @include('admin.cabang-olahraga.partials.pagination', [
+                                        'cabors' => $cabors,
+                                    ])
                                 </div>
                             @endif
                         @endif
@@ -986,147 +692,510 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            console.log('Initializing server-side search and filter...');
+    // ✅ Declare all variables at the top
+    let isLoading = false;
+    let searchTimeout;
+    let clickTimeout;
 
-            // Auto-submit search with debounce
-            let searchTimeout;
-            $('#search').on('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    console.log('Submitting search form...');
-                    $('#searchForm').submit();
-                }, 500); // 500ms delay untuk menghindari request berlebihan
-            });
+    // Tambahkan check jQuery
+    if (typeof $ === 'undefined') {
+        console.error('jQuery not loaded!');
+        return;
+    }
 
-            // Apply filters button
-            $('#apply-filters').on('click', function() {
-                console.log('Applying filters...');
+    console.log('🚀 AJAX System Loading...');
+    console.log('jQuery loaded:', typeof $ !== 'undefined');
+    console.log('Current URL:', window.location.href);
 
-                // Update the search form with filter values
-                const statusValue = $('#filter-status').val();
-                $('#searchForm input[name="status"]').val(statusValue);
+    // Base URL untuk AJAX requests
+    const baseUrl = "{{ route('admin.konfigurasi.cabang-olahraga.index') }}";
 
-                // Submit the search form
-                $('#searchForm').submit(); // <-- INI JUGA MENYEBABKAN RELOAD
-            });
+    // Debug: Cek elemen yang diperlukan
+    console.log('Search element:', $('#search').length > 0 ? 'FOUND' : 'NOT FOUND');
+    console.log('Filter element:', $('#filter-status').length > 0 ? 'FOUND' : 'NOT FOUND');
+    console.log('Table container:', $('#tableContainer').length > 0 ? 'FOUND' : 'NOT FOUND');
 
-            // Reset filters button
-            $('#reset-filters').on('click', function() {
-                console.log('Resetting filters...');
+    // ✅ FIXED AJAX Request Function with proper error handling
+    function performAjaxRequest(params = {}, showLoading = true) {
+        if (isLoading) {
+            console.log('⚠️ Request already in progress, skipping...');
+            return Promise.reject('Request in progress');
+        }
 
-                // Clear search input
-                $('#search').val('');
-                $('#filter-status').val('');
+        // Show loading state
+        if (showLoading) {
+            showTableLoading();
+        }
 
-                // Clear hidden inputs
-                $('#searchForm input[name="search"]').val('');
-                $('#searchForm input[name="status"]').val('');
+        // Get current URL parameters
+        const currentParams = new URLSearchParams(window.location.search);
+        const newParams = new URLSearchParams();
 
-                // Submit to reset all filters
-                window.location.href = "{{ route('admin.konfigurasi.cabang-olahraga.index') }}";
-            });
+        // Preserve existing params first
+        for (let [key, value] of currentParams) {
+            newParams.set(key, value);
+        }
 
-            // Auto-apply filter when status dropdown changes
-            $('#filter-status').on('change', function() {
-                console.log('Status filter changed, auto-applying...');
-                $('#apply-filters').click();
-            });
-
-            // Update filter count badge on page load
-            updateFilterCountBadge();
-
-            // Show active search/filter indicators
-            showActiveFilters();
-
-            console.log('Search and filter initialization complete');
-        });
-
-        // Function to update filter count badge
-        function updateFilterCountBadge() {
-            const activeFilters = [];
-
-            if ($('#filter-status').val()) {
-                activeFilters.push('status');
-            }
-
-            const count = activeFilters.length;
-            const badge = $('#filter-count');
-
-            if (count > 0) {
-                badge.text(count).removeClass('d-none');
-            } else {
-                badge.addClass('d-none');
+        // Override/add new params
+        for (let [key, value] of Object.entries(params)) {
+            if (value !== null && value !== undefined && value !== '') {
+                newParams.set(key, value);
+            } else if (value === '' || value === null) {
+                newParams.delete(key);
             }
         }
 
-        // Function to show active search/filter indicators
-        function showActiveFilters() {
-            const hasSearch = "{{ request('search') }}" !== "";
-            const hasFilter = "{{ request('status') }}" !== "";
+        const url = `${baseUrl}?${newParams.toString()}`;
+        console.log('🚀 Making AJAX request to:', url, 'with params:', params);
 
-            if (hasSearch || hasFilter) {
-                console.log('Active filters detected:', {
-                    search: "{{ request('search') }}",
-                    status: "{{ request('status') }}"
-                });
-            }
-        }
-
-        // Delete warning modal functions
-        function showDeleteWarning(namaCabor, jumlahAtlet, jumlahPelatih) {
-            document.getElementById('caborName').textContent = namaCabor;
-
-            const dependencyList = document.getElementById('dependencyList');
-            dependencyList.innerHTML = '';
-
-            if (jumlahAtlet > 0) {
-                dependencyList.innerHTML += `<li>${jumlahAtlet} atlet yang terdaftar</li>`;
-            }
-
-            if (jumlahPelatih > 0) {
-                dependencyList.innerHTML += `<li>${jumlahPelatih} pelatih yang terdaftar</li>`;
-            }
-
-            // Show modal
-            const modal = new bootstrap.Modal(document.getElementById('deleteWarningModal'));
-            modal.show();
-        }
-
-        function confirmDelete(namaCabor) {
-            return confirm(`Yakin ingin menghapus cabang olahraga "${namaCabor}"?\nTindakan ini tidak dapat dibatalkan.`);
-        }
-
-        // Loading state management for better UX
-        function showTableLoading() {
-            const tableContainer = document.getElementById('tableContainer');
-            if (tableContainer) {
-                tableContainer.classList.add('table-loading');
-                const spinner = document.createElement('div');
-                spinner.className = 'loading-spinner';
-                tableContainer.appendChild(spinner);
-            }
-        }
-
-        function hideTableLoading() {
-            const tableContainer = document.getElementById('tableContainer');
-            if (tableContainer) {
-                tableContainer.classList.remove('table-loading');
-                const spinner = tableContainer.querySelector('.loading-spinner');
-                if (spinner) {
-                    spinner.remove();
+        return $.ajax({
+            url: url,
+            type: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json, text/html',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            timeout: 15000, // 15 second timeout
+            cache: false
+        })
+        .done(function(response, textStatus, jqXHR) {
+            console.log('📦 Response received:', response);
+            console.log('📦 Response type:', typeof response);
+            
+            // Check if response is JSON
+            let data = response;
+            if (typeof response === 'string') {
+                try {
+                    data = JSON.parse(response);
+                } catch (e) {
+                    console.log('📦 Response is HTML, parsing...');
+                    // If it's HTML, we need to extract the table content
+                    handleHtmlResponse(response);
+                    return;
                 }
             }
+
+            // Handle JSON response
+            if (data && typeof data === 'object') {
+                updateTableContent(data);
+                
+                // Update URL without reload
+                if (url !== window.location.href) {
+                    window.history.pushState({}, '', url);
+                    console.log('✅ URL updated:', url);
+                }
+            } else {
+                console.warn('⚠️ Invalid response format');
+                fallbackToPageReload(url);
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            console.error('❌ AJAX error:', textStatus, errorThrown);
+            console.error('❌ Response status:', jqXHR.status);
+            console.error('❌ Response text:', jqXHR.responseText);
+            
+            showErrorToast('Gagal memuat data. Silakan coba lagi.');
+            
+            // Fallback to page reload after short delay
+            setTimeout(() => {
+                console.log('🔄 Falling back to page reload...');
+                window.location.href = url;
+            }, 1500);
+        })
+        .always(function() {
+            if (showLoading) {
+                hideTableLoading();
+            }
+        });
+    }
+
+    // ✅ NEW: Handle HTML response (when server returns full page)
+    function handleHtmlResponse(htmlResponse) {
+        try {
+            const $response = $(htmlResponse);
+            
+            // Extract table content
+            const tableContent = $response.find('#tableContainer').html();
+            if (tableContent) {
+                $('#tableContainer').html(tableContent);
+                console.log('✅ Table updated from HTML response');
+            }
+            
+            // Extract pagination content
+            const paginationContent = $response.find('.table-footer').html();
+            if (paginationContent) {
+                $('.table-footer').html(paginationContent);
+                console.log('✅ Pagination updated from HTML response');
+            }
+            
+        } catch (error) {
+            console.error('❌ Error parsing HTML response:', error);
+            showErrorToast('Terjadi kesalahan saat memuat data.');
+        }
+    }
+
+    // ✅ NEW: Update table content from JSON response
+    function updateTableContent(data) {
+        if (data.html || data.table) {
+            const tableContent = data.html || data.table;
+            $('#tableContainer').html(tableContent);
+            console.log('✅ Table content updated from JSON');
         }
 
-        // Form submission handling with loading state
-        $('#searchForm, #filterForm, #perPageForm').on('submit', function() {
-            showTableLoading();
+        if (data.pagination) {
+            $('.table-footer').html(data.pagination);
+            console.log('✅ Pagination updated from JSON');
+        }
+
+        // Update other elements if provided
+        if (data.total_records) {
+            $('.total-records').text(data.total_records);
+        }
+    }
+
+    // ✅ NEW: Fallback to page reload
+    function fallbackToPageReload(url) {
+        console.log('🔄 Falling back to page reload...');
+        setTimeout(() => {
+            window.location.href = url;
+        }, 1000);
+    }
+
+    // ✅ Enhanced Loading State Functions
+    function showTableLoading() {
+        isLoading = true;
+        const tableContainer = $('#tableContainer');
+
+        if (tableContainer.length && !tableContainer.find('.loading-overlay').length) {
+            const overlay = $(`
+                <div class="loading-overlay" style="
+                    position: absolute !important;
+                    top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(255, 255, 255, 0.9);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9999;
+                    border-radius: 8px;
+                    backdrop-filter: blur(2px);
+                ">
+                    <div class="d-flex align-items-center px-3 py-2 bg-white rounded shadow">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <span class="text-muted">Memuat data...</span>
+                    </div>
+                </div>
+            `);
+
+            tableContainer.css('position', 'relative').append(overlay);
+        }
+    }
+
+    function hideTableLoading() {
+        isLoading = false;
+        $('.loading-overlay').remove();
+    }
+
+    // ✅ Enhanced Error Toast Function
+    function showErrorToast(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message, 'Error', {
+                timeOut: 5000,
+                closeButton: true,
+                progressBar: true
+            });
+        } else if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000
+            });
+        } else {
+            console.error(message);
+            alert(message);
+        }
+    }
+
+    // ✅ Update Filter Count Badge
+    function updateFilterCountBadge() {
+        let count = 0;
+
+        if ($('#filter-status').val()) count++;
+        if ($('#search').val().trim()) count++;
+
+        const badge = $('#filter-count');
+        if (count > 0) {
+            badge.text(count).removeClass('d-none');
+        } else {
+            badge.addClass('d-none');
+        }
+    }
+
+    // ✅ EVENT HANDLERS
+
+    // Search dengan debounce - FIXED: Prevent default form submission
+    $('#search').on('input', function(e) {
+        e.preventDefault();
+        clearTimeout(searchTimeout);
+        const searchValue = $(this).val().trim();
+
+        console.log('🔍 Search input:', searchValue);
+
+        searchTimeout = setTimeout(() => {
+            performAjaxRequest({
+                search: searchValue,
+                page: 1
+            });
+            updateFilterCountBadge();
+        }, 500);
+        
+        return false; // Prevent any form submission
+    });
+
+    // FIXED: Prevent Enter key from submitting form in search
+    $('#search').on('keypress', function(e) {
+        if (e.which === 13) { // Enter key
+            e.preventDefault();
+            clearTimeout(searchTimeout);
+            
+            const searchValue = $(this).val().trim();
+            performAjaxRequest({
+                search: searchValue,
+                page: 1
+            });
+            updateFilterCountBadge();
+            
+            return false;
+        }
+    });
+
+    // Filter Status Change - FIXED: Prevent default
+    $(document).on('change', '#filter-status', function(e) {
+        e.preventDefault();
+        const statusValue = $(this).val();
+        console.log('🔽 Filter status changed:', statusValue);
+
+        performAjaxRequest({
+            status: statusValue,
+            page: 1
+        });
+        updateFilterCountBadge();
+        
+        return false;
+    });
+
+    // Apply Filters Button - FIXED: Better event handling
+    $(document).on('click', '#apply-filters', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const statusValue = $('#filter-status').val();
+        const searchValue = $('#search').val().trim();
+
+        console.log('✅ Applying filters - Status:', statusValue, 'Search:', searchValue);
+
+        performAjaxRequest({
+            status: statusValue,
+            search: searchValue,
+            page: 1
+        });
+        updateFilterCountBadge();
+        
+        return false;
+    });
+
+    // Reset Filters Button - FIXED: Better reset handling
+    $(document).on('click', '#reset-filters', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log('🔄 Resetting filters');
+
+        // Clear form fields
+        $('#search').val('');
+        $('#filter-status').val('');
+
+        // Make AJAX request with empty parameters
+        performAjaxRequest({
+            search: '',
+            status: '',
+            page: 1
+        });
+        updateFilterCountBadge();
+        
+        return false;
+    });
+
+    // FIXED: Per Page Change Handler - Use event delegation
+    $(document).on('change', '#ajax-per-page', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const perPageValue = $(this).val();
+        console.log('📄 Per page changed:', perPageValue);
+
+        performAjaxRequest({
+            per_page: perPageValue,
+            page: 1
+        });
+        
+        return false;
+    });
+
+    // FIXED: Pagination Click Handler - Better event handling
+    $(document).on('click', '.ajax-pagination', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const $this = $(this);
+        const page = $this.data('page');
+
+        console.log('📄 Pagination clicked, page:', page);
+
+        if (page && !$this.hasClass('processing')) {
+            $this.addClass('processing');
+
+            performAjaxRequest({ page: page })
+                .always(() => {
+                    setTimeout(() => {
+                        $('.ajax-pagination').removeClass('processing');
+                    }, 500);
+                });
+        }
+
+        return false;
+    });
+
+    // FIXED: Sorting Click Handler - Prevent any navigation
+    $(document).on('click', '.ajax-sort', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const $this = $(this);
+        const sortBy = $this.data('sort');
+        
+        console.log('🔄 Sort button clicked, sort by:', sortBy);
+
+        if (!sortBy || $this.hasClass('processing')) {
+            console.log('⚠️ No sort data found or already processing');
+            return false;
+        }
+
+        $this.addClass('processing');
+
+        const currentParams = new URLSearchParams(window.location.search);
+        const currentSortBy = currentParams.get('sort_by');
+        const currentOrder = currentParams.get('order');
+
+        // Toggle order if same field, default to asc for new field
+        let newOrder = 'asc';
+        if (currentSortBy === sortBy && currentOrder === 'asc') {
+            newOrder = 'desc';
+        }
+
+        console.log('🔄 Sorting:', sortBy, newOrder);
+
+        performAjaxRequest({
+            sort_by: sortBy,
+            order: newOrder,
+            page: 1
+        })
+        .always(() => {
+            setTimeout(() => {
+                $('.ajax-sort').removeClass('processing');
+            }, 500);
         });
 
-        // Handle browser back/forward buttons
-        window.addEventListener('pageshow', function() {
-            hideTableLoading();
-        });
+        return false;
+    });
+
+    // ✅ CRITICAL: Prevent ALL form submissions on this page
+    $(document).on('submit', 'form', function(e) {
+        console.log('🛑 Form submission prevented');
+        e.preventDefault();
+        return false;
+    });
+
+    // ✅ CRITICAL: Prevent default link behavior for any AJAX elements
+    $(document).on('click', 'a[href*="sort_by"], a[href*="page"], .ajax-sort, .ajax-pagination', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
+    // ✅ Initialize on page load
+    updateFilterCountBadge();
+
+    // ✅ Handle browser back/forward - FIXED: Better handling
+    window.addEventListener('popstate', function(event) {
+        console.log('🔙 Browser back/forward detected');
+        
+        // Get parameters from current URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const params = {};
+        
+        for (let [key, value] of urlParams) {
+            params[key] = value;
+        }
+        
+        // Update form fields to match URL
+        $('#search').val(params.search || '');
+        $('#filter-status').val(params.status || '');
+        
+        // Make AJAX request to load content
+        performAjaxRequest(params, true);
+        updateFilterCountBadge();
+    });
+
+    // ✅ Cleanup on page unload
+    $(window).on('beforeunload', function() {
+        hideTableLoading();
+        clearTimeout(searchTimeout);
+        clearTimeout(clickTimeout);
+        isLoading = false;
+    });
+
+    console.log('✅ FIXED Enhanced AJAX system initialized successfully');
+
+    // ✅ Add debugging function
+    window.testAjax = function() {
+        console.log('🧪 Testing AJAX manually...');
+        performAjaxRequest({ page: 1 }, true);
+    };
+
+    // ✅ Final diagnostic
+    setTimeout(() => {
+        console.log('🔍 Final diagnostic:');
+        console.log('- Search element:', $('#search').length);
+        console.log('- Filter element:', $('#filter-status').length);
+        console.log('- Table container:', $('#tableContainer').length);
+        console.log('- Sort buttons:', $('.ajax-sort').length);
+        console.log('- Pagination buttons:', $('.ajax-pagination').length);
+        console.log('💡 Run testAjax() to test manually');
+    }, 1000);
+});
+
+// ✅ Global functions for delete operations (outside document ready)
+window.showDeleteWarning = function(nama, jumlahAtlet, jumlahPelatih) {
+    $('#caborName').text(nama);
+
+    const dependencies = [];
+    if (jumlahAtlet > 0) dependencies.push(`${jumlahAtlet} atlet`);
+    if (jumlahPelatih > 0) dependencies.push(`${jumlahPelatih} pelatih`);
+
+    $('#dependencyList').html(dependencies.map(dep => `<li>${dep}</li>`).join(''));
+    $('#deleteWarningModal').modal('show');
+};
+
+window.confirmDelete = function(nama) {
+    return confirm(`Apakah Anda yakin ingin menghapus cabang olahraga "${nama}"?`);
+};
     </script>
 
     {{-- Notifikasi --}}
