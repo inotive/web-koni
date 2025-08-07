@@ -112,8 +112,8 @@ $query->select('atlets.*');
         return view('admin.atlet._table', compact('atlets'))->render();
     }
 
-        return view('admin.atlet.index', compact('atlets', 'allCabor'));
-    }
+    return view('admin.atlet.index', compact('atlets', 'allCabor'));
+}
 
     public function create()
     {
@@ -142,9 +142,9 @@ $query->select('atlets.*');
 
         Atlet::create($validated);
 
-        return redirect()->route('admin.konfigurasi.atlet.index')
-            ->with('OK', 'Atlet berhasil ditambahkan.')
-            ->with('action', 'store');
+return redirect()->route('admin.konfigurasi.atlet.index')
+    ->with('OK', 'Atlet berhasil ditambahkan.')
+    ->with('action', 'store');
     }
 
     public function edit($id)
@@ -181,14 +181,14 @@ $query->select('atlets.*');
 
         $atlet->update($validated);
 
-        return redirect()->route('admin.konfigurasi.atlet.index')
-            ->with('OK', 'Data atlet berhasil diperbarui.')
-            ->with('action', 'update');
+    return redirect()->route('admin.konfigurasi.atlet.index')
+    ->with('OK', 'Data atlet berhasil diperbarui.')
+    ->with('action', 'update');
     }
 
     public function destroy($id)
-    {
-        $atlet = Atlet::findOrFail($id);
+{
+    $atlet = Atlet::withCount('prestasis')->findOrFail($id);
 
     if ($atlet->prestasis_count > 0) {
         return redirect()
@@ -199,5 +199,30 @@ $query->select('atlets.*');
     if ($atlet->foto_atlet) {
         Storage::disk('public')->delete($atlet->foto_atlet);
     }
+
+    $atlet->delete();
+
+    return redirect()
+        ->route('admin.konfigurasi.atlet.index')
+        ->with('OK', 'Data atlet berhasil dihapus.')
+        ->with('action', 'destroy');
+}
+
+public function show(Atlet $atlet, Request $request)
+{
+    if ($request->has('from')) {
+        session(['detail_referrer' => $request->get('from')]);
+    } elseif (!session()->has('detail_referrer') && $request->header('referer')) {
+        $referrer = $request->header('referer');
+        if (str_contains($referrer, 'prestasi')) {
+            session(['detail_referrer' => 'prestasi']);
+        } else {
+            session(['detail_referrer' => 'atlet']);
+        }
+    }
+
+    $atlet->load(['cabangOlahraga', 'prestasis']);
+
+    return view('admin.atlet.show', compact('atlet'));
 }
 }
