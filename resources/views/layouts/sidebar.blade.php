@@ -68,7 +68,7 @@
                         <i
                             class="fa-solid {{ $isLaporanLPJActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
                     </a>
-                    {{-- <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
+                    <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
                         <ul class="menu flex-column ms-5">
                             {{-- <li class="menu-item">
                                 <a class="menu-link {{ request()->is('admin/laporan-lpj/sekretariat*') ? 'active' : '' }}"
@@ -85,7 +85,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </div> --}}
+                    </div>
                 </div>
 
                 <!-- Konfigurasi Section -->
