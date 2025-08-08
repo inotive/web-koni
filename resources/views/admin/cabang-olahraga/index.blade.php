@@ -37,7 +37,7 @@
 @section('content')
     <style>
         body {
-            background-color: #f5f5f5 !important;
+            background-color: #f5f5f5;
         }
 
         .main-content {
@@ -46,33 +46,21 @@
             padding: 20px 0;
         }
 
-        .table-container {
+        /* Card Styles - Matching Pelatih */
+        .card {
             background-color: white;
             border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid #e9ecef;
-            overflow: hidden;
+            overflow: visible !important;
         }
 
-        .table-header {
-            background-color: white;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e9ecef;
+        .card-body {
+            padding: 0;
+            overflow: visible !important;
         }
 
-        .table-footer {
-            background-color: white;
-            padding: 15px 25px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #6c757d;
-            padding: 60px 25px;
-            background-color: white;
-        }
-
+        /* Page Header */
         .page-header {
             background-color: transparent;
             padding: 0;
@@ -85,6 +73,7 @@
             font-weight: 700;
         }
 
+        /* Buttons */
         .btn-add-cabor {
             background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
             border: none;
@@ -101,56 +90,147 @@
             box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
         }
 
+        /* Table Container - Matching Pelatih */
+        .table-container {
+            background-color: white;
+            border-radius: 0px 0px 12px 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            background-color: white;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+            border-radius: 12px 12px 0px 0px;
+            overflow: visible !important;
+            position: relative;
+            z-index: 10;
+        }
+
+        .table-footer {
+            background-color: white;
+            padding: 15px 25px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        /* Table Responsive - Matching Pelatih */
         .table-responsive {
             overflow-x: auto;
             overflow-y: visible;
             -webkit-overflow-scrolling: touch;
-            border-radius: 0;
-            border: none;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            background-color: white;
         }
 
+        /* Table Base Styles - Matching Pelatih */
         .table {
-            border-collapse: collapse !important;
+            border-collapse: separate !important;
             border-spacing: 0 !important;
             margin: 0 !important;
             background-color: white;
             width: 100%;
             min-width: 1200px;
+            border: none;
         }
 
+        /* Table Header Styles - Matching Pelatih with Sort Fix */
         .table thead th {
             background-color: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            border-left: none !important;
-            border-right: none !important;
-            border-top: none !important;
+            border: 1px solid #e9ecef;
+            border-top: none;
             font-weight: 600;
             font-size: 0.875rem;
             color: #495057;
             white-space: nowrap;
             padding: 12px 8px !important;
-            position: static;
+            position: relative;
+            text-align: center !important;
+        }
+
+        .table thead th:last-child {
+            border-right: none;
+        }
+
+        /* Sort Link Styles - Matching Pelatih */
+        .table thead th .sort-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            text-decoration: none;
+            color: inherit;
+            gap: 8px;
+        }
+
+        .table thead th .sort-link:hover {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .table thead th .sort-link i {
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        /* Column-specific alignments - Adjusted for Cabor columns */
+        .table th:nth-child(2) .sort-link,
+        .table th:nth-child(3) .sort-link,
+        .table th:nth-child(5) .sort-link,
+        .table th:nth-child(8) .sort-link {
+            justify-content: space-between;
+            text-align: left;
+        }
+
+        .table th:nth-child(1) .sort-link,
+        .table th:nth-child(4) .sort-link,
+        .table th:nth-child(6) .sort-link,
+        .table th:nth-child(7) .sort-link,
+        .table th:nth-child(9) .sort-link {
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Table Body Styles - Matching Pelatih */
+        .table tbody tr {
+            border: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:first-child {
+            border-top: none;
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .table tbody tr:hover,
+        .table tbody tr:hover td {
+            background-color: #f8f9fa;
         }
 
         .table tbody tr td {
-            border-left: none !important;
-            border-right: none !important;
+            border: 1px solid #e9ecef !important;
             padding: 8px !important;
             font-size: 0.875rem;
-            border-bottom: 1px solid #e9ecef;
             white-space: nowrap;
             vertical-align: middle;
             word-wrap: break-word;
             max-width: 200px;
+            text-align: left !important;
+            background-color: white;
         }
 
-        .table tbody tr:last-child td {
-            border-bottom: none;
+        .table tbody tr td:last-child {
+            border-right: none !important;
         }
 
+        /* Column Widths and Alignments - Adjusted for Cabor */
         .table td:first-child,
         .table th:first-child {
-            padding-left: 12px !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
         }
 
         .table td:last-child,
@@ -158,66 +238,16 @@
             padding-right: 12px !important;
         }
 
-        .table th:nth-child(1),
-        .table td:nth-child(1) {
-            width: 40px;
-            text-align: center;
-        }
-
-        .table th:nth-child(2),
-        .table td:nth-child(2) {
-            width: 250px;
-        }
-
-        .table th:nth-child(3),
-        .table td:nth-child(3) {
-            width: 200px;
-        }
-
-        .table th:nth-child(4),
-        .table td:nth-child(4) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .table th:nth-child(5),
-        .table td:nth-child(5) {
-            width: 150px;
-        }
-
-        .table th:nth-child(6),
-        .table td:nth-child(6) {
-            width: 100px;
-            text-align: center;
-        }
-
-        .table th:nth-child(7),
-        .table td:nth-child(7) {
-            width: 100px;
-            text-align: center;
-        }
-
-        .table th:nth-child(8),
-        .table td:nth-child(8) {
-            width: 150px;
-        }
-
-        .table th:nth-child(9),
-        .table td:nth-child(9) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .text-truncate-custom {
-            max-width: 180px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .object-fit-cover {
-            object-fit: cover;
-        }
+        /* Specific column widths for Cabor table */
+        .table th:nth-child(1), .table td:nth-child(1) { width: 40px; text-align: center !important; }
+        .table th:nth-child(2), .table td:nth-child(2) { width: 250px; text-align: left !important; }
+        .table th:nth-child(3), .table td:nth-child(3) { width: 200px; text-align: left !important; }
+        .table th:nth-child(4), .table td:nth-child(4) { width: 120px; text-align: center !important; }
+        .table th:nth-child(5), .table td:nth-child(5) { width: 150px; text-align: left !important; }
+        .table th:nth-child(6), .table td:nth-child(6) { width: 100px; text-align: center !important; }
+        .table th:nth-child(7), .table td:nth-child(7) { width: 100px; text-align: center !important; }
+        .table th:nth-child(8), .table td:nth-child(8) { width: 150px; text-align: left !important; }
+        .table th:nth-child(9), .table td:nth-child(9) { width: 120px; text-align: center !important; }
 
         .table td:nth-child(1),
         .table td:nth-child(4),
@@ -227,30 +257,49 @@
             text-align: center;
         }
 
-        @media (max-width: 768px) {
-
-            .table-header,
-            .table-footer {
-                padding: 15px;
-            }
-
-            .d-flex.justify-content-between.align-items-center.flex-wrap {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .d-flex.align-items-center.gap-2.flex-wrap {
-                justify-content: center;
-                width: 100%;
-            }
+        /* Utility Classes - Matching Pelatih */
+        .text-truncate-custom {
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
+        .object-fit-cover {
+            object-fit: cover;
+        }
+
+        .badge-circle {
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        /* Empty State - Matching Pelatih */
+        .empty-state {
+            text-align: center;
+            color: #6c757d;
+            padding: 60px 25px;
+            background-color: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin: 20px;
+        }
+
+        /* Dropdowns - Matching Pelatih */
         .dropdown-menu {
             border: none;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             border-radius: 8px;
+            z-index: 1050 !important;
+            position: absolute !important;
         }
 
+        /* Form Controls - Matching Pelatih */
         .form-select {
             border-radius: 6px;
             border: 1px solid #dee2e6;
@@ -267,14 +316,13 @@
             border-color: #f5f5f5;
         }
 
-        .badge-circle {
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
+        /* Pagination - Matching Pelatih */
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 1px;
         }
 
         .pagination-sm .page-link {
@@ -304,43 +352,7 @@
             border-color: #dee2e6;
         }
 
-        .pagination {
-            margin-bottom: 0;
-        }
-
-        .pagination .page-item {
-            margin: 0 1px;
-        }
-
-        @media (max-width: 768px) {
-            .d-flex.justify-content-between.align-items-center.flex-wrap {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: center !important;
-            }
-
-            .pagination-sm .page-link {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.75rem;
-            }
-
-            .d-flex.align-items-center.gap-3 {
-                flex-direction: column;
-                gap: 0.5rem !important;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .pagination-sm .page-link {
-                padding: 0.2rem 0.4rem;
-                font-size: 0.7rem;
-            }
-
-            .text-muted {
-                font-size: 0.875rem;
-            }
-        }
-
+        /* Simple Pagination Styles - Matching Pelatih */
         .simple-pagination .page-link {
             border: none !important;
             margin: 0 2px;
@@ -365,14 +377,13 @@
             box-shadow: none !important;
         }
 
+        /* Pagination Arrows and Numbers - Matching Pelatih */
         .pagination-arrow {
             color: #6c757d;
             text-decoration: none;
             padding: 6px 8px;
             transition: color 0.2s ease;
             cursor: pointer;
-            background: none;
-            border: none;
         }
 
         .pagination-arrow:hover {
@@ -396,9 +407,6 @@
             background-color: #f8f9fa;
             border: 1px solid transparent;
             font-size: 0.875rem;
-            cursor: pointer;
-            background: none;
-            border: none;
         }
 
         .pagination-number:hover {
@@ -413,96 +421,56 @@
             border-color: #e0e1e4;
         }
 
-        .pagination-dots {
-            color: #6c757d;
-            padding: 6px 4px;
-            font-size: 0.875rem;
+        /* Loading States - Matching Pelatih */
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
         }
 
-        .form-select-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            border-radius: 0.375rem;
-            border: 1px solid #dee2e6;
-            background-color: #fff;
-            min-width: 70px;
+        .table-loading {
+            position: relative;
+            opacity: 0.7;
+            pointer-events: none;
         }
 
-        .form-select-sm:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
         }
 
-        @media (max-width: 768px) {
-            .d-flex.justify-content-between {
-                flex-direction: column;
-                align-items: stretch !important;
-                gap: 1rem;
-            }
-
-            .table-responsive {
-                font-size: 0.875rem;
-            }
-
-            .pagination-arrow,
-            .pagination-number {
-                padding: 4px 6px;
-                font-size: 0.75rem;
-            }
-
-            .table-footer .d-flex.justify-content-between {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: center !important;
-            }
-
-            .d-flex.align-items-center.gap-2.flex-wrap {
-                flex-direction: column;
-                align-items: center !important;
-                gap: 0.5rem !important;
-            }
-
-            .form-select-sm {
-                min-width: 60px;
-                font-size: 0.75rem;
-                padding: 0.2rem 0.4rem;
-            }
+        /* Toast Notifications - Matching Pelatih */
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
         }
 
-        @media (max-width: 576px) {
-            .table-responsive {
-                font-size: 0.875rem;
-            }
+        .toast-success { background-color: #51a351; color: white; }
+        .toast-error { background-color: #bd362f; color: white; }
+        .toast-warning { background-color: #f89406; color: white; }
+        .toast-info { background-color: #2f96b4; color: white; }
 
-            .btn-sm {
-                padding: 0.375rem 0.5rem;
-            }
-
-            .table-footer {
-                padding: 10px 15px;
-            }
-
-            .text-muted {
-                font-size: 0.8rem;
-                text-align: center;
-            }
-
-            .form-label {
-                font-size: 0.8rem;
-            }
+        /* AJAX Loading Overlay - Matching Pelatih */
+        .loading-overlay {
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            border-radius: 8px;
         }
 
-        .table-responsive {
-            -webkit-overflow-scrolling: touch;
-            overflow-x: auto;
-        }
-
-        .text-truncate {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
+        /* Button Icon Styles */
         .btn-icon.btn-sm {
             width: 32px;
             height: 32px;
@@ -525,43 +493,70 @@
             color: #dc3545;
         }
 
-        /* Loading state styles */
-        .table-loading {
-            position: relative;
-        }
-
-        .loading-spinner {
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid #F8285A;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
+        /* Responsive Styles - Matching Pelatih */
+        @media (max-width: 768px) {
+            .table-header,
+            .table-footer {
+                padding: 15px;
             }
 
-            100% {
-                transform: rotate(360deg);
+            .d-flex.justify-content-between.align-items-center.flex-wrap {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .d-flex.align-items-center.gap-2.flex-wrap {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .table-responsive {
+                border-radius: 6px;
+            }
+
+            .table thead th,
+            .table tbody tr td {
+                padding: 8px 6px !important;
+                font-size: 0.8rem;
+            }
+
+            .table thead th .sort-link {
+                gap: 4px;
+                font-size: 0.8rem;
+            }
+
+            .d-flex.justify-content-between.align-items-center.flex-wrap {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center !important;
+            }
+
+            .pagination-sm .page-link {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .d-flex.align-items-center.gap-3 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+
+            .pagination-arrow,
+            .pagination-number {
+                padding: 4px 6px;
+                font-size: 0.75rem;
             }
         }
 
-        /* AJAX Loading Overlay */
-        .loading-overlay {
-            position: absolute !important;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.85);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            border-radius: 8px;
+        @media (max-width: 576px) {
+            .pagination-sm .page-link {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.7rem;
+            }
+
+            .text-muted {
+                font-size: 0.875rem;
+            }
         }
     </style>
 
