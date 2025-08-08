@@ -36,25 +36,28 @@
         margin-bottom: 0;
     }
 
-    .action-buttons {
-        margin-bottom: 30px;
+    /* Enhanced controls container */
+    .controls-container {
         display: flex;
-        gap: 10px;
         align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
     }
 
-    .search-box {
-        max-width: 400px;
+    .search-container {
         position: relative;
+        max-width: 280px;
+        flex: 1;
     }
 
     .search-input {
         border: 1px solid #dee2e6;
-        border-radius: 25px;
-        padding: 12px 45px 12px 20px;
+        border-radius: 8px;
+        padding: 12px 20px 12px 45px; /* Fixed padding for icon space */
         font-size: 0.95rem;
         transition: all 0.3s ease;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        width: 100%;
     }
 
     .search-input:focus {
@@ -65,86 +68,211 @@
 
     .search-icon {
         position: absolute;
-        right: 15px;
+        left: 15px;
         top: 50%;
         transform: translateY(-50%);
         color: #6c757d;
         pointer-events: none;
+        z-index: 10;
     }
 
+    /* Sort dropdown styling */
+    .sort-dropdown {
+        position: relative;
+    }
+
+    .sort-btn {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        color: #495057;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        min-width: 140px;
+    }
+
+    .sort-btn:hover {
+        border-color: #F8285A;
+        color: #F8285A;
+    }
+
+    .sort-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        min-width: 200px;
+        margin-top: 4px;
+        display: none;
+        overflow: visible !important;
+    }
+
+    .sort-menu.show {
+        display: block;
+    }
+
+    .sort-option {
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #f8f9fa;
+    }
+
+    .sort-option:last-child {
+        border-bottom: none;
+    }
+
+    .sort-option:hover {
+        background-color: #f8f9fa;
+    }
+
+    .sort-option.active {
+        background-color: #F8285A;
+        color: white;
+    }
+
+    /* Grid layouts */
     .bidang-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 20px;
         margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+
+    /* Default grid - 4 columns */
+    .bidang-grid.grid-default {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    /* Large grid - 2 columns for few results */
+    .bidang-grid.grid-large {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+
+    /* Single result - centered */
+    .bidang-grid.grid-single {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 20px auto;
     }
 
     .bidang-card {
         background: white;
-        border-radius: 12px;
-        padding: 30px 25px;
+        border-radius: 16px;
+        padding: 35px 30px;
         text-align: center;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         border: 1px solid #e9ecef;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         cursor: pointer;
         text-decoration: none;
         color: inherit;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .bidang-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(248, 40, 90, 0.05), transparent);
+        transition: left 0.5s;
+    }
+
+    .bidang-card:hover::before {
+        left: 100%;
     }
 
     .bidang-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
         text-decoration: none;
         color: inherit;
+        border-color: #F8285A;
     }
 
+    /* Fixed icon container - no upscaling */
     .bidang-icon {
-        width: 100px;
-        height: 100px;
-        margin: 0 auto 20px;
-        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 24px;
+        border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 3.5rem;
-        color: white !important;
         position: relative;
+        transition: all 0.3s ease;
     }
 
-    .bidang-icon i {
-        color: white !important;
+    /* Original size images - no quality loss */
+    .bidang-icon img {
+        width: 57px !important;
+        height: 57px !important;
+        object-fit: contain;
+        transition: all 0.3s ease;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
     }
 
-    .icon-mobilisasi { background: #4285f4 !important; }
-    .icon-hubungan { background: #db4437 !important; }
-    .icon-kesehatan { background: #0f9d58 !important; }
-    .icon-organisasi { background: #ff9800 !important; }
-    .icon-hukum { background: #fdd835 !important; }
-    .icon-prestasi { background: #e91e63 !important; }
-    .icon-science { background: #00acc1 !important; }
-    .icon-perencanaan { background: #7b1fa2 !important; }
+    .bidang-card:hover .bidang-icon img {
+        transform: scale(1.05);
+    }
 
     .bidang-title {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: 600;
         color: #2c3e50;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         line-height: 1.3;
+        transition: color 0.3s ease;
     }
 
     .bidang-count {
         color: #6c757d;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         margin: 0;
+        font-weight: 500;
     }
 
     .bidang-card:hover .bidang-title {
         color: #F8285A;
     }
 
+    /* Loading state */
+    .bidang-grid.loading {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    /* Responsive design */
     @media (max-width: 768px) {
-        .bidang-grid {
+        .controls-container {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-container {
+            max-width: none;
+        }
+
+        .bidang-grid.grid-default,
+        .bidang-grid.grid-large {
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 15px;
         }
@@ -153,13 +281,15 @@
             padding: 25px 20px;
         }
 
-        .page-header h2 {
+        .page-header h1 {
             font-size: 1.6rem;
         }
     }
 
     @media (max-width: 576px) {
-        .bidang-grid {
+        .bidang-grid.grid-default,
+        .bidang-grid.grid-large,
+        .bidang-grid.grid-single {
             grid-template-columns: 1fr;
         }
     }
@@ -168,15 +298,17 @@
 <div class="main-content">
     <div class="container-fluid">
         <!-- Page Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-            <!-- Page Header -->
-            <div>
-                <h2 class="fw-bold mb-1">Bidang Bidang</h2>
-                <p class="text-muted mb-0">Jelajahi Bidang Bidang yang terdaftar</p>
-            </div>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <!-- Page Header -->
+        <div>
+            <strong><h1 class="fw-bold mb-1">Bidang Bidang</h1></strong>
+            <h3 class="text-muted mb-0">Jelajahi Bidang Bidang yang terdaftar</h3>
+        </div>
 
-            <!-- Search Box -->
-            <div class="position-relative" style="max-width: 250px;">
+        <!-- Enhanced Search and Sort Controls -->
+        <div class="controls-container">
+            <!-- Search Container -->
+            <div class="search-container">
                 <input
                     type="text"
                     class="form-control search-input"
@@ -185,7 +317,39 @@
                 >
                 <i class="fas fa-search search-icon"></i>
             </div>
+
+            <!-- Sort Dropdown -->
+            {{-- <div class="sort-dropdown">
+                <div class="sort-btn" id="sortBtn">
+                    <i class="fas fa-sort"></i>
+                    <span>Sort by</span>
+                    <i class="fas fa-chevron-down ms-1" style="font-size: 0.8rem;"></i>
+                </div>
+                <div class="sort-menu" id="sortMenu">
+                    <div class="sort-option active" data-sort="default">
+                        <span>Default Order</span>
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="sort-option" data-sort="name-asc">
+                        <span>Name (A-Z)</span>
+                        <i class="fas fa-sort-alpha-down"></i>
+                    </div>
+                    <div class="sort-option" data-sort="name-desc">
+                        <span>Name (Z-A)</span>
+                        <i class="fas fa-sort-alpha-up"></i>
+                    </div>
+                    <div class="sort-option" data-sort="docs-desc">
+                        <span>Most Documents</span>
+                        <i class="fas fa-sort-numeric-down"></i>
+                    </div>
+                    <div class="sort-option" data-sort="docs-asc">
+                        <span>Least Documents</span>
+                        <i class="fas fa-sort-numeric-up"></i>
+                    </div>
+                </div>
+            </div> --}}
         </div>
+    </div>
 
         <!-- Empty State (hidden by default) -->
         <div class="empty-state text-center py-5" id="emptyState" style="display: none;">
@@ -195,76 +359,77 @@
         </div>
 
         <!-- Bidang Grid -->
-        <div class="bidang-grid" id="bidangGrid">
+        <div class="bidang-grid grid-default" id="bidangGrid">
             <!-- Mobilisasi Sumberdaya -->
-            <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya') }}" class="bidang-card" data-title="mobilisasi sumberdaya">
+            <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya') }}" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="13">
                 <div class="bidang-icon icon-mobilisasi">
-                    <i class="fas fa-building"></i>
+                    <img src="{{ asset('assets2/media/misc/bidang/bank.png') }}" alt="">
                 </div>
-                <h4 class="bidang-title">Mobilisasi Sumberdaya...</h4>
+                <h4 class="bidang-title">Mobilisasi Sumberdaya</h4>
                 <p class="bidang-count">13 Dokumen</p>
             </a>
 
             <!-- Hubungan Antar Lembaga -->
-            <a href="{{ route('admin.laporan-lpj.bidang.hubungan-antar-lembaga') }}" class="bidang-card" data-title="hubungan antar lembaga">
+            <a href="{{ route('admin.laporan-lpj.bidang.hubungan-antar-lembaga') }}" class="bidang-card" data-title="hubungan antar lembaga" data-docs="5">
                 <div class="bidang-icon icon-hubungan">
-                    <i class="fas fa-handshake"></i>
+                    <img src="{{ asset('assets2/media/misc/bidang/data.png') }}" alt="">
                 </div>
-                <h4 class="bidang-title">Hubungan Antar Lemba...</h4>
+                <h4 class="bidang-title">Hubungan Antar Lembaga</h4>
                 <p class="bidang-count">5 Dokumen</p>
             </a>
 
+            <!-- Continue for other cards... -->
             <!-- Kesehatan -->
-            <a href="{{ route('admin.laporan-lpj.bidang.kesehatan') }}" class="bidang-card" data-title="kesehatan">
+            <a href="{{ route('admin.laporan-lpj.bidang.kesehatan') }}" class="bidang-card" data-title="kesehatan" data-docs="15">
                 <div class="bidang-icon icon-kesehatan">
-                    <i class="fas fa-heartbeat"></i>
+                    <img src="{{ asset('assets2/media/misc/bidang/pulse.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Kesehatan</h4>
                 <p class="bidang-count">15 Dokumen</p>
             </a>
 
             <!-- Organisasi -->
-            <a href="{{ route('admin.laporan-lpj.bidang.organisasi') }}" class="bidang-card" data-title="organisasi">
+            <a href="{{ route('admin.laporan-lpj.bidang.organisasi') }}" class="bidang-card" data-title="organisasi" data-docs="0">
                 <div class="bidang-icon icon-organisasi">
-                    <i class="fas fa-sitemap"></i>
+                    <img src="{{ asset('assets2/media/misc/bidang/people.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Organisasi</h4>
                 <p class="bidang-count">5 Days Ago</p>
             </a>
 
             <!-- Pembinaan Hukum Olahraga -->
-            <a href="{{ route('admin.laporan-lpj.bidang.pembinaan-hukum') }}" class="bidang-card" data-title="pembinaan hukum olahraga">
+            <a href="{{ route('admin.laporan-lpj.bidang.pembinaan-hukum') }}" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="9">
                 <div class="bidang-icon icon-hukum">
-                    <i class="fas fa-gavel"></i>
+                    <img src="{{ asset('assets2/media/misc/bidang/shield.png') }}" alt="">
                 </div>
-                <h4 class="bidang-title">Pembinaan Hukum Olah...</h4>
+                <h4 class="bidang-title">Pembinaan Hukum Olahraga</h4>
                 <p class="bidang-count">9 Dokumen</p>
             </a>
 
             <!-- Pembinaan Prestasi -->
-            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.index') }}" class="bidang-card" data-title="pembinaan prestasi">
+            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.index') }}" class="bidang-card" data-title="pembinaan prestasi" data-docs="48">
                 <div class="bidang-icon icon-prestasi">
-                    <i class="fas fa-trophy"></i>
+                    <img src="{{ asset('assets2/media/misc/bidang/dribbble.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Pembinaan Prestasi</h4>
                 <p class="bidang-count">48 Cabang Olahraga</p>
             </a>
 
             <!-- Sport Science & Iptek -->
-            <a href="{{ route('admin.laporan-lpj.bidang.sport-science') }}" class="bidang-card" data-title="sport science iptek">
+            <a href="{{ route('admin.laporan-lpj.bidang.sport-science') }}" class="bidang-card" data-title="sport science iptek" data-docs="10">
                 <div class="bidang-icon icon-science">
-                    <i class="fas fa-flask"></i>
+                    <img src="{{ asset('assets2/media/misc/bidang/test-tubes.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Sport Science & Iptek</h4>
                 <p class="bidang-count">10 Dokumen</p>
             </a>
 
             <!-- Perencanaan Program dan Anggaran -->
-            <a href="{{ route('admin.laporan-lpj.bidang.perencanaan-program') }}" class="bidang-card" data-title="perencanaan program anggaran">
+            <a href="{{ route('admin.laporan-lpj.bidang.perencanaan-program') }}" class="bidang-card" data-title="perencanaan program anggaran" data-docs="35">
                 <div class="bidang-icon icon-perencanaan">
-                    <i class="fas fa-chart-line"></i>
+                    <img src="{{ asset('assets2/media/misc/bidang/tab-tablet.png') }}" alt="">
                 </div>
-                <h4 class="bidang-title">Perencanaan Program d...</h4>
+                <h4 class="bidang-title">Perencanaan Program dan Anggaran</h4>
                 <p class="bidang-count">35 Dokumen</p>
             </a>
         </div>
@@ -275,36 +440,145 @@
 
 @section('script')
 <script>
-    $(document).ready(function() {
-        // Search functionality
-        $('#searchInput').on('keyup', function() {
-            const searchTerm = $(this).val().toLowerCase();
-            let visibleCount = 0;
+$(document).ready(function() {
+    // let currentSort = 'default';
 
-            $('.bidang-card').each(function() {
-                const title = $(this).data('title').toLowerCase();
-                const cardTitle = $(this).find('.bidang-title').text().toLowerCase();
+    // // Store original order for default sorting
+    // const originalOrder = $('.bidang-card').toArray();
 
-                if (title.includes(searchTerm) || cardTitle.includes(searchTerm)) {
-                    $(this).show();
-                    visibleCount++;
-                } else {
-                    $(this).hide();
-                }
-            });
+    // // Sort dropdown functionality
+    // $('#sortBtn').on('click', function(e) {
+    //     e.stopPropagation();
+    //     $('#sortMenu').toggleClass('show');
+    // });
 
-            // Show/hide empty state
-            if (visibleCount === 0 && searchTerm.length > 0) {
-                $('#emptyState').show();
-                $('#bidangGrid').hide();
+    // // Close dropdown when clicking outside
+    // $(document).on('click', function() {
+    //     $('#sortMenu').removeClass('show');
+    // });
+
+    // // Sort option selection
+    // $('.sort-option').on('click', function(e) {
+    //     e.stopPropagation();
+
+    //     const sortType = $(this).data('sort');
+    //     if (sortType === currentSort) return;
+
+    //     // Update active state
+    //     $('.sort-option').removeClass('active');
+    //     $(this).addClass('active');
+
+    //     // Update button text
+    //     const sortText = $(this).find('span').text();
+    //     $('#sortBtn span').text(sortText);
+
+    //     currentSort = sortType;
+    //     sortCards(sortType);
+
+    //     $('#sortMenu').removeClass('show');
+    // });
+
+    // // Sort function
+    // function sortCards(sortType) {
+    //     const $grid = $('#bidangGrid');
+    //     const $cards = $('.bidang-card:visible');
+
+    //     $grid.addClass('loading');
+
+    //     let sortedCards;
+
+    //     switch(sortType) {
+    //         case 'name-asc':
+    //             sortedCards = $cards.toArray().sort((a, b) => {
+    //                 return $(a).find('.bidang-title').text().localeCompare($(b).find('.bidang-title').text());
+    //             });
+    //             break;
+
+    //         case 'name-desc':
+    //             sortedCards = $cards.toArray().sort((a, b) => {
+    //                 return $(b).find('.bidang-title').text().localeCompare($(a).find('.bidang-title').text());
+    //             });
+    //             break;
+
+    //         case 'docs-desc':
+    //             sortedCards = $cards.toArray().sort((a, b) => {
+    //                 const aCount = parseInt($(a).data('docs')) || 0;
+    //                 const bCount = parseInt($(b).data('docs')) || 0;
+    //                 return bCount - aCount;
+    //             });
+    //             break;
+
+    //         case 'docs-asc':
+    //             sortedCards = $cards.toArray().sort((a, b) => {
+    //                 const aCount = parseInt($(a).data('docs')) || 0;
+    //                 const bCount = parseInt($(b).data('docs')) || 0;
+    //                 return aCount - bCount;
+    //             });
+    //             break;
+
+    //         case 'default':
+    //         default:
+    //             sortedCards = originalOrder.filter(card => $(card).is(':visible'));
+    //             break;
+    //     }
+
+    //     // Animate and reorder
+    //     setTimeout(() => {
+    //         $grid.empty().append(sortedCards);
+    //         $grid.removeClass('loading');
+
+    //         // Re-trigger any hover effects
+    //         bindHoverEffects();
+    //     }, 300);
+    // }
+
+    // Enhanced search functionality with grid layout changes
+    $('#searchInput').on('keyup', function() {
+        const searchTerm = $(this).val().toLowerCase();
+        let visibleCount = 0;
+        const $grid = $('#bidangGrid');
+
+        $('.bidang-card').each(function() {
+            const title = $(this).data('title').toLowerCase();
+            const cardTitle = $(this).find('.bidang-title').text().toLowerCase();
+
+            if (title.includes(searchTerm) || cardTitle.includes(searchTerm)) {
+                $(this).show();
+                visibleCount++;
             } else {
-                $('#emptyState').hide();
-                $('#bidangGrid').show();
+                $(this).hide();
             }
         });
 
-        // Add hover effects
-        $('.bidang-card').hover(
+        // Update grid layout based on results
+        $grid.removeClass('grid-default grid-large grid-single');
+
+        if (visibleCount === 0 && searchTerm.length > 0) {
+            $('#emptyState').show();
+            $('#bidangGrid').hide();
+        } else {
+            $('#emptyState').hide();
+            $('#bidangGrid').show();
+
+            // Apply appropriate grid class
+            if (visibleCount === 1) {
+                $grid.addClass('grid-single');
+            } else if (visibleCount <= 3 && searchTerm.length > 0) {
+                $grid.addClass('grid-large');
+            } else {
+                $grid.addClass('grid-default');
+            }
+        }
+
+        // Re-sort if not default
+        if (currentSort !== 'default') {
+            sortCards(currentSort);
+        }
+    });
+
+    // Bind hover effects
+    function bindHoverEffects() {
+        $('.bidang-card').off('mouseenter mouseleave').hover(
             function() {
                 $(this).find('.bidang-icon').addClass('animate__animated animate__pulse');
             },
@@ -312,6 +586,30 @@
                 $(this).find('.bidang-icon').removeClass('animate__animated animate__pulse');
             }
         );
+    }
+
+    // Initialize hover effects
+    bindHoverEffects();
+
+    // Add smooth transitions for grid changes
+    $('#bidangGrid').on('transitionend', function() {
+        $(this).removeClass('loading');
     });
+
+    // Keyboard shortcuts
+    $(document).keydown(function(e) {
+        // Focus search on Ctrl+F or Cmd+F
+        if ((e.ctrlKey || e.metaKey) && e.keyCode === 70) {
+            e.preventDefault();
+            $('#searchInput').focus();
+        }
+
+        // Clear search on Escape
+        if (e.keyCode === 27) {
+            $('#searchInput').val('').trigger('keyup');
+            $('#searchInput').blur();
+        }
+    });
+});
 </script>
 @endsection

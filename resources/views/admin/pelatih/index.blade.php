@@ -17,33 +17,21 @@
             padding: 20px 0;
         }
 
-        .table-container {
+        /* Card Styles */
+        .card {
             background-color: white;
-            border-radius: 0px 0px 12px 12px;
+            border-radius: 12px;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
             border: 1px solid #e9ecef;
-            overflow: hidden;
+            overflow: visible !important;
         }
 
-        .table-header {
-            background-color: white;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e9ecef;
+        .card-body {
+            padding: 0;
+            overflow: visible !important;
         }
 
-        .table-footer {
-            background-color: white;
-            padding: 15px 25px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: #6c757d;
-            padding: 60px 25px;
-            background-color: white;
-        }
-
+        /* Page Header */
         .page-header {
             background-color: transparent;
             padding: 0;
@@ -56,6 +44,7 @@
             font-weight: 700;
         }
 
+        /* Buttons */
         .btn-add-pelatih {
             background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
             border: none;
@@ -72,58 +61,150 @@
             box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
         }
 
+        /* Table Container */
+        .table-container {
+            background-color: white;
+            border-radius: 0px 0px 12px 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            background-color: white;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e9ecef;
+            border-radius: 12px 12px 0px 0px;
+            overflow: visible !important;
+            position: relative;
+            z-index: 10;
+        }
+
+        .table-footer {
+            background-color: white;
+            padding: 15px 25px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        /* Table Responsive */
         .table-responsive {
             overflow-x: auto;
             overflow-y: visible;
             -webkit-overflow-scrolling: touch;
-            border-radius: 0;
-            border: none;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            background-color: white;
         }
 
+        /* Table Base Styles */
         .table {
-            border-collapse: collapse !important;
+            border-collapse: separate !important;
             border-spacing: 0 !important;
             margin: 0 !important;
             background-color: white;
             width: 100%;
             min-width: 1200px;
+            border: none;
         }
 
+        /* Table Header Styles with Sort Fix */
         .table thead th {
             background-color: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            border-left: none !important;
-            border-right: none !important;
-            border-top: none !important;
+            border: 1px solid #e9ecef;
+            border-top: none;
             font-weight: 600;
             font-size: 0.875rem;
             color: #495057;
             white-space: nowrap;
             padding: 12px 8px !important;
-            position: static;
+            position: relative;
             text-align: center !important;
         }
 
+        .table thead th:last-child {
+            border-right: none;
+        }
+
+        /* Sort Link Styles - NEW */
+        .table thead th .sort-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            text-decoration: none;
+            color: inherit;
+            gap: 8px;
+        }
+
+        .table thead th .sort-link:hover {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .table thead th .sort-link i {
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        /* Column-specific alignments */
+        .table th:nth-child(3) .sort-link,
+        .table th:nth-child(4) .sort-link,
+        .table th:nth-child(5) .sort-link,
+        .table th:nth-child(9) .sort-link,
+        .table th:nth-child(10) .sort-link,
+        .table th:nth-child(11) .sort-link {
+            justify-content: space-between;
+            text-align: left;
+        }
+
+        .table th:nth-child(1) .sort-link,
+        .table th:nth-child(2) .sort-link,
+        .table th:nth-child(6) .sort-link,
+        .table th:nth-child(7) .sort-link,
+        .table th:nth-child(8) .sort-link,
+        .table th:nth-child(12) .sort-link {
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Table Body Styles */
+        .table tbody tr {
+            border: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .table tbody tr:first-child {
+            border-top: none;
+        }
+
+        .table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .table tbody tr:hover,
+        .table tbody tr:hover td {
+            background-color: #f8f9fa;
+        }
+
         .table tbody tr td {
-            border-left: none !important;
-            border-right: none !important;
+            border: 1px solid #e9ecef !important;
             padding: 8px !important;
             font-size: 0.875rem;
-            border-bottom: 1px solid #e9ecef;
             white-space: nowrap;
             vertical-align: middle;
             word-wrap: break-word;
             max-width: 200px;
             text-align: left !important;
+            background-color: white;
         }
 
-        .table tbody tr:last-child td {
-            border-bottom: none;
+        .table tbody tr td:last-child {
+            border-right: none !important;
         }
 
+        /* Column Widths and Alignments */
         .table td:first-child,
         .table th:first-child {
-            padding-left: 12px !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
         }
 
         .table td:last-child,
@@ -131,79 +212,29 @@
             padding-right: 12px !important;
         }
 
-        .table th:nth-child(1),
-        .table td:nth-child(1) {
-            width: 40px;
-            text-align: center !important;
-        }
+        /* Specific column widths */
+        .table th:nth-child(1), .table td:nth-child(1) { width: 40px; text-align: center !important; }
+        .table th:nth-child(2), .table td:nth-child(2) { width: 50px; text-align: center; }
+        .table th:nth-child(3), .table td:nth-child(3) { width: 140px; text-align: left !important; }
+        .table th:nth-child(4), .table td:nth-child(4) { width: 110px; text-align: left !important; }
+        .table th:nth-child(5), .table td:nth-child(5) { width: 100px; text-align: left !important; }
+        .table th:nth-child(6), .table td:nth-child(6) { width: 70px; text-align: left !important; }
+        .table th:nth-child(7), .table td:nth-child(7) { width: 80px; text-align: left !important; }
+        .table th:nth-child(8), .table td:nth-child(8) { width: 80px; text-align: left !important; }
+        .table th:nth-child(9), .table td:nth-child(9) { width: 110px; text-align: left !important; }
+        .table th:nth-child(10), .table td:nth-child(10) { width: 120px; text-align: left !important; }
+        .table th:nth-child(11), .table td:nth-child(11) { width: 90px; text-align: left !important; }
+        .table th:nth-child(12), .table td:nth-child(12) { width: 80px; text-align: center !important; }
 
-        /* Column widths for coach table */
-        .table th:nth-child(2),
-        .table td:nth-child(2) {
-            width: 50px;
-            text-align: center;
-        }
-
-        .table th:nth-child(3),
-        .table td:nth-child(3) {
-            width: 140px;
-            text-align: center;
-        }
-
-        .table th:nth-child(4),
-        .table td:nth-child(4) {
-            width: 110px;
-            text-align: center;
-        }
-
-        .table th:nth-child(5),
-        .table td:nth-child(5) {
-            width: 100px;
-            text-align: center;
-        }
-
-        .table th:nth-child(6),
-        .table td:nth-child(6) {
-            width: 70px;
-            text-align: center;
-        }
-
-        .table th:nth-child(7),
-        .table td:nth-child(7) {
-            width: 80px;
-            text-align: center;
-        }
-
-        .table th:nth-child(8),
-        .table td:nth-child(8) {
-            width: 80px;
-            text-align: center;
-        }
-
-        .table th:nth-child(9),
-        .table td:nth-child(9) {
-            width: 110px;
-            text-align: center;
-        }
-
-        .table th:nth-child(10),
-        .table td:nth-child(10) {
-            width: 120px;
-            text-align: center;
-        }
-
-        .table th:nth-child(11),
-        .table td:nth-child(11) {
-            width: 90px;
-            text-align: center;
-        }
-
-        .table th:nth-child(12),
+        .table td:nth-child(1),
+        .table td:nth-child(2),
+        .table td:nth-child(6),
+        .table td:nth-child(7),
         .table td:nth-child(12) {
-            width: 80px;
             text-align: center;
         }
 
+        /* Utility Classes */
         .text-truncate-custom {
             max-width: 120px;
             overflow: hidden;
@@ -219,37 +250,37 @@
             object-fit: cover;
         }
 
-        .table td:nth-child(1),
-        .table td:nth-child(2),
-        .table td:nth-child(6),
-        .table td:nth-child(7),
-        .table td:nth-child(12) {
+        .badge-circle {
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        /* Empty State */
+        .empty-state {
             text-align: center;
+            color: #6c757d;
+            padding: 60px 25px;
+            background-color: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin: 20px;
         }
 
-        @media (max-width: 768px) {
-            .table-header,
-            .table-footer {
-                padding: 15px;
-            }
-
-            .d-flex.justify-content-between.align-items-center.flex-wrap {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .d-flex.align-items-center.gap-2.flex-wrap {
-                justify-content: center;
-                width: 100%;
-            }
-        }
-
+        /* Dropdowns */
         .dropdown-menu {
             border: none;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             border-radius: 8px;
+            z-index: 1050 !important;
+            position: absolute !important;
         }
 
+        /* Form Controls */
         .form-select {
             border-radius: 6px;
             border: 1px solid #dee2e6;
@@ -266,44 +297,68 @@
             border-color: #f5f5f5;
         }
 
-        .badge-circle {
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
+        /* Pagination */
+        .pagination {
+            margin-bottom: 0;
         }
 
-        .notification-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            min-width: 300px;
+        .pagination .page-item {
+            margin: 0 1px;
         }
 
-        .toast-success {
-            background-color: #51a351;
+        .pagination-sm .page-link {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            margin: 0 2px;
+        }
+
+        .pagination-sm .page-item.active .page-link {
+            background-color: #F8285A;
+            border-color: #F8285A;
             color: white;
         }
 
-        .toast-error {
-            background-color: #bd362f;
-            color: white;
+        .pagination-sm .page-link:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #495057;
         }
 
-        .toast-warning {
-            background-color: #f89406;
-            color: white;
+        .pagination-sm .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
         }
 
-        .toast-info {
-            background-color: #2f96b4;
-            color: white;
+        /* Simple Pagination Styles */
+        .simple-pagination .page-link {
+            border: none !important;
+            margin: 0 2px;
+            border-radius: 4px !important;
+            padding: 6px 12px !important;
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            transition: all 0.2s ease;
         }
 
+        .simple-pagination .page-link:hover {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+        .simple-pagination .page-item.active .page-link {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+
+        .simple-pagination .page-link:focus {
+            box-shadow: none !important;
+        }
+
+        /* Pagination Arrows and Numbers */
         .pagination-arrow {
             color: #6c757d;
             text-decoration: none;
@@ -347,43 +402,72 @@
             border-color: #e0e1e4;
         }
 
-        .pagination-sm .page-link {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-            color: #6c757d;
-            margin: 0 2px;
+        /* Loading States */
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
         }
 
-        .pagination-sm .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
-            color: white;
+        .table-loading {
+            position: relative;
+            opacity: 0.7;
+            pointer-events: none;
         }
 
-        .pagination-sm .page-link:hover {
-            background-color: #f8f9fa;
-            border-color: #dee2e6;
-            color: #495057;
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
         }
 
-        .pagination-sm .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: #fff;
-            border-color: #dee2e6;
+        /* Toast Notifications */
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
         }
 
-        .pagination {
-            margin-bottom: 0;
-        }
+        .toast-success { background-color: #51a351; color: white; }
+        .toast-error { background-color: #bd362f; color: white; }
+        .toast-warning { background-color: #f89406; color: white; }
+        .toast-info { background-color: #2f96b4; color: white; }
 
-        .pagination .page-item {
-            margin: 0 1px;
-        }
-
-        /* Responsive adjustments */
+        /* Responsive Styles */
         @media (max-width: 768px) {
+            .table-header,
+            .table-footer {
+                padding: 15px;
+            }
+
+            .d-flex.justify-content-between.align-items-center.flex-wrap {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .d-flex.align-items-center.gap-2.flex-wrap {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .table-responsive {
+                border-radius: 6px;
+            }
+
+            .table thead th,
+            .table tbody tr td {
+                padding: 8px 6px !important;
+                font-size: 0.8rem;
+            }
+
+            .table thead th .sort-link {
+                gap: 4px;
+                font-size: 0.8rem;
+            }
+
             .d-flex.justify-content-between.align-items-center.flex-wrap {
                 flex-direction: column;
                 gap: 1rem;
@@ -417,49 +501,6 @@
                 font-size: 0.875rem;
             }
         }
-
-        .simple-pagination .page-link {
-            border: none !important;
-            margin: 0 2px;
-            border-radius: 4px !important;
-            padding: 6px 12px !important;
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            transition: all 0.2s ease;
-        }
-
-        .simple-pagination .page-link:hover {
-            background-color: #e9ecef !important;
-            color: #495057 !important;
-        }
-
-        .simple-pagination .page-item.active .page-link {
-            background-color: #007bff !important;
-            color: white !important;
-        }
-
-        .simple-pagination .page-link:focus {
-            box-shadow: none !important;
-        }
-
-        .loading-spinner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-        }
-
-        .table-loading {
-            position: relative;
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .spinner-border-sm {
-            width: 1rem;
-            height: 1rem;
-        }
     </style>
 
     @if (session('success'))
@@ -480,106 +521,112 @@
         </a>
     </div>
 
+
+
     <div class="main-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="table-header" style="border-radius: 12px 12px 0px 0px">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>
+                    <div class="card">
+                        <div class="card-body">
+                        <div class="table-header" style="border-radius: 12px 12px 0px 0px">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>
 
-                            <div class="d-flex align-items-center gap-2 flex-wrap">
-                                <div class="input-group" style="width: 250px;">
-                                    <input type="search" name="search" id="search" class="form-control"
-                                        placeholder="Cari pelatih...">
-                                    <button class="btn btn-outline-secondary" type="button">
-                                        <i class="fas fa-search"></i>
-                                    </button>
-                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <div class="input-group" style="width: 250px;">
+                                        <input type="search" name="search" id="search" class="form-control"
+                                            placeholder="Cari pelatih...">
+                                        <button class="btn btn-outline-secondary" type="button">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
 
-                                <div class="dropdown">
-                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                        data-bs-toggle="dropdown">
-                                        <i class="fas fa-filter me-1"></i> Filter
-                                        <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
-                                    </button>
-                                    <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Cabang Olahraga</label>
-                                            <select id="filter-cabor" class="form-select">
-                                                <option value="">Semua Cabor</option>
-                                                @if (isset($allCabor))
-                                                    @foreach ($allCabor as $id => $nama)
-                                                        <option value="{{ $nama }}">{{ $nama }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                            data-bs-toggle="dropdown">
+                                            <i class="fas fa-filter me-1"></i> Filter
+                                            <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                        </button>
+                                        <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Cabang Olahraga</label>
+                                                <select id="filter-cabor" class="form-select">
+                                                    <option value="">Semua Cabor</option>
+                                                    @if (isset($allCabor))
+                                                        @foreach ($allCabor as $id => $nama)
+                                                            <option value="{{ $nama }}">{{ $nama }}</option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                            </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Jenis Kelamin</label>
-                                            <select id="filter-gender" class="form-select">
-                                                <option value="">Semua</option>
-                                                <option value="Laki-laki">Laki-laki</option>
-                                                <option value="Perempuan">Perempuan</option>
-                                            </select>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Jenis Kelamin</label>
+                                                <select id="filter-gender" class="form-select">
+                                                    <option value="">Semua</option>
+                                                    <option value="Laki-laki">Laki-laki</option>
+                                                    <option value="Perempuan">Perempuan</option>
+                                                </select>
+                                            </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Rentang Usia</label>
-                                            <select id="filter-age" class="form-select">
-                                                <option value="">Semua Usia</option>
-                                                <option value="20-30">20-30 tahun</option>
-                                                <option value="31-40">31-40 tahun</option>
-                                                <option value="41-50">41-50 tahun</option>
-                                                <option value="51-60">51-60 tahun</option>
-                                                <option value="60+">60+ tahun</option>
-                                            </select>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Rentang Usia</label>
+                                                <select id="filter-age" class="form-select">
+                                                    <option value="">Semua Usia</option>
+                                                    <option value="20-30">20-30 tahun</option>
+                                                    <option value="31-40">31-40 tahun</option>
+                                                    <option value="41-50">41-50 tahun</option>
+                                                    <option value="51-60">51-60 tahun</option>
+                                                    <option value="60+">60+ tahun</option>
+                                                </select>
+                                            </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold">Status Prestasi</label>
-                                            <select id="filter-prestasi" class="form-select">
-                                                <option value="">Semua</option>
-                                                <option value="ada">Ada Prestasi</option>
-                                                <option value="tidak">Tidak Ada Prestasi</option>
-                                                <option value="emas">Medali Emas</option>
-                                                <option value="perak">Medali Perak</option>
-                                                <option value="perunggu">Medali Perunggu</option>
-                                            </select>
-                                        </div>
+                                            <div class="mb-3">
+                                                <label class="form-label fw-semibold">Status Prestasi</label>
+                                                <select id="filter-prestasi" class="form-select">
+                                                    <option value="">Semua</option>
+                                                    <option value="ada">Ada Prestasi</option>
+                                                    <option value="tidak">Tidak Ada Prestasi</option>
+                                                    <option value="emas">Medali Emas</option>
+                                                    <option value="perak">Medali Perak</option>
+                                                    <option value="perunggu">Medali Perunggu</option>
+                                                </select>
+                                            </div>
 
-                                        <div class="d-flex gap-2">
-                                            <button type="button" id="apply-filters"
-                                                class="btn btn-primary btn-sm flex-fill">
-                                                <i class="fas fa-check"></i> Terapkan
-                                            </button>
-                                            <button type="button" id="reset-filters"
-                                                class="btn btn-light btn-sm flex-fill">
-                                                <i class="fas fa-redo"></i> Reset
-                                            </button>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" id="apply-filters"
+                                                    class="btn btn-primary btn-sm flex-fill">
+                                                    <i class="fas fa-check"></i> Terapkan
+                                                </button>
+                                                <button type="button" id="reset-filters"
+                                                    class="btn btn-light btn-sm flex-fill">
+                                                    <i class="fas fa-redo"></i> Reset
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        @if (!(isset($pelatih) && $pelatih->isEmpty()))
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div id="filter-info" class="text-muted">
-                                    Menampilkan <span id="showing-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span>
-                                    dari <span id="total-count">{{ isset($pelatih) ? $pelatih->total() : 0 }}</span> pelatih
+                            @if (!(isset($pelatih) && $pelatih->isEmpty()))
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div id="filter-info" class="text-muted">
+                                        Menampilkan <span id="showing-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span>
+                                        dari <span id="total-count">{{ isset($pelatih) ? $pelatih->total() : 0 }}</span> pelatih
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="table-container">
-                        @include('admin.pelatih._table')
+                            @endif
+                        </div>
+                        <div class="table-container">
+                            @include('admin.pelatih._table')
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
 
 @endsection
 

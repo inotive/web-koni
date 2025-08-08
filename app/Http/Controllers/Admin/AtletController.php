@@ -4,226 +4,433 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Atlet;
 use App\Models\CabangOlahraga;
+use App\Models\Atlet;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\Admin\DB;
+use Illuminate\Support\Facades\Log;
 
 class AtletController extends Controller
 {
-  public function index(Request $request)
-{
-    $perPage = $request->get('per_page', 10);
+    public function index(Request $request)
+    {
+        $perPage = $request->get('per_page', 10);
 
-$allowedSorts = [
-    'nama', 'tanggal_lahir', 'jenis_kelamin', 'alamat',
-    'no_telepon', 'email', 'updated_at', 'created_at'
-];
+        // Add 'prestasi' to the allowed sorts array
+        $allowedSorts = [
+            'nama', 'tanggal_lahir', 'jenis_kelamin', 'alamat',
+            'no_telepon', 'email', 'updated_at', 'created_at', 'prestasi'
+        ];
 
-$sortBy   = $request->get('sort_by', 'created_at');
-$order    = strtolower($request->get('order', 'desc'));
+        $sortBy = $request->get('sort_by', 'created_at');
+        $order = strtolower($request->get('order', 'desc'));
 
-if (!in_array($sortBy, $allowedSorts)) {
-    $sortBy = 'created_at';
-}
-if (!in_array($order, ['asc', 'desc'])) {
-    $order = 'desc';
-}
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'created_at';
+        }
 
-$query = Atlet::with(['cabangOlahraga', 'prestasis'])
-              ->orderBy($sortBy, $order);
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'desc';
+        }
 
-    if ($request->filled('search')) {
-        $query->where('nama', 'like', '%' . $request->search . '%');
-    }
+        $query = Atlet::with(['cabangOlahraga', 'prestasis' => function ($q) {
+            $q->orderByDesc('tahun');
+        }])
+        ->withCount('prestasis');
 
-    if ($request->filled('cabor')) {
-        $query->whereHas('cabangOlahraga', function ($q) use ($request) {
-            $q->where('nama_cabor', $request->cabor);
-        });
-    }
-
-    if ($request->filled('gender')) {
-        $query->where('jenis_kelamin', $request->gender);
-    }
-
-    if ($request->filled('age')) {
-        $age = $request->age;
-        if ($age === '36+') {
-            $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) >= 36');
+        // Handle prestasi sorting separately
+        if ($sortBy === 'prestasi') {
+            // Simple approach: just sort by prestasis_count
+            $query->orderBy('prestasis_count', $order);
         } else {
-            [$min, $max] = array_map('intval', explode('-', $age));
-            $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) BETWEEN ? AND ?', [$min, $max]);
+            // Handle regular sorting
+            $query->orderBy($sortBy, $order);
         }
-    }
 
-    if ($request->filled('prestasi')) {
-        switch ($request->prestasi) {
-            case 'ada':
-                $query->has('prestasis');
-                break;
-            case 'tidak':
-                $query->doesntHave('prestasis');
-                break;
-            case 'emas':
-            case 'perak':
-            case 'perunggu':
-                $query->whereHas('prestasis', fn($q) => $q->where('medali', ucfirst($request->prestasi)));
-                break;
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama', 'like', '%' . $searchTerm . '%')
+                ->orWhere('email', 'like', '%' . $searchTerm . '%')
+                ->orWhere('no_telepon', 'like', '%' . $searchTerm . '%')
+                ->orWhere('alamat', 'like', '%' . $searchTerm . '%')
+                ->orWhere('alamatkota', 'like', '%' . $searchTerm . '%')
+                ->orWhere('alamatprovinsi', 'like', '%' . $searchTerm . '%')
+                ->orWhere('tempat_lahir', 'like', '%' . $searchTerm . '%')
+                ->orWhereHas('cabangOlahraga', function ($q) use ($searchTerm) {
+                    $q->where('nama_cabor', 'like', '%' . $searchTerm . '%');
+                })
+                ->orWhereHas('prestasis', function ($q) use ($searchTerm) {
+                    $q->where('nama_prestasi', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('tempat', 'like', '%' . $searchTerm . '%');
+                });
+            });
         }
-        $latestPrestasiSub = DB::table('prestasis')
-    ->select('atlet_id', DB::raw('MAX(updated_at) as latest_prestasi_at'))
-    ->groupBy('atlet_id');
 
-$query = Atlet::with(['cabangOlahraga', 'prestasis'])
-    ->leftJoinSub($latestPrestasiSub, 'latest_prestasi', function ($join) {
-        $join->on('atlets.id', '=', 'latest_prestasi.atlet_id');
-    });
+        if ($request->filled('cabor') || $request->filled('filter_cabor')) {
+            $caborValue = $request->filled('cabor') ? $request->cabor : $request->filter_cabor;
+            $query->whereHas('cabangOlahraga', function ($q) use ($caborValue) {
+                $q->where('nama_cabor', $caborValue);
+            });
+        }
 
-$allowedSorts = [
-    'nama', 'tanggal_lahir', 'jenis_kelamin', 'alamat',
-    'no_telepon', 'email', 'updated_at', 'created_at',
-    'latest_prestasi_at'
-];
+        if ($request->filled('gender') || $request->filled('filter_gender')) {
+            $genderValue = $request->filled('gender') ? $request->gender : $request->filter_gender;
+            $query->where('jenis_kelamin', $genderValue);
+        }
 
-$sortBy   = $request->get('sort_by', 'created_at');
-$order    = strtolower($request->get('order', 'desc'));
+        if ($request->filled('age') || $request->filled('filter_age')) {
+            $ageValue = $request->filled('age') ? $request->age : $request->filter_age;
 
-if (!in_array($sortBy, $allowedSorts)) {
-    $sortBy = 'created_at';
+            if ($ageValue === '60+' || $ageValue === '36+') {
+                $minAge = $ageValue === '60+' ? 60 : 36;
+                $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) >= ?', [$minAge]);
+            } else {
+                [$min, $max] = array_map('intval', explode('-', $ageValue));
+                $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) BETWEEN ? AND ?', [$min, $max]);
+            }
+        }
+
+        if ($request->filled('prestasi') || $request->filled('filter_prestasi')) {
+            $prestasiValue = $request->filled('prestasi') ? $request->prestasi : $request->filter_prestasi;
+
+            switch ($prestasiValue) {
+                case 'ada':
+                    $query->has('prestasis');
+                    break;
+                case 'tidak':
+                    $query->doesntHave('prestasis');
+                    break;
+                case 'emas':
+                case 'perak':
+                case 'perunggu':
+                    $query->whereHas('prestasis', function ($q) use ($prestasiValue) {
+                        $q->where('medali', ucfirst($prestasiValue));
+                    });
+                    break;
+            }
+        }
+
+        if ($request->filled('filter_ketersediaan')) {
+            $query->where('ketersediaan', $request->filter_ketersediaan);
+        }
+
+        // Add secondary sorting for non-prestasi sorts
+        if ($sortBy !== 'created_at' && $sortBy !== 'prestasi') {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // Add final ordering by ID for consistency
+        $query->orderBy('id', 'desc');
+
+        $atlet = $query->paginate($perPage);
+
+        $atlet->appends($request->query());
+
+        $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
+        $allKelamin = Atlet::select('jenis_kelamin')->distinct()->whereNotNull('jenis_kelamin')->pluck('jenis_kelamin');
+
+        if ($request->ajax()) {
+            return view('admin.atlet._table', compact('atlet'))->render();
+        }
+
+        return view('admin.atlet.index', compact('atlet', 'allCabor', 'allKelamin'));
 }
-if (!in_array($order, ['asc', 'desc'])) {
-    $order = 'desc';
-}
-if ($sortBy === 'latest_prestasi_at') {
-    // kalau sort by prestasi terbaru
-    $query->orderByRaw('latest_prestasi.latest_prestasi_at ' . $order . ' NULLS LAST');
-} else {
-    $query->orderBy('atlets.' . $sortBy, $order);
-}
-
-$query->select('atlets.*');
-    }
-
-    $atlets = $query->paginate($perPage);
-
-    $allCabor = CabangOlahraga::pluck('nama_cabor', 'id');
-
-    if ($request->ajax()) {
-        return view('admin.atlet._table', compact('atlets'))->render();
-    }
-
-    return view('admin.atlet.index', compact('atlets', 'allCabor'));
-}
-
     public function create()
     {
-        $cabors = CabangOlahraga::select('id', 'nama_cabor')->get();
-        return view('admin.atlet.create', compact('cabors'));
-    }
+        $cabors = CabangOlahraga::pluck('nama_cabor', 'id');
+        $allKelamin = ['Laki-Laki', 'Perempuan'];
 
+        return view('admin.atlet.create', compact('cabors', 'allKelamin'));
+    }
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $data = $request->validate([
             'nama' => 'required|string|max:255',
             'cabor_id' => 'required|exists:cabang_olahragas,id',
-            'tempat_lahir' => 'required|string|max:100',
+            'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'alamatkota' => 'nullable|string|max:255',
+            'alamatprovinsi' => 'nullable|string|max:255',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:100',
-            'foto_atlet' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'email' => 'nullable|email|max:255',
+            'foto' => 'nullable|image|max:2048',
+            'ketersediaan' => 'required|in:Tersedia,Tidak-Tersedia',
         ]);
 
-        if ($request->hasFile('foto_atlet')) {
-            $foto = $request->file('foto_atlet')->store('foto_atlet', 'public');
-            $validated['foto_atlet'] = $foto;
+        try {
+            if ($request->hasFile('foto')) {
+                $data['foto'] = $request->file('foto')->store('atlet', 'public');
+            }
+
+            $atlet = Atlet::create($data);
+
+            return redirect()->route('admin.konfigurasi.atlet.index')
+                ->with('OK', 'Data atlet berhasil disimpan.')
+                ->with('action', 'store');
+        } catch (\Exception $e) {
+            return back()->withInput()
+                ->with('error', 'Gagal menyimpan data atlet. Error: ' . $e->getMessage());
+        }
+    }
+
+    public function show($id, Request $request)
+    {
+        $atlet = Atlet::with(['cabangOlahraga', 'prestasis'])->findOrFail($id);
+
+        $backUrl = request('back') === 'cabor'
+        ? route('admin.konfigurasi.cabang-olahraga.show', $atlet->cabor_id)
+        : route('admin.konfigurasi.atlet.index');
+
+
+        if ($request->ajax() || $request->get('ajax')) {
+            $perPage = $request->get('per_page', 3);
+            $sortBy = $request->get('sort_by', 'created_at');
+            $order = $request->get('order', 'desc');
+
+            $allowedSortColumns = ['created_at', 'nama_prestasi', 'tahun', 'tempat', 'medali'];
+            if (!in_array($sortBy, $allowedSortColumns)) {
+                $sortBy = 'created_at';
+            }
+
+            $order = in_array(strtolower($order), ['asc', 'desc']) ? $order : 'desc';
+
+            try {
+                $prestasis = $atlet->prestasis()
+                    ->orderBy($sortBy, $order)
+                    ->paginate($perPage);
+
+                $response = [
+                    'success' => true,
+                    'prestasis' => $prestasis->items(),
+                    'pagination' => [
+                        'current_page' => $prestasis->currentPage(),
+                        'last_page' => $prestasis->lastPage(),
+                        'per_page' => $prestasis->perPage(),
+                        'total' => $prestasis->total(),
+                        'from' => $prestasis->firstItem(),
+                        'to' => $prestasis->lastItem(),
+                        'has_more_pages' => $prestasis->hasMorePages()
+                    ]
+                ];
+
+                return response()->json($response);
+
+            } catch (\Exception $e) {
+                Log::error('Error loading prestasi: ' . $e->getMessage());
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error loading prestasi data',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
         }
 
-        Atlet::create($validated);
+        $prestasis = $atlet->prestasis()
+            ->orderBy('created_at', 'desc')
+            ->paginate(3);
 
-return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('OK', 'Atlet berhasil ditambahkan.')
-    ->with('action', 'store');
+        return view('admin.atlet.show', compact('atlet', 'prestasis','backUrl'));
     }
+
 
     public function edit($id)
     {
         $atlet = Atlet::findOrFail($id);
-        $cabors = CabangOlahraga::select('id', 'nama_cabor')->get();
-        return view('admin.atlet.edit', compact('atlet', 'cabors'));
+        $cabors = CabangOlahraga::pluck('nama_cabor', 'id');
+        $allKelamin = ['Laki-Laki', 'Perempuan'];
+
+        return view('admin.atlet.edit', compact('atlet', 'cabors', 'allKelamin'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Atlet $atlet)
     {
-        $atlet = Atlet::findOrFail($id);
-
-        $validated = $request->validate([
+        $data = $request->validate([
             'nama' => 'required|string|max:255',
             'cabor_id' => 'required|exists:cabang_olahragas,id',
-            'tempat_lahir' => 'required|string|max:100',
+            'tempat_lahir' => 'required|string|max:255',
             'tanggal_lahir' => 'required|date',
             'alamat' => 'required|string',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'alamatkota' => 'nullable|string|max:255',
+            'alamatprovinsi' => 'nullable|string|max:255',
+            'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
             'no_telepon' => 'nullable|string|max:20',
-            'email' => 'nullable|email|max:100',
-            'foto_atlet' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'email' => 'nullable|email|max:255',
+            'foto' => 'nullable|image|max:2048',
+            'ketersediaan' => 'required|in:Tersedia,Tidak-Tersedia',
         ]);
 
-        if ($request->hasFile('foto_atlet')) {
-
-            if ($atlet->foto_atlet) {
-                Storage::disk('public')->delete($atlet->foto_atlet);
+        try {
+            if ($request->hasFile('foto')) {
+                if ($atlet->foto) {
+                    Storage::disk('public')->delete($atlet->foto);
+                }
+                $data['foto'] = $request->file('foto')->store('atlet', 'public');
             }
-            $foto = $request->file('foto_atlet')->store('foto_atlet', 'public');
-            $validated['foto_atlet'] = $foto;
-        }
 
-        $atlet->update($validated);
+            $atlet->update($data);
 
-    return redirect()->route('admin.konfigurasi.atlet.index')
-    ->with('OK', 'Data atlet berhasil diperbarui.')
-    ->with('action', 'update');
-    }
-
-    public function destroy($id)
-{
-    $atlet = Atlet::withCount('prestasis')->findOrFail($id);
-
-    if ($atlet->prestasis_count > 0) {
-        return redirect()
-            ->route('admin.konfigurasi.atlet.index')
-            ->with('error', "Gagal dihapus – atlet ini masih memiliki {$atlet->prestasis_count} prestasi.");
-    }
-
-    if ($atlet->foto_atlet) {
-        Storage::disk('public')->delete($atlet->foto_atlet);
-    }
-
-    $atlet->delete();
-
-    return redirect()
-        ->route('admin.konfigurasi.atlet.index')
-        ->with('OK', 'Data atlet berhasil dihapus.')
-        ->with('action', 'destroy');
-}
-
-public function show(Atlet $atlet, Request $request)
-{
-    if ($request->has('from')) {
-        session(['detail_referrer' => $request->get('from')]);
-    } elseif (!session()->has('detail_referrer') && $request->header('referer')) {
-        $referrer = $request->header('referer');
-        if (str_contains($referrer, 'prestasi')) {
-            session(['detail_referrer' => 'prestasi']);
-        } else {
-            session(['detail_referrer' => 'atlet']);
+            return redirect()->route('admin.konfigurasi.atlet.index')
+                ->with('OK', 'Data atlet berhasil diubah.')
+                ->with('action', 'update');
+        } catch (\Exception $e) {
+            return back()->withInput()
+                ->with('error', 'Gagal mengubah data atlet. Error: ' . $e->getMessage());
         }
     }
 
-    $atlet->load(['cabangOlahraga', 'prestasis']);
+    public function destroy(Request $request, Atlet $atlet)
+    {
+        try {
+            if ($atlet->prestasis()->exists()) {
+                $prestasiCount = $atlet->prestasis()->count();
+                $prestasiList = $atlet->prestasis()->pluck('nama_prestasi')->toArray();
 
-    return view('admin.atlet.show', compact('atlet'));
-}
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Atlet tidak dapat dihapus karena masih memiliki prestasi terkait.',
+                    'reason' => 'has_prestasis',
+                    'prestasi_count' => $prestasiCount,
+                    'prestasi_list' => $prestasiList,
+                    'atlet_name' => $atlet->nama
+                ], 422);
+            }
+
+                return back()->with('error', "Atlet tidak dapat dihapus karena masih memiliki {$prestasiCount} prestasi terkait.");
+            }
+
+            if ($atlet->foto) {
+                Storage::disk('public')->delete($atlet->foto);
+            }
+
+            $atlet->delete();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data atlet berhasil dihapus.'
+                ]);
+            }
+
+            return redirect()->route('admin.konfigurasi.atlet.index')
+                ->with('OK', 'Data atlet berhasil dihapus.')
+                ->with('action', 'destroy');
+
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'OK' => false,
+                    'message' => 'Gagal menghapus data atlet. Error: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return back()->with('error', 'Gagal menghapus data atlet. Error: ' . $e->getMessage());
+        }
+    }
+
+    public function addPrestasi(Request $request, $id)
+    {
+        $request->validate([
+            'tahun' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
+            'tempat' => 'required|string|max:255',
+            'nama_prestasi' => 'required|string|max:255',
+        ]);
+
+        try {
+            $atlet = Atlet::findOrFail($id);
+
+            $atlet->prestasis()->create([
+                'tahun' => $request->tahun,
+                'tempat' => $request->tempat,
+                'nama_prestasi' => $request->nama_prestasi
+            ]);
+
+            return redirect()->back()
+                ->with('OK', 'Prestasi berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            return back()->with('ERR', 'Gagal menambahkan prestasi. Error: ' . $e->getMessage());
+        }
+    }
+
+    public function updateKetersediaan(Request $request, $id)
+    {
+        Log::info('updateKetersediaan called', [
+            'id' => $id,
+            'request_data' => $request->all(),
+            'method' => $request->method(),
+            'is_ajax' => $request->ajax()
+        ]);
+
+        try {
+            $validated = $request->validate([
+                'ketersediaan' => 'required|in:Tersedia,Tidak-Tersedia'
+            ]);
+
+            Log::info('Validation passed', $validated);
+
+            $atlet = Atlet::findOrFail($id);
+            Log::info('Atlet found', ['atlet_id' => $atlet->id, 'current_ketersediaan' => $atlet->ketersediaan]);
+
+            $previousValue = $atlet->ketersediaan;
+
+            $atlet->ketersediaan = $request->ketersediaan;
+            $result = $atlet->save();
+
+            Log::info('Save result', ['save_result' => $result, 'new_value' => $atlet->ketersediaan]);
+
+            if ($request->ajax()) {
+                $response = [
+                    'success' => true,
+                    'message' => 'Ketersediaan berhasil diperbarui',
+                    'new_value' => $request->ketersediaan,
+                    'previous_value' => $previousValue,
+                    'debug_info' => [
+                        'atlet_id' => $atlet->id,
+                        'save_result' => $result
+                    ]
+                ];
+
+                Log::info('Sending AJAX response', $response);
+                return response()->json($response);
+            }
+
+            return redirect()->back()->with('OK', 'Ketersediaan berhasil diperbarui');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation error', ['errors' => $e->errors()]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak valid',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+
+            return redirect()->back()->withErrors($e->errors());
+
+        } catch (\Exception $e) {
+            Log::error('General error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                    'debug_info' => [
+                        'error_file' => $e->getFile(),
+                        'error_line' => $e->getLine()
+                    ]
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data');
+        }
+    }
 }

@@ -4,9 +4,9 @@
         @if(request('search') || request()->hasAny(['filter_cabor', 'filter_gender', 'filter_age', 'filter_prestasi']))
             <h4>Tidak ada pelatih yang sesuai dengan kriteria pencarian.</h4>
             <p class="text-muted">Coba ubah kata kunci pencarian atau filter yang Anda gunakan.</p>
-            <button class="btn btn-outline-primary" id="reset-all-filters">
-                <i class="fas fa-redo me-2"></i>Reset Pencarian
-            </button>
+            {{-- <button class="btn btn-outline-primary" id="reset-all-filters">
+                <i class="fas fa-redo me-2" class="awooga"></i>Reset Pencarian
+            </button> --}}
         @else
             <h4>Tidak ada data pelatih.</h4>
             <p class="text-muted">Belum ada pelatih yang terdaftar dalam sistem.</p>
