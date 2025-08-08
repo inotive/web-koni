@@ -24,7 +24,8 @@ class Atlet extends Model
         'email',
         'foto_atlet',
         'alamatkota',
-        'alamatprovinsi'
+        'alamatprovinsi',
+        'ketersediaan'
     ];
 
     protected $casts = [

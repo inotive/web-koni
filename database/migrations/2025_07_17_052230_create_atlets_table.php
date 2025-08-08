@@ -24,6 +24,7 @@ Schema::create('atlets', function (Blueprint $table) {
     $table->string('foto_atlet')->nullable();
     $table->string('alamatkota');
     $table->string('alamatprovinsi');
+    $table->enum('ketersediaan', ['Tersedia', 'Tidak-Tersedia'])->default('Tersedia');
     $table->timestamps();
 });
 
