@@ -31,9 +31,7 @@
 
         .table-container {
             background-color: white;
-            border-radius: 0px 0px 12px 12px;
-            box-shadow: none;
-            border: none;
+            border: 1px solid #e9ecef;
             overflow: hidden;
         }
 
