@@ -196,7 +196,7 @@
                                         'label' => 'Jenis Kelamin',
                                         'type' => 'select',
                                         'options' => [
-                                            'Laki-laki' => 'Laki-laki',
+                                            'Laki-Laki' => 'Laki-Laki',
                                             'Perempuan' => 'Perempuan',
                                         ],
                                     ],
