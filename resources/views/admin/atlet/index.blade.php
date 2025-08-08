@@ -565,7 +565,7 @@
                                                 <label class="form-label fw-semibold">Jenis Kelamin</label>
                                                 <select id="filter-gender" class="form-select">
                                                     <option value="">Semua</option>
-                                                    <option value="Laki-laki">Laki-laki</option>
+                                                    <option value="Laki-Laki">Laki-Laki</option>
                                                     <option value="Perempuan">Perempuan</option>
                                                 </select>
                                             </div>

@@ -211,7 +211,7 @@
                                     <input type="{{ $field['type'] }}" name="{{ $key }}" id="{{ $key }}"
                                            class="form-control @error($key) is-invalid @enderror"
                                            placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}">
-                                            {{ in_array($key, ['nama','cabor_id','tanggal_lahir','tempat_lahir','jenis_kelamin','alamat','alamatprovinsi','alamatkota']) ? '' : '' }}
+                                            {{ in_array($key, ['nama','cabor_id','tanggal_lahir','tempat_lahir','kelamin','alamat','alamatprovinsi','alamatkota']) ? '' : '' }}
                                 @endif
                                 @error($key)
                                     <div class="invalid-feedback">{{ $message }}</div>

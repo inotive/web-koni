@@ -1103,11 +1103,10 @@
                         <div class="detail-label">
                             <p class="detail-label-text">Kelamin</p>
                         </div>
-                        <p class="detail-value">{{ $atlet->kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+                        <p class="detail-value">{{ $atlet->jenis_kelamin === 'Laki-Laki' ? 'Laki-Laki' : 'Perempuan' }}</p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
-
                             </svg>
                         </div>
                     </div>
