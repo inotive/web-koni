@@ -19,9 +19,6 @@
 
         .table-container {
             background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e9ecef;
             overflow: hidden;
         }
 
@@ -313,6 +310,37 @@
         .simple-pagination .page-link:focus {
             box-shadow: none !important;
         }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+        }
+
+        .card-body {
+            padding: 0;
+        }
+
+        .card {
+            overflow: visible !important;
+        }
+
+        .card-body {
+            overflow: visible !important;
+        }
+
+        .table-header {
+            overflow: visible !important;
+            position: relative;
+            z-index: 10;
+        }
+
+        .dropdown-menu {
+            z-index: 1050 !important;
+            position: absolute !important;
+        }
     </style>
 
     @if (session('success'))
@@ -328,7 +356,7 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Atlet</h2>
         <a href="{{ route('admin.konfigurasi.atlet.create') }}" class="btn"
-            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
+            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; padding: 12px 20px; font-weight: 500;">
             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Atlet
         </a>
     </div>
@@ -337,6 +365,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
                     <div class="table-header">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h3 class="mb-0 fw-semibold text-dark">Informasi Atlet</h3>
@@ -458,6 +488,9 @@
             </div>
         </div>
     </div>
+            </div>
+    </div>
+
 
 @endsection
 

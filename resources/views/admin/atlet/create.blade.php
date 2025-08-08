@@ -201,7 +201,7 @@
                                         ],
                                     ],
                                     'alamat' => [
-                                        'label' => 'Alamat (Sesuai KTP)',
+                                        'label' => 'Alamat',
                                         'type' => 'textarea',
                                         'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
                                     ],
