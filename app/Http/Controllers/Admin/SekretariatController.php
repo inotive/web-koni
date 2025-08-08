@@ -62,7 +62,7 @@ class SekretariatController extends Controller
     Sekretariat::create($data);
 
     return redirect()->route('admin.laporan-lpj.sekretariat.index')
-                     ->with('success', 'Kegiatan berhasil ditambahkan.');
+                     ->with('OK', 'Kegiatan berhasil ditambahkan.');
 }
 
     public function edit(Sekretariat $sekretariat)
@@ -95,13 +95,13 @@ class SekretariatController extends Controller
         $sekretariat->update($data);
 
         return redirect()->route('admin.laporan-lpj.sekretariat.index')
-                         ->with('success', 'Kegiatan berhasil diperbarui.');
+                         ->with('OK', 'Kegiatan berhasil diperbarui.');
     }
 
     public function destroy(Sekretariat $sekretariat)
     {
         $sekretariat->delete();
         return redirect()->route('admin.laporan-lpj.sekretariat.index')
-                         ->with('success', 'Kegiatan berhasil dihapus.');
+                         ->with('OK', 'Kegiatan berhasil dihapus.');
     }
 }
