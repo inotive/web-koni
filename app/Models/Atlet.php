@@ -17,12 +17,14 @@ class Atlet extends Model
         'cabor_id',
         'tempat_lahir',
         'tanggal_lahir',
-        'alamat',                // ✅ Sesuai migration
+        'alamat',
         'jenis_kelamin',
-        'prestasi_terbaru',      // ✅ TAMBAHKAN INI!
+        'prestasi_terbaru',
         'no_telepon',
         'email',
-        'foto_atlet'
+        'foto_atlet',
+        'alamatkota',
+        'alamatprovinsi'
     ];
 
     protected $casts = [

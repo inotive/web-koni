@@ -205,6 +205,26 @@
                                         'type' => 'textarea',
                                         'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
                                     ],
+                                    'alamatprovinsi' => [
+                                        'label' => 'Provinsi',
+                                        'type' => 'text',
+                                        'placeholder' => 'Contoh: Kalimantan Timur',
+                                    ],
+                                    'alamatkota' => [
+                                        'label' => 'Kota/Kabupaten',
+                                        'type' => 'text',
+                                        'placeholder' => 'Contoh: Balikpapan',
+                                    ],
+                                    'alamatprovinsi' => [
+                                        'label' => 'Provinsi',
+                                        'type' => 'text',
+                                        'placeholder' => 'Contoh: Kalimantan Timur',
+                                    ],
+                                    'alamatkota' => [
+                                        'label' => 'Kota/Kabupaten',
+                                        'type' => 'text',
+                                        'placeholder' => 'Contoh: Balikpapan',
+                                    ],
                                 ];
                             @endphp
 
@@ -217,8 +237,7 @@
                                         @if ($field['type'] === 'select')
                                             <select name="{{ $key }}" id="{{ $key }}"
                                                 class="form-select @error($key) is-invalid @enderror"
-                                                {{ in_array($key, ['nama', 'cabor_id', 'tanggal_lahir', 'tempat_lahir', 'jenis_kelamin', 'alamat']) ? 'required' : '' }}>
-                                                <option value="">Pilih {{ $field['label'] }}</option>
+{{ in_array($key, ['nama', 'cabor_id', 'tanggal_lahir', 'tempat_lahir', 'jenis_kelamin', 'alamat', 'alamatprovinsi', 'alamatkota']) ? 'required' : '' }}                                                <option value="">Pilih {{ $field['label'] }}</option>
                                                 @if ($key === 'cabor_id')
                                                     @foreach ($field['options'] as $id => $nama)
                                                         <option value="{{ $id }}"
