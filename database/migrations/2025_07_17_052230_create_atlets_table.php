@@ -21,7 +21,7 @@ Schema::create('atlets', function (Blueprint $table) {
     $table->enum('jenis_kelamin', ['Laki-Laki', 'Perempuan']);
     $table->string('no_telepon')->nullable();
     $table->string('email')->nullable();
-    $table->string('foto_atlet')->nullable();
+    $table->string('foto')->nullable();
     $table->string('alamatkota');
     $table->string('alamatprovinsi');
     $table->enum('ketersediaan', ['Tersedia', 'Tidak-Tersedia'])->default('Tersedia');
