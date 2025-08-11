@@ -174,7 +174,7 @@
                                     'cabor_id' => [
                                         'label' => 'Cabang Olahraga',
                                         'type' => 'select',
-                                        'options' => $cabors->pluck('nama_cabor', 'id'),
+                                        'options' => $cabors,
                                     ],
                                     'email' => [
                                         'label' => 'Email',
@@ -237,7 +237,8 @@
                                         @if ($field['type'] === 'select')
                                             <select name="{{ $key }}" id="{{ $key }}"
                                                 class="form-select @error($key) is-invalid @enderror"
-{{ in_array($key, ['nama', 'cabor_id', 'tanggal_lahir', 'tempat_lahir', 'jenis_kelamin', 'alamat', 'alamatprovinsi', 'alamatkota']) ? 'required' : '' }}                                                <option value="">Pilih {{ $field['label'] }}</option>
+                                                {{ in_array($key, ['nama', 'cabor_id', 'tanggal_lahir', 'tempat_lahir', 'jenis_kelamin', 'alamat', 'alamatprovinsi', 'alamatkota']) ? 'required' : '' }}
+                                                <option value="">Pilih {{ $field['label'] }}</option>
                                                 @if ($key === 'cabor_id')
                                                     @foreach ($field['options'] as $id => $nama)
                                                         <option value="{{ $id }}"
