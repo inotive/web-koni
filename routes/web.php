@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PrestasiController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\CabangOlahragaController;
 use App\Http\Controllers\Admin\ManajemenRKAController;
+use App\Http\Controllers\Admin\SuratController;
 use App\Http\Controllers\LaporanRKAController;
 
 /*
@@ -59,6 +60,9 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
     Route::resource('manajemen-rka', ManajemenRKAController::class);
     Route::resource('laporan-rka', LaporanRKAController::class);
+
+    Route::resource('surat', SuratController::class);
+
 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);
@@ -153,11 +157,8 @@ Route::prefix('laporan-lpj')->name('laporan-lpj.')->group(function () {
         Route::get('/sport-science', [App\Http\Controllers\Admin\BidangController::class, 'sportScience'])->name('sport-science');
         Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
     });
-
 });
 });
-
-
 // TAMBAHAN: Rute untuk panggilan API jika diperlukan (opsional)
 Route::prefix('api/admin')->name('api.admin.')->middleware('auth')->group(function () {
     Route::prefix('cabang-olahraga')->name('cabang-olahraga.')->group(function () {

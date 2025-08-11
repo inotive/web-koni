@@ -1144,7 +1144,7 @@
 </div>
 
 <div class="detail-actions">
-    <a href="{{ $backUrl ?? route('admin.konfigurasi.atlet.index') }}" class="btn btn-light-primary">
+    <a href="{{ request('from') === 'prestasi' ? route('admin.konfigurasi.prestasi.index') : route('admin.konfigurasi.atlet.index') }}" class="btn btn-light-primary">
         <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
     </a>
 </div>
