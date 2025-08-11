@@ -4,31 +4,26 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+return new class extends Migration
+{
+    public function up()
     {
         Schema::create('kegiatan_lainnya', function (Blueprint $table) {
-            $table->id(); // Kolom ID auto-incrementing primary key
-            $table->string('nama_program_kegiatan'); // Nama program atau kegiatan, tipe string
-            $table->string('jenis_kegiatan'); // Jenis kegiatan, tipe string
-            $table->date('tanggal_kegiatan'); // Tanggal kegiatan, tipe date
-            $table->string('volume'); // Volume (misal: "10 unit", "2 hari"), tipe string
-            $table->decimal('jumlah_harga_satuan', 15, 2); // Jumlah harga per satuan, tipe decimal (total 15 digit, 2 di belakang koma)
-            $table->decimal('jumlah_harga', 15, 2); // Total jumlah harga, tipe decimal
-            $table->string('foto_jurnal')->nullable(); // Path/lokasi file foto jurnal, bisa kosong (nullable)
-            $table->string('dokumen_pendukung')->nullable(); // Path/lokasi file dokumen pendukung, bisa kosong (nullable)
-            $table->timestamps(); // Kolom `created_at` dan `updated_at` (timestamp)
+            $table->id();
+            $table->string('nama_program_kegiatan');
+            $table->string('jenis_kegiatan');
+            $table->date('tanggal_kegiatan');
+            $table->string('volume');
+            $table->decimal('jumlah_harga_satuan', 15, 2);
+            $table->decimal('jumlah_harga', 15, 2);
+            $table->string('foto_jurnal')->nullable();
+            $table->string('dokumen_pendukung')->nullable();
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+    public function down()
     {
-        Schema::dropIfExists('kegiatan_lainnya'); // Menghapus tabel jika migrasi di-rollback
+        Schema::dropIfExists('kegiatan_lainnya');
     }
 };

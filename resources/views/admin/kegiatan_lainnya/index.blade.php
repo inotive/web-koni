@@ -332,7 +332,7 @@
                 {{-- Modal Body --}}
                 <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
                     <form id="kt_modal_add_kegiatan_form" class="form" 
-                          action="{{ route('admin.kegiatan-lainnya.store') }}" 
+                          action="{{ route('admin.laporan-lpj.kegiatan_lainnya.store') }}" 
                           method="POST" enctype="multipart/form-data">
                         @csrf
 

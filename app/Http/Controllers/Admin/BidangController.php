@@ -81,7 +81,7 @@ class BidangController extends Controller
 
     public function caborBeladiri(){
         return view ('admin.laporan-lpj.bidang.prestasi.Beladiri.index');
-    }
+    }   
 
     public function caborPermainan(){
         return view ('admin.laporan-lpj.bidang.prestasi.Permainan.index');
