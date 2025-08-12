@@ -65,9 +65,12 @@
                             -
                         @endif
                     </td>
-                    <td class="px-2 text-center">
+                    <td class="px-2 text-center position-relative dropdown-wrapper">
                         <div class="dropdown">
-                            <button class="btn btn-sm p-0" type="button" data-bs-toggle="dropdown">
+                            <button class="btn btn-sm p-0" type="button"
+                                        data-bs-toggle="dropdown"
+                                        data-bs-boundary="body"
+                                        aria-expanded="false">
                                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <rect width="32" height="32" rx="6" fill="#EFF6FF" />
@@ -89,9 +92,9 @@
                                     </defs>
                                 </svg>
                             </button>
-                            <ul class="dropdown-menu cursor-pointer">
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 @if($item->dokumen)
-                                <li class="dropdown-item" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')">
+                                <li class="dropdown-item preview" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')">
                                     <i class="ki-outline ki-eye me-2"></i>Preview Dokumen
                                 </li>
                                 {{-- <li class="dropdown-item" onclick="window.open('{{ Storage::url($item->dokumen) }}', '_blank')">

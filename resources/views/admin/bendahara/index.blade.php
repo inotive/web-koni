@@ -5,6 +5,11 @@
 @section('currentSection', 'Database Bendahara')
 @section('style')
     <style>
+
+        .preview:hover {
+            background-color: #F4EEFF !important;
+        }
+
         .edit:hover {
             background-color: rgb(249, 245, 172) !important;
         }
@@ -218,6 +223,13 @@
             font-size: 4rem;
             margin-bottom: 1rem;
             color: #dc3545;
+        }
+
+        .dropdown-wrapper .dropdown-menu {
+            position: fixed !important;
+            inset: auto auto auto auto !important;
+            transform: none !important;
+            z-index: 1055;  /* higher than the modal backdrop */
         }
     </style>
 @endsection
