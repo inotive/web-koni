@@ -31,16 +31,66 @@ class BendaharaController extends Controller
 
         $query = Bendahara::query();
 
-        // Handle sorting
-        $query->orderBy($sortBy, $order);
-
-        // Search functionality
+        // Search functionality - Applied BEFORE pagination
         if ($request->filled('search')) {
             $searchTerm = $request->search;
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('judul', 'like', '%' . $searchTerm . '%');
+                // Add more searchable fields if needed
+                // $q->orWhere('description', 'like', '%' . $searchTerm . '%');
             });
         }
+
+        // File type filtering - Applied BEFORE pagination
+        if ($request->filled('filter_type') && $request->filter_type !== 'all') {
+            $filterType = $request->filter_type;
+
+            switch ($filterType) {
+                case 'pdf':
+                    $query->where('dokumen', 'like', '%.pdf');
+                    break;
+                case 'doc':
+                    $query->where(function ($q) {
+                        $q->where('dokumen', 'like', '%.doc')
+                          ->orWhere('dokumen', 'like', '%.docx');
+                    });
+                    break;
+                case 'excel':
+                    $query->where(function ($q) {
+                        $q->where('dokumen', 'like', '%.xls')
+                          ->orWhere('dokumen', 'like', '%.xlsx');
+                    });
+                    break;
+                case 'image':
+                    $query->where(function ($q) {
+                        $q->where('dokumen', 'like', '%.jpg')
+                          ->orWhere('dokumen', 'like', '%.jpeg')
+                          ->orWhere('dokumen', 'like', '%.png')
+                          ->orWhere('dokumen', 'like', '%.gif')
+                          ->orWhere('dokumen', 'like', '%.bmp')
+                          ->orWhere('dokumen', 'like', '%.svg');
+                    });
+                    break;
+                case 'other':
+                    $query->where(function ($q) {
+                        $q->where('dokumen', 'not like', '%.pdf')
+                          ->where('dokumen', 'not like', '%.doc')
+                          ->where('dokumen', 'not like', '%.docx')
+                          ->where('dokumen', 'not like', '%.xls')
+                          ->where('dokumen', 'not like', '%.xlsx')
+                          ->where('dokumen', 'not like', '%.jpg')
+                          ->where('dokumen', 'not like', '%.jpeg')
+                          ->where('dokumen', 'not like', '%.png')
+                          ->where('dokumen', 'not like', '%.gif')
+                          ->where('dokumen', 'not like', '%.bmp')
+                          ->where('dokumen', 'not like', '%.svg');
+                    });
+                    break;
+            }
+        }
+
+        // Handle sorting
+        $query->orderBy($sortBy, $order);
 
         // Add secondary sorting for consistency
         if ($sortBy !== 'created_at') {
@@ -53,11 +103,66 @@ class BendaharaController extends Controller
         $laporanBendahara = $query->paginate($perPage);
         $laporanBendahara->appends($request->query());
 
+        // Get file counts for all data (for filter dropdown)
+        $fileCounts = $this->getFileCounts($request);
+
         if ($request->ajax()) {
-            return view('admin.bendahara._table', compact('laporanBendahara'))->render();
+            return view('admin.bendahara._table', compact('laporanBendahara', 'fileCounts'))->render();
         }
 
-        return view('admin.bendahara.index', compact('laporanBendahara'));
+        return view('admin.bendahara.index', compact('laporanBendahara', 'fileCounts'));
+    }
+
+    /**
+     * Get file counts for filter dropdown
+     */
+    private function getFileCounts(Request $request)
+    {
+        $baseQuery = Bendahara::query();
+
+        // Apply search to count query if search is active
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $baseQuery->where(function ($q) use ($searchTerm) {
+                $q->where('judul', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        $counts = [
+            'all' => $baseQuery->count(),
+            'pdf' => (clone $baseQuery)->where('dokumen', 'like', '%.pdf')->count(),
+            'doc' => (clone $baseQuery)->where(function ($q) {
+                $q->where('dokumen', 'like', '%.doc')
+                  ->orWhere('dokumen', 'like', '%.docx');
+            })->count(),
+            'excel' => (clone $baseQuery)->where(function ($q) {
+                $q->where('dokumen', 'like', '%.xls')
+                  ->orWhere('dokumen', 'like', '%.xlsx');
+            })->count(),
+            'image' => (clone $baseQuery)->where(function ($q) {
+                $q->where('dokumen', 'like', '%.jpg')
+                  ->orWhere('dokumen', 'like', '%.jpeg')
+                  ->orWhere('dokumen', 'like', '%.png')
+                  ->orWhere('dokumen', 'like', '%.gif')
+                  ->orWhere('dokumen', 'like', '%.bmp')
+                  ->orWhere('dokumen', 'like', '%.svg');
+            })->count(),
+            'other' => (clone $baseQuery)->where(function ($q) {
+                $q->where('dokumen', 'not like', '%.pdf')
+                  ->where('dokumen', 'not like', '%.doc')
+                  ->where('dokumen', 'not like', '%.docx')
+                  ->where('dokumen', 'not like', '%.xls')
+                  ->where('dokumen', 'not like', '%.xlsx')
+                  ->where('dokumen', 'not like', '%.jpg')
+                  ->where('dokumen', 'not like', '%.jpeg')
+                  ->where('dokumen', 'not like', '%.png')
+                  ->where('dokumen', 'not like', '%.gif')
+                  ->where('dokumen', 'not like', '%.bmp')
+                  ->where('dokumen', 'not like', '%.svg');
+            })->count()
+        ];
+
+        return $counts;
     }
 
     public function create()
@@ -69,7 +174,7 @@ class BendaharaController extends Controller
     {
         $data = $request->validate([
             'judul' => 'required|string|max:255',
-            'dokumen' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:5120',
+            'dokumen' => 'required|mimes:pdf,doc,docx,xls,xlsx|max:5120',
         ]);
 
         try {
@@ -100,7 +205,7 @@ class BendaharaController extends Controller
         return view('admin.bendahara.edit', compact('laporanBendahara'));
     }
 
-    public function update(Request $request, Bendahara $Bendahara)
+    public function update(Request $request, Bendahara $bendahara)
     {
         $data = $request->validate([
             'judul' => 'required|string|max:255',
@@ -109,13 +214,13 @@ class BendaharaController extends Controller
 
         try {
             if ($request->hasFile('dokumen')) {
-                if ($Bendahara->dokumen) {
-                    Storage::disk('public')->delete($Bendahara->dokumen);
+                if ($bendahara->dokumen) {
+                    Storage::disk('public')->delete($bendahara->dokumen);
                 }
                 $data['dokumen'] = $request->file('dokumen')->store('bendahara', 'public');
             }
 
-            $Bendahara->update($data);
+            $bendahara->update($data);
 
             return redirect()->route('admin.bendahara.index')
                 ->with('OK', 'Laporan bendahara berhasil diubah.')
@@ -126,15 +231,15 @@ class BendaharaController extends Controller
         }
     }
 
-    public function destroy(Request $request, Bendahara $Bendahara)
+    public function destroy(Request $request, Bendahara $bendahara)
     {
         try {
             // Delete file if exists
-            if ($Bendahara->dokumen) {
-                Storage::disk('public')->delete($Bendahara->dokumen);
+            if ($bendahara->dokumen) {
+                Storage::disk('public')->delete($bendahara->dokumen);
             }
 
-            $Bendahara->delete();
+            $bendahara->delete();
 
             if ($request->ajax()) {
                 return response()->json([
@@ -169,7 +274,7 @@ class BendaharaController extends Controller
 
         $filePath = storage_path('app/public/' . $laporanBendahara->dokumen);
 
-        if (!file_exists($filePath  )) {
+        if (!file_exists($filePath)) {
             return back()->with('error', 'File tidak ditemukan.');
         }
 

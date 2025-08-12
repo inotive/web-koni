@@ -818,14 +818,24 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="table-header" style="border-radius: 12px 12px 0px 0px">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <strong><h2 class="mb-0 fw-bold text-dark">Daftar Laporan Database Bendahara</h2></strong>
+                                <div class="d-flex justify-content-between align-items-start mb-3"> <!-- Changed to align-items-start -->
+                                    <!-- Left side with title and info aligned -->
+                                    <div class="d-flex flex-column">
+                                        <strong><h2 class="mb-2 fw-bold text-dark">Daftar Laporan Database Bendahara</h2></strong>
+                                        @if (!(isset($laporanBendahara) && $laporanBendahara->isEmpty()))
+                                            <div id="filter-info" class="text-muted">
+                                                Menampilkan <span id="showing-count">{{ isset($laporanBendahara) ? $laporanBendahara->count() : 0 }}</span>
+                                                dari <span id="total-count">{{ isset($laporanBendahara) ? $laporanBendahara->total() : 0 }}</span> laporan
+                                            </div>
+                                        @endif
+                                    </div>
 
                                     <!-- Enhanced Search and Filter Controls -->
                                     <div class="controls-container">
                                         <a href="{{ route('admin.bendahara.create') }}" class="btn btn-add-laporan">
                                             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Laporan
                                         </a>
+
                                         <!-- Search Container -->
                                         <div class="search-container">
                                             <input
@@ -834,75 +844,82 @@
                                                 placeholder="Cari laporan..."
                                                 id="search"
                                                 name="search"
+                                                value="{{ request('search') }}"
                                             >
                                             <i class="fas fa-search search-icon"></i>
                                         </div>
 
                                         <!-- Filter Dropdown -->
                                         <div class="filter-dropdown">
-                                            <div class="filter-btn" id="filterBtn">
+                                            {{-- UPDATED FILTER BUTTON - This shows current active filter --}}
+                                            <div class="filter-btn {{ (request('filter_type') && request('filter_type') != 'all') ? 'filter-active' : '' }}" id="filterBtn">
                                                 <i class="fas fa-filter"></i>
-                                                <span>Filter</span>
+                                                <span>
+                                                    @if(request('filter_type') == 'pdf')
+                                                        File PDF
+                                                    @elseif(request('filter_type') == 'doc')
+                                                        File DOC/DOCX
+                                                    @elseif(request('filter_type') == 'excel')
+                                                        File Excel
+                                                    @elseif(request('filter_type') == 'image')
+                                                        File Gambar
+                                                    @elseif(request('filter_type') == 'other')
+                                                        File Lain
+                                                    @else
+                                                        Filter
+                                                    @endif
+                                                </span>
                                                 <i class="fas fa-chevron-down ms-1" style="font-size: 0.8rem;"></i>
                                             </div>
-                                            <div class="filter-menu" id="filterMenu">
-                                                <div class="filter-option active" data-filter="all">
+
+                                            {{-- UPDATED FILTER MENU - This shows filter options with counts --}}
+                                            <div class="filter-menu" id="filterMenu" data-filter-counts="{{ json_encode($fileCounts ?? []) }}">
+                                                <div class="filter-option {{ (request('filter_type', 'all') == 'all') ? 'active' : '' }}" data-filter="all">
                                                     <span>
                                                         <i class="fas fa-list file-type-icon"></i>
                                                         Semua File
                                                     </span>
-                                                    <span class="filter-count" id="all-count">0</span>
+                                                    <span class="filter-count" id="all-count">{{ $fileCounts['all'] ?? 0 }}</span>
                                                 </div>
-                                                <div class="filter-option" data-filter="pdf">
+                                                <div class="filter-option {{ (request('filter_type') == 'pdf') ? 'active' : '' }}" data-filter="pdf">
                                                     <span>
                                                         <i class="fas fa-file-pdf file-type-icon" style="color: #dc3545;"></i>
                                                         File PDF
                                                     </span>
-                                                    <span class="filter-count" id="pdf-count">0</span>
+                                                    <span class="filter-count" id="pdf-count">{{ $fileCounts['pdf'] ?? 0 }}</span>
                                                 </div>
-                                                <div class="filter-option" data-filter="doc">
+                                                <div class="filter-option {{ (request('filter_type') == 'doc') ? 'active' : '' }}" data-filter="doc">
                                                     <span>
                                                         <i class="fas fa-file-word file-type-icon" style="color: #0d6efd;"></i>
                                                         File DOC/DOCX
                                                     </span>
-                                                    <span class="filter-count" id="doc-count">0</span>
+                                                    <span class="filter-count" id="doc-count">{{ $fileCounts['doc'] ?? 0 }}</span>
                                                 </div>
-                                                <div class="filter-option" data-filter="excel">
+                                                <div class="filter-option {{ (request('filter_type') == 'excel') ? 'active' : '' }}" data-filter="excel">
                                                     <span>
                                                         <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
                                                         File Excel
                                                     </span>
-                                                    <span class="filter-count" id="excel-count">0</span>
+                                                    <span class="filter-count" id="excel-count">{{ $fileCounts['excel'] ?? 0 }}</span>
                                                 </div>
-                                                <div class="filter-option" data-filter="image">
+                                                <div class="filter-option {{ (request('filter_type') == 'image') ? 'active' : '' }}" data-filter="image">
                                                     <span>
                                                         <i class="fas fa-file-image file-type-icon" style="color: #fd7e14;"></i>
                                                         File Gambar
                                                     </span>
-                                                    <span class="filter-count" id="image-count">0</span>
+                                                    <span class="filter-count" id="image-count">{{ $fileCounts['image'] ?? 0 }}</span>
                                                 </div>
-                                                <div class="filter-option" data-filter="other">
+                                                <div class="filter-option {{ (request('filter_type') == 'other') ? 'active' : '' }}" data-filter="other">
                                                     <span>
                                                         <i class="fas fa-file file-type-icon" style="color: #6c757d;"></i>
                                                         File Lain
                                                     </span>
-                                                    <span class="filter-count" id="other-count">0</span>
+                                                    <span class="filter-count" id="other-count">{{ $fileCounts['other'] ?? 0 }}</span>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <!-- Add Report Button -->
-
                                     </div>
                                 </div>
-                                @if (!(isset($laporanBendahara) && $laporanBendahara->isEmpty()))
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <div id="filter-info" class="text-muted">
-                                            Menampilkan <span id="showing-count">{{ isset($laporanBendahara) ? $laporanBendahara->count() : 0 }}</span>
-                                            dari <span id="total-count">{{ isset($laporanBendahara) ? $laporanBendahara->total() : 0 }}</span> laporan
-                                        </div>
-                                    </div>
-                                @endif
                             </div>
                             <div class="table-container">
                                 @include('admin.bendahara._table')
@@ -920,546 +937,429 @@
     @if (isset($laporanBendahara) && $laporanBendahara->isNotEmpty())
         <script>
         $(document).ready(function() {
-            let currentFilter = 'all';
+        let currentFilter = 'all';
 
-            // Initialize sorting from URL on page load
-            initializeSortingFromURL();
-            updateFileCounts();
+        // Initialize sorting from URL on page load
+        initializeSortingFromURL();
+        updateFilterCounts();
 
-            // Filter dropdown functionality
-            $('#filterBtn').on('click', function(e) {
-                e.stopPropagation();
-                $('#filterMenu').toggleClass('show');
-            });
+        // Filter dropdown functionality
+        $('#filterBtn').on('click', function(e) {
+            e.stopPropagation();
+            $('#filterMenu').toggleClass('show');
+        });
 
-            // Close dropdown when clicking outside
-            $(document).on('click', function() {
-                $('#filterMenu').removeClass('show');
-            });
+        // Close dropdown when clicking outside
+        $(document).on('click', function() {
+            $('#filterMenu').removeClass('show');
+        });
 
-            // Filter option selection
-            $('.filter-option').on('click', function(e) {
-                e.stopPropagation();
+        // Filter option selection - NOW USES SERVER-SIDE FILTERING
+        $('.filter-option').on('click', function(e) {
+            e.stopPropagation();
 
-                const filterType = $(this).data('filter');
-                if (filterType === currentFilter) return;
+            const filterType = $(this).data('filter');
+            if (filterType === currentFilter) return;
 
-                // Update active state
-                $('.filter-option').removeClass('active');
-                $(this).addClass('active');
+            // Update active state
+            $('.filter-option').removeClass('active');
+            $(this).addClass('active');
 
-                // Update button text and style
-                const filterText = $(this).find('span').first().text().trim();
-                $('#filterBtn span').text(filterText);
+            // Update button text and style
+            const filterText = $(this).find('span').first().text().trim();
+            $('#filterBtn span').text(filterText);
 
-                // Update button style for active filter
-                if (filterType === 'all') {
-                    $('#filterBtn').removeClass('filter-active');
-                } else {
-                    $('#filterBtn').addClass('filter-active');
-                }
-
-                currentFilter = filterType;
-                applyFilters();
-
-                $('#filterMenu').removeClass('show');
-            });
-
-            // Enhanced file extension detection function
-            function getFileExtensionFromRow($row) {
-                // Method 1: Use data-extension attribute (most reliable)
-                const dataExtension = $row.data('extension');
-                if (dataExtension && dataExtension.trim() !== '') {
-                    console.log('Extension from data-extension:', dataExtension);
-                    return dataExtension.toLowerCase().trim();
-                }
-
-                // Method 2: Parse from data-dokumen attribute
-                const dataDokumen = $row.data('dokumen');
-                if (dataDokumen && dataDokumen.trim() !== '') {
-                    const extensionMatch = dataDokumen.match(/\.([a-zA-Z0-9]+)$/);
-                    if (extensionMatch) {
-                        console.log('Extension from data-dokumen:', extensionMatch[1]);
-                        return extensionMatch[1].toLowerCase();
-                    }
-                }
-
-                // Method 3: Check file icons (fallback)
-                const fileIconClasses = [
-                    { selector: '.fa-file-pdf', extension: 'pdf' },
-                    { selector: '.fa-file-word', extension: 'docx' },
-                    { selector: '.fa-file-excel', extension: 'xlsx' },
-                    { selector: '.fa-file-image', extension: 'jpg' }
-                ];
-
-                for (const iconClass of fileIconClasses) {
-                    if ($row.find(iconClass.selector).length > 0) {
-                        console.log('Extension from icon:', iconClass.extension);
-                        return iconClass.extension;
-                    }
-                }
-
-                // Method 4: Check for generic file icon (categorize as 'other')
-                if ($row.find('.fa-file').length > 0 && $row.find('.fa-file:not([class*="fa-file-"])').length > 0) {
-                    console.log('Generic file detected');
-                    return 'other';
-                }
-
-                console.log('No extension found for row');
-                return null;
+            // Update button style for active filter
+            if (filterType === 'all') {
+                $('#filterBtn').removeClass('filter-active');
+            } else {
+                $('#filterBtn').addClass('filter-active');
             }
 
-            // Update file counts with better detection
-            function updateFileCounts() {
-                console.log('=== Updating File Counts ===');
-                const rows = $('.table tbody tr');
-                let counts = {
-                    all: 0,
-                    pdf: 0,
-                    doc: 0,
-                    excel: 0,
-                    image: 0,
-                    other: 0
-                };
+            currentFilter = filterType;
 
-                rows.each(function() {
-                    const $row = $(this);
+            // Apply SERVER-SIDE filter
+            applyServerSideFilter(filterType);
 
-                    // Skip empty rows or "no data" rows
-                    if ($row.find('td').length === 1 && $row.find('td').attr('colspan')) {
+            $('#filterMenu').removeClass('show');
+        });
+
+        // Apply server-side filtering
+        function applyServerSideFilter(filterType) {
+            const url = buildURL();
+
+            // Set or remove filter parameter
+            if (filterType && filterType !== 'all') {
+                url.searchParams.set('filter_type', filterType);
+            } else {
+                url.searchParams.delete('filter_type');
+            }
+
+            // Reset to first page when filtering
+            url.searchParams.delete('page');
+
+            // Load filtered results from server
+            loadTable(url.toString());
+        }
+
+        // Update filter counts from server response
+        function updateFilterCounts() {
+            // These counts will be provided by the server in the view
+            // The counts should be passed from the controller
+            console.log('Filter counts updated from server data');
+        }
+
+        function loadTable(url) {
+            $.ajax({
+                url: url,
+                type: 'GET',
+                beforeSend: function() {
+                    $('.table-container').html(
+                        '<div class="text-center py-5">' +
+                        '<div class="spinner-border text-primary" role="status">' +
+                        '<span class="visually-hidden">Loading...</span>' +
+                        '</div></div>'
+                    );
+                },
+                success: function(response) {
+                    $('.table-container').html(response);
+                    bindEvents();
+                    updateFilterInfo(response);
+                    updateURL(url);
+
+                    // Update filter counts from server response
+                    updateFilterCountsFromResponse(response);
+
+                    // Re-sync sorting after loading new content
+                    syncSortingWithURL();
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Gagal memuat data laporan',
+                        icon: 'error'
+                    });
+                }
+            });
+        }
+
+        function updateFilterCountsFromResponse(response) {
+            try {
+                // Extract filter counts from the response
+                const tempDiv = $('<div>').html(response);
+
+                // Look for count data in the response
+                const countData = tempDiv.find('[data-filter-counts]').data('filter-counts');
+                if (countData) {
+                    $('#all-count').text(countData.all || 0);
+                    $('#pdf-count').text(countData.pdf || 0);
+                    $('#doc-count').text(countData.doc || 0);
+                    $('#excel-count').text(countData.excel || 0);
+                    $('#image-count').text(countData.image || 0);
+                    $('#other-count').text(countData.other || 0);
+                }
+            } catch (e) {
+                console.log('Could not update filter counts from response');
+            }
+        }
+
+        function bindEvents() {
+            // Remove all previous event bindings to prevent duplicates
+            $(document).off('click.customFilter change.customFilter input.customFilter');
+
+            // Pagination links
+            $(document).on('click.customFilter', '.pagination-link', function(e) {
+                e.preventDefault();
+                const url = $(this).attr('href');
+                if (url) loadTable(url);
+            });
+
+            // Per page selector
+            $(document).on('change.customFilter', 'select[name="per_page"]', function() {
+                const url = buildURL();
+                url.searchParams.set('per_page', $(this).val());
+                url.searchParams.delete('page');
+                loadTable(url.toString());
+            });
+
+            // Sorting links
+            $(document).on('click.customFilter', '.sortable, .sort-link', function(e) {
+                e.preventDefault();
+
+                const sortBy = $(this).data('sort');
+                const url = buildURL();
+
+                // Get current sorting from URL parameters
+                const currentSortBy = url.searchParams.get('sort_by');
+                const currentOrder = url.searchParams.get('order');
+
+                let newOrder;
+
+                if (currentSortBy === sortBy) {
+                    // Same column clicked - cycle through: asc -> desc -> no sort
+                    if (currentOrder === 'asc') {
+                        newOrder = 'desc';
+                    } else if (currentOrder === 'desc') {
+                        // Remove sorting (back to default)
+                        url.searchParams.delete('sort_by');
+                        url.searchParams.delete('order');
+                        url.searchParams.delete('page');
+
+                        // Update visual indicators
+                        updateSortingVisuals();
+
+                        loadTable(url.toString());
                         return;
-                    }
-
-                    counts.all++;
-                    const fileExtension = getFileExtensionFromRow($row);
-
-                    console.log('Row extension detected:', fileExtension);
-
-                    if (fileExtension === 'pdf') {
-                        counts.pdf++;
-                    } else if (['doc', 'docx'].includes(fileExtension)) {
-                        counts.doc++;
-                    } else if (['xls', 'xlsx'].includes(fileExtension)) {
-                        counts.excel++;
-                    } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(fileExtension)) {
-                        counts.image++;
-                    } else if (fileExtension === 'other' || (fileExtension && !['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(fileExtension))) {
-                        counts.other++;
-                    }
-                });
-
-                console.log('Final counts:', counts);
-
-                // Update count displays
-                $('#all-count').text(counts.all);
-                $('#pdf-count').text(counts.pdf);
-                $('#doc-count').text(counts.doc);
-                $('#excel-count').text(counts.excel);
-                $('#image-count').text(counts.image);
-                $('#other-count').text(counts.other);
-            }
-
-            // Apply client-side filters
-            function applyClientSideFilter(filterType) {
-                console.log('Applying filter:', filterType);
-                let visibleCount = 0;
-
-                $('.table tbody tr').each(function() {
-                    const $row = $(this);
-
-                    // Skip empty rows or "no data" rows
-                    if ($row.find('td').length === 1 && $row.find('td').attr('colspan')) {
-                        $row.show();
-                        return;
-                    }
-
-                    const fileExtension = getFileExtensionFromRow($row);
-                    let shouldShow = false;
-
-                    switch(filterType) {
-                        case 'pdf':
-                            shouldShow = fileExtension === 'pdf';
-                            break;
-                        case 'doc':
-                            shouldShow = ['doc', 'docx'].includes(fileExtension);
-                            break;
-                        case 'excel':
-                            shouldShow = ['xls', 'xlsx'].includes(fileExtension);
-                            break;
-                        case 'image':
-                            shouldShow = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(fileExtension);
-                            break;
-                        case 'other':
-                            shouldShow = fileExtension === 'other' || (fileExtension && !['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'].includes(fileExtension));
-                            break;
-                        default:
-                            shouldShow = true;
-                    }
-
-                    if (shouldShow) {
-                        $row.show();
-                        visibleCount++;
                     } else {
-                        $row.hide();
-                    }
-                });
-
-                console.log(`Filter '${filterType}' applied. Visible rows: ${visibleCount}`);
-
-                // Update filter info
-                if (filterType !== 'all') {
-                    $('#filter-info').html(`Menampilkan <span id="showing-count">${visibleCount}</span> dari <span id="total-count">${$('.table tbody tr').length}</span> laporan (filtered)`);
-                }
-            }
-
-            function loadTable(url) {
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    beforeSend: function() {
-                        $('.table-container').html(
-                            '<div class="text-center py-5">' +
-                            '<div class="spinner-border text-primary" role="status">' +
-                            '<span class="visually-hidden">Loading...</span>' +
-                            '</div></div>'
-                        );
-                    },
-                    success: function(response) {
-                        $('.table-container').html(response);
-                        bindEvents();
-                        updateFilterInfo(response);
-                        updateURL(url);
-
-                        // Re-calculate counts after new content loads
-                        setTimeout(function() {
-                            updateFileCounts();
-                            // Re-apply current filter if not 'all'
-                            if (currentFilter !== 'all') {
-                                applyClientSideFilter(currentFilter);
-                            }
-                        }, 100);
-
-                        // Re-sync sorting after loading new content
-                        syncSortingWithURL();
-                    },
-                    error: function(xhr) {
-                        console.error(xhr.responseText);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Gagal memuat data laporan',
-                            icon: 'error'
-                        });
-                    }
-                });
-            }
-
-            function bindEvents() {
-                // Remove all previous event bindings to prevent duplicates
-                $(document).off('click.customFilter change.customFilter input.customFilter');
-
-                // Pagination links
-                $(document).on('click.customFilter', '.pagination-link', function(e) {
-                    e.preventDefault();
-                    const url = $(this).attr('href');
-                    if (url) loadTable(url);
-                });
-
-                // Per page selector
-                $(document).on('change.customFilter', 'select[name="per_page"]', function() {
-                    const url = buildURL();
-                    url.searchParams.set('per_page', $(this).val());
-                    url.searchParams.delete('page');
-                    loadTable(url.toString());
-                });
-
-                // Sorting links
-                $(document).on('click.customFilter', '.sortable, .sort-link', function(e) {
-                    e.preventDefault();
-
-                    const sortBy = $(this).data('sort');
-                    const url = buildURL();
-
-                    // Get current sorting from URL parameters
-                    const currentSortBy = url.searchParams.get('sort_by');
-                    const currentOrder = url.searchParams.get('order');
-
-                    let newOrder;
-
-                    if (currentSortBy === sortBy) {
-                        // Same column clicked - cycle through: asc -> desc -> no sort
-                        if (currentOrder === 'asc') {
-                            newOrder = 'desc';
-                        } else if (currentOrder === 'desc') {
-                            // Remove sorting (back to default)
-                            url.searchParams.delete('sort_by');
-                            url.searchParams.delete('order');
-                            url.searchParams.delete('page');
-
-                            // Update visual indicators
-                            updateSortingVisuals();
-
-                            loadTable(url.toString());
-                            return;
-                        } else {
-                            newOrder = 'asc';
-                        }
-                    } else {
-                        // Different column clicked - start with asc
                         newOrder = 'asc';
                     }
-
-                    // Set new sorting parameters
-                    url.searchParams.set('sort_by', sortBy);
-                    url.searchParams.set('order', newOrder);
-                    url.searchParams.delete('page');
-
-                    // Update visual indicators immediately
-                    updateSortingVisuals(sortBy, newOrder);
-
-                    loadTable(url.toString());
-                });
-
-                // Search input with debounce
-                let searchTimeout;
-                $(document).on('input.customFilter', '#search', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        applySearch();
-                    }, 300);
-                });
-            }
-
-            function applySearch() {
-                const url = buildURL();
-                const search = $('#search').val().trim();
-
-                // Set or remove search parameter
-                if (search) {
-                    url.searchParams.set('search', search);
                 } else {
-                    url.searchParams.delete('search');
+                    // Different column clicked - start with asc
+                    newOrder = 'asc';
                 }
 
-                // Reset to first page when searching
+                // Set new sorting parameters
+                url.searchParams.set('sort_by', sortBy);
+                url.searchParams.set('order', newOrder);
                 url.searchParams.delete('page');
 
-                // Preserve per_page setting
-                const perPage = $('select[name="per_page"]').val();
-                if (perPage && perPage !== '10') {
-                    url.searchParams.set('per_page', perPage);
-                }
+                // Update visual indicators immediately
+                updateSortingVisuals(sortBy, newOrder);
 
-                // Load search results
                 loadTable(url.toString());
-            }
-
-            function applyFilters() {
-                if (currentFilter === 'all') {
-                    // Show all rows
-                    $('.table tbody tr').show();
-                    updateFilterInfo();
-                } else {
-                    applyClientSideFilter(currentFilter);
-                }
-            }
-
-            function buildURL() {
-                return new URL(window.location.href);
-            }
-
-            function initializeSortingFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const sortBy = urlParams.get('sort_by');
-                const order = urlParams.get('order');
-
-                // Set search value from URL
-                $('#search').val(urlParams.get('search') || '');
-                $('select[name="per_page"]').val(urlParams.get('per_page') || '10');
-
-                updateSortingVisuals(sortBy, order);
-            }
-
-            function syncSortingWithURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const sortBy = urlParams.get('sort_by');
-                const order = urlParams.get('order');
-
-                // Sync search input
-                $('#search').val(urlParams.get('search') || '');
-
-                // Sync per_page selector
-                const perPage = urlParams.get('per_page') || '10';
-                $('select[name="per_page"]').val(perPage);
-
-                updateSortingVisuals(sortBy, order);
-            }
-
-            function updateSortingVisuals(activeSortBy = null, activeOrder = null) {
-                // Reset all sort indicators
-                $('.sort-link').each(function() {
-                    const $link = $(this);
-                    const $icon = $link.find('i');
-                    const sortBy = $link.data('sort');
-
-                    // Update data-order for next click
-                    if (sortBy === activeSortBy) {
-                        $link.data('order', activeOrder);
-
-                        // Update icon based on current state
-                        if (activeOrder === 'asc') {
-                            $icon.removeClass('fa-sort fa-sort-down text-muted').addClass('fa-sort-up');
-                        } else if (activeOrder === 'desc') {
-                            $icon.removeClass('fa-sort fa-sort-up text-muted').addClass('fa-sort-down');
-                        } else {
-                            $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
-                        }
-                    } else {
-                        // Reset other columns
-                        $link.data('order', 'asc');
-                        $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
-                    }
-                });
-            }
-
-            function updateFilterInfo(response) {
-                try {
-                    const tempDiv = $('<div>').html(response);
-                    const showingInfo = tempDiv.find('#filter-info, .showing-info').text();
-                    if (showingInfo) {
-                        $('#filter-info, .showing-info').text(showingInfo);
-                    }
-                } catch (e) {
-                    console.log('Could not update filter info');
-                }
-            }
-
-            function updateURL(url) {
-                if (window.history && window.history.pushState) {
-                    window.history.pushState({}, '', url);
-                }
-            }
-
-            // Handle browser back/forward buttons
-            window.onpopstate = function() {
-                syncSortingWithURL();
-                loadTable(window.location.href);
-            };
-
-            // Initialize event bindings
-            bindEvents();
-
-            // Keyboard shortcuts
-            $(document).keydown(function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.keyCode === 70) { // Ctrl+F
-                    e.preventDefault();
-                    $('#search').focus();
-                }
-
-                if (e.keyCode === 27) { // Escape
-                    $('#search').val('').trigger('input');
-                    // Reset filter
-                    currentFilter = 'all';
-                    $('.filter-option').removeClass('active');
-                    $('.filter-option[data-filter="all"]').addClass('active');
-                    $('#filterBtn').removeClass('filter-active');
-                    $('#filterBtn span').text('Filter');
-                    applyFilters();
-                }
             });
 
-            // Debug function
-            window.debugFileExtraction = function() {
-                console.log('=== DEBUG FILE EXTRACTION ===');
-                $('.table tbody tr').each(function(index) {
-                    const $row = $(this);
-                    const fileExtension = getFileExtensionFromRow($row);
-                    const title = $row.find('td:nth-child(2)').text().trim();
-                    console.log(`Row ${index + 1} (${title}): ${fileExtension}`);
-                    console.log('Row data-extension:', $row.data('extension'));
-                    console.log('Row data-dokumen:', $row.data('dokumen'));
-                    console.log('---');
-                });
-            };
+            // Search input with debounce
+            let searchTimeout;
+            $(document).on('input.customFilter', '#search', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    applySearch();
+                }, 300);
+            });
+        }
 
-            // Test detection after initial load
-            setTimeout(function() {
-                console.log('Running file detection test...');
-                window.debugFileExtraction();
-            }, 500);
+        function applySearch() {
+            const url = buildURL();
+            const search = $('#search').val().trim();
 
-            // Delete functionality
-            window.destroyItem = function(button) {
-                const route = button.dataset.route;
+            // Set or remove search parameter
+            if (search) {
+                url.searchParams.set('search', search);
+            } else {
+                url.searchParams.delete('search');
+            }
 
-                Swal.fire({
-                    title: "Apakah Anda Yakin?",
-                    html: "<p style='text-align:center'>Setelah data laporan dihapus, Anda tidak bisa mengembalikannya!</p>",
-                    icon: "warning",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus!',
-                    cancelButtonText: 'Batalkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Menghapus...',
-                            text: 'Mohon tunggu',
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            willOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
+            // Reset to first page when searching
+            url.searchParams.delete('page');
 
-                        $.ajax({
-                            url: route,
-                            type: 'DELETE',
-                            data: {
-                                _token: $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}'
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: response.message || 'Data laporan berhasil dihapus',
-                                    icon: 'success',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
+            // Preserve per_page setting
+            const perPage = $('select[name="per_page"]').val();
+            if (perPage && perPage !== '10') {
+                url.searchParams.set('per_page', perPage);
+            }
 
-                                loadTable(window.location.href);
-                            },
-                            error: function(xhr) {
-                                Swal.close();
+            // Load search results
+            loadTable(url.toString());
+        }
 
-                                try {
-                                    const response = JSON.parse(xhr.responseText);
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: response.message || 'Gagal menghapus data laporan',
-                                        icon: 'error'
-                                    });
-                                } catch (e) {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Gagal menghapus data laporan',
-                                        icon: 'error'
-                                    });
-                                }
-                            }
-                        });
+        function buildURL() {
+            return new URL(window.location.href);
+        }
+
+        function initializeSortingFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sortBy = urlParams.get('sort_by');
+            const order = urlParams.get('order');
+            const filterType = urlParams.get('filter_type') || 'all';
+
+            // Set search value from URL
+            $('#search').val(urlParams.get('search') || '');
+            $('select[name="per_page"]').val(urlParams.get('per_page') || '10');
+
+            // Set filter from URL
+            currentFilter = filterType;
+            $('.filter-option').removeClass('active');
+            $(`.filter-option[data-filter="${filterType}"]`).addClass('active');
+
+            // Update filter button
+            if (filterType !== 'all') {
+                $('#filterBtn').addClass('filter-active');
+                const filterText = $(`.filter-option[data-filter="${filterType}"] span`).first().text().trim();
+                $('#filterBtn span').text(filterText);
+            }
+
+            updateSortingVisuals(sortBy, order);
+        }
+
+        function syncSortingWithURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sortBy = urlParams.get('sort_by');
+            const order = urlParams.get('order');
+            const filterType = urlParams.get('filter_type') || 'all';
+
+            // Sync search input
+            $('#search').val(urlParams.get('search') || '');
+
+            // Sync per_page selector
+            const perPage = urlParams.get('per_page') || '10';
+            $('select[name="per_page"]').val(perPage);
+
+            // Sync filter
+            currentFilter = filterType;
+            $('.filter-option').removeClass('active');
+            $(`.filter-option[data-filter="${filterType}"]`).addClass('active');
+
+            updateSortingVisuals(sortBy, order);
+        }
+
+        function updateSortingVisuals(activeSortBy = null, activeOrder = null) {
+            // Reset all sort indicators
+            $('.sort-link').each(function() {
+                const $link = $(this);
+                const $icon = $link.find('i');
+                const sortBy = $link.data('sort');
+
+                // Update data-order for next click
+                if (sortBy === activeSortBy) {
+                    $link.data('order', activeOrder);
+
+                    // Update icon based on current state
+                    if (activeOrder === 'asc') {
+                        $icon.removeClass('fa-sort fa-sort-down text-muted').addClass('fa-sort-up');
+                    } else if (activeOrder === 'desc') {
+                        $icon.removeClass('fa-sort fa-sort-up text-muted').addClass('fa-sort-down');
                     } else {
-                        Swal.fire({
-                            title: "Aksi Dibatalkan :)",
-                            icon: "info",
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
+                        $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
                     }
-                });
-            };
+                } else {
+                    // Reset other columns
+                    $link.data('order', 'asc');
+                    $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
+                }
+            });
+        }
+
+        function updateFilterInfo(response) {
+            try {
+                const tempDiv = $('<div>').html(response);
+                const showingInfo = tempDiv.find('#filter-info, .showing-info').text();
+                if (showingInfo) {
+                    $('#filter-info, .showing-info').text(showingInfo);
+                }
+            } catch (e) {
+                console.log('Could not update filter info');
+            }
+        }
+
+        function updateURL(url) {
+            if (window.history && window.history.pushState) {
+                window.history.pushState({}, '', url);
+            }
+        }
+
+        // Handle browser back/forward buttons
+        window.onpopstate = function() {
+            syncSortingWithURL();
+            loadTable(window.location.href);
+        };
+
+        // Initialize event bindings
+        bindEvents();
+
+        // Keyboard shortcuts
+        $(document).keydown(function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.keyCode === 70) { // Ctrl+F
+                e.preventDefault();
+                $('#search').focus();
+            }
+
+            if (e.keyCode === 27) { // Escape
+                $('#search').val('').trigger('input');
+                // Reset filter
+                currentFilter = 'all';
+                $('.filter-option').removeClass('active');
+                $('.filter-option[data-filter="all"]').addClass('active');
+                $('#filterBtn').removeClass('filter-active');
+                $('#filterBtn span').text('Filter');
+                applyServerSideFilter('all');
+            }
         });
+
+        // Delete functionality
+        window.destroyItem = function(button) {
+            const route = button.dataset.route;
+
+            Swal.fire({
+                title: "Apakah Anda Yakin?",
+                html: "<p style='text-align:center'>Setelah data laporan dihapus, Anda tidak bisa mengembalikannya!</p>",
+                icon: "warning",
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Hapus!',
+                cancelButtonText: 'Batalkan!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        text: 'Mohon tunggu',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: route,
+                        type: 'DELETE',
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: response.message || 'Data laporan berhasil dihapus',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+
+                            loadTable(window.location.href);
+                        },
+                        error: function(xhr) {
+                            Swal.close();
+
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.message || 'Gagal menghapus data laporan',
+                                    icon: 'error'
+                                });
+                            } catch (e) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Gagal menghapus data laporan',
+                                    icon: 'error'
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Aksi Dibatalkan :)",
+                        icon: "info",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        };
+    });
         </script>
     @endif
 @endsection

@@ -369,13 +369,13 @@
                                     @if($laporanBendahara->dokumen && file_exists(storage_path('app/public/' . $laporanBendahara->dokumen)))
                                         <a href="{{ route('admin.bendahara.download', $laporanBendahara->id) }}"
                                            class="btn-minimal btn-download" id="downloadBtn">
-                                            <i class="fas fa-download"></i> Download
+                                            <i class="fas fa-download" style="color: white"></i> Download
                                         </a>
                                     @endif
 
                                     <a href="{{ route('admin.bendahara.edit', $laporanBendahara->id) }}"
                                        class="btn-minimal btn-edit">
-                                        <i class="fas fa-edit"></i> Edit
+                                        <i class="fas fa-edit"style="color: white"></i> Edit
                                     </a>
                                 </div>
                             </div>

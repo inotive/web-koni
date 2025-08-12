@@ -1,11 +1,13 @@
+<div style="display: none;" data-filter-counts="{{ json_encode($fileCounts ?? []) }}"></div>
+
 @if (isset($laporanBendahara) && $laporanBendahara->isEmpty())
     <div class="empty-state">
         <i class="fas fa-search fs-3x mb-3 text-muted"></i>
-        @if(request('search'))
-            <h4>Tidak ada laporan yang sesuai dengan pencarian.</h4>
-            <p class="text-muted">Coba ubah kata kunci pencarian yang Anda gunakan.</p>
+        @if(request('search') || request('filter_type'))
+            <h4>Tidak ada laporan yang sesuai dengan filter/pencarian.</h4>
+            <p class="text-muted">Coba ubah kata kunci pencarian atau filter yang Anda gunakan.</p>
         @else
-            <h4>Tidak ada data laporan.</h4>
+            <h4>Tidak ada data laporan bendahara.</h4>
             <p class="text-muted">Belum ada laporan bendahara yang tersimpan dalam sistem.</p>
         @endif
     </div>
