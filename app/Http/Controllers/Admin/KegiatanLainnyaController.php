@@ -50,7 +50,7 @@ class KegiatanLainnyaController extends Controller
         $namaBidangUntukJudul = 'Manajemen'; // Atau 'Kegiatan' atau sesuai keinginan Anda
 
         // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/index.blade.php
-        return view('admin.kegiatan_lainnya.index', compact('kegiatanLainnya', 'namaBidangUntukJudul'));
+        return view('admin.laporan-lpj.kegiatan_lainnya.index', compact('kegiatanLainnya', 'namaBidangUntukJudul'));
     }
 
     public function store(Request $request)
@@ -78,7 +78,7 @@ class KegiatanLainnyaController extends Controller
         KegiatanLainnya::create($data);
 
         // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
-        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil ditambahkan!');
+        return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
 
     public function show(KegiatanLainnya $kegiatan_lainnya)
@@ -124,7 +124,7 @@ class KegiatanLainnyaController extends Controller
         $kegiatan_lainnya->update($data);
 
         // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
-        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil diperbarui!');
+        return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')->with('success', 'Kegiatan berhasil diperbarui!');
     }
 
     public function destroy(KegiatanLainnya $kegiatan_lainnya)
@@ -139,6 +139,6 @@ class KegiatanLainnyaController extends Controller
         $kegiatan_lainnya->delete();
 
         // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
-        return redirect()->route('admin.kegiatan-lainnya.index')->with('success', 'Kegiatan berhasil dihapus!');
+        return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')->with('success', 'Kegiatan berhasil dihapus!');
     }
 }

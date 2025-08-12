@@ -41,6 +41,11 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::put('profile/{profile}/update-profile', [ProfileController::class, 'updateProfile'])->name('profile-update');
     });
 
+    Route::resource('file-kesekretariat', \App\Http\Controllers\Admin\FileKesekretariatController::class);  
+    // Letakkan rute 'download' sebelum rute resourc    e
+    Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
+        ->name('file-kesekretariat.download');
+
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {
         Route::resource('permission', PermissionController::class)->except('show', 'create', 'edit');
         Route::resource('user', UserController::class)->except('show');
@@ -59,6 +64,8 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
     Route::resource('manajemen-rka', ManajemenRKAController::class);
     Route::resource('laporan-rka', LaporanRKAController::class);
+
+
 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);
@@ -152,6 +159,17 @@ Route::prefix('laporan-lpj')->name('laporan-lpj.')->group(function () {
         Route::get('/pembinaan-hukum', [App\Http\Controllers\Admin\BidangController::class, 'pembinaanHukum'])->name('pembinaan-hukum');
         Route::get('/sport-science', [App\Http\Controllers\Admin\BidangController::class, 'sportScience'])->name('sport-science');
         Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
+    });
+
+    // Tambahkan rute Kegiatan Lainnya di sini
+    Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'store'])->name('store');
+        Route::get('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'show'])->name('show');
+        Route::get('/{kegiatanLainnya}/edit', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'edit'])->name('edit');
+        Route::put('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'update'])->name('update');
+        Route::delete('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'destroy'])->name('destroy');
     });
 
 });
