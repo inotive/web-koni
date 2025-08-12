@@ -1,78 +1,125 @@
 @if (isset($prestasis) && $prestasis->isEmpty())
     <div class="empty-state">
-        <i class="fas fa-trophy fs-3x mb-3"></i>
-        <h4>Belum ada data prestasi.</h4>
+        <i class="fas fa-trophy fs-3x mb-3 text-muted"></i>
+        @if (request('search') || request()->hasAny(['tahun', 'medali', 'tingkat']))
+            <h4>Tidak ada prestasi yang sesuai dengan kriteria pencarian.</h4>
+            <p class="text-muted">Coba ubah kata kunci pencarian atau filter yang Anda gunakan.</p>
+        @else
+            <h4>Belum ada data prestasi.</h4>
+            <p class="text-muted">Belum ada prestasi yang terdaftar dalam sistem.</p>
+        @endif
     </div>
 @else
     <div class="table-responsive">
-        <table class="table table-hover align-middle" id="kt_datatable_prestasi">
+        <table class="table table-hover align-middle" id="prestasi-table">
             <thead>
                 <tr>
                     <th>No</th>
-
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama', 'order' => request('sort_by') == 'nama' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                            class="text-dark text-decoration-none sort-link">
-                            Nama
-                            <i
-                                class="fas fa-sort{{ request('sort_by') == 'nama' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            class="text-decoration-none text-dark sort-link">
+                            Nama & Role
+                            @if (request('sort_by') == 'nama')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up"></i>
+                                @else
+                                    <i class="fas fa-sort-down"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
                         </a>
                     </th>
-
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'jenis_kelamin', 'order' => request('sort_by') == 'jenis_kelamin' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                            class="text-dark text-decoration-none sort-link">
+                            class="text-decoration-none text-dark sort-link">
                             Jenis Kelamin
-                            <i
-                                class="fas fa-sort{{ request('sort_by') == 'jenis_kelamin' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            @if (request('sort_by') == 'jenis_kelamin')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up"></i>
+                                @else
+                                    <i class="fas fa-sort-down"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
                         </a>
                     </th>
-
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama_prestasi', 'order' => request('sort_by') == 'nama_prestasi' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                            class="text-dark text-decoration-none sort-link">
-                            Prestasi
-                            <i
-                                class="fas fa-sort{{ request('sort_by') == 'nama_prestasi' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            class="text-decoration-none text-dark sort-link">
+                            Prestasi & Kejuaraan
+                            @if (request('sort_by') == 'nama_prestasi')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up"></i>
+                                @else
+                                    <i class="fas fa-sort-down"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
                         </a>
                     </th>
-
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'cabor', 'order' => request('sort_by') == 'cabor' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                            class="text-dark text-decoration-none sort-link">
+                            class="text-decoration-none text-dark sort-link">
                             Cabor
-                            <i
-                                class="fas fa-sort{{ request('sort_by') == 'cabor' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            @if (request('sort_by') == 'cabor')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up"></i>
+                                @else
+                                    <i class="fas fa-sort-down"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
                         </a>
                     </th>
-
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'tingkat', 'order' => request('sort_by') == 'tingkat' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                            class="text-dark text-decoration-none sort-link">
+                            class="text-decoration-none text-dark sort-link">
                             Tingkat
-                            <i
-                                class="fas fa-sort{{ request('sort_by') == 'tingkat' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            @if (request('sort_by') == 'tingkat')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up"></i>
+                                @else
+                                    <i class="fas fa-sort-down"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
                         </a>
                     </th>
-
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'tahun', 'order' => request('sort_by') == 'tahun' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                            class="text-dark text-decoration-none sort-link">
+                            class="text-decoration-none text-dark sort-link">
                             Tempat & Tahun
-                            <i
-                                class="fas fa-sort{{ request('sort_by') == 'tahun' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            @if (request('sort_by') == 'tahun')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up"></i>
+                                @else
+                                    <i class="fas fa-sort-down"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
                         </a>
                     </th>
-
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'medali', 'order' => request('sort_by') == 'medali' && request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                            class="text-dark text-decoration-none sort-link">
+                            class="text-decoration-none text-dark sort-link">
                             Medali
-                            <i
-                                class="fas fa-sort{{ request('sort_by') == 'medali' ? (request('order') == 'asc' ? '-up' : '-down') : '' }}"></i>
+                            @if (request('sort_by') == 'medali')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up"></i>
+                                @else
+                                    <i class="fas fa-sort-down"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
                         </a>
                     </th>
-
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -125,40 +172,65 @@
                             <td>{{ $rowNumber }}</td>
 
                             <td>
-                                <div class="d-flex align-items-center">
-                                    @if ($prestasi->subject->foto_atlet ?? ($prestasi->subject->foto_pelatih ?? null))
-                                        <img src="{{ asset('storage/' . ($prestasi->subject->foto_atlet ?? $prestasi->subject->foto_pelatih)) }}"
-                                            alt="{{ $prestasi->subject->nama }}"
-                                            class="rounded-circle me-2 object-fit-cover" width="40" height="40">
-                                    @else
-                                        <div class="rounded-circle bg-light me-2 d-flex align-items-center justify-content-center"
-                                            style="width: 40px; height: 40px;">
-                                            <i class="fas fa-user text-muted"></i>
-                                        </div>
-                                    @endif
-                                    <div>
-                                        <strong>{{ $prestasi->subject->nama }}</strong><br>
-                                        <small class="text-muted">
-                                            {{ class_basename($prestasi->subject_type) }}
-                                        </small>
-                                    </div>
+                                <div class="d-flex flex-column">
+                                    <strong class="text-truncate-custom"
+                                        title="{{ $prestasi->subject->nama }}">
+                                        @if (request('search'))
+                                            {!! preg_replace(
+                                                '/(' . preg_quote(request('search'), '/') . ')/i',
+                                                '<span class="search-highlight">$1</span>',
+                                                $prestasi->subject->nama,
+                                            ) !!}
+                                        @else
+                                            {{ $prestasi->subject->nama }}
+                                        @endif
+                                    </strong>
+                                    <small class="text-muted" title="{{ class_basename($prestasi->subject_type) }}">
+                                        {{ class_basename($prestasi->subject_type) }}
+                                    </small>
                                 </div>
                             </td>
 
                             <td>{{ $jenisKelamin }}</td>
 
                             <td>
-                                <div>
-                                    <strong>{{ $prestasi->nama_prestasi }}</strong><br>
-                                    <small class="text-muted">
-                                        {{ $prestasi->kejuaraan }}
+                                <div class="d-flex flex-column">
+                                    <strong class="text-truncate-custom">
+                                        @if (request('search'))
+                                            {!! preg_replace(
+                                                '/(' . preg_quote(request('search'), '/') . ')/i',
+                                                '<span class="search-highlight">$1</span>',
+                                                $prestasi->nama_prestasi,
+                                            ) !!}
+                                        @else
+                                            {{ $prestasi->nama_prestasi }}
+                                        @endif
+                                    </strong>
+                                    <small class="text-muted text-truncate-custom">
+                                        @if (request('search'))
+                                            {!! preg_replace(
+                                                '/(' . preg_quote(request('search'), '/') . ')/i',
+                                                '<span class="search-highlight">$1</span>',
+                                                $prestasi->kejuaraan,
+                                            ) !!}
+                                        @else
+                                            {{ $prestasi->kejuaraan }}
+                                        @endif
                                     </small>
                                 </div>
                             </td>
 
                             <td>
                                 <div class="text-truncate-custom">
-                                    {{ $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-' }}
+                                    @if (request('search'))
+                                        {!! preg_replace(
+                                            '/(' . preg_quote(request('search'), '/') . ')/i',
+                                            '<span class="search-highlight">$1</span>',
+                                            $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-',
+                                        ) !!}
+                                    @else
+                                        {{ $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-' }}
+                                    @endif
                                 </div>
                             </td>
 
@@ -166,7 +238,17 @@
 
                             <td>
                                 <div class="d-flex flex-column">
-                                    <span class="text-truncate-custom">{{ $prestasi->tempat }}</span>
+                                    <strong class="text-truncate-custom">
+                                        @if (request('search'))
+                                            {!! preg_replace(
+                                                '/(' . preg_quote(request('search'), '/') . ')/i',
+                                                '<span class="search-highlight">$1</span>',
+                                                $prestasi->tempat,
+                                            ) !!}
+                                        @else
+                                            {{ $prestasi->tempat }}
+                                        @endif
+                                    </strong>
                                     <small class="text-muted">{{ $prestasi->tahun }}</small>
                                 </div>
                             </td>
@@ -189,10 +271,10 @@
                                             break;
                                     }
                                 @endphp
-                                <span>
-                                    <i class="fas fa-medal me-1 {{ $iconColor }}"></i>
-                                    {{ $prestasi->medali }}
-                                </span>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-medal me-2 {{ $iconColor }}"></i>
+                                    <span>{{ $prestasi->medali }}</span>
+                                </div>
                             </td>
 
                             <td class="text-center">
@@ -219,7 +301,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                            <td colspan="10" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                         </tr>
                     @endforelse
                 @endif
@@ -255,8 +337,8 @@
                         @if ($prestasis->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $prestasis->previousPageUrl() }}" class="pagination-arrow pagination-link"
-                                aria-label="Previous">←</a>
+                            <a href="{{ $prestasis->appends(request()->query())->previousPageUrl() }}"
+                                class="pagination-arrow pagination-link" aria-label="Previous">←</a>
                         @endif
 
                         @php
@@ -279,15 +361,15 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $prestasis->url($i) }}"
+                                    <a href="{{ $prestasis->appends(request()->query())->url($i) }}"
                                         class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
                         @if ($prestasis->hasMorePages())
-                            <a href="{{ $prestasis->nextPageUrl() }}" class="pagination-arrow pagination-link"
-                                aria-label="Next">→</a>
+                            <a href="{{ $prestasis->appends(request()->query())->nextPageUrl() }}"
+                                class="pagination-arrow pagination-link" aria-label="Next">→</a>
                         @else
                             <span class="pagination-arrow disabled">→</span>
                         @endif

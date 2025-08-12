@@ -22,7 +22,7 @@ class Atlet extends Model
         'prestasi_terbaru',
         'no_telepon',
         'email',
-        'foto_atlet',
+        'foto',
         'alamatkota',
         'alamatprovinsi',
         'ketersediaan'
