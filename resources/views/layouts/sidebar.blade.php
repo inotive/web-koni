@@ -86,6 +86,14 @@
                             </li>
                         </ul>
                     </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/bendahara*') ? 'active' : '' }}"
+                            href="{{ route('admin.bendahara.index') }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-address-book fs-2"></i>
+                            </span> <span class="menu-title">Database Bendahara</span>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="menu-item">
