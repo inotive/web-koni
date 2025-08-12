@@ -15,6 +15,7 @@ class AtletController extends Controller
     {
         $perPage = $request->get('per_page', 10);
 
+
         // Add 'prestasi' to the allowed sorts array
         $allowedSorts = [
             'nama', 'tanggal_lahir', 'jenis_kelamin', 'alamat',
@@ -178,6 +179,12 @@ class AtletController extends Controller
     public function show($id, Request $request)
     {
         $atlet = Atlet::with(['cabangOlahraga', 'prestasis'])->findOrFail($id);
+
+        $backUrl = match (request('back')) {
+            'cabor'     => route('admin.konfigurasi.cabang-olahraga.show', $atlet->cabor_id),
+            'prestasi' => route('admin.konfigurasi.prestasi.index', $atlet->id),
+            default     => route('admin.konfigurasi.atlet.index'),
+        };
 
         $backUrl = request('back') === 'cabor'
         ? route('admin.konfigurasi.cabang-olahraga.show', $atlet->cabor_id)
