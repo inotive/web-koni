@@ -172,7 +172,8 @@ $files = $query->orderBy(
         // Then, delete the record from the database
         $fileKesekretariat->delete();
 
-        return response()->json(['message' => 'Data berhasil dihapus']);
+        return redirect()->route('admin.file-kesekretariat.index')
+                         ->with('success', 'File berhasil dihapus.');
     }
 
     /**

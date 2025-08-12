@@ -223,45 +223,58 @@
                         <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah File
                     </a>
 
-                    {{-- Search Input --}}
-                    <div class="input-group" style="width: 250px;">
-                        <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari nama dokumen..." value="{{ request('search') }}">
-                        <button class="btn btn-outline-secondary" type="button" id="search-button">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
+                    {{-- Search + Filter - SAMA SEPERTI CABOR --}}
+<div class="d-flex align-items-center gap-2 flex-wrap">
+    {{-- Search --}}
+    <div class="input-group border rounded" style="width: 230px;">
+        <span class="input-group-text bg-transparent border-0">
+            <i class="fas fa-search"></i>
+        </span>
+        <input type="search" name="search" id="search"
+            class="form-control border-0 py-2" placeholder="Cari nama dokumen..."
+            value="{{ request('search') }}">
+    </div>
 
-                    {{-- Filter Dropdown --}}
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-filter me-1"></i> Filter
-                            <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
-                        </button>
-                        <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Tipe File</label>
-                                <select id="filter-file-type" class="form-select">
-                                    <option value="">Semua Tipe</option>
-                                    <option value="pdf">PDF</option>
-                                    <option value="doc">DOC</option>
-                                    <option value="docx">DOCX</option>
-                                    <option value="xls">XLS</option>
-                                    <option value="xlsx">XLSX</option>
-                                </select>
-                            </div>
+    {{-- Filter --}}
+    <div class="border rounded" style="width: 120px;">
+        <button
+            class="btn bg-white dropdown-toggle w-100 text-start border-0 py-2 d-flex justify-content-between align-items-center"
+            type="button" data-bs-toggle="dropdown">
+            <span>Filter</span>
+            <div>
+                <i class="fas fa-filter ms-1"></i>
+                <span id="filter-count"
+                    class="badge badge-circle badge-danger ms-1 {{ request('file_type') ? '' : 'd-none' }}">
+                    {{ request('file_type') ? 1 : 0 }}
+                </span>
+            </div>
+        </button>
+        <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Tipe File</label>
+                <select id="filter-file-type" name="file_type" class="form-select">
+                    <option value="">Semua Tipe</option>
+                    <option value="pdf" {{ request('file_type') == 'pdf' ? 'selected' : '' }}>PDF</option>
+                    <option value="doc" {{ request('file_type') == 'doc' ? 'selected' : '' }}>DOC</option>
+                    <option value="docx" {{ request('file_type') == 'docx' ? 'selected' : '' }}>DOCX</option>
+                    <option value="xls" {{ request('file_type') == 'xls' ? 'selected' : '' }}>XLS</option>
+                    <option value="xlsx" {{ request('file_type') == 'xlsx' ? 'selected' : '' }}>XLSX</option>
+                </select>
+            </div>
 
-                            {{-- Filter Action Buttons --}}
-                            <div class="d-flex gap-2">
-                                <button type="button" id="apply-filters" class="btn btn-primary btn-sm flex-fill">
-                                    <i class="ki-duotone ki-check fs-3"></i>Terapkan
-                                </button>
-                                <button type="button" id="reset-filters" class="btn btn-light btn-sm flex-fill">
-                                    <i class="ki-duotone ki-arrows-circle fs-3"></i>Reset
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+            <div class="d-flex gap-2">
+                <button type="button" id="apply-filters"
+                    class="btn btn-primary btn-sm flex-fill">
+                    <i class="fas fa-check"></i> Terapkan
+                </button>
+                <button type="button" id="reset-filters"
+                    class="btn btn-light btn-sm flex-fill">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
                 </div>
             </div>
 
@@ -452,229 +465,85 @@
 @section('script')
     @if ($files->isNotEmpty())
         <script>
-            $(function() {
-                /* ---------- DataTable ---------- */
-                const table = $('#kt_datatable_dom_positioning_files').DataTable({
-                    paging: false,
-                    info: false,
-                    searching: false,
-                    ordering: true,
-                    responsive: false,
-                    autoWidth: false,
-                    scrollX: false,
-                    columnDefs: [{
-                            targets: 0,
-                            orderable: false,
-                            searchable: false,
-                            width: '50px'
-                        },
-                        {
-                            targets: -1,
-                            orderable: false,
-                            searchable: false,
-                            width: '150px'
-                        },
-                        {
-                            targets: 2,
-                            searchable: true
-                        }
-                    ],
-                    language: {
-                        emptyTable: 'Data tidak ditemukan',
-                        zeroRecords: 'Data tidak ditemukan'
-                    }
-                });
+    $(document).ready(function() {
+        // ✅ SAMA SEPERTI CABANG OLAHRAGA
+        let isLoading = false;
+        let searchTimeout;
+        let clickTimeout;
 
-                /* ---------- Global vars ---------- */
-                let searchTimeout;
-                const $searchInput = $('#search');
-                const $filterType = $('#filter-file-type');
-                const $badge = $('#filter-count');
+        const baseUrl = "{{ route('admin.file-kesekretariat.index') }}";
 
-                /* ---------- Notification Functions ---------- */
-                function showToast(message, type = 'success') {
-                    const toastId = 'toast-' + Date.now();
-                    const icon = type === 'success' ? '✔️' : '❌';
-                    
-                    const toastHtml = `
-                        <div class="toast ${type}" role="alert" aria-live="assertive" aria-atomic="true" id="${toastId}">
-                            <div class="toast-header">
-                                <span class="me-2" style="font-size: 16px;">${icon}</span>
-                                <strong class="me-auto">${type === 'success' ? 'Berhasil' : 'Gagal'}</strong>
-                                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
-                            <div class="toast-body">
-                                ${message}
-                            </div>
-                        </div>
-                    `;
-                    
-                    $('#toast-container').append(toastHtml);
-                    
-                    const toastElement = new bootstrap.Toast(document.getElementById(toastId), {
-                        autohide: true,
-                        delay: 5000
-                    });
-                    
-                    toastElement.show();
-                    
-                    // Remove toast element after it's hidden
-                    document.getElementById(toastId).addEventListener('hidden.bs.toast', function() {
-                        this.remove();
-                    });
+        function performAjaxRequest(params = {}, showLoading = true) {
+            if (isLoading) return Promise.reject('Request in progress');
+            if (showLoading) showTableLoading();
+
+            const newParams = new URLSearchParams(window.location.search);
+            for (let [key, value] of Object.entries(params)) {
+                if (value === '' || value === null) newParams.delete(key);
+                else newParams.set(key, value);
+            }
+
+            const url = `${baseUrl}?${newParams.toString()}`;
+            return $.ajax({
+                url: url,
+                type: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json, text/html',
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                timeout: 15000,
+                cache: false
+            }).done(function(response) {
+                if (typeof response === 'string') {
+                    const $response = $(response);
+                    $('#tableContainer').html($response.find('#tableContainer').html());
+                    $('.pagination-boxed').html($response.find('.pagination-boxed').html());
+                    window.history.pushState({}, '', url);
+                } else {
+                    console.warn('Invalid response');
                 }
+            }).always(() => hideTableLoading());
+        }
 
-                /* ---------- Delete Functionality ---------- */
-                let currentFileId = null;
-                let currentDeleteUrl = null;
+        function updateFilterCountBadge() {
+            let count = 0;
+            if ($('#filter-file-type').val()) count++;
+            $('#filter-count').text(count).toggleClass('d-none', count === 0);
+        }
 
-                // Handle delete button click
-                $(document).on('click', '.delete-btn', function() {
-                    currentFileId = $(this).data('file-id');
-                    currentDeleteUrl = $(this).data('delete-url');
-                    const fileName = $(this).data('file-name');
-                    
-                    $('#fileName').text(fileName);
-                    $('#deleteModal').modal('show');
-                });
+        $('#search').on('input', function () {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                performAjaxRequest({ search: $(this).val().trim(), page: 1 });
+                updateFilterCountBadge();
+            }, 500);
+        });
 
-                // Handle confirm delete
-                $('#confirmDeleteBtn').on('click', function() {
-                    const $btn = $(this);
-                    const originalHtml = $btn.html();
-                    
-                    // Show loading state
-                    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Menghapus...');
-                    
-                    // Perform AJAX delete
-                    $.ajax({
-                        url: currentDeleteUrl,
-                        type: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(response) {
-                            // Hide modal
-                            $('#deleteModal').modal('hide');
-                            
-                            // Remove row from table with animation
-                            const $row = $('#file-row-' + currentFileId);
-                            $row.fadeOut(400, function() {
-                                $row.remove();
-                                
-                                // Redraw table if using DataTables
-                                if (table) {
-                                    table.draw();
-                                }
-                                
-                                // Check if table is empty after deletion
-                                if ($('tbody tr').length === 0) {
-                                    $('tbody').html(`
-                                        <tr>
-                                            <td colspan="4" class="text-center py-5 text-muted">Data tidak ditemukan</td>
-                                        </tr>
-                                    `);
-                                }
-                            });
-                            
-                            // Show success notification
-                            showToast('Data berhasil dihapus.', 'success');
-                        },
-                        error: function(xhr, status, error) {
-                            // Hide modal
-                            $('#deleteModal').modal('hide');
-                            
-                            // Show error notification
-                            let errorMessage = 'Gagal menghapus data. Silakan coba lagi.';
-                            
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                            } else if (status === 'timeout') {
-                                errorMessage = 'Koneksi timeout. Silakan coba lagi.';
-                            } else if (status === 'error' && xhr.status === 0) {
-                                errorMessage = 'Tidak ada koneksi internet. Silakan periksa koneksi Anda.';
-                            }
-                            
-                            showToast(errorMessage, 'error');
-                        },
-                        complete: function() {
-                            // Reset button state
-                            $btn.prop('disabled', false).html(originalHtml);
-                            
-                            // Reset variables
-                            currentFileId = null;
-                            currentDeleteUrl = null;
-                        }
-                    });
-                });
+        $(document).on('change', '#filter-file-type', function () {
+            performAjaxRequest({ file_type: $(this).val(), page: 1 });
+            updateFilterCountBadge();
+        });
 
-                // Reset variables when modal is hidden
-                $('#deleteModal').on('hidden.bs.modal', function() {
-                    currentFileId = null;
-                    currentDeleteUrl = null;
-                    $('#confirmDeleteBtn').prop('disabled', false).html('<i class="fas fa-trash me-1"></i>Ya, Hapus');
-                });
-
-                /* ---------- Helpers ---------- */
-                function updateBadge() {
-                    let c = 0;
-                    if ($searchInput.val().trim()) c++;
-                    if ($filterType.val()) c++;
-                    $badge.toggle(c > 0).text(c);
-                }
-
-                function applyFilters() {
-                    const searchVal = $searchInput.val().trim();
-                    const typeVal = $filterType.val();
-
-                    table.column(1).search(searchVal).draw();
-                    table.column(2).search(typeVal || '').draw();
-
-                    updateBadge();
-                }
-
-                /* ---------- Search ---------- */
-                $searchInput.on('input', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(function() {
-                        applyFilters();
-                    }, 500);
-                });
-
-                $('#per-page').on('change', function() {
-                    const url = new URL(location.href);
-                    url.searchParams.set('per_page', this.value);
-                    location.href = url.toString();
-                });
-
-                $('#search-button').on('click', function(e) {
-                    e.preventDefault();
-                });
-
-                /* ---------- Filter ---------- */
-                $filterType.on('change', function() {
-                    applyFilters();
-                });
-
-                $('#apply-filters').on('click', function(e) {
-                    e.preventDefault();
-                    applyFilters();
-                });
-
-                $('#reset-filters').on('click', function(e) {
-                    e.preventDefault();
-                    $searchInput.val('');
-                    $filterType.val('');
-                    table.search('').columns().search('').draw();
-                    updateBadge();
-                });
-
-                /* ---------- Dropdown overflow fix ---------- */
-                $('<style>.dataTables_scrollBody{overflow:visible!important}</style>').appendTo('head');
-
-                /* ---------- Init badge ---------- */
-                updateBadge();
+        $(document).on('click', '#apply-filters', function () {
+            performAjaxRequest({
+                search: $('#search').val().trim(),
+                file_type: $('#filter-file-type').val(),
+                page: 1
             });
-        </script>
+            updateFilterCountBadge();
+        });
+
+        $(document).on('click', '#reset-filters', function () {
+            $('#search').val('');
+            $('#filter-file-type').val('');
+            performAjaxRequest({ search: '', file_type: '', page: 1 });
+            updateFilterCountBadge();
+        });
+
+        $(document).on('submit', 'form', e => e.preventDefault());
+        updateFilterCountBadge();
+    });
+</script>
     @endif
 @endsection
