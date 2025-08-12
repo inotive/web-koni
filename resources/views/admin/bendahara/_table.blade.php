@@ -1,215 +1,244 @@
 <div style="display: none;" data-filter-counts="{{ json_encode($fileCounts ?? []) }}"></div>
 
-@if (isset($laporanBendahara) && $laporanBendahara->isEmpty())
-    <div class="empty-state">
-        <i class="fas fa-search fs-3x mb-3 text-muted"></i>
-        @if(request('search') || request('filter_type'))
-            <h4>Tidak ada laporan yang sesuai dengan filter/pencarian.</h4>
-            <p class="text-muted">Coba ubah kata kunci pencarian atau filter yang Anda gunakan.</p>
-        @else
-            <h4>Tidak ada data laporan bendahara.</h4>
-            <p class="text-muted">Belum ada laporan bendahara yang tersimpan dalam sistem.</p>
-        @endif
-    </div>
-@else
-    <div class="table-responsive">
-        <table class="table table-hover align-middle" id="bendahara-table">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>
-                        <a href="#" class="text-decoration-none text-dark sort-link"
-                        data-sort="judul">
-                            Judul Laporan
-                            @if(request('sort_by') == 'judul')
-                                @if(request('order') == 'asc')
-                                    <i class="fas fa-sort-up"></i>
+<div style="overflow-x:auto;">
+    <table class="table-row-bordered gy-4 table align-middle">
+        <thead>
+            <tr class="fw-bold text-uppercase text-muted">
+                <th class="bg-light px-6 text-center" style="width: 60px;">No</th>
+                <th class="bg-light px-20">Judul Laporan</th>
+                <th class="bg-light text-center">Ukuran File</th>
+                <th class="bg-light text-center">Tipe File</th>
+                <th class="bg-light px-8 text-center">Aksi</th>
+            </tr>
+        </thead>
+        <tbody class="border-bottom">
+            @forelse ($laporanBendahara as $index => $item)
+                @php
+                    $extension = $item->dokumen ? strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) : '';
+                    // Calculate proper row number based on pagination
+                    $rowNumber = ($laporanBendahara->currentPage() - 1) * $laporanBendahara->perPage() + $index + 1;
+                @endphp
+                <tr data-extension="{{ $extension }}" data-dokumen="{{ $item->dokumen }}">
+                    <td class="text-center fw-bold px-2">
+                        {{ $rowNumber }}
+                    </td>
+                    <td class="fw-bold px-6">
+                        @if($item->dokumen)
+                            <a href="#" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ $extension }}')" class="text-decoration-none cursor-pointer">
+                                @if(request('search'))
+                                    {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
                                 @else
-                                    <i class="fas fa-sort-down"></i>
+                                    {{ $item->judul }}
                                 @endif
+                            </a>
+                        @else
+                            @if(request('search'))
+                                {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
                             @else
-                                <i class="fas fa-sort text-muted"></i>
+                                {{ $item->judul }}
                             @endif
-                        </a>
-                    </th>
-                    <th>File Laporan</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if(isset($laporanBendahara))
-                    @forelse ($laporanBendahara as $index => $item)
-                        @php
-                            $extension = $item->dokumen ? strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) : '';
-                        @endphp
-                        <tr data-extension="{{ $extension }}" data-dokumen="{{ $item->dokumen }}">
-                            <td>{{ $laporanBendahara->firstItem() + $loop->index }}</td>
-
-                            <td>
-                                <div class="d-flex flex-column">
-                                    <strong class="text-dark">
-                                        @if(request('search'))
-                                            {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
-                                        @else
-                                            {{ $item->judul }}
-                                        @endif
-                                    </strong>
-                                    <small class="text-muted">{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</small>
-                                </div>
-                            </td>
-
-                            <td>
+                        @endif
+                        <br>
+                        <small class="text-muted">{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</small>
+                    </td>
+                    <td class="px-2 text-center">
+                        @if($item->dokumen && Storage::disk('public')->exists($item->dokumen))
+                            {{ number_format(Storage::disk('public')->size($item->dokumen) / 1048576, 2) }} MB
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="px-2 text-center">
+                        @if($item->dokumen)
+                            @php
+                                $extension = strtoupper(pathinfo($item->dokumen, PATHINFO_EXTENSION));
+                                $badgeClass = match($extension) {
+                                    'PDF' => 'badge-danger',
+                                    'DOC', 'DOCX' => 'badge-primary',
+                                    'XLS', 'XLSX' => 'badge-success',
+                                    'JPG', 'JPEG', 'PNG', 'GIF', 'BMP', 'SVG' => 'badge-warning',
+                                    default => 'badge-secondary'
+                                };
+                            @endphp
+                            <span class="badge {{ $badgeClass }}">{{ $extension }}</span>
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="px-2 text-center">
+                        <div class="dropdown">
+                            <button class="btn btn-sm p-0" type="button" data-bs-toggle="dropdown">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="32" height="32" rx="6" fill="#EFF6FF" />
+                                    <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" stroke="#1B84FF"
+                                        stroke-opacity="0.2" />
+                                    <g clip-path="url(#clip0_2223_4269)">
+                                        <path opacity="0.3"
+                                            d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
+                                            fill="#1B84FF" />
+                                        <path
+                                            d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
+                                            fill="#1B84FF" />
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_2223_4269">
+                                            <rect width="18" height="18" fill="white"
+                                                transform="translate(7 7)" />
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </button>
+                            <ul class="dropdown-menu cursor-pointer">
                                 @if($item->dokumen)
-                                    <div class="d-flex align-items-center">
-                                        {{-- Icons that match the filter dropdown exactly --}}
-                                        @if($extension == 'pdf')
-                                            <i class="fas fa-file-pdf file-icon" style="color: #dc3545; font-size: 16px; margin-right: 8px;"></i>
-                                        @elseif(in_array($extension, ['doc', 'docx']))
-                                            <i class="fas fa-file-word file-icon" style="color: #0d6efd; font-size: 16px; margin-right: 8px;"></i>
-                                        @elseif(in_array($extension, ['xls', 'xlsx']))
-                                            <i class="fas fa-file-excel file-icon" style="color: #198754; font-size: 16px; margin-right: 8px;"></i>
-                                        @elseif(in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg']))
-                                            <i class="fas fa-file-image file-icon" style="color: #fd7e14; font-size: 16px; margin-right: 8px;"></i>
-                                        @else
-                                            <i class="fas fa-file file-icon" style="color: #6c757d; font-size: 16px; margin-right: 8px;"></i>
-                                        @endif
+                                <li class="dropdown-item" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')">
+                                    <i class="ki-outline ki-eye me-2"></i>Preview Dokumen
+                                </li>
+                                {{-- <li class="dropdown-item" onclick="window.open('{{ Storage::url($item->dokumen) }}', '_blank')">
+                                    <i class="ki-outline ki-down me-2"></i>Download
+                                </li> --}}
+                                @endif
+                                <li class="dropdown-item edit" data-bs-toggle="modal"
+                                    data-bs-target="#edit-{{ $item->id }}">
+                                    <i class="ki-outline ki-pencil me-2"></i>Edit Laporan
+                                </li>
+                                <li class="dropdown-item delete"
+                                    onclick="deleteItem('delete-form-{{ $item->id }}')">
+                                    <i class="ki-outline ki-trash me-2"></i>Hapus
+                                </li>
 
-                                        <div>
-                                            <div class="fw-semibold file-name" style="color: #dc3545 !important;">
-                                                {{ strtoupper($extension) }} File
+                                <form id="delete-form-{{ $item->id }}"
+                                    action="{{ route('admin.bendahara.destroy', $item->id) }}" method="POST"
+                                    style="display: none;">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Edit Modal -->
+                <div class="modal fade" id="edit-{{ $item->id }}" tabindex="-1"
+                    aria-labelledby="edit-{{ $item->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                            <div class="d-flex justify-content-between align-items-center gap-2">
+                                <div class="fs-2 fw-bold text-truncate leading-5">Edit Laporan: {{ Str::limit($item->judul, 20) }}</div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+
+                            <form id="form-{{ $item->id }}" method="POST"
+                                action="{{ route('admin.bendahara.update', $item->id) }}"
+                                enctype="multipart/form-data" class="d-grid gap-4">
+                                @csrf
+                                @method('PUT')
+
+                                <div>
+                                    <div class="fw-semibold required mb-3 text-gray-800">Judul Laporan</div>
+                                    <input type="text" name="judul" value="{{ $item->judul }}"
+                                        placeholder="Masukkan Judul Laporan"
+                                        class="form-control bg-light border border-gray-400" required />
+                                </div>
+
+                                <div>
+                                    <div class="fw-semibold mb-3 text-gray-800">
+                                        Unggah Dokumen Baru
+                                        <span class="text-muted">(Opsional)</span>
+                                    </div>
+                                    <div class="fv-row">
+                                        <div class="dropzone" id="dropzone-form-{{ $item->id }}">
+                                            <div class="dz-message needsclick">
+                                                <i class="ki-duotone ki-file-up fs-3x text-primary">
+                                                    <span class="path1"></span><span class="path2"></span>
+                                                </i>
+                                                <div class="ms-4">
+                                                    <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen baru.</h3>
+                                                    <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB. Kosongkan jika tidak ingin mengubah file.</span>
+                                                </div>
                                             </div>
-                                            @if(file_exists(storage_path('app/public/' . $item->dokumen)))
-                                                @php
-                                                    $fileSize = filesize(storage_path('app/public/' . $item->dokumen));
-                                                    $units = ['B', 'KB', 'MB', 'GB'];
-                                                    $factor = floor((strlen($fileSize) - 1) / 3);
-                                                    $size = sprintf("%.2f", $fileSize / pow(1024, $factor)) . ' ' . $units[$factor];
-                                                @endphp
-                                                <small class="text-muted file-size" style="color: #dc3545 !important;">{{ $size }}</small>
-                                            @endif
                                         </div>
                                     </div>
-                                @else
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-file file-icon" style="color: #6c757d; font-size: 16px; margin-right: 8px;"></i>
-                                        <span class="text-muted">Tidak ada file</span>
+
+                                    @if($item->dokumen)
+                                    <div class="mt-2 p-3 bg-light rounded">
+                                        <small class="text-muted">File saat ini: </small>
+                                        <a href="#" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')" class="text-primary text-decoration-none fw-bold">
+                                            {{ basename($item->dokumen) }}
+                                        </a>
                                     </div>
-                                @endif
-                            </td>
-
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center gap-1">
-                                    {{-- Preview/Detail Button - Light Blue --}}
-                                    <a href="{{ route('admin.bendahara.show', $item->id) }}"
-                                    class="btn btn-icon btn-sm btn-preview"
-                                    style="background-color: #87CEEB !important; border-color: #87CEEB !important; color: #2c5aa0 !important;"
-                                    title="Detail">
-                                        <i class="fa-solid fa-eye" style="color: #2c5aa0 !important;"></i>
-                                    </a>
-
-                                    {{-- Edit Button - Yellow with White Icon --}}
-                                    <a href="{{ route('admin.bendahara.edit', $item->id) }}"
-                                    class="btn btn-icon btn-sm btn-edit"
-                                    style="background-color: #ffc107 !important; border-color: #ffc107 !important; color: white !important;"
-                                    title="Edit">
-                                        <i class="fa-solid fa-pen-to-square" style="color: white !important;"></i>
-                                    </a>
-
-                                    {{-- Delete Button - Red with White Icon --}}
-                                    <button type="button"
-                                            class="btn btn-icon btn-sm btn-delete"
-                                            style="background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important;"
-                                            data-route="{{ route('admin.bendahara.destroy', $item->id) }}"
-                                            onclick="destroyItem(this)"
-                                            title="Hapus">
-                                        <i class="fa-solid fa-trash" style="color: white !important;"></i>
-                                    </button>
+                                    @endif
                                 </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="4" class="text-center py-5 text-muted">Data tidak ditemukan</td>
-                        </tr>
-                    @endforelse
-                @endif
-            </tbody>
-        </table>
-    </div>
+                            </form>
 
-    <div class="table-footer">
-        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-            <div class="mb-2 mb-md-0">
-                <div class="d-flex align-items-center">
-                    <span class="me-2">Show</span>
-                    <select name="per_page" class="form-select form-select-sm w-auto">
-                        @foreach ([10, 25, 50, 100] as $limit)
-                            <option value="{{ $limit }}"
-                                {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
-                                {{ $limit }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <span class="ms-2">per page</span>
-                </div>
-            </div>
-
-            @if (isset($laporanBendahara) && method_exists($laporanBendahara, 'hasPages') && $laporanBendahara->hasPages())
-                <div class="d-flex align-items-center gap-3">
-                    <div class="text-muted small">
-                        {{ $laporanBendahara->firstItem() }}-{{ $laporanBendahara->lastItem() }} of
-                        {{ $laporanBendahara->total() }}
-                    </div>
-
-                    <div class="d-flex align-items-center gap-2">
-                        @if ($laporanBendahara->onFirstPage())
-                            <span class="pagination-arrow disabled">←</span>
-                        @else
-                            <a href="{{ $laporanBendahara->appends(request()->query())->previousPageUrl() }}"
-                               class="pagination-arrow pagination-link"
-                               aria-label="Previous">←</a>
-                        @endif
-
-                        @php
-                            $current = $laporanBendahara->currentPage();
-                            $total = $laporanBendahara->lastPage();
-                            $start = max(1, $current - 2);
-                            $end = min($total, $current + 2);
-
-                            if ($end - $start < 4) {
-                                if ($start == 1) {
-                                    $end = min($total, $start + 4);
-                                } else {
-                                    $start = max(1, $end - 4);
-                                }
-                            }
-                        @endphp
-
-                        <div class="d-flex align-items-center">
-                            @for ($i = $start; $i <= $end; $i++)
-                                @if ($i == $current)
-                                    <span class="pagination-number active">{{ $i }}</span>
-                                @else
-                                    <a href="{{ $laporanBendahara->appends(request()->query())->url($i) }}"
-                                       class="pagination-number pagination-link">{{ $i }}</a>
-                                @endif
-                            @endfor
+                            <div class="d-grid py-4">
+                                <button type="button" onclick="submitForm('form-{{ $item->id }}')"
+                                    class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                                    Update Laporan
+                                </button>
+                            </div>
                         </div>
-
-                        @if ($laporanBendahara->hasMorePages())
-                            <a href="{{ $laporanBendahara->appends(request()->query())->nextPageUrl() }}"
-                               class="pagination-arrow pagination-link"
-                               aria-label="Next">→</a>
-                        @else
-                            <span class="pagination-arrow disabled">→</span>
-                        @endif
                     </div>
                 </div>
-            @elseif(isset($laporanBendahara) && method_exists($laporanBendahara, 'hasPages'))
-                <div class="text-muted small">
-                    1-{{ $laporanBendahara->count() }} of {{ $laporanBendahara->total() }}
-                </div>
-            @endif
+            @empty
+                <tr>
+                    <td class="fw-bold p-6 text-center" colspan="5">
+                        <div class="d-flex flex-column align-items-center gap-3">
+                            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="32" fill="#F8F9FA"/>
+                                <path d="M32 20C25.3726 20 20 25.3726 20 32C20 38.6274 25.3726 44 32 44C38.6274 44 44 38.6274 44 32C44 25.3726 38.6274 20 32 20ZM32 22C37.5467 22 42 26.4533 42 32C42 37.5467 37.5467 42 32 42C26.4533 42 22 37.5467 22 32C22 26.4533 26.4533 22 32 22Z" fill="#6C7B7F"/>
+                                <path d="M30 28V36H34V28H30ZM30 24V27H34V24H30Z" fill="#6C7B7F"/>
+                            </svg>
+                            <div class="text-center">
+                                <div class="fw-bold text-gray-800 mb-1">
+                                    @if(request('search') || request('filter_type'))
+                                        Tidak ada laporan yang sesuai dengan pencarian/filter
+                                    @else
+                                        Belum ada laporan bendahara
+                                    @endif
+                                </div>
+                                <div class="text-muted">
+                                    @if(request('search') || request('filter_type'))
+                                        Coba ubah kata kunci pencarian atau filter yang Anda gunakan
+                                    @else
+                                        Klik tombol "Tambah Laporan" untuk menambah laporan baru
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination and Per Page Controls -->
+@if(method_exists($laporanBendahara, 'hasPages'))
+<div class="border-0 px-10 py-5">
+    <div class="d-flex justify-content-between align-items-center col-12">
+        <div class="d-flex align-items-center gap-2 text-gray-500">
+            <span>Show</span>
+            <select id="per_page" name="per_page" class="form-select border border-gray-200 p-2" style="width: 80px;">
+                <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ request('per_page', 10) == 100 ? 'selected' : '' }}>100</option>
+            </select>
+            <span>per page</span>
         </div>
+
+        <!-- Pagination Links -->
+        @if($laporanBendahara->hasPages())
+            <nav aria-label="Table pagination">
+                {{ $laporanBendahara->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </nav>
+        @else
+            <div class="text-muted">
+                Showing {{ $laporanBendahara->firstItem() ?? 0 }} to {{ $laporanBendahara->lastItem() ?? 0 }} of {{ $laporanBendahara->total() }} entries
+            </div>
+        @endif
     </div>
+</div>
 @endif

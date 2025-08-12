@@ -3,49 +3,24 @@
 @section('pageTitle', 'Database Bendahara')
 @section('mainSection', 'Main Menu')
 @section('currentSection', 'Database Bendahara')
-
-@section('content')
-
+@section('style')
     <style>
-        body {
-            background-color: #f5f5f5;
+        .edit:hover {
+            background-color: rgb(249, 245, 172) !important;
         }
 
-        .main-content {
-            background-color: #f5f5f5;
-            min-height: 100vh;
-            padding: 20px 0;
+        .delete:hover {
+            background-color: #ffcad7ff !important;
         }
 
-        /* Card Styles */
-        .card {
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e9ecef;
-            overflow: visible !important;
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
 
-        .card-body {
-            padding: 0;
-            overflow: visible !important;
-        }
-
-        /* Page Header */
-        .page-header {
-            background-color: transparent;
-            padding: 0;
-            margin-bottom: 20px;
-        }
-
-        .page-header h3 {
-            color: #2c3e50;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        /* Enhanced controls container */
-        .controls-container {
+        /* Enhanced search and filter styling */
+        .filter-container {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -54,24 +29,11 @@
 
         .search-container {
             position: relative;
-            max-width: 280px;
-            flex: 1;
+            width: 180px;
         }
 
         .search-input {
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 12px 20px 12px 45px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            width: 100%;
-        }
-
-        .search-input:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.15);
-            outline: none;
+            padding-left: 45px !important;
         }
 
         .search-icon {
@@ -87,22 +49,23 @@
         /* Filter dropdown styling */
         .filter-dropdown {
             position: relative;
+            width: 200px;
         }
 
         .filter-btn {
             background: white;
             border: 1px solid #dee2e6;
             border-radius: 8px;
-            padding: 12px 16px;
+            padding: 8px 16px;
             font-size: 0.95rem;
             color: #495057;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            min-width: 140px;
+            justify-content: space-between;
+            width: 100%;
+            text-align: left;
         }
 
         .filter-btn:hover {
@@ -110,19 +73,24 @@
             color: #F8285A;
         }
 
+        .filter-btn.filter-active {
+            background-color: #F8285A;
+            border-color: #F8285A;
+            color: white;
+        }
+
         .filter-menu {
             position: absolute;
             top: 100%;
+            left: 0;
             right: 0;
             background: white;
             border: 1px solid #dee2e6;
             border-radius: 8px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             z-index: 1000;
-            min-width: 220px;
             margin-top: 4px;
             display: none;
-            overflow: visible !important;
         }
 
         .filter-menu.show {
@@ -157,294 +125,9 @@
             font-size: 16px;
         }
 
-        .filter-option .file-count {
+        .filter-option .filter-count {
             font-size: 0.85rem;
             opacity: 0.8;
-        }
-
-        /* Buttons */
-        .btn-add-laporan {
-            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 12px 24px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: white;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
-            white-space: nowrap;
-        }
-
-        .btn-add-laporan:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
-            color: white;
-            text-decoration: none;
-        }
-
-        /* Table Container */
-        .table-container {
-            background-color: white;
-            border-radius: 0px 0px 12px 12px;
-            overflow: hidden;
-        }
-
-        .table-header {
-            background-color: white;
-            padding: 20px 25px;
-            border-bottom: 1px solid #e9ecef;
-            border-radius: 12px 12px 0px 0px;
-            overflow: visible !important;
-            position: relative;
-            z-index: 10;
-        }
-
-        .table-footer {
-            background-color: white;
-            padding: 15px 25px;
-            border-top: 1px solid #e9ecef;
-        }
-
-        /* Table Responsive */
-        .table-responsive {
-            overflow-x: auto;
-            overflow-y: visible;
-            -webkit-overflow-scrolling: touch;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-            background-color: white;
-        }
-
-        /* Table Base Styles */
-        .table {
-            border-collapse: separate !important;
-            border-spacing: 0 !important;
-            margin: 0 !important;
-            background-color: white;
-            width: 100%;
-            min-width: 800px;
-            border: none;
-        }
-
-        /* Table Header Styles with Sort Fix */
-        .table thead th {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-top: none;
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: #495057;
-            white-space: nowrap;
-            padding: 12px 8px !important;
-            position: relative;
-            text-align: center !important;
-        }
-
-        .table thead th:last-child {
-            border-right: none;
-        }
-
-        /* Sort Link Styles */
-        .table thead th .sort-link {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            text-decoration: none;
-            color: inherit;
-            gap: 8px;
-        }
-
-        .table thead th .sort-link:hover {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .table thead th .sort-link i {
-            flex-shrink: 0;
-            margin-left: auto;
-        }
-
-        /* Table Body Styles */
-        .table tbody tr {
-            border: 1px solid #e9ecef;
-            transition: background-color 0.2s ease;
-        }
-
-        .table tbody tr:first-child {
-            border-top: none;
-        }
-
-        .table tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        .table tbody tr:hover,
-        .table tbody tr:hover td {
-            background-color: #f8f9fa;
-        }
-
-        .table tbody tr td {
-            border: 1px solid #e9ecef !important;
-            padding: 8px !important;
-            font-size: 0.875rem;
-            white-space: nowrap;
-            vertical-align: middle;
-            word-wrap: break-word;
-            max-width: 200px;
-            text-align: left !important;
-            background-color: white;
-        }
-
-        .table tbody tr td:last-child {
-            border-right: none !important;
-        }
-
-        /* Column Widths and Alignments */
-        .table td:first-child,
-        .table th:first-child {
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-        }
-
-        .table td:last-child,
-        .table th:last-child {
-            padding-right: 12px !important;
-        }
-
-        /* Specific column widths */
-        .table th:nth-child(1), .table td:nth-child(1) { width: 10px; text-align: center !important; }
-        .table th:nth-child(2), .table td:nth-child(2) { width: 300px; text-align: left !important; }
-        .table th:nth-child(3), .table td:nth-child(3) { width: 300px; text-align: left !important; }
-        .table th:nth-child(4), .table td:nth-child(4) { width: 10px; text-align: center !important; }
-        .table th:nth-child(5), .table td:nth-child(5) { width: 10px; text-align: center !important; }
-
-        .table td:nth-child(1),
-        .table td:nth-child(4),
-        .table td:nth-child(5) {
-            text-align: center !important;
-        }
-
-        /* File Icons */
-        .file-icon {
-            width: 24px;
-            height: 24px;
-            margin-right: 8px;
-        }
-
-        .file-icon.pdf { color: #dc3545; }
-        .file-icon.doc,
-        .file-icon.docx { color: #0d6efd; }
-        .file-icon.xls,
-        .file-icon.xlsx { color: #198754; }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            color: #6c757d;
-            padding: 60px 25px;
-            background-color: white;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            margin: 20px;
-        }
-
-        /* Form Controls */
-        .form-select {
-            border-radius: 6px;
-            border: 1px solid #dee2e6;
-            transition: all 0.2s ease;
-        }
-
-        .form-select:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: #f5f5f5;
-            border-color: #f5f5f5;
-        }
-
-        /* Pagination */
-        .pagination {
-            margin-bottom: 0;
-        }
-
-        .pagination .page-item {
-            margin: 0 1px;
-        }
-
-        .pagination-sm .page-link {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-            color: #6c757d;
-            margin: 0 2px;
-        }
-
-        .pagination-sm .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
-            color: white;
-        }
-
-        .pagination-sm .page-link:hover {
-            background-color: #f8f9fa;
-            border-color: #dee2e6;
-            color: #495057;
-        }
-
-        .pagination-sm .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: #fff;
-            border-color: #dee2e6;
-        }
-
-        /* Pagination Arrows and Numbers */
-        .pagination-arrow {
-            color: #6c757d;
-            text-decoration: none;
-            padding: 6px 8px;
-            transition: color 0.2s ease;
-            cursor: pointer;
-        }
-
-        .pagination-arrow:hover {
-            color: #0b0b0b;
-            text-decoration: none;
-        }
-
-        .pagination-arrow.disabled {
-            color: #adb5bd;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .pagination-number {
-            color: #6c757d;
-            text-decoration: none;
-            padding: 6px 10px;
-            margin: 0 1px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            background-color: #f8f9fa;
-            border: 1px solid transparent;
-            font-size: 0.875rem;
-        }
-
-        .pagination-number:hover {
-            color: #89add1;
-            background-color: #e9ecef;
-            text-decoration: none;
-        }
-
-        .pagination-number.active {
-            background-color: #e4e6e9;
-            color: rgb(4, 4, 4);
-            border-color: #e0e1e4;
         }
 
         /* Search highlight */
@@ -455,911 +138,612 @@
             font-weight: bold;
         }
 
-        /* Active filter indicator */
-        .filter-active {
-            background-color: #F8285A !important;
-            color: white !important;
-            border-color: #F8285A !important;
+        /* File type badges with consistent colors */
+        .badge-danger { background-color: #dc3545 !important; }
+        .badge-primary { background-color: #0d6efd !important; }
+        .badge-success { background-color: #198754 !important; }
+        .badge-warning { background-color: #fd7e14 !important; }
+        .badge-secondary { background-color: #6c757d !important; }
+
+        /* Loading state */
+        .table-loading {
+            opacity: 0.6;
+            pointer-events: none;
         }
 
-        .filter-active:hover {
-            background-color: #e91e63 !important;
-            border-color: #e91e63 !important;
+        /* Fix pagination dropdown arrow */
+        #per_page {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 16px;
+            padding-right: 32px !important;
         }
 
-        /* Debug helper */
-        .debug-info {
-            font-size: 0.7rem;
-            color: #6c757d;
-            font-style: italic;
-            display: none; /* Hidden by default, can be shown for debugging */
-        }
-
-        /* Responsive Styles */
+        /* Responsive adjustments */
         @media (max-width: 768px) {
-            .controls-container {
+            .filter-container {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 15px;
+                gap: 10px;
             }
 
             .search-container {
-                max-width: none;
+                width: 100%;
             }
 
             .filter-dropdown {
                 width: 100%;
             }
-
-            .filter-btn {
-                justify-content: center;
-                width: 100%;
-            }
-
-            .table-header,
-            .table-footer {
-                padding: 15px;
-            }
-
-            .d-flex.justify-content-between.align-items-center.flex-wrap {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .d-flex.align-items-center.gap-2.flex-wrap {
-                justify-content: center;
-                width: 100%;
-            }
-
-            .table-responsive {
-                border-radius: 6px;
-            }
-
-            .table thead th,
-            .table tbody tr td {
-                padding: 8px 6px !important;
-                font-size: 0.8rem;
-            }
-
-            .table thead th .sort-link {
-                gap: 4px;
-                font-size: 0.8rem;
-            }
-
-            .d-flex.justify-content-between.align-items-center.flex-wrap {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: center !important;
-            }
-
-            .pagination-sm .page-link {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.75rem;
-            }
         }
 
-        @media (max-width: 576px) {
-            .pagination-sm .page-link {
-                padding: 0.2rem 0.4rem;
-                font-size: 0.7rem;
-            }
-
-            .text-muted {
-                font-size: 0.875rem;
-            }
-
-            .btn-add-laporan {
-                width: 100%;
-                margin-bottom: 10px;
-            }
+        /* File preview modal styling */
+        .preview-modal .modal-dialog {
+            max-width: 90vw;
+            height: 90vh;
         }
-        .table-header h2 {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-    padding-top: 0.25rem;
-    line-height: 1.3;
-}
 
-/* Page title positioning fix */
-.d-flex.justify-content-between.align-items-center.flex-wrap h1 {
-    margin-bottom: 0.5rem !important;
-    padding-bottom: 0;
-    line-height: 1.2;
-}
+        .preview-modal .modal-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* File name styling - Red color for filename and PDF indicator */
-.table tbody tr td .file-name,
-.table tbody tr td .file-title,
-.table tbody tr td .filename {
-    color: #dc3545 !important; /* Bootstrap red */
-    font-weight: 600;
-}
+        .preview-modal .modal-body {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
 
-/* File type indicator (PDF, DOC, etc.) styling */
-.table tbody tr td .file-type,
-.table tbody tr td .file-extension,
-.table tbody tr td .badge {
-    background-color: #dc3545 !important;
-    color: white !important;
-    font-weight: 500;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-}
+        .preview-modal iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
 
-/* File size styling */
-.table tbody tr td .file-size {
-    color: #dc3545 !important;
-    font-weight: 500;
-    font-size: 0.85rem;
-}
+        .preview-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            text-align: center;
+            color: #6c757d;
+        }
 
-/* File icon styling */
-.table tbody tr td i.fas.fa-file-pdf{
-    color: #dc3545 !important;
-}
-.table tbody tr td i.fas.fa-file-word{
-    color: #0d6efd !important;
-}
-.table tbody tr td i.fas.fa-file-excel{
-    color: #198754 !important;
-}
-.table tbody tr td i.fas.fa-file-image{
-    color: #fd7e14 !important;
-}
-
-/* Eye/Preview button styling - Light blue */
-.table tbody tr td .btn-preview,
-.table tbody tr td .preview-btn,
-.table tbody tr td a[title*="preview" i],
-.table tbody tr td a[title*="lihat" i],
-.table tbody tr td a.btn:has(i.fa-eye),
-.table tbody tr td button:has(i.fa-eye) {
-    background-color: #87CEEB !important; /* Light blue */
-    border-color: #87CEEB !important;
-    color: #2c5aa0 !important; /* Darker blue for text */
-}
-
-.table tbody tr td .btn-preview:hover,
-.table tbody tr td .preview-btn:hover,
-.table tbody tr td a[title*="preview" i]:hover,
-.table tbody tr td a[title*="lihat" i]:hover {
-    background-color: #6BB6FF !important;
-    border-color: #6BB6FF !important;
-    color: #1a4480 !important;
-}
-
-/* Eye icon specific styling */
-.table tbody tr td i.fa-eye,
-.table tbody tr td i.fas.fa-eye {
-    color: #2c5aa0 !important;
-}
-
-/* Date/Time styling for Created At and Updated At columns */
-.table tbody tr td .created-at,
-.table tbody tr td .updated-at,
-.table tbody tr td .date-time,
-.table tbody tr td:nth-child(4), /* Assuming 4th column is created_at */
-.table tbody tr td:nth-child(5)  /* Assuming 5th column is updated_at */ {
-    color: #dc3545 !important;
-    font-weight: 500;
-}
-
-/* Download button styling - White text and icon */
-.table tbody tr td .btn-download,
-.table tbody tr td .download-btn,
-.table tbody tr td a[title*="download" i],
-.table tbody tr td a[href*="download"],
-.table tbody tr td a.btn:has(i.fa-download),
-.table tbody tr td button:has(i.fa-download) {
-    background-color: #28a745 !important; /* Keep green background */
-    border-color: #28a745 !important;
-    color: white !important;
-    font-weight: 500;
-}
-
-.table tbody tr td .btn-download:hover,
-.table tbody tr td .download-btn:hover,
-.table tbody tr td a[title*="download" i]:hover,
-.table tbody tr td a[href*="download"]:hover {
-    background-color: #218838 !important;
-    border-color: #218838 !important;
-    color: white !important;
-}
-
-/* Download icon specific styling */
-.table tbody tr td .btn-download i,
-.table tbody tr td .download-btn i,
-.table tbody tr td a[title*="download" i] i,
-.table tbody tr td a[href*="download"] i,
-.table tbody tr td i.fa-download {
-    color: white !important;
-}
-
-/* Edit button styling - White text and icon */
-.table tbody tr td .btn-edit,
-.table tbody tr td .edit-btn,
-.table tbody tr td a[title*="edit" i],
-.table tbody tr td a[href*="edit"],
-.table tbody tr td a.btn:has(i.fa-edit),
-.table tbody tr td button:has(i.fa-edit),
-.table tbody tr td a.btn:has(i.fa-pencil),
-.table tbody tr td button:has(i.fa-pencil) {
-    background-color: #ffc107 !important; /* Keep yellow/warning background */
-    border-color: #ffc107 !important;
-    color: white !important;
-    font-weight: 500;
-}
-
-.table tbody tr td .btn-edit:hover,
-.table tbody tr td .edit-btn:hover,
-.table tbody tr td a[title*="edit" i]:hover,
-.table tbody tr td a[href*="edit"]:hover {
-    background-color: #e0a800 !important;
-    border-color: #e0a800 !important;
-    color: white !important;
-}
-
-/* Edit icon specific styling */
-.table tbody tr td .btn-edit i,
-.table tbody tr td .edit-btn i,
-.table tbody tr td a[title*="edit" i] i,
-.table tbody tr td a[href*="edit"] i,
-.table tbody tr td i.fa-edit,
-.table tbody tr td i.fa-pencil,
-.table tbody tr td i.fas.fa-edit,
-.table tbody tr td i.fas.fa-pencil {
-    color: white !important;
-}
-
-/* Delete button styling - Keep existing red but ensure white text/icon */
-.table tbody tr td .btn-delete,
-.table tbody tr td .delete-btn,
-.table tbody tr td a[title*="delete" i],
-.table tbody tr td a[title*="hapus" i],
-.table tbody tr td button[onclick*="destroyItem"] {
-    background-color: #dc3545 !important;
-    border-color: #dc3545 !important;
-    color: white !important;
-    font-weight: 500;
-}
-
-.table tbody tr td .btn-delete i,
-.table tbody tr td .delete-btn i,
-.table tbody tr td a[title*="delete" i] i,
-.table tbody tr td a[title*="hapus" i] i,
-.table tbody tr td button[onclick*="destroyItem"] i,
-.table tbody tr td i.fa-trash,
-.table tbody tr td i.fas.fa-trash {
-    color: white !important;
-}
-
-/* Generic action button improvements */
-.table tbody tr td .btn-sm {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.875rem;
-    border-radius: 0.375rem;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-}
-
-.table tbody tr td .btn-sm:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* Specific styling for file information rows */
-.table tbody tr td:nth-child(2) { /* Assuming 2nd column contains file info */
-    color: #dc3545 !important;
-}
-
-/* If you have specific classes for file info, add them here */
-.file-info,
-.file-details,
-.document-name {
-    color: #dc3545 !important;
-    font-weight: 600;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .table-header h2 {
-        font-size: 1.5rem;
-        margin-top: 0.25rem !important;
-    }
-
-    .d-flex.justify-content-between.align-items-center.flex-wrap h1 {
-        font-size: 1.75rem;
-        margin-bottom: 0.25rem !important;
-    }
-}
-
-/* Additional utility classes you can use in your HTML */
-.text-red {
-    color: #dc3545 !important;
-}
-
-.text-light-blue {
-    color: #87CEEB !important;
-}
-
-.btn-light-blue {
-    background-color: #87CEEB !important;
-    border-color: #87CEEB !important;
-    color: #2c5aa0 !important;
-}
-
-.btn-light-blue:hover {
-    background-color: #6BB6FF !important;
-    border-color: #6BB6FF !important;
-    color: #1a4480 !important;
-}
+        .preview-error i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #dc3545;
+        }
     </style>
+@endsection
 
-    @if (session('success'))
-        <div class="alert alert-{{ session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger') }} alert-dismissible fade show"
-            role="alert">
-            <i
-                class="fas {{ session('action') === 'store' ? 'fa-check-circle' : (session('action') === 'update' ? 'fa-exclamation-circle' : 'fa-trash-alt') }} me-2"></i>
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+@section('content')
+    <div class="d-grid gap-5 border-0">
+        <div class="d-flex justify-content-between align-items-center container">
+            <div class="d-none d-md-block">
+                <h1>Database Bendahara</h1>
+                <span>Kelola laporan bendahara</span>
+            </div>
+            <form id="filter" class="d-flex gap-3 filter-container">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#add"
+                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                    Tambah Laporan
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_851_8468)">
+                            <path
+                                d="M12.3782 17.0625H5.61375C4.37344 17.0582 3.18528 16.5631 2.309 15.6853C1.43272 14.8075 0.939624 13.6185 0.9375 12.3782V5.62182C0.939624 4.38151 1.43272 3.19249 2.309 2.3147C3.18528 1.43692 4.37344 0.941767 5.61375 0.937507H12.3701C12.9853 0.936447 13.5946 1.05656 14.1633 1.29099C14.7321 1.52542 15.2491 1.86958 15.6848 2.30381C16.1205 2.73804 16.4664 3.25384 16.7028 3.82176C16.9392 4.38968 17.0614 4.9986 17.0625 5.61375V12.3701C17.0636 12.986 16.9432 13.596 16.7082 14.1652C16.4733 14.7345 16.1284 15.2518 15.6933 15.6876C15.2583 16.1235 14.7415 16.4692 14.1727 16.7052C13.6038 16.9411 12.994 17.0625 12.3782 17.0625ZM13.0312 8.19375H9.80625V4.96876C9.80625 4.75492 9.7213 4.54985 9.5701 4.39865C9.4189 4.24745 9.21383 4.16251 9 4.16251C8.78617 4.16251 8.58109 4.24745 8.42989 4.39865C8.27869 4.54985 8.19375 4.75492 8.19375 4.96876V8.19375H4.96875C4.75492 8.19375 4.54984 8.2787 4.39864 8.4299C4.24744 8.5811 4.1625 8.78617 4.1625 9C4.1625 9.21383 4.24744 9.41891 4.39864 9.57011C4.54984 9.72131 4.75492 9.80625 4.96875 9.80625H8.19375V13.0313C8.19375 13.2451 8.27869 13.4502 8.42989 13.6014C8.58109 13.7526 8.78617 13.8375 9 13.8375C9.21383 13.8375 9.4189 13.7526 9.5701 13.6014C9.7213 13.4502 9.80625 13.2451 9.80625 13.0313V9.80625H13.0312C13.2451 9.80625 13.4501 9.72131 13.6013 9.57011C13.7526 9.41891 13.8375 9.21383 13.8375 9C13.8375 8.78617 13.7526 8.5811 13.6013 8.4299C13.4501 8.2787 13.2451 8.19375 13.0312 8.19375Z"
+                                fill="white" />
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_851_8468">
+                                <rect width="18" height="18" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </button>
+
+                <!-- Enhanced Search Container -->
+                <div class="search-container">
+                    <div class="position-relative bg-light">
+                        <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" data-kt-docs-table-filter="search"
+                            placeholder="Cari Laporan" class="form-control border border-gray-500 py-2 search-input" />
+                    </div>
+                </div>
+
+                <!-- Enhanced Filter Dropdown -->
+                <div class="filter-dropdown">
+                    <div class="filter-btn {{ (request('filter_type') && request('filter_type') != 'all') ? 'filter-active' : '' }}" id="filterBtn">
+                        <span>
+                            @if(request('filter_type') == 'pdf')
+                                <i class="fas fa-file-pdf me-2" style="color: #dc3545;"></i>File PDF
+                            @elseif(request('filter_type') == 'doc')
+                                <i class="fas fa-file-word me-2" style="color: #0d6efd;"></i>File DOC/DOCX
+                            @elseif(request('filter_type') == 'excel')
+                                <i class="fas fa-file-excel me-2" style="color: #198754;"></i>File Excel
+                            @elseif(request('filter_type') == 'image')
+                                <i class="fas fa-file-image me-2" style="color: #fd7e14;"></i>File Gambar
+                            @elseif(request('filter_type') == 'other')
+                                <i class="fas fa-file me-2" style="color: #6c757d;"></i>File Lain
+                            @else
+                                <i class="fas fa-filter me-2"></i>Filter Tipe File
+                            @endif
+                        </span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                    </div>
+
+                    <div class="filter-menu" id="filterMenu" data-filter-counts="{{ json_encode($fileCounts ?? []) }}">
+                        <div class="filter-option {{ (request('filter_type', 'all') == 'all') ? 'active' : '' }}" data-filter="all">
+                            <span>
+                                <i class="fas fa-list file-type-icon"></i>
+                                Semua File
+                            </span>
+                            <span class="filter-count">{{ $fileCounts['all'] ?? 0 }}</span>
+                        </div>
+                        <div class="filter-option {{ (request('filter_type') == 'pdf') ? 'active' : '' }}" data-filter="pdf">
+                            <span>
+                                <i class="fas fa-file-pdf file-type-icon" style="color: #dc3545;"></i>
+                                File PDF
+                            </span>
+                            <span class="filter-count">{{ $fileCounts['pdf'] ?? 0 }}</span>
+                        </div>
+                        <div class="filter-option {{ (request('filter_type') == 'doc') ? 'active' : '' }}" data-filter="doc">
+                            <span>
+                                <i class="fas fa-file-word file-type-icon" style="color: #0d6efd;"></i>
+                                File DOC/DOCX
+                            </span>
+                            <span class="filter-count">{{ $fileCounts['doc'] ?? 0 }}</span>
+                        </div>
+                        <div class="filter-option {{ (request('filter_type') == 'excel') ? 'active' : '' }}" data-filter="excel">
+                            <span>
+                                <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
+                                File Excel
+                            </span>
+                            <span class="filter-count">{{ $fileCounts['excel'] ?? 0 }}</span>
+                        </div>
+                        <div class="filter-option {{ (request('filter_type') == 'image') ? 'active' : '' }}" data-filter="image">
+                            <span>
+                                <i class="fas fa-file-image file-type-icon" style="color: #fd7e14;"></i>
+                                File Gambar
+                            </span>
+                            <span class="filter-count">{{ $fileCounts['image'] ?? 0 }}</span>
+                        </div>
+                        <div class="filter-option {{ (request('filter_type') == 'other') ? 'active' : '' }}" data-filter="other">
+                            <span>
+                                <i class="fas fa-file file-type-icon" style="color: #6c757d;"></i>
+                                File Lain
+                            </span>
+                            <span class="filter-count">{{ $fileCounts['other'] ?? 0 }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden input for maintaining filter state -->
+                <input type="hidden" name="filter_type" id="filter_type_input" value="{{ request('filter_type', 'all') }}">
+            </form>
         </div>
-    @endif
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
-        <strong><h1 class="fw-bold fs-2 mb-0 text-dark">Database Bendahara</h1></strong>
-        <p></p>
-    </div>
+        <div id="table" class="container">
+            @include('admin.bendahara._table', compact('laporanBendahara', 'fileCounts'))
+        </div>
 
-    <div class="main-content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="table-header" style="border-radius: 12px 12px 0px 0px">
-                                <div class="d-flex justify-content-between align-items-start mb-3"> <!-- Changed to align-items-start -->
-                                    <!-- Left side with title and info aligned -->
-                                    <div class="d-flex flex-column">
-                                        <strong><h2 class="mb-2 fw-bold text-dark">Daftar Laporan Database Bendahara</h2></strong>
-                                        @if (!(isset($laporanBendahara) && $laporanBendahara->isEmpty()))
-                                            <div id="filter-info" class="text-muted">
-                                                Menampilkan <span id="showing-count">{{ isset($laporanBendahara) ? $laporanBendahara->count() : 0 }}</span>
-                                                dari <span id="total-count">{{ isset($laporanBendahara) ? $laporanBendahara->total() : 0 }}</span> laporan
-                                            </div>
-                                        @endif
-                                    </div>
+        <!-- Add Modal -->
+        <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="fs-2 fw-bold leading-5">Tambah Laporan Bendahara</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
 
-                                    <!-- Enhanced Search and Filter Controls -->
-                                    <div class="controls-container">
-                                        <a href="{{ route('admin.bendahara.create') }}" class="btn btn-add-laporan">
-                                            <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Laporan
-                                        </a>
+                    <form id="formAdd" action="{{ route('admin.bendahara.store') }}" method="POST"
+                        enctype="multipart/form-data" class="d-grid gap-4">
+                        @csrf
 
-                                        <!-- Search Container -->
-                                        <div class="search-container">
-                                            <input
-                                                type="text"
-                                                class="form-control search-input"
-                                                placeholder="Cari laporan..."
-                                                id="search"
-                                                name="search"
-                                                value="{{ request('search') }}"
-                                            >
-                                            <i class="fas fa-search search-icon"></i>
-                                        </div>
+                        <div>
+                            <div class="fw-semibold required mb-3 text-gray-800">Judul Laporan</div>
+                            <input type="text" name="judul" placeholder="Masukkan Judul Laporan"
+                                class="form-control bg-light border border-gray-400" required />
+                        </div>
 
-                                        <!-- Filter Dropdown -->
-                                        <div class="filter-dropdown">
-                                            {{-- UPDATED FILTER BUTTON - This shows current active filter --}}
-                                            <div class="filter-btn {{ (request('filter_type') && request('filter_type') != 'all') ? 'filter-active' : '' }}" id="filterBtn">
-                                                <i class="fas fa-filter"></i>
-                                                <span>
-                                                    @if(request('filter_type') == 'pdf')
-                                                        File PDF
-                                                    @elseif(request('filter_type') == 'doc')
-                                                        File DOC/DOCX
-                                                    @elseif(request('filter_type') == 'excel')
-                                                        File Excel
-                                                    @elseif(request('filter_type') == 'image')
-                                                        File Gambar
-                                                    @elseif(request('filter_type') == 'other')
-                                                        File Lain
-                                                    @else
-                                                        Filter
-                                                    @endif
-                                                </span>
-                                                <i class="fas fa-chevron-down ms-1" style="font-size: 0.8rem;"></i>
-                                            </div>
-
-                                            {{-- UPDATED FILTER MENU - This shows filter options with counts --}}
-                                            <div class="filter-menu" id="filterMenu" data-filter-counts="{{ json_encode($fileCounts ?? []) }}">
-                                                <div class="filter-option {{ (request('filter_type', 'all') == 'all') ? 'active' : '' }}" data-filter="all">
-                                                    <span>
-                                                        <i class="fas fa-list file-type-icon"></i>
-                                                        Semua File
-                                                    </span>
-                                                    <span class="filter-count" id="all-count">{{ $fileCounts['all'] ?? 0 }}</span>
-                                                </div>
-                                                <div class="filter-option {{ (request('filter_type') == 'pdf') ? 'active' : '' }}" data-filter="pdf">
-                                                    <span>
-                                                        <i class="fas fa-file-pdf file-type-icon" style="color: #dc3545;"></i>
-                                                        File PDF
-                                                    </span>
-                                                    <span class="filter-count" id="pdf-count">{{ $fileCounts['pdf'] ?? 0 }}</span>
-                                                </div>
-                                                <div class="filter-option {{ (request('filter_type') == 'doc') ? 'active' : '' }}" data-filter="doc">
-                                                    <span>
-                                                        <i class="fas fa-file-word file-type-icon" style="color: #0d6efd;"></i>
-                                                        File DOC/DOCX
-                                                    </span>
-                                                    <span class="filter-count" id="doc-count">{{ $fileCounts['doc'] ?? 0 }}</span>
-                                                </div>
-                                                <div class="filter-option {{ (request('filter_type') == 'excel') ? 'active' : '' }}" data-filter="excel">
-                                                    <span>
-                                                        <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
-                                                        File Excel
-                                                    </span>
-                                                    <span class="filter-count" id="excel-count">{{ $fileCounts['excel'] ?? 0 }}</span>
-                                                </div>
-                                                <div class="filter-option {{ (request('filter_type') == 'image') ? 'active' : '' }}" data-filter="image">
-                                                    <span>
-                                                        <i class="fas fa-file-image file-type-icon" style="color: #fd7e14;"></i>
-                                                        File Gambar
-                                                    </span>
-                                                    <span class="filter-count" id="image-count">{{ $fileCounts['image'] ?? 0 }}</span>
-                                                </div>
-                                                <div class="filter-option {{ (request('filter_type') == 'other') ? 'active' : '' }}" data-filter="other">
-                                                    <span>
-                                                        <i class="fas fa-file file-type-icon" style="color: #6c757d;"></i>
-                                                        File Lain
-                                                    </span>
-                                                    <span class="filter-count" id="other-count">{{ $fileCounts['other'] ?? 0 }}</span>
-                                                </div>
-                                            </div>
+                        <div>
+                            <div class="fw-semibold required mb-3 text-gray-800">Unggah Dokumen</div>
+                            <div class="fv-row">
+                                <div class="dropzone" id="dropzone-formAdd">
+                                    <div class="dz-message needsclick">
+                                        <i class="ki-duotone ki-file-up fs-3x text-primary">
+                                            <span class="path1"></span><span class="path2"></span>
+                                        </i>
+                                        <div class="ms-4">
+                                            <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
+                                            <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB.</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="table-container">
-                                @include('admin.bendahara._table')
-                            </div>
                         </div>
+                    </form>
+
+                    <div class="d-grid py-4">
+                        <button type="button" onclick="submitForm('formAdd')"
+                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            Tambah Laporan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Preview Modal -->
+        <div class="modal fade preview-modal" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filePreviewModalLabel">Preview Dokumen</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div id="previewContainer" class="w-100 h-100">
+                            <!-- Preview content will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a id="downloadBtn" href="#" class="btn btn-primary" target="_blank">
+                            <i class="ki-outline ki-down me-2"></i>Download File
+                        </a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('script')
-    @if (isset($laporanBendahara) && $laporanBendahara->isNotEmpty())
-        <script>
-        $(document).ready(function() {
-        let currentFilter = 'all';
+    <script>
+        function reloadTable(url = null) {
+            let formData = $('#filter').serialize();
+            let target = url ?? "{{ route('admin.bendahara.index') }}";
 
-        // Initialize sorting from URL on page load
-        initializeSortingFromURL();
-        updateFilterCounts();
-
-        // Filter dropdown functionality
-        $('#filterBtn').on('click', function(e) {
-            e.stopPropagation();
-            $('#filterMenu').toggleClass('show');
-        });
-
-        // Close dropdown when clicking outside
-        $(document).on('click', function() {
-            $('#filterMenu').removeClass('show');
-        });
-
-        // Filter option selection - NOW USES SERVER-SIDE FILTERING
-        $('.filter-option').on('click', function(e) {
-            e.stopPropagation();
-
-            const filterType = $(this).data('filter');
-            if (filterType === currentFilter) return;
-
-            // Update active state
-            $('.filter-option').removeClass('active');
-            $(this).addClass('active');
-
-            // Update button text and style
-            const filterText = $(this).find('span').first().text().trim();
-            $('#filterBtn span').text(filterText);
-
-            // Update button style for active filter
-            if (filterType === 'all') {
-                $('#filterBtn').removeClass('filter-active');
-            } else {
-                $('#filterBtn').addClass('filter-active');
-            }
-
-            currentFilter = filterType;
-
-            // Apply SERVER-SIDE filter
-            applyServerSideFilter(filterType);
-
-            $('#filterMenu').removeClass('show');
-        });
-
-        // Apply server-side filtering
-        function applyServerSideFilter(filterType) {
-            const url = buildURL();
-
-            // Set or remove filter parameter
-            if (filterType && filterType !== 'all') {
-                url.searchParams.set('filter_type', filterType);
-            } else {
-                url.searchParams.delete('filter_type');
-            }
-
-            // Reset to first page when filtering
-            url.searchParams.delete('page');
-
-            // Load filtered results from server
-            loadTable(url.toString());
-        }
-
-        // Update filter counts from server response
-        function updateFilterCounts() {
-            // These counts will be provided by the server in the view
-            // The counts should be passed from the controller
-            console.log('Filter counts updated from server data');
-        }
-
-        function loadTable(url) {
             $.ajax({
-                url: url,
-                type: 'GET',
+                url: target,
+                data: formData,
                 beforeSend: function() {
-                    $('.table-container').html(
-                        '<div class="text-center py-5">' +
-                        '<div class="spinner-border text-primary" role="status">' +
-                        '<span class="visually-hidden">Loading...</span>' +
-                        '</div></div>'
+                    $('#table').addClass('table-loading');
+                    $('#table').html(
+                        '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
                     );
                 },
                 success: function(response) {
-                    $('.table-container').html(response);
-                    bindEvents();
-                    updateFilterInfo(response);
-                    updateURL(url);
+                    $('#table').removeClass('table-loading');
+                    $('#table').html(response);
 
-                    // Update filter counts from server response
+                    // Reinitialize dropzones for edit modals
+                    initializeDropzones();
+
+                    // Update filter counts
                     updateFilterCountsFromResponse(response);
 
-                    // Re-sync sorting after loading new content
-                    syncSortingWithURL();
+                    // Update URL without page refresh
+                    if (window.history && window.history.pushState) {
+                        const url = new URL(window.location);
+                        const searchParams = new URLSearchParams(formData);
+
+                        // Update URL parameters
+                        for (const [key, value] of searchParams.entries()) {
+                            if (value) {
+                                url.searchParams.set(key, value);
+                            } else {
+                                url.searchParams.delete(key);
+                            }
+                        }
+
+                        window.history.pushState({}, '', url);
+                    }
                 },
                 error: function(xhr) {
-                    console.error(xhr.responseText);
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Gagal memuat data laporan',
-                        icon: 'error'
-                    });
+                    $('#table').removeClass('table-loading');
+                    $('#table').html(
+                        '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                    );
                 }
             });
         }
 
         function updateFilterCountsFromResponse(response) {
             try {
-                // Extract filter counts from the response
                 const tempDiv = $('<div>').html(response);
-
-                // Look for count data in the response
                 const countData = tempDiv.find('[data-filter-counts]').data('filter-counts');
+
                 if (countData) {
-                    $('#all-count').text(countData.all || 0);
-                    $('#pdf-count').text(countData.pdf || 0);
-                    $('#doc-count').text(countData.doc || 0);
-                    $('#excel-count').text(countData.excel || 0);
-                    $('#image-count').text(countData.image || 0);
-                    $('#other-count').text(countData.other || 0);
+                    // Update filter menu counts
+                    $('.filter-option[data-filter="all"] .filter-count').text(countData.all || 0);
+                    $('.filter-option[data-filter="pdf"] .filter-count').text(countData.pdf || 0);
+                    $('.filter-option[data-filter="doc"] .filter-count').text(countData.doc || 0);
+                    $('.filter-option[data-filter="excel"] .filter-count').text(countData.excel || 0);
+                    $('.filter-option[data-filter="image"] .filter-count').text(countData.image || 0);
+                    $('.filter-option[data-filter="other"] .filter-count').text(countData.other || 0);
                 }
             } catch (e) {
                 console.log('Could not update filter counts from response');
             }
         }
 
-        function bindEvents() {
-            // Remove all previous event bindings to prevent duplicates
-            $(document).off('click.customFilter change.customFilter input.customFilter');
+        function previewFile(fileUrl, fileName, fileExtension) {
+            const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
+            const previewContainer = document.getElementById('previewContainer');
+            const modalTitle = document.getElementById('filePreviewModalLabel');
+            const downloadBtn = document.getElementById('downloadBtn');
 
-            // Pagination links
-            $(document).on('click.customFilter', '.pagination-link', function(e) {
-                e.preventDefault();
-                const url = $(this).attr('href');
-                if (url) loadTable(url);
-            });
+            // Set modal title and download button
+            modalTitle.textContent = fileName;
+            downloadBtn.href = fileUrl;
 
-            // Per page selector
-            $(document).on('change.customFilter', 'select[name="per_page"]', function() {
-                const url = buildURL();
-                url.searchParams.set('per_page', $(this).val());
-                url.searchParams.delete('page');
-                loadTable(url.toString());
-            });
+            // Clear previous content
+            previewContainer.innerHTML = '';
 
-            // Sorting links
-            $(document).on('click.customFilter', '.sortable, .sort-link', function(e) {
-                e.preventDefault();
+            // Handle different file types
+            const ext = fileExtension.toLowerCase();
 
-                const sortBy = $(this).data('sort');
-                const url = buildURL();
-
-                // Get current sorting from URL parameters
-                const currentSortBy = url.searchParams.get('sort_by');
-                const currentOrder = url.searchParams.get('order');
-
-                let newOrder;
-
-                if (currentSortBy === sortBy) {
-                    // Same column clicked - cycle through: asc -> desc -> no sort
-                    if (currentOrder === 'asc') {
-                        newOrder = 'desc';
-                    } else if (currentOrder === 'desc') {
-                        // Remove sorting (back to default)
-                        url.searchParams.delete('sort_by');
-                        url.searchParams.delete('order');
-                        url.searchParams.delete('page');
-
-                        // Update visual indicators
-                        updateSortingVisuals();
-
-                        loadTable(url.toString());
-                        return;
-                    } else {
-                        newOrder = 'asc';
-                    }
-                } else {
-                    // Different column clicked - start with asc
-                    newOrder = 'asc';
-                }
-
-                // Set new sorting parameters
-                url.searchParams.set('sort_by', sortBy);
-                url.searchParams.set('order', newOrder);
-                url.searchParams.delete('page');
-
-                // Update visual indicators immediately
-                updateSortingVisuals(sortBy, newOrder);
-
-                loadTable(url.toString());
-            });
-
-            // Search input with debounce
-            let searchTimeout;
-            $(document).on('input.customFilter', '#search', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    applySearch();
-                }, 300);
-            });
-        }
-
-        function applySearch() {
-            const url = buildURL();
-            const search = $('#search').val().trim();
-
-            // Set or remove search parameter
-            if (search) {
-                url.searchParams.set('search', search);
+            if (ext === 'pdf') {
+                // PDF preview
+                previewContainer.innerHTML = `
+                    <iframe src="${fileUrl}" style="width: 100%; height: 70vh;" frameborder="0">
+                        <div class="preview-error">
+                            <i class="fas fa-file-pdf"></i>
+                            <h5>Cannot display PDF</h5>
+                            <p>Your browser doesn't support PDF preview. Please download the file to view it.</p>
+                        </div>
+                    </iframe>
+                `;
+            } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
+                // Image preview
+                previewContainer.innerHTML = `
+                    <div class="d-flex justify-content-center align-items-center" style="height: 70vh;">
+                        <img src="${fileUrl}" class="img-fluid" style="max-height: 100%; max-width: 100%;" alt="${fileName}">
+                    </div>
+                `;
+            } else if (['doc', 'docx'].includes(ext)) {
+                // Word document preview using Google Docs Viewer
+                previewContainer.innerHTML = `
+                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true"
+                            style="width: 100%; height: 70vh;" frameborder="0">
+                        <div class="preview-error">
+                            <i class="fas fa-file-word"></i>
+                            <h5>Preview not available</h5>
+                            <p>Cannot preview this Word document. Please download the file to view it.</p>
+                        </div>
+                    </iframe>
+                `;
+            } else if (['xls', 'xlsx'].includes(ext)) {
+                // Excel document preview using Google Docs Viewer
+                previewContainer.innerHTML = `
+                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true"
+                            style="width: 100%; height: 70vh;" frameborder="0">
+                        <div class="preview-error">
+                            <i class="fas fa-file-excel"></i>
+                            <h5>Preview not available</h5>
+                            <p>Cannot preview this Excel document. Please download the file to view it.</p>
+                        </div>
+                    </iframe>
+                `;
             } else {
-                url.searchParams.delete('search');
+                // Unsupported file type
+                previewContainer.innerHTML = `
+                    <div class="preview-error">
+                        <i class="fas fa-file"></i>
+                        <h5>Preview not available</h5>
+                        <p>This file type cannot be previewed. Please download the file to view it.</p>
+                        <small class="text-muted">File type: ${ext.toUpperCase()}</small>
+                    </div>
+                `;
             }
 
-            // Reset to first page when searching
-            url.searchParams.delete('page');
+            modal.show();
+        }
 
-            // Preserve per_page setting
-            const perPage = $('select[name="per_page"]').val();
-            if (perPage && perPage !== '10') {
-                url.searchParams.set('per_page', perPage);
+        function debounce(func, delay) {
+            let timeout;
+            return function() {
+                const context = this,
+                    args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        Dropzone.autoDiscover = false;
+        const dropzones = {};
+
+        function initializeDropzones() {
+            // Clear existing dropzones
+            Object.keys(dropzones).forEach(key => {
+                if (dropzones[key] && typeof dropzones[key].destroy === 'function') {
+                    dropzones[key].destroy();
+                    delete dropzones[key];
+                }
+            });
+
+            // Initialize add form dropzone
+            if (document.getElementById('dropzone-formAdd')) {
+                dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
+                    url: "#",
+                    autoProcessQueue: false,
+                    paramName: 'dokumen',
+                    maxFiles: 1,
+                    maxFilesize: 10,
+                    addRemoveLinks: true,
+                    acceptedFiles: '.pdf,.doc,.docx,.xls,.xlsx',
+                });
             }
 
-            // Load search results
-            loadTable(url.toString());
-        }
-
-        function buildURL() {
-            return new URL(window.location.href);
-        }
-
-        function initializeSortingFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const sortBy = urlParams.get('sort_by');
-            const order = urlParams.get('order');
-            const filterType = urlParams.get('filter_type') || 'all';
-
-            // Set search value from URL
-            $('#search').val(urlParams.get('search') || '');
-            $('select[name="per_page"]').val(urlParams.get('per_page') || '10');
-
-            // Set filter from URL
-            currentFilter = filterType;
-            $('.filter-option').removeClass('active');
-            $(`.filter-option[data-filter="${filterType}"]`).addClass('active');
-
-            // Update filter button
-            if (filterType !== 'all') {
-                $('#filterBtn').addClass('filter-active');
-                const filterText = $(`.filter-option[data-filter="${filterType}"] span`).first().text().trim();
-                $('#filterBtn span').text(filterText);
-            }
-
-            updateSortingVisuals(sortBy, order);
-        }
-
-        function syncSortingWithURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const sortBy = urlParams.get('sort_by');
-            const order = urlParams.get('order');
-            const filterType = urlParams.get('filter_type') || 'all';
-
-            // Sync search input
-            $('#search').val(urlParams.get('search') || '');
-
-            // Sync per_page selector
-            const perPage = urlParams.get('per_page') || '10';
-            $('select[name="per_page"]').val(perPage);
-
-            // Sync filter
-            currentFilter = filterType;
-            $('.filter-option').removeClass('active');
-            $(`.filter-option[data-filter="${filterType}"]`).addClass('active');
-
-            updateSortingVisuals(sortBy, order);
-        }
-
-        function updateSortingVisuals(activeSortBy = null, activeOrder = null) {
-            // Reset all sort indicators
-            $('.sort-link').each(function() {
-                const $link = $(this);
-                const $icon = $link.find('i');
-                const sortBy = $link.data('sort');
-
-                // Update data-order for next click
-                if (sortBy === activeSortBy) {
-                    $link.data('order', activeOrder);
-
-                    // Update icon based on current state
-                    if (activeOrder === 'asc') {
-                        $icon.removeClass('fa-sort fa-sort-down text-muted').addClass('fa-sort-up');
-                    } else if (activeOrder === 'desc') {
-                        $icon.removeClass('fa-sort fa-sort-up text-muted').addClass('fa-sort-down');
-                    } else {
-                        $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
-                    }
-                } else {
-                    // Reset other columns
-                    $link.data('order', 'asc');
-                    $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
+            // Initialize edit form dropzones
+            document.querySelectorAll('[id^="dropzone-form-"]').forEach(element => {
+                const formId = element.id.replace('dropzone-', '');
+                if (!dropzones[formId]) {
+                    dropzones[formId] = new Dropzone(`#${element.id}`, {
+                        url: "#",
+                        autoProcessQueue: false,
+                        paramName: 'dokumen',
+                        maxFiles: 1,
+                        maxFilesize: 10,
+                        addRemoveLinks: true,
+                        acceptedFiles: '.pdf,.doc,.docx,.xls,.xlsx',
+                    });
                 }
             });
         }
 
-        function updateFilterInfo(response) {
-            try {
-                const tempDiv = $('<div>').html(response);
-                const showingInfo = tempDiv.find('#filter-info, .showing-info').text();
-                if (showingInfo) {
-                    $('#filter-info, .showing-info').text(showingInfo);
-                }
-            } catch (e) {
-                console.log('Could not update filter info');
-            }
-        }
+        $(document).ready(function() {
+            let currentFilter = '{{ request("filter_type", "all") }}';
 
-        function updateURL(url) {
-            if (window.history && window.history.pushState) {
-                window.history.pushState({}, '', url);
-            }
-        }
+            initializeDropzones();
 
-        // Handle browser back/forward buttons
-        window.onpopstate = function() {
-            syncSortingWithURL();
-            loadTable(window.location.href);
-        };
+            // Filter dropdown functionality
+            $('#filterBtn').on('click', function(e) {
+                e.stopPropagation();
+                $('#filterMenu').toggleClass('show');
+            });
 
-        // Initialize event bindings
-        bindEvents();
+            // Close dropdown when clicking outside
+            $(document).on('click', function() {
+                $('#filterMenu').removeClass('show');
+            });
 
-        // Keyboard shortcuts
-        $(document).keydown(function(e) {
-            if ((e.ctrlKey || e.metaKey) && e.keyCode === 70) { // Ctrl+F
-                e.preventDefault();
-                $('#search').focus();
-            }
+            // Filter option selection
+            $('.filter-option').on('click', function(e) {
+                e.stopPropagation();
 
-            if (e.keyCode === 27) { // Escape
-                $('#search').val('').trigger('input');
-                // Reset filter
-                currentFilter = 'all';
+                const filterType = $(this).data('filter');
+                if (filterType === currentFilter) return;
+
+                // Update active state
                 $('.filter-option').removeClass('active');
-                $('.filter-option[data-filter="all"]').addClass('active');
-                $('#filterBtn').removeClass('filter-active');
-                $('#filterBtn span').text('Filter');
-                applyServerSideFilter('all');
+                $(this).addClass('active');
+
+                // Update button content
+                const filterContent = $(this).find('span').first().html();
+                $('#filterBtn span').html(filterContent);
+
+                // Update button style for active filter
+                if (filterType === 'all') {
+                    $('#filterBtn').removeClass('filter-active');
+                } else {
+                    $('#filterBtn').addClass('filter-active');
+                }
+
+                currentFilter = filterType;
+
+                // Update hidden input
+                $('#filter_type_input').val(filterType);
+
+                // Apply filter
+                reloadTable();
+
+                $('#filterMenu').removeClass('show');
+            });
+
+            // Search functionality with debounce
+            $(document).on('input', '#filter input[name="search"]', debounce(function() {
+                let keyword = $(this).val();
+                if (keyword.length >= 1 || keyword.length === 0) {
+                    reloadTable();
+                }
+            }, 300));
+
+            // Per page change
+            $(document).on('change', '#per_page', function() {
+                reloadTable();
+            });
+
+            // Pagination clicks
+            $(document).on('click', '.pagination a', function(e) {
+                e.preventDefault();
+                let url = $(this).attr('href');
+                if (url) {
+                    reloadTable(url);
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside
+            $('#filterMenu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // Initialize filter from URL on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            const filterFromURL = urlParams.get('filter_type') || 'all';
+            if (filterFromURL !== currentFilter) {
+                $(`.filter-option[data-filter="${filterFromURL}"]`).click();
             }
         });
 
-        // Delete functionality
-        window.destroyItem = function(button) {
-            const route = button.dataset.route;
+        function submitForm(formId) {
+            let form = document.getElementById(formId);
+            let formData = new FormData(form);
 
-            Swal.fire({
-                title: "Apakah Anda Yakin?",
-                html: "<p style='text-align:center'>Setelah data laporan dihapus, Anda tidak bisa mengembalikannya!</p>",
-                icon: "warning",
-                showCancelButton: true,
-                reverseButtons: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Hapus!',
-                cancelButtonText: 'Batalkan!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Menghapus...',
-                        text: 'Mohon tunggu',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        willOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
-
-                    $.ajax({
-                        url: route,
-                        type: 'DELETE',
-                        data: {
-                            _token: $('meta[name="csrf-token"]').attr('content')
-                        },
-                        success: function(response) {
-                            Swal.fire({
-                                title: 'Berhasil!',
-                                text: response.message || 'Data laporan berhasil dihapus',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-
-                            loadTable(window.location.href);
-                        },
-                        error: function(xhr) {
-                            Swal.close();
-
-                            try {
-                                const response = JSON.parse(xhr.responseText);
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: response.message || 'Gagal menghapus data laporan',
-                                    icon: 'error'
-                                });
-                            } catch (e) {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Gagal menghapus data laporan',
-                                    icon: 'error'
-                                });
-                            }
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        title: "Aksi Dibatalkan :)",
-                        icon: "info",
-                        timer: 1500,
-                        showConfirmButton: false
+            const dz = dropzones[formId];
+            if (dz) {
+                const files = dz.getAcceptedFiles();
+                if (files.length > 0) {
+                    files.forEach((file) => {
+                        formData.append('dokumen', file);
                     });
                 }
-            });
-        };
-    });
-        </script>
-    @endif
+            }
+
+            fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData,
+                })
+                .then(async response => {
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        $('.modal.show').modal('hide');
+                        console.log('Error response from controller:', data);
+
+                        if (data.errors) {
+                            for (let field in data.errors) {
+                                let msg = data.errors[field].join(', ');
+                                toastr.error(msg, "Error!");
+                            }
+                        } else {
+                            toastr.error(data.message || "Gagal menyimpan data", "Error!");
+                        }
+                    } else {
+                        $('.modal.show').modal('hide');
+                        toastr.success(data.message || "Data berhasil disimpan", "Success!");
+
+                        // Clear form
+                        form.reset();
+                        if (dropzones[formId]) {
+                            dropzones[formId].removeAllFiles();
+                        }
+
+                        reloadTable();
+                    }
+                })
+                .catch(error => {
+                    $('.modal.show').modal('hide');
+                    console.error('Fetch error:', error);
+                    toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+                });
+        }
+
+        function deleteItem(formId) {
+            if (confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
+                document.getElementById(formId).submit();
+            }
+        }
+    </script>
 @endsection

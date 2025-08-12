@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Bendahara;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class BendaharaController extends Controller
 {
@@ -172,22 +173,51 @@ class BendaharaController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'judul' => 'required|string|max:255',
-            'dokumen' => 'required|mimes:pdf,doc,docx,xls,xlsx|max:5120',
-        ]);
-
         try {
+            $data = $request->validate([
+                'judul' => 'required|string|max:255',
+                'dokumen' => 'required|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            ], [
+                'judul.required' => 'Judul laporan wajib diisi.',
+                'judul.max' => 'Judul laporan tidak boleh lebih dari 255 karakter.',
+                'dokumen.required' => 'Dokumen wajib diunggah.',
+                'dokumen.mimes' => 'Format file harus PDF, DOC, DOCX, XLS, atau XLSX.',
+                'dokumen.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
+            ]);
+
             if ($request->hasFile('dokumen')) {
                 $data['dokumen'] = $request->file('dokumen')->store('bendahara', 'public');
             }
 
             $laporanBendahara = Bendahara::create($data);
 
+            // Check if it's AJAX request
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Laporan bendahara berhasil disimpan.'
+                ]);
+            }
+
             return redirect()->route('admin.bendahara.index')
                 ->with('OK', 'Laporan bendahara berhasil disimpan.')
                 ->with('action', 'store');
+
+        } catch (ValidationException $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            return back()->withInput()->withErrors($e->errors());
         } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menyimpan laporan bendahara: ' . $e->getMessage()
+                ], 500);
+            }
             return back()->withInput()
                 ->with('error', 'Gagal menyimpan laporan bendahara. Error: ' . $e->getMessage());
         }
@@ -207,13 +237,20 @@ class BendaharaController extends Controller
 
     public function update(Request $request, Bendahara $bendahara)
     {
-        $data = $request->validate([
-            'judul' => 'required|string|max:255',
-            'dokumen' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:5120',
-        ]);
-
         try {
+            $data = $request->validate([
+                'judul' => 'required|string|max:255',
+                'dokumen' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            ], [
+                'judul.required' => 'Judul laporan wajib diisi.',
+                'judul.max' => 'Judul laporan tidak boleh lebih dari 255 karakter.',
+                'dokumen.mimes' => 'Format file harus PDF, DOC, DOCX, XLS, atau XLSX.',
+                'dokumen.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
+            ]);
+
+            // Handle file update if new file is uploaded
             if ($request->hasFile('dokumen')) {
+                // Delete old file if exists
                 if ($bendahara->dokumen) {
                     Storage::disk('public')->delete($bendahara->dokumen);
                 }
@@ -222,10 +259,33 @@ class BendaharaController extends Controller
 
             $bendahara->update($data);
 
+            // Check if it's AJAX request
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Laporan bendahara berhasil diperbarui.'
+                ]);
+            }
+
             return redirect()->route('admin.bendahara.index')
                 ->with('OK', 'Laporan bendahara berhasil diubah.')
                 ->with('action', 'update');
+
+        } catch (ValidationException $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            return back()->withInput()->withErrors($e->errors());
         } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal memperbarui laporan bendahara: ' . $e->getMessage()
+                ], 500);
+            }
             return back()->withInput()
                 ->with('error', 'Gagal mengubah laporan bendahara. Error: ' . $e->getMessage());
         }
@@ -282,4 +342,19 @@ class BendaharaController extends Controller
 
         return response()->download($filePath, $fileName);
     }
+
+    /**
+     * Helper method to format file size
+     */
+    private function formatBytes($size, $precision = 2)
+    {
+        if ($size == 0) return '0 B';
+
+        $base = log($size, 1024);
+        $suffixes = array('B', 'KB', 'MB', 'GB', 'TB');
+
+        return round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
+    }
 }
+
+
