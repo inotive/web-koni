@@ -83,7 +83,7 @@ class SuratController extends Controller
         Surat::create($data);
 
         return redirect()->route('admin.surat.index')
-                        ->with('success', 'Surat berhasil ditambahkan!');
+                        ->with('OK', 'Surat berhasil ditambahkan!');
     }
 
     /**
@@ -129,7 +129,7 @@ class SuratController extends Controller
         $surat->update($data);
 
         return redirect()->route('admin.surat.index')
-                        ->with('success', 'Surat berhasil diperbarui!');
+                        ->with('OK', 'Surat berhasil diperbarui!');
     }
 
     /**
@@ -145,6 +145,6 @@ class SuratController extends Controller
         $surat->delete();
 
         return redirect()->route('admin.surat.index')
-                        ->with('success', 'Surat berhasil dihapus!');
+                        ->with('OK', 'Surat berhasil dihapus!');
     }
 }
