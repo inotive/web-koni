@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\CabangOlahragaController;
 use App\Http\Controllers\Admin\ManajemenRKAController;
 use App\Http\Controllers\Admin\BendaharaController;
+use App\Http\Controllers\Admin\SuratController;
 use App\Http\Controllers\Admin\SumberdayaController;
 use App\Http\Controllers\LaporanRKAController;
 
@@ -63,14 +64,17 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::resource('manajemen-rka', ManajemenRKAController::class);
     Route::resource('laporan-rka', LaporanRKAController::class);
 
+    Route::resource('surat', SuratController::class);
+
+
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);
         Route::resource('pelatih', PelatihController::class);
-         Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
+        Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
             ->name('pelatih.updateKetersediaan');
         Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
             ->name('pelatih.prestasi.store');
-            Route::patch('atlet/{atlet}/ketersediaan', [AtletController::class, 'updateKetersediaan'])
+        Route::patch('atlet/{atlet}/ketersediaan', [AtletController::class, 'updateKetersediaan'])
             ->name('atlet.updateKetersediaan');
         Route::post('atlet/{atlet}/prestasi', [PrestasiController::class, 'store'])
             ->name('atlet.prestasi.store');
@@ -166,19 +170,18 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/sport-science', [App\Http\Controllers\Admin\BidangController::class, 'sportScience'])->name('sport-science');
             Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
         });
-
     }); //Batas LPJ
-        Route::prefix('bendahara')->name('bendahara.')->group(function () {
-            Route::get('/', [BendaharaController::class, 'index'])->name('index');
-            Route::get('/create', [BendaharaController::class, 'create'])->name('create');
-            Route::post('/', [BendaharaController::class, 'store'])->name('store');
-            Route::get('/{bendahara}', [BendaharaController::class, 'show'])->name('show');
-            Route::get('/{bendahara}/edit', [BendaharaController::class, 'edit'])->name('edit');
-            Route::put('/{bendahara}', [BendaharaController::class, 'update'])->name('update');
-            Route::delete('/{bendahara}', [BendaharaController::class, 'destroy'])->name('destroy');
-            Route::get('/{bendahara}/download', [BendaharaController::class, 'download'])->name('download');
-        });
-    }); //Batas Admin
+    Route::prefix('bendahara')->name('bendahara.')->group(function () {
+        Route::get('/', [BendaharaController::class, 'index'])->name('index');
+        Route::get('/create', [BendaharaController::class, 'create'])->name('create');
+        Route::post('/', [BendaharaController::class, 'store'])->name('store');
+        Route::get('/{bendahara}', [BendaharaController::class, 'show'])->name('show');
+        Route::get('/{bendahara}/edit', [BendaharaController::class, 'edit'])->name('edit');
+        Route::put('/{bendahara}', [BendaharaController::class, 'update'])->name('update');
+        Route::delete('/{bendahara}', [BendaharaController::class, 'destroy'])->name('destroy');
+        Route::get('/{bendahara}/download', [BendaharaController::class, 'download'])->name('download');
+    });
+}); //Batas Admin
 
 
 

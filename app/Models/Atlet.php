@@ -22,7 +22,7 @@ class Atlet extends Model
         'prestasi_terbaru',
         'no_telepon',
         'email',
-        'foto_atlet',
+        'foto',
         'alamatkota',
         'alamatprovinsi',
         'ketersediaan'
@@ -32,6 +32,8 @@ class Atlet extends Model
         'tanggal_lahir' => 'date',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
+        'foto_jurnal' => 'array',
+        'dokumen_pendukung' => 'array',
     ];
 
     public function getUmurAttribute()

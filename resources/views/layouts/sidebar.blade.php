@@ -96,6 +96,17 @@
                     </div>
                 </div>
 
+                <div class="menu-item">
+                    <a class="menu-link {{ request()->is('admin/surat*') ? 'active bg-red' : '' }}"
+                        href=" {{ route('admin.surat.index') }}">
+                        <span class="menu-icon">
+                            <i class="fs-1 fa-solid fa-message"></i>
+                        </span>
+                        <span class="menu-title">Surat Masuk & Keluar</span>
+                    </a>
+                </div>
+
+
                 <!-- Konfigurasi Section -->
                 <div class="menu-item pt-10">
                     <div class="menu-content">

@@ -18,8 +18,8 @@ return new class extends Migration {
             $table->string('volume');
             $table->decimal('jumlah_harga_satuan', 15, 2);
             $table->decimal('jumlah_harga', 15, 2);
-            $table->string('foto_jurnal')->nullable();
-            $table->string('dokumen_pendukung')->nullable();
+            $table->text('foto_jurnal')->nullable();
+            $table->text('dokumen_pendukung')->nullable();
             $table->timestamps();
         });
     }
