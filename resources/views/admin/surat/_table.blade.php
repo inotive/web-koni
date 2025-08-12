@@ -1,17 +1,12 @@
-{{-- File: resources/views/admin/surat/partials/table.blade.php --}}
-
 @if ($suratData->isEmpty())
-    {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
         <h4>Tidak ada data surat {{ $tableId === 'masuk' ? 'masuk' : ($tableId === 'keluar' ? 'keluar' : 'masuk & keluar') }}.</h4>
     </div>
 @else
-    {{-- Data Table --}}
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle"
             id="kt_datatable_dom_positioning_surat_{{ $tableId }}">
-            {{-- Table Header --}}
             <thead class="bg-light">
                 <tr>
                     <th>No</th>
@@ -63,59 +58,20 @@
                             {{ \Carbon\Carbon::parse($surat->created_at)->format('d M Y H:i') }}
                         </td>
                         <td class="text-center">
-                            <div class="dropdown">
-                                <button class="btn btn-sm" type="button" data-bs-toggle="dropdown"
-                                    data-bs-boundary="window" aria-expanded="false"
-                                    style="padding: 7px; border: 1px solid #DBDFE9; border-radius: 6px;">
-                                    <svg fill="none" stroke-width="1.5" stroke="currentColor"
-                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg "
-                                        width="24" height="24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                                    </svg>
+                            <div class="d-flex justify-content-center gap-1">
+                                <a href="{{ route('admin.surat.edit', $surat->id) }}"
+                                   class="btn btn-icon btn-sm btn-light-warning"
+                                   title="Edit">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+
+                                <button type="button"
+                                        class="btn btn-icon btn-sm btn-light-danger"
+                                        data-route="{{ route('admin.surat.destroy', $surat->id) }}"
+                                        onclick="destroyItem(this)"
+                                        title="Hapus">
+                                    <i class="fa-solid fa-trash"></i>
                                 </button>
-
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="{{ route('admin.surat.show', $surat->id) }}"
-                                            class="dropdown-item d-flex align-items-center gap-2">
-                                            <i class="fas fa-eye"></i> Lihat Detail
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <a href="{{ route('admin.surat.edit', $surat->id) }}"
-                                            class="dropdown-item d-flex align-items-center gap-2">
-                                            <i class="fas fa-edit"></i> Modifikasi
-                                        </a>
-                                    </li>
-
-                                    @if ($surat->dokumen_surat)
-                                        <li>
-                                            <a href="{{ asset('storage/' . $surat->dokumen_surat) }}"
-                                               target="_blank"
-                                               class="dropdown-item d-flex align-items-center gap-2">
-                                                <i class="fas fa-download"></i> Download
-                                            </a>
-                                        </li>
-                                    @endif
-
-                                    <li><hr class="dropdown-divider"></li>
-
-                                    <li>
-                                        <form
-                                            action="{{ route('admin.surat.destroy', $surat->id) }}"
-                                            method="POST" class="d-inline"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                                                <i class="fas fa-trash"></i> Hapus
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
                             </div>
                         </td>
                     </tr>
@@ -128,10 +84,8 @@
         </table>
     </div>
 
-    {{-- Pagination Controls - Only show for 'semua' tab --}}
     @if ($tableId === 'semua' && $suratData instanceof \Illuminate\Pagination\LengthAwarePaginator)
         <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
-            {{-- Per Page Selector --}}
             <div class="mb-2 mb-md-0">
                 <div class="d-flex align-items-center">
                     <span class="me-2">Show</span>
@@ -145,7 +99,6 @@
                 </div>
             </div>
 
-            {{-- Pagination Links --}}
             <div class="d-flex align-items-center gap-3">
                 <div class="d-flex align-items-center">
                     <span class="me-2">Page {{ $suratData->currentPage() }} of {{ $suratData->lastPage() }}</span>

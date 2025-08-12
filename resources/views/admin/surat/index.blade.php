@@ -170,6 +170,52 @@
             background-color: #e9ecef;
             border-color: #dee2e6;
         }
+
+        /* Action Buttons Styling */
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .btn-light-warning {
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+            color: #856404;
+        }
+
+        .btn-light-warning:hover {
+            background-color: #ffecb5;
+            border-color: #ffe69c;
+            color: #533f03;
+        }
+
+        .btn-light-danger {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .btn-light-danger:hover {
+            background-color: #f1b0b7;
+            border-color: #ecadb2;
+            color: #491217;
+        }
+
+        .btn-light-primary {
+            background-color: #d1ecf1;
+            border-color: #b8daff;
+            color: #0c5460;
+        }
+
+        .btn-light-primary:hover {
+            background-color: #bee5eb;
+            border-color: #a6d8ff;
+            color: #062c33;
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -310,7 +356,6 @@
     @if ($suratMasukKeluar->isNotEmpty())
         <script>
             $(document).ready(function() {
-                // Initialize DataTables for each tab
                 function initializeDataTable(tableId) {
                     const table = $(`#kt_datatable_dom_positioning_surat_${tableId}`).DataTable({
                         paging: false,
@@ -339,11 +384,11 @@
                             }
                         ],
                         columns: [
-                            null, // No
-                            null, // Nama Kegiatan
-                            null, // Dokumen
-                            null, // Tanggal Dibuat
-                            null  // Aksi
+                            null,
+                            null,
+                            null,
+                            null,
+                            null
                         ],
                         language: {
                             emptyTable: "Data tidak ditemukan",
@@ -352,17 +397,14 @@
                     });
                 }
 
-                // Initialize all tables
                 initializeDataTable('semua');
                 initializeDataTable('masuk');
                 initializeDataTable('keluar');
 
-                // Tab change handler
                 $('#suratTabs button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
                     const targetId = $(e.target).attr('data-bs-target');
                     const tableId = targetId.replace('#', '').replace('-content', '');
 
-                    // Trigger table redraw to fix layout issues
                     setTimeout(() => {
                         $(`#kt_datatable_dom_positioning_surat_${tableId}`).DataTable().columns.adjust();
                     }, 100);
@@ -455,7 +497,6 @@
 
                 updateFilterCount();
 
-                // Handle active tab based on URL parameters
                 const urlParams = new URLSearchParams(window.location.search);
                 const jenisSurat = urlParams.get('jenis_surat');
 
@@ -465,6 +506,42 @@
                     $('#keluar-tab').tab('show');
                 }
             });
+
+            function destroyItem(button) {
+                const route = button.getAttribute('data-route');
+
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data surat ini akan dihapus secara permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#F8285A',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = route;
+
+                        const csrfToken = document.createElement('input');
+                        csrfToken.type = 'hidden';
+                        csrfToken.name = '_token';
+                        csrfToken.value = '{{ csrf_token() }}';
+                        form.appendChild(csrfToken);
+
+                        const methodInput = document.createElement('input');
+                        methodInput.type = 'hidden';
+                        methodInput.name = '_method';
+                        methodInput.value = 'DELETE';
+                        form.appendChild(methodInput);
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            }
         </script>
     @endif
 @endsection
