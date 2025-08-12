@@ -88,6 +88,39 @@
             transform: translateY(-8px);
         }
 
+        /* Tab Navigation Styling */
+        .nav-tabs-custom {
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 0;
+        }
+
+        .nav-tabs-custom .nav-link {
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 12px 24px;
+            font-weight: 600;
+            color: #6c757d;
+            background: none;
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs-custom .nav-link:hover {
+            border-bottom-color: #F8285A;
+            color: #F8285A;
+            background: none;
+        }
+
+        .nav-tabs-custom .nav-link.active {
+            color: #F8285A;
+            border-bottom-color: #F8285A;
+            background: none;
+        }
+
+        .tab-content-custom {
+            border-top: none;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .card-body {
@@ -105,6 +138,11 @@
                 z-index: 9999 !important;
                 right: 0 !important;
                 left: auto !important;
+            }
+
+            .nav-tabs-custom .nav-link {
+                padding: 8px 16px;
+                font-size: 14px;
             }
         }
 
@@ -142,8 +180,26 @@
     {{-- Main Content Card --}}
     <div class="row col-12 mt-5">
         <div class="card">
-            {{-- Card Header --}}
-            <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
+            {{-- Tab Navigation --}}
+            <div class="card-header border-bottom-0 pb-0">
+                <ul class="nav nav-tabs nav-tabs-custom" id="suratTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content"
+                                type="button" role="tab" aria-controls="masuk-content" aria-selected="false">
+                            <i class="fas fa-inbox me-2"></i>Surat Masuk
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="keluar-tab" data-bs-toggle="tab" data-bs-target="#keluar-content"
+                                type="button" role="tab" aria-controls="keluar-content" aria-selected="false">
+                            <i class="fas fa-paper-plane me-2"></i>Surat Keluar
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            {{-- Card Header with Title and Actions --}}
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5 border-top-0">
                 <h3 class="card-title fw-bold fs-4 mb-0">Daftar Surat Masuk & Keluar - 2025</h3>
 
                 {{-- Action Buttons --}}
@@ -211,164 +267,30 @@
                 </div>
             </div>
 
-            {{-- Card Body --}}
+            {{-- Tab Content --}}
             <div class="card-body">
-                @if ($surat->isEmpty())
-                    {{-- Empty State --}}
-                    <div class="text-center text-muted py-10">
-                        <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
-                        <h4>Tidak ada data surat masuk & keluar.</h4>
-                    </div>
-                @else
-                    {{-- Data Table --}}
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle"
-                            id="kt_datatable_dom_positioning_surat">
-                            {{-- Table Header --}}
-                            <thead class="bg-light">
-                                <tr>
-                                    <th>No</th>
-                                    <th>
-                                        <a href="{{ sortUrl('nama_kegiatan') }}"
-                                            class="text-dark text-decoration-none">
-                                            Nama Kegiatan {!! sortIcon('nama_kegiatan') !!}
-                                        </a>
-                                    </th>
-                                    <th>Dokumen</th>
-                                    <th>
-                                        <a href="{{ sortUrl('created_at') }}" class="text-dark text-decoration-none">
-                                            Tanggal Dibuat {!! sortIcon('created_at') !!}
-                                        </a>
-                                    </th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
+                <div class="tab-content tab-content-custom" id="suratTabContent">
 
-                            <tbody>
-                                @forelse ($suratMasukKeluar as $index => $surat)
-                                    <tr data-jenis-surat="{{ $surat->jenis_surat ?? '' }}">
-                                        <td class="text-center">
-                                            {{ ($suratMasukKeluar->currentPage() - 1) * $suratMasukKeluar->perPage() + $index + 1 }}
-                                        </td>
-                                        <td>
-                                            <div class="d-flex flex-column">
-                                                <strong class="text-truncate-custom">{{ $surat->nama_kegiatan }}</strong>
-                                                @if ($surat->jenis_surat)
-                                                    <small class="text-muted">
-                                                        <span class="badge badge-{{ $surat->jenis_surat == 'masuk' ? 'success' : 'primary' }} badge-sm">
-                                                            {{ $surat->jenis_surat == 'masuk' ? 'Surat Masuk' : 'Surat Keluar' }}
-                                                        </span>
-                                                    </small>
-                                                @endif
-                                            </div>
-                                        </td>
-                                        <td>
-                                            @if ($surat->dokumen_surat)
-                                                <a href="{{ asset('storage/' . $surat->dokumen_surat) }}" target="_blank"
-                                                    class="btn btn-sm btn-light-primary">
-                                                    <i class="fas fa-file-pdf me-1"></i>Lihat Dokumen
-                                                </a>
-                                            @else
-                                                <span class="text-muted">-</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ \Carbon\Carbon::parse($surat->created_at)->format('d M Y H:i') }}
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm" type="button" data-bs-toggle="dropdown"
-                                                    data-bs-boundary="window" aria-expanded="false"
-                                                    style="padding: 7px; border: 1px solid #DBDFE9; border-radius: 6px;">
-                                                    <svg fill="none" stroke-width="1.5" stroke="currentColor"
-                                                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg "
-                                                        width="24" height="24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                                                    </svg>
-                                                </button>
-
-                                                <ul class="dropdown-menu">
-                                                    <li>
-                                                        <a href="{{ route('admin.surat.show', $surat->id) }}"
-                                                            class="dropdown-item d-flex align-items-center gap-2">
-                                                            <i class="fas fa-eye"></i> Lihat Detail
-                                                        </a>
-                                                    </li>
-
-                                                    <li>
-                                                        <a href="{{ route('admin.surat.edit', $surat->id) }}"
-                                                            class="dropdown-item d-flex align-items-center gap-2">
-                                                            <i class="fas fa-edit"></i> Modifikasi
-                                                        </a>
-                                                    </li>
-
-                                                    @if ($surat->dokumen_surat)
-                                                        <li>
-                                                            <a href="{{ asset('storage/' . $surat->dokumen_surat) }}"
-                                                               target="_blank"
-                                                               class="dropdown-item d-flex align-items-center gap-2">
-                                                                <i class="fas fa-download"></i> Download
-                                                            </a>
-                                                        </li>
-                                                    @endif
-
-                                                    <li><hr class="dropdown-divider"></li>
-
-                                                    <li>
-                                                        <form
-                                                            action="{{ route('admin.surat.destroy', $surat->id) }}"
-                                                            method="POST" class="d-inline"
-                                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus surat ini?')">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                                                                <i class="fas fa-trash"></i> Hapus
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="5" class="text-center py-5 text-muted">Data tidak ditemukan</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                    {{-- Surat Masuk Tab --}}
+                    <div class="tab-pane fade" id="masuk-content" role="tabpanel" aria-labelledby="masuk-tab">
+                        @php
+                            $suratMasuk = $suratMasukKeluar->filter(function($item) {
+                                return $item->jenis_surat === 'masuk';
+                            });
+                        @endphp
+                        @include('admin.surat._table', ['suratData' => $suratMasuk, 'tableId' => 'masuk'])
                     </div>
 
-                    {{-- Pagination Controls --}}
-                    <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
-                        {{-- Per Page Selector --}}
-                        <div class="mb-2 mb-md-0">
-                            <div class="d-flex align-items-center">
-                                <span class="me-2">Show</span>
-                                <select class="form-select form-select-sm w-auto" id="per-page-select">
-                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                                </select>
-                                <span class="ms-2">per page</span>
-                            </div>
-                        </div>
-
-                        {{-- Pagination Links --}}
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="d-flex align-items-center">
-                                <span class="me-2">Page {{ $suratMasukKeluar->currentPage() }} of
-                                    {{ $suratMasukKeluar->lastPage() }}</span>
-                            </div>
-                            <div class="pagination-wrapper">
-                                {{ $suratMasukKeluar->appends(request()->query())->links('pagination::bootstrap-4') }}
-                            </div>
-                        </div>
+                    {{-- Surat Keluar Tab --}}
+                    <div class="tab-pane fade" id="keluar-content" role="tabpanel" aria-labelledby="keluar-tab">
+                        @php
+                            $suratKeluar = $suratMasukKeluar->filter(function($item) {
+                                return $item->jenis_surat === 'keluar';
+                            });
+                        @endphp
+                        @include('admin.surat._table', ['suratData' => $suratKeluar, 'tableId' => 'keluar'])
                     </div>
-                @endif
+                </div>
             </div>
         </div>
     </div>
@@ -378,43 +300,62 @@
     @if ($suratMasukKeluar->isNotEmpty())
         <script>
             $(document).ready(function() {
-                const table = $("#kt_datatable_dom_positioning_surat").DataTable({
-                    paging: false,
-                    info: false,
-                    searching: false,
-                    ordering: true,
-                    responsive: false,
-                    autoWidth: false,
-                    scrollX: false,
-                    columnDefs: [{
-                            targets: -1,
-                            orderable: false,
-                            searchable: false,
-                            width: "120px"
-                        },
-                        {
-                            targets: 0,
-                            orderable: false,
-                            searchable: false,
-                            width: "50px"
-                        },
-                        {
-                            targets: [2],
-                            orderable: false,
-                            searchable: false
+                // Initialize DataTables for each tab
+                function initializeDataTable(tableId) {
+                    const table = $(`#kt_datatable_dom_positioning_surat_${tableId}`).DataTable({
+                        paging: false,
+                        info: false,
+                        searching: false,
+                        ordering: true,
+                        responsive: false,
+                        autoWidth: false,
+                        scrollX: false,
+                        columnDefs: [{
+                                targets: -1,
+                                orderable: false,
+                                searchable: false,
+                                width: "120px"
+                            },
+                            {
+                                targets: 0,
+                                orderable: false,
+                                searchable: false,
+                                width: "50px"
+                            },
+                            {
+                                targets: [2],
+                                orderable: false,
+                                searchable: false
+                            }
+                        ],
+                        columns: [
+                            null, // No
+                            null, // Nama Kegiatan
+                            null, // Dokumen
+                            null, // Tanggal Dibuat
+                            null  // Aksi
+                        ],
+                        language: {
+                            emptyTable: "Data tidak ditemukan",
+                            zeroRecords: "Tidak ada data yang cocok dengan pencarian"
                         }
-                    ],
-                    columns: [
-                        null, // No
-                        null, // Nama Kegiatan
-                        null, // Dokumen
-                        null, // Tanggal Dibuat
-                        null  // Aksi
-                    ],
-                    language: {
-                        emptyTable: "Data tidak ditemukan",
-                        zeroRecords: "Tidak ada data yang cocok dengan pencarian"
-                    }
+                    });
+                }
+
+                // Initialize all tables
+                initializeDataTable('semua');
+                initializeDataTable('masuk');
+                initializeDataTable('keluar');
+
+                // Tab change handler
+                $('#suratTabs button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    const targetId = $(e.target).attr('data-bs-target');
+                    const tableId = targetId.replace('#', '').replace('-content', '');
+
+                    // Trigger table redraw to fix layout issues
+                    setTimeout(() => {
+                        $(`#kt_datatable_dom_positioning_surat_${tableId}`).DataTable().columns.adjust();
+                    }, 100);
                 });
 
                 $('.dropdown').on('show.bs.dropdown', function() {
@@ -503,6 +444,16 @@
                 }
 
                 updateFilterCount();
+
+                // Handle active tab based on URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const jenisSurat = urlParams.get('jenis_surat');
+
+                if (jenisSurat === 'masuk') {
+                    $('#masuk-tab').tab('show');
+                } else if (jenisSurat === 'keluar') {
+                    $('#keluar-tab').tab('show');
+                }
             });
         </script>
     @endif
