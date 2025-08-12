@@ -184,6 +184,12 @@
             <div class="card-header border-bottom-0 pb-0">
                 <ul class="nav nav-tabs nav-tabs-custom" id="suratTabs" role="tablist">
                     <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="semua-tab" data-bs-toggle="tab" data-bs-target="#semua-content"
+                                type="button" role="tab" aria-controls="semua-content" aria-selected="true">
+                            <i class="fas fa-list me-2"></i>Semua Surat
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content"
                                 type="button" role="tab" aria-controls="masuk-content" aria-selected="false">
                             <i class="fas fa-inbox me-2"></i>Surat Masuk
@@ -270,6 +276,10 @@
             {{-- Tab Content --}}
             <div class="card-body">
                 <div class="tab-content tab-content-custom" id="suratTabContent">
+                    {{-- Semua Surat Tab --}}
+                    <div class="tab-pane fade show active" id="semua-content" role="tabpanel" aria-labelledby="semua-tab">
+                        @include('admin.surat._table', ['suratData' => $suratMasukKeluar, 'tableId' => 'semua'])
+                    </div>
 
                     {{-- Surat Masuk Tab --}}
                     <div class="tab-pane fade" id="masuk-content" role="tabpanel" aria-labelledby="masuk-tab">
