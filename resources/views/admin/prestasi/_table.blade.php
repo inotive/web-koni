@@ -158,12 +158,12 @@
                             if ($prestasi->subject_type === 'App\Models\Atlet') {
                                 $detailRoute = route('admin.konfigurasi.atlet.show', [
                                     'atlet' => $prestasi->subject->id,
-                                    'from' => 'prestasi',
+                                    'back' => 'prestasi',
                                 ]);
                             } elseif ($prestasi->subject_type === 'App\Models\Pelatih') {
                                 $detailRoute = route('admin.konfigurasi.pelatih.show', [
                                     'pelatih' => $prestasi->subject->id,
-                                    'from' => 'prestasi',
+                                    'back' => 'prestasi',
                                 ]);
                             }
                         @endphp
