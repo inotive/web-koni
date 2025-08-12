@@ -732,6 +732,22 @@ body {
                     });
                 }
 
+                function updateFilterBadge() {
+                    // Hanya hitung filter dropdown, BUKAN search field
+                    const activeFilters = [
+                        $('#filter-tahun').val(),
+                        $('#filter-medali').val(),
+                        $('#filter-tingkat').val()
+                    ].filter(val => val && val.trim() !== '').length;
+
+                    const badge = $('#filter-count');
+                    if (activeFilters > 0) {
+                        badge.text(activeFilters).removeClass('d-none');
+                    } else {
+                        badge.addClass('d-none');
+                    }
+                }
+
                 function bindEvents() {
                     $(document).off('click', '.pagination-link')
                         .on('click', '.pagination-link', function(e) {
@@ -760,6 +776,12 @@ body {
                                 loadTable(url);
                                 window.history.pushState({}, '', url);
                             }
+                        });
+
+                    // Event handler untuk filter dropdown berubah
+                    $(document).off('change', '#filter-tahun, #filter-medali, #filter-tingkat')
+                        .on('change', '#filter-tahun, #filter-medali, #filter-tingkat', function() {
+                            updateFilterBadge();
                         });
 
                     $(document).off('click', '#apply-filters, #reset-filters')
@@ -795,6 +817,9 @@ body {
 
                             loadTable(url.toString());
                             window.history.pushState({}, '', url.toString());
+
+                            // Update badge setelah apply/reset
+                            updateFilterBadge();
 
                             $('.dropdown-toggle').dropdown('hide');
                         });
@@ -834,22 +859,6 @@ body {
                         });
 
                     updateFilterBadge();
-                }
-
-                function updateFilterBadge() {
-                    const activeFilters = [
-                        $('#filter-tahun').val(),
-                        $('#filter-medali').val(),
-                        $('#filter-tingkat').val(),
-                        $('#search').val()
-                    ].filter(val => val && val.trim() !== '').length;
-
-                    const badge = $('#filter-count');
-                    if (activeFilters > 0) {
-                        badge.text(activeFilters).removeClass('d-none');
-                    } else {
-                        badge.addClass('d-none');
-                    }
                 }
 
                 function updateFilterInfo() {
@@ -934,10 +943,17 @@ body {
                     });
                 }
 
+                // Set initial filter values dari URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                $('#filter-tahun').val(urlParams.get('tahun') || '');
+                $('#filter-medali').val(urlParams.get('medali') || '');
+                $('#filter-tingkat').val(urlParams.get('tingkat') || '');
+
                 window.onpopstate = function(event) {
                     loadTable(window.location.href);
                 };
 
+                // Initialize
                 populateTahunDropdown();
                 bindEvents();
                 updateFilterBadge();

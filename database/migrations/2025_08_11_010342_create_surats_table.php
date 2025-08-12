@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('surats', function (Blueprint $table) {
+        Schema::create('surat', function (Blueprint $table) {
             $table->id();
+            $table->string('nama_kegiatan');
+            $table->string('no_surat');
+            $table->enum('jenis_surat', ['masuk', 'keluar']);
+            $table->text('dokumen_surat')->nullable();
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('surats');
+        Schema::dropIfExists('surat');
     }
 };
