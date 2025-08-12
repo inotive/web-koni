@@ -226,4 +226,20 @@
 .sortable-header {
     pointer-events: all;
 }
+
+/* Target semua tombol sorting */
+.sortable-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    text-align: left !important;
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+.sortable-header i {
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+}
 </style>

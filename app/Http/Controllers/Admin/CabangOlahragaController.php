@@ -30,9 +30,9 @@ class CabangOlahragaController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Apply sorting
-        $sortBy = $request->get('sort_by', 'nama_cabor');
-        $order = $request->get('order', 'asc');
+        // Apply sorting - MODIFIKASI: Default sorting berdasarkan data terbaru
+        $sortBy = $request->get('sort_by', 'terakhir_update'); // Ubah default ke terakhir_update
+        $order = $request->get('order', 'desc'); // Ubah default ke desc (terbaru dulu)
 
         // Validate sort fields
         $allowedSortFields = [
@@ -40,13 +40,17 @@ class CabangOlahragaController extends Controller
             'ketua_penanggung_jawab',
             'status',
             'tanggal_pembentukan',
-            'terakhir_update'
+            'terakhir_update',
+            'created_at', // Tambahkan created_at untuk sorting
+            'id' // Tambahkan id untuk sorting
         ];
 
         if (in_array($sortBy, $allowedSortFields)) {
             $query->orderBy($sortBy, $order);
         } else {
-            $query->orderBy('terakhir_update', 'desc');
+            // Default sorting: data terbaru dulu
+            $query->orderBy('terakhir_update', 'desc')
+                  ->orderBy('created_at', 'desc'); // Sebagai backup sorting
         }
 
         // PERBAIKAN: Per page handling yang lebih robust
@@ -145,11 +149,21 @@ class CabangOlahragaController extends Controller
         }
 
         $validatedData['terakhir_update'] = now();
+        $validatedData['created_at'] = now(); // Pastikan created_at di-set
 
         CabangOlahraga::create($validatedData);
 
-        return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
-            ->with('cabor_created', 'Cabang olahraga berhasil ditambahkan.');
+        // SOLUSI 1: Redirect dengan parameter untuk memastikan halaman pertama dan sorting terbaru
+        return redirect()->route('admin.konfigurasi.cabang-olahraga.index', [
+            'page' => 1, // Paksa ke halaman pertama
+            'sort_by' => 'terakhir_update', // Sorting berdasarkan terakhir update
+            'order' => 'desc' // Order descending (terbaru dulu)
+        ])->with('cabor_created', 'Cabang olahraga berhasil ditambahkan.');
+
+        // ALTERNATIF SOLUSI 2: Jika ingin lebih sederhana
+        // return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
+        //     ->with('cabor_created', 'Cabang olahraga berhasil ditambahkan.')
+        //     ->with('show_new_data', true); // Flag untuk highlight data baru
     }
 
     public function show($id)
@@ -198,8 +212,12 @@ class CabangOlahragaController extends Controller
 
         $cabor->update($validatedData);
 
-        return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
-            ->with('cabor_updated', 'Cabang olahraga berhasil diperbarui.');
+        // MODIFIKASI: Redirect dengan parameter untuk highlight data yang diupdate
+        return redirect()->route('admin.konfigurasi.cabang-olahraga.index', [
+            'page' => 1,
+            'sort_by' => 'terakhir_update',
+            'order' => 'desc'
+        ])->with('cabor_updated', 'Cabang olahraga berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -256,13 +274,7 @@ class CabangOlahragaController extends Controller
         }
     }
 
-    // TAMBAHAN: Method untuk reset filter dan search
-    public function resetFilters()
-    {
-        return redirect()->route('admin.konfigurasi.cabang-olahraga.index');
-    }
-
-    // Method baru untuk nonaktifkan cabor (sebagai alternatif)
+    // Method untuk nonaktifkan cabor (sebagai alternatif)
     public function deactivate($id)
     {
         try {
@@ -273,8 +285,11 @@ class CabangOlahragaController extends Controller
                 'terakhir_update' => now()
             ]);
 
-            return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
-                ->with('cabor_updated', "Cabang olahraga '{$cabor->nama_cabor}' berhasil dinonaktifkan.");
+            return redirect()->route('admin.konfigurasi.cabang-olahraga.index', [
+                'page' => 1,
+                'sort_by' => 'terakhir_update',
+                'order' => 'desc'
+            ])->with('cabor_updated', "Cabang olahraga '{$cabor->nama_cabor}' berhasil dinonaktifkan.");
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal menonaktifkan cabang olahraga: ' . $e->getMessage());
         }
@@ -309,75 +324,19 @@ class CabangOlahragaController extends Controller
         }
     }
 
-    // Method untuk force delete dengan cascade (gunakan dengan hati-hati)
-    public function forceDestroy($id)
+    // TAMBAHAN: Method untuk menampilkan data terbaru (alternatif)
+    public function latest()
     {
-        try {
-            DB::beginTransaction();
-
-            $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
-
-            // Hitung jumlah data yang akan dihapus
-            $jumlahAtlet = $cabor->atlets()->count();
-            $jumlahPelatih = $cabor->pelatihs()->count();
-
-            // Hapus semua atlet terkait
-            $cabor->atlets()->delete();
-
-            // Hapus semua pelatih terkait  
-            $cabor->pelatihs()->delete();
-
-            // Hapus ikon
-            if ($cabor->icon_cabor) {
-                Storage::disk('public')->delete($cabor->icon_cabor);
-            }
-
-            // Hapus cabor
-            $cabor->delete();
-
-            DB::commit();
-
-            $pesan = "Cabang olahraga '{$cabor->nama_cabor}' beserta {$jumlahAtlet} atlet dan {$jumlahPelatih} pelatih berhasil dihapus.";
-
-            return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
-                ->with('cabor_deleted', $pesan);
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->back()->with('error', 'Gagal menghapus: ' . $e->getMessage());
-        }
-    }
-
-    // TAMBAHAN: Method untuk export/import (opsional untuk future enhancement)
-    public function export(Request $request)
-    {
-        // Logic untuk export data berdasarkan filter aktif
-        // Bisa menggunakan Excel/CSV
-
-        $query = CabangOlahraga::with(['atlets', 'pelatihs']);
-
-        // Terapkan filter yang sama seperti di index
-        if ($search = $request->input('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_cabor', 'like', '%' . $search . '%')
-                    ->orWhere('ketua_penanggung_jawab', 'like', '%' . $search . '%');
-            });
-        }
-
-        if ($status = $request->input('status')) {
-            $query->where('status', $status);
-        }
-
-        $cabors = $query->get();
-
-        // Return export file (implementasi sesuai kebutuhan)
-        // return Excel::download(new CabangOlahragaExport($cabors), 'cabang-olahraga.xlsx');
+        return redirect()->route('admin.konfigurasi.cabang-olahraga.index', [
+            'page' => 1,
+            'sort_by' => 'created_at',
+            'order' => 'desc',
+            'per_page' => 10
+        ]);
     }
 
     /**
      * Menangani upload icon dan resize ke 80x80px
-     *
-     * @param \Illuminate\Http\UploadedFile $file
-     * @return string
      */
     private function handleIconUpload($file)
     {
@@ -392,7 +351,6 @@ class CabangOlahragaController extends Controller
         }
 
         // Gunakan library GD untuk resize
-        // Pastikan ekstensi GD di PHP sudah aktif
         $this->resizeImageGD($file->getRealPath(), storage_path('app/public/' . $path), 80, 80);
 
         return $path;
@@ -400,12 +358,6 @@ class CabangOlahragaController extends Controller
 
     /**
      * Resize gambar menggunakan library GD
-     *
-     * @param string $sourcePath
-     * @param string $destinationPath
-     * @param int $width
-     * @param int $height
-     * @return bool
      */
     private function resizeImageGD($sourcePath, $destinationPath, $width, $height)
     {

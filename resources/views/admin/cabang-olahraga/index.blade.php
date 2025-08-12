@@ -136,16 +136,7 @@
 
         /* Table Header Styles - Matching Pelatih with Sort Fix */
         .table thead th {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-top: none;
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: #495057;
-            white-space: nowrap;
-            padding: 12px 8px !important;
-            position: relative;
-            text-align: center !important;
+            font-weight: bold !important;
         }
 
         .table thead th:last-child {
@@ -154,13 +145,7 @@
 
         /* Sort Link Styles - Matching Pelatih */
         .table thead th .sort-link {
-            display: flex;
             justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            text-decoration: none;
-            color: inherit;
-            gap: 8px;
         }
 
         .table thead th .sort-link:hover {
@@ -169,7 +154,6 @@
         }
 
         .table thead th .sort-link i {
-            flex-shrink: 0;
             margin-left: auto;
         }
 
@@ -618,6 +602,9 @@
                 font-size: 0.875rem;
             }
         }
+
+        
+        
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
