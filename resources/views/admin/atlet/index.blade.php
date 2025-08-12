@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <style>
+   <style>
         body {
             background-color: #f5f5f5;
         }
@@ -110,7 +110,7 @@
             background-color: #f8f9fa;
             border: 1px solid #e9ecef;
             border-top: none;
-            font-weight: 600;
+            font-weight: bold !important;
             font-size: 0.875rem;
             color: #495057;
             white-space: nowrap;
