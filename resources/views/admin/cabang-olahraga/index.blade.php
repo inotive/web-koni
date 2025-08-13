@@ -136,16 +136,7 @@
 
         /* Table Header Styles - Matching Pelatih with Sort Fix */
         .table thead th {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-top: none;
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: #495057;
-            white-space: nowrap;
-            padding: 12px 8px !important;
-            position: relative;
-            text-align: center !important;
+            font-weight: bold !important;
         }
 
         .table thead th:last-child {
@@ -154,13 +145,7 @@
 
         /* Sort Link Styles - Matching Pelatih */
         .table thead th .sort-link {
-            display: flex;
             justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            text-decoration: none;
-            color: inherit;
-            gap: 8px;
         }
 
         .table thead th .sort-link:hover {
@@ -169,7 +154,6 @@
         }
 
         .table thead th .sort-link i {
-            flex-shrink: 0;
             margin-left: auto;
         }
 
@@ -239,15 +223,59 @@
         }
 
         /* Specific column widths for Cabor table */
-        .table th:nth-child(1), .table td:nth-child(1) { width: 40px; text-align: center !important; }
-        .table th:nth-child(2), .table td:nth-child(2) { width: 250px; text-align: left !important; }
-        .table th:nth-child(3), .table td:nth-child(3) { width: 200px; text-align: left !important; }
-        .table th:nth-child(4), .table td:nth-child(4) { width: 120px; text-align: center !important; }
-        .table th:nth-child(5), .table td:nth-child(5) { width: 150px; text-align: left !important; }
-        .table th:nth-child(6), .table td:nth-child(6) { width: 100px; text-align: center !important; }
-        .table th:nth-child(7), .table td:nth-child(7) { width: 100px; text-align: center !important; }
-        .table th:nth-child(8), .table td:nth-child(8) { width: 150px; text-align: left !important; }
-        .table th:nth-child(9), .table td:nth-child(9) { width: 120px; text-align: center !important; }
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            width: 40px;
+            text-align: center !important;
+        }
+
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            width: 250px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            width: 200px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            width: 120px;
+            text-align: center !important;
+        }
+
+        .table th:nth-child(5),
+        .table td:nth-child(5) {
+            width: 150px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(6),
+        .table td:nth-child(6) {
+            width: 100px;
+            text-align: center !important;
+        }
+
+        .table th:nth-child(7),
+        .table td:nth-child(7) {
+            width: 100px;
+            text-align: center !important;
+        }
+
+        .table th:nth-child(8),
+        .table td:nth-child(8) {
+            width: 150px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(9),
+        .table td:nth-child(9) {
+            width: 120px;
+            text-align: center !important;
+        }
 
         .table td:nth-child(1),
         .table td:nth-child(4),
@@ -450,10 +478,25 @@
             min-width: 300px;
         }
 
-        .toast-success { background-color: #51a351; color: white; }
-        .toast-error { background-color: #bd362f; color: white; }
-        .toast-warning { background-color: #f89406; color: white; }
-        .toast-info { background-color: #2f96b4; color: white; }
+        .toast-success {
+            background-color: #51a351;
+            color: white;
+        }
+
+        .toast-error {
+            background-color: #bd362f;
+            color: white;
+        }
+
+        .toast-warning {
+            background-color: #f89406;
+            color: white;
+        }
+
+        .toast-info {
+            background-color: #2f96b4;
+            color: white;
+        }
 
         /* AJAX Loading Overlay - Matching Pelatih */
         .loading-overlay {
@@ -495,6 +538,7 @@
 
         /* Responsive Styles - Matching Pelatih */
         @media (max-width: 768px) {
+
             .table-header,
             .table-footer {
                 padding: 15px;
@@ -558,6 +602,9 @@
                 font-size: 0.875rem;
             }
         }
+
+        
+        
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
@@ -597,8 +644,8 @@
                                             <div>
                                                 <i class="fas fa-filter ms-1"></i>
                                                 <span id="filter-count"
-                                                    class="badge badge-circle badge-danger ms-1 {{ request('status') || request('search') ? '' : 'd-none' }}">
-                                                    {{ (request('status') ? 1 : 0) + (request('search') ? 1 : 0) }}
+                                                    class="badge badge-circle badge-danger ms-1 {{ request('status') ? '' : 'd-none' }}">
+                                                    {{ request('status') ? 1 : 0 }}
                                                 </span>
                                             </div>
                                         </button>
@@ -687,184 +734,184 @@
 @section('script')
     <script>
         $(document).ready(function() {
-    // ✅ Declare all variables at the top
-    let isLoading = false;
-    let searchTimeout;
-    let clickTimeout;
+            // ✅ Declare all variables at the top
+            let isLoading = false;
+            let searchTimeout;
+            let clickTimeout;
 
-    // Tambahkan check jQuery
-    if (typeof $ === 'undefined') {
-        console.error('jQuery not loaded!');
-        return;
-    }
-
-    console.log('🚀 AJAX System Loading...');
-    console.log('jQuery loaded:', typeof $ !== 'undefined');
-    console.log('Current URL:', window.location.href);
-
-    // Base URL untuk AJAX requests
-    const baseUrl = "{{ route('admin.konfigurasi.cabang-olahraga.index') }}";
-
-    // Debug: Cek elemen yang diperlukan
-    console.log('Search element:', $('#search').length > 0 ? 'FOUND' : 'NOT FOUND');
-    console.log('Filter element:', $('#filter-status').length > 0 ? 'FOUND' : 'NOT FOUND');
-    console.log('Table container:', $('#tableContainer').length > 0 ? 'FOUND' : 'NOT FOUND');
-
-    // ✅ FIXED AJAX Request Function with proper error handling
-    function performAjaxRequest(params = {}, showLoading = true) {
-        if (isLoading) {
-            console.log('⚠️ Request already in progress, skipping...');
-            return Promise.reject('Request in progress');
-        }
-
-        // Show loading state
-        if (showLoading) {
-            showTableLoading();
-        }
-
-        // Get current URL parameters
-        const currentParams = new URLSearchParams(window.location.search);
-        const newParams = new URLSearchParams();
-
-        // Preserve existing params first
-        for (let [key, value] of currentParams) {
-            newParams.set(key, value);
-        }
-
-        // Override/add new params
-        for (let [key, value] of Object.entries(params)) {
-            if (value !== null && value !== undefined && value !== '') {
-                newParams.set(key, value);
-            } else if (value === '' || value === null) {
-                newParams.delete(key);
+            // Tambahkan check jQuery
+            if (typeof $ === 'undefined') {
+                console.error('jQuery not loaded!');
+                return;
             }
-        }
 
-        const url = `${baseUrl}?${newParams.toString()}`;
-        console.log('🚀 Making AJAX request to:', url, 'with params:', params);
+            console.log('🚀 AJAX System Loading...');
+            console.log('jQuery loaded:', typeof $ !== 'undefined');
+            console.log('Current URL:', window.location.href);
 
-        return $.ajax({
-            url: url,
-            type: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json, text/html',
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            timeout: 15000, // 15 second timeout
-            cache: false
-        })
-        .done(function(response, textStatus, jqXHR) {
-            console.log('📦 Response received:', response);
-            console.log('📦 Response type:', typeof response);
-            
-            // Check if response is JSON
-            let data = response;
-            if (typeof response === 'string') {
+            // Base URL untuk AJAX requests
+            const baseUrl = "{{ route('admin.konfigurasi.cabang-olahraga.index') }}";
+
+            // Debug: Cek elemen yang diperlukan
+            console.log('Search element:', $('#search').length > 0 ? 'FOUND' : 'NOT FOUND');
+            console.log('Filter element:', $('#filter-status').length > 0 ? 'FOUND' : 'NOT FOUND');
+            console.log('Table container:', $('#tableContainer').length > 0 ? 'FOUND' : 'NOT FOUND');
+
+            // ✅ FIXED AJAX Request Function with proper error handling
+            function performAjaxRequest(params = {}, showLoading = true) {
+                if (isLoading) {
+                    console.log('⚠️ Request already in progress, skipping...');
+                    return Promise.reject('Request in progress');
+                }
+
+                // Show loading state
+                if (showLoading) {
+                    showTableLoading();
+                }
+
+                // Get current URL parameters
+                const currentParams = new URLSearchParams(window.location.search);
+                const newParams = new URLSearchParams();
+
+                // Preserve existing params first
+                for (let [key, value] of currentParams) {
+                    newParams.set(key, value);
+                }
+
+                // Override/add new params
+                for (let [key, value] of Object.entries(params)) {
+                    if (value !== null && value !== undefined && value !== '') {
+                        newParams.set(key, value);
+                    } else if (value === '' || value === null) {
+                        newParams.delete(key);
+                    }
+                }
+
+                const url = `${baseUrl}?${newParams.toString()}`;
+                console.log('🚀 Making AJAX request to:', url, 'with params:', params);
+
+                return $.ajax({
+                        url: url,
+                        type: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json, text/html',
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        timeout: 15000, // 15 second timeout
+                        cache: false
+                    })
+                    .done(function(response, textStatus, jqXHR) {
+                        console.log('📦 Response received:', response);
+                        console.log('📦 Response type:', typeof response);
+
+                        // Check if response is JSON
+                        let data = response;
+                        if (typeof response === 'string') {
+                            try {
+                                data = JSON.parse(response);
+                            } catch (e) {
+                                console.log('📦 Response is HTML, parsing...');
+                                // If it's HTML, we need to extract the table content
+                                handleHtmlResponse(response);
+                                return;
+                            }
+                        }
+
+                        // Handle JSON response
+                        if (data && typeof data === 'object') {
+                            updateTableContent(data);
+
+                            // Update URL without reload
+                            if (url !== window.location.href) {
+                                window.history.pushState({}, '', url);
+                                console.log('✅ URL updated:', url);
+                            }
+                        } else {
+                            console.warn('⚠️ Invalid response format');
+                            fallbackToPageReload(url);
+                        }
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                        console.error('❌ AJAX error:', textStatus, errorThrown);
+                        console.error('❌ Response status:', jqXHR.status);
+                        console.error('❌ Response text:', jqXHR.responseText);
+
+                        showErrorToast('Gagal memuat data. Silakan coba lagi.');
+
+                        // Fallback to page reload after short delay
+                        setTimeout(() => {
+                            console.log('🔄 Falling back to page reload...');
+                            window.location.href = url;
+                        }, 1500);
+                    })
+                    .always(function() {
+                        if (showLoading) {
+                            hideTableLoading();
+                        }
+                    });
+            }
+
+            // ✅ NEW: Handle HTML response (when server returns full page)
+            function handleHtmlResponse(htmlResponse) {
                 try {
-                    data = JSON.parse(response);
-                } catch (e) {
-                    console.log('📦 Response is HTML, parsing...');
-                    // If it's HTML, we need to extract the table content
-                    handleHtmlResponse(response);
-                    return;
+                    const $response = $(htmlResponse);
+
+                    // Extract table content
+                    const tableContent = $response.find('#tableContainer').html();
+                    if (tableContent) {
+                        $('#tableContainer').html(tableContent);
+                        console.log('✅ Table updated from HTML response');
+                    }
+
+                    // Extract pagination content
+                    const paginationContent = $response.find('.table-footer').html();
+                    if (paginationContent) {
+                        $('.table-footer').html(paginationContent);
+                        console.log('✅ Pagination updated from HTML response');
+                    }
+
+                } catch (error) {
+                    console.error('❌ Error parsing HTML response:', error);
+                    showErrorToast('Terjadi kesalahan saat memuat data.');
                 }
             }
 
-            // Handle JSON response
-            if (data && typeof data === 'object') {
-                updateTableContent(data);
-                
-                // Update URL without reload
-                if (url !== window.location.href) {
-                    window.history.pushState({}, '', url);
-                    console.log('✅ URL updated:', url);
+            // ✅ NEW: Update table content from JSON response
+            function updateTableContent(data) {
+                if (data.html || data.table) {
+                    const tableContent = data.html || data.table;
+                    $('#tableContainer').html(tableContent);
+                    console.log('✅ Table content updated from JSON');
                 }
-            } else {
-                console.warn('⚠️ Invalid response format');
-                fallbackToPageReload(url);
+
+                if (data.pagination) {
+                    $('.table-footer').html(data.pagination);
+                    console.log('✅ Pagination updated from JSON');
+                }
+
+                // Update other elements if provided
+                if (data.total_records) {
+                    $('.total-records').text(data.total_records);
+                }
             }
-        })
-        .fail(function(jqXHR, textStatus, errorThrown) {
-            console.error('❌ AJAX error:', textStatus, errorThrown);
-            console.error('❌ Response status:', jqXHR.status);
-            console.error('❌ Response text:', jqXHR.responseText);
-            
-            showErrorToast('Gagal memuat data. Silakan coba lagi.');
-            
-            // Fallback to page reload after short delay
-            setTimeout(() => {
+
+            // ✅ NEW: Fallback to page reload
+            function fallbackToPageReload(url) {
                 console.log('🔄 Falling back to page reload...');
-                window.location.href = url;
-            }, 1500);
-        })
-        .always(function() {
-            if (showLoading) {
-                hideTableLoading();
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 1000);
             }
-        });
-    }
 
-    // ✅ NEW: Handle HTML response (when server returns full page)
-    function handleHtmlResponse(htmlResponse) {
-        try {
-            const $response = $(htmlResponse);
-            
-            // Extract table content
-            const tableContent = $response.find('#tableContainer').html();
-            if (tableContent) {
-                $('#tableContainer').html(tableContent);
-                console.log('✅ Table updated from HTML response');
-            }
-            
-            // Extract pagination content
-            const paginationContent = $response.find('.table-footer').html();
-            if (paginationContent) {
-                $('.table-footer').html(paginationContent);
-                console.log('✅ Pagination updated from HTML response');
-            }
-            
-        } catch (error) {
-            console.error('❌ Error parsing HTML response:', error);
-            showErrorToast('Terjadi kesalahan saat memuat data.');
-        }
-    }
+            // ✅ Enhanced Loading State Functions
+            function showTableLoading() {
+                isLoading = true;
+                const tableContainer = $('#tableContainer');
 
-    // ✅ NEW: Update table content from JSON response
-    function updateTableContent(data) {
-        if (data.html || data.table) {
-            const tableContent = data.html || data.table;
-            $('#tableContainer').html(tableContent);
-            console.log('✅ Table content updated from JSON');
-        }
-
-        if (data.pagination) {
-            $('.table-footer').html(data.pagination);
-            console.log('✅ Pagination updated from JSON');
-        }
-
-        // Update other elements if provided
-        if (data.total_records) {
-            $('.total-records').text(data.total_records);
-        }
-    }
-
-    // ✅ NEW: Fallback to page reload
-    function fallbackToPageReload(url) {
-        console.log('🔄 Falling back to page reload...');
-        setTimeout(() => {
-            window.location.href = url;
-        }, 1000);
-    }
-
-    // ✅ Enhanced Loading State Functions
-    function showTableLoading() {
-        isLoading = true;
-        const tableContainer = $('#tableContainer');
-
-        if (tableContainer.length && !tableContainer.find('.loading-overlay').length) {
-            const overlay = $(`
+                if (tableContainer.length && !tableContainer.find('.loading-overlay').length) {
+                    const overlay = $(`
                 <div class="loading-overlay" style="
                     position: absolute !important;
                     top: 0; left: 0; right: 0; bottom: 0;
@@ -885,312 +932,314 @@
                 </div>
             `);
 
-            tableContainer.css('position', 'relative').append(overlay);
-        }
-    }
+                    tableContainer.css('position', 'relative').append(overlay);
+                }
+            }
 
-    function hideTableLoading() {
-        isLoading = false;
-        $('.loading-overlay').remove();
-    }
+            function hideTableLoading() {
+                isLoading = false;
+                $('.loading-overlay').remove();
+            }
 
-    // ✅ Enhanced Error Toast Function
-    function showErrorToast(message) {
-        if (typeof toastr !== 'undefined') {
-            toastr.error(message, 'Error', {
-                timeOut: 5000,
-                closeButton: true,
-                progressBar: true
+            // ✅ Enhanced Error Toast Function
+            function showErrorToast(message) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error(message, 'Error', {
+                        timeOut: 5000,
+                        closeButton: true,
+                        progressBar: true
+                    });
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: message,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                } else {
+                    console.error(message);
+                    alert(message);
+                }
+            }
+
+            // ✅ Update Filter Count Badge
+            function updateFilterCountBadge() {
+                let count = 0;
+
+                const statusVal = $('#filter-status').val();
+                if (statusVal) count++;
+
+                const badge = $('#filter-count');
+                badge.text(count);
+                badge.toggleClass('d-none', count === 0);
+            }
+
+            // ✅ EVENT HANDLERS
+
+            // Search dengan debounce - FIXED: Prevent default form submission
+            $('#search').on('input', function(e) {
+                e.preventDefault();
+                clearTimeout(searchTimeout);
+                const searchValue = $(this).val().trim();
+
+                console.log('🔍 Search input:', searchValue);
+
+                searchTimeout = setTimeout(() => {
+                    performAjaxRequest({
+                        search: searchValue,
+                        page: 1
+                    });
+                    updateFilterCountBadge();
+                }, 500);
+
+                return false; // Prevent any form submission
             });
-        } else if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: message,
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 5000
+
+            // FIXED: Prevent Enter key from submitting form in search
+            $('#search').on('keypress', function(e) {
+                if (e.which === 13) { // Enter key
+                    e.preventDefault();
+                    clearTimeout(searchTimeout);
+
+                    const searchValue = $(this).val().trim();
+                    performAjaxRequest({
+                        search: searchValue,
+                        page: 1
+                    });
+                    updateFilterCountBadge();
+
+                    return false;
+                }
             });
-        } else {
-            console.error(message);
-            alert(message);
-        }
-    }
 
-    // ✅ Update Filter Count Badge
-    function updateFilterCountBadge() {
-        let count = 0;
+            // Filter Status Change - FIXED: Prevent default
+            $(document).on('change', '#filter-status', function(e) {
+                e.preventDefault();
+                const statusValue = $(this).val();
+                console.log('🔽 Filter status changed:', statusValue);
 
-        if ($('#filter-status').val()) count++;
-        if ($('#search').val().trim()) count++;
-
-        const badge = $('#filter-count');
-        if (count > 0) {
-            badge.text(count).removeClass('d-none');
-        } else {
-            badge.addClass('d-none');
-        }
-    }
-
-    // ✅ EVENT HANDLERS
-
-    // Search dengan debounce - FIXED: Prevent default form submission
-    $('#search').on('input', function(e) {
-        e.preventDefault();
-        clearTimeout(searchTimeout);
-        const searchValue = $(this).val().trim();
-
-        console.log('🔍 Search input:', searchValue);
-
-        searchTimeout = setTimeout(() => {
-            performAjaxRequest({
-                search: searchValue,
-                page: 1
-            });
-            updateFilterCountBadge();
-        }, 500);
-        
-        return false; // Prevent any form submission
-    });
-
-    // FIXED: Prevent Enter key from submitting form in search
-    $('#search').on('keypress', function(e) {
-        if (e.which === 13) { // Enter key
-            e.preventDefault();
-            clearTimeout(searchTimeout);
-            
-            const searchValue = $(this).val().trim();
-            performAjaxRequest({
-                search: searchValue,
-                page: 1
-            });
-            updateFilterCountBadge();
-            
-            return false;
-        }
-    });
-
-    // Filter Status Change - FIXED: Prevent default
-    $(document).on('change', '#filter-status', function(e) {
-        e.preventDefault();
-        const statusValue = $(this).val();
-        console.log('🔽 Filter status changed:', statusValue);
-
-        performAjaxRequest({
-            status: statusValue,
-            page: 1
-        });
-        updateFilterCountBadge();
-        
-        return false;
-    });
-
-    // Apply Filters Button - FIXED: Better event handling
-    $(document).on('click', '#apply-filters', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const statusValue = $('#filter-status').val();
-        const searchValue = $('#search').val().trim();
-
-        console.log('✅ Applying filters - Status:', statusValue, 'Search:', searchValue);
-
-        performAjaxRequest({
-            status: statusValue,
-            search: searchValue,
-            page: 1
-        });
-        updateFilterCountBadge();
-        
-        return false;
-    });
-
-    // Reset Filters Button - FIXED: Better reset handling
-    $(document).on('click', '#reset-filters', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        console.log('🔄 Resetting filters');
-
-        // Clear form fields
-        $('#search').val('');
-        $('#filter-status').val('');
-
-        // Make AJAX request with empty parameters
-        performAjaxRequest({
-            search: '',
-            status: '',
-            page: 1
-        });
-        updateFilterCountBadge();
-        
-        return false;
-    });
-
-    // FIXED: Per Page Change Handler - Use event delegation
-    $(document).on('change', '#ajax-per-page', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const perPageValue = $(this).val();
-        console.log('📄 Per page changed:', perPageValue);
-
-        performAjaxRequest({
-            per_page: perPageValue,
-            page: 1
-        });
-        
-        return false;
-    });
-
-    // FIXED: Pagination Click Handler - Better event handling
-    $(document).on('click', '.ajax-pagination', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const $this = $(this);
-        const page = $this.data('page');
-
-        console.log('📄 Pagination clicked, page:', page);
-
-        if (page && !$this.hasClass('processing')) {
-            $this.addClass('processing');
-
-            performAjaxRequest({ page: page })
-                .always(() => {
-                    setTimeout(() => {
-                        $('.ajax-pagination').removeClass('processing');
-                    }, 500);
+                performAjaxRequest({
+                    status: statusValue,
+                    page: 1
                 });
-        }
+                updateFilterCountBadge();
 
-        return false;
-    });
+                return false;
+            });
 
-    // FIXED: Sorting Click Handler - Prevent any navigation
-    $(document).on('click', '.ajax-sort', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
+            // Apply Filters Button - FIXED: Better event handling
+            $(document).on('click', '#apply-filters', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-        const $this = $(this);
-        const sortBy = $this.data('sort');
-        
-        console.log('🔄 Sort button clicked, sort by:', sortBy);
+                const statusValue = $('#filter-status').val();
+                const searchValue = $('#search').val().trim();
 
-        if (!sortBy || $this.hasClass('processing')) {
-            console.log('⚠️ No sort data found or already processing');
-            return false;
-        }
+                console.log('✅ Applying filters - Status:', statusValue, 'Search:', searchValue);
 
-        $this.addClass('processing');
+                performAjaxRequest({
+                    status: statusValue,
+                    search: searchValue,
+                    page: 1
+                });
+                updateFilterCountBadge();
 
-        const currentParams = new URLSearchParams(window.location.search);
-        const currentSortBy = currentParams.get('sort_by');
-        const currentOrder = currentParams.get('order');
+                return false;
+            });
 
-        // Toggle order if same field, default to asc for new field
-        let newOrder = 'asc';
-        if (currentSortBy === sortBy && currentOrder === 'asc') {
-            newOrder = 'desc';
-        }
+            // Reset Filters Button - FIXED: Better reset handling
+            $(document).on('click', '#reset-filters', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-        console.log('🔄 Sorting:', sortBy, newOrder);
+                console.log('🔄 Resetting filters');
 
-        performAjaxRequest({
-            sort_by: sortBy,
-            order: newOrder,
-            page: 1
-        })
-        .always(() => {
+                // Clear form fields
+                $('#search').val('');
+                $('#filter-status').val('');
+
+                // Make AJAX request with empty parameters
+                performAjaxRequest({
+                    search: '',
+                    status: '',
+                    page: 1
+                });
+                updateFilterCountBadge();
+
+                return false;
+            });
+
+            // FIXED: Per Page Change Handler - Use event delegation
+            $(document).on('change', '#ajax-per-page', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const perPageValue = $(this).val();
+                console.log('📄 Per page changed:', perPageValue);
+
+                performAjaxRequest({
+                    per_page: perPageValue,
+                    page: 1
+                });
+
+                return false;
+            });
+
+            // FIXED: Pagination Click Handler - Better event handling
+            $(document).on('click', '.ajax-pagination', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const $this = $(this);
+                const page = $this.data('page');
+
+                console.log('📄 Pagination clicked, page:', page);
+
+                if (page && !$this.hasClass('processing')) {
+                    $this.addClass('processing');
+
+                    performAjaxRequest({
+                            page: page
+                        })
+                        .always(() => {
+                            setTimeout(() => {
+                                $('.ajax-pagination').removeClass('processing');
+                            }, 500);
+                        });
+                }
+
+                return false;
+            });
+
+            // FIXED: Sorting Click Handler - Prevent any navigation
+            $(document).on('click', '.ajax-sort', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const $this = $(this);
+                const sortBy = $this.data('sort');
+
+                console.log('🔄 Sort button clicked, sort by:', sortBy);
+
+                if (!sortBy || $this.hasClass('processing')) {
+                    console.log('⚠️ No sort data found or already processing');
+                    return false;
+                }
+
+                $this.addClass('processing');
+
+                const currentParams = new URLSearchParams(window.location.search);
+                const currentSortBy = currentParams.get('sort_by');
+                const currentOrder = currentParams.get('order');
+
+                // Toggle order if same field, default to asc for new field
+                let newOrder = 'asc';
+                if (currentSortBy === sortBy && currentOrder === 'asc') {
+                    newOrder = 'desc';
+                }
+
+                console.log('🔄 Sorting:', sortBy, newOrder);
+
+                performAjaxRequest({
+                        sort_by: sortBy,
+                        order: newOrder,
+                        page: 1
+                    })
+                    .always(() => {
+                        setTimeout(() => {
+                            $('.ajax-sort').removeClass('processing');
+                        }, 500);
+                    });
+
+                return false;
+            });
+
+            // ✅ CRITICAL: Prevent ALL form submissions on this page
+            $(document).on('submit', 'form', function(e) {
+                console.log('🛑 Form submission prevented');
+                e.preventDefault();
+                return false;
+            });
+
+            // ✅ CRITICAL: Prevent default link behavior for any AJAX elements
+            $(document).on('click', 'a[href*="sort_by"], a[href*="page"], .ajax-sort, .ajax-pagination', function(
+                e) {
+                e.preventDefault();
+                return false;
+            });
+
+            // ✅ Initialize on page load
+            updateFilterCountBadge();
+
+            // ✅ Handle browser back/forward - FIXED: Better handling
+            window.addEventListener('popstate', function(event) {
+                console.log('🔙 Browser back/forward detected');
+
+                // Get parameters from current URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const params = {};
+
+                for (let [key, value] of urlParams) {
+                    params[key] = value;
+                }
+
+                // Update form fields to match URL
+                $('#search').val(params.search || '');
+                $('#filter-status').val(params.status || '');
+
+                // Make AJAX request to load content
+                performAjaxRequest(params, true);
+                updateFilterCountBadge();
+            });
+
+            // ✅ Cleanup on page unload
+            $(window).on('beforeunload', function() {
+                hideTableLoading();
+                clearTimeout(searchTimeout);
+                clearTimeout(clickTimeout);
+                isLoading = false;
+            });
+
+            console.log('✅ FIXED Enhanced AJAX system initialized successfully');
+
+            // ✅ Add debugging function
+            window.testAjax = function() {
+                console.log('🧪 Testing AJAX manually...');
+                performAjaxRequest({
+                    page: 1
+                }, true);
+            };
+
+            // ✅ Final diagnostic
             setTimeout(() => {
-                $('.ajax-sort').removeClass('processing');
-            }, 500);
+                console.log('🔍 Final diagnostic:');
+                console.log('- Search element:', $('#search').length);
+                console.log('- Filter element:', $('#filter-status').length);
+                console.log('- Table container:', $('#tableContainer').length);
+                console.log('- Sort buttons:', $('.ajax-sort').length);
+                console.log('- Pagination buttons:', $('.ajax-pagination').length);
+                console.log('💡 Run testAjax() to test manually');
+            }, 1000);
         });
 
-        return false;
-    });
+        // ✅ Global functions for delete operations (outside document ready)
+        window.showDeleteWarning = function(nama, jumlahAtlet, jumlahPelatih) {
+            $('#caborName').text(nama);
 
-    // ✅ CRITICAL: Prevent ALL form submissions on this page
-    $(document).on('submit', 'form', function(e) {
-        console.log('🛑 Form submission prevented');
-        e.preventDefault();
-        return false;
-    });
+            const dependencies = [];
+            if (jumlahAtlet > 0) dependencies.push(`${jumlahAtlet} atlet`);
+            if (jumlahPelatih > 0) dependencies.push(`${jumlahPelatih} pelatih`);
 
-    // ✅ CRITICAL: Prevent default link behavior for any AJAX elements
-    $(document).on('click', 'a[href*="sort_by"], a[href*="page"], .ajax-sort, .ajax-pagination', function(e) {
-        e.preventDefault();
-        return false;
-    });
+            $('#dependencyList').html(dependencies.map(dep => `<li>${dep}</li>`).join(''));
+            $('#deleteWarningModal').modal('show');
+        };
 
-    // ✅ Initialize on page load
-    updateFilterCountBadge();
-
-    // ✅ Handle browser back/forward - FIXED: Better handling
-    window.addEventListener('popstate', function(event) {
-        console.log('🔙 Browser back/forward detected');
-        
-        // Get parameters from current URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const params = {};
-        
-        for (let [key, value] of urlParams) {
-            params[key] = value;
-        }
-        
-        // Update form fields to match URL
-        $('#search').val(params.search || '');
-        $('#filter-status').val(params.status || '');
-        
-        // Make AJAX request to load content
-        performAjaxRequest(params, true);
-        updateFilterCountBadge();
-    });
-
-    // ✅ Cleanup on page unload
-    $(window).on('beforeunload', function() {
-        hideTableLoading();
-        clearTimeout(searchTimeout);
-        clearTimeout(clickTimeout);
-        isLoading = false;
-    });
-
-    console.log('✅ FIXED Enhanced AJAX system initialized successfully');
-
-    // ✅ Add debugging function
-    window.testAjax = function() {
-        console.log('🧪 Testing AJAX manually...');
-        performAjaxRequest({ page: 1 }, true);
-    };
-
-    // ✅ Final diagnostic
-    setTimeout(() => {
-        console.log('🔍 Final diagnostic:');
-        console.log('- Search element:', $('#search').length);
-        console.log('- Filter element:', $('#filter-status').length);
-        console.log('- Table container:', $('#tableContainer').length);
-        console.log('- Sort buttons:', $('.ajax-sort').length);
-        console.log('- Pagination buttons:', $('.ajax-pagination').length);
-        console.log('💡 Run testAjax() to test manually');
-    }, 1000);
-});
-
-// ✅ Global functions for delete operations (outside document ready)
-window.showDeleteWarning = function(nama, jumlahAtlet, jumlahPelatih) {
-    $('#caborName').text(nama);
-
-    const dependencies = [];
-    if (jumlahAtlet > 0) dependencies.push(`${jumlahAtlet} atlet`);
-    if (jumlahPelatih > 0) dependencies.push(`${jumlahPelatih} pelatih`);
-
-    $('#dependencyList').html(dependencies.map(dep => `<li>${dep}</li>`).join(''));
-    $('#deleteWarningModal').modal('show');
-};
-
-window.confirmDelete = function(nama) {
-    return confirm(`Apakah Anda yakin ingin menghapus cabang olahraga "${nama}"?`);
-};
+        window.confirmDelete = function(nama) {
+            return confirm(`Apakah Anda yakin ingin menghapus cabang olahraga "${nama}"?`);
+        };
     </script>
 
     {{-- Notifikasi --}}

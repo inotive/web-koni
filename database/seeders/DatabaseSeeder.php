@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             AtletSeeder::class,
             PelatihSeeder::class,
             PrestasiSeeder::class,
-            ManajemenRKASeeder::class
+            ManajemenRKASeeder::class,
+            FileKesekretariatSeeder::class,
         ]);
     }
 }

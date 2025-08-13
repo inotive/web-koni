@@ -70,18 +70,26 @@
                     </a>
                     <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
                         <ul class="menu flex-column ms-5">
-                            <li class="menu-item">
+                             <li class="menu-item">
                                 <a class="menu-link {{ request()->is('admin/laporan-lpj/sekretariat*') ? 'active' : '' }}"
                                     href="{{ route('admin.laporan-lpj.sekretariat.index') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Sekretariat</span>
                                 </a>
-                            </li>
-                            <li class="menu-item">
+                            </li> 
+                             <li class="menu-item">
                                 <a class="menu-link {{ request()->is('admin/laporan-lpj/bidang*') ? 'active' : '' }}"
                                     href="{{ route('admin.laporan-lpj.bidang.index') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Bidang Bidang</span>
+                                </a>
+                            </li>
+                            </li> 
+                             <li class="menu-item">
+                                <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan_lainnya*') ? 'active' : '' }}"
+                                    href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}">
+                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                    <span class="menu-title">Kegiatan lainnya</span>
                                 </a>
                             </li>
                         </ul>
@@ -106,6 +114,22 @@
                     </a>
                 </div>
 
+                <!-- File Kesekretariat - MENU BARU -->
+                @php
+                    $isFileKesekretariatActive =
+                        request()->routeIs('admin.file-kesekretariat*') ||
+                        request()->is('admin/file-kesekretariat*') ||
+                        (isset($mainSection) && $mainSection == 'File Kesekretariat');
+                @endphp
+                <div class="menu-item">
+                    <a class="menu-link {{ $isFileKesekretariatActive ? 'active bg-red' : '' }}"
+                        href="{{ route('admin.file-kesekretariat.index') }}">
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-folder-open fs-2"></i>
+                        </span>
+                        <span class="menu-title">File Kesekretariat</span>
+                    </a>
+                </div>
 
                 <!-- Konfigurasi Section -->
                 <div class="menu-item pt-10">
@@ -187,6 +211,14 @@
                             class="menu-title {{ $isPrestasiActive ? 'text-white' : 'text-gray-800' }}">Kejuaraan</span>
                     </a>
                 </div>
+
+                <!-- Manajemen Pengguna Section -->
+                <div class="menu-item pt-10">
+                    <div class="menu-content">
+                        <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Manajemen Pengguna</span>
+                    </div>
+                </div>
+
                 @php
                     $isManajemenPenggunaActive =
                         request()->is('admin/manajemen-pengguna*') ||
@@ -194,19 +226,24 @@
                 @endphp
                 <div class="menu-item">
                     <a class="menu-link {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'active' : '' }}"
-                        href="{{ route('admin.manajemen-pengguna.pengguna.index') }}">
+                        href="{{ route('admin.manajemen-pengguna.pengguna.index') }}"
+                        style="{{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'background-color: #D20A11;' : '' }}">
                         <span class="menu-icon">
-                            <i class="fa-solid fa-users fs-2"></i>
+                            <i class="fa-solid fa-users fs-2"
+                                style="color: {{ request()->is('admin/manajemen-pengguna/pengguna*') ? '#ffffff' : '#6c757d' }}"></i>
                         </span>
-                        <span class="menu-title">Pengguna</span>
+                        <span class="menu-title {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'text-white' : 'text-gray-800' }}">Pengguna</span>
                     </a>
                 </div>
                 <div class="menu-item">
                     <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active' : '' }}"
-                        href="{{ route('admin.manajemen-pengguna.role.index') }}">
+                        href="{{ route('admin.manajemen-pengguna.role.index') }}"
+                        style="{{ request()->is('admin/manajemen-pengguna/role*') ? 'background-color: #D20A11;' : '' }}">
                         <span class="menu-icon">
-                            <i class="fa-solid fa-diagram-project fs-2"></i>
-                        </span> <span class="menu-title">Jabatan</span>
+                            <i class="fa-solid fa-diagram-project fs-2"
+                                style="color: {{ request()->is('admin/manajemen-pengguna/role*') ? '#ffffff' : '#6c757d' }}"></i>
+                        </span> 
+                        <span class="menu-title {{ request()->is('admin/manajemen-pengguna/role*') ? 'text-white' : 'text-gray-800' }}">Jabatan</span>
                     </a>
                 </div>
             </div>

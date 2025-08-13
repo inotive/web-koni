@@ -6,7 +6,7 @@
 
 @section('content')
 
-    <style>
+   <style>
         body {
             background-color: #f5f5f5;
         }

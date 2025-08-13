@@ -13,137 +13,146 @@ use Illuminate\Support\Facades\DB;
 class PrestasiController extends Controller
 {
     public function index(Request $request)
-{
-    $perPage = $request->get('per_page', 10);
+    {
+        $perPage = $request->get('per_page', 10);
 
-    $allowedSorts = [
-        'nama', 'jenis_kelamin', 'nama_prestasi', 'cabor', 'tingkat',
-        'tempat', 'tahun', 'medali', 'updated_at', 'created_at'
-    ];
+        $allowedSorts = [
+            'nama', 'jenis_kelamin', 'nama_prestasi', 'cabor', 'tingkat',
+            'tempat', 'tahun', 'medali', 'updated_at', 'created_at'
+        ];
 
-    $sortBy = $request->get('sort_by', 'created_at');
-    $order = strtolower($request->get('order', 'desc'));
+        $sortBy = $request->get('sort_by', 'created_at');
+        $order = strtolower($request->get('order', 'desc'));
 
-    if (!in_array($sortBy, $allowedSorts)) {
-        $sortBy = 'created_at';
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'created_at';
+        }
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'desc';
+        }
+
+        // PERBAIKAN: Cek request get_tahun di awal sebelum query besar
+        if ($request->get('get_tahun')) {
+            $years = Prestasi::distinct()
+                ->pluck('tahun')
+                ->filter(function($year) {
+                    return !is_null($year) && $year !== '';
+                })
+                ->sortDesc()
+                ->values()
+                ->toArray();
+
+            \Log::info('Years data:', ['years' => $years]);
+            return response()->json($years);
+        }
+
+        $query = Prestasi::with(['subject', 'cabangOlahraga'])
+            ->select('prestasis.*');
+
+        switch ($sortBy) {
+            case 'nama':
+                $query->join(DB::raw('(
+                    SELECT id, nama, "App\\\\Models\\\\Atlet" as type FROM atlets
+                    UNION ALL
+                    SELECT id, nama, "App\\\\Models\\\\Pelatih" as type FROM pelatih
+                ) as subjects'), function($join) {
+                    $join->on('prestasis.subject_id', '=', 'subjects.id')
+                         ->on('prestasis.subject_type', '=', 'subjects.type');
+                })->orderBy('subjects.nama', $order);
+                break;
+
+            case 'jenis_kelamin':
+                $query->join(DB::raw('(
+                    SELECT id,
+                           CASE WHEN jenis_kelamin = "L" OR jenis_kelamin = "Laki-laki" THEN "Laki-laki"
+                                WHEN jenis_kelamin = "P" OR jenis_kelamin = "Perempuan" THEN "Perempuan"
+                                ELSE jenis_kelamin END as gender,
+                           "App\\\\Models\\\\Atlet" as type
+                    FROM atlets
+                    UNION ALL
+                    SELECT id,
+                           CASE WHEN kelamin = "L" OR kelamin = "Laki-laki" THEN "Laki-laki"
+                                WHEN kelamin = "P" OR kelamin = "Perempuan" THEN "Perempuan"
+                                ELSE kelamin END as gender,
+                           "App\\\\Models\\\\Pelatih" as type
+                    FROM pelatih
+                ) as subjects'), function($join) {
+                    $join->on('prestasis.subject_id', '=', 'subjects.id')
+                         ->on('prestasis.subject_type', '=', 'subjects.type');
+                })->orderBy('subjects.gender', $order);
+                break;
+
+            case 'cabor':
+                $query->join(DB::raw('(
+                    SELECT id, cabor_id, "App\\\\Models\\\\Atlet" as type FROM atlets
+                    UNION ALL
+                    SELECT id, cabor_id, "App\\\\Models\\\\Pelatih" as type FROM pelatih
+                ) as subjects'), function($join) {
+                    $join->on('prestasis.subject_id', '=', 'subjects.id')
+                         ->on('prestasis.subject_type', '=', 'subjects.type');
+                })
+                ->join('cabang_olahragas', 'subjects.cabor_id', '=', 'cabang_olahragas.id')
+                ->orderBy('cabang_olahragas.nama_cabor', $order);
+                break;
+
+            default:
+                $query->orderBy($sortBy, $order);
+                break;
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_prestasi', 'like', "%{$search}%")
+                    ->orWhere('tingkat', 'like', "%{$search}%")
+                    ->orWhere('tempat', 'like', "%{$search}%")
+                    ->orWhereHasMorph('subject', [Atlet::class, Pelatih::class], function ($q) use ($search) {
+                        $q->where('nama', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->filled('medali')) {
+            $query->where('medali', $request->medali);
+        }
+
+        if ($request->filled('tahun')) {
+            $query->where('tahun', $request->tahun);
+        }
+
+        if ($request->filled('tingkat')) {
+            $query->where('tingkat', $request->tingkat);
+        }
+
+        if ($request->filled('subject_type')) {
+            $query->where('subject_type', $request->subject_type === 'atlet' ? Atlet::class : Pelatih::class);
+        }
+
+        if ($request->filled('cabor')) {
+            $query->whereHasMorph('subject', [Atlet::class, Pelatih::class], function ($q) use ($request) {
+                $q->where('cabor_id', $request->cabor);
+            });
+        }
+
+        $prestasis = $query->paginate($perPage);
+        $prestasis->appends($request->except('page'));
+
+        if ($request->ajax()) {
+            return view('admin.prestasi._table', compact('prestasis'))->render();
+        }
+
+        $allCabors = DB::table('cabang_olahragas')->pluck('nama_cabor', 'id');
+        $allTingkats = ['Nasional', 'Regional', 'Provinsi', 'Kota/Kabupaten'];
+        $allMedalis = ['Emas', 'Perak', 'Perunggu'];
+
+        // PERBAIKAN: Hapus $allYears karena tahun sudah diambil via AJAX
+        return view('admin.prestasi.index', compact(
+            'prestasis',
+            'allCabors',
+            'allTingkats',
+            'allMedalis'
+        ));
     }
-    if (!in_array($order, ['asc', 'desc'])) {
-        $order = 'desc';
-    }
-
-    $query = Prestasi::with(['subject', 'cabangOlahraga'])
-        ->select('prestasis.*');
-
-    switch ($sortBy) {
-        case 'nama':
-            $query->join(DB::raw('(
-                SELECT id, nama, "App\\\\Models\\\\Atlet" as type FROM atlets
-                UNION ALL
-                SELECT id, nama, "App\\\\Models\\\\Pelatih" as type FROM pelatih
-            ) as subjects'), function($join) {
-                $join->on('prestasis.subject_id', '=', 'subjects.id')
-                     ->on('prestasis.subject_type', '=', 'subjects.type');
-            })->orderBy('subjects.nama', $order);
-            break;
-
-        case 'jenis_kelamin':
-            $query->join(DB::raw('(
-                SELECT id,
-                       CASE WHEN jenis_kelamin = "L" OR jenis_kelamin = "Laki-laki" THEN "Laki-laki"
-                            WHEN jenis_kelamin = "P" OR jenis_kelamin = "Perempuan" THEN "Perempuan"
-                            ELSE jenis_kelamin END as gender,
-                       "App\\\\Models\\\\Atlet" as type
-                FROM atlets
-                UNION ALL
-                SELECT id,
-                       CASE WHEN kelamin = "L" OR kelamin = "Laki-laki" THEN "Laki-laki"
-                            WHEN kelamin = "P" OR kelamin = "Perempuan" THEN "Perempuan"
-                            ELSE kelamin END as gender,
-                       "App\\\\Models\\\\Pelatih" as type
-                FROM pelatih
-            ) as subjects'), function($join) {
-                $join->on('prestasis.subject_id', '=', 'subjects.id')
-                     ->on('prestasis.subject_type', '=', 'subjects.type');
-            })->orderBy('subjects.gender', $order);
-            break;
-
-        case 'cabor':
-            $query->join(DB::raw('(
-                SELECT id, cabor_id, "App\\\\Models\\\\Atlet" as type FROM atlets
-                UNION ALL
-                SELECT id, cabor_id, "App\\\\Models\\\\Pelatih" as type FROM pelatih
-            ) as subjects'), function($join) {
-                $join->on('prestasis.subject_id', '=', 'subjects.id')
-                     ->on('prestasis.subject_type', '=', 'subjects.type');
-            })
-            ->join('cabang_olahragas', 'subjects.cabor_id', '=', 'cabang_olahragas.id')
-            ->orderBy('cabang_olahragas.nama_cabor', $order);
-            break;
-
-        default:
-            $query->orderBy($sortBy, $order);
-            break;
-    }
-
-    if ($request->filled('search')) {
-        $search = $request->search;
-        $query->where(function ($q) use ($search) {
-            $q->where('nama_prestasi', 'like', "%{$search}%")
-                ->orWhere('tingkat', 'like', "%{$search}%")
-                ->orWhere('tempat', 'like', "%{$search}%")
-                ->orWhereHasMorph('subject', [Atlet::class, Pelatih::class], function ($q) use ($search) {
-                    $q->where('nama', 'like', "%{$search}%");
-                });
-        });
-    }
-
-    if ($request->filled('medali')) {
-        $query->where('medali', $request->medali);
-    }
-
-    if ($request->filled('tahun')) {
-        $query->where('tahun', $request->tahun);
-    }
-
-    if ($request->filled('tingkat')) {
-        $query->where('tingkat', $request->tingkat);
-    }
-
-    if ($request->filled('subject_type')) {
-        $query->where('subject_type', $request->subject_type === 'atlet' ? Atlet::class : Pelatih::class);
-    }
-
-    if ($request->filled('cabor')) {
-        $query->whereHasMorph('subject', [Atlet::class, Pelatih::class], function ($q) use ($request) {
-            $q->where('cabor_id', $request->cabor);
-        });
-    }
-
-    $prestasis = $query->paginate($perPage);
-    $prestasis->appends($request->except('page'));
-
-    if ($request->ajax()) {
-        return view('admin.prestasi._table', compact('prestasis'))->render();
-    }
-
-    $allCabors = DB::table('cabang_olahragas')->pluck('nama_cabor', 'id');
-    $allTingkats = ['Nasional', 'Regional', 'Provinsi', 'Kota/Kabupaten'];
-    $allMedalis = ['Emas', 'Perak', 'Perunggu'];
-    $allYears = range(date('Y'), 2015);
-
-    if ($request->get('get_tahun')) {
-        $years = Prestasi::distinct()->pluck('tahun')->sortDesc()->values();
-        return response()->json($years);
-    }
-
-    return view('admin.prestasi.index', compact(
-        'prestasis',
-        'allCabors',
-        'allTingkats',
-        'allMedalis',
-        'allYears'
-    ));
-}
 
     public function create()
     {
@@ -185,7 +194,7 @@ class PrestasiController extends Controller
         $prestasi->save();
 
         return redirect()->route('admin.konfigurasi.prestasi.index')
-            ->with('OK', 'Prestasi berhasil ditambahkan!')
+            ->with('success', 'Prestasi berhasil ditambahkan!')
             ->with('action', 'store');
     }
 
@@ -233,14 +242,14 @@ class PrestasiController extends Controller
         ]));
 
         return redirect()->route('admin.konfigurasi.prestasi.index')
-            ->with('OK', 'Prestasi berhasil diperbarui!')
+            ->with('success', 'Prestasi berhasil diperbarui!')
             ->with('action', 'update');
     }
 
     public function destroy(Prestasi $prestasi)
     {
         $prestasi->delete();
-        return back()->with('OK', 'Prestasi berhasil dihapus!')
+        return back()->with('success', 'Prestasi berhasil dihapus!')
             ->with('action', 'destroy');
     }
 
@@ -270,7 +279,7 @@ class PrestasiController extends Controller
         $prestasi->save();
 
         return redirect()->route('admin.konfigurasi.atlet.show', $atlet)
-            ->with('OK', 'Prestasi atlet berhasil ditambahkan!');
+            ->with('success', 'Prestasi atlet berhasil ditambahkan!');
     }
 
     public function createForPelatih(Pelatih $pelatih)
@@ -299,6 +308,6 @@ class PrestasiController extends Controller
         $prestasi->save();
 
         return redirect()->route('admin.konfigurasi.pelatih.show', $pelatih)
-            ->with('OK', 'Prestasi pelatih berhasil ditambahkan!');
+            ->with('success', 'Prestasi pelatih berhasil ditambahkan!');
     }
 }

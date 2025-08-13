@@ -177,7 +177,8 @@
                                 'label' => 'Tanggal Pembentukan',
                                 'type' => 'date',
                                 'required' => true,
-                                'value' => $cabor->tanggal_pembentukan,
+                                // pastikan formatnya Y-m-d
+                                'value' => optional($cabor->tanggal_pembentukan)->format('Y-m-d'),
                             ],
                         ];
                     @endphp

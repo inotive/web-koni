@@ -213,7 +213,7 @@
                                             <th class="min-w-200px">Alamat Domisili</th>
                                             <th class="min-w-120px">Jenis Kelamin</th>
                                             <th class="min-w-80px">Usia</th>
-                                            <th class="min-w-180px">Prestasi Terbaru</th>
+                                            <th class="min-w-180px">Prestasi</th>
                                             <th class="min-w-150px">Kontak</th>
                                             <th class="min-w-100px text-end pe-6">Aksi</th>
                                         </tr>
@@ -283,13 +283,19 @@
                                                     <div class="d-flex flex-column">
                                                         @if ($atlet->no_telepon)
                                                             <span class="text-gray-800 fs-7 mb-1">
-                                                                <i class="ki-duotone ki-phone fs-6 me-1"></i>
+                                                                <i class="ki-duotone ki-phone fs-6 me-1">
+                                                                    <span class="path1"></span>
+                                                                    <span class="path2"></span>
+                                                                </i>
                                                                 {{ $atlet->no_telepon }}
                                                             </span>
                                                         @endif
                                                         @if ($atlet->email)
                                                             <span class="text-gray-600 fs-7">
-                                                                <i class="ki-duotone ki-sms fs-6 me-1"></i>
+                                                                <i class="ki-duotone ki-sms fs-6 me-1">
+                                                                    <span class="path1"></span>
+                                                                    <span class="path2"></span>
+                                                                </i>
                                                                 {{ Str::limit($atlet->email, 20) }}
                                                             </span>
                                                         @endif
@@ -390,7 +396,7 @@
                                             <th class="min-w-200px">Alamat Domisili</th>
                                             <th class="min-w-120px">Jenis Kelamin</th>
                                             <th class="min-w-80px">Usia</th>
-                                            <th class="min-w-180px">Prestasi/Sertifikasi</th>
+                                            <th class="min-w-180px">Prestasi</th>
                                             <th class="min-w-150px">Kontak</th>
                                             <th class="min-w-100px text-end pe-6">Aksi</th>
                                         </tr>
@@ -523,123 +529,231 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            // Initialize Bootstrap tabs
-            var triggerTabList = [].slice.call(document.querySelectorAll('.nav-tabs a'))
-            triggerTabList.forEach(function(triggerEl) {
-                var tabTrigger = new bootstrap.Tab(triggerEl)
+    // Initialize Bootstrap tabs
+    var triggerTabList = [].slice.call(document.querySelectorAll('.nav-tabs a'))
+    triggerTabList.forEach(function(triggerEl) {
+        var tabTrigger = new bootstrap.Tab(triggerEl)
 
-                triggerEl.addEventListener('click', function(event) {
-                    event.preventDefault()
-                    tabTrigger.show()
-                })
-            });
+        triggerEl.addEventListener('click', function(event) {
+            event.preventDefault()
+            tabTrigger.show()
+        })
+    });
 
-            // Fungsi untuk tabel Atlet
-            const atletTable = $('table').first(); // Tabel pertama adalah tabel atlet
-            const atletRows = atletTable.find('tbody tr');
+    // Fungsi untuk tabel Atlet
+    function initAtletFilter() {
+        const atletTable = $('#kt_tab_pane_atlet table');
+        const atletRows = atletTable.find('tbody tr');
 
-            $('#search-atlet').on('keyup', function() {
-                const searchText = $(this).val().toLowerCase();
-                filterAtletTable(searchText, $('#filter-jenis-kelamin-atlet').val());
-            });
-
-            $('#apply-filters-atlet').on('click', function() {
-                filterAtletTable($('#search-atlet').val().toLowerCase(), $('#filter-jenis-kelamin-atlet')
-                    .val());
-                updateAtletFilterCount();
-            });
-
-            $('#reset-filters-atlet').on('click', function() {
-                $('#search-atlet').val('');
-                $('#filter-jenis-kelamin-atlet').val('');
-                filterAtletTable('', '');
-                updateAtletFilterCount();
-            });
-
-            function filterAtletTable(searchText, jenisKelamin) {
-                atletRows.each(function() {
-                    const row = $(this);
-                    const nama = row.find('td:nth-child(3)').text().toLowerCase();
-                    const jk = row.find('td:nth-child(5)').text().toLowerCase();
-
-                    const cocokSearch = nama.includes(searchText) || searchText === '';
-                    const cocokFilter = jk.includes(jenisKelamin) || jenisKelamin === '';
-
-                    if (cocokSearch && cocokFilter) {
-                        row.show();
-                    } else {
-                        row.hide();
-                    }
-                });
-            }
-
-            function updateAtletFilterCount() {
-                const filterAktif = [];
-                if ($('#filter-jenis-kelamin-atlet').val()) filterAktif.push('jenis_kelamin');
-
-                const jumlah = filterAktif.length;
-                const badge = $('#filter-count-atlet');
-
-                if (jumlah > 0) {
-                    badge.text(jumlah).removeClass('d-none');
-                } else {
-                    badge.addClass('d-none');
-                }
-            }
-
-            // Fungsi untuk tabel Pelatih
-            const pelatihTable = $('table').last(); // Tabel terakhir adalah tabel pelatih
-            const pelatihRows = pelatihTable.find('tbody tr');
-
-            $('#search-pelatih').on('keyup', function() {
-                const searchText = $(this).val().toLowerCase();
-                filterPelatihTable(searchText, $('#filter-jenis-kelamin-pelatih').val());
-            });
-
-            $('#apply-filters-pelatih').on('click', function() {
-                filterPelatihTable($('#search-pelatih').val().toLowerCase(), $(
-                    '#filter-jenis-kelamin-pelatih').val());
-                updatePelatihFilterCount();
-            });
-
-            $('#reset-filters-pelatih').on('click', function() {
-                $('#search-pelatih').val('');
-                $('#filter-jenis-kelamin-pelatih').val('');
-                filterPelatihTable('', '');
-                updatePelatihFilterCount();
-            });
-
-            function filterPelatihTable(searchText, jenisKelamin) {
-                pelatihRows.each(function() {
-                    const row = $(this);
-                    const nama = row.find('td:nth-child(3)').text().toLowerCase();
-                    const jk = row.find('td:nth-child(5)').text().toLowerCase();
-
-                    const cocokSearch = nama.includes(searchText) || searchText === '';
-                    const cocokFilter = jk.includes(jenisKelamin) || jenisKelamin === '';
-
-                    if (cocokSearch && cocokFilter) {
-                        row.show();
-                    } else {
-                        row.hide();
-                    }
-                });
-            }
-
-            function updatePelatihFilterCount() {
-                const filterAktif = [];
-                if ($('#filter-jenis-kelamin-pelatih').val()) filterAktif.push('jenis_kelamin');
-
-                const jumlah = filterAktif.length;
-                const badge = $('#filter-count-pelatih');
-
-                if (jumlah > 0) {
-                    badge.text(jumlah).removeClass('d-none');
-                } else {
-                    badge.addClass('d-none');
-                }
-            }
+        $('#search-atlet').on('keyup', function() {
+            const searchText = $(this).val().toLowerCase();
+            const jenisKelamin = $('#filter-jenis-kelamin-atlet').val().toLowerCase();
+            filterAtletTable(searchText, jenisKelamin);
         });
+
+        $('#apply-filters-atlet').on('click', function() {
+            const searchText = $('#search-atlet').val().toLowerCase();
+            const jenisKelamin = $('#filter-jenis-kelamin-atlet').val().toLowerCase();
+            filterAtletTable(searchText, jenisKelamin);
+            updateAtletFilterCount();
+            
+            // Close dropdown menu
+            $('[data-kt-menu="true"]').removeClass('show');
+        });
+
+        $('#reset-filters-atlet').on('click', function() {
+            $('#search-atlet').val('');
+            $('#filter-jenis-kelamin-atlet').val('');
+            filterAtletTable('', '');
+            updateAtletFilterCount();
+        });
+
+        function filterAtletTable(searchText, jenisKelamin) {
+            let visibleCount = 0;
+            
+            atletRows.each(function() {
+                const row = $(this);
+                const nama = row.find('td:nth-child(3)').text().toLowerCase().trim();
+                const tempat = row.find('td:nth-child(4)').text().toLowerCase().trim();
+                const alamat = row.find('td:nth-child(5)').text().toLowerCase().trim();
+                const jk = row.find('td:nth-child(6) .badge').text().toLowerCase().trim();
+                
+                // Check search criteria (search in nama, tempat, alamat)
+                const cocokSearch = searchText === '' || 
+                    nama.includes(searchText) || 
+                    tempat.includes(searchText) || 
+                    alamat.includes(searchText);
+                
+                // Check filter criteria
+                const cocokFilter = jenisKelamin === '' || jk.includes(jenisKelamin);
+
+                if (cocokSearch && cocokFilter) {
+                    row.show();
+                    visibleCount++;
+                } else {
+                    row.hide();
+                }
+            });
+
+            // Show/hide no results message
+            showNoResultsMessage('#kt_tab_pane_atlet', visibleCount, 'atlet');
+        }
+
+        function updateAtletFilterCount() {
+            const filterAktif = [];
+            if ($('#filter-jenis-kelamin-atlet').val()) filterAktif.push('jenis_kelamin');
+
+            const jumlah = filterAktif.length;
+            const badge = $('#filter-count-atlet');
+
+            if (jumlah > 0) {
+                badge.text(jumlah).removeClass('d-none');
+            } else {
+                badge.addClass('d-none');
+            }
+        }
+    }
+
+    // Fungsi untuk tabel Pelatih
+    function initPelatihFilter() {
+        const pelatihTable = $('#kt_tab_pane_pelatih table');
+        const pelatihRows = pelatihTable.find('tbody tr');
+
+        $('#search-pelatih').on('keyup', function() {
+            const searchText = $(this).val().toLowerCase();
+            const jenisKelamin = $('#filter-jenis-kelamin-pelatih').val().toLowerCase();
+            filterPelatihTable(searchText, jenisKelamin);
+        });
+
+        $('#apply-filters-pelatih').on('click', function() {
+            const searchText = $('#search-pelatih').val().toLowerCase();
+            const jenisKelamin = $('#filter-jenis-kelamin-pelatih').val().toLowerCase();
+            filterPelatihTable(searchText, jenisKelamin);
+            updatePelatihFilterCount();
+            
+            // Close dropdown menu
+            $('[data-kt-menu="true"]').removeClass('show');
+        });
+
+        $('#reset-filters-pelatih').on('click', function() {
+            $('#search-pelatih').val('');
+            $('#filter-jenis-kelamin-pelatih').val('');
+            filterPelatihTable('', '');
+            updatePelatihFilterCount();
+        });
+
+        function filterPelatihTable(searchText, jenisKelamin) {
+            let visibleCount = 0;
+            
+            pelatihRows.each(function() {
+                const row = $(this);
+                const nama = row.find('td:nth-child(3)').text().toLowerCase().trim();
+                const tempat = row.find('td:nth-child(4)').text().toLowerCase().trim();
+                const alamat = row.find('td:nth-child(5)').text().toLowerCase().trim();
+                const jk = row.find('td:nth-child(6) .badge').text().toLowerCase().trim();
+                
+                // Check search criteria (search in nama, tempat, alamat)
+                const cocokSearch = searchText === '' || 
+                    nama.includes(searchText) || 
+                    tempat.includes(searchText) || 
+                    alamat.includes(searchText);
+                
+                // Check filter criteria
+                const cocokFilter = jenisKelamin === '' || jk.includes(jenisKelamin);
+
+                if (cocokSearch && cocokFilter) {
+                    row.show();
+                    visibleCount++;
+                } else {
+                    row.hide();
+                }
+            });
+
+            // Show/hide no results message
+            showNoResultsMessage('#kt_tab_pane_pelatih', visibleCount, 'pelatih');
+        }
+
+        function updatePelatihFilterCount() {
+            const filterAktif = [];
+            if ($('#filter-jenis-kelamin-pelatih').val()) filterAktif.push('jenis_kelamin');
+
+            const jumlah = filterAktif.length;
+            const badge = $('#filter-count-pelatih');
+
+            if (jumlah > 0) {
+                badge.text(jumlah).removeClass('d-none');
+            } else {
+                badge.addClass('d-none');
+            }
+        }
+    }
+
+    // Function to show/hide no results message
+    function showNoResultsMessage(tabSelector, visibleCount, type) {
+        const tab = $(tabSelector);
+        const existingMessage = tab.find('.no-results-message');
+        
+        if (visibleCount === 0) {
+            if (existingMessage.length === 0) {
+                const message = `
+                    <div class="no-results-message d-flex flex-column flex-center text-center p-10">
+                        <div class="pt-10 pb-10">
+                            <h3 class="fs-4 fw-bold text-gray-600">Tidak Ada Hasil Ditemukan</h3>
+                            <p class="text-gray-400 fs-6 fw-semibold">
+                                Coba ubah kata kunci pencarian atau filter yang digunakan.
+                            </p>
+                        </div>
+                    </div>
+                `;
+                tab.find('.table-responsive').after(message);
+            }
+        } else {
+            existingMessage.remove();
+        }
+    }
+
+    // Initialize filters for both tables
+    if ($('#kt_tab_pane_atlet table tbody tr').length > 0) {
+        initAtletFilter();
+    }
+    
+    if ($('#kt_tab_pane_pelatih table tbody tr').length > 0) {
+        initPelatihFilter();
+    }
+
+    // Handle tab switching to reinitialize if needed
+    $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        const targetTab = $(e.target).attr('href');
+        
+        // Clear any existing no results messages when switching tabs
+        $('.no-results-message').remove();
+        
+        // Reset search and filters when switching tabs
+        if (targetTab === '#kt_tab_pane_atlet') {
+            $('#search-atlet').val('');
+            $('#filter-jenis-kelamin-atlet').val('');
+            $('#filter-count-atlet').addClass('d-none');
+            if ($('#kt_tab_pane_atlet table tbody tr').length > 0) {
+                $('#kt_tab_pane_atlet table tbody tr').show();
+            }
+        } else if (targetTab === '#kt_tab_pane_pelatih') {
+            $('#search-pelatih').val('');
+            $('#filter-jenis-kelamin-pelatih').val('');
+            $('#filter-count-pelatih').addClass('d-none');
+            if ($('#kt_tab_pane_pelatih table tbody tr').length > 0) {
+                $('#kt_tab_pane_pelatih table tbody tr').show();
+            }
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('[data-kt-menu-trigger]').length && 
+            !$(e.target).closest('[data-kt-menu="true"]').length) {
+            $('[data-kt-menu="true"]').removeClass('show');
+        }
+    });
+});
     </script>
 
     <style>
