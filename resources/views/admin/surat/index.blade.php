@@ -115,6 +115,134 @@
         color: white;
     }
 
+    /* Date Filter Styles */
+    .date-filter-container {
+        position: relative;
+        width: 200px;
+    }
+
+    .date-filter-btn {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 0.95rem;
+        color: #495057;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        text-align: left;
+    }
+
+    .date-filter-btn:hover {
+        border-color: #F8285A;
+        color: #F8285A;
+    }
+
+    .date-filter-btn.date-filter-active {
+        background-color: #F8285A;
+        border-color: #F8285A;
+        color: white;
+    }
+
+    .date-filter-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        margin-top: 4px;
+        display: none;
+        padding: 16px;
+        min-width: 280px;
+    }
+
+    .date-filter-menu.show {
+        display: block;
+    }
+
+    .date-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .date-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .date-input-label {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .date-input {
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        color: #374151;
+        background-color: #fff;
+        transition: border-color 0.2s ease;
+    }
+
+    .date-input:focus {
+        outline: none;
+        border-color: #F8285A;
+        box-shadow: 0 0 0 3px rgba(248, 40, 90, 0.1);
+    }
+
+    .date-filter-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .date-filter-apply {
+        flex: 1;
+        background-color: #F8285A;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .date-filter-apply:hover {
+        background-color: #e1244e;
+    }
+
+    .date-filter-clear {
+        background-color: #f3f4f6;
+        color: #6b7280;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .date-filter-clear:hover {
+        background-color: #e5e7eb;
+    }
+
     .nav-tabs-custom {
         border-bottom: 2px solid #e9ecef;
         margin-bottom: 0;
@@ -230,17 +358,21 @@
             gap: 10px;
         }
 
-        .search-container {
-            width: 100%;
-        }
-
-        .filter-dropdown {
+        .search-container,
+        .filter-dropdown,
+        .date-filter-container {
             width: 100%;
         }
 
         .nav-tabs-custom .nav-link {
             padding: 8px 16px;
             font-size: 14px;
+        }
+
+        .date-filter-menu {
+            min-width: 100%;
+            left: 0;
+            right: 0;
         }
     }
 
@@ -311,10 +443,10 @@
             </div>
             
             <form id="filter" class="d-flex gap-3 filter-container">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#add"
+                <button type="button" id="tambahSuratBtn"
                     class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
-                    Tambah Surat
+                    <span id="tambahSuratText">Tambah Surat Masuk</span>
                 </button>
 
                 <div class="search-container">
@@ -361,11 +493,48 @@
                     </div>
                 </div>
 
-                <div class="d-flex gap-2">
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" 
-                           class="form-control form-control-sm" placeholder="Dari" style="width: 150px;">
-                    <input type="date" name="end_date" value="{{ request('end_date') }}" 
-                           class="form-control form-control-sm" placeholder="Sampai" style="width: 150px;">
+                <!-- Date Filter Dropdown -->
+                <div class="date-filter-container">
+                    <div class="date-filter-btn {{ (request('start_date') || request('end_date')) ? 'date-filter-active' : '' }}" id="dateFilterBtn">
+                        <span>
+                            @if(request('start_date') || request('end_date'))
+                                <i class="fas fa-calendar-check me-2"></i>
+                                @if(request('start_date') && request('end_date'))
+                                    {{ date('d/m/Y', strtotime(request('start_date'))) }} - {{ date('d/m/Y', strtotime(request('end_date'))) }}
+                                @elseif(request('start_date'))
+                                    Dari {{ date('d/m/Y', strtotime(request('start_date'))) }}
+                                @else
+                                    Sampai {{ date('d/m/Y', strtotime(request('end_date'))) }}
+                                @endif
+                            @else
+                                <i class="fas fa-calendar me-2"></i>Filter Tanggal
+                            @endif
+                        </span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                    </div>
+
+                    <div class="date-filter-menu" id="dateFilterMenu">
+                        <div class="date-input-group">
+                            <div class="date-input-wrapper">
+                                <label class="date-input-label">Tanggal Mulai</label>
+                                <input type="date" name="start_date" value="{{ request('start_date') }}" 
+                                       class="date-input" id="startDateInput">
+                            </div>
+                            <div class="date-input-wrapper">
+                                <label class="date-input-label">Tanggal Akhir</label>
+                                <input type="date" name="end_date" value="{{ request('end_date') }}" 
+                                       class="date-input" id="endDateInput">
+                            </div>
+                        </div>
+                        <div class="date-filter-actions">
+                            <button type="button" class="date-filter-apply" id="applyDateFilter">
+                                Terapkan
+                            </button>
+                            <button type="button" class="date-filter-clear" id="clearDateFilter">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <input type="hidden" name="jenis_surat" id="jenis_surat_input" value="{{ request('jenis_surat', 'all') }}">
@@ -413,7 +582,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 gap-5 px-10 py-8">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="fs-2 fw-bold leading-5">Tambah Surat</div>
+                        <div class="fs-2 fw-bold leading-5" id="modalTitle">Tambah Surat Masuk</div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
@@ -429,8 +598,7 @@
 
                         <div>
                             <div class="fw-semibold required mb-3 text-gray-800">Jenis Surat</div>
-                            <select name="jenis_surat" class="form-select bg-light border border-gray-400" required>
-                                <option value="">Pilih Jenis Surat</option>
+                            <select name="jenis_surat" id="jenisSuratSelect" class="form-select bg-light border border-gray-400" required>
                                 <option value="masuk">Surat Masuk</option>
                                 <option value="keluar">Surat Keluar</option>
                             </select>
@@ -459,8 +627,8 @@
 
                     <div class="d-grid py-4">
                         <button type="button" onclick="submitForm('formAdd')"
-                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                            Tambah Surat
+                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white" id="submitBtn">
+                            Tambah Surat Masuk
                         </button>
                     </div>
                 </div>
@@ -473,6 +641,47 @@
 <script>
     let currentFilter = '{{ request("jenis_surat", "all") }}';
     let currentTab = 'masuk';
+
+    function updateAddButtonText() {
+        const isKeluar = currentTab === 'keluar';
+        const buttonText = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
+        const modalTitle = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
+        const submitText = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
+        
+        $('#tambahSuratText').text(buttonText);
+        $('#modalTitle').text(modalTitle);
+        $('#submitBtn').text(submitText);
+        $('#jenisSuratSelect').val(currentTab === 'keluar' ? 'keluar' : 'masuk');
+    }
+
+    function updateDateFilterButton() {
+        const startDate = $('#startDateInput').val();
+        const endDate = $('#endDateInput').val();
+        const button = $('#dateFilterBtn');
+        const span = button.find('span');
+
+        if (startDate || endDate) {
+            button.addClass('date-filter-active');
+            let dateText = '<i class="fas fa-calendar-check me-2"></i>';
+            
+            if (startDate && endDate) {
+                const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
+                const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
+                dateText += `${startFormatted} - ${endFormatted}`;
+            } else if (startDate) {
+                const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
+                dateText += `Dari ${startFormatted}`;
+            } else {
+                const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
+                dateText += `Sampai ${endFormatted}`;
+            }
+            
+            span.html(dateText);
+        } else {
+            button.removeClass('date-filter-active');
+            span.html('<i class="fas fa-calendar me-2"></i>Filter Tanggal');
+        }
+    }
 
     function reloadTable(url = null) {
         let formData = $('#filter').serialize();
@@ -570,20 +779,37 @@
 
     $(document).ready(function() {
         initializeDropzones();
+        updateAddButtonText();
+        updateDateFilterButton();
+
+        $('#tambahSuratBtn').on('click', function() {
+            $('#add').modal('show');
+        });
 
         $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
             const targetId = $(e.target).attr('data-bs-target');
             currentTab = targetId.replace('#', '').replace('-content', '');
+            updateAddButtonText();
             reloadTable();
         });
 
+        // Filter jenis surat dropdown
         $('#filterBtn').on('click', function(e) {
             e.stopPropagation();
             $('#filterMenu').toggleClass('show');
+            $('#dateFilterMenu').removeClass('show'); // Close date filter when opening this one
+        });
+
+        // Date filter dropdown
+        $('#dateFilterBtn').on('click', function(e) {
+            e.stopPropagation();
+            $('#dateFilterMenu').toggleClass('show');
+            $('#filterMenu').removeClass('show'); // Close jenis surat filter when opening this one
         });
 
         $(document).on('click', function() {
             $('#filterMenu').removeClass('show');
+            $('#dateFilterMenu').removeClass('show');
         });
 
         $('.filter-option').on('click', function(e) {
@@ -613,16 +839,27 @@
             $('#filterMenu').removeClass('show');
         });
 
+        // Date filter actions
+        $('#applyDateFilter').on('click', function() {
+            updateDateFilterButton();
+            reloadTable();
+            $('#dateFilterMenu').removeClass('show');
+        });
+
+        $('#clearDateFilter').on('click', function() {
+            $('#startDateInput').val('');
+            $('#endDateInput').val('');
+            updateDateFilterButton();
+            reloadTable();
+            $('#dateFilterMenu').removeClass('show');
+        });
+
         $(document).on('input', '#filter input[name="search"]', debounce(function() {
             let keyword = $(this).val();
             if (keyword.length >= 1 || keyword.length === 0) {
                 reloadTable();
             }
         }, 300));
-
-        $(document).on('change', '#filter input[name="start_date"], #filter input[name="end_date"]', function() {
-            reloadTable();
-        });
 
         $(document).on('change', '#per_page', function() {
             reloadTable();
@@ -636,7 +873,8 @@
             }
         });
 
-        $('#filterMenu').on('click', function(e) {
+        // Prevent dropdown menus from closing when clicking inside
+        $('#filterMenu, #dateFilterMenu').on('click', function(e) {
             e.stopPropagation();
         });
 
@@ -649,6 +887,7 @@
         if (filterFromURL === 'keluar') {
             $('#keluar-tab').tab('show');
             currentTab = 'keluar';
+            updateAddButtonText();
         }
     });
 
@@ -698,6 +937,7 @@
                         dropzones[formId].removeAllFiles();
                     }
 
+                    updateAddButtonText();
                     reloadTable();
                 }
             })
