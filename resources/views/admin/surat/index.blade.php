@@ -4,12 +4,6 @@
 @section('mainSection', 'Menu Utama')
 @section('currentSection', 'Surat Masuk & Keluar')
 
-@section('breadcrumb-title')
-@endsection
-
-@section('breadcrumb-items')
-@endsection
-
 @section('style')
 <style>
     .filter-container {
@@ -38,12 +32,12 @@
         z-index: 10;
     }
 
-    .filter-dropdown {
+    .filter-dropdown, .date-filter-container {
         position: relative;
         width: 200px;
     }
 
-    .filter-btn {
+    .filter-btn, .date-filter-btn {
         background: white;
         border: 1px solid #dee2e6;
         border-radius: 8px;
@@ -59,18 +53,18 @@
         text-align: left;
     }
 
-    .filter-btn:hover {
+    .filter-btn:hover, .date-filter-btn:hover {
         border-color: #F8285A;
         color: #F8285A;
     }
 
-    .filter-btn.filter-active {
+    .filter-btn.filter-active, .date-filter-btn.date-filter-active {
         background-color: #F8285A;
         border-color: #F8285A;
         color: white;
     }
 
-    .filter-menu {
+    .filter-menu, .date-filter-menu {
         position: absolute;
         top: 100%;
         left: 0;
@@ -84,7 +78,7 @@
         display: none;
     }
 
-    .filter-menu.show {
+    .filter-menu.show, .date-filter-menu.show {
         display: block;
     }
 
@@ -111,57 +105,9 @@
         color: white;
     }
 
-    /* Date Filter Styles */
-    .date-filter-container {
-        position: relative;
-        width: 200px;
-    }
-
-    .date-filter-btn {
-        background: white;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 8px 16px;
-        font-size: 0.95rem;
-        color: #495057;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        text-align: left;
-    }
-
-    .date-filter-btn:hover {
-        border-color: #F8285A;
-        color: #F8285A;
-    }
-
-    .date-filter-btn.date-filter-active {
-        background-color: #F8285A;
-        border-color: #F8285A;
-        color: white;
-    }
-
     .date-filter-menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        z-index: 1000;
-        margin-top: 4px;
-        display: none;
         padding: 16px;
         min-width: 280px;
-    }
-
-    .date-filter-menu.show {
-        display: block;
     }
 
     .date-input-group {
@@ -267,81 +213,6 @@
         background: none;
     }
 
-    .tab-content-custom {
-        border-top: none;
-    }
-
-    table td,
-    table th {
-        vertical-align: middle;
-        word-wrap: break-word;
-        max-width: 200px;
-    }
-
-    .text-truncate-custom {
-        max-width: 200px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .dropdown-menu {
-        z-index: 1055 !important;
-        position: absolute !important;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-        border: 1px solid rgba(0, 0, 0, 0.15) !important;
-    }
-
-    .dropdown {
-        position: relative;
-        z-index: 1000;
-    }
-
-    .btn-icon {
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0;
-    }
-
-    .btn-light-warning {
-        background-color: #fff3cd;
-        border-color: #ffeaa7;
-        color: #856404;
-    }
-
-    .btn-light-warning:hover {
-        background-color: #ffecb5;
-        border-color: #ffe69c;
-        color: #533f03;
-    }
-
-    .btn-light-danger {
-        background-color: #f8d7da;
-        border-color: #f5c6cb;
-        color: #721c24;
-    }
-
-    .btn-light-danger:hover {
-        background-color: #f1b0b7;
-        border-color: #ecadb2;
-        color: #491217;
-    }
-
-    .btn-light-primary {
-        background-color: #d1ecf1;
-        border-color: #b8daff;
-        color: #0c5460;
-    }
-
-    .btn-light-primary:hover {
-        background-color: #bee5eb;
-        border-color: #a6d8ff;
-        color: #062c33;
-    }
-
     .table-loading {
         opacity: 0.6;
         pointer-events: none;
@@ -354,9 +225,7 @@
             gap: 10px;
         }
 
-        .search-container,
-        .filter-dropdown,
-        .date-filter-container {
+        .search-container, .filter-dropdown, .date-filter-container {
             width: 100%;
         }
 
@@ -371,190 +240,6 @@
             right: 0;
         }
     }
-
-     .pagination {
-            margin-bottom: 0;
-        }
-
-        .pagination .page-item {
-            margin: 0 1px;
-        }
-
-        .pagination-sm .page-link {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-            color: #6c757d;
-            margin: 0 2px;
-        }
-
-        .pagination-sm .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
-            color: white;
-        }
-
-        .pagination-sm .page-link:hover {
-            background-color: #f8f9fa;
-            border-color: #dee2e6;
-            color: #495057;
-        }
-
-        .pagination-sm .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: #fff;
-            border-color: #dee2e6;
-        }
-
-        /* Simple Pagination Styles */
-        .simple-pagination .page-link {
-            border: none !important;
-            margin: 0 2px;
-            border-radius: 4px !important;
-            padding: 6px 12px !important;
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            transition: all 0.2s ease;
-        }
-
-        .simple-pagination .page-link:hover {
-            background-color: #e9ecef !important;
-            color: #495057 !important;
-        }
-
-        .simple-pagination .page-item.active .page-link {
-            background-color: #007bff !important;
-            color: white !important;
-        }
-
-        .simple-pagination .page-link:focus {
-            box-shadow: none !important;
-        }
-
-        /* Pagination Arrows and Numbers */
-        .pagination-arrow {
-            color: #6c757d;
-            text-decoration: none;
-            padding: 6px 8px;
-            transition: color 0.2s ease;
-            cursor: pointer;
-        }
-
-        .pagination-arrow:hover {
-            color: #0b0b0b;
-            text-decoration: none;
-        }
-
-        .pagination-arrow.disabled {
-            color: #adb5bd;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .pagination-number {
-            color: #6c757d;
-            text-decoration: none;
-            padding: 6px 10px;
-            margin: 0 1px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            background-color: #f8f9fa;
-            border: 1px solid transparent;
-            font-size: 0.875rem;
-        }
-
-        .pagination-number:hover {
-            color: #89add1;
-            background-color: #e9ecef;
-            text-decoration: none;
-        }
-
-        .pagination-number.active {
-            background-color: #e4e6e9;
-            color: rgb(4, 4, 4);
-            border-color: #e0e1e4;
-        }
-
-    .badge-success { background-color: #198754 !important; }
-    .badge-primary { background-color: #0d6efd !important; }
-
-    .edit:hover {
-        background-color: rgb(249, 245, 172) !important;
-    }
-
-    .delete:hover {
-        background-color: #ffcad7ff !important;
-    }
-
-
-
-    .tab-content {
-        min-height: auto !important;
-        height: auto !important;
-    }
-
-    .tab-pane {
-        min-height: auto !important;
-        height: auto !important;
-    }
-
-    .dropdown-wrapper {
-    position: relative;
-    z-index: 1;
-}
-
-.dropdown-wrapper .dropdown {
-    position: static;
-}
-
-.dropdown-wrapper .dropdown-menu {
-    position: fixed !important;
-    inset: auto auto auto auto !important;
-    transform: none !important;
-    z-index: 9999 !important;
-    min-width: 150px !important;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25) !important;
-    border: 1px solid rgba(0, 0, 0, 0.15) !important;
-}
-
-.dropdown-wrapper .dropdown-menu.show {
-    display: block !important;
-}
-
-.table-row-bordered {
-    position: relative;
-    z-index: auto;
-}
-
-.table-row-bordered tbody tr {
-    position: relative;
-    z-index: 1;
-}
-
-.table-row-bordered tbody tr:hover {
-    z-index: 2;
-}
-
-.table tbody tr:hover .dropdown-wrapper {
-    z-index: 10;
-}
-
-.dropdown-wrapper:hover {
-    z-index: 10;
-}
-
-.dropdown-menu {
-    z-index: 9999 !important;
-}
-
-.modal {
-    z-index: 10000 !important;
-}
-
-.modal-backdrop {
-    z-index: 9999 !important;
-}
 </style>
 @endsection
 
@@ -567,8 +252,7 @@
             </div>
             
             <form id="filter" class="d-flex gap-3 filter-container">
-                <button type="button" id="tambahSuratBtn"
-                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                <button type="button" id="tambahSuratBtn" class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
                     <span id="tambahSuratText">Tambah Surat Masuk</span>
                 </button>
@@ -576,8 +260,7 @@
                 <div class="search-container">
                     <div class="position-relative bg-light">
                         <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari surat..." class="form-control border border-gray-500 py-2 search-input" />
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari surat..." class="form-control border border-gray-500 py-2 search-input" />
                     </div>
                 </div>
 
@@ -597,27 +280,17 @@
 
                     <div class="filter-menu" id="filterMenu">
                         <div class="filter-option {{ (request('jenis_surat', 'all') == 'all') ? 'active' : '' }}" data-filter="all">
-                            <span>
-                                <i class="fas fa-list me-2"></i>
-                                Semua Surat
-                            </span>
+                            <span><i class="fas fa-list me-2"></i>Semua Surat</span>
                         </div>
                         <div class="filter-option {{ (request('jenis_surat') == 'masuk') ? 'active' : '' }}" data-filter="masuk">
-                            <span>
-                                <i class="fas fa-inbox me-2" style="color: #198754;"></i>
-                                Surat Masuk
-                            </span>
+                            <span><i class="fas fa-inbox me-2" style="color: #198754;"></i>Surat Masuk</span>
                         </div>
                         <div class="filter-option {{ (request('jenis_surat') == 'keluar') ? 'active' : '' }}" data-filter="keluar">
-                            <span>
-                                <i class="fas fa-paper-plane me-2" style="color: #0d6efd;"></i>
-                                Surat Keluar
-                            </span>
+                            <span><i class="fas fa-paper-plane me-2" style="color: #0d6efd;"></i>Surat Keluar</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Date Filter Dropdown -->
                 <div class="date-filter-container">
                     <div class="date-filter-btn {{ (request('start_date') || request('end_date')) ? 'date-filter-active' : '' }}" id="dateFilterBtn">
                         <span>
@@ -640,21 +313,13 @@
                     <div class="date-filter-menu" id="dateFilterMenu">
                         <div class="date-input-group">
                             <div class="date-input-wrapper">
-                               
-                            </div>
-                            <div class="date-input-wrapper">
                                 <label class="date-input-label">Tanggal Dibuat</label>
-                                <input type="date" name="end_date" value="{{ request('end_date') }}" 
-                                       class="date-input" id="endDateInput">
+                                <input type="date" name="end_date" value="{{ request('end_date') }}" class="date-input" id="endDateInput">
                             </div>
                         </div>
                         <div class="date-filter-actions">
-                            <button type="button" class="date-filter-apply" id="applyDateFilter">
-                                Terapkan
-                            </button>
-                            <button type="button" class="date-filter-clear" id="clearDateFilter">
-                                Reset
-                            </button>
+                            <button type="button" class="date-filter-apply" id="applyDateFilter">Terapkan</button>
+                            <button type="button" class="date-filter-clear" id="clearDateFilter">Reset</button>
                         </div>
                     </div>
                 </div>
@@ -664,139 +329,121 @@
         </div>
 
         <div class="container">
-                <div class="card-header border-bottom-0 pb-0">
-                    <ul class="nav nav-tabs nav-tabs-custom" id="suratTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content"
-                                    type="button" role="tab" aria-controls="masuk-content" aria-selected="true">
-                                <i class="fas fa-inbox me-2"></i>Surat Masuk
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="keluar-tab" data-bs-toggle="tab" data-bs-target="#keluar-content"
-                                    type="button" role="tab" aria-controls="keluar-content" aria-selected="false">
-                                <i class="fas fa-paper-plane me-2"></i>Surat Keluar
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+            <div class="card-header border-bottom-0 pb-0">
+                <ul class="nav nav-tabs nav-tabs-custom" id="suratTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content" type="button" role="tab" aria-controls="masuk-content" aria-selected="true">
+                            <i class="fas fa-inbox me-2"></i>Surat Masuk
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="keluar-tab" data-bs-toggle="tab" data-bs-target="#keluar-content" type="button" role="tab" aria-controls="keluar-content" aria-selected="false">
+                            <i class="fas fa-paper-plane me-2"></i>Surat Keluar
+                        </button>
+                    </li>
+                </ul>
+            </div>
 
-                <div class="card-body">
-                    <div class="tab-content tab-content-custom" id="suratTabContent">
-                        <div class="tab-pane fade show active" id="masuk-content" role="tabpanel" aria-labelledby="masuk-tab">
-                            <div id="table-masuk">
-                                @include('admin.surat._table', ['suratData' => $suratMasuk, 'tableId' => 'masuk'])
-                            </div>
+            <div class="card-body">
+                <div class="tab-content tab-content-custom" id="suratTabContent">
+                    <div class="tab-pane fade show active" id="masuk-content" role="tabpanel" aria-labelledby="masuk-tab">
+                        <div id="table-masuk">
+                            @include('admin.surat._table', ['suratData' => $suratMasuk, 'tableId' => 'masuk'])
                         </div>
+                    </div>
 
-                        <div class="tab-pane fade" id="keluar-content" role="tabpanel" aria-labelledby="keluar-tab">
-                            <div id="table-keluar">
-                                @include('admin.surat._table', ['suratData' => $suratKeluar, 'tableId' => 'keluar'])
-                            </div>
+                    <div class="tab-pane fade" id="keluar-content" role="tabpanel" aria-labelledby="keluar-tab">
+                        <div id="table-keluar">
+                            @include('admin.surat._table', ['suratData' => $suratKeluar, 'tableId' => 'keluar'])
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-4 gap-5 px-10 py-8">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="fs-2 fw-bold leading-5" id="modalTitle">Tambah Surat Masuk</div>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="fs-2 fw-bold leading-5" id="modalTitle">Tambah Surat Masuk</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="formAdd" action="{{ route('admin.surat.store') }}" method="POST" enctype="multipart/form-data" class="d-grid gap-4">
+                    @csrf
+
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Nama Kegiatan</div>
+                        <input type="text" name="nama_kegiatan" placeholder="Masukkan Nama Kegiatan" class="form-control bg-light border border-gray-400" required />
                     </div>
 
-                    <form id="formAdd" action="{{ route('admin.surat.store') }}" method="POST"
-                        enctype="multipart/form-data" class="d-grid gap-4">
-                        @csrf
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Jenis Surat</div>
+                        <select name="jenis_surat" id="jenisSuratSelect" class="form-select bg-light border border-gray-400" required>
+                            <option value="masuk">Surat Masuk</option>
+                            <option value="keluar">Surat Keluar</option>
+                        </select>
+                    </div>
 
-                        <div>
-                            <div class="fw-semibold required mb-3 text-gray-800">Nama Kegiatan</div>
-                            <input type="text" name="nama_kegiatan" placeholder="Masukkan Nama Kegiatan"
-                                class="form-control bg-light border border-gray-400" required />
+                    <div>
+                        <div class="fw-semibold mb-3 text-gray-800">
+                            Unggah Dokumen Surat
+                            <span class="text-muted">(Opsional)</span>
                         </div>
-
-                        <div>
-                            <div class="fw-semibold required mb-3 text-gray-800">Jenis Surat</div>
-                            <select name="jenis_surat" id="jenisSuratSelect" class="form-select bg-light border border-gray-400" required>
-                                <option value="masuk">Surat Masuk</option>
-                                <option value="keluar">Surat Keluar</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <div class="fw-semibold mb-3 text-gray-800">
-                                Unggah Dokumen Surat
-                                <span class="text-muted">(Opsional)</span>
-                            </div>
-                            <div class="fv-row">
-                                <div class="dropzone" id="dropzone-formAdd">
-                                    <div class="dz-message needsclick">
-                                        <i class="ki-duotone ki-file-up fs-3x text-primary">
-                                            <span class="path1"></span><span class="path2"></span>
-                                        </i>
-                                        <div class="ms-4">
-                                            <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen surat.</h3>
-                                            <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX. Max. 10 MB.</span>
-                                        </div>
+                        <div class="fv-row">
+                            <div class="dropzone" id="dropzone-formAdd">
+                                <div class="dz-message needsclick">
+                                    <i class="ki-duotone ki-file-up fs-3x text-primary">
+                                        <span class="path1"></span><span class="path2"></span>
+                                    </i>
+                                    <div class="ms-4">
+                                        <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen surat.</h3>
+                                        <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX. Max. 10 MB.</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </form>
-
-                    <div class="d-grid py-4">
-                        <button type="button" onclick="submitForm('formAdd')"
-                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white" id="submitBtn">
-                            Tambah Surat Masuk
-                        </button>
                     </div>
+                </form>
+
+                <div class="d-grid py-4">
+                    <button type="button" onclick="submitForm('formAdd')" class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white" id="submitBtn">
+                        Tambah Surat Masuk
+                    </button>
                 </div>
             </div>
         </div>
+    </div>
 @endsection
 
 @section('script')
 <script>
     let currentFilter = '{{ request("jenis_surat", "all") }}';
     let currentTab = 'masuk';
+    Dropzone.autoDiscover = false;
+    const dropzones = {};
 
     function updateAddButtonText() {
         const isKeluar = currentTab === 'keluar';
         const buttonText = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
         const modalTitle = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
-        const submitText = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
         
         $('#tambahSuratText').text(buttonText);
         $('#modalTitle').text(modalTitle);
-        $('#submitBtn').text(submitText);
+        $('#submitBtn').text(buttonText);
         $('#jenisSuratSelect').val(currentTab === 'keluar' ? 'keluar' : 'masuk');
     }
 
     function updateDateFilterButton() {
-        const startDate = $('#startDateInput').val();
         const endDate = $('#endDateInput').val();
         const button = $('#dateFilterBtn');
         const span = button.find('span');
 
-        if (startDate || endDate) {
+        if (endDate) {
             button.addClass('date-filter-active');
-            let dateText = '<i class="fas fa-calendar-check me-2"></i>';
-            
-            if (startDate && endDate) {
-                const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
-                const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
-                dateText += `${startFormatted} - ${endFormatted}`;
-            } else if (startDate) {
-                const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
-                dateText += `Dari ${startFormatted}`;
-            } else {
-                const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
-                dateText += `Tanggal ${endFormatted}`;
-            }
-            
-            span.html(dateText);
+            const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
+            span.html(`<i class="fas fa-calendar-check me-2"></i>Tanggal ${endFormatted}`);
         } else {
             button.removeClass('date-filter-active');
             span.html('<i class="fas fa-calendar me-2"></i>Filter Tanggal');
@@ -806,7 +453,6 @@
     function reloadTable(url = null) {
         let formData = $('#filter').serialize();
         let target = url ?? "{{ route('admin.surat.index') }}";
-
         formData += '&tab=' + currentTab;
 
         $.ajax({
@@ -814,78 +460,57 @@
             data: formData,
             beforeSend: function() {
                 $(`#table-${currentTab}`).addClass('table-loading');
-                $(`#table-${currentTab}`).html(
-                    '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
-                );
+                $(`#table-${currentTab}`).html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
             },
             success: function(response) {
                 $(`#table-${currentTab}`).removeClass('table-loading');
                 $(`#table-${currentTab}`).html(response);
-
                 initializeDropzones();
                 initializeDropdownEvents();
-
-                if (window.history && window.history.pushState) {
-                    const url = new URL(window.location);
-                    const searchParams = new URLSearchParams(formData);
-
-                    for (const [key, value] of searchParams.entries()) {
-                        if (value && key !== 'tab') {
-                            url.searchParams.set(key, value);
-                        } else if (key !== 'tab') {
-                            url.searchParams.delete(key);
-                        }
-                    }
-
-                    window.history.pushState({}, '', url);
-                }
+                updateURL(formData);
             },
             error: function(xhr) {
                 $(`#table-${currentTab}`).removeClass('table-loading');
-                $(`#table-${currentTab}`).html(
-                    '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
-                );
+                $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
             }
         });
     }
 
+    function updateURL(formData) {
+        if (window.history && window.history.pushState) {
+            const url = new URL(window.location);
+            const searchParams = new URLSearchParams(formData);
+
+            for (const [key, value] of searchParams.entries()) {
+                if (value && key !== 'tab') {
+                    url.searchParams.set(key, value);
+                } else if (key !== 'tab') {
+                    url.searchParams.delete(key);
+                }
+            }
+            window.history.pushState({}, '', url);
+        }
+    }
+
     function initializeDropdownEvents() {
-        $(document).off('click', '.dropdown-wrapper .dropdown-toggle, .dropdown-wrapper .btn');
-        
-        $(document).on('click', '.dropdown-wrapper .dropdown-toggle, .dropdown-wrapper .btn', function(e) {
+        $(document).off('click', '.dropdown-toggle-custom');
+        $(document).on('click', '.dropdown-toggle-custom', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
-            $('.dropdown-menu').removeClass('show');
+            $('.dropdown-menu-custom').removeClass('show');
             
-            const $dropdown = $(this).closest('.dropdown');
-            const $menu = $dropdown.find('.dropdown-menu');
-            
-            if (!$menu.hasClass('show')) {
-                const $button = $(this);
-                const buttonRect = $button[0].getBoundingClientRect();
-                const scrollTop = $(window).scrollTop();
-                const scrollLeft = $(window).scrollLeft();
-                
-                $menu.css({
-                    'position': 'fixed',
-                    'top': buttonRect.bottom + scrollTop + 5 + 'px',
-                    'left': (buttonRect.right + scrollLeft - 150) + 'px',
-                    'z-index': '9999',
-                    'min-width': '150px'
-                });
-                
-                $menu.addClass('show');
-            }
+            const $menu = $(this).siblings('.dropdown-menu-custom');
+            $menu.addClass('show');
         });
 
         $(document).on('click', function(e) {
-            if (!$(e.target).closest('.dropdown-wrapper').length) {
-                $('.dropdown-menu').removeClass('show');
+            if (!$(e.target).closest('.dropdown-action').length) {
+                $('.dropdown-menu-custom').removeClass('show');
             }
         });
 
-        $(document).on('click', '.dropdown-menu', function(e) {
+        $(document).on('click', '.dropdown-menu-custom', function(e) {
             e.stopPropagation();
         });
     }
@@ -893,15 +518,11 @@
     function debounce(func, delay) {
         let timeout;
         return function() {
-            const context = this,
-                args = arguments;
+            const context = this, args = arguments;
             clearTimeout(timeout);
             timeout = setTimeout(() => func.apply(context, args), delay);
         };
     }
-
-    Dropzone.autoDiscover = false;
-    const dropzones = {};
 
     function initializeDropzones() {
         Object.keys(dropzones).forEach(key => {
@@ -975,7 +596,6 @@
 
         $('.filter-option').on('click', function(e) {
             e.stopPropagation();
-
             const filterType = $(this).data('filter');
             if (filterType === currentFilter) return;
 
@@ -992,11 +612,8 @@
             }
 
             currentFilter = filterType;
-
             $('#jenis_surat_input').val(filterType);
-
             reloadTable();
-
             $('#filterMenu').removeClass('show');
         });
 
@@ -1007,7 +624,6 @@
         });
 
         $('#clearDateFilter').on('click', function() {
-            $('#startDateInput').val('');
             $('#endDateInput').val('');
             updateDateFilterButton();
             reloadTable();
@@ -1023,11 +639,6 @@
 
         $(document).on('change', 'select[name="per_page"]', function() {
             const newPerPage = $(this).val();
-            const currentUrl = new URL(window.location.href);
-            
-            currentUrl.searchParams.set('per_page', newPerPage);
-            currentUrl.searchParams.delete('page');
-            
             const formData = $('#filter').serialize() + '&tab=' + currentTab + '&per_page=' + newPerPage;
             
             $.ajax({
@@ -1035,22 +646,18 @@
                 data: formData,
                 beforeSend: function() {
                     $(`#table-${currentTab}`).addClass('table-loading');
+                    $(`#table-${currentTab}`).html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
                 },
                 success: function(response) {
                     $(`#table-${currentTab}`).removeClass('table-loading');
                     $(`#table-${currentTab}`).html(response);
                     initializeDropzones();
                     initializeDropdownEvents();
-                    
-                    if (window.history && window.history.pushState) {
-                        window.history.pushState({}, '', currentUrl);
-                    }
+                    updateURL(formData);
                 },
                 error: function(xhr) {
                     $(`#table-${currentTab}`).removeClass('table-loading');
-                    $(`#table-${currentTab}`).html(
-                        '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
-                    );
+                    $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
                 }
             });
         });
@@ -1071,29 +678,18 @@
                     data: formData,
                     beforeSend: function() {
                         $(`#table-${currentTab}`).addClass('table-loading');
+                        $(`#table-${currentTab}`).html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
                     },
                     success: function(response) {
                         $(`#table-${currentTab}`).removeClass('table-loading');
                         $(`#table-${currentTab}`).html(response);
                         initializeDropzones();
                         initializeDropdownEvents();
-                        
-                        if (window.history && window.history.pushState) {
-                            urlObj.searchParams.set('tab', currentTab);
-                            const currentFormData = new URLSearchParams(formData);
-                            for (const [key, value] of currentFormData.entries()) {
-                                if (value && key !== 'tab') {
-                                    urlObj.searchParams.set(key, value);
-                                }
-                            }
-                            window.history.pushState({}, '', urlObj);
-                        }
+                        updateURL(formData);
                     },
                     error: function(xhr) {
                         $(`#table-${currentTab}`).removeClass('table-loading');
-                        $(`#table-${currentTab}`).html(
-                            '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
-                        );
+                        $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
                     }
                 });
             }
@@ -1143,8 +739,6 @@
 
                 if (!response.ok) {
                     $('.modal.show').modal('hide');
-                    console.log('Error response from controller:', data);
-
                     if (data.errors) {
                         for (let field in data.errors) {
                             let msg = data.errors[field].join(', ');
@@ -1168,7 +762,6 @@
             })
             .catch(error => {
                 $('.modal.show').modal('hide');
-                console.error('Fetch error:', error);
                 toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
             });
     }
@@ -1193,10 +786,96 @@
                 }
             })
             .catch(error => {
-                console.error('Delete error:', error);
                 toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
             });
         }
     }
+function initializeDropdownEvents() {
+    $(document).off('click', '.dropdown-toggle-custom');
+    $(document).off('mouseenter', '.dropdown-action');
+    $(document).off('mouseleave', '.dropdown-action');
+    
+    $(document).on('click', '.dropdown-toggle-custom', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const $dropdownAction = $(this).closest('.dropdown-action');
+        const $menu = $dropdownAction.find('.dropdown-menu-custom');
+        
+        // Close all other dropdowns
+        $('.dropdown-menu-custom').not($menu).removeClass('show');
+        
+        // Toggle this dropdown
+        $menu.toggleClass('show');
+        
+        // Check position
+        checkDropdownPosition($dropdownAction);
+    });
+
+    // Function to check dropdown position - modified to force dropup for bottom rows
+   function checkDropdownPosition($dropdownAction) {
+    const $menu = $dropdownAction.find('.dropdown-menu-custom');
+    if (!$menu.hasClass('show')) return;
+    
+    const menuHeight = $menu.outerHeight();
+    const dropdownOffset = $dropdownAction.offset();
+    const windowHeight = $(window).height();
+    const spaceBelow = windowHeight - dropdownOffset.top - $dropdownAction.outerHeight();
+    
+    // Reset position class
+    $dropdownAction.removeClass('dropup');
+    
+    // Check if this is the last row of the table
+    const $row = $dropdownAction.closest('tr');
+    const $table = $row.closest('tbody');
+    const rowIndex = $table.find('tr').index($row);
+    const totalRows = $table.find('tr').length;
+    
+    // Only apply dropup to the last row
+    if (rowIndex === totalRows - 1) {
+        $dropdownAction.addClass('dropup');
+    }
+}
+
+    // Close dropdown when clicking outside
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.dropdown-action').length) {
+            $('.dropdown-menu-custom').removeClass('show');
+        }
+    });
+
+    // Handle window resize
+    $(window).on('resize', function() {
+        $('.dropdown-action').each(function() {
+            if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
+                checkDropdownPosition($(this));
+            }
+        });
+    });
+
+    if (window.innerWidth > 768) {
+        $(document).on('mouseenter', '.dropdown-action', function() {
+            const $menu = $(this).find('.dropdown-menu-custom');
+            $menu.addClass('show');
+            checkDropdownPosition($(this));
+        }).on('mouseleave', '.dropdown-action', function() {
+            const $menu = $(this).find('.dropdown-menu-custom');
+            setTimeout(() => {
+                if (!$menu.is(':hover')) {
+                    $menu.removeClass('show');
+                }
+            }, 100);
+        });
+
+        $(document).on('mouseenter', '.dropdown-menu-custom', function() {
+            clearTimeout($(this).data('timeout'));
+        }).on('mouseleave', '.dropdown-menu-custom', function() {
+            const $menu = $(this);
+            $menu.data('timeout', setTimeout(() => {
+                $menu.removeClass('show');
+            }, 200));
+        });
+    }
+}
 </script>
 @endsection
