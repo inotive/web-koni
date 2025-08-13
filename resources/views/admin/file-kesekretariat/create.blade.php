@@ -11,28 +11,18 @@
     <link rel="stylesheet" href="{{ asset('css/create.css') }}">
 @endpush
 
-@section('breadcrumb-title')
-    {{-- <h1 class="text-dark fw-bold fs-3 mb-0">Tambah File Kesekretariat</h1> --}}
-@endsection
-
-@section('content')
-
+@section('style')
     <style>
         .form-label {
-            font-weight: 500;
+            font-weight: 600;
             color: #495057;
-        }
-
-        .card-form {
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border: none;
+            font-size: 1rem;
         }
 
         .file-upload-wrapper {
             border: 2px dashed #dee2e6;
             border-radius: 8px;
-            padding: 1.5rem;
+            padding: 2rem;
             text-align: center;
             cursor: pointer;
             background-color: #f8f9fa;
@@ -76,24 +66,41 @@
             color: #198754;
         }
 
-        .btn-danger {
-            background-color: #F8285A;
-            border-color: #F8285A;
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
         }
 
-        .btn-danger:hover {
-            background-color: #d61e4a;
-            border-color: #d61e4a;
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
         }
     </style>
+@endsection
 
-    <div class="container mt-4">
-        <div class="card card-form">
-            <div class="card-body p-4 p-md-5">
-                <h3 class="fw-bold mb-4">Tambah File Kesekretariat</h3>
+@section('content')
+    <div class="d-grid gap-5 border-0">
+        <div class="d-flex justify-content-between align-items-center container">
+            <div class="d-none d-md-block">
+                <h1>Tambah File Kesekretariat</h1>
+                <span>Unggah dokumen file kesekretariat baru</span>
+            </div>
+        </div>
 
+        <div class="container">
+            <div class="rounded-4 gap-5 px-10 py-8" style="background-color: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
                 <form action="{{ route('admin.file-kesekretariat.store') }}" method="POST"
-                    enctype="multipart/form-data" id="fileUploadForm">
+                    enctype="multipart/form-data" id="fileUploadForm" class="d-grid gap-4">
                     @csrf
 
                     @php
@@ -108,17 +115,15 @@
                     @endphp
 
                     @foreach ($fields as $key => $field)
-                        <div class="row align-items-center mb-4">
-                            <div class="col-md-3">
-                                <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
-                            </div>
-                            <div class="col-md-9">
+                        <div class="d-grid gap-2">
+                            <div class="fs-4 fw-bold">{{ $field['label'] }}</div>
+                            <div>
                                 @php
                                     $value = old($key, '');
                                 @endphp
                                 @if ($field['type'] === 'select')
                                     <select name="{{ $key }}" id="{{ $key }}"
-                                        class="form-select @error($key) is-invalid @enderror"
+                                        class="form-control border border-gray-600 @error($key) is-invalid @enderror"
                                         {{ $field['required'] ? 'required' : '' }}>
                                         <option value="">Pilih {{ $field['label'] }}</option>
                                         @foreach ($field['options'] as $option)
@@ -127,11 +132,14 @@
                                         @endforeach
                                     </select>
                                 @elseif ($field['type'] === 'textarea')
-                                    <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
-                                        placeholder="{{ $field['placeholder'] }}" rows="3" {{ $field['required'] ? 'required' : '' }}>{{ $value }}</textarea>
+                                    <textarea name="{{ $key }}" id="{{ $key }}" 
+                                        class="form-control border border-gray-600 @error($key) is-invalid @enderror"
+                                        placeholder="{{ $field['placeholder'] }}" rows="3" 
+                                        {{ $field['required'] ? 'required' : '' }}>{{ $value }}</textarea>
                                 @else
                                     <input type="{{ $field['type'] }}" name="{{ $key }}"
-                                        id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
+                                        id="{{ $key }}" 
+                                        class="form-control border border-gray-600 @error($key) is-invalid @enderror"
                                         placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}"
                                         {{ $field['required'] ? 'required' : '' }}
                                         @if ($field['type'] === 'number') min="0" @endif>
@@ -143,11 +151,9 @@
                         </div>
                     @endforeach
 
-                    <div class="row align-items-center mb-4">
-                        <div class="col-md-3">
-                            <label for="dokumen_file" class="form-label">File Dokumen</label>
-                        </div>
-                        <div class="col-md-9">
+                    <div class="d-grid gap-2">
+                        <div class="fs-4 fw-bold">File Dokumen</div>
+                        <div>
                             <label for="dokumen_file" class="file-upload-wrapper" id="dropArea">
                                 <input type="file" name="dokumen_file" id="dokumen_file"
                                     accept=".pdf,.doc,.docx,.xls,.xlsx" required>
@@ -167,16 +173,15 @@
                         </div>
                     </div>
 
-                    <div class="row mt-4">
-                        <div class="col-md-9 offset-md-3 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-danger px-4">
-                                <i class="fas fa-save me-2"></i>Simpan File
-                            </button>
-                            <a href="{{ route('admin.file-kesekretariat.index') }}"
-                                class="btn btn-secondary px-4">
-                                <i class="fas fa-arrow-left me-2"></i>Batal
-                            </a>
-                        </div>
+                    <div class="d-flex gap-3 justify-content-end mt-4">
+                        <a href="{{ route('admin.file-kesekretariat.index') }}"
+                            class="btn btn-secondary px-4 py-2 fw-bold d-flex align-items-center gap-2 rounded border-0">
+                            <i class="fas fa-arrow-left"></i>Batal
+                        </a>
+                        <button type="submit" 
+                            class="btn btn-danger px-4 py-2 fw-bold d-flex align-items-center gap-2 rounded border-0">
+                            <i class="fas fa-save"></i>Simpan File
+                        </button>
                     </div>
                 </form>
             </div>

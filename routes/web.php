@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     // Letakkan rute 'download' sebelum rute resourc    e
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
+        
 
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {
         Route::resource('permission', PermissionController::class)->except('show', 'create', 'edit');

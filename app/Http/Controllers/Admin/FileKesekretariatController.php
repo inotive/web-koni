@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Illuminate\Support\Facades\Cache;
 
 class FileKesekretariatController extends Controller
 {
@@ -21,38 +23,70 @@ class FileKesekretariatController extends Controller
      */
     public function index(Request $request): View
     {
+         // Create cache key based on request parameters
+        $cacheKey = 'file_kesekretariat_' . md5(serialize($request->query()));
+        
         // Start with a base query for all files
         $query = FileKesekretariat::query();
 
         // Handle the search functionality
         if ($request->filled('search')) {
-            $query->where('nama_dokumen', 'like', '%' . $request->input('search') . '%');
+            $searchTerm = trim($request->input('search'));
+            $query->where('nama_dokumen', 'like', '%' . $searchTerm . '%');
         }
 
         // Handle the file type filter
-        if ($request->filled('filter_file_type')) {
-            // The file type filter in the front-end checks the file extension.
-            // We'll assume the 'dokumen_file' column contains the full file name.
-            $query->where('dokumen_file', 'like', '%' . $request->input('filter_file_type') . '%');
+        if ($request->filled('file_type')) {
+            $fileType = $request->input('file_type');
+            // Filter by file extension (more precise matching)
+            $query->where('dokumen_file', 'like', '%.' . $fileType);
+        }
+
+        // Apply sorting with validation
+        $allowedSortColumns = ['nama_dokumen', 'created_at', 'updated_at'];
+        $sortBy = $request->get('sort_by', 'created_at');
+        $order = $request->get('order', 'desc');
+        
+        // Validate sort parameters
+        if (!in_array($sortBy, $allowedSortColumns)) {
+            $sortBy = 'created_at';
         }
         
-        // Always order by the latest file first
-        $query->orderBy('created_at', 'desc');
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'desc';
+        }
 
-        // Get the files from the database.
-        // In a real application, you should add pagination here,
-        // for example: ->paginate(10);
-        $perPage = (int) $request->input('per_page', 10); // default 10
-$perPage = in_array($perPage, [10,25,50,100]) ? $perPage : 10;
+        // Apply sorting - prioritize latest data by default
+        $query->orderBy($sortBy, $order);
+        
+        // Add secondary sort by ID for consistent ordering (prevent duplicates)
+        if ($sortBy !== 'created_at') {
+            $query->orderBy('created_at', 'desc');
+        }
+        $query->orderBy('id', 'desc');
 
-$files = $query->orderBy(
-            $request->get('sort_by', 'created_at'),
-            $request->get('order', 'desc')
-         )
-         ->paginate($perPage)
-         ->withQueryString(); // agar filter/search tetap terbawa
+        // Pagination settings with validation
+        $perPage = (int) $request->input('per_page', 10);
+        $perPage = in_array($perPage, [10, 25, 50, 100]) ? $perPage : 10;
 
-        // Return the view and pass the $files variable to it using compact()
+        // Execute query with pagination
+        $files = $query->paginate($perPage)
+                      ->withQueryString();
+
+        // Add file path for each file (for easier access in view)
+        $files->getCollection()->transform(function ($file) {
+            $file->path = 'documents/' . $file->dokumen_file;
+            $file->file_exists = Storage::disk('public')->exists($file->path);
+            $file->file_size = $file->file_exists ? Storage::disk('public')->size($file->path) : 0;
+            $file->file_extension = pathinfo($file->dokumen_file, PATHINFO_EXTENSION);
+            return $file;
+        });
+
+        // Cache the results for 5 minutes (only if no search/filter)
+        if (!$request->filled('search') && !$request->filled('file_type')) {
+            Cache::put($cacheKey, $files, now()->addMinutes(5));
+        }
+
         return view('admin.file-kesekretariat.index', compact('files'));
     }
 
@@ -159,21 +193,49 @@ $files = $query->orderBy(
      * Remove the specified resource from storage.
      *
      * @param  FileKesekretariat  $fileKesekretariat
-     * @return RedirectResponse
+     * @param  Request  $request
+     * @return JsonResponse|RedirectResponse
      */
-    public function destroy(FileKesekretariat $fileKesekretariat)
-{
-    // Hapus file fisik
-    if ($fileKesekretariat->dokumen_file &&
-        Storage::disk('public')->exists('documents/' . $fileKesekretariat->dokumen_file)) {
-        Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
-    }
+    public function destroy(FileKesekretariat $fileKesekretariat, Request $request)
+    {
+        try {
+            // Hapus file fisik jika ada
+            if ($fileKesekretariat->dokumen_file &&
+                Storage::disk('public')->exists('documents/' . $fileKesekretariat->dokumen_file)) {
+                Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
+            }
 
-        // Then, delete the record from the database
-        $fileKesekretariat->delete();
+            // Hapus record dari database
+            $fileKesekretariat->delete();
 
-        return redirect()->route('admin.file-kesekretariat.index')
-                         ->with('success', 'File berhasil dihapus.');
+            // Jika request AJAX, return JSON response
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data berhasil dihapus.'
+                ]);
+            }
+
+            // Untuk request biasa, redirect dengan flash message
+            return redirect()->route('admin.file-kesekretariat.index')
+                           ->with('success', 'Data berhasil dihapus.');
+                           
+        } catch (\Exception $e) {
+            // Log error untuk debugging
+            \Log::error('Error deleting file: ' . $e->getMessage());
+            
+            // Jika request AJAX, return JSON error response
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menghapus data. Silakan coba lagi.'
+                ], 500);
+            }
+
+            // Untuk request biasa, redirect dengan error message
+            return redirect()->route('admin.file-kesekretariat.index')
+                           ->with('error', 'Gagal menghapus data. Silakan coba lagi.');
+        }
     }
 
     /**
