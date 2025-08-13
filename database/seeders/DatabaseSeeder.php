@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             PrestasiSeeder::class,
             ManajemenRKASeeder::class,
             FileKesekretariatSeeder::class,
+            SuratSeeder::class,
         ]);
     }
 }

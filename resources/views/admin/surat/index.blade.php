@@ -516,12 +516,10 @@
                     <div class="date-filter-menu" id="dateFilterMenu">
                         <div class="date-input-group">
                             <div class="date-input-wrapper">
-                                <label class="date-input-label">Tanggal Mulai</label>
-                                <input type="date" name="start_date" value="{{ request('start_date') }}" 
-                                       class="date-input" id="startDateInput">
+                               
                             </div>
                             <div class="date-input-wrapper">
-                                <label class="date-input-label">Tanggal Akhir</label>
+                                <label class="date-input-label">Tanggal Dibuat</label>
                                 <input type="date" name="end_date" value="{{ request('end_date') }}" 
                                        class="date-input" id="endDateInput">
                             </div>
@@ -673,7 +671,7 @@
                 dateText += `Dari ${startFormatted}`;
             } else {
                 const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
-                dateText += `Sampai ${endFormatted}`;
+                dateText += `Tanggal ${endFormatted}`;
             }
             
             span.html(dateText);
