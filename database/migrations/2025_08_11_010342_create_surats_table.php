@@ -6,24 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('surat', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kegiatan');
-            $table->string('no_surat');
+            $table->string('no_surat')->unique();
             $table->enum('jenis_surat', ['masuk', 'keluar']);
-            $table->text('dokumen_surat')->nullable();
+            $table->string('dokumen_surat')->nullable();
             $table->timestamps();
+            
+            $table->index(['jenis_surat', 'created_at']);
+            $table->index('no_surat');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('surat');

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('pageTitle', 'Tambah Data Surat')
-@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('mainSection', 'Menu Utama')
 @section('subSection', 'Surat Masuk & Keluar')
 @section('subSectionUrl', route('admin.surat.index'))
 @section('currentSection', 'Tambah Data Surat')
