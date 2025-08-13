@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Manajemen Sekretariat')
-@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('mainSection', 'Menu Utama')
 @section('currentSection', 'Surat Masuk & Keluar')
 
 @section('breadcrumb-title')
@@ -12,10 +12,6 @@
 
 @section('style')
 <style>
-    body {
-        background-color: #f5f5f5;
-    }
-
     .filter-container {
         display: flex;
         align-items: center;
@@ -376,29 +372,109 @@
         }
     }
 
-    .pagination-wrapper .pagination {
-        margin-bottom: 0;
-    }
+     .pagination {
+            margin-bottom: 0;
+        }
 
-    .pagination-wrapper .page-link {
-        padding: 0.375rem 0.75rem;
-        margin-left: -1px;
-        color: #6c757d;
-        background-color: #fff;
-        border: 1px solid #dee2e6;
-    }
+        .pagination .page-item {
+            margin: 0 1px;
+        }
 
-    .pagination-wrapper .page-item.active .page-link {
-        background-color: #F8285A;
-        border-color: #F8285A;
-        color: #fff;
-    }
+        .pagination-sm .page-link {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            margin: 0 2px;
+        }
 
-    .pagination-wrapper .page-link:hover {
-        color: #495057;
-        background-color: #e9ecef;
-        border-color: #dee2e6;
-    }
+        .pagination-sm .page-item.active .page-link {
+            background-color: #F8285A;
+            border-color: #F8285A;
+            color: white;
+        }
+
+        .pagination-sm .page-link:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #495057;
+        }
+
+        .pagination-sm .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+
+        /* Simple Pagination Styles */
+        .simple-pagination .page-link {
+            border: none !important;
+            margin: 0 2px;
+            border-radius: 4px !important;
+            padding: 6px 12px !important;
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            transition: all 0.2s ease;
+        }
+
+        .simple-pagination .page-link:hover {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+        .simple-pagination .page-item.active .page-link {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+
+        .simple-pagination .page-link:focus {
+            box-shadow: none !important;
+        }
+
+        /* Pagination Arrows and Numbers */
+        .pagination-arrow {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .pagination-arrow:hover {
+            color: #0b0b0b;
+            text-decoration: none;
+        }
+
+        .pagination-arrow.disabled {
+            color: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .pagination-number {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 10px;
+            margin: 0 1px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+            border: 1px solid transparent;
+            font-size: 0.875rem;
+        }
+
+        .pagination-number:hover {
+            color: #89add1;
+            background-color: #e9ecef;
+            text-decoration: none;
+        }
+
+        .pagination-number.active {
+            background-color: #e4e6e9;
+            color: rgb(4, 4, 4);
+            border-color: #e0e1e4;
+        }
 
     .badge-success { background-color: #198754 !important; }
     .badge-primary { background-color: #0d6efd !important; }
@@ -411,16 +487,7 @@
         background-color: #ffcad7ff !important;
     }
 
-    .card {
-        min-height: auto !important;
-        height: auto !important;
-    }
 
-    .card-body {
-        min-height: auto !important;
-        height: auto !important;
-        padding: 1.5rem;
-    }
 
     .tab-content {
         min-height: auto !important;
@@ -431,6 +498,63 @@
         min-height: auto !important;
         height: auto !important;
     }
+
+    .dropdown-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.dropdown-wrapper .dropdown {
+    position: static;
+}
+
+.dropdown-wrapper .dropdown-menu {
+    position: fixed !important;
+    inset: auto auto auto auto !important;
+    transform: none !important;
+    z-index: 9999 !important;
+    min-width: 150px !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25) !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+.dropdown-wrapper .dropdown-menu.show {
+    display: block !important;
+}
+
+.table-row-bordered {
+    position: relative;
+    z-index: auto;
+}
+
+.table-row-bordered tbody tr {
+    position: relative;
+    z-index: 1;
+}
+
+.table-row-bordered tbody tr:hover {
+    z-index: 2;
+}
+
+.table tbody tr:hover .dropdown-wrapper {
+    z-index: 10;
+}
+
+.dropdown-wrapper:hover {
+    z-index: 10;
+}
+
+.dropdown-menu {
+    z-index: 9999 !important;
+}
+
+.modal {
+    z-index: 10000 !important;
+}
+
+.modal-backdrop {
+    z-index: 9999 !important;
+}
 </style>
 @endsection
 
@@ -540,7 +664,6 @@
         </div>
 
         <div class="container">
-            <div class="card">
                 <div class="card-header border-bottom-0 pb-0">
                     <ul class="nav nav-tabs nav-tabs-custom" id="suratTabs" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -632,7 +755,6 @@
                 </div>
             </div>
         </div>
-    </div>
 @endsection
 
 @section('script')
@@ -701,6 +823,7 @@
                 $(`#table-${currentTab}`).html(response);
 
                 initializeDropzones();
+                initializeDropdownEvents();
 
                 if (window.history && window.history.pushState) {
                     const url = new URL(window.location);
@@ -723,6 +846,47 @@
                     '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
                 );
             }
+        });
+    }
+
+    function initializeDropdownEvents() {
+        $(document).off('click', '.dropdown-wrapper .dropdown-toggle, .dropdown-wrapper .btn');
+        
+        $(document).on('click', '.dropdown-wrapper .dropdown-toggle, .dropdown-wrapper .btn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            $('.dropdown-menu').removeClass('show');
+            
+            const $dropdown = $(this).closest('.dropdown');
+            const $menu = $dropdown.find('.dropdown-menu');
+            
+            if (!$menu.hasClass('show')) {
+                const $button = $(this);
+                const buttonRect = $button[0].getBoundingClientRect();
+                const scrollTop = $(window).scrollTop();
+                const scrollLeft = $(window).scrollLeft();
+                
+                $menu.css({
+                    'position': 'fixed',
+                    'top': buttonRect.bottom + scrollTop + 5 + 'px',
+                    'left': (buttonRect.right + scrollLeft - 150) + 'px',
+                    'z-index': '9999',
+                    'min-width': '150px'
+                });
+                
+                $menu.addClass('show');
+            }
+        });
+
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.dropdown-wrapper').length) {
+                $('.dropdown-menu').removeClass('show');
+            }
+        });
+
+        $(document).on('click', '.dropdown-menu', function(e) {
+            e.stopPropagation();
         });
     }
 
@@ -777,6 +941,7 @@
 
     $(document).ready(function() {
         initializeDropzones();
+        initializeDropdownEvents();
         updateAddButtonText();
         updateDateFilterButton();
 
@@ -791,18 +956,16 @@
             reloadTable();
         });
 
-        // Filter jenis surat dropdown
         $('#filterBtn').on('click', function(e) {
             e.stopPropagation();
             $('#filterMenu').toggleClass('show');
-            $('#dateFilterMenu').removeClass('show'); // Close date filter when opening this one
+            $('#dateFilterMenu').removeClass('show');
         });
 
-        // Date filter dropdown
         $('#dateFilterBtn').on('click', function(e) {
             e.stopPropagation();
             $('#dateFilterMenu').toggleClass('show');
-            $('#filterMenu').removeClass('show'); // Close jenis surat filter when opening this one
+            $('#filterMenu').removeClass('show');
         });
 
         $(document).on('click', function() {
@@ -837,7 +1000,6 @@
             $('#filterMenu').removeClass('show');
         });
 
-        // Date filter actions
         $('#applyDateFilter').on('click', function() {
             updateDateFilterButton();
             reloadTable();
@@ -859,19 +1021,84 @@
             }
         }, 300));
 
-        $(document).on('change', '#per_page', function() {
-            reloadTable();
+        $(document).on('change', 'select[name="per_page"]', function() {
+            const newPerPage = $(this).val();
+            const currentUrl = new URL(window.location.href);
+            
+            currentUrl.searchParams.set('per_page', newPerPage);
+            currentUrl.searchParams.delete('page');
+            
+            const formData = $('#filter').serialize() + '&tab=' + currentTab + '&per_page=' + newPerPage;
+            
+            $.ajax({
+                url: "{{ route('admin.surat.index') }}",
+                data: formData,
+                beforeSend: function() {
+                    $(`#table-${currentTab}`).addClass('table-loading');
+                },
+                success: function(response) {
+                    $(`#table-${currentTab}`).removeClass('table-loading');
+                    $(`#table-${currentTab}`).html(response);
+                    initializeDropzones();
+                    initializeDropdownEvents();
+                    
+                    if (window.history && window.history.pushState) {
+                        window.history.pushState({}, '', currentUrl);
+                    }
+                },
+                error: function(xhr) {
+                    $(`#table-${currentTab}`).removeClass('table-loading');
+                    $(`#table-${currentTab}`).html(
+                        '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                    );
+                }
+            });
         });
 
-        $(document).on('click', '.pagination a', function(e) {
+        $(document).on('click', '.pagination-link', function(e) {
             e.preventDefault();
             let url = $(this).attr('href');
             if (url) {
-                reloadTable(url);
+                const urlObj = new URL(url);
+                const page = urlObj.searchParams.get('page');
+                
+                let formData = $('#filter').serialize();
+                formData += '&tab=' + currentTab;
+                formData += '&page=' + page;
+                
+                $.ajax({
+                    url: "{{ route('admin.surat.index') }}",
+                    data: formData,
+                    beforeSend: function() {
+                        $(`#table-${currentTab}`).addClass('table-loading');
+                    },
+                    success: function(response) {
+                        $(`#table-${currentTab}`).removeClass('table-loading');
+                        $(`#table-${currentTab}`).html(response);
+                        initializeDropzones();
+                        initializeDropdownEvents();
+                        
+                        if (window.history && window.history.pushState) {
+                            urlObj.searchParams.set('tab', currentTab);
+                            const currentFormData = new URLSearchParams(formData);
+                            for (const [key, value] of currentFormData.entries()) {
+                                if (value && key !== 'tab') {
+                                    urlObj.searchParams.set(key, value);
+                                }
+                            }
+                            window.history.pushState({}, '', urlObj);
+                        }
+                    },
+                    error: function(xhr) {
+                        $(`#table-${currentTab}`).removeClass('table-loading');
+                        $(`#table-${currentTab}`).html(
+                            '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                        );
+                    }
+                });
             }
         });
 
-        // Prevent dropdown menus from closing when clicking inside
         $('#filterMenu, #dateFilterMenu').on('click', function(e) {
             e.stopPropagation();
         });

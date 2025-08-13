@@ -228,33 +228,83 @@
         </table>
     </div>
 
-    @if(method_exists($suratData, 'hasPages'))
-    <div class="border-0 px-10 py-5">
-        <div class="d-flex justify-content-between align-items-center col-12">
-            <div class="d-flex align-items-center gap-2 text-gray-500">
-                <span>Show</span>
-                <select id="per_page" name="per_page" class="form-select border border-gray-200 p-2" style="width: 80px;">
-                    <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('per_page', 10) == 100 ? 'selected' : '' }}>100</option>
-                </select>
-                <span>per page</span>
+  <div class="table-footer">
+        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+            <div class="mb-2 mb-md-0">
+                <div class="d-flex align-items-center">
+                    <span class="me-2">Show</span>
+                    <select name="per_page" class="form-select form-select-sm w-auto">
+                        @foreach ([10, 25, 50, 100] as $limit)
+                            <option value="{{ $limit }}"
+                                {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
+                                {{ $limit }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <span class="ms-2">per page</span>
+                </div>
             </div>
 
-            @if($suratData->hasPages())
-                <nav aria-label="Table pagination">
-                    {{ $suratData->appends(request()->query())->links('pagination::bootstrap-5') }}
-                </nav>
-            @else
-                <div class="text-muted">
-                    Showing {{ $suratData->firstItem() ?? 0 }} to {{ $suratData->lastItem() ?? 0 }} of {{ $suratData->total() }} entries
+            @if (isset($suratData) && method_exists($suratData, 'hasPages') && $suratData->hasPages())
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-muted small">
+                        {{ $suratData->firstItem() }}-{{ $suratData->lastItem() }} of
+                        {{ $suratData->total() }}
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        @if ($suratData->onFirstPage())
+                            <span class="pagination-arrow disabled">←</span>
+                        @else
+                            <a href="{{ $suratData->appends(request()->query())->previousPageUrl() }}"
+                               class="pagination-arrow pagination-link"
+                               aria-label="Previous">←</a>
+                        @endif
+
+                        @php
+                            $current = $suratData->currentPage();
+                            $total = $suratData->lastPage();
+                            $start = max(1, $current - 2);
+                            $end = min($total, $current + 2);
+
+                            if ($end - $start < 4) {
+                                if ($start == 1) {
+                                    $end = min($total, $start + 4);
+                                } else {
+                                    $start = max(1, $end - 4);
+                                }
+                            }
+                        @endphp
+
+                        <div class="d-flex align-items-center">
+                            @for ($i = $start; $i <= $end; $i++)
+                                @if ($i == $current)
+                                    <span class="pagination-number active">{{ $i }}</span>
+                                @else
+                                    <a href="{{ $suratData->appends(request()->query())->url($i) }}"
+                                       class="pagination-number pagination-link">{{ $i }}</a>
+                                @endif
+                            @endfor
+                        </div>
+
+                        @if ($suratData->hasMorePages())
+                            <a href="{{ $suratData->appends(request()->query())->nextPageUrl() }}"
+                               class="pagination-arrow pagination-link"
+                               aria-label="Next">→</a>
+                        @else
+                            <span class="pagination-arrow disabled">→</span>
+                        @endif
+                    </div>
+                </div>
+            @elseif(isset($suratData) && method_exists($suratData, 'hasPages'))
+                <div class="text-muted small">
+                    1-{{ $suratData->count() }} of {{ $suratData->total() }}
                 </div>
             @endif
         </div>
     </div>
     @endif
-@endif
+
 
 <style>
 .search-highlight {
