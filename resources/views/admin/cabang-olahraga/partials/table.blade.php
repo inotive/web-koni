@@ -1,64 +1,61 @@
-{{-- File: resources/views/admin/cabang-olahraga/partials/table.blade.php --}}
 <table class="table table-hover align-middle" id="caborTable">
     <thead>
         <tr>
-            <th>No</th>
-            {{-- CRITICAL FIX: Ensure buttons don't have href and prevent navigation --}}
+            <th class="text-center">No</th>
             <th>
-                <button type="button" 
-                        class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 text-start" 
-                        data-sort="nama_cabor" 
-                        title="Sort by Nama Cabor"
-                        style="border: none !important; background: none !important;">
-                    Nama Cabor {!! sortIcon('nama_cabor') !!}
+                <button type="button"
+                    class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 d-flex justify-content-between align-items-center"
+                    data-sort="nama_cabor" title="Sort by Nama Cabor" style="border: none; background: none;">
+                    <span class="flex-grow-1 text-start">Nama Cabor</span>
+                    {!! sortIcon('nama_cabor') !!}
                 </button>
             </th>
             <th>
-                <button type="button" 
-                        class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 text-start" 
-                        data-sort="ketua_penanggung_jawab" 
-                        title="Sort by Ketua Penanggung Jawab"
-                        style="border: none !important; background: none !important;">
-                    Ketua Penanggung Jawab {!! sortIcon('ketua_penanggung_jawab') !!}
+                <button type="button"
+                    class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 d-flex justify-content-between align-items-center"
+                    data-sort="ketua_penanggung_jawab" title="Sort by Ketua Penanggung Jawab"
+                    style="border: none !important; background: none !important;">
+                    <span class="flex-grow-1 text-start">Ketua Penanggung Jawab</span>
+                    {!! sortIcon('ketua_penanggung_jawab') !!}
+                </button>
+            </th>
+            <th class="text-center">
+                <button type="button"
+                    class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 d-flex justify-content-center align-items-center"
+                    data-sort="status" title="Sort by Status"
+                    style="border: none !important; background: none !important;">
+                    <span class="me-2">Status</span>
+                    {!! sortIcon('status') !!}
                 </button>
             </th>
             <th>
-                <button type="button" 
-                        class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 text-start" 
-                        data-sort="status" 
-                        title="Sort by Status"
-                        style="border: none !important; background: none !important;">
-                    Status {!! sortIcon('status') !!}
+                <button type="button"
+                    class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 d-flex justify-content-between align-items-center"
+                    data-sort="tanggal_pembentukan" title="Sort by Tanggal Pembentukan"
+                    style="border: none !important; background: none !important;">
+                    <span class="flex-grow-1 text-start">Tanggal Pembentukan</span>
+                    {!! sortIcon('tanggal_pembentukan') !!}
                 </button>
             </th>
+            <th class="text-center">Jumlah Atlet</th>
+            <th class="text-center">Jumlah Pelatih</th>
             <th>
-                <button type="button" 
-                        class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 text-start" 
-                        data-sort="tanggal_pembentukan" 
-                        title="Sort by Tanggal Pembentukan"
-                        style="border: none !important; background: none !important;">
-                    Tanggal Pembentukan {!! sortIcon('tanggal_pembentukan') !!}
+                <button type="button"
+                    class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 d-flex justify-content-between align-items-center"
+                    data-sort="terakhir_update" title="Sort by Terakhir Update"
+                    style="border: none !important; background: none !important;">
+                    <span class="flex-grow-1 text-start">Terakhir Update</span>
+                    {!! sortIcon('terakhir_update') !!}
                 </button>
             </th>
-            <th>Jumlah Atlet</th>
-            <th>Jumlah Pelatih</th>
-            <th>
-                <button type="button" 
-                        class="btn btn-link text-dark text-decoration-none p-0 ajax-sort sortable-header w-100 text-start" 
-                        data-sort="terakhir_update" 
-                        title="Sort by Terakhir Update"
-                        style="border: none !important; background: none !important;">
-                    Terakhir Update {!! sortIcon('terakhir_update') !!}
-                </button>
-            </th>
-            <th>Aksi</th>
+            <th class="text-center">Aksi</th>
         </tr>
     </thead>
     <tbody>
         @if (isset($cabors))
             @forelse ($cabors as $index => $cabor)
                 <tr data-status="{{ $cabor->status }}">
-                    <td>{{ $loop->iteration + ($cabors->currentPage() - 1) * $cabors->perPage() }}</td>
+                    <td class="text-center">{{ $loop->iteration + ($cabors->currentPage() - 1) * $cabors->perPage() }}</td>
                     <td>
                         <div class="d-flex align-items-center">
                             @if ($cabor->icon_cabor)
@@ -80,18 +77,19 @@
                             {{ $cabor->ketua_penanggung_jawab }}
                         </div>
                     </td>
-                    <td>
-                        <span class="badge {{ $cabor->status == 'Aktif' ? 'badge-light-success' : 'badge-light-danger' }}">
+                    <td class="text-center">
+                        <span
+                            class="badge {{ $cabor->status == 'Aktif' ? 'badge-light-success' : 'badge-light-danger' }}">
                             {{ $cabor->status }}
                         </span>
                     </td>
                     <td>
                         {{ \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->format('d M Y') }}
                     </td>
-                    <td>
+                    <td class="text-center">
                         {{ $cabor->atlets ? $cabor->atlets->count() : 0 }}
                     </td>
-                    <td>
+                    <td class="text-center">
                         {{ $cabor->pelatihs ? $cabor->pelatihs->count() : 0 }}
                     </td>
                     <td>
@@ -153,93 +151,101 @@
 
 {{-- ENHANCED CSS Styling untuk Table Sorting --}}
 <style>
-.sortable-header {
-    font-weight: 600 !important;
-    width: 100% !important;
-    text-align: left !important;
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
+    .sortable-header {
+        font-weight: 600 !important;
+        width: 100% !important;
+        border: none !important;
+        background: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        color: inherit !important;
+    }
 
-.sortable-header:hover {
-    color: #007bff !important;
-    text-decoration: none !important;
-    background: none !important;
-}
+    .sortable-header:hover {
+        color: #007bff !important;
+        text-decoration: none !important;
+        background: none !important;
+    }
 
-.sortable-header:focus {
-    box-shadow: none !important;
-    outline: none !important;
-    background: none !important;
-}
+    .sortable-header:focus {
+        box-shadow: none !important;
+        outline: none !important;
+        background: none !important;
+    }
 
-.sortable-header:active {
-    background: none !important;
-    box-shadow: none !important;
-}
+    .sortable-header:active {
+        background: none !important;
+        box-shadow: none !important;
+    }
 
-.sortable-header.processing {
-    opacity: 0.6;
-    pointer-events: none;
-}
+    .sortable-header.processing {
+        opacity: 0.6;
+        pointer-events: none;
+    }
 
-/* Prevent Bootstrap button styles from interfering */
-.sortable-header.btn-link {
-    color: inherit !important;
-    text-decoration: none !important;
-}
+    /* Prevent Bootstrap button styles from interfering */
+    .sortable-header.btn-link {
+        color: inherit !important;
+        text-decoration: none !important;
+    }
 
-.sortable-header.btn-link:hover {
-    color: #007bff !important;
-    text-decoration: none !important;
-}
+    .sortable-header.btn-link:hover {
+        color: #007bff !important;
+        text-decoration: none !important;
+    }
 
-/* Loading state untuk table */
-.table-responsive {
-    position: relative;
-}
+    /* Loading state untuk table */
+    .table-responsive {
+        position: relative;
+    }
 
-.loading-overlay {
-    position: absolute !important;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    border-radius: 8px;
-    backdrop-filter: blur(2px);
-}
+    .loading-overlay {
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        border-radius: 8px;
+        backdrop-filter: blur(2px);
+    }
 
-/* Ensure table headers are not clickable links */
-.sortable-header * {
-    pointer-events: none;
-}
+    /* Ensure table headers are properly clickable */
+    .sortable-header * {
+        pointer-events: none;
+    }
 
-.sortable-header {
-    pointer-events: all;
-}
+    .sortable-header {
+        pointer-events: all;
+    }
 
-/* Target semua tombol sorting */
-.sortable-header {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    width: 100% !important;
-    text-align: left !important;
-    color: inherit !important;
-    text-decoration: none !important;
-}
+    /* Consistent header styling */
+    .table thead th {
+        font-weight: 600;
+        border-bottom: 2px solid #e9ecef;
+        vertical-align: middle;
+        padding: 12px 8px;
+    }
 
-.sortable-header i {
-    margin-left: auto !important;
-    flex-shrink: 0 !important;
-}
+    /* Icon positioning */
+    .sortable-header i {
+        flex-shrink: 0;
+        margin-left: 8px;
+    }
+
+    /* Center aligned headers */
+    .sortable-header.text-center {
+        justify-content: center !important;
+    }
+
+    .sortable-header.text-center span {
+        margin-right: 8px;
+        margin-left: 0;
+    }
 </style>
