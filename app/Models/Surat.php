@@ -48,4 +48,19 @@ class Surat extends Model
               ->orWhere('no_surat', 'like', "%{$search}%");
         });
     }
+
+    public function getFormattedDateAttribute()
+    {
+        return $this->created_at->format('d M Y H:i');
+    }
+
+    public function getJenisSuratBadgeAttribute()
+    {
+        return $this->jenis_surat == 'masuk' ? 'success' : 'primary';
+    }
+
+    public function getJenisSuratTextAttribute()
+    {
+        return $this->jenis_surat == 'masuk' ? 'Surat Masuk' : 'Surat Keluar';
+    }
 }
