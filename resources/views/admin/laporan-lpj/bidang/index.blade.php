@@ -361,7 +361,7 @@
         <!-- Bidang Grid -->
         <div class="bidang-grid grid-default" id="bidangGrid">
             <!-- Mobilisasi Sumberdaya -->
-            <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya') }}" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="13">
+            <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index') }}" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="13">
                 <div class="bidang-icon icon-mobilisasi">
                     <img src="{{ asset('assets2/media/misc/bidang/bank.png') }}" alt="">
                 </div>

@@ -1144,7 +1144,13 @@
 </div>
 
 <div class="detail-actions">
-    <a href="{{ request('from') === 'prestasi' ? route('admin.konfigurasi.prestasi.index') : route('admin.konfigurasi.atlet.index') }}" class="btn btn-light-primary">
+    <a href="{{
+        match (request('back')) {
+            'cabor'     => route('admin.konfigurasi.cabang-olahraga.show', $atlet->cabor_id),
+            'prestasi' => route('admin.konfigurasi.prestasi.index', $atlet->id),
+            default     => route('admin.konfigurasi.atlet.index'),
+        }
+    }}" class="btn btn-light-primary">
         <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
     </a>
 </div>

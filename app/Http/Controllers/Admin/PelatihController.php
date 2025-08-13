@@ -179,9 +179,11 @@ class PelatihController extends Controller
     {
         $pelatih = Pelatih::with(['cabangOlahraga', 'prestasis'])->findOrFail($id);
 
-        $backUrl = request('back') === 'cabor'
-        ? route('admin.konfigurasi.cabang-olahraga.show', $pelatih->cabor_id)
-        : route('admin.konfigurasi.pelatih.index');
+        $backUrl = match (request('back')) {
+            'cabor'     => route('admin.konfigurasi.cabang-olahraga.show', $pelatih->cabor_id),
+            'prestasi' => route('admin.konfigurasi.prestasi.index', $pelatih->id),
+            default     => route('admin.konfigurasi.pelatih.index'),
+        };
 
 
         if ($request->ajax() || $request->get('ajax')) {
