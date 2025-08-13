@@ -229,7 +229,7 @@
             position: fixed !important;
             inset: auto auto auto auto !important;
             transform: none !important;
-            z-index: 1055;  /* higher than the modal backdrop */
+            z-index: 1055;
         }
     </style>
 @endsection

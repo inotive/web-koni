@@ -137,67 +137,6 @@
                             enctype="multipart/form-data">
                             @csrf
 
-                            {{-- Foto Jurnal Upload --}}
-                            <div class="row align-items-start mb-4">
-                                <div class="col-md-3">
-                                    <label class="form-label">Foto Jurnal</label>
-                                    <p class="file-upload-hint">Maks. 1 file Foto, hingga 10 MB</p>
-                                </div>
-                                <div class="col-md-9">
-                                    <label for="foto_jurnal" class="file-upload-wrapper">
-                                        <input type="file" name="foto_jurnal" id="foto_jurnal"
-                                            class="@error('foto_jurnal') is-invalid @enderror" accept="image/*">
-
-                                        <div class="d-flex align-items-center gap-12">
-                                            <div class="file-upload-icon-wrapper">
-                                                <i class="fas fa-upload file-upload-icon"></i>
-                                            </div>
-                                            <div>
-                                                <p class="file-upload-text" id="file-name-display">
-                                                    Seret dan lepas file di sini, atau klik untuk mengunggah.
-                                                </p>
-                                                <div id="imagePreviewContainer" class="mt-2"></div>
-                                            </div>
-                                        </div>
-                                    </label>
-
-                                    @error('foto_jurnal')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            {{-- Dokumen LPJ Upload --}}
-                            <div class="row align-items-start mb-4">
-                                <div class="col-md-3">
-                                    <label class="form-label">Dokumen LPJ</label>
-                                    <p class="file-upload-hint">Maks. 10 file PDF/Office, masing-masing hingga 10MB</p>
-                                </div>
-                                <div class="col-md-9">
-                                    <label for="dokumen_lpj" class="file-upload-wrapper">
-                                        <input type="file" name="dokumen_lpj[]" id="dokumen_lpj"
-                                            class="form-control @error('dokumen_lpj') is-invalid @enderror"
-                                            accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
-
-                                        <div class="d-flex align-items-center gap-12">
-                                            <div class="file-upload-icon-wrapper">
-                                                <i class="fas fa-upload file-upload-icon"></i>
-                                            </div>
-                                            <div>
-                                                <p class="file-upload-text" id="dokumen-file-name-display">
-                                                    Seret dan lepas file di sini, atau klik untuk mengunggah.
-                                                </p>
-                                                <div id="dokumenPreviewContainer" class="mt-2"></div>
-                                            </div>
-                                        </div>
-                                    </label>
-
-                                    @error('dokumen_lpj')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
                             @php
                                 $fields = [
                                     'nama_program' => [
@@ -240,6 +179,68 @@
                             @endphp
 
                             @foreach ($fields as $key => $field)
+                                @if($key === 'keterangan_tambahan')
+                                {{-- Foto Jurnal Upload --}}
+                                <div class="row align-items-start mb-4">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Foto Jurnal</label>
+                                        <p class="file-upload-hint">File Foto, hingga 10 MB</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <label for="foto_jurnal" class="file-upload-wrapper">
+                                            <input type="file" name="foto_jurnal" id="foto_jurnal"
+                                                class="@error('foto_jurnal') is-invalid @enderror" accept="image/*">
+
+                                            <div class="d-flex align-items-center gap-12">
+                                                <div class="file-upload-icon-wrapper">
+                                                    <i class="fas fa-upload file-upload-icon"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="file-upload-text" id="file-name-display">
+                                                        Seret dan lepas file di sini, atau klik untuk mengunggah.
+                                                    </p>
+                                                    <div id="imagePreviewContainer" class="mt-2"></div>
+                                                </div>
+                                            </div>
+                                        </label>
+
+                                        @error('foto_jurnal')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                {{-- Dokumen LPJ Upload --}}
+                                <div class="row align-items-start mb-4">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Dokumen LPJ</label>
+                                        <p class="file-upload-hint">File PDF/Office, masing-masing hingga 10MB</p>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <label for="dokumen_lpj" class="file-upload-wrapper">
+                                            <input type="file" name="dokumen_lpj[]" id="dokumen_lpj"
+                                                class="form-control @error('dokumen_lpj') is-invalid @enderror"
+                                                accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+
+                                            <div class="d-flex align-items-center gap-12">
+                                                <div class="file-upload-icon-wrapper">
+                                                    <i class="fas fa-upload file-upload-icon"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="file-upload-text" id="dokumen-file-name-display">
+                                                        Seret dan lepas file di sini, atau klik untuk mengunggah.
+                                                    </p>
+                                                    <div id="dokumenPreviewContainer" class="mt-2"></div>
+                                                </div>
+                                            </div>
+                                        </label>
+
+                                        @error('dokumen_lpj')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            @endif
                                 <div class="row align-items-center mb-3">
                                     <div class="col-md-3">
                                         <label for="{{ $key }}" class="form-label">
