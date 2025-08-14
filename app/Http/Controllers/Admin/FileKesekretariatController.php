@@ -186,54 +186,57 @@ class FileKesekretariatController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(FileKesekretariat $fileKesekretariat): View
-    {
-        return view('admin.file-kesekretariat.edit', [
-            'file' => $fileKesekretariat,
-            'current_file_size' => $this->formatFileSize(
-                Storage::disk('public')->size('documents/' . $fileKesekretariat->dokumen_file)
-            ),
-        ]);
-    }
+{
+    return view('admin.file-kesekretariat.edit', [
+        'file' => $fileKesekretariat, // Ini sudah benar
+        'fileKesekretariat' => $fileKesekretariat, // Tambahkan ini untuk konsistensi
+        'current_file_size' => $this->formatFileSize(
+            Storage::disk('public')->size('documents/' . $fileKesekretariat->dokumen_file)
+        ),
+    ]);
+}
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, FileKesekretariat $fileKesekretariat): RedirectResponse
-    {
-        $validated = $request->validate([
-            'nama_dokumen' => 'required|string|max:255',
-            'dokumen_file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:2048',
-        ]);
+{
+    // Validasi
+    $validated = $request->validate([
+        'nama_dokumen' => 'required|string|max:255',
+        'dokumen_file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:2048',
+    ]);
 
-        try {
-            $data = ['nama_dokumen' => $validated['nama_dokumen']];
+    try {
+        $data = ['nama_dokumen' => $validated['nama_dokumen']];
 
-            if ($request->hasFile('dokumen_file')) {
-                // Delete old file
+        if ($request->hasFile('dokumen_file')) {
+            // Hapus file lama jika ada
+            if ($fileKesekretariat->dokumen_file) {
                 Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
-                
-                // Store new file
-                $file = $request->file('dokumen_file');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->storeAs('documents', $fileName, 'public');
-                
-                $data['dokumen_file'] = $fileName;
             }
-
-            $fileKesekretariat->update($data);
-
-            return redirect()
-                ->route('admin.file-kesekretariat.index')
-                ->with('success', 'File berhasil diupdate.');
-
-        } catch (\Exception $e) {
-            Log::error('Error updating file: ' . $e->getMessage()); // Diubah dari \Log ke Log
-            return back()
-                ->withInput()
-                ->with('error', 'Gagal mengupdate file. Silakan coba lagi.');
+            
+            // Simpan file baru
+            $file = $request->file('dokumen_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('documents', $fileName, 'public');
+            
+            $data['dokumen_file'] = $fileName;
         }
-    }
 
+        $fileKesekretariat->update($data);
+
+        return redirect()
+            ->route('admin.file-kesekretariat.index')
+            ->with('success', 'File berhasil diupdate.');
+
+    } catch (\Exception $e) {
+        Log::error('Error updating file: ' . $e->getMessage());
+        return back()
+            ->withInput()
+            ->with('error', 'Gagal mengupdate file. Silakan coba lagi.');
+    }
+}
     /**
      * Remove the specified resource from storage.
      */
