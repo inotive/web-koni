@@ -8,14 +8,14 @@
             </svg>
             <div class="text-center">
                 <div class="fw-bold text-gray-800 mb-1">
-                    @if(request('search') || request('jenis_surat') !== 'all')
+                    @if(request('search') || request('start_date') || request('end_date'))
                         Tidak ada surat yang sesuai dengan pencarian/filter
                     @else
                         Belum ada surat {{ $tableId }}
                     @endif
                 </div>
                 <div class="text-muted">
-                    @if(request('search') || request('jenis_surat') !== 'all')
+                    @if(request('search') || request('start_date') || request('end_date'))
                         Coba ubah kata kunci pencarian atau filter yang Anda gunakan
                     @else
                         Klik tombol "Tambah Surat" untuk menambah surat baru
@@ -30,9 +30,35 @@
             <thead>
                 <tr class="fw-bold text-uppercase text-muted">
                     <th class="bg-light px-6 text-center" style="width: 60px;">No</th>
-                    <th class="bg-light px-20">Nama Kegiatan</th>
+                    <th class="bg-light px-20">
+                        <a href="#" class="text-decoration-none text-dark sort-link" data-sort="nama_kegiatan">
+                            Nama Kegiatan
+                            @if(request('sort_by') == 'nama_kegiatan')
+                                @if(request('order') == 'asc')
+                                    <i class="fas fa-sort-up"></i>
+                                @else
+                                    <i class="fas fa-sort-down"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
+                        </a>
+                    </th>
                     <th class="bg-light text-center">Dokumen</th>
-                    <th class="bg-light text-center">Tanggal Dibuat</th>
+                    <th class="bg-light text-center">
+                        <a href="#" class="text-decoration-none text-dark sort-link" data-sort="created_at">
+                            Tanggal Dibuat
+                            @if(request('sort_by') == 'created_at')
+                                @if(request('order') == 'asc')
+                                    <i class="fas fa-sort-up"></i>
+                                @else
+                                    <i class="fas fa-sort-down"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
+                        </a>
+                    </th>
                     <th class="bg-light px-8 text-center">Aksi</th>
                 </tr>
             </thead>
@@ -180,14 +206,14 @@
                                 </svg>
                                 <div class="text-center">
                                     <div class="fw-bold text-gray-800 mb-1">
-                                        @if(request('search') || request('jenis_surat') !== 'all')
+                                        @if(request('search') || request('start_date') || request('end_date'))
                                             Tidak ada surat yang sesuai dengan pencarian/filter
                                         @else
                                             Belum ada surat {{ $tableId }}
                                         @endif
                                     </div>
                                     <div class="text-muted">
-                                        @if(request('search') || request('jenis_surat') !== 'all')
+                                        @if(request('search') || request('start_date') || request('end_date'))
                                             Coba ubah kata kunci pencarian atau filter yang Anda gunakan
                                         @else
                                             Klik tombol "Tambah Surat" untuk menambah surat baru
@@ -281,6 +307,22 @@
 
 .preview:hover {
     background-color: #F4EEFF !important;
+}
+
+.sort-link {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.sort-link:hover {
+    color: #F8285A !important;
+    text-decoration: none !important;
+}
+
+.sort-link i {
+    transition: color 0.2s ease;
+    font-size: 0.8rem;
+    margin-left: 4px;
 }
 
 #per_page {

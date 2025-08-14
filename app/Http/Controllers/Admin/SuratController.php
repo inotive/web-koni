@@ -13,6 +13,18 @@ class SuratController extends Controller
     {
         $query = Surat::query();
 
+        $allowedSorts = ['nama_kegiatan', 'no_surat', 'created_at', 'updated_at'];
+        $sortBy = $request->get('sort_by', 'created_at');
+        $order = strtolower($request->get('order', 'desc'));
+
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'created_at';
+        }
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'desc';
+        }
+
         if ($request->filled('search')) {
             $search = $request->get('search');
             $query->where('nama_kegiatan', 'LIKE', "%{$search}%");
@@ -31,7 +43,12 @@ class SuratController extends Controller
         }
 
         $perPage = $request->get('per_page', 10);
-        $query->orderBy('created_at', 'desc');
+
+        $query->orderBy($sortBy, $order);
+        if ($sortBy !== 'created_at') {
+            $query->orderBy('created_at', 'desc');
+        }
+        $query->orderBy('id', 'desc');
 
         $currentTab = $request->get('tab', 'masuk');
 

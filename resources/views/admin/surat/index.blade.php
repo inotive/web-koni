@@ -32,13 +32,11 @@
             z-index: 10;
         }
 
-        .filter-dropdown,
         .date-filter-container {
             position: relative;
             width: 200px;
         }
 
-        .filter-btn,
         .date-filter-btn {
             background: white;
             border: 1px solid #dee2e6;
@@ -55,20 +53,17 @@
             text-align: left;
         }
 
-        .filter-btn:hover,
         .date-filter-btn:hover {
             border-color: #F8285A;
             color: #F8285A;
         }
 
-        .filter-btn.filter-active,
         .date-filter-btn.date-filter-active {
             background-color: #F8285A;
             border-color: #F8285A;
             color: white;
         }
 
-        .filter-menu,
         .date-filter-menu {
             position: absolute;
             top: 100%;
@@ -83,32 +78,8 @@
             display: none;
         }
 
-        .filter-menu.show,
         .date-filter-menu.show {
             display: block;
-        }
-
-        .filter-option {
-            padding: 12px 16px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #f8f9fa;
-        }
-
-        .filter-option:last-child {
-            border-bottom: none;
-        }
-
-        .filter-option:hover {
-            background-color: #f8f9fa;
-        }
-
-        .filter-option.active {
-            background-color: #F8285A;
-            color: white;
         }
 
         .date-filter-menu {
@@ -271,7 +242,6 @@
             }
 
             .search-container,
-            .filter-dropdown,
             .date-filter-container {
                 width: 100%;
             }
@@ -317,16 +287,15 @@
                     <div class="date-filter-btn {{ request('start_date') || request('end_date') ? 'date-filter-active' : '' }}"
                         id="dateFilterBtn">
                         <span>
-                            @if (request('start_date') || request('end_date'))
+                            @if (request('start_date') && request('end_date'))
                                 <i class="fas fa-calendar-check me-2"></i>
-                                @if (request('start_date') && request('end_date'))
-                                    {{ date('d/m/Y', strtotime(request('start_date'))) }} -
-                                    {{ date('d/m/Y', strtotime(request('end_date'))) }}
-                                @elseif(request('start_date'))
-                                    Dari {{ date('d/m/Y', strtotime(request('start_date'))) }}
-                                @else
-                                    Sampai {{ date('d/m/Y', strtotime(request('end_date'))) }}
-                                @endif
+                                {{ date('d/m/Y', strtotime(request('start_date'))) }} - {{ date('d/m/Y', strtotime(request('end_date'))) }}
+                            @elseif(request('start_date'))
+                                <i class="fas fa-calendar-check me-2"></i>
+                                Dari {{ date('d/m/Y', strtotime(request('start_date'))) }}
+                            @elseif(request('end_date'))
+                                <i class="fas fa-calendar-check me-2"></i>
+                                Sampai {{ date('d/m/Y', strtotime(request('end_date'))) }}
                             @else
                                 <i class="fas fa-calendar me-2"></i>Filter Tanggal
                             @endif
@@ -337,7 +306,12 @@
                     <div class="date-filter-menu" id="dateFilterMenu">
                         <div class="date-input-group">
                             <div class="date-input-wrapper">
-                                <label class="date-input-label">Tanggal Dibuat</label>
+                                <label class="date-input-label">Tanggal Mulai</label>
+                                <input type="date" name="start_date" value="{{ request('start_date') }}" class="date-input"
+                                    id="startDateInput">
+                            </div>
+                            <div class="date-input-wrapper">
+                                <label class="date-input-label">Tanggal Selesai</label>
                                 <input type="date" name="end_date" value="{{ request('end_date') }}" class="date-input"
                                     id="endDateInput">
                             </div>
@@ -350,6 +324,8 @@
                 </div>
 
                 <input type="hidden" name="jenis_surat" id="jenis_surat_input" value="{{ request('jenis_surat', 'all') }}">
+                <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
+                <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
             </form>
         </div>
 
@@ -455,7 +431,6 @@
                 </div>
                 <div class="modal-body p-0">
                     <div id="previewContainer" class="w-100 h-100">
-                        <!-- Preview content will be loaded here -->
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -473,6 +448,8 @@
     <script>
         let currentFilter = '{{ request('jenis_surat', 'all') }}';
         let currentTab = 'masuk';
+        let currentSort = '{{ request('sort_by', 'created_at') }}';
+        let currentOrder = '{{ request('order', 'desc') }}';
         Dropzone.autoDiscover = false;
         const dropzones = {};
 
@@ -516,17 +493,6 @@
                         </div>
                     </iframe>
                 `;
-            } else if (['xls', 'xlsx'].includes(ext)) {
-                previewContainer.innerHTML = `
-                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true"
-                            style="width: 100%; height: 70vh;" frameborder="0">
-                        <div class="preview-error">
-                            <i class="fas fa-file-excel"></i>
-                            <h5>Preview not available</h5>
-                            <p>Cannot preview this Excel document. Please download the file to view it.</p>
-                        </div>
-                    </iframe>
-                `;
             } else {
                 previewContainer.innerHTML = `
                     <div class="preview-error">
@@ -549,18 +515,32 @@
             $('#tambahSuratText').text(buttonText);
             $('#modalTitle').text(modalTitle);
             $('#submitBtn').text(buttonText);
-            $('#jenisSuratSelect').val(currentTab === 'keluar' ? 'keluar' : 'masuk');
+            $('#hiddenJenisSurat').val(currentTab === 'keluar' ? 'keluar' : 'masuk');
         }
 
         function updateDateFilterButton() {
+            const startDate = $('#startDateInput').val();
             const endDate = $('#endDateInput').val();
             const button = $('#dateFilterBtn');
             const span = button.find('span');
 
-            if (endDate) {
+            if (startDate || endDate) {
                 button.addClass('date-filter-active');
-                const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
-                span.html(`<i class="fas fa-calendar-check me-2"></i>Tanggal ${endFormatted}`);
+                let text = '<i class="fas fa-calendar-check me-2"></i>';
+
+                if (startDate && endDate) {
+                    const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
+                    const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
+                    text += `${startFormatted} - ${endFormatted}`;
+                } else if (startDate) {
+                    const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
+                    text += `Dari ${startFormatted}`;
+                } else {
+                    const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
+                    text += `Sampai ${endFormatted}`;
+                }
+
+                span.html(text);
             } else {
                 button.removeClass('date-filter-active');
                 span.html('<i class="fas fa-calendar me-2"></i>Filter Tanggal');
@@ -586,6 +566,7 @@
                     $(`#table-${currentTab}`).html(response);
                     initializeDropzones();
                     initializeDropdownEvents();
+                    initializeSortingEvents();
                     updateURL(formData);
                 },
                 error: function(xhr) {
@@ -611,6 +592,28 @@
                 }
                 window.history.pushState({}, '', url);
             }
+        }
+
+        function initializeSortingEvents() {
+            $(document).off('click', '.sort-link');
+            $(document).on('click', '.sort-link', function(e) {
+                e.preventDefault();
+
+                const sortBy = $(this).data('sort');
+                let order = 'asc';
+
+                if (currentSort === sortBy) {
+                    order = currentOrder === 'asc' ? 'desc' : 'asc';
+                }
+
+                currentSort = sortBy;
+                currentOrder = order;
+
+                $('#sort_by_input').val(sortBy);
+                $('#order_input').val(order);
+
+                reloadTable();
+            });
         }
 
         function initializeDropdownEvents() {
