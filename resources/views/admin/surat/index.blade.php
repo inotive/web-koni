@@ -224,6 +224,45 @@
             pointer-events: none;
         }
 
+        .preview-modal .modal-dialog {
+            max-width: 90vw;
+            height: 90vh;
+        }
+
+        .preview-modal .modal-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-modal .modal-body {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .preview-modal iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .preview-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .preview-error i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #dc3545;
+        }
+
         @media (max-width: 768px) {
             .filter-container {
                 flex-direction: column;
@@ -406,6 +445,28 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade preview-modal" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filePreviewModalLabel">Preview Dokumen</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div id="previewContainer" class="w-100 h-100">
+                        <!-- Preview content will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="downloadBtn" href="#" class="btn btn-primary" target="_blank">
+                        <i class="ki-outline ki-down me-2"></i>Download File
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
@@ -414,6 +475,71 @@
         let currentTab = 'masuk';
         Dropzone.autoDiscover = false;
         const dropzones = {};
+
+        function previewFile(fileUrl, fileName, fileExtension) {
+            const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
+            const previewContainer = document.getElementById('previewContainer');
+            const modalTitle = document.getElementById('filePreviewModalLabel');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            modalTitle.textContent = fileName;
+            downloadBtn.href = fileUrl;
+
+            previewContainer.innerHTML = '';
+
+            const ext = fileExtension.toLowerCase();
+
+            if (ext === 'pdf') {
+                previewContainer.innerHTML = `
+                    <iframe src="${fileUrl}" style="width: 100%; height: 70vh;" frameborder="0">
+                        <div class="preview-error">
+                            <i class="fas fa-file-pdf"></i>
+                            <h5>Cannot display PDF</h5>
+                            <p>Your browser doesn't support PDF preview. Please download the file to view it.</p>
+                        </div>
+                    </iframe>
+                `;
+            } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
+                previewContainer.innerHTML = `
+                    <div class="d-flex justify-content-center align-items-center" style="height: 70vh;">
+                        <img src="${fileUrl}" class="img-fluid" style="max-height: 100%; max-width: 100%;" alt="${fileName}">
+                    </div>
+                `;
+            } else if (['doc', 'docx'].includes(ext)) {
+                previewContainer.innerHTML = `
+                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true"
+                            style="width: 100%; height: 70vh;" frameborder="0">
+                        <div class="preview-error">
+                            <i class="fas fa-file-word"></i>
+                            <h5>Preview not available</h5>
+                            <p>Cannot preview this Word document. Please download the file to view it.</p>
+                        </div>
+                    </iframe>
+                `;
+            } else if (['xls', 'xlsx'].includes(ext)) {
+                previewContainer.innerHTML = `
+                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true"
+                            style="width: 100%; height: 70vh;" frameborder="0">
+                        <div class="preview-error">
+                            <i class="fas fa-file-excel"></i>
+                            <h5>Preview not available</h5>
+                            <p>Cannot preview this Excel document. Please download the file to view it.</p>
+                        </div>
+                    </iframe>
+                `;
+            } else {
+                previewContainer.innerHTML = `
+                    <div class="preview-error">
+                        <i class="fas fa-file"></i>
+                        <h5>Preview not available</h5>
+                        <p>This file type cannot be previewed. Please download the file to view it.</p>
+                        <small class="text-muted">File type: ${ext.toUpperCase()}</small>
+                    </div>
+                `;
+            }
+
+            modal.show();
+        }
 
         function updateAddButtonText() {
             const isKeluar = currentTab === 'keluar';
@@ -853,17 +979,13 @@
                 const $dropdownAction = $(this).closest('.dropdown-action');
                 const $menu = $dropdownAction.find('.dropdown-menu-custom');
 
-                // Close all other dropdowns
                 $('.dropdown-menu-custom').not($menu).removeClass('show');
 
-                // Toggle this dropdown
                 $menu.toggleClass('show');
 
-                // Check position
                 checkDropdownPosition($dropdownAction);
             });
 
-            // Function to check dropdown position - modified to force dropup for bottom rows
             function checkDropdownPosition($dropdownAction) {
                 const $menu = $dropdownAction.find('.dropdown-menu-custom');
                 if (!$menu.hasClass('show')) return;
@@ -873,29 +995,24 @@
                 const windowHeight = $(window).height();
                 const spaceBelow = windowHeight - dropdownOffset.top - $dropdownAction.outerHeight();
 
-                // Reset position class
                 $dropdownAction.removeClass('dropup');
 
-                // Check if this is the last row of the table
                 const $row = $dropdownAction.closest('tr');
                 const $table = $row.closest('tbody');
                 const rowIndex = $table.find('tr').index($row);
                 const totalRows = $table.find('tr').length;
 
-                // Only apply dropup to the last row
                 if (rowIndex === totalRows - 1) {
                     $dropdownAction.addClass('dropup');
                 }
             }
 
-            // Close dropdown when clicking outside
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.dropdown-action').length) {
                     $('.dropdown-menu-custom').removeClass('show');
                 }
             });
 
-            // Handle window resize
             $(window).on('resize', function() {
                 $('.dropdown-action').each(function() {
                     if ($(this).find('.dropdown-menu-custom').hasClass('show')) {

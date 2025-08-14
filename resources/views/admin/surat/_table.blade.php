@@ -63,9 +63,15 @@
                         </td>
                         <td class="px-2 text-center">
                             @if ($surat->dokumen_surat)
-                                <a href="{{ asset('storage/' . $surat->dokumen_surat) }}" target="_blank" class="btn btn-sm btn-light-primary">
-                                    <i class="fas fa-file-pdf me-1"></i>Lihat Dokumen
-                                </a>
+                                @php
+                                    $fileExtension = pathinfo($surat->dokumen_surat, PATHINFO_EXTENSION);
+                                    $fileName = basename($surat->dokumen_surat);
+                                    $fileUrl = asset('storage/' . $surat->dokumen_surat);
+                                @endphp
+                                <button type="button" class="btn btn-sm btn-light-primary preview"
+                                        onclick="previewFile('{{ $fileUrl }}', '{{ $fileName }}', '{{ $fileExtension }}')">
+                                    <i class="fas fa-eye me-1"></i>Lihat Dokumen
+                                </button>
                             @else
                                 <span class="text-muted">-</span>
                             @endif
@@ -271,6 +277,10 @@
     padding: 1px 3px;
     border-radius: 3px;
     font-weight: bold;
+}
+
+.preview:hover {
+    background-color: #F4EEFF !important;
 }
 
 #per_page {
