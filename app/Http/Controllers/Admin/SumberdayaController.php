@@ -113,7 +113,7 @@ class SumberdayaController extends Controller
         SumberDaya::create($data);
 
         return redirect()->route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index')
-                         ->with('success', 'Data sumber daya berhasil ditambahkan.');
+                         ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
     public function show(SumberDaya $sumberdaya)

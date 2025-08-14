@@ -8,6 +8,7 @@ use App\Models\Bendahara;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
 
 class BendaharaController extends Controller
 {
@@ -15,8 +16,14 @@ class BendaharaController extends Controller
     {
         $perPage = $request->get('per_page', 10);
 
+        // Validate per_page value
+        $allowedPerPage = [10, 25, 50, 100];
+        if (!in_array($perPage, $allowedPerPage)) {
+            $perPage = 10;
+        }
+
         $allowedSorts = [
-            'judul', 'created_at', 'updated_at'
+            'judul', 'created_at', 'updated_at', 'file_size'
         ];
 
         $sortBy = $request->get('sort_by', 'created_at');
@@ -40,6 +47,24 @@ class BendaharaController extends Controller
                 // Add more searchable fields if needed
                 // $q->orWhere('description', 'like', '%' . $searchTerm . '%');
             });
+        }
+
+         if ($request->filled('date_from') || $request->filled('date_to')) {
+            if ($request->filled('date_from') && $request->filled('date_to')) {
+                // Both dates provided - filter between dates (inclusive)
+                $dateFrom = Carbon::parse($request->date_from)->startOfDay();
+                $dateTo = Carbon::parse($request->date_to)->endOfDay();
+
+                $query->whereBetween('created_at', [$dateFrom, $dateTo]);
+            } elseif ($request->filled('date_from')) {
+                // Only start date provided - filter from this date onwards
+                $dateFrom = Carbon::parse($request->date_from)->startOfDay();
+                $query->where('created_at', '>=', $dateFrom);
+            } elseif ($request->filled('date_to')) {
+                // Only end date provided - filter up to this date
+                $dateTo = Carbon::parse($request->date_to)->endOfDay();
+                $query->where('created_at', '<=', $dateTo);
+            }
         }
 
         // File type filtering - Applied BEFORE pagination (Updated for PDF and Excel only)
@@ -67,9 +92,83 @@ class BendaharaController extends Controller
         }
 
         // Handle sorting
-        $query->orderBy($sortBy, $order);
+        if ($sortBy === 'file_size') {
+            // For file size sorting, we need to get all records first to sort by actual file size
+            $allRecords = $query->get()->map(function ($item) {
+                if ($item->dokumen && Storage::disk('public')->exists($item->dokumen)) {
+                    $item->actual_file_size = Storage::disk('public')->size($item->dokumen);
+                } else {
+                    $item->actual_file_size = 0;
+                }
+                return $item;
+            });
 
-        // Add secondary sorting for consistency
+            // Sort by file size
+            if ($order === 'desc') {
+                $allRecords = $allRecords->sortByDesc('actual_file_size');
+            } else {
+                $allRecords = $allRecords->sortBy('actual_file_size');
+            }
+
+            // Get the IDs in the sorted order
+            $sortedIds = $allRecords->pluck('id')->toArray();
+
+            // Create a new query with the sorted order
+            if (!empty($sortedIds)) {
+                $orderByIds = implode(',', $sortedIds);
+                $query = Bendahara::whereIn('id', $sortedIds)
+                    ->orderByRaw("FIELD(id, $orderByIds)");
+
+                // Re-apply search and filter conditions
+                if ($request->filled('search')) {
+                    $searchTerm = $request->search;
+                    $query->where(function ($q) use ($searchTerm) {
+                        $q->where('judul', 'like', '%' . $searchTerm . '%');
+                    });
+                }
+
+                if ($request->filled('date_from') || $request->filled('date_to')) {
+                    if ($request->filled('date_from') && $request->filled('date_to')) {
+                        $dateFrom = Carbon::parse($request->date_from)->startOfDay();
+                        $dateTo = Carbon::parse($request->date_to)->endOfDay();
+                        $query->whereBetween('created_at', [$dateFrom, $dateTo]);
+                    } elseif ($request->filled('date_from')) {
+                        $dateFrom = Carbon::parse($request->date_from)->startOfDay();
+                        $query->where('created_at', '>=', $dateFrom);
+                    } elseif ($request->filled('date_to')) {
+                        $dateTo = Carbon::parse($request->date_to)->endOfDay();
+                        $query->where('created_at', '<=', $dateTo);
+                    }
+                }
+
+                if ($request->filled('filter_type') && $request->filter_type !== 'all') {
+                    $filterType = $request->filter_type;
+                    switch ($filterType) {
+                        case 'pdf':
+                            $query->where('dokumen', 'like', '%.pdf');
+                            break;
+                        case 'excel':
+                            $query->where(function ($q) {
+                                $q->where('dokumen', 'like', '%.xls')
+                                  ->orWhere('dokumen', 'like', '%.xlsx');
+                            });
+                            break;
+                        case 'other':
+                            $query->where(function ($q) {
+                                $q->where('dokumen', 'not like', '%.pdf')
+                                  ->where('dokumen', 'not like', '%.xls')
+                                  ->where('dokumen', 'not like', '%.xlsx');
+                            });
+                            break;
+                    }
+                }
+            }
+        } else {
+            // Handle normal sorting
+            $query->orderBy($sortBy, $order);
+        }
+
+        // Add secondary sorting for consistency (only if not already sorting by created_at)
         if ($sortBy !== 'created_at') {
             $query->orderBy('created_at', 'desc');
         }
@@ -83,11 +182,17 @@ class BendaharaController extends Controller
         // Get file counts for all data (for filter dropdown)
         $fileCounts = $this->getFileCounts($request);
 
+        // Get current sort parameters for the view
+        $currentSort = [
+            'sort_by' => $sortBy,
+            'order' => $order
+        ];
+
         if ($request->ajax()) {
-            return view('admin.bendahara._table', compact('laporanBendahara', 'fileCounts'))->render();
+            return view('admin.bendahara._table', compact('laporanBendahara', 'fileCounts', 'currentSort'))->render();
         }
 
-        return view('admin.bendahara.index', compact('laporanBendahara', 'fileCounts'));
+        return view('admin.bendahara.index', compact('laporanBendahara', 'fileCounts', 'currentSort'));
     }
 
     /**
