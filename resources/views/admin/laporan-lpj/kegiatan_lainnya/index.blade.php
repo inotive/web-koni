@@ -13,36 +13,89 @@
 @endsection
 
 @section('content')
-    {{-- CSS Styling --}}
+
     <style>
         /* Table Styling */
         table td,
         table th {
             vertical-align: middle;
             word-wrap: break-word;
-            max-width: 200px;
         }
 
         .object-fit-cover {
             object-fit: cover;
         }
 
-        /* Column Width Settings */
-        .table th:nth-child(1) { width: 50px; }   /* No */
-        .table th:nth-child(2) { width: 250px; }  /* Nama Program & Kegiatan */
-        .table th:nth-child(3) { width: 100px; }  /* Volume */
-        .table th:nth-child(4) { width: 150px; }  /* Jumlah Harga Satuan */
-        .table th:nth-child(5) { width: 150px; }  /* Jumlah Harga */
-        .table th:nth-child(6) { width: 100px; }  /* Foto Jurnal */
-        .table th:nth-child(7) { width: 100px; }  /* Dokumen */
-        .table th:nth-child(8) { width: 120px; }  /* Tanggal Ditambahkan */
-        .table th:nth-child(9) { width: 100px; }  /* Aksi */
+        /* Fixed Column Width Settings with text truncation */
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            width: 50px !important;
+            max-width: 50px !important;
+        }
 
-        .text-truncate-custom {
-            max-width: 200px;
+        /* No */
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            width: 250px !important;
+            max-width: 250px !important;
+        }
+
+        /* Nama Program & Kegiatan */
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            width: 100px !important;
+            max-width: 100px !important;
+        }
+
+        /* Volume */
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            width: 150px !important;
+            max-width: 150px !important;
+        }
+
+        /* Jumlah Harga Satuan */
+        .table th:nth-child(5),
+        .table td:nth-child(5) {
+            width: 150px !important;
+            max-width: 150px !important;
+        }
+
+        /* Jumlah Harga */
+        .table th:nth-child(6),
+        .table td:nth-child(6) {
+            width: 100px !important;
+            max-width: 100px !important;
+        }
+
+        /* Foto Jurnal */
+        .table th:nth-child(7),
+        .table td:nth-child(7) {
+            width: 100px !important;
+            max-width: 100px !important;
+        }
+
+        /* Dokumen */
+        .table th:nth-child(8),
+        .table td:nth-child(8) {
+            width: 120px !important;
+            max-width: 120px !important;
+        }
+
+        /* Tanggal Ditambahkan */
+        .table th:nth-child(9),
+        .table td:nth-child(9) {
+            width: 100px !important;
+            max-width: 100px !important;
+        }
+
+        /* Aksi */
+
+        /* Text truncation for all cells except action column */
+        .table td:not(:last-child) {
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         /* Responsive Design */
@@ -82,6 +135,7 @@
             border-color: #dee2e6;
         }
     </style>
+    
 
     {{-- Page Header --}}
     <div class="d-flex flex-column mb-8">
@@ -95,14 +149,13 @@
             {{-- Card Header --}}
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
                 <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Kegiatan Lainnya - 2025</h3>
-                
+
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button --}}
-                    <button type="button" class="btn custom-red-button" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#modal_add_kegiatan_lainnya"
-                            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                    <button type="button" class="btn custom-red-button" data-bs-toggle="modal"
+                        data-bs-target="#modal_add_kegiatan_lainnya"
+                        style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                         <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                     </button>
 
@@ -114,7 +167,7 @@
                     {{-- Search Input --}}
                     <div class="input-group" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
-                               placeholder="Cari kegiatan..." value="{{ request('search') }}">
+                            placeholder="Cari kegiatan..." value="{{ request('search') }}">
                         <button class="btn btn-outline-secondary" type="button" id="search-button">
                             <i class="fas fa-search"></i>
                         </button>
@@ -133,7 +186,8 @@
                                 <select id="filter-jenis-kegiatan" class="form-select">
                                     <option value="">Semua Jenis</option>
                                     @foreach ($kegiatanLainnya->pluck('jenis_kegiatan')->unique()->filter() as $jenis)
-                                        <option value="{{ $jenis }}" {{ request('jenis_kegiatan_filter') == $jenis ? 'selected' : '' }}>
+                                        <option value="{{ $jenis }}"
+                                            {{ request('jenis_kegiatan_filter') == $jenis ? 'selected' : '' }}>
                                             {{ $jenis }}
                                         </option>
                                     @endforeach
@@ -143,8 +197,10 @@
                             {{-- Filter by Date Range --}}
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Rentang Tanggal</label>
-                                <input type="date" id="filter-start-date" class="form-control mb-2" value="{{ request('start_date') }}">
-                                <input type="date" id="filter-end-date" class="form-control" value="{{ request('end_date') }}">
+                                <input type="date" id="filter-start-date" class="form-control mb-2"
+                                    value="{{ request('start_date') }}">
+                                <input type="date" id="filter-end-date" class="form-control"
+                                    value="{{ request('end_date') }}">
                             </div>
 
                             {{-- Filter Action Buttons --}}
@@ -167,18 +223,20 @@
                     {{-- Empty State --}}
                     <div class="text-center text-muted py-10">
                         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
-                        <h4>Tidak ada data kegiatan lainnya.</h4>
+                        <h4>Data tidak tersedia</h4>
                     </div>
                 @else
                     {{-- Data Table --}}
                     <div class="table-responsive">
-                        <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning_kegiatan">
+                        <table class="table table-bordered table-hover align-middle"
+                            id="kt_datatable_dom_positioning_kegiatan">
                             {{-- Table Header --}}
                             <thead class="bg-light">
                                 <tr>
                                     <th>No</th>
                                     <th>
-                                        <a href="{{ sortUrl('nama_program_kegiatan') }}" class="text-dark text-decoration-none">
+                                        <a href="{{ sortUrl('nama_program_kegiatan') }}"
+                                            class="text-dark text-decoration-none">
                                             Nama Program & Kegiatan {!! sortIcon('nama_program_kegiatan') !!}
                                         </a>
                                     </th>
@@ -188,7 +246,8 @@
                                         </a>
                                     </th>
                                     <th>
-                                        <a href="{{ sortUrl('jumlah_harga_satuan') }}" class="text-dark text-decoration-none">
+                                        <a href="{{ sortUrl('jumlah_harga_satuan') }}"
+                                            class="text-dark text-decoration-none">
                                             Jumlah Harga Satuan {!! sortIcon('jumlah_harga_satuan') !!}
                                         </a>
                                     </th>
@@ -218,7 +277,8 @@
                                         </td>
                                         <td>
                                             <div class="d-flex flex-column">
-                                                <strong class="text-truncate-custom" title="{{ $kegiatan->nama_program_kegiatan }}">
+                                                <strong class="text-truncate-custom"
+                                                    title="{{ $kegiatan->nama_program_kegiatan }}">
                                                     {{ $kegiatan->nama_program_kegiatan }}
                                                 </strong>
                                                 <small class="text-muted">{{ $kegiatan->jenis_kegiatan ?? '-' }}</small>
@@ -229,16 +289,16 @@
                                         <td>Rp {{ number_format($kegiatan->jumlah_harga, 0, ',', '.') }}</td>
                                         <td>
                                             @if ($kegiatan->foto_jurnal)
-                                                <a href="{{ asset('storage/' . $kegiatan->foto_jurnal) }}" target="_blank" 
-                                                   class="btn btn-sm btn-light-info">Lihat Foto</a>
+                                                <a href="{{ asset('storage/' . $kegiatan->foto_jurnal) }}" target="_blank"
+                                                    class="btn btn-sm btn-light-info">Lihat Foto</a>
                                             @else
                                                 <span class="text-muted">-</span>
                                             @endif
                                         </td>
                                         <td>
                                             @if ($kegiatan->dokumen_pendukung)
-                                                <a href="{{ asset('storage/' . $kegiatan->dokumen_pendukung) }}" target="_blank" 
-                                                   class="btn btn-sm btn-light-primary">Lihat Dokumen</a>
+                                                <a href="{{ asset('storage/' . $kegiatan->dokumen_pendukung) }}"
+                                                    target="_blank" class="btn btn-sm btn-light-primary">Lihat Dokumen</a>
                                             @else
                                                 <span class="text-muted">-</span>
                                             @endif
@@ -247,24 +307,26 @@
                                         <td class="text-center">
                                             <div class="d-flex justify-content-center gap-1">
                                                 {{-- Detail Button --}}
-                                                <a href="{{ route('admin.kegiatan-lainnya.show', $kegiatan->id) }}"
-                                                   class="btn btn-icon btn-sm btn-light-primary" title="Detail">
+                                                <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.show', $kegiatan->id) }}"
+                                                    class="btn btn-icon btn-sm btn-light-primary" title="Detail">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
 
                                                 {{-- Edit Button --}}
-                                                <a href="{{ route('admin.kegiatan-lainnya.edit', $kegiatan->id) }}"
-                                                   class="btn btn-icon btn-sm btn-light-warning" title="Edit">
+                                                <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
+                                                    class="btn btn-icon btn-sm btn-light-warning" title="Edit">
                                                     <i class="fa-solid fa-pen-to-square"></i>
                                                 </a>
 
                                                 {{-- Delete Button --}}
-                                                <form action="{{ route('admin.kegiatan-lainnya.destroy', $kegiatan->id) }}"
-                                                      method="POST" class="d-inline"
-                                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus kegiatan ini?')">
+                                                <form
+                                                    action="{{ route('admin.laporan-lpj.kegiatan_lainnya.destroy', $kegiatan->id) }}"
+                                                    method="POST" class="d-inline"
+                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus kegiatan ini?')">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-icon btn-sm btn-light-danger" title="Hapus">
+                                                    <button type="submit" class="btn btn-icon btn-sm btn-light-danger"
+                                                        title="Hapus">
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
                                                 </form>
@@ -281,35 +343,62 @@
                     </div>
 
                     {{-- Pagination Controls --}}
-                    <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
-                        {{-- Per Page Selector --}}
-                        <div class="mb-2 mb-md-0">
-                            <div class="d-flex align-items-center">
-                                <span class="me-2">Show</span>
-                                <select class="form-select form-select-sm w-auto" id="per-page-select">
-                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                                </select>
-                                <span class="ms-2">per page</span>
-                            </div>
-                        </div>
+<div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
+    <!-- Per Page Selector -->
+    <div class="mb-2 mb-md-0">
+        <div class="d-flex align-items-center">
+            <span class="me-2">Show</span>
+            <select class="form-select form-select-sm w-auto" id="per-page-select">
+                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+            </select>
+            <span class="ms-2">per page</span>
+        </div>
+    </div>
 
-                        {{-- Pagination Links --}}
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="d-flex align-items-center">
-                                <span class="me-2">Page {{ $kegiatanLainnya->currentPage() }} of {{ $kegiatanLainnya->lastPage() }}</span>
-                            </div>
-                            <div class="pagination-wrapper">
-                                {{ $kegiatanLainnya->appends(request()->query())->links('pagination::bootstrap-4') }}
-                            </div>
-                        </div>
-                    </div>
+    <!-- Pagination Links -->
+    <div class="d-flex align-items-center gap-3">
+        <div class="d-flex align-items-center">
+            <span class="me-2">Page {{ $kegiatanLainnya->currentPage() }} of {{ $kegiatanLainnya->lastPage() }}</span>
+        </div>
+        <div class="pagination-wrapper">
+            <ul class="pagination pagination-sm">
+                <!-- Previous Page Link -->
+                <li class="page-item {{ $kegiatanLainnya->onFirstPage() ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ $kegiatanLainnya->previousPageUrl() }}" aria-label="Previous">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+
+                <!-- Pagination Elements -->
+                @foreach ($kegiatanLainnya->getUrlRange(1, $kegiatanLainnya->lastPage()) as $page => $url)
+                    @if ($page == $kegiatanLainnya->currentPage())
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">{{ $page }}</span>
+                        </li>
+                    @else
+                        <li class="page-item">
+                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                        </li>
+                    @endif
+                @endforeach
+
+                <!-- Next Page Link -->
+                <li class="page-item {{ !$kegiatanLainnya->hasMorePages() ? 'disabled' : '' }}">
+                    <a class="page-link" href="{{ $kegiatanLainnya->nextPageUrl() }}" aria-label="Next">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 
                     {{-- Results Info --}}
                     <div class="text-muted mt-2 text-center">
-                        Showing {{ $kegiatanLainnya->firstItem() }} to {{ $kegiatanLainnya->lastItem() }} 
+                        Showing {{ $kegiatanLainnya->firstItem() }} to {{ $kegiatanLainnya->lastItem() }}
                         of {{ $kegiatanLainnya->total() }} results
                     </div>
                 @endif
@@ -331,71 +420,70 @@
 
                 {{-- Modal Body --}}
                 <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                    <form id="kt_modal_add_kegiatan_form" class="form" 
-                          action="{{ route('admin.laporan-lpj.kegiatan_lainnya.store') }}" 
-                          method="POST" enctype="multipart/form-data">
+                    <form id="kt_modal_add_kegiatan_form" class="form"
+                        action="{{ route('admin.laporan-lpj.kegiatan_lainnya.store') }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
 
                         {{-- Nama Program & Kegiatan --}}
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Nama Program & Kegiatan</label>
-                            <input type="text" name="nama_program_kegiatan" 
-                                   class="form-control form-control-solid mb-3 mb-lg-0" 
-                                   placeholder="Masukkan nama program dan kegiatan" required/>
+                            <input type="text" name="nama_program_kegiatan"
+                                class="form-control form-control-solid mb-3 mb-lg-0"
+                                placeholder="Masukkan nama program dan kegiatan" required />
                         </div>
 
                         {{-- Jenis Kegiatan --}}
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Jenis Kegiatan</label>
-                            <input type="text" name="jenis_kegiatan" 
-                                   class="form-control form-control-solid mb-3 mb-lg-0" 
-                                   placeholder="Contoh: Rapat, Pelatihan, Pembelian" required/>
+                            <input type="text" name="jenis_kegiatan"
+                                class="form-control form-control-solid mb-3 mb-lg-0"
+                                placeholder="Contoh: Rapat, Pelatihan, Pembelian" required />
                         </div>
 
                         {{-- Tanggal Kegiatan --}}
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Tanggal Kegiatan</label>
-                            <input type="date" name="tanggal_kegiatan" 
-                                   class="form-control form-control-solid mb-3 mb-lg-0" required/>
+                            <input type="date" name="tanggal_kegiatan"
+                                class="form-control form-control-solid mb-3 mb-lg-0" required />
                         </div>
 
                         {{-- Volume --}}
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Volume</label>
-                            <input type="text" name="volume" 
-                                   class="form-control form-control-solid mb-3 mb-lg-0" 
-                                   placeholder="Masukkan volume kegiatan (contoh: 20 unit, 1 kegiatan)" required/>
+                            <input type="text" name="volume" class="form-control form-control-solid mb-3 mb-lg-0"
+                                placeholder="Masukkan volume kegiatan (contoh: 20 unit, 1 kegiatan)" required />
                         </div>
 
                         {{-- Jumlah Harga Satuan --}}
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Jumlah Harga Satuan</label>
-                            <input type="number" name="jumlah_harga_satuan" 
-                                   class="form-control form-control-solid mb-3 mb-lg-0" 
-                                   placeholder="Masukkan jumlah harga satuan" required/>
+                            <input type="number" name="jumlah_harga_satuan"
+                                class="form-control form-control-solid mb-3 mb-lg-0"
+                                placeholder="Masukkan jumlah harga satuan" required />
                         </div>
 
                         {{-- Jumlah Harga --}}
                         <div class="fv-row mb-7">
                             <label class="required fw-semibold fs-6 mb-2">Jumlah Harga</label>
-                            <input type="number" name="jumlah_harga" 
-                                   class="form-control form-control-solid mb-3 mb-lg-0" 
-                                   placeholder="Masukkan jumlah harga" required/>
+                            <input type="number" name="jumlah_harga"
+                                class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Masukkan jumlah harga"
+                                required />
                         </div>
 
                         {{-- Foto Jurnal --}}
                         <div class="fv-row mb-7">
                             <label class="fw-semibold fs-6 mb-2">Foto Jurnal</label>
-                            <input type="file" name="foto_jurnal" 
-                                   class="form-control form-control-solid mb-3 mb-lg-0" accept="image/*"/>
+                            <input type="file" name="foto_jurnal" class="form-control form-control-solid mb-3 mb-lg-0"
+                                accept="image/*" />
                         </div>
 
                         {{-- Dokumen Pendukung --}}
                         <div class="fv-row mb-7">
                             <label class="fw-semibold fs-6 mb-2">Dokumen Pendukung</label>
-                            <input type="file" name="dokumen_pendukung" 
-                                   class="form-control form-control-solid mb-3 mb-lg-0" 
-                                   accept=".pdf,.doc,.docx,.xls,.xlsx"/>
+                            <input type="file" name="dokumen_pendukung"
+                                class="form-control form-control-solid mb-3 mb-lg-0"
+                                accept=".pdf,.doc,.docx,.xls,.xlsx" />
                         </div>
 
                         {{-- Form Actions --}}
@@ -428,8 +516,7 @@
                     responsive: true,
                     autoWidth: false,
                     scrollX: false,
-                    columnDefs: [
-                        {
+                    columnDefs: [{
                             targets: -1, // Last column (Aksi)
                             orderable: false,
                             searchable: false
@@ -456,14 +543,25 @@
                 }
 
                 // Handle per page selection
-                $('#per-page-select').on('change', function() {
-                    updateUrlAndRedirect({ 'per_page': $(this).val() });
-                });
+    $('#per-page-select').on('change', function() {
+        const perPage = $(this).val();
+        const currentUrl = new URL(window.location.href);
+        
+        // Update per_page parameter
+        currentUrl.searchParams.set('per_page', perPage);
+        // Reset to first page when changing per_page
+        currentUrl.searchParams.set('page', 1);
+        
+        window.location.href = currentUrl.toString();
+    });
+            
 
-                // Handle search functionality
-                $('#search-button').on('click', function() {
-                    updateUrlAndRedirect({ 'search': $('#search').val() });
-                });
+                /// Handle search functionality
+    $('#search-button').on('click', function() {
+        updateUrlAndRedirect({
+            'search': $('#search').val()
+        });
+    });
 
                 $('#search').on('keypress', function(e) {
                     if (e.which === 13) { // Enter key
@@ -485,14 +583,14 @@
                 });
 
                 $('#reset-filters').on('click', function() {
-                    window.location.href = "{{ route('admin.kegiatan-lainnya.index') }}";
+                    window.location.href = "{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}";
                 });
 
                 // Update filter count badge
                 function updateFilterCount() {
                     const urlParams = new URLSearchParams(window.location.search);
                     let count = 0;
-                    
+
                     if (urlParams.get('jenis_kegiatan_filter')) count++;
                     if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
                     if (urlParams.get('search')) count++;
@@ -510,4 +608,4 @@
             });
         </script>
     @endif
-@endsection 
+@endsection

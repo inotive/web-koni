@@ -73,11 +73,12 @@
         .dropdown-menu {
             z-index: 1055 !important;
             position: absolute !important;
-            border: none !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
-            border-radius: 8px !important;
-            padding: 8px 0 !important;
-            min-width: 160px !important;
+            right: 0 !important;
+            left: auto !important;
+            top: 100% !important;
+            margin-top: 0.125rem !important;
+            transform: none !important;
+            will-change: transform !important;
         }
 
         .dropdown {
@@ -201,20 +202,21 @@
 
         /* File preview button styling */
         .preview-file {
-    background-color: #1B84FF !important;
-    border-color: #1B84FF !important;
-    color: white !important;
-    transition: all 0.2s ease;
-}
+            background-color: #1B84FF !important;
+            border-color: #1B84FF !important;
+            color: white !important;
+            transition: all 0.2s ease;
+        }
 
 
         .preview-file:hover {
-    background-color: #1570e6 !important; /* Sedikit lebih gelap saat hover */
-    border-color: #1570e6 !important;
-    color: white !important;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(27, 132, 255, 0.3);
-}
+            background-color: #1570e6 !important;
+            /* Sedikit lebih gelap saat hover */
+            border-color: #1570e6 !important;
+            color: white !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(27, 132, 255, 0.3);
+        }
 
         .file-icon {
             color: #1976d2;
@@ -472,6 +474,13 @@
                 height: 85vh;
                 margin: 2.5vh auto;
             }
+
+            .table tbody tr:last-child .dropdown-menu {
+                top: auto !important;
+                bottom: 100% !important;
+                margin-top: 0 !important;
+                margin-bottom: 0.125rem !important;
+            }
         }
     </style>
 
@@ -646,15 +655,14 @@
                                             </div>
                                         </td>
                                         <td class="text-center">
-                                            <button type="button" 
-        class="btn btn-sm preview-file" 
-        data-file-url="{{ asset('storage/' . $file->path) }}"
-        data-file-name="{{ $file->nama_dokumen }}"
-        data-file-type="{{ pathinfo($file->path, PATHINFO_EXTENSION) }}"
-        title="Klik untuk melihat preview file">
-    <i class="fas fa-eye me-1"></i>
-    Lihat Dokumen
-</button>
+                                            <button type="button" class="btn btn-sm preview-file"
+                                                data-file-url="{{ asset('storage/' . $file->path) }}"
+                                                data-file-name="{{ $file->nama_dokumen }}"
+                                                data-file-type="{{ pathinfo($file->path, PATHINFO_EXTENSION) }}"
+                                                title="Klik untuk melihat preview file">
+                                                <i class="fas fa-eye me-1"></i>
+                                                Lihat Dokumen
+                                            </button>
                                         </td>
                                         <td class="text-center">
                                             <div class="dropdown">
@@ -683,14 +691,6 @@
                                                     </svg>
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
-                                                    <li>
-                                                        <a href="{{ route('admin.file-kesekretariat.show', $file->id) }}"
-                                                            class="dropdown-item view-btn"
-                                                            data-file-url="{{ asset('storage/' . $file->path) }}"
-                                                            target="_blank">
-                                                            <i class="bi bi-eye"></i> Lihat
-                                                        </a>
-                                                    </li>
                                                     <li>
                                                         <a href="{{ route('admin.file-kesekretariat.edit', $file) }}"
                                                             class="dropdown-item">
@@ -870,7 +870,8 @@
     </div>
 
     {{-- File Preview Modal --}}
-    <div class="modal fade file-preview-modal" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+    <div class="modal fade file-preview-modal" id="filePreviewModal" tabindex="-1"
+        aria-labelledby="filePreviewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1021,21 +1022,21 @@
                 const modal = $('#filePreviewModal');
                 const container = $('#filePreviewContainer');
                 const loading = $('#previewLoading');
-                
+
                 // Update modal title and info
                 $('#previewFileName').text(fileName);
                 $('#previewFileType').text(fileType.toUpperCase());
                 $('#downloadFileBtn').attr('href', fileUrl);
                 $('#openNewTabBtn').attr('href', fileUrl);
-                
+
                 // Show loading
                 container.html(loading);
                 modal.modal('show');
-                
+
                 // Create preview content based on file type
                 setTimeout(() => {
                     let previewContent = '';
-                    
+
                     if (fileType.toLowerCase() === 'pdf') {
                         previewContent = `
                             <iframe src="${fileUrl}" 
@@ -1045,7 +1046,8 @@
                         `;
                     } else if (['doc', 'docx'].includes(fileType.toLowerCase())) {
                         // For Word documents, use Google Docs Viewer
-                        const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+                        const viewerUrl =
+                            `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
                         previewContent = `
                             <iframe src="${viewerUrl}" 
                                     class="file-preview-iframe" 
@@ -1054,7 +1056,8 @@
                         `;
                     } else if (['xls', 'xlsx'].includes(fileType.toLowerCase())) {
                         // For Excel files, use Google Docs Viewer
-                        const viewerUrl = `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+                        const viewerUrl =
+                            `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
                         previewContent = `
                             <iframe src="${viewerUrl}" 
                                     class="file-preview-iframe" 
@@ -1071,7 +1074,7 @@
                             </div>
                         `;
                     }
-                    
+
                     container.html(previewContent);
                 }, 500);
             }
@@ -1082,7 +1085,7 @@
                 const fileUrl = $(this).data('file-url');
                 const fileName = $(this).data('file-name');
                 const fileType = $(this).data('file-type');
-                
+
                 showFilePreview(fileUrl, fileName, fileType);
             });
 
