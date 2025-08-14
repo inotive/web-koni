@@ -250,7 +250,7 @@
                 <h1>Surat Masuk & Keluar</h1>
                 <span>Manajemen Surat Masuk & Keluar Anda Sekarang</span>
             </div>
-            
+
             <form id="filter" class="d-flex gap-3 filter-container">
                 <button type="button" id="tambahSuratBtn" class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
@@ -261,33 +261,6 @@
                     <div class="position-relative bg-light">
                         <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari surat..." class="form-control border border-gray-500 py-2 search-input" />
-                    </div>
-                </div>
-
-                <div class="filter-dropdown">
-                    <div class="filter-btn {{ (request('jenis_surat') && request('jenis_surat') != 'all') ? 'filter-active' : '' }}" id="filterBtn">
-                        <span>
-                            @if(request('jenis_surat') == 'masuk')
-                                <i class="fas fa-inbox me-2" style="color: #198754;"></i>Surat Masuk
-                            @elseif(request('jenis_surat') == 'keluar')
-                                <i class="fas fa-paper-plane me-2" style="color: #0d6efd;"></i>Surat Keluar
-                            @else
-                                <i class="fas fa-filter me-2"></i>Filter Jenis Surat
-                            @endif
-                        </span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
-                    </div>
-
-                    <div class="filter-menu" id="filterMenu">
-                        <div class="filter-option {{ (request('jenis_surat', 'all') == 'all') ? 'active' : '' }}" data-filter="all">
-                            <span><i class="fas fa-list me-2"></i>Semua Surat</span>
-                        </div>
-                        <div class="filter-option {{ (request('jenis_surat') == 'masuk') ? 'active' : '' }}" data-filter="masuk">
-                            <span><i class="fas fa-inbox me-2" style="color: #198754;"></i>Surat Masuk</span>
-                        </div>
-                        <div class="filter-option {{ (request('jenis_surat') == 'keluar') ? 'active' : '' }}" data-filter="keluar">
-                            <span><i class="fas fa-paper-plane me-2" style="color: #0d6efd;"></i>Surat Keluar</span>
-                        </div>
                     </div>
                 </div>
 
@@ -428,7 +401,7 @@
         const isKeluar = currentTab === 'keluar';
         const buttonText = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
         const modalTitle = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
-        
+
         $('#tambahSuratText').text(buttonText);
         $('#modalTitle').text(modalTitle);
         $('#submitBtn').text(buttonText);
@@ -497,9 +470,9 @@
         $(document).on('click', '.dropdown-toggle-custom', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             $('.dropdown-menu-custom').removeClass('show');
-            
+
             const $menu = $(this).siblings('.dropdown-menu-custom');
             $menu.addClass('show');
         });
@@ -640,7 +613,7 @@
         $(document).on('change', 'select[name="per_page"]', function() {
             const newPerPage = $(this).val();
             const formData = $('#filter').serialize() + '&tab=' + currentTab + '&per_page=' + newPerPage;
-            
+
             $.ajax({
                 url: "{{ route('admin.surat.index') }}",
                 data: formData,
@@ -668,11 +641,11 @@
             if (url) {
                 const urlObj = new URL(url);
                 const page = urlObj.searchParams.get('page');
-                
+
                 let formData = $('#filter').serialize();
                 formData += '&tab=' + currentTab;
                 formData += '&page=' + page;
-                
+
                 $.ajax({
                     url: "{{ route('admin.surat.index') }}",
                     data: formData,
@@ -794,20 +767,20 @@ function initializeDropdownEvents() {
     $(document).off('click', '.dropdown-toggle-custom');
     $(document).off('mouseenter', '.dropdown-action');
     $(document).off('mouseleave', '.dropdown-action');
-    
+
     $(document).on('click', '.dropdown-toggle-custom', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const $dropdownAction = $(this).closest('.dropdown-action');
         const $menu = $dropdownAction.find('.dropdown-menu-custom');
-        
+
         // Close all other dropdowns
         $('.dropdown-menu-custom').not($menu).removeClass('show');
-        
+
         // Toggle this dropdown
         $menu.toggleClass('show');
-        
+
         // Check position
         checkDropdownPosition($dropdownAction);
     });
@@ -816,21 +789,21 @@ function initializeDropdownEvents() {
    function checkDropdownPosition($dropdownAction) {
     const $menu = $dropdownAction.find('.dropdown-menu-custom');
     if (!$menu.hasClass('show')) return;
-    
+
     const menuHeight = $menu.outerHeight();
     const dropdownOffset = $dropdownAction.offset();
     const windowHeight = $(window).height();
     const spaceBelow = windowHeight - dropdownOffset.top - $dropdownAction.outerHeight();
-    
+
     // Reset position class
     $dropdownAction.removeClass('dropup');
-    
+
     // Check if this is the last row of the table
     const $row = $dropdownAction.closest('tr');
     const $table = $row.closest('tbody');
     const rowIndex = $table.find('tr').index($row);
     const totalRows = $table.find('tr').length;
-    
+
     // Only apply dropup to the last row
     if (rowIndex === totalRows - 1) {
         $dropdownAction.addClass('dropup');
