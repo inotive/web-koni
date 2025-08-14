@@ -123,7 +123,7 @@
                                 <li class="dropdown-item edit" data-bs-toggle="modal" data-bs-target="#edit-{{ $item->id }}">
                                     <i class="ki-outline ki-pencil me-2"></i>Edit Laporan
                                 </li>
-                                <li class="dropdown-item delete" onclick="deleteItem('delete-form-{{ $item->id }}')">
+                                <li class="dropdown-item delete" onclick="deleteItemEnhanced('delete-form-{{ $item->id }}')">
                                     <i class="ki-outline ki-trash me-2"></i>Hapus
                                 </li>
                             </ul>

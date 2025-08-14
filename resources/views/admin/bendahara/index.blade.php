@@ -3,6 +3,7 @@
 @section('pageTitle', 'Database Bendahara')
 @section('mainSection', 'Main Menu')
 @section('currentSection', 'Database Bendahara')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @section('style')
     <style>
 
@@ -167,10 +168,33 @@
             padding: 5px;
             border-radius: 4px;
             transition: all 0.2s ease;
+            position: relative;
         }
 
         .dropdown-toggle-custom:hover {
             background-color: rgba(0, 0, 0, 0.05);
+            transform: scale(1.05);
+        }
+
+        /* Add loading state for hover delay */
+        .dropdown-action.loading .dropdown-toggle-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid rgba(27, 132, 255, 0.3);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         .dropdown-menu-custom {
@@ -186,19 +210,57 @@
             margin-top: 5px;
             display: none;
             list-style: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            pointer-events: none;
         }
 
         .dropdown-menu-custom.show {
             display: block;
-            animation: fadeIn 0.2s ease;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            animation: dropdownFadeIn 0.2s ease forwards;
         }
 
-        /* Dropup style */
+        @keyframes dropdownFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Dropup style with enhanced animation */
         .dropup .dropdown-menu-custom {
             bottom: 100%;
             top: auto;
             margin-top: 0;
             margin-bottom: 5px;
+            transform: translateY(10px);
+        }
+
+        .dropup .dropdown-menu-custom.show {
+            transform: translateY(0);
+        }
+
+        @keyframes dropupFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropup .dropdown-menu-custom.show {
+            animation: dropupFadeIn 0.2s ease forwards;
         }
 
         .dropdown-item {
@@ -210,33 +272,103 @@
             color: #495057;
             text-decoration: none;
             font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dropdown-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, transparent, rgba(248, 40, 90, 0.1));
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .dropdown-item:hover::before {
+            width: 100%;
         }
 
         .dropdown-item i {
             margin-right: 8px;
             width: 20px;
             text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .dropdown-item:hover i {
+            transform: scale(1.1);
         }
 
         .dropdown-item:hover {
             background-color: #f8f9fa;
+            transform: translateX(2px);
         }
 
         .dropdown-item.preview:hover {
             background-color: #F4EEFF !important;
+            color: #6f42c1;
         }
 
         .dropdown-item.edit:hover {
             background-color: rgb(249, 245, 172) !important;
+            color: #856404;
         }
 
         .dropdown-item.delete:hover {
             background-color: #ffcad7 !important;
+            color: #721c24;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Enhanced hover states for action buttons */
+        .dropdown-action:hover .dropdown-toggle-custom svg {
+            transition: transform 0.2s ease;
+        }
+
+        .dropdown-action:hover .dropdown-toggle-custom svg {
+            transform: scale(1.1);
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .dropdown-menu-custom {
+                position: fixed;
+                right: 10px;
+                left: auto;
+                min-width: 200px;
+                max-width: calc(100vw - 20px);
+            }
+
+            .dropdown-item {
+                padding: 12px 16px;
+                font-size: 1rem;
+            }
+
+            /* Disable hover effects on mobile */
+            .dropdown-item:hover::before {
+                width: 0;
+            }
+
+            .dropdown-item:hover {
+                transform: none;
+            }
+        }
+
+        /* Loading state for dropdown during cooldown */
+        .dropdown-action.hover-loading .dropdown-toggle-custom {
+            opacity: 0.7;
+        }
+
+        .dropdown-action.hover-loading .dropdown-toggle-custom svg {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* Fix pagination dropdown arrow */
@@ -773,63 +905,605 @@
 
 @section('script')
     <script>
-        let isSubmitting = false; // Global flag to prevent multiple submissions
+        // Global variables
+        let isSubmitting = false;
+        let hasUnsavedChanges = false;
+        let originalFormData = {};
+        const dropzones = {};
+        let currentFilter = '{{ request("filter_type", "all") }}';
+        let currentDateFilter = {
+            from: '{{ request("date_from") }}',
+            to: '{{ request("date_to") }}'
+        };
+
+        // Dropzone configuration
+        Dropzone.autoDiscover = false;
+
+        // ==================== UTILITY FUNCTIONS ====================
+
+        function debounce(func, delay) {
+            let timeout;
+            return function() {
+                const context = this, args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function enablePageInteractions() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $('body').css('padding-right', '');
+            $('html, body').css('overflow', '');
+        }
+
+        // ==================== FORM HANDLING ====================
+
+        function clearFormErrors(formId) {
+            const form = document.getElementById(formId);
+            if (!form) {
+                console.warn(`Form not found: ${formId}`);
+                return;
+            }
+
+            form.querySelectorAll('.form-control').forEach(input => {
+                if (input) input.classList.remove('is-invalid');
+            });
+
+            form.querySelectorAll('.invalid-feedback').forEach(feedback => {
+                if (feedback) feedback.textContent = '';
+            });
+        }
+
+        function showFormErrors(formId, errors) {
+            const form = document.getElementById(formId);
+            if (!form) {
+                console.warn(`Form not found: ${formId}`);
+                return;
+            }
+
+            clearFormErrors(formId);
+
+            for (const field in errors) {
+                const input = form.querySelector(`[name="${field}"]`);
+                if (!input) {
+                    console.warn(`Input field not found: ${field} in form ${formId}`);
+                    continue;
+                }
+
+                const feedback = input.parentElement?.querySelector('.invalid-feedback');
+                if (input && feedback) {
+                    input.classList.add('is-invalid');
+                    feedback.textContent = errors[field][0];
+                }
+            }
+        }
+
+        function setButtonLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            if (!button) {
+                console.warn(`Button not found: ${buttonId}`);
+                return;
+            }
+
+            const btnText = button.querySelector('.btn-text');
+
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+                if (btnText) btnText.style.opacity = '0';
+            } else {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+                if (btnText) btnText.style.opacity = '1';
+            }
+        }
+
+        // ==================== DROPZONE MANAGEMENT ====================
+
+        function initializeDropzones() {
+            // Clear existing dropzones
+            Object.keys(dropzones).forEach(key => {
+                if (dropzones[key] && typeof dropzones[key].destroy === 'function') {
+                    dropzones[key].destroy();
+                    delete dropzones[key];
+                }
+            });
+
+            // Common dropzone config
+            const dropzoneConfig = {
+                url: "#",
+                autoProcessQueue: false,
+                paramName: 'dokumen',
+                maxFiles: 1,
+                maxFilesize: 10,
+                addRemoveLinks: true,
+                acceptedFiles: '.pdf,.xls,.xlsx',
+                dictInvalidFileType: 'Format file tidak didukung. Hanya PDF dan Excel yang diperbolehkan.',
+                dictFileTooBig: 'Ukuran file terlalu besar. Maksimal 10MB.',
+            };
+
+            // Initialize add form dropzone
+            if (document.getElementById('dropzone-formAdd')) {
+                dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
+                    ...dropzoneConfig,
+                    dictDefaultMessage: 'Seret atau pilih dokumen.<br><small>Format: PDF, XLS, XLSX. Max. 10 MB.</small>',
+                });
+            }
+
+            // Initialize edit form dropzones
+            document.querySelectorAll('[id^="dropzone-form-"]').forEach(element => {
+                const formId = element.id.replace('dropzone-', '');
+                if (!dropzones[formId]) {
+                    dropzones[formId] = new Dropzone(`#${element.id}`, {
+                        ...dropzoneConfig,
+                        dictDefaultMessage: 'Seret atau pilih dokumen baru.<br><small>Format: PDF, XLS, XLSX. Max. 10 MB. Kosongkan jika tidak ingin mengubah file.</small>',
+                    });
+                }
+            });
+
+            // Add dropzone event listeners for change tracking
+            Object.keys(dropzones).forEach(formId => {
+                if (dropzones[formId]) {
+                    dropzones[formId].on('addedfile', function() {
+                        if (formId.startsWith('form-')) {
+                            hasUnsavedChanges = true;
+                            console.log(`Dropzone file added to ${formId}, marking as changed`);
+                        }
+                    });
+
+                    dropzones[formId].on('removedfile', function() {
+                        if (formId.startsWith('form-')) {
+                            const itemId = formId.replace('form-', '');
+                            // Check if any files remain
+                            const hasFiles = this.getAcceptedFiles().length > 0;
+
+                            if (!hasFiles && originalFormData[itemId]) {
+                                // No new files, check if form text changed
+                                const $form = $(`#${formId}`);
+                                const currentJudul = $form.find('input[name="judul"]').val() || '';
+                                const originalJudul = originalFormData[itemId].judul || '';
+                                hasUnsavedChanges = currentJudul !== originalJudul;
+                            }
+                            console.log(`Dropzone file removed from ${formId}, checking changes:`, hasUnsavedChanges);
+                        }
+                    });
+                }
+            });
+        }
+
+        // ==================== MODAL MANAGEMENT (FIXED) ====================
+
+        function initializeModalHandlers() {
+            // Edit modal show handler - Store original form data
+            $(document).on('show.bs.modal', '[id^="edit-"]', function() {
+                const modalId = $(this).attr('id');
+                const itemId = modalId.replace('edit-', '');
+                const form = document.getElementById(`form-${itemId}`);
+
+                console.log(`Opening modal: ${modalId}`);
+
+                if (form) {
+                    const judulInput = form.querySelector('input[name="judul"]');
+
+                    // Store original form data INCLUDING the exact input values
+                    originalFormData[itemId] = {
+                        judul: judulInput?.value || '',
+                        dropzoneFiles: [],
+                        // Store the original HTML form state
+                        originalFormHTML: form.innerHTML
+                    };
+
+                    clearFormErrors(`form-${itemId}`);
+                    isSubmitting = false;
+                    hasUnsavedChanges = false;
+                    setButtonLoading(`submitBtn${itemId}`, false);
+
+                    // Clear dropzone files but don't reset original state
+                    const dropzone = dropzones[`form-${itemId}`];
+                    if (dropzone) dropzone.removeAllFiles(true);
+                } else {
+                    console.warn(`Form not found: form-${itemId}`);
+                }
+            });
+
+            // Enhanced modal hide handler with proper unsaved changes check
+            $(document).on('hide.bs.modal', '[id^="edit-"]', function(e) {
+                const modalId = $(this).attr('id');
+                const itemId = modalId.replace('edit-', '');
+                const focusedElement = this.querySelector(':focus');
+                if (focusedElement) focusedElement.blur();
+
+                $(this).find('[tabindex]').removeAttr('tabindex');
+
+                // Check if form was successfully submitted
+                const wasSuccessfullySubmitted = $(this).data('success-submitted');
+
+                // Check for unsaved changes only if not successfully submitted
+                if (hasUnsavedChanges && !wasSuccessfullySubmitted) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    Swal.fire({
+                        title: 'Perubahan Belum Disimpan',
+                        text: 'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin menutup tanpa menyimpan?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, Tutup',
+                        cancelButtonText: 'Tetap Edit'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            hasUnsavedChanges = false;
+                            $(this).data('force-close', true);
+                            $(this).modal('hide');
+                        }
+                    });
+                    return false;
+                }
+            });
+
+            // Modal hidden handler - PROPER cleanup and form reset
+            $(document).on('hidden.bs.modal', '[id^="edit-"]', function() {
+                const modalId = $(this).attr('id');
+                const itemId = modalId.replace('edit-', '');
+                const form = document.getElementById(`form-${itemId}`);
+
+                console.log(`Modal closed: ${modalId}`);
+
+                // Clean up modal state
+                $(this).removeAttr('aria-hidden').removeClass('show').css('display', '');
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open').css('padding-right', '');
+
+                const wasSuccessfullySubmitted = $(this).data('success-submitted');
+                const wasForceCloseD = $(this).data('force-close');
+
+                if (form && originalFormData[itemId]) {
+                    // Only reset if NOT successfully submitted
+                    if (!wasSuccessfullySubmitted) {
+                        console.log('Resetting form to original state for item:', itemId);
+
+                        // Reset form fields to original values
+                        const judulInput = form.querySelector('input[name="judul"]');
+                        if (judulInput && originalFormData[itemId].judul !== undefined) {
+                            judulInput.value = originalFormData[itemId].judul;
+                            console.log(`Reset judul to: "${originalFormData[itemId].judul}"`);
+                        }
+
+                        // Reset dropzone
+                        const dropzone = dropzones[`form-${itemId}`];
+                        if (dropzone) {
+                            dropzone.removeAllFiles(true);
+                            console.log('Dropzone files cleared');
+                        }
+
+                        // Clear any form errors
+                        clearFormErrors(`form-${itemId}`);
+
+                        // Force update input appearance
+                        if (judulInput) {
+                            judulInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                    } else {
+                        console.log('Form was successfully submitted, no reset needed');
+                    }
+
+                    // Clean up stored data
+                    delete originalFormData[itemId];
+                }
+
+                // Reset all modal flags
+                $(this).removeData('success-submitted');
+                $(this).removeData('force-close');
+
+                // Reset global state
+                isSubmitting = false;
+                hasUnsavedChanges = false;
+                setButtonLoading(`submitBtn${itemId}`, false);
+                enablePageInteractions();
+            });
+
+            // Add modal handlers
+            $('#add').on('show.bs.modal', function() {
+                isSubmitting = false;
+                hasUnsavedChanges = false;
+                clearFormErrors('formAdd');
+                setButtonLoading('submitBtnAdd', false);
+
+                if (dropzones['formAdd']) {
+                    dropzones['formAdd'].removeAllFiles(true);
+                }
+            });
+
+            $('#add').on('hide.bs.modal', function() {
+                const focusedElement = this.querySelector(':focus');
+                if (focusedElement) focusedElement.blur();
+            });
+
+            $('#add').on('hidden.bs.modal', function() {
+                const form = document.getElementById('formAdd');
+                if (form) form.reset();
+
+                if (dropzones['formAdd']) {
+                    dropzones['formAdd'].removeAllFiles(true);
+                }
+
+                clearFormErrors('formAdd');
+                isSubmitting = false;
+                hasUnsavedChanges = false;
+                setButtonLoading('submitBtnAdd', false);
+
+                $(this).removeAttr('aria-hidden').css('display', '');
+                $('.modal-backdrop').remove();
+                $('body').removeClass('modal-open').css('padding-right', '');
+                enablePageInteractions();
+            });
+        }
+
+        function initializeModalEvents() {
+            $(document).off('click', '[data-bs-toggle="modal"][data-bs-target^="#edit-"]');
+
+            $(document).on('click', '[data-bs-toggle="modal"][data-bs-target^="#edit-"]', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const targetModalId = $(this).data('bs-target');
+                const modalElement = document.querySelector(targetModalId);
+
+                console.log('Edit button clicked, target:', targetModalId);
+
+                if (modalElement) {
+                    try {
+                        const existingModal = bootstrap.Modal.getInstance(modalElement);
+                        if (existingModal) existingModal.dispose();
+
+                        const modal = new bootstrap.Modal(modalElement, {
+                            backdrop: true,
+                            keyboard: true,
+                            focus: true
+                        });
+
+                        modal.show();
+                    } catch (error) {
+                        console.error('Error showing modal:', error);
+                        try {
+                            $(targetModalId).modal('show');
+                        } catch (jqueryError) {
+                            console.error('jQuery modal fallback failed:', jqueryError);
+                        }
+                    }
+                } else {
+                    console.error('Modal not found:', targetModalId);
+                }
+            });
+        }
+
+        // ==================== FORM SUBMISSION ====================
+
+        function submitFormEnhanced(formId) {
+            if (isSubmitting) return;
+
+            let form = document.getElementById(formId);
+            if (!form) {
+                console.error(`Form not found: ${formId}`);
+                return;
+            }
+
+            let formData = new FormData(form);
+            let submitBtnId = formId === 'formAdd' ? 'submitBtnAdd' : `submitBtn${formId.replace('form-', '')}`;
+
+            clearFormErrors(formId);
+            isSubmitting = true;
+            setButtonLoading(submitBtnId, true);
+
+            const dz = dropzones[formId];
+            if (dz) {
+                const files = dz.getAcceptedFiles();
+                files.forEach((file) => formData.append('dokumen', file));
+            }
+
+            fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData,
+                })
+                .then(async response => {
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        if (data.errors) {
+                            showFormErrors(formId, data.errors);
+                            const firstError = Object.values(data.errors)[0][0];
+                            toastr.error(firstError, "Validasi Gagal!");
+                        } else {
+                            const currentModal = $('.modal.show');
+                            if (currentModal.length) {
+                                const modalInstance = bootstrap.Modal.getInstance(currentModal[0]);
+                                if (modalInstance) {
+                                    modalInstance.hide();
+                                } else {
+                                    currentModal.modal('hide');
+                                }
+                            }
+                            toastr.error(data.message || "Gagal menyimpan data", "Error!");
+                        }
+                    } else {
+                        const currentModal = $('.modal.show');
+                        if (currentModal.length) {
+                            currentModal.data('success-submitted', true);
+
+                            const modalInstance = bootstrap.Modal.getInstance(currentModal[0]);
+                            if (modalInstance) {
+                                modalInstance.hide();
+                            } else {
+                                currentModal.modal('hide');
+                            }
+                        }
+
+                        toastr.success(data.message || "Data berhasil disimpan", "Success!");
+                        form.reset();
+
+                        if (dropzones[formId]) {
+                            dropzones[formId].removeAllFiles(true);
+                        }
+
+                        hasUnsavedChanges = false;
+                        setTimeout(() => reloadTable(), 100);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    const currentModal = $('.modal.show');
+                    if (currentModal.length) {
+                        const modalInstance = bootstrap.Modal.getInstance(currentModal[0]);
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        } else {
+                            currentModal.modal('hide');
+                        }
+                    }
+                    toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+                })
+                .finally(() => {
+                    isSubmitting = false;
+                    setButtonLoading(submitBtnId, false);
+                });
+        }
+
+        function deleteItemEnhanced(formId) {
+            const form = document.getElementById(formId);
+            const route = form.action;
+            const row = form.closest('tr');
+            const itemName = row ? row.querySelector('.fw-bold').textContent.trim() : 'item ini';
+
+            Swal.fire({
+                title: "Apakah Anda Yakin?",
+                html: `<p style='text-align:center'>Data laporan akan dihapus secara permanen!</p>
+                    <p style='text-align:center; color: #6c757d; font-size: 0.9rem;'>Setelah dihapus, Anda tidak bisa mengembalikannya!</p>`,
+                icon: "warning",
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batalkan',
+                customClass: {
+                    confirmButton: 'btn btn-danger me-2',
+                    cancelButton: 'btn btn-secondary'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        text: 'Mohon tunggu',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => Swal.showLoading()
+                    });
+
+                    fetch(route, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: new FormData(form)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: data.message || 'Data berhasil dihapus',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false,
+                                timerProgressBar: true
+                            });
+                            reloadTable();
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message || 'Gagal menghapus data',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Delete error:', error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat menghapus data',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire({
+                        title: "Aksi Dibatalkan",
+                        text: "Data Anda tetap aman :)",
+                        icon: "info",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+
+        // ==================== TABLE AND FILTERING ====================
 
         function reloadTable(url = null) {
             let formData = $('#filter').serialize();
             let target = url ?? "{{ route('admin.bendahara.index') }}";
 
-            // Add sorting parameters if they exist
             const urlParams = new URLSearchParams(window.location.search);
             const sortBy = urlParams.get('sort_by');
             const order = urlParams.get('order');
 
-            if (sortBy) {
-                formData += '&sort_by=' + encodeURIComponent(sortBy);
-            }
-            if (order) {
-                formData += '&order=' + encodeURIComponent(order);
-            }
+            if (sortBy) formData += '&sort_by=' + encodeURIComponent(sortBy);
+            if (order) formData += '&order=' + encodeURIComponent(order);
 
             $.ajax({
                 url: target,
                 data: formData,
                 beforeSend: function() {
                     $('#table').addClass('table-loading');
-                    $('#table').html(
-                        '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
-                    );
+                    $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
                 },
                 success: function(response) {
                     $('#table').removeClass('table-loading');
                     $('#table').html(response);
 
-                    // Reinitialize dropzones for edit modals
-                    initializeDropzones();
-
-                    // Initialize dropdown events
-                    initializeDropdownEvents();
-
-                    // Initialize sorting events
-                    initializeSortingEvents();
-
-                    // Update filter counts
-                    updateFilterCountsFromResponse(response);
-
-                    // Update URL without page refresh
-                    updateURL(formData);
+                    setTimeout(() => {
+                        initializeDropzones();
+                        initializeDropdownEvents();
+                        initializeSortingEvents();
+                        initializeModalHandlers();
+                        initializeModalEvents();
+                        updateFilterCountsFromResponse(response);
+                        updateURL(formData);
+                        enablePageInteractions();
+                    }, 50);
                 },
                 error: function(xhr) {
                     $('#table').removeClass('table-loading');
-                    $('#table').html(
-                        '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
-                    );
+                    $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                    enablePageInteractions();
                 }
             });
         }
 
         function handleSort(sortBy, order) {
-            // Add sort parameters to the form
             let formData = $('#filter').serialize();
             formData += '&sort_by=' + encodeURIComponent(sortBy) + '&order=' + encodeURIComponent(order);
 
@@ -844,18 +1518,15 @@
                     $('#table').removeClass('table-loading');
                     $('#table').html(response);
 
-                    // Reinitialize all events
                     initializeDropzones();
                     initializeDropdownEvents();
                     initializeSortingEvents();
                     updateFilterCountsFromResponse(response);
 
-                    // Update URL with sorting parameters
                     const url = new URL(window.location);
                     url.searchParams.set('sort_by', sortBy);
                     url.searchParams.set('order', order);
 
-                    // Preserve other parameters
                     const formParams = new URLSearchParams($('#filter').serialize());
                     for (const [key, value] of formParams.entries()) {
                         if (key !== 'sort_by' && key !== 'order') {
@@ -878,13 +1549,10 @@
 
         function initializeSortingEvents() {
             $(document).off('click', '.sortable');
-
             $(document).on('click', '.sortable', function(e) {
                 e.preventDefault();
-
                 const sortBy = $(this).data('sort');
                 const order = $(this).data('order');
-
                 handleSort(sortBy, order);
             });
         }
@@ -894,7 +1562,6 @@
                 const url = new URL(window.location);
                 const searchParams = new URLSearchParams(formData);
 
-                // Update URL parameters
                 for (const [key, value] of searchParams.entries()) {
                     if (value) {
                         url.searchParams.set(key, value);
@@ -913,7 +1580,6 @@
                 const countData = tempDiv.find('[data-filter-counts]').data('filter-counts');
 
                 if (countData) {
-                    // Update filter menu counts
                     $('.filter-option[data-filter="all"] .filter-count').text(countData.all || 0);
                     $('.filter-option[data-filter="pdf"] .filter-count').text(countData.pdf || 0);
                     $('.filter-option[data-filter="excel"] .filter-count').text(countData.excel || 0);
@@ -924,12 +1590,17 @@
             }
         }
 
-        // Initialize dropdown events (adapted from surat system)
+        // ==================== DROPDOWN MANAGEMENT (FIXED WITH COOLDOWN) ====================
+
         function initializeDropdownEvents() {
+            // Clear any existing event handlers
             $(document).off('click', '.dropdown-toggle-custom');
             $(document).off('mouseenter', '.dropdown-action');
             $(document).off('mouseleave', '.dropdown-action');
 
+            let showTimeout, hideTimeout;
+
+            // Click handler for dropdown toggle
             $(document).on('click', '.dropdown-toggle-custom', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -937,40 +1608,93 @@
                 const $dropdownAction = $(this).closest('.dropdown-action');
                 const $menu = $dropdownAction.find('.dropdown-menu-custom');
 
-                // Close all other dropdowns
+                // Clear any pending timeouts
+                clearTimeout(showTimeout);
+                clearTimeout(hideTimeout);
+
+                // Close other dropdowns immediately
                 $('.dropdown-menu-custom').not($menu).removeClass('show');
 
-                // Toggle this dropdown
+                // Toggle current dropdown
                 $menu.toggleClass('show');
-
-                // Check position
                 checkDropdownPosition($dropdownAction);
             });
 
-            // Function to check dropdown position - modified to force dropup for bottom rows
             function checkDropdownPosition($dropdownAction) {
                 const $menu = $dropdownAction.find('.dropdown-menu-custom');
                 if (!$menu.hasClass('show')) return;
 
-                // Reset position class
                 $dropdownAction.removeClass('dropup');
 
-                // Check if this is the last row of the table
                 const $row = $dropdownAction.closest('tr');
                 const $table = $row.closest('tbody');
                 const rowIndex = $table.find('tr').index($row);
                 const totalRows = $table.find('tr').length;
 
-                // Only apply dropup to the last row
-                if (rowIndex === totalRows - 1) {
+                // Check if it's one of the last 2 rows
+                if (rowIndex >= totalRows - 2) {
                     $dropdownAction.addClass('dropup');
                 }
-
             }
 
-            // Close dropdown when clicking outside
+            // Enhanced hover functionality with cooldown (only for desktop)
+            if (window.innerWidth > 768) {
+                $(document).on('mouseenter', '.dropdown-action', function() {
+                    const $dropdownAction = $(this);
+                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
+
+                    // Clear any pending hide timeout
+                    clearTimeout(hideTimeout);
+
+                    // Add cooldown for showing (300ms delay)
+                    showTimeout = setTimeout(() => {
+                        // Close other dropdowns first
+                        $('.dropdown-menu-custom').not($menu).removeClass('show');
+
+                        // Show current dropdown
+                        $menu.addClass('show');
+                        checkDropdownPosition($dropdownAction);
+                    }, 300);
+                });
+
+                $(document).on('mouseleave', '.dropdown-action', function() {
+                    const $dropdownAction = $(this);
+                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
+
+                    // Clear any pending show timeout
+                    clearTimeout(showTimeout);
+
+                    // Add cooldown for hiding (200ms delay to allow moving to menu)
+                    hideTimeout = setTimeout(() => {
+                        if (!$menu.is(':hover') && !$dropdownAction.is(':hover')) {
+                            $menu.removeClass('show');
+                        }
+                    }, 200);
+                });
+
+                // Keep dropdown open when hovering over the menu itself
+                $(document).on('mouseenter', '.dropdown-menu-custom', function() {
+                    clearTimeout(hideTimeout);
+                });
+
+                $(document).on('mouseleave', '.dropdown-menu-custom', function() {
+                    const $menu = $(this);
+                    const $dropdownAction = $menu.closest('.dropdown-action');
+
+                    // Add delay before hiding when leaving the menu
+                    hideTimeout = setTimeout(() => {
+                        if (!$dropdownAction.is(':hover')) {
+                            $menu.removeClass('show');
+                        }
+                    }, 200);
+                });
+            }
+
+            // Close dropdowns when clicking outside
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.dropdown-action').length) {
+                    clearTimeout(showTimeout);
+                    clearTimeout(hideTimeout);
                     $('.dropdown-menu-custom').removeClass('show');
                 }
             });
@@ -984,30 +1708,15 @@
                 });
             });
 
-            if (window.innerWidth > 768) {
-                $(document).on('mouseenter', '.dropdown-action', function() {
-                    const $menu = $(this).find('.dropdown-menu-custom');
-                    $menu.addClass('show');
-                    checkDropdownPosition($(this));
-                }).on('mouseleave', '.dropdown-action', function() {
-                    const $menu = $(this).find('.dropdown-menu-custom');
-                    setTimeout(() => {
-                        if (!$menu.is(':hover')) {
-                            $menu.removeClass('show');
-                        }
-                    }, 100);
-                });
-
-                $(document).on('mouseenter', '.dropdown-menu-custom', function() {
-                    clearTimeout($(this).data('timeout'));
-                }).on('mouseleave', '.dropdown-menu-custom', function() {
-                    const $menu = $(this);
-                    $menu.data('timeout', setTimeout(() => {
-                        $menu.removeClass('show');
-                    }, 200));
-                });
-            }
+            // Clear timeouts when page unloads
+            $(window).on('beforeunload', function() {
+                clearTimeout(showTimeout);
+                clearTimeout(hideTimeout);
+            });
         }
+
+
+        // ==================== FILE PREVIEW ====================
 
         function previewFile(fileUrl, fileName, fileExtension) {
             const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
@@ -1015,18 +1724,13 @@
             const modalTitle = document.getElementById('filePreviewModalLabel');
             const downloadBtn = document.getElementById('downloadBtn');
 
-            // Set modal title and download button
             modalTitle.textContent = fileName;
             downloadBtn.href = fileUrl;
-
-            // Clear previous content
             previewContainer.innerHTML = '';
 
-            // Handle different file types
             const ext = fileExtension.toLowerCase();
 
             if (ext === 'pdf') {
-                // PDF preview
                 previewContainer.innerHTML = `
                     <iframe src="${fileUrl}" style="width: 100%; height: 70vh;" frameborder="0">
                         <div class="preview-error">
@@ -1037,7 +1741,6 @@
                     </iframe>
                 `;
             } else if (['xls', 'xlsx'].includes(ext)) {
-                // Excel document preview using Google Docs Viewer
                 previewContainer.innerHTML = `
                     <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true"
                             style="width: 100%; height: 70vh;" frameborder="0">
@@ -1049,7 +1752,6 @@
                     </iframe>
                 `;
             } else {
-                // Unsupported file type
                 previewContainer.innerHTML = `
                     <div class="preview-error">
                         <i class="fas fa-file"></i>
@@ -1063,149 +1765,56 @@
             modal.show();
         }
 
-        function debounce(func, delay) {
-            let timeout;
-            return function() {
-                const context = this,
-                    args = arguments;
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(context, args), delay);
-            };
-        }
-
-        function clearFormErrors(formId) {
-            const form = document.getElementById(formId);
-            const inputs = form.querySelectorAll('.form-control');
-            const feedbacks = form.querySelectorAll('.invalid-feedback');
-
-            inputs.forEach(input => {
-                input.classList.remove('is-invalid');
-            });
-
-            feedbacks.forEach(feedback => {
-                feedback.textContent = '';
-            });
-        }
-
-        function showFormErrors(formId, errors) {
-            const form = document.getElementById(formId);
-
-            // Clear previous errors first
-            clearFormErrors(formId);
-
-            // Show new errors
-            for (const field in errors) {
-                const input = form.querySelector(`[name="${field}"]`);
-                const feedback = input?.parentElement.querySelector('.invalid-feedback');
-
-                if (input && feedback) {
-                    input.classList.add('is-invalid');
-                    feedback.textContent = errors[field][0];
-                }
-            }
-        }
-
-        function setButtonLoading(buttonId, isLoading) {
-            const button = document.getElementById(buttonId);
-            const btnText = button.querySelector('.btn-text');
-
-            if (isLoading) {
-                button.classList.add('btn-loading');
-                button.disabled = true;
-                if (btnText) {
-                    btnText.style.opacity = '0';
-                }
-            } else {
-                button.classList.remove('btn-loading');
-                button.disabled = false;
-                if (btnText) {
-                    btnText.style.opacity = '1';
-                }
-            }
-        }
-
-        Dropzone.autoDiscover = false;
-        const dropzones = {};
-
-        function initializeDropzones() {
-            // Clear existing dropzones
-            Object.keys(dropzones).forEach(key => {
-                if (dropzones[key] && typeof dropzones[key].destroy === 'function') {
-                    dropzones[key].destroy();
-                    delete dropzones[key];
-                }
-            });
-
-            // Initialize add form dropzone (Updated for PDF and Excel only)
-            if (document.getElementById('dropzone-formAdd')) {
-                dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
-                    url: "#",
-                    autoProcessQueue: false,
-                    paramName: 'dokumen',
-                    maxFiles: 1,
-                    maxFilesize: 10,
-                    addRemoveLinks: true,
-                    acceptedFiles: '.pdf,.xls,.xlsx',
-                    dictDefaultMessage: 'Seret atau pilih dokumen.<br><small>Format: PDF, XLS, XLSX. Max. 10 MB.</small>',
-                    dictInvalidFileType: 'Format file tidak didukung. Hanya PDF dan Excel yang diperbolehkan.',
-                    dictFileTooBig: 'Ukuran file terlalu besar. Maksimal 10MB.',
-                });
-            }
-
-            // Initialize edit form dropzones
-            document.querySelectorAll('[id^="dropzone-form-"]').forEach(element => {
-                const formId = element.id.replace('dropzone-', '');
-                if (!dropzones[formId]) {
-                    dropzones[formId] = new Dropzone(`#${element.id}`, {
-                        url: "#",
-                        autoProcessQueue: false,
-                        paramName: 'dokumen',
-                        maxFiles: 1,
-                        maxFilesize: 10,
-                        addRemoveLinks: true,
-                        acceptedFiles: '.pdf,.xls,.xlsx',
-                        dictDefaultMessage: 'Seret atau pilih dokumen baru.<br><small>Format: PDF, XLS, XLSX. Max. 10 MB. Kosongkan jika tidak ingin mengubah file.</small>',
-                        dictInvalidFileType: 'Format file tidak didukung. Hanya PDF dan Excel yang diperbolehkan.',
-                        dictFileTooBig: 'Ukuran file terlalu besar. Maksimal 10MB.',
-                    });
-                }
-            });
-        }
+        // ==================== DOCUMENT READY ====================
 
         $(document).ready(function() {
-            let currentFilter = '{{ request("filter_type", "all") }}';
+            // Clean up any existing modal states on page load
+            enablePageInteractions();
 
+            // Initialize all functionality
             initializeDropzones();
             initializeDropdownEvents();
-            initializeSortingEvents(); // Initialize sorting events
+            initializeSortingEvents();
+            initializeModalHandlers();
+            initializeModalEvents();
 
-            // Filter dropdown functionality
+            // Replace global function references
+            window.submitForm = submitFormEnhanced;
+            window.deleteItem = deleteItemEnhanced;
+
+            // Track form changes for unsaved changes warning
+            $(document).on('input change', '[id^="form-"] input, [id^="form-"] select, [id^="form-"] textarea', function() {
+                const formId = $(this).closest('form').attr('id');
+                if (formId && formId.startsWith('form-')) {
+                    hasUnsavedChanges = true;
+                }
+            });
+
+            $(document).on('hidden.bs.modal', '[id^="edit-"]', function() {
+                hasUnsavedChanges = false;
+            });
+
+            // ==================== FILTER FUNCTIONALITY ====================
+
+            // Main filter dropdown
             $('#filterBtn').on('click', function(e) {
                 e.stopPropagation();
                 $('#filterMenu').toggleClass('show');
+                $('#dateFilterMenu').removeClass('show'); // Close date filter
             });
 
-            // Close dropdown when clicking outside
-            $(document).on('click', function() {
-                $('#filterMenu').removeClass('show');
-            });
-
-            // Filter option selection (Updated for PDF and Excel only)
+            // Filter option selection
             $('.filter-option').on('click', function(e) {
                 e.stopPropagation();
-
                 const filterType = $(this).data('filter');
                 if (filterType === currentFilter) return;
 
-                // Update active state
                 $('.filter-option').removeClass('active');
                 $(this).addClass('active');
 
-                // Update button content
                 const filterContent = $(this).find('span').first().html();
                 $('#filterBtn span').html(filterContent);
 
-                // Update button style for active filter
                 if (filterType === 'all') {
                     $('#filterBtn').removeClass('filter-active');
                 } else {
@@ -1213,274 +1822,17 @@
                 }
 
                 currentFilter = filterType;
-
-                // Update hidden input
                 $('#filter_type_input').val(filterType);
-
-                // Apply filter
                 reloadTable();
-
                 $('#filterMenu').removeClass('show');
             });
 
-            // Search functionality with debounce
-            $(document).on('input', '#filter input[name="search"]', debounce(function() {
-                let keyword = $(this).val();
-                if (keyword.length >= 1 || keyword.length === 0) {
-                    reloadTable();
-                }
-            }, 300));
+            // ==================== DATE FILTER FUNCTIONALITY ====================
 
-            // Per page change - Fixed selector
-            $(document).on('change', 'select[name="per_page"]', function() {
-                const newPerPage = $(this).val();
-                let formData = $('#filter').serialize() + '&per_page=' + newPerPage;
-
-                // Preserve sorting parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                const sortBy = urlParams.get('sort_by');
-                const order = urlParams.get('order');
-
-                if (sortBy) {
-                    formData += '&sort_by=' + encodeURIComponent(sortBy);
-                }
-                if (order) {
-                    formData += '&order=' + encodeURIComponent(order);
-                }
-
-                $.ajax({
-                    url: "{{ route('admin.bendahara.index') }}",
-                    data: formData,
-                    beforeSend: function() {
-                        $('#table').addClass('table-loading');
-                        $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
-                    },
-                    success: function(response) {
-                        $('#table').removeClass('table-loading');
-                        $('#table').html(response);
-                        initializeDropzones();
-                        initializeDropdownEvents();
-                        initializeSortingEvents();
-                        updateURL(formData);
-                    },
-                    error: function(xhr) {
-                        $('#table').removeClass('table-loading');
-                        $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
-                    }
-                });
-            });
-
-            // Pagination clicks - Fixed selector
-            $(document).on('click', '.pagination-link', function(e) {
-                e.preventDefault();
-                let url = $(this).attr('href');
-                if (url) {
-                    const urlObj = new URL(url);
-                    const page = urlObj.searchParams.get('page');
-
-                    let formData = $('#filter').serialize();
-                    formData += '&page=' + page;
-
-                    // Preserve sorting parameters
-                    const currentUrlParams = new URLSearchParams(window.location.search);
-                    const sortBy = currentUrlParams.get('sort_by');
-                    const order = currentUrlParams.get('order');
-
-                    if (sortBy) {
-                        formData += '&sort_by=' + encodeURIComponent(sortBy);
-                    }
-                    if (order) {
-                        formData += '&order=' + encodeURIComponent(order);
-                    }
-
-                    $.ajax({
-                        url: "{{ route('admin.bendahara.index') }}",
-                        data: formData,
-                        beforeSend: function() {
-                            $('#table').addClass('table-loading');
-                            $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
-                        },
-                        success: function(response) {
-                            $('#table').removeClass('table-loading');
-                            $('#table').html(response);
-                            initializeDropzones();
-                            initializeDropdownEvents();
-                            initializeSortingEvents();
-                            updateURL(formData);
-                        },
-                        error: function(xhr) {
-                            $('#table').removeClass('table-loading');
-                            $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
-                        }
-                    });
-                }
-            });
-
-            // Prevent dropdown from closing when clicking inside
-            $('#filterMenu').on('click', function(e) {
-                e.stopPropagation();
-            });
-
-            // Initialize filter from URL on page load
-            const urlParams = new URLSearchParams(window.location.search);
-            const filterFromURL = urlParams.get('filter_type') || 'all';
-            if (filterFromURL !== currentFilter) {
-                $(`.filter-option[data-filter="${filterFromURL}"]`).click();
-            }
-
-            // Modal event handlers to reset form state
-            $('#add').on('show.bs.modal', function() {
-                isSubmitting = false;
-                clearFormErrors('formAdd');
-                setButtonLoading('submitBtnAdd', false);
-
-                // Clear dropzone
-                if (dropzones['formAdd']) {
-                    dropzones['formAdd'].removeAllFiles(true);
-                }
-            });
-
-            $('#add').on('hidden.bs.modal', function() {
-                const form = document.getElementById('formAdd');
-                form.reset();
-
-                if (dropzones['formAdd']) {
-                    dropzones['formAdd'].removeAllFiles(true);
-                }
-
-                clearFormErrors('formAdd');
-                isSubmitting = false;
-                setButtonLoading('submitBtnAdd', false);
-            });
-        }
-
-        function submitForm(formId) {
-            // Prevent multiple submissions
-            if (isSubmitting) {
-                return;
-            }
-
-            let form = document.getElementById(formId);
-            let formData = new FormData(form);
-            let submitBtnId = formId === 'formAdd' ? 'submitBtnAdd' : `submitBtn${formId.replace('form-', '')}`;
-
-            // Clear previous errors
-            clearFormErrors(formId);
-
-            // Set loading state
-            isSubmitting = true;
-            setButtonLoading(submitBtnId, true);
-
-            const dz = dropzones[formId];
-            if (dz) {
-                const files = dz.getAcceptedFiles();
-                if (files.length > 0) {
-                    files.forEach((file) => {
-                        formData.append('dokumen', file);
-                    });
-                }
-            }
-
-            fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    body: formData,
-                })
-                .then(async response => {
-                    const data = await response.json();
-
-                    if (!response.ok) {
-                        if (data.errors) {
-                            // Show form validation errors - DON'T close modal
-                            showFormErrors(formId, data.errors);
-
-                            // Show first error in toast as well
-                            const firstError = Object.values(data.errors)[0][0];
-                            toastr.error(firstError, "Validasi Gagal!");
-                        } else {
-                            // For other errors, show toast and close modal
-                            $('.modal.show').modal('hide');
-                            toastr.error(data.message || "Gagal menyimpan data", "Error!");
-                        }
-                    } else {
-                        // Success - close modal and show success message
-                        $('.modal.show').modal('hide');
-                        toastr.success(data.message || "Data berhasil disimpan", "Success!");
-
-                        // Clear form
-                        form.reset();
-                        if (dropzones[formId]) {
-                            dropzones[formId].removeAllFiles();
-                        }
-
-                        reloadTable();
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    $('.modal.show').modal('hide');
-                    toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
-                })
-                .finally(() => {
-                    // Reset loading state
-                    isSubmitting = false;
-                    setButtonLoading(submitBtnId, false);
-                });
-        }
-
-        function deleteItem(formId) {
-            if (confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
-                fetch(document.getElementById(formId).action, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'X-Requested-With': 'XMLHttpRequest',
-                    },
-                    body: new FormData(document.getElementById(formId))
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        toastr.success(data.message || "Data berhasil dihapus", "Success!");
-                        reloadTable();
-                    } else {
-                        toastr.error(data.message || "Gagal menghapus data", "Error!");
-                    }
-                })
-                .catch(error => {
-                    toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
-                });
-            }
-        }
-    </script>
-    <script>
-        $(document).ready(function() {
-            let currentDateFilter = {
-                from: '{{ request("date_from") }}',
-                to: '{{ request("date_to") }}'
-            };
-
-            // Date filter dropdown functionality
             $('#dateFilterBtn').on('click', function(e) {
                 e.stopPropagation();
                 $('#dateFilterMenu').toggleClass('show');
-                // Close other dropdowns
-                $('#filterMenu').removeClass('show');
-            });
-
-            // Close dropdown when clicking outside
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('.date-filter-dropdown').length) {
-                    $('#dateFilterMenu').removeClass('show');
-                }
-            });
-
-            // Prevent dropdown from closing when clicking inside
-            $('#dateFilterMenu').on('click', function(e) {
-                e.stopPropagation();
+                $('#filterMenu').removeClass('show'); // Close main filter
             });
 
             // Date preset buttons
@@ -1489,7 +1841,6 @@
                 const today = new Date();
                 let fromDate, toDate;
 
-                // Remove active class from all presets
                 $('.date-preset-btn').removeClass('active');
                 $(this).addClass('active');
 
@@ -1530,17 +1881,14 @@
                 const dateFrom = $('#dateFrom').val();
                 const dateTo = $('#dateTo').val();
 
-                // Validate date range
                 if (dateFrom && dateTo && new Date(dateFrom) > new Date(dateTo)) {
                     toastr.error('Tanggal mulai tidak boleh lebih besar dari tanggal akhir', 'Error!');
                     return;
                 }
 
-                // Update hidden inputs
                 $('#date_from_input').val(dateFrom);
                 $('#date_to_input').val(dateTo);
 
-                // Update button state
                 if (dateFrom || dateTo) {
                     $('#dateFilterBtn').addClass('date-filter-active');
                 } else {
@@ -1548,12 +1896,9 @@
                 }
 
                 currentDateFilter = { from: dateFrom, to: dateTo };
-
-                // Apply filter
                 reloadTable();
                 $('#dateFilterMenu').removeClass('show');
 
-                // Show success message
                 if (dateFrom || dateTo) {
                     toastr.success('Filter tanggal berhasil diterapkan', 'Success!');
                 }
@@ -1569,24 +1914,124 @@
                 $('.date-preset-btn').removeClass('active');
 
                 currentDateFilter = { from: '', to: '' };
-
-                // Apply filter (which will show all data)
                 reloadTable();
                 $('#dateFilterMenu').removeClass('show');
-
                 toastr.success('Filter tanggal berhasil direset', 'Success!');
             });
 
-            // Helper function to format date
-            function formatDate(date) {
-                return date.toISOString().split('T')[0];
+            // ==================== SEARCH AND PAGINATION ====================
+
+            // Search functionality with debounce
+            $(document).on('input', '#filter input[name="search"]', debounce(function() {
+                let keyword = $(this).val();
+                if (keyword.length >= 1 || keyword.length === 0) {
+                    reloadTable();
+                }
+            }, 300));
+
+            // Per page change
+            $(document).on('change', 'select[name="per_page"]', function() {
+                const newPerPage = $(this).val();
+                let formData = $('#filter').serialize() + '&per_page=' + newPerPage;
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const sortBy = urlParams.get('sort_by');
+                const order = urlParams.get('order');
+
+                if (sortBy) formData += '&sort_by=' + encodeURIComponent(sortBy);
+                if (order) formData += '&order=' + encodeURIComponent(order);
+
+                $.ajax({
+                    url: "{{ route('admin.bendahara.index') }}",
+                    data: formData,
+                    beforeSend: function() {
+                        $('#table').addClass('table-loading');
+                        $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                    },
+                    success: function(response) {
+                        $('#table').removeClass('table-loading');
+                        $('#table').html(response);
+                        initializeDropzones();
+                        initializeDropdownEvents();
+                        initializeSortingEvents();
+                        updateURL(formData);
+                    },
+                    error: function(xhr) {
+                        $('#table').removeClass('table-loading');
+                        $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                    }
+                });
+            });
+
+            // Pagination clicks
+            $(document).on('click', '.pagination-link', function(e) {
+                e.preventDefault();
+                let url = $(this).attr('href');
+                if (url) {
+                    const urlObj = new URL(url);
+                    const page = urlObj.searchParams.get('page');
+
+                    let formData = $('#filter').serialize();
+                    formData += '&page=' + page;
+
+                    const currentUrlParams = new URLSearchParams(window.location.search);
+                    const sortBy = currentUrlParams.get('sort_by');
+                    const order = currentUrlParams.get('order');
+
+                    if (sortBy) formData += '&sort_by=' + encodeURIComponent(sortBy);
+                    if (order) formData += '&order=' + encodeURIComponent(order);
+
+                    $.ajax({
+                        url: "{{ route('admin.bendahara.index') }}",
+                        data: formData,
+                        beforeSend: function() {
+                            $('#table').addClass('table-loading');
+                            $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                        },
+                        success: function(response) {
+                            $('#table').removeClass('table-loading');
+                            $('#table').html(response);
+                            initializeDropzones();
+                            initializeDropdownEvents();
+                            initializeSortingEvents();
+                            updateURL(formData);
+                        },
+                        error: function(xhr) {
+                            $('#table').removeClass('table-loading');
+                            $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                        }
+                    });
+                }
+            });
+
+            // ==================== DROPDOWN CLOSE HANDLERS ====================
+
+            // Close dropdowns when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.filter-dropdown, .date-filter-dropdown').length) {
+                    $('#filterMenu').removeClass('show');
+                    $('#dateFilterMenu').removeClass('show');
+                }
+            });
+
+            // Prevent dropdowns from closing when clicking inside
+            $('#filterMenu, #dateFilterMenu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // ==================== INITIALIZATION ====================
+
+            // Initialize filter from URL on page load
+            const urlParams = new URLSearchParams(window.location.search);
+            const filterFromURL = urlParams.get('filter_type') || 'all';
+            if (filterFromURL !== currentFilter) {
+                $(`.filter-option[data-filter="${filterFromURL}"]`).click();
             }
 
             // Initialize date filter state on page load
             if (currentDateFilter.from || currentDateFilter.to) {
                 $('#dateFilterBtn').addClass('date-filter-active');
 
-                // Set active preset if matches
                 const from = currentDateFilter.from;
                 const to = currentDateFilter.to;
                 const today = formatDate(new Date());
@@ -1594,8 +2039,53 @@
                 if (from === today && to === today) {
                     $('.date-preset-btn[data-preset="today"]').addClass('active');
                 }
-                // Add more preset checks as needed
             }
         });
-        </script>
+
+        // ==================== SWEETALERT2 STYLING ====================
+
+        // Add CSS for better SweetAlert2 styling
+        const additionalCSS = `
+        <style>
+        .swal2-popup {
+            border-radius: 12px !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .swal2-title {
+            font-size: 1.5rem !important;
+            font-weight: 600 !important;
+            color: #2c3e50 !important;
+        }
+
+        .swal2-content {
+            font-size: 1rem !important;
+            color: #495057 !important;
+        }
+
+        .swal2-confirm.btn-danger {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+
+        .swal2-cancel.btn-secondary {
+            color: white !important;
+            background-color: #424874 !important;
+            border-color: #424874 !important;
+        }
+
+        .swal2-loading .swal2-title {
+            color: #007bff !important;
+        }
+
+        .swal2-timer-progress-bar {
+            background: rgba(0, 123, 255, 0.7) !important;
+        }
+        </style>
+        `;
+
+        // Inject the CSS
+        $('head').append(additionalCSS);
+        
+    </script>
 @endsection
