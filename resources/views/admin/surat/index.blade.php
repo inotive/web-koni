@@ -335,15 +335,15 @@
         </div>
     </div>
 
-    <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
+ <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 gap-5 px-10 py-8">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="fs-2 fw-bold leading-5" id="modalTitle">Tambah Surat Masuk</div>
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div class="fs-2 fw-bold text-truncate leading-5" id="modalTitle">Tambah Surat Masuk</div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="formAdd" action="{{ route('admin.surat.store') }}" method="POST" enctype="multipart/form-data" class="d-grid gap-4">
+                <form id="formAdd" method="POST" action="{{ route('admin.surat.store') }}" enctype="multipart/form-data" class="d-grid gap-4">
                     @csrf
 
                     <div>
@@ -351,17 +351,12 @@
                         <input type="text" name="nama_kegiatan" placeholder="Masukkan Nama Kegiatan" class="form-control bg-light border border-gray-400" required />
                     </div>
 
-                    <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Jenis Surat</div>
-                        <select name="jenis_surat" id="jenisSuratSelect" class="form-select bg-light border border-gray-400" required>
-                            <option value="masuk">Surat Masuk</option>
-                            <option value="keluar">Surat Keluar</option>
-                        </select>
-                    </div>
+                    <!-- Hidden field untuk jenis surat -->
+                    <input type="hidden" name="jenis_surat" id="hiddenJenisSurat" value="masuk">
 
                     <div>
                         <div class="fw-semibold mb-3 text-gray-800">
-                            Unggah Dokumen Surat
+                            Unggah Dokumen
                             <span class="text-muted">(Opsional)</span>
                         </div>
                         <div class="fv-row">
@@ -371,7 +366,7 @@
                                         <span class="path1"></span><span class="path2"></span>
                                     </i>
                                     <div class="ms-4">
-                                        <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen surat.</h3>
+                                        <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
                                         <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX. Max. 10 MB.</span>
                                     </div>
                                 </div>
@@ -381,7 +376,7 @@
                 </form>
 
                 <div class="d-grid py-4">
-                    <button type="button" onclick="submitForm('formAdd')" class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white" id="submitBtn">
+                    <button type="button" onclick="submitForm('formAdd')" id="submitBtn" class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                         Tambah Surat Masuk
                     </button>
                 </div>
