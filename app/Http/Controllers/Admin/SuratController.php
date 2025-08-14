@@ -76,10 +76,11 @@ class SuratController extends Controller
     {
         try {
             $validated = $request->validate([
-                'nama_kegiatan' => 'required|string|max:255',
-                'jenis_surat' => 'required|in:masuk,keluar',
-                'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            ]);
+    'nama_kegiatan' => 'required|string|max:255',
+    'no_surat' => 'required|string|max:255|unique:surat,no_surat',
+    'jenis_surat' => 'required|in:masuk,keluar',
+    'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+]);
 
             $surat = new Surat();
             $surat->nama_kegiatan = $validated['nama_kegiatan'];
@@ -138,10 +139,11 @@ class SuratController extends Controller
             $surat = Surat::findOrFail($id);
 
             $validated = $request->validate([
-                'nama_kegiatan' => 'required|string|max:255',
-                'jenis_surat' => 'required|in:masuk,keluar',
-                'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-            ]);
+    'nama_kegiatan' => 'required|string|max:255',
+    'no_surat' => 'required|string|max:255|unique:surat,no_surat,' . $id,
+    'jenis_surat' => 'required|in:masuk,keluar',
+    'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+]);
 
             $surat->nama_kegiatan = $validated['nama_kegiatan'];
             $surat->jenis_surat = $validated['jenis_surat'];
