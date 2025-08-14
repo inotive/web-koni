@@ -42,7 +42,7 @@ class BendaharaController extends Controller
             });
         }
 
-        // File type filtering - Applied BEFORE pagination
+        // File type filtering - Applied BEFORE pagination (Updated for PDF and Excel only)
         if ($request->filled('filter_type') && $request->filter_type !== 'all') {
             $filterType = $request->filter_type;
 
@@ -50,41 +50,17 @@ class BendaharaController extends Controller
                 case 'pdf':
                     $query->where('dokumen', 'like', '%.pdf');
                     break;
-                case 'doc':
-                    $query->where(function ($q) {
-                        $q->where('dokumen', 'like', '%.doc')
-                          ->orWhere('dokumen', 'like', '%.docx');
-                    });
-                    break;
                 case 'excel':
                     $query->where(function ($q) {
                         $q->where('dokumen', 'like', '%.xls')
                           ->orWhere('dokumen', 'like', '%.xlsx');
                     });
                     break;
-                case 'image':
-                    $query->where(function ($q) {
-                        $q->where('dokumen', 'like', '%.jpg')
-                          ->orWhere('dokumen', 'like', '%.jpeg')
-                          ->orWhere('dokumen', 'like', '%.png')
-                          ->orWhere('dokumen', 'like', '%.gif')
-                          ->orWhere('dokumen', 'like', '%.bmp')
-                          ->orWhere('dokumen', 'like', '%.svg');
-                    });
-                    break;
                 case 'other':
                     $query->where(function ($q) {
                         $q->where('dokumen', 'not like', '%.pdf')
-                          ->where('dokumen', 'not like', '%.doc')
-                          ->where('dokumen', 'not like', '%.docx')
                           ->where('dokumen', 'not like', '%.xls')
-                          ->where('dokumen', 'not like', '%.xlsx')
-                          ->where('dokumen', 'not like', '%.jpg')
-                          ->where('dokumen', 'not like', '%.jpeg')
-                          ->where('dokumen', 'not like', '%.png')
-                          ->where('dokumen', 'not like', '%.gif')
-                          ->where('dokumen', 'not like', '%.bmp')
-                          ->where('dokumen', 'not like', '%.svg');
+                          ->where('dokumen', 'not like', '%.xlsx');
                     });
                     break;
             }
@@ -115,7 +91,7 @@ class BendaharaController extends Controller
     }
 
     /**
-     * Get file counts for filter dropdown
+     * Get file counts for filter dropdown (Updated for PDF and Excel only)
      */
     private function getFileCounts(Request $request)
     {
@@ -132,34 +108,14 @@ class BendaharaController extends Controller
         $counts = [
             'all' => $baseQuery->count(),
             'pdf' => (clone $baseQuery)->where('dokumen', 'like', '%.pdf')->count(),
-            'doc' => (clone $baseQuery)->where(function ($q) {
-                $q->where('dokumen', 'like', '%.doc')
-                  ->orWhere('dokumen', 'like', '%.docx');
-            })->count(),
             'excel' => (clone $baseQuery)->where(function ($q) {
                 $q->where('dokumen', 'like', '%.xls')
                   ->orWhere('dokumen', 'like', '%.xlsx');
             })->count(),
-            'image' => (clone $baseQuery)->where(function ($q) {
-                $q->where('dokumen', 'like', '%.jpg')
-                  ->orWhere('dokumen', 'like', '%.jpeg')
-                  ->orWhere('dokumen', 'like', '%.png')
-                  ->orWhere('dokumen', 'like', '%.gif')
-                  ->orWhere('dokumen', 'like', '%.bmp')
-                  ->orWhere('dokumen', 'like', '%.svg');
-            })->count(),
             'other' => (clone $baseQuery)->where(function ($q) {
                 $q->where('dokumen', 'not like', '%.pdf')
-                  ->where('dokumen', 'not like', '%.doc')
-                  ->where('dokumen', 'not like', '%.docx')
                   ->where('dokumen', 'not like', '%.xls')
-                  ->where('dokumen', 'not like', '%.xlsx')
-                  ->where('dokumen', 'not like', '%.jpg')
-                  ->where('dokumen', 'not like', '%.jpeg')
-                  ->where('dokumen', 'not like', '%.png')
-                  ->where('dokumen', 'not like', '%.gif')
-                  ->where('dokumen', 'not like', '%.bmp')
-                  ->where('dokumen', 'not like', '%.svg');
+                  ->where('dokumen', 'not like', '%.xlsx');
             })->count()
         ];
 
@@ -174,14 +130,15 @@ class BendaharaController extends Controller
     public function store(Request $request)
     {
         try {
+            // Updated validation for PDF and Excel only
             $data = $request->validate([
                 'judul' => 'required|string|max:255',
-                'dokumen' => 'required|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+                'dokumen' => 'required|mimes:pdf,xls,xlsx|max:10240',
             ], [
                 'judul.required' => 'Judul laporan wajib diisi.',
                 'judul.max' => 'Judul laporan tidak boleh lebih dari 255 karakter.',
                 'dokumen.required' => 'Dokumen wajib diunggah.',
-                'dokumen.mimes' => 'Format file harus PDF, DOC, DOCX, XLS, atau XLSX.',
+                'dokumen.mimes' => 'Format file harus PDF, XLS, atau XLSX.',
                 'dokumen.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
             ]);
 
@@ -207,7 +164,8 @@ class BendaharaController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => $e->errors()
+                    'errors' => $e->errors(),
+                    'message' => 'Validasi gagal. Periksa kembali form Anda.'
                 ], 422);
             }
             return back()->withInput()->withErrors($e->errors());
@@ -238,13 +196,14 @@ class BendaharaController extends Controller
     public function update(Request $request, Bendahara $bendahara)
     {
         try {
+            // Updated validation for PDF and Excel only
             $data = $request->validate([
                 'judul' => 'required|string|max:255',
-                'dokumen' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+                'dokumen' => 'nullable|mimes:pdf,xls,xlsx|max:10240',
             ], [
                 'judul.required' => 'Judul laporan wajib diisi.',
                 'judul.max' => 'Judul laporan tidak boleh lebih dari 255 karakter.',
-                'dokumen.mimes' => 'Format file harus PDF, DOC, DOCX, XLS, atau XLSX.',
+                'dokumen.mimes' => 'Format file harus PDF, XLS, atau XLSX.',
                 'dokumen.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
             ]);
 
@@ -275,7 +234,8 @@ class BendaharaController extends Controller
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => $e->errors()
+                    'errors' => $e->errors(),
+                    'message' => 'Validasi gagal. Periksa kembali form Anda.'
                 ], 422);
             }
             return back()->withInput()->withErrors($e->errors());
@@ -356,5 +316,3 @@ class BendaharaController extends Controller
         return round(pow(1024, $base - floor($base)), $precision) . ' ' . $suffixes[floor($base)];
     }
 }
-
-

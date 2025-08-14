@@ -54,9 +54,7 @@
                                 $extension = strtoupper(pathinfo($item->dokumen, PATHINFO_EXTENSION));
                                 $badgeClass = match($extension) {
                                     'PDF' => 'badge-danger',
-                                    'DOC', 'DOCX' => 'badge-primary',
                                     'XLS', 'XLSX' => 'badge-success',
-                                    'JPG', 'JPEG', 'PNG', 'GIF', 'BMP', 'SVG' => 'badge-warning',
                                     default => 'badge-secondary'
                                 };
                             @endphp
@@ -97,9 +95,6 @@
                                 <li class="dropdown-item preview" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')">
                                     <i class="ki-outline ki-eye me-2"></i>Preview Dokumen
                                 </li>
-                                {{-- <li class="dropdown-item" onclick="window.open('{{ Storage::url($item->dokumen) }}', '_blank')">
-                                    <i class="ki-outline ki-down me-2"></i>Download
-                                </li> --}}
                                 @endif
                                 <li class="dropdown-item edit" data-bs-toggle="modal"
                                     data-bs-target="#edit-{{ $item->id }}">
@@ -143,6 +138,7 @@
                                     <input type="text" name="judul" value="{{ $item->judul }}"
                                         placeholder="Masukkan Judul Laporan"
                                         class="form-control bg-light border border-gray-400" required />
+                                    <div class="invalid-feedback"></div>
                                 </div>
 
                                 <div>
@@ -158,10 +154,11 @@
                                                 </i>
                                                 <div class="ms-4">
                                                     <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen baru.</h3>
-                                                    <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB. Kosongkan jika tidak ingin mengubah file.</span>
+                                                    <span class="fs-7 fw-semibold text-gray-500">Format: PDF, XLS, XLSX. Max. 10 MB. Kosongkan jika tidak ingin mengubah file.</span>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="invalid-feedback"></div>
                                     </div>
 
                                     @if($item->dokumen)
@@ -176,9 +173,9 @@
                             </form>
 
                             <div class="d-grid py-4">
-                                <button type="button" onclick="submitForm('form-{{ $item->id }}')"
+                                <button type="button" onclick="submitForm('form-{{ $item->id }}')" id="submitBtn{{ $item->id }}"
                                     class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                                    Update Laporan
+                                    <span class="btn-text">Update Laporan</span>
                                 </button>
                             </div>
                         </div>

@@ -145,9 +145,7 @@
 
         /* File type badges with consistent colors */
         .badge-danger { background-color: #dc3545 !important; }
-        .badge-primary { background-color: #0d6efd !important; }
         .badge-success { background-color: #198754 !important; }
-        .badge-warning { background-color: #fd7e14 !important; }
         .badge-secondary { background-color: #6c757d !important; }
 
         /* Loading state */
@@ -231,6 +229,46 @@
             transform: none !important;
             z-index: 1055;
         }
+
+        /* Loading button states */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error input styling */
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
     </style>
 @endsection
 
@@ -268,18 +306,14 @@
                     </div>
                 </div>
 
-                <!-- Enhanced Filter Dropdown -->
+                <!-- Enhanced Filter Dropdown (Updated for PDF and Excel only) -->
                 <div class="filter-dropdown">
                     <div class="filter-btn {{ (request('filter_type') && request('filter_type') != 'all') ? 'filter-active' : '' }}" id="filterBtn">
                         <span>
                             @if(request('filter_type') == 'pdf')
                                 <i class="fas fa-file-pdf me-2" style="color: #dc3545;"></i>File PDF
-                            @elseif(request('filter_type') == 'doc')
-                                <i class="fas fa-file-word me-2" style="color: #0d6efd;"></i>File DOC/DOCX
                             @elseif(request('filter_type') == 'excel')
                                 <i class="fas fa-file-excel me-2" style="color: #198754;"></i>File Excel
-                            @elseif(request('filter_type') == 'image')
-                                <i class="fas fa-file-image me-2" style="color: #fd7e14;"></i>File Gambar
                             @elseif(request('filter_type') == 'other')
                                 <i class="fas fa-file me-2" style="color: #6c757d;"></i>File Lain
                             @else
@@ -304,26 +338,12 @@
                             </span>
                             <span class="filter-count">{{ $fileCounts['pdf'] ?? 0 }}</span>
                         </div>
-                        <div class="filter-option {{ (request('filter_type') == 'doc') ? 'active' : '' }}" data-filter="doc">
-                            <span>
-                                <i class="fas fa-file-word file-type-icon" style="color: #0d6efd;"></i>
-                                File DOC/DOCX
-                            </span>
-                            <span class="filter-count">{{ $fileCounts['doc'] ?? 0 }}</span>
-                        </div>
                         <div class="filter-option {{ (request('filter_type') == 'excel') ? 'active' : '' }}" data-filter="excel">
                             <span>
                                 <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
                                 File Excel
                             </span>
                             <span class="filter-count">{{ $fileCounts['excel'] ?? 0 }}</span>
-                        </div>
-                        <div class="filter-option {{ (request('filter_type') == 'image') ? 'active' : '' }}" data-filter="image">
-                            <span>
-                                <i class="fas fa-file-image file-type-icon" style="color: #fd7e14;"></i>
-                                File Gambar
-                            </span>
-                            <span class="filter-count">{{ $fileCounts['image'] ?? 0 }}</span>
                         </div>
                         <div class="filter-option {{ (request('filter_type') == 'other') ? 'active' : '' }}" data-filter="other">
                             <span>
@@ -361,6 +381,7 @@
                             <div class="fw-semibold required mb-3 text-gray-800">Judul Laporan</div>
                             <input type="text" name="judul" placeholder="Masukkan Judul Laporan"
                                 class="form-control bg-light border border-gray-400" required />
+                            <div class="invalid-feedback"></div>
                         </div>
 
                         <div>
@@ -373,18 +394,19 @@
                                         </i>
                                         <div class="ms-4">
                                             <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
-                                            <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB.</span>
+                                            <span class="fs-7 fw-semibold text-gray-500">Format: PDF, XLS, XLSX. Max. 10 MB.</span>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                     </form>
 
                     <div class="d-grid py-4">
-                        <button type="button" onclick="submitForm('formAdd')"
+                        <button type="button" onclick="submitForm('formAdd')" id="submitBtnAdd"
                             class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                            Tambah Laporan
+                            <span class="btn-text">Tambah Laporan</span>
                         </button>
                     </div>
                 </div>
@@ -418,6 +440,8 @@
 
 @section('script')
     <script>
+        let isSubmitting = false; // Global flag to prevent multiple submissions
+
         function reloadTable(url = null) {
             let formData = $('#filter').serialize();
             let target = url ?? "{{ route('admin.bendahara.index') }}";
@@ -476,9 +500,7 @@
                     // Update filter menu counts
                     $('.filter-option[data-filter="all"] .filter-count').text(countData.all || 0);
                     $('.filter-option[data-filter="pdf"] .filter-count').text(countData.pdf || 0);
-                    $('.filter-option[data-filter="doc"] .filter-count').text(countData.doc || 0);
                     $('.filter-option[data-filter="excel"] .filter-count').text(countData.excel || 0);
-                    $('.filter-option[data-filter="image"] .filter-count').text(countData.image || 0);
                     $('.filter-option[data-filter="other"] .filter-count').text(countData.other || 0);
                 }
             } catch (e) {
@@ -510,25 +532,6 @@
                             <i class="fas fa-file-pdf"></i>
                             <h5>Cannot display PDF</h5>
                             <p>Your browser doesn't support PDF preview. Please download the file to view it.</p>
-                        </div>
-                    </iframe>
-                `;
-            } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
-                // Image preview
-                previewContainer.innerHTML = `
-                    <div class="d-flex justify-content-center align-items-center" style="height: 70vh;">
-                        <img src="${fileUrl}" class="img-fluid" style="max-height: 100%; max-width: 100%;" alt="${fileName}">
-                    </div>
-                `;
-            } else if (['doc', 'docx'].includes(ext)) {
-                // Word document preview using Google Docs Viewer
-                previewContainer.innerHTML = `
-                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true"
-                            style="width: 100%; height: 70vh;" frameborder="0">
-                        <div class="preview-error">
-                            <i class="fas fa-file-word"></i>
-                            <h5>Preview not available</h5>
-                            <p>Cannot preview this Word document. Please download the file to view it.</p>
                         </div>
                     </iframe>
                 `;
@@ -569,6 +572,57 @@
             };
         }
 
+        function clearFormErrors(formId) {
+            const form = document.getElementById(formId);
+            const inputs = form.querySelectorAll('.form-control');
+            const feedbacks = form.querySelectorAll('.invalid-feedback');
+
+            inputs.forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+
+            feedbacks.forEach(feedback => {
+                feedback.textContent = '';
+            });
+        }
+
+        function showFormErrors(formId, errors) {
+            const form = document.getElementById(formId);
+
+            // Clear previous errors first
+            clearFormErrors(formId);
+
+            // Show new errors
+            for (const field in errors) {
+                const input = form.querySelector(`[name="${field}"]`);
+                const feedback = input?.parentElement.querySelector('.invalid-feedback');
+
+                if (input && feedback) {
+                    input.classList.add('is-invalid');
+                    feedback.textContent = errors[field][0];
+                }
+            }
+        }
+
+        function setButtonLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            const btnText = button.querySelector('.btn-text');
+
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+                if (btnText) {
+                    btnText.style.opacity = '0';
+                }
+            } else {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+                if (btnText) {
+                    btnText.style.opacity = '1';
+                }
+            }
+        }
+
         Dropzone.autoDiscover = false;
         const dropzones = {};
 
@@ -581,7 +635,7 @@
                 }
             });
 
-            // Initialize add form dropzone
+            // Initialize add form dropzone (Updated for PDF and Excel only)
             if (document.getElementById('dropzone-formAdd')) {
                 dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
                     url: "#",
@@ -590,7 +644,10 @@
                     maxFiles: 1,
                     maxFilesize: 10,
                     addRemoveLinks: true,
-                    acceptedFiles: '.pdf,.doc,.docx,.xls,.xlsx',
+                    acceptedFiles: '.pdf,.xls,.xlsx',
+                    dictDefaultMessage: 'Seret atau pilih dokumen.<br><small>Format: PDF, XLS, XLSX. Max. 10 MB.</small>',
+                    dictInvalidFileType: 'Format file tidak didukung. Hanya PDF dan Excel yang diperbolehkan.',
+                    dictFileTooBig: 'Ukuran file terlalu besar. Maksimal 10MB.',
                 });
             }
 
@@ -605,7 +662,10 @@
                         maxFiles: 1,
                         maxFilesize: 10,
                         addRemoveLinks: true,
-                        acceptedFiles: '.pdf,.doc,.docx,.xls,.xlsx',
+                        acceptedFiles: '.pdf,.xls,.xlsx',
+                        dictDefaultMessage: 'Seret atau pilih dokumen baru.<br><small>Format: PDF, XLS, XLSX. Max. 10 MB. Kosongkan jika tidak ingin mengubah file.</small>',
+                        dictInvalidFileType: 'Format file tidak didukung. Hanya PDF dan Excel yang diperbolehkan.',
+                        dictFileTooBig: 'Ukuran file terlalu besar. Maksimal 10MB.',
                     });
                 }
             });
@@ -627,7 +687,7 @@
                 $('#filterMenu').removeClass('show');
             });
 
-            // Filter option selection
+            // Filter option selection (Updated for PDF and Excel only)
             $('.filter-option').on('click', function(e) {
                 e.stopPropagation();
 
@@ -693,11 +753,43 @@
             if (filterFromURL !== currentFilter) {
                 $(`.filter-option[data-filter="${filterFromURL}"]`).click();
             }
+
+            // Modal event handlers to reset form state
+            $('#add').on('show.bs.modal', function() {
+                isSubmitting = false;
+                clearFormErrors('formAdd');
+                setButtonLoading('submitBtnAdd', false);
+            });
+
+            // Reset form when modal is closed
+            $('#add').on('hidden.bs.modal', function() {
+                const form = document.getElementById('formAdd');
+                form.reset();
+                if (dropzones['formAdd']) {
+                    dropzones['formAdd'].removeAllFiles();
+                }
+                clearFormErrors('formAdd');
+                isSubmitting = false;
+                setButtonLoading('submitBtnAdd', false);
+            });
         });
 
         function submitForm(formId) {
+            // Prevent multiple submissions
+            if (isSubmitting) {
+                return;
+            }
+
             let form = document.getElementById(formId);
             let formData = new FormData(form);
+            let submitBtnId = formId === 'formAdd' ? 'submitBtnAdd' : `submitBtn${formId.replace('form-', '')}`;
+
+            // Clear previous errors
+            clearFormErrors(formId);
+
+            // Set loading state
+            isSubmitting = true;
+            setButtonLoading(submitBtnId, true);
 
             const dz = dropzones[formId];
             if (dz) {
@@ -721,18 +813,22 @@
                     const data = await response.json();
 
                     if (!response.ok) {
-                        $('.modal.show').modal('hide');
                         console.log('Error response from controller:', data);
 
                         if (data.errors) {
-                            for (let field in data.errors) {
-                                let msg = data.errors[field].join(', ');
-                                toastr.error(msg, "Error!");
-                            }
+                            // Show form validation errors - DON'T close modal
+                            showFormErrors(formId, data.errors);
+
+                            // Show first error in toast as well
+                            const firstError = Object.values(data.errors)[0][0];
+                            toastr.error(firstError, "Validasi Gagal!");
                         } else {
+                            // For other errors, show toast and close modal
+                            $('.modal.show').modal('hide');
                             toastr.error(data.message || "Gagal menyimpan data", "Error!");
                         }
                     } else {
+                        // Success - close modal and show success message
                         $('.modal.show').modal('hide');
                         toastr.success(data.message || "Data berhasil disimpan", "Success!");
 
@@ -746,9 +842,13 @@
                     }
                 })
                 .catch(error => {
-                    $('.modal.show').modal('hide');
                     console.error('Fetch error:', error);
                     toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+                })
+                .finally(() => {
+                    // Reset loading state
+                    isSubmitting = false;
+                    setButtonLoading(submitBtnId, false);
                 });
         }
 
