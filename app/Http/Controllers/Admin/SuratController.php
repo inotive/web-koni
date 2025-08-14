@@ -39,7 +39,7 @@ class SuratController extends Controller
             $tabQuery = clone $query;
             $tabQuery->where('jenis_surat', $currentTab);
             $suratData = $tabQuery->paginate($perPage);
-            
+
             return view('admin.surat._table', [
                 'suratData' => $suratData,
                 'tableId' => $currentTab
@@ -218,7 +218,7 @@ class SuratController extends Controller
         $prefix = $jenisSurat == 'masuk' ? 'SM' : 'SK';
         $year = date('Y');
         $month = date('m');
-        
+
         $lastSurat = Surat::where('jenis_surat', $jenisSurat)
             ->where('no_surat', 'like', "{$prefix}/{$year}/{$month}%")
             ->orderBy('no_surat', 'desc')

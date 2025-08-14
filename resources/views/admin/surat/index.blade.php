@@ -357,7 +357,6 @@
                     <div>
                         <div class="fw-semibold mb-3 text-gray-800">
                             Unggah Dokumen
-                            <span class="text-muted">(Opsional)</span>
                         </div>
                         <div class="fv-row">
                             <div class="dropzone" id="dropzone-formAdd">

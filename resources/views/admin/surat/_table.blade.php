@@ -39,8 +39,8 @@
             <tbody class="border-bottom">
                 @forelse ($suratData as $index => $surat)
                     @php
-                        $rowNumber = method_exists($suratData, 'currentPage') 
-                            ? ($suratData->currentPage() - 1) * $suratData->perPage() + $index + 1 
+                        $rowNumber = method_exists($suratData, 'currentPage')
+                            ? ($suratData->currentPage() - 1) * $suratData->perPage() + $index + 1
                             : $index + 1;
                     @endphp
                     <tr data-jenis-surat="{{ $surat->jenis_surat ?? '' }}" style="position: relative;">
@@ -108,7 +108,9 @@
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content rounded-4 gap-5 px-10 py-8">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <div class="fs-2 fw-bold text-truncate leading-5">Edit Surat: {{ Str::limit($surat->nama_kegiatan, 20) }}</div>
+                                    <div class="fs-2 fw-bold text-truncate leading-5" id="editModalTitle-{{ $surat->id }}">
+                                        Edit {{ $surat->jenis_surat == 'masuk' ? 'Surat Masuk' : 'Surat Keluar' }}: {{ Str::limit($surat->nama_kegiatan, 20) }}
+                                    </div>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
 
@@ -121,14 +123,8 @@
                                         <input type="text" name="nama_kegiatan" value="{{ $surat->nama_kegiatan }}" placeholder="Masukkan Nama Kegiatan" class="form-control bg-light border border-gray-400" required />
                                     </div>
 
-                                    <div>
-                                        <div class="fw-semibold required mb-3 text-gray-800">Jenis Surat</div>
-                                        <select name="jenis_surat" class="form-select bg-light border border-gray-400" required>
-                                            <option value="">Pilih Jenis Surat</option>
-                                            <option value="masuk" {{ $surat->jenis_surat == 'masuk' ? 'selected' : '' }}>Surat Masuk</option>
-                                            <option value="keluar" {{ $surat->jenis_surat == 'keluar' ? 'selected' : '' }}>Surat Keluar</option>
-                                        </select>
-                                    </div>
+                                    <!-- Hidden field untuk jenis surat - mengikuti jenis surat yang sudah ada -->
+                                    <input type="hidden" name="jenis_surat" value="{{ $surat->jenis_surat }}">
 
                                     <div>
                                         <div class="fw-semibold mb-3 text-gray-800">
@@ -161,8 +157,8 @@
                                 </form>
 
                                 <div class="d-grid py-4">
-                                    <button type="button" onclick="submitForm('form-{{ $surat->id }}')" class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                                        Update Surat
+                                    <button type="button" onclick="submitForm('form-{{ $surat->id }}')" id="editSubmitBtn-{{ $surat->id }}" class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                                        Update {{ $surat->jenis_surat == 'masuk' ? 'Surat Masuk' : 'Surat Keluar' }}
                                     </button>
                                 </div>
                             </div>
