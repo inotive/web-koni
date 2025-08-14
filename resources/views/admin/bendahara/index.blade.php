@@ -145,9 +145,7 @@
 
         /* File type badges with consistent colors */
         .badge-danger { background-color: #dc3545 !important; }
-        .badge-primary { background-color: #0d6efd !important; }
         .badge-success { background-color: #198754 !important; }
-        .badge-warning { background-color: #fd7e14 !important; }
         .badge-secondary { background-color: #6c757d !important; }
 
         /* Loading state */
@@ -156,8 +154,93 @@
             pointer-events: none;
         }
 
+        /* Dropdown action styles from surat */
+        .dropdown-action {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle-custom {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-toggle-custom:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-menu-custom {
+            position: absolute;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 180px;
+            padding: 8px 0;
+            margin-top: 5px;
+            display: none;
+            list-style: none;
+        }
+
+        .dropdown-menu-custom.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* Dropup style */
+        .dropup .dropdown-menu-custom {
+            bottom: 100%;
+            top: auto;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-item i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item.preview:hover {
+            background-color: #F4EEFF !important;
+        }
+
+        .dropdown-item.edit:hover {
+            background-color: rgb(249, 245, 172) !important;
+        }
+
+        .dropdown-item.delete:hover {
+            background-color: #ffcad7 !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Fix pagination dropdown arrow */
-        #per_page {
+        .per-page-select {
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -225,11 +308,258 @@
             color: #dc3545;
         }
 
-        .dropdown-wrapper .dropdown-menu {
-            position: fixed !important;
-            inset: auto auto auto auto !important;
-            transform: none !important;
-            z-index: 1055;  /* higher than the modal backdrop */
+        /* Loading button states */
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error input styling */
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Pagination styling */
+        .pagination-arrow {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 8px;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .pagination-arrow:hover {
+            color: #0b0b0b;
+            text-decoration: none;
+        }
+
+        .pagination-arrow.disabled {
+            color: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .pagination-number {
+            color: #6c757d;
+            text-decoration: none;
+            padding: 6px 10px;
+            margin: 0 1px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            background-color: #f8f9fa;
+            border: 1px solid transparent;
+            font-size: 0.875rem;
+        }
+
+        .pagination-number:hover {
+            color: #89add1;
+            background-color: #e9ecef;
+            text-decoration: none;
+        }
+
+        .pagination-number.active {
+            background-color: #e4e6e9;
+            color: rgb(4, 4, 4);
+            border-color: #e0e1e4;
+        }
+
+        .date-filter-dropdown {
+            position: relative;
+            width: auto;
+        }
+
+        .date-filter-btn {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.95rem;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 38px;
+        }
+
+        .date-filter-btn:hover {
+            border-color: #F8285A;
+            color: #F8285A;
+        }
+
+        .date-filter-btn.date-filter-active {
+            background-color: #F8285A;
+            border-color: #F8285A;
+            color: white;
+        }
+
+        .date-filter-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            margin-top: 4px;
+            display: none;
+            min-width: 300px;
+            padding: 16px;
+        }
+
+        .date-filter-menu.show {
+            display: block;
+        }
+
+        .date-filter-header {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #495057;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .date-range-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .date-input-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #6c757d;
+        }
+
+        .date-input {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #F8285A;
+            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+        }
+
+        .date-filter-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f8f9fa;
+        }
+
+        .date-filter-btn-action {
+            flex: 1;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .date-filter-reset {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .date-filter-reset:hover {
+            background-color: #e9ecef;
+        }
+
+        .date-filter-apply {
+            background-color: #F8285A;
+            color: white;
+        }
+
+        .date-filter-apply:hover {
+            background-color: #d91e4a;
+        }
+
+        /* Quick date presets */
+        .date-presets {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .date-presets-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #6c757d;
+            margin-bottom: 8px;
+        }
+
+        .date-preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .date-preset-btn {
+            padding: 4px 12px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .date-preset-btn:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .date-preset-btn.active {
+            background-color: #F8285A;
+            border-color: #F8285A;
+            color: white;
         }
     </style>
 @endsection
@@ -268,18 +598,14 @@
                     </div>
                 </div>
 
-                <!-- Enhanced Filter Dropdown -->
+                <!-- Enhanced Filter Dropdown (Updated for PDF and Excel only) -->
                 <div class="filter-dropdown">
                     <div class="filter-btn {{ (request('filter_type') && request('filter_type') != 'all') ? 'filter-active' : '' }}" id="filterBtn">
                         <span>
                             @if(request('filter_type') == 'pdf')
                                 <i class="fas fa-file-pdf me-2" style="color: #dc3545;"></i>File PDF
-                            @elseif(request('filter_type') == 'doc')
-                                <i class="fas fa-file-word me-2" style="color: #0d6efd;"></i>File DOC/DOCX
                             @elseif(request('filter_type') == 'excel')
                                 <i class="fas fa-file-excel me-2" style="color: #198754;"></i>File Excel
-                            @elseif(request('filter_type') == 'image')
-                                <i class="fas fa-file-image me-2" style="color: #fd7e14;"></i>File Gambar
                             @elseif(request('filter_type') == 'other')
                                 <i class="fas fa-file me-2" style="color: #6c757d;"></i>File Lain
                             @else
@@ -304,26 +630,12 @@
                             </span>
                             <span class="filter-count">{{ $fileCounts['pdf'] ?? 0 }}</span>
                         </div>
-                        <div class="filter-option {{ (request('filter_type') == 'doc') ? 'active' : '' }}" data-filter="doc">
-                            <span>
-                                <i class="fas fa-file-word file-type-icon" style="color: #0d6efd;"></i>
-                                File DOC/DOCX
-                            </span>
-                            <span class="filter-count">{{ $fileCounts['doc'] ?? 0 }}</span>
-                        </div>
                         <div class="filter-option {{ (request('filter_type') == 'excel') ? 'active' : '' }}" data-filter="excel">
                             <span>
                                 <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
                                 File Excel
                             </span>
                             <span class="filter-count">{{ $fileCounts['excel'] ?? 0 }}</span>
-                        </div>
-                        <div class="filter-option {{ (request('filter_type') == 'image') ? 'active' : '' }}" data-filter="image">
-                            <span>
-                                <i class="fas fa-file-image file-type-icon" style="color: #fd7e14;"></i>
-                                File Gambar
-                            </span>
-                            <span class="filter-count">{{ $fileCounts['image'] ?? 0 }}</span>
                         </div>
                         <div class="filter-option {{ (request('filter_type') == 'other') ? 'active' : '' }}" data-filter="other">
                             <span>
@@ -335,8 +647,49 @@
                     </div>
                 </div>
 
-                <!-- Hidden input for maintaining filter state -->
+            <div class="date-filter-dropdown">
+                    <div class="date-filter-btn {{ (request('date_from') || request('date_to')) ? 'date-filter-active' : '' }}" id="dateFilterBtn">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </div>
+
+                    <div class="date-filter-menu" id="dateFilterMenu">
+                        <div class="date-filter-header">Filter Berdasarkan Tanggal</div>
+
+                        <!-- Quick Date Presets -->
+                        <div class="date-presets">
+                            <div class="date-presets-label">Preset Cepat:</div>
+                            <div class="date-preset-buttons">
+                                <button type="button" class="date-preset-btn" data-preset="today">Hari Ini</button>
+                                <button type="button" class="date-preset-btn" data-preset="this-week">Minggu Ini</button>
+                                <button type="button" class="date-preset-btn" data-preset="this-month">Bulan Ini</button>
+                                <button type="button" class="date-preset-btn" data-preset="this-year">Tahun Ini</button>
+                                <button type="button" class="date-preset-btn" data-preset="last-30-days">30 Hari Terakhir</button>
+                            </div>
+                        </div>
+
+                        <!-- Custom Date Range -->
+                        <div class="date-range-container">
+                            <div class="date-input-group">
+                                <label class="date-input-label">Dari Tanggal:</label>
+                                <input type="date" name="date_from" id="dateFrom" class="date-input" value="{{ request('date_from') }}">
+                            </div>
+                            <div class="date-input-group">
+                                <label class="date-input-label">Sampai Tanggal:</label>
+                                <input type="date" name="date_to" id="dateTo" class="date-input" value="{{ request('date_to') }}">
+                            </div>
+                        </div>
+
+                        <div class="date-filter-actions">
+                            <button type="button" class="date-filter-btn-action date-filter-reset" id="resetDateFilter">Reset</button>
+                            <button type="button" class="date-filter-btn-action date-filter-apply" id="applyDateFilter">Terapkan</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden inputs for maintaining filter state -->
                 <input type="hidden" name="filter_type" id="filter_type_input" value="{{ request('filter_type', 'all') }}">
+                <input type="hidden" name="date_from" id="date_from_input" value="{{ request('date_from') }}">
+                <input type="hidden" name="date_to" id="date_to_input" value="{{ request('date_to') }}">
             </form>
         </div>
 
@@ -361,6 +714,7 @@
                             <div class="fw-semibold required mb-3 text-gray-800">Judul Laporan</div>
                             <input type="text" name="judul" placeholder="Masukkan Judul Laporan"
                                 class="form-control bg-light border border-gray-400" required />
+                            <div class="invalid-feedback"></div>
                         </div>
 
                         <div>
@@ -373,18 +727,19 @@
                                         </i>
                                         <div class="ms-4">
                                             <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
-                                            <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB.</span>
+                                            <span class="fs-7 fw-semibold text-gray-500">Format: PDF, XLS, XLSX. Max. 10 MB.</span>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="invalid-feedback"></div>
                             </div>
                         </div>
                     </form>
 
                     <div class="d-grid py-4">
-                        <button type="button" onclick="submitForm('formAdd')"
+                        <button type="button" onclick="submitForm('formAdd')" id="submitBtnAdd"
                             class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                            Tambah Laporan
+                            <span class="btn-text">Tambah Laporan</span>
                         </button>
                     </div>
                 </div>
@@ -418,9 +773,23 @@
 
 @section('script')
     <script>
+        let isSubmitting = false; // Global flag to prevent multiple submissions
+
         function reloadTable(url = null) {
             let formData = $('#filter').serialize();
             let target = url ?? "{{ route('admin.bendahara.index') }}";
+
+            // Add sorting parameters if they exist
+            const urlParams = new URLSearchParams(window.location.search);
+            const sortBy = urlParams.get('sort_by');
+            const order = urlParams.get('order');
+
+            if (sortBy) {
+                formData += '&sort_by=' + encodeURIComponent(sortBy);
+            }
+            if (order) {
+                formData += '&order=' + encodeURIComponent(order);
+            }
 
             $.ajax({
                 url: target,
@@ -438,25 +807,17 @@
                     // Reinitialize dropzones for edit modals
                     initializeDropzones();
 
+                    // Initialize dropdown events
+                    initializeDropdownEvents();
+
+                    // Initialize sorting events
+                    initializeSortingEvents();
+
                     // Update filter counts
                     updateFilterCountsFromResponse(response);
 
                     // Update URL without page refresh
-                    if (window.history && window.history.pushState) {
-                        const url = new URL(window.location);
-                        const searchParams = new URLSearchParams(formData);
-
-                        // Update URL parameters
-                        for (const [key, value] of searchParams.entries()) {
-                            if (value) {
-                                url.searchParams.set(key, value);
-                            } else {
-                                url.searchParams.delete(key);
-                            }
-                        }
-
-                        window.history.pushState({}, '', url);
-                    }
+                    updateURL(formData);
                 },
                 error: function(xhr) {
                     $('#table').removeClass('table-loading');
@@ -465,6 +826,85 @@
                     );
                 }
             });
+        }
+
+        function handleSort(sortBy, order) {
+            // Add sort parameters to the form
+            let formData = $('#filter').serialize();
+            formData += '&sort_by=' + encodeURIComponent(sortBy) + '&order=' + encodeURIComponent(order);
+
+            $.ajax({
+                url: "{{ route('admin.bendahara.index') }}",
+                data: formData,
+                beforeSend: function() {
+                    $('#table').addClass('table-loading');
+                    $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                },
+                success: function(response) {
+                    $('#table').removeClass('table-loading');
+                    $('#table').html(response);
+
+                    // Reinitialize all events
+                    initializeDropzones();
+                    initializeDropdownEvents();
+                    initializeSortingEvents();
+                    updateFilterCountsFromResponse(response);
+
+                    // Update URL with sorting parameters
+                    const url = new URL(window.location);
+                    url.searchParams.set('sort_by', sortBy);
+                    url.searchParams.set('order', order);
+
+                    // Preserve other parameters
+                    const formParams = new URLSearchParams($('#filter').serialize());
+                    for (const [key, value] of formParams.entries()) {
+                        if (key !== 'sort_by' && key !== 'order') {
+                            if (value) {
+                                url.searchParams.set(key, value);
+                            } else {
+                                url.searchParams.delete(key);
+                            }
+                        }
+                    }
+
+                    window.history.pushState({}, '', url);
+                },
+                error: function(xhr) {
+                    $('#table').removeClass('table-loading');
+                    $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                }
+            });
+        }
+
+        function initializeSortingEvents() {
+            $(document).off('click', '.sortable');
+
+            $(document).on('click', '.sortable', function(e) {
+                e.preventDefault();
+
+                const sortBy = $(this).data('sort');
+                const order = $(this).data('order');
+
+                handleSort(sortBy, order);
+            });
+        }
+
+        function updateURL(formData) {
+            if (window.history && window.history.pushState) {
+                const url = new URL(window.location);
+                const searchParams = new URLSearchParams(formData);
+
+                // Update URL parameters
+                for (const [key, value] of searchParams.entries()) {
+                    if (value) {
+                        url.searchParams.set(key, value);
+                    } else {
+                        url.searchParams.delete(key);
+                    }
+                }
+
+                window.history.pushState({}, '', url);
+            }
         }
 
         function updateFilterCountsFromResponse(response) {
@@ -476,13 +916,96 @@
                     // Update filter menu counts
                     $('.filter-option[data-filter="all"] .filter-count').text(countData.all || 0);
                     $('.filter-option[data-filter="pdf"] .filter-count').text(countData.pdf || 0);
-                    $('.filter-option[data-filter="doc"] .filter-count').text(countData.doc || 0);
                     $('.filter-option[data-filter="excel"] .filter-count').text(countData.excel || 0);
-                    $('.filter-option[data-filter="image"] .filter-count').text(countData.image || 0);
                     $('.filter-option[data-filter="other"] .filter-count').text(countData.other || 0);
                 }
             } catch (e) {
                 console.log('Could not update filter counts from response');
+            }
+        }
+
+        // Initialize dropdown events (adapted from surat system)
+        function initializeDropdownEvents() {
+            $(document).off('click', '.dropdown-toggle-custom');
+            $(document).off('mouseenter', '.dropdown-action');
+            $(document).off('mouseleave', '.dropdown-action');
+
+            $(document).on('click', '.dropdown-toggle-custom', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const $dropdownAction = $(this).closest('.dropdown-action');
+                const $menu = $dropdownAction.find('.dropdown-menu-custom');
+
+                // Close all other dropdowns
+                $('.dropdown-menu-custom').not($menu).removeClass('show');
+
+                // Toggle this dropdown
+                $menu.toggleClass('show');
+
+                // Check position
+                checkDropdownPosition($dropdownAction);
+            });
+
+            // Function to check dropdown position - modified to force dropup for bottom rows
+            function checkDropdownPosition($dropdownAction) {
+                const $menu = $dropdownAction.find('.dropdown-menu-custom');
+                if (!$menu.hasClass('show')) return;
+
+                // Reset position class
+                $dropdownAction.removeClass('dropup');
+
+                // Check if this is the last row of the table
+                const $row = $dropdownAction.closest('tr');
+                const $table = $row.closest('tbody');
+                const rowIndex = $table.find('tr').index($row);
+                const totalRows = $table.find('tr').length;
+
+                // Only apply dropup to the last row
+                if (rowIndex === totalRows - 1) {
+                    $dropdownAction.addClass('dropup');
+                }
+
+            }
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.dropdown-action').length) {
+                    $('.dropdown-menu-custom').removeClass('show');
+                }
+            });
+
+            // Handle window resize
+            $(window).on('resize', function() {
+                $('.dropdown-action').each(function() {
+                    if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
+                        checkDropdownPosition($(this));
+                    }
+                });
+            });
+
+            if (window.innerWidth > 768) {
+                $(document).on('mouseenter', '.dropdown-action', function() {
+                    const $menu = $(this).find('.dropdown-menu-custom');
+                    $menu.addClass('show');
+                    checkDropdownPosition($(this));
+                }).on('mouseleave', '.dropdown-action', function() {
+                    const $menu = $(this).find('.dropdown-menu-custom');
+                    setTimeout(() => {
+                        if (!$menu.is(':hover')) {
+                            $menu.removeClass('show');
+                        }
+                    }, 100);
+                });
+
+                $(document).on('mouseenter', '.dropdown-menu-custom', function() {
+                    clearTimeout($(this).data('timeout'));
+                }).on('mouseleave', '.dropdown-menu-custom', function() {
+                    const $menu = $(this);
+                    $menu.data('timeout', setTimeout(() => {
+                        $menu.removeClass('show');
+                    }, 200));
+                });
             }
         }
 
@@ -510,25 +1033,6 @@
                             <i class="fas fa-file-pdf"></i>
                             <h5>Cannot display PDF</h5>
                             <p>Your browser doesn't support PDF preview. Please download the file to view it.</p>
-                        </div>
-                    </iframe>
-                `;
-            } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
-                // Image preview
-                previewContainer.innerHTML = `
-                    <div class="d-flex justify-content-center align-items-center" style="height: 70vh;">
-                        <img src="${fileUrl}" class="img-fluid" style="max-height: 100%; max-width: 100%;" alt="${fileName}">
-                    </div>
-                `;
-            } else if (['doc', 'docx'].includes(ext)) {
-                // Word document preview using Google Docs Viewer
-                previewContainer.innerHTML = `
-                    <iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true"
-                            style="width: 100%; height: 70vh;" frameborder="0">
-                        <div class="preview-error">
-                            <i class="fas fa-file-word"></i>
-                            <h5>Preview not available</h5>
-                            <p>Cannot preview this Word document. Please download the file to view it.</p>
                         </div>
                     </iframe>
                 `;
@@ -569,6 +1073,57 @@
             };
         }
 
+        function clearFormErrors(formId) {
+            const form = document.getElementById(formId);
+            const inputs = form.querySelectorAll('.form-control');
+            const feedbacks = form.querySelectorAll('.invalid-feedback');
+
+            inputs.forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+
+            feedbacks.forEach(feedback => {
+                feedback.textContent = '';
+            });
+        }
+
+        function showFormErrors(formId, errors) {
+            const form = document.getElementById(formId);
+
+            // Clear previous errors first
+            clearFormErrors(formId);
+
+            // Show new errors
+            for (const field in errors) {
+                const input = form.querySelector(`[name="${field}"]`);
+                const feedback = input?.parentElement.querySelector('.invalid-feedback');
+
+                if (input && feedback) {
+                    input.classList.add('is-invalid');
+                    feedback.textContent = errors[field][0];
+                }
+            }
+        }
+
+        function setButtonLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            const btnText = button.querySelector('.btn-text');
+
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.disabled = true;
+                if (btnText) {
+                    btnText.style.opacity = '0';
+                }
+            } else {
+                button.classList.remove('btn-loading');
+                button.disabled = false;
+                if (btnText) {
+                    btnText.style.opacity = '1';
+                }
+            }
+        }
+
         Dropzone.autoDiscover = false;
         const dropzones = {};
 
@@ -581,7 +1136,7 @@
                 }
             });
 
-            // Initialize add form dropzone
+            // Initialize add form dropzone (Updated for PDF and Excel only)
             if (document.getElementById('dropzone-formAdd')) {
                 dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
                     url: "#",
@@ -590,7 +1145,10 @@
                     maxFiles: 1,
                     maxFilesize: 10,
                     addRemoveLinks: true,
-                    acceptedFiles: '.pdf,.doc,.docx,.xls,.xlsx',
+                    acceptedFiles: '.pdf,.xls,.xlsx',
+                    dictDefaultMessage: 'Seret atau pilih dokumen.<br><small>Format: PDF, XLS, XLSX. Max. 10 MB.</small>',
+                    dictInvalidFileType: 'Format file tidak didukung. Hanya PDF dan Excel yang diperbolehkan.',
+                    dictFileTooBig: 'Ukuran file terlalu besar. Maksimal 10MB.',
                 });
             }
 
@@ -605,7 +1163,10 @@
                         maxFiles: 1,
                         maxFilesize: 10,
                         addRemoveLinks: true,
-                        acceptedFiles: '.pdf,.doc,.docx,.xls,.xlsx',
+                        acceptedFiles: '.pdf,.xls,.xlsx',
+                        dictDefaultMessage: 'Seret atau pilih dokumen baru.<br><small>Format: PDF, XLS, XLSX. Max. 10 MB. Kosongkan jika tidak ingin mengubah file.</small>',
+                        dictInvalidFileType: 'Format file tidak didukung. Hanya PDF dan Excel yang diperbolehkan.',
+                        dictFileTooBig: 'Ukuran file terlalu besar. Maksimal 10MB.',
                     });
                 }
             });
@@ -615,6 +1176,8 @@
             let currentFilter = '{{ request("filter_type", "all") }}';
 
             initializeDropzones();
+            initializeDropdownEvents();
+            initializeSortingEvents(); // Initialize sorting events
 
             // Filter dropdown functionality
             $('#filterBtn').on('click', function(e) {
@@ -627,7 +1190,7 @@
                 $('#filterMenu').removeClass('show');
             });
 
-            // Filter option selection
+            // Filter option selection (Updated for PDF and Excel only)
             $('.filter-option').on('click', function(e) {
                 e.stopPropagation();
 
@@ -668,17 +1231,88 @@
                 }
             }, 300));
 
-            // Per page change
-            $(document).on('change', '#per_page', function() {
-                reloadTable();
+            // Per page change - Fixed selector
+            $(document).on('change', 'select[name="per_page"]', function() {
+                const newPerPage = $(this).val();
+                let formData = $('#filter').serialize() + '&per_page=' + newPerPage;
+
+                // Preserve sorting parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const sortBy = urlParams.get('sort_by');
+                const order = urlParams.get('order');
+
+                if (sortBy) {
+                    formData += '&sort_by=' + encodeURIComponent(sortBy);
+                }
+                if (order) {
+                    formData += '&order=' + encodeURIComponent(order);
+                }
+
+                $.ajax({
+                    url: "{{ route('admin.bendahara.index') }}",
+                    data: formData,
+                    beforeSend: function() {
+                        $('#table').addClass('table-loading');
+                        $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                    },
+                    success: function(response) {
+                        $('#table').removeClass('table-loading');
+                        $('#table').html(response);
+                        initializeDropzones();
+                        initializeDropdownEvents();
+                        initializeSortingEvents();
+                        updateURL(formData);
+                    },
+                    error: function(xhr) {
+                        $('#table').removeClass('table-loading');
+                        $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                    }
+                });
             });
 
-            // Pagination clicks
-            $(document).on('click', '.pagination a', function(e) {
+            // Pagination clicks - Fixed selector
+            $(document).on('click', '.pagination-link', function(e) {
                 e.preventDefault();
                 let url = $(this).attr('href');
                 if (url) {
-                    reloadTable(url);
+                    const urlObj = new URL(url);
+                    const page = urlObj.searchParams.get('page');
+
+                    let formData = $('#filter').serialize();
+                    formData += '&page=' + page;
+
+                    // Preserve sorting parameters
+                    const currentUrlParams = new URLSearchParams(window.location.search);
+                    const sortBy = currentUrlParams.get('sort_by');
+                    const order = currentUrlParams.get('order');
+
+                    if (sortBy) {
+                        formData += '&sort_by=' + encodeURIComponent(sortBy);
+                    }
+                    if (order) {
+                        formData += '&order=' + encodeURIComponent(order);
+                    }
+
+                    $.ajax({
+                        url: "{{ route('admin.bendahara.index') }}",
+                        data: formData,
+                        beforeSend: function() {
+                            $('#table').addClass('table-loading');
+                            $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                        },
+                        success: function(response) {
+                            $('#table').removeClass('table-loading');
+                            $('#table').html(response);
+                            initializeDropzones();
+                            initializeDropdownEvents();
+                            initializeSortingEvents();
+                            updateURL(formData);
+                        },
+                        error: function(xhr) {
+                            $('#table').removeClass('table-loading');
+                            $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                        }
+                    });
                 }
             });
 
@@ -693,11 +1327,49 @@
             if (filterFromURL !== currentFilter) {
                 $(`.filter-option[data-filter="${filterFromURL}"]`).click();
             }
-        });
+
+            // Modal event handlers to reset form state
+            $('#add').on('show.bs.modal', function() {
+                isSubmitting = false;
+                clearFormErrors('formAdd');
+                setButtonLoading('submitBtnAdd', false);
+
+                // Clear dropzone
+                if (dropzones['formAdd']) {
+                    dropzones['formAdd'].removeAllFiles(true);
+                }
+            });
+
+            $('#add').on('hidden.bs.modal', function() {
+                const form = document.getElementById('formAdd');
+                form.reset();
+
+                if (dropzones['formAdd']) {
+                    dropzones['formAdd'].removeAllFiles(true);
+                }
+
+                clearFormErrors('formAdd');
+                isSubmitting = false;
+                setButtonLoading('submitBtnAdd', false);
+            });
+        }
 
         function submitForm(formId) {
+            // Prevent multiple submissions
+            if (isSubmitting) {
+                return;
+            }
+
             let form = document.getElementById(formId);
             let formData = new FormData(form);
+            let submitBtnId = formId === 'formAdd' ? 'submitBtnAdd' : `submitBtn${formId.replace('form-', '')}`;
+
+            // Clear previous errors
+            clearFormErrors(formId);
+
+            // Set loading state
+            isSubmitting = true;
+            setButtonLoading(submitBtnId, true);
 
             const dz = dropzones[formId];
             if (dz) {
@@ -721,18 +1393,20 @@
                     const data = await response.json();
 
                     if (!response.ok) {
-                        $('.modal.show').modal('hide');
-                        console.log('Error response from controller:', data);
-
                         if (data.errors) {
-                            for (let field in data.errors) {
-                                let msg = data.errors[field].join(', ');
-                                toastr.error(msg, "Error!");
-                            }
+                            // Show form validation errors - DON'T close modal
+                            showFormErrors(formId, data.errors);
+
+                            // Show first error in toast as well
+                            const firstError = Object.values(data.errors)[0][0];
+                            toastr.error(firstError, "Validasi Gagal!");
                         } else {
+                            // For other errors, show toast and close modal
+                            $('.modal.show').modal('hide');
                             toastr.error(data.message || "Gagal menyimpan data", "Error!");
                         }
                     } else {
+                        // Success - close modal and show success message
                         $('.modal.show').modal('hide');
                         toastr.success(data.message || "Data berhasil disimpan", "Success!");
 
@@ -746,16 +1420,182 @@
                     }
                 })
                 .catch(error => {
-                    $('.modal.show').modal('hide');
                     console.error('Fetch error:', error);
+                    $('.modal.show').modal('hide');
                     toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+                })
+                .finally(() => {
+                    // Reset loading state
+                    isSubmitting = false;
+                    setButtonLoading(submitBtnId, false);
                 });
         }
 
         function deleteItem(formId) {
             if (confirm('Apakah Anda yakin ingin menghapus laporan ini?')) {
-                document.getElementById(formId).submit();
+                fetch(document.getElementById(formId).action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: new FormData(document.getElementById(formId))
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        toastr.success(data.message || "Data berhasil dihapus", "Success!");
+                        reloadTable();
+                    } else {
+                        toastr.error(data.message || "Gagal menghapus data", "Error!");
+                    }
+                })
+                .catch(error => {
+                    toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+                });
             }
         }
     </script>
+    <script>
+        $(document).ready(function() {
+            let currentDateFilter = {
+                from: '{{ request("date_from") }}',
+                to: '{{ request("date_to") }}'
+            };
+
+            // Date filter dropdown functionality
+            $('#dateFilterBtn').on('click', function(e) {
+                e.stopPropagation();
+                $('#dateFilterMenu').toggleClass('show');
+                // Close other dropdowns
+                $('#filterMenu').removeClass('show');
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.date-filter-dropdown').length) {
+                    $('#dateFilterMenu').removeClass('show');
+                }
+            });
+
+            // Prevent dropdown from closing when clicking inside
+            $('#dateFilterMenu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // Date preset buttons
+            $('.date-preset-btn').on('click', function() {
+                const preset = $(this).data('preset');
+                const today = new Date();
+                let fromDate, toDate;
+
+                // Remove active class from all presets
+                $('.date-preset-btn').removeClass('active');
+                $(this).addClass('active');
+
+                switch (preset) {
+                    case 'today':
+                        fromDate = toDate = formatDate(today);
+                        break;
+                    case 'this-week':
+                        const startOfWeek = new Date(today);
+                        startOfWeek.setDate(today.getDate() - today.getDay());
+                        const endOfWeek = new Date(startOfWeek);
+                        endOfWeek.setDate(startOfWeek.getDate() + 6);
+                        fromDate = formatDate(startOfWeek);
+                        toDate = formatDate(endOfWeek);
+                        break;
+                    case 'this-month':
+                        fromDate = formatDate(new Date(today.getFullYear(), today.getMonth(), 1));
+                        toDate = formatDate(new Date(today.getFullYear(), today.getMonth() + 1, 0));
+                        break;
+                    case 'this-year':
+                        fromDate = formatDate(new Date(today.getFullYear(), 0, 1));
+                        toDate = formatDate(new Date(today.getFullYear(), 11, 31));
+                        break;
+                    case 'last-30-days':
+                        const thirtyDaysAgo = new Date(today);
+                        thirtyDaysAgo.setDate(today.getDate() - 30);
+                        fromDate = formatDate(thirtyDaysAgo);
+                        toDate = formatDate(today);
+                        break;
+                }
+
+                $('#dateFrom').val(fromDate);
+                $('#dateTo').val(toDate);
+            });
+
+            // Apply date filter
+            $('#applyDateFilter').on('click', function() {
+                const dateFrom = $('#dateFrom').val();
+                const dateTo = $('#dateTo').val();
+
+                // Validate date range
+                if (dateFrom && dateTo && new Date(dateFrom) > new Date(dateTo)) {
+                    toastr.error('Tanggal mulai tidak boleh lebih besar dari tanggal akhir', 'Error!');
+                    return;
+                }
+
+                // Update hidden inputs
+                $('#date_from_input').val(dateFrom);
+                $('#date_to_input').val(dateTo);
+
+                // Update button state
+                if (dateFrom || dateTo) {
+                    $('#dateFilterBtn').addClass('date-filter-active');
+                } else {
+                    $('#dateFilterBtn').removeClass('date-filter-active');
+                }
+
+                currentDateFilter = { from: dateFrom, to: dateTo };
+
+                // Apply filter
+                reloadTable();
+                $('#dateFilterMenu').removeClass('show');
+
+                // Show success message
+                if (dateFrom || dateTo) {
+                    toastr.success('Filter tanggal berhasil diterapkan', 'Success!');
+                }
+            });
+
+            // Reset date filter
+            $('#resetDateFilter').on('click', function() {
+                $('#dateFrom').val('');
+                $('#dateTo').val('');
+                $('#date_from_input').val('');
+                $('#date_to_input').val('');
+                $('#dateFilterBtn').removeClass('date-filter-active');
+                $('.date-preset-btn').removeClass('active');
+
+                currentDateFilter = { from: '', to: '' };
+
+                // Apply filter (which will show all data)
+                reloadTable();
+                $('#dateFilterMenu').removeClass('show');
+
+                toastr.success('Filter tanggal berhasil direset', 'Success!');
+            });
+
+            // Helper function to format date
+            function formatDate(date) {
+                return date.toISOString().split('T')[0];
+            }
+
+            // Initialize date filter state on page load
+            if (currentDateFilter.from || currentDateFilter.to) {
+                $('#dateFilterBtn').addClass('date-filter-active');
+
+                // Set active preset if matches
+                const from = currentDateFilter.from;
+                const to = currentDateFilter.to;
+                const today = formatDate(new Date());
+
+                if (from === today && to === today) {
+                    $('.date-preset-btn[data-preset="today"]').addClass('active');
+                }
+                // Add more preset checks as needed
+            }
+        });
+        </script>
 @endsection

@@ -48,7 +48,7 @@ class SumberdayaController extends Controller
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.table', compact('sumberDayaData'))->render();
+            return view('admin.laporan-lpj.bidang.mobilisasi-sumberdaya._table', compact('sumberDayaData'))->render();
         }
 
         return view('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index', compact('sumberDayaData'));
@@ -68,9 +68,19 @@ class SumberdayaController extends Controller
             'jumlah_harga_satuan' => 'required|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
-            'foto_jurnal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
-            'dokumen_lpj' => 'nullable|array',
+            'foto_jurnal' => 'nullable|array|max:10',
+            'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
+            'dokumen_lpj' => 'nullable|array|max:10',
             'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+        ], [
+            'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
+            'foto_jurnal.*.image' => 'File harus berupa gambar.',
+            'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
+            'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
+            'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
+            'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
 
         $data = $request->only([
@@ -82,10 +92,13 @@ class SumberdayaController extends Controller
             'keterangan_tambahan'
         ]);
 
-        // Handle foto_jurnal upload
+        // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
-            $fotoPath = $request->file('foto_jurnal')->store('sumber_daya/foto_jurnal', 'public');
-            $data['foto_jurnal'] = [$fotoPath]; // Store as array
+            $fotoPaths = [];
+            foreach ($request->file('foto_jurnal') as $file) {
+                $fotoPaths[] = $file->store('sumber_daya/foto_jurnal', 'public');
+            }
+            $data['foto_jurnal'] = $fotoPaths;
         }
 
         // Handle dokumen_lpj uploads
@@ -100,7 +113,7 @@ class SumberdayaController extends Controller
         SumberDaya::create($data);
 
         return redirect()->route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index')
-                         ->with('success', 'Data sumber daya berhasil ditambahkan.');
+                         ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
     public function show(SumberDaya $sumberdaya)
@@ -110,11 +123,21 @@ class SumberdayaController extends Controller
 
     public function edit(SumberDaya $sumberdaya)
     {
+        // Check if user has permission to edit
+        if (!auth()->user()->hasRole('superadmin')) {
+            abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
+        }
+
         return view('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.edit', compact('sumberdaya'));
     }
 
     public function update(Request $request, SumberDaya $sumberdaya)
     {
+        // Check if user has permission to update
+        if (!auth()->user()->hasRole('superadmin')) {
+            abort(403, 'Akses ditolak. Hanya superadmin yang dapat memperbarui data.');
+        }
+
         $request->validate([
             'nama_program' => 'required|string|max:255',
             'nama_kegiatan' => 'required|string|max:255',
@@ -122,9 +145,19 @@ class SumberdayaController extends Controller
             'jumlah_harga_satuan' => 'required|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
-            'foto_jurnal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
-            'dokumen_lpj' => 'nullable|array',
+            'foto_jurnal' => 'nullable|array|max:10',
+            'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
+            'dokumen_lpj' => 'nullable|array|max:10',
             'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+        ], [
+            'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
+            'foto_jurnal.*.image' => 'File harus berupa gambar.',
+            'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
+            'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
+            'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
+            'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
 
         $data = $request->only([
@@ -136,17 +169,20 @@ class SumberdayaController extends Controller
             'keterangan_tambahan'
         ]);
 
-        // Handle foto_jurnal upload
+        // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
-            // Delete old foto if exists
+            // Delete old photos if exists
             if ($sumberdaya->foto_jurnal) {
                 foreach ($sumberdaya->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
-            $fotoPath = $request->file('foto_jurnal')->store('sumber_daya/foto_jurnal', 'public');
-            $data['foto_jurnal'] = [$fotoPath];
+            $fotoPaths = [];
+            foreach ($request->file('foto_jurnal') as $file) {
+                $fotoPaths[] = $file->store('sumber_daya/foto_jurnal', 'public');
+            }
+            $data['foto_jurnal'] = $fotoPaths;
         }
 
         // Handle dokumen_lpj uploads
@@ -168,11 +204,16 @@ class SumberdayaController extends Controller
         $sumberdaya->update($data);
 
         return redirect()->route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index')
-                         ->with('success', 'Data sumber daya berhasil diperbarui.');
+                         ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
     public function destroy(SumberDaya $sumberdaya)
     {
+        // Check if user has permission to delete
+        if (!auth()->user()->hasRole('superadmin')) {
+            abort(403, 'Akses ditolak. Hanya superadmin yang dapat menghapus data.');
+        }
+
         // Delete associated files
         if ($sumberdaya->foto_jurnal) {
             foreach ($sumberdaya->foto_jurnal as $foto) {
@@ -189,7 +230,7 @@ class SumberdayaController extends Controller
         $sumberdaya->delete();
 
         return redirect()->route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index')
-                         ->with('success', 'Data sumber daya berhasil dihapus.');
+                         ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
     /**
@@ -203,6 +244,47 @@ class SumberdayaController extends Controller
         return request()->fullUrlWithQuery([
             'sort' => $column,
             'direction' => $newDirection
+        ]);
+    }
+
+    /**
+     * Remove individual file from the collection
+     */
+    public function removeFile(Request $request, SumberDaya $sumberdaya)
+    {
+        // Check if user has permission to modify files
+        if (!auth()->user()->hasRole('superadmin')) {
+            return response()->json(['error' => 'Akses ditolak'], 403);
+        }
+
+        $request->validate([
+            'file_type' => 'required|in:foto_jurnal,dokumen_lpj',
+            'file_index' => 'required|integer|min:0'
+        ]);
+
+        $fileType = $request->file_type;
+        $fileIndex = $request->file_index;
+        $files = $sumberdaya->$fileType ?? [];
+
+        if (!isset($files[$fileIndex])) {
+            return response()->json(['error' => 'File tidak ditemukan'], 404);
+        }
+
+        // Delete the file from storage
+        $filePath = $files[$fileIndex];
+        Storage::disk('public')->delete($filePath);
+
+        // Remove from array
+        unset($files[$fileIndex]);
+        $files = array_values($files); // Reindex array
+
+        // Update the model
+        $sumberdaya->update([$fileType => $files]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'File berhasil dihapus',
+            'remaining_files' => count($files)
         ]);
     }
 }

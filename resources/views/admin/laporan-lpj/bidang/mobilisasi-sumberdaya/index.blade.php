@@ -32,7 +32,7 @@
 
         /* Column widths */
         .table th:nth-child(1) {
-            width: 20px;
+            width: 40px;
         }
 
         .table th:nth-child(2) {
@@ -56,11 +56,11 @@
         }
 
         .table th:nth-child(7) {
-            width: 100px;
+            width: 120px;
         }
 
         .table th:nth-child(8) {
-            width: 120px;
+            width: 80px;
         }
 
         .text-truncate-custom {
@@ -69,55 +69,104 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        
-        .card {
-            overflow: visible !important;
-        }
 
-        .card-body {
-            overflow: visible !important;
-        }
-
-        .table-responsive {
-            overflow: visible !important;
-        }
-
-        .dropdown-menu {
-            z-index: 1055 !important;
-            position: absolute !important;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-            border: 1px solid rgba(0, 0, 0, 0.15) !important;
-        }
-
-        .dropdown {
+        /* Dropdown styles from paste 1 and 2 */
+        .dropdown-action {
             position: relative;
-            z-index: 1000;
+            display: inline-block;
         }
 
-        /* Untuk baris terakhir, gunakan dropup */
-        .table tbody tr:nth-last-child(-n+2) .dropdown-menu {
-            top: auto !important;
-            bottom: 100% !important;
-            transform: translateY(-8px);
+        .dropdown-toggle-custom {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-toggle-custom:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dropdown-menu-custom {
+            position: absolute;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 180px;
+            padding: 8px 0;
+            margin-top: 5px;
+            display: none;
+            list-style: none;
+        }
+
+        .dropdown-menu-custom.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* Dropup style */
+        .dropup .dropdown-menu-custom {
+            bottom: 100%;
+            top: auto;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .dropdown-item-custom {
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            color: #495057;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-item-custom i {
+            margin-right: 8px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-item-custom:hover {
+            background-color: #f8f9fa;
+            text-decoration: none;
+            color: #495057;
+        }
+
+        .dropdown-item-custom.edit:hover {
+            background-color: rgb(249, 245, 172) !important;
+        }
+
+        .dropdown-item-custom.delete:hover {
+            background-color: #ffcad7 !important;
+        }
+
+        /* Fixed dropdown styles */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .card-body {
-                overflow-x: auto !important;
-                overflow-y: visible !important;
-            }
-
             .table-responsive {
                 overflow-x: auto !important;
                 overflow-y: visible !important;
             }
 
-            .dropdown-menu {
+            .dropdown-menu-custom {
                 position: absolute !important;
                 z-index: 9999 !important;
                 right: 0 !important;
                 left: auto !important;
+                min-width: 140px;
             }
         }
 
@@ -159,6 +208,137 @@
             align-items: center;
             z-index: 1000;
         }
+
+        /* Custom tooltip styling to match the design */
+        .custom-tooltip {
+            --bs-tooltip-bg: #ffffff;
+            --bs-tooltip-border-color: #e0e0e0;
+            --bs-tooltip-color: #333333;
+            --bs-tooltip-padding-x: 12px;
+            --bs-tooltip-padding-y: 8px;
+            --bs-tooltip-border-radius: 8px;
+            --bs-tooltip-font-size: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--bs-tooltip-border-color);
+        }
+
+        .custom-tooltip .tooltip-inner {
+            background-color: var(--bs-tooltip-bg);
+            color: var(--bs-tooltip-color);
+            border-radius: var(--bs-tooltip-border-radius);
+            padding: var(--bs-tooltip-padding-y) var(--bs-tooltip-padding-x);
+            text-align: left;
+            max-width: 200px;
+        }
+
+        .custom-tooltip .tooltip-arrow::before {
+            border-bottom-color: var(--bs-tooltip-bg);
+            border-top-color: var(--bs-tooltip-bg);
+        }
+
+        .tooltip-content strong {
+            color: #333333;
+            font-weight: 600;
+        }
+
+        /* Restricted button styling */
+        .btn-restricted {
+            cursor: not-allowed !important;
+            opacity: 0.6 !important;
+            pointer-events: none;
+        }
+
+        .btn-restricted:hover {
+            background-color: #F8285A !important;
+            border-color: #F8285A !important;
+            color: white !important;
+        }
+
+        /* Preview Modal Styles */
+        .preview-slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .preview-slide.active {
+            display: flex;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 80%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            background: white;
+            padding: 10px;
+        }
+
+        .preview-document {
+            width: 100%;
+            height: 80%;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .document-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 80%;
+            background: white;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .document-placeholder i {
+            font-size: 4rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .document-placeholder h5 {
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .document-placeholder p {
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .modal-header {
+            background-color: #F8285A !important;
+            color: white !important;
+            border-bottom: 1px solid #F8285A !important;
+        }
+
+        /* Restricted action styling */
+        .restricted-action {
+            position: relative;
+        }
+
+        .restricted-action:hover {
+            background-color: transparent !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -175,11 +355,29 @@
 
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    {{-- Add Button --}}
-                    <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.create') }}" class="btn custom-red-button"
-                        style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-                    </a>
+                    {{-- Add Button with Access Control --}}
+                    @if(auth()->user()->hasRole('superadmin'))
+                        <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.create') }}" class="btn custom-red-button"
+                            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                            <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+                        </a>
+                    @else
+                        <div class="position-relative">
+                            <button class="btn custom-red-button btn-restricted"
+                                    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="bottom"
+                                    data-bs-custom-class="custom-tooltip"
+                                    data-bs-html="true"
+                                    title="<div class='tooltip-content'>
+                                              <strong>Informasi</strong><br>
+                                              Ajukan approval untuk<br>
+                                              modifikasi laporan
+                                           </div>">
+                                <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+                            </button>
+                        </div>
+                    @endif
 
                     {{-- Search Input --}}
                     <div class="input-group" style="width: 250px;">
@@ -191,7 +389,7 @@
                     </div>
 
                     {{-- Filter Dropdown --}}
-                    <div class="dropdown">
+                    <div class="dropdown" style="z-index: 1055">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             <i class="fas fa-filter me-1"></i> Filter
                             <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
@@ -208,16 +406,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Tanggal Mulai</label>
-                                <input type="date" id="filter-start-date" class="form-control" value="{{ request('start_date') }}">
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Tanggal Akhir</label>
-                                <input type="date" id="filter-end-date" class="form-control" value="{{ request('end_date') }}">
                             </div>
 
                             {{-- Filter Action Buttons --}}
@@ -248,52 +436,182 @@
             </div>
         </div>
     </div>
+
+    {{-- Preview Modal --}}
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #F8285A; color: white;">
+                    <h5 class="modal-title text-white" id="previewModalLabel">Preview Files</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0" style="height: 70vh;">
+                    <div class="preview-container h-100 position-relative d-flex align-items-center justify-content-center" style="background: #f8f9fa;">
+                        <!-- Slides will be dynamically inserted here -->
+                        <div id="previewSlides" class="w-100 h-100"></div>
+
+                        <!-- Navigation buttons -->
+                        <button type="button" id="prevBtn" class="btn btn-primary position-absolute start-0 top-50 translate-middle-y ms-3" style="z-index: 10; display: none;">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button type="button" id="nextBtn" class="btn btn-primary position-absolute end-0 top-50 translate-middle-y me-3" style="z-index: 10; display: none;">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <div>
+                            <strong id="currentFileName">File Name</strong>
+                            <div class="text-muted small" id="fileCounter">1 of 1</div>
+                        </div>
+                        <div>
+                            <button type="button" id="downloadBtn" class="btn btn-success btn-sm me-2">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
     <script>
         $(document).ready(function() {
             // Initialize DataTable functionality but disable default features
-            const table = $("#kt_datatable_dom_positioning_sumberdaya");
+            let dataTable = null;
 
-            if (table.length > 0) {
-                table.DataTable({
-                    paging: false,
-                    info: false,
-                    searching: false,
-                    ordering: false,
-                    responsive: false,
-                    autoWidth: false,
-                    scrollX: false,
-                    language: {
-                        emptyTable: "Data tidak ditemukan",
-                        zeroRecords: "Tidak ada data yang cocok dengan pencarian"
-                    }
+            function initializeDataTable() {
+                const table = $("#kt_datatable_dom_positioning_sumberdaya");
+
+                // Destroy existing DataTable if it exists
+                if (dataTable) {
+                    dataTable.destroy();
+                }
+
+                if (table.length > 0) {
+                    dataTable = table.DataTable({
+                        paging: false,
+                        info: false,
+                        searching: false,
+                        ordering: false,
+                        responsive: false,
+                        autoWidth: false,
+                        scrollX: false,
+                        language: {
+                            emptyTable: "Data tidak ditemukan",
+                            zeroRecords: "Tidak ada data yang cocok dengan pencarian"
+                        },
+                        columnDefs: [{
+                            targets: -1,
+                            orderable: false,
+                            searchable: false
+                        }]
+                    });
+                }
+            }
+
+            // Initialize DataTable on page load
+            initializeDataTable();
+
+            // Initialize tooltips and dropdown events
+            function initializeTooltips() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl, {
+                        trigger: 'hover focus'
+                    });
                 });
             }
 
-            // Dropdown positioning fix
-            $('.dropdown').on('show.bs.dropdown', function() {
-                const $dropdown = $(this);
-                const $menu = $dropdown.find('.dropdown-menu');
-                const $button = $dropdown.find('.dropdown-toggle');
+            function initializeDropdownEvents() {
+                $(document).off('click', '.dropdown-toggle-custom');
+                $(document).off('mouseenter', '.dropdown-action');
+                $(document).off('mouseleave', '.dropdown-action');
 
-                const buttonRect = $button[0].getBoundingClientRect();
-                const viewportHeight = window.innerHeight;
-                const spaceBelow = viewportHeight - buttonRect.bottom;
+                $(document).on('click', '.dropdown-toggle-custom', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                if (spaceBelow < 200) {
-                    $menu.css({
-                        'top': 'auto',
-                        'bottom': '100%',
-                        'transform': 'translateY(-8px)'
+                    const $dropdownAction = $(this).closest('.dropdown-action');
+                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
+
+                    // Close all other dropdowns
+                    $('.dropdown-menu-custom').not($menu).removeClass('show');
+
+                    // Toggle this dropdown
+                    $menu.toggleClass('show');
+
+                    // Check position
+                    checkDropdownPosition($dropdownAction);
+                });
+
+                // Function to check dropdown position - modified to force dropup for bottom rows
+                function checkDropdownPosition($dropdownAction) {
+                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
+                    if (!$menu.hasClass('show')) return;
+
+                    // Reset position class
+                    $dropdownAction.removeClass('dropup');
+
+                    // Check if this is the last row of the table
+                    const $row = $dropdownAction.closest('tr');
+                    const $table = $row.closest('tbody');
+                    const rowIndex = $table.find('tr').index($row);
+                    const totalRows = $table.find('tr').length;
+
+                    // Only apply dropup to the last row
+                    if (rowIndex === totalRows - 1) {
+                        $dropdownAction.addClass('dropup');
+                    }
+                }
+
+                // Close dropdown when clicking outside
+                $(document).on('click', function(e) {
+                    if (!$(e.target).closest('.dropdown-action').length) {
+                        $('.dropdown-menu-custom').removeClass('show');
+                    }
+                });
+
+                // Handle window resize
+                $(window).on('resize', function() {
+                    $('.dropdown-action').each(function() {
+                        if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
+                            checkDropdownPosition($(this));
+                        }
+                    });
+                });
+
+                if (window.innerWidth > 768) {
+                    $(document).on('mouseenter', '.dropdown-action', function() {
+                        const $menu = $(this).find('.dropdown-menu-custom');
+                        $menu.addClass('show');
+                        checkDropdownPosition($(this));
+                    }).on('mouseleave', '.dropdown-action', function() {
+                        const $menu = $(this).find('.dropdown-menu-custom');
+                        setTimeout(() => {
+                            if (!$menu.is(':hover')) {
+                                $menu.removeClass('show');
+                            }
+                        }, 100);
+                    });
+
+                    $(document).on('mouseenter', '.dropdown-menu-custom', function() {
+                        clearTimeout($(this).data('timeout'));
+                    }).on('mouseleave', '.dropdown-menu-custom', function() {
+                        const $menu = $(this);
+                        $menu.data('timeout', setTimeout(() => {
+                            $menu.removeClass('show');
+                        }, 200));
                     });
                 }
-            });
+            }
 
-            $('.table-responsive').on('scroll', function() {
-                $('.dropdown.show').dropdown('hide');
-            });
+            // Initialize tooltips and dropdown events
+            initializeTooltips();
+            initializeDropdownEvents();
 
             // AJAX functions
             function showLoading() {
@@ -337,24 +655,10 @@
                         // Update URL without page reload
                         window.history.pushState(null, null, currentUrl.toString());
 
-                        // Reinitialize DataTable for new content
-                        const newTable = $("#kt_datatable_dom_positioning_sumberdaya");
-                        if (newTable.length > 0) {
-                            newTable.DataTable({
-                                paging: false,
-                                info: false,
-                                searching: false,
-                                ordering: false,
-                                responsive: false,
-                                autoWidth: false,
-                                scrollX: false,
-                                language: {
-                                    emptyTable: "Data tidak ditemukan",
-                                    zeroRecords: "Tidak ada data yang cocok dengan pencarian"
-                                }
-                            });
-                        }
-
+                        // Reinitialize DataTable, tooltips and dropdown events for new content
+                        initializeDataTable();
+                        initializeTooltips();
+                        initializeDropdownEvents();
                         updateFilterCount();
                     },
                     error: function() {
@@ -452,6 +756,141 @@
             }
 
             updateFilterCount();
+
+            // Preview Modal functionality
+            let currentFiles = [];
+            let currentIndex = 0;
+            let currentType = '';
+
+            const previewModal = document.getElementById('previewModal');
+            const previewSlides = document.getElementById('previewSlides');
+            const currentFileName = document.getElementById('currentFileName');
+            const fileCounter = document.getElementById('fileCounter');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const modalTitle = document.getElementById('previewModalLabel');
+
+            // Handle preview button clicks
+            $(document).on('click', '.preview-btn', function() {
+                const btn = $(this);
+                currentFiles = JSON.parse(btn.attr('data-files'));
+                currentType = btn.attr('data-type');
+                currentIndex = 0;
+                modalTitle.textContent = btn.attr('data-title');
+
+                loadPreview();
+            });
+
+            function loadPreview() {
+                previewSlides.innerHTML = '';
+
+                currentFiles.forEach((file, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
+
+                    if (currentType === 'image') {
+                        slide.innerHTML = `
+                            <img src="/storage/${file}" alt="Preview" class="preview-image">
+                        `;
+                    } else {
+                        const fileName = file.split('/').pop();
+                        const fileExtension = fileName.split('.').pop().toLowerCase();
+
+                        if (fileExtension === 'pdf') {
+                            slide.innerHTML = `
+                                <iframe src="/storage/${file}" class="preview-document"></iframe>
+                            `;
+                        } else {
+                            const iconClass = getFileIcon(fileExtension);
+                            slide.innerHTML = `
+                                <div class="document-placeholder">
+                                    <i class="${iconClass}"></i>
+                                    <h5>${fileName}</h5>
+                                    <p>Click download to view this ${fileExtension.toUpperCase()} file</p>
+                                    <a href="/storage/${file}" class="btn btn-primary" target="_blank">
+                                        <i class="fas fa-external-link-alt me-2"></i>Open File
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    previewSlides.appendChild(slide);
+                });
+
+                updateUI();
+            }
+
+            function updateUI() {
+                const fileName = currentFiles[currentIndex].split('/').pop();
+                currentFileName.textContent = fileName;
+                fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
+
+                // Show/hide navigation buttons
+                if (currentFiles.length > 1) {
+                    prevBtn.style.display = 'block';
+                    nextBtn.style.display = 'block';
+                } else {
+                    prevBtn.style.display = 'none';
+                    nextBtn.style.display = 'none';
+                }
+
+                // Update download button
+                downloadBtn.onclick = function() {
+                    window.open('/storage/' + currentFiles[currentIndex], '_blank');
+                };
+            }
+
+            function showSlide(index) {
+                document.querySelectorAll('.preview-slide').forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+                currentIndex = index;
+                updateUI();
+            }
+
+            prevBtn.addEventListener('click', function() {
+                const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
+                showSlide(newIndex);
+            });
+
+            nextBtn.addEventListener('click', function() {
+                const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
+                showSlide(newIndex);
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (previewModal.classList.contains('show')) {
+                    if (e.key === 'ArrowLeft') {
+                        prevBtn.click();
+                    } else if (e.key === 'ArrowRight') {
+                        nextBtn.click();
+                    }
+                }
+            });
+
+            function getFileIcon(extension) {
+                const icons = {
+                    'pdf': 'fas fa-file-pdf text-danger',
+                    'doc': 'fas fa-file-word text-primary',
+                    'docx': 'fas fa-file-word text-primary',
+                    'xls': 'fas fa-file-excel text-success',
+                    'xlsx': 'fas fa-file-excel text-success',
+                    'ppt': 'fas fa-file-powerpoint text-warning',
+                    'pptx': 'fas fa-file-powerpoint text-warning'
+                };
+                return icons[extension] || 'fas fa-file text-muted';
+            }
+
+            // Initialize the modal when it's shown
+            $('#previewModal').on('show.bs.modal', function() {
+                // Reset to first slide when modal is shown
+                if (currentFiles.length > 0) {
+                    showSlide(0);
+                }
+            });
         });
     </script>
 @endsection
