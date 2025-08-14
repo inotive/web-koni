@@ -114,16 +114,15 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
 
-                                <form id="form-{{ $surat->id }}" method="POST" action="{{ route('admin.surat.update', $surat->id) }}" enctype="multipart/form-data" class="d-grid gap-4">
-                                    @csrf
-                                    @method('PUT')
+                                <div id="form-{{ $surat->id }}" data-action="{{ route('admin.surat.update', $surat->id) }}" class="d-grid gap-4">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="_method" value="PUT">
 
                                     <div>
                                         <div class="fw-semibold required mb-3 text-gray-800">Nama Kegiatan</div>
                                         <input type="text" name="nama_kegiatan" value="{{ $surat->nama_kegiatan }}" placeholder="Masukkan Nama Kegiatan" class="form-control bg-light border border-gray-400" required />
                                     </div>
 
-                                    <!-- Hidden field untuk jenis surat - mengikuti jenis surat yang sudah ada -->
                                     <input type="hidden" name="jenis_surat" value="{{ $surat->jenis_surat }}">
 
                                     <div>
@@ -154,7 +153,7 @@
                                         </div>
                                         @endif
                                     </div>
-                                </form>
+                                </div>
 
                                 <div class="d-grid py-4">
                                     <button type="button" onclick="submitForm('form-{{ $surat->id }}')" id="editSubmitBtn-{{ $surat->id }}" class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
@@ -323,7 +322,6 @@
     animation: fadeIn 0.2s ease;
 }
 
-/* Dropup style */
 .dropup .dropdown-menu-custom {
     bottom: 100%;
     top: auto;

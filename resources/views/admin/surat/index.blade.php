@@ -5,242 +5,250 @@
 @section('currentSection', 'Surat Masuk & Keluar')
 
 @section('style')
-<style>
-    .filter-container {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .search-container {
-        position: relative;
-        width: 250px;
-    }
-
-    .search-input {
-        padding-left: 45px !important;
-    }
-
-    .search-icon {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #6c757d;
-        pointer-events: none;
-        z-index: 10;
-    }
-
-    .filter-dropdown, .date-filter-container {
-        position: relative;
-        width: 200px;
-    }
-
-    .filter-btn, .date-filter-btn {
-        background: white;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 8px 16px;
-        font-size: 0.95rem;
-        color: #495057;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        text-align: left;
-    }
-
-    .filter-btn:hover, .date-filter-btn:hover {
-        border-color: #F8285A;
-        color: #F8285A;
-    }
-
-    .filter-btn.filter-active, .date-filter-btn.date-filter-active {
-        background-color: #F8285A;
-        border-color: #F8285A;
-        color: white;
-    }
-
-    .filter-menu, .date-filter-menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        z-index: 1000;
-        margin-top: 4px;
-        display: none;
-    }
-
-    .filter-menu.show, .date-filter-menu.show {
-        display: block;
-    }
-
-    .filter-option {
-        padding: 12px 16px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid #f8f9fa;
-    }
-
-    .filter-option:last-child {
-        border-bottom: none;
-    }
-
-    .filter-option:hover {
-        background-color: #f8f9fa;
-    }
-
-    .filter-option.active {
-        background-color: #F8285A;
-        color: white;
-    }
-
-    .date-filter-menu {
-        padding: 16px;
-        min-width: 280px;
-    }
-
-    .date-input-group {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .date-input-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-
-    .date-input-label {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #374151;
-    }
-
-    .date-input {
-        padding: 8px 12px;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        font-size: 0.875rem;
-        color: #374151;
-        background-color: #fff;
-        transition: border-color 0.2s ease;
-    }
-
-    .date-input:focus {
-        outline: none;
-        border-color: #F8285A;
-        box-shadow: 0 0 0 3px rgba(248, 40, 90, 0.1);
-    }
-
-    .date-filter-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid #e5e7eb;
-    }
-
-    .date-filter-apply {
-        flex: 1;
-        background-color: #F8285A;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 16px;
-        font-size: 0.875rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-
-    .date-filter-apply:hover {
-        background-color: #e1244e;
-    }
-
-    .date-filter-clear {
-        background-color: #f3f4f6;
-        color: #6b7280;
-        border: none;
-        border-radius: 6px;
-        padding: 8px 16px;
-        font-size: 0.875rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-    }
-
-    .date-filter-clear:hover {
-        background-color: #e5e7eb;
-    }
-
-    .nav-tabs-custom {
-        border-bottom: 2px solid #e9ecef;
-        margin-bottom: 0;
-    }
-
-    .nav-tabs-custom .nav-link {
-        border: none;
-        border-bottom: 3px solid transparent;
-        padding: 12px 24px;
-        font-weight: 600;
-        color: #6c757d;
-        background: none;
-        border-radius: 0;
-        transition: all 0.3s ease;
-    }
-
-    .nav-tabs-custom .nav-link:hover {
-        border-bottom-color: #F8285A;
-        color: #F8285A;
-        background: none;
-    }
-
-    .nav-tabs-custom .nav-link.active {
-        color: #F8285A;
-        border-bottom-color: #F8285A;
-        background: none;
-    }
-
-    .table-loading {
-        opacity: 0.6;
-        pointer-events: none;
-    }
-
-    @media (max-width: 768px) {
+    <style>
         .filter-container {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
-        .search-container, .filter-dropdown, .date-filter-container {
-            width: 100%;
+        .search-container {
+            position: relative;
+            width: 250px;
         }
 
-        .nav-tabs-custom .nav-link {
+        .search-input {
+            padding-left: 45px !important;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .filter-dropdown,
+        .date-filter-container {
+            position: relative;
+            width: 200px;
+        }
+
+        .filter-btn,
+        .date-filter-btn {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
             padding: 8px 16px;
-            font-size: 14px;
+            font-size: 0.95rem;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            text-align: left;
+        }
+
+        .filter-btn:hover,
+        .date-filter-btn:hover {
+            border-color: #F8285A;
+            color: #F8285A;
+        }
+
+        .filter-btn.filter-active,
+        .date-filter-btn.date-filter-active {
+            background-color: #F8285A;
+            border-color: #F8285A;
+            color: white;
+        }
+
+        .filter-menu,
+        .date-filter-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .filter-menu.show,
+        .date-filter-menu.show {
+            display: block;
+        }
+
+        .filter-option {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .filter-option:last-child {
+            border-bottom: none;
+        }
+
+        .filter-option:hover {
+            background-color: #f8f9fa;
+        }
+
+        .filter-option.active {
+            background-color: #F8285A;
+            color: white;
         }
 
         .date-filter-menu {
-            min-width: 100%;
-            left: 0;
-            right: 0;
+            padding: 16px;
+            min-width: 280px;
         }
-    }
-</style>
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .date-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .date-input-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .date-input {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #374151;
+            background-color: #fff;
+            transition: border-color 0.2s ease;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #F8285A;
+            box-shadow: 0 0 0 3px rgba(248, 40, 90, 0.1);
+        }
+
+        .date-filter-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .date-filter-apply {
+            flex: 1;
+            background-color: #F8285A;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .date-filter-apply:hover {
+            background-color: #e1244e;
+        }
+
+        .date-filter-clear {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .date-filter-clear:hover {
+            background-color: #e5e7eb;
+        }
+
+        .nav-tabs-custom {
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 0;
+        }
+
+        .nav-tabs-custom .nav-link {
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 12px 24px;
+            font-weight: 600;
+            color: #6c757d;
+            background: none;
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs-custom .nav-link:hover {
+            border-bottom-color: #F8285A;
+            color: #F8285A;
+            background: none;
+        }
+
+        .nav-tabs-custom .nav-link.active {
+            color: #F8285A;
+            border-bottom-color: #F8285A;
+            background: none;
+        }
+
+        .table-loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .search-container,
+            .filter-dropdown,
+            .date-filter-container {
+                width: 100%;
+            }
+
+            .nav-tabs-custom .nav-link {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .date-filter-menu {
+                min-width: 100%;
+                left: 0;
+                right: 0;
+            }
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -252,7 +260,8 @@
             </div>
 
             <form id="filter" class="d-flex gap-3 filter-container">
-                <button type="button" id="tambahSuratBtn" class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                <button type="button" id="tambahSuratBtn"
+                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
                     <span id="tambahSuratText">Tambah Surat Masuk</span>
                 </button>
@@ -260,17 +269,20 @@
                 <div class="search-container">
                     <div class="position-relative bg-light">
                         <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari surat..." class="form-control border border-gray-500 py-2 search-input" />
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari surat..."
+                            class="form-control border border-gray-500 py-2 search-input" />
                     </div>
                 </div>
 
                 <div class="date-filter-container">
-                    <div class="date-filter-btn {{ (request('start_date') || request('end_date')) ? 'date-filter-active' : '' }}" id="dateFilterBtn">
+                    <div class="date-filter-btn {{ request('start_date') || request('end_date') ? 'date-filter-active' : '' }}"
+                        id="dateFilterBtn">
                         <span>
-                            @if(request('start_date') || request('end_date'))
+                            @if (request('start_date') || request('end_date'))
                                 <i class="fas fa-calendar-check me-2"></i>
-                                @if(request('start_date') && request('end_date'))
-                                    {{ date('d/m/Y', strtotime(request('start_date'))) }} - {{ date('d/m/Y', strtotime(request('end_date'))) }}
+                                @if (request('start_date') && request('end_date'))
+                                    {{ date('d/m/Y', strtotime(request('start_date'))) }} -
+                                    {{ date('d/m/Y', strtotime(request('end_date'))) }}
                                 @elseif(request('start_date'))
                                     Dari {{ date('d/m/Y', strtotime(request('start_date'))) }}
                                 @else
@@ -287,7 +299,8 @@
                         <div class="date-input-group">
                             <div class="date-input-wrapper">
                                 <label class="date-input-label">Tanggal Dibuat</label>
-                                <input type="date" name="end_date" value="{{ request('end_date') }}" class="date-input" id="endDateInput">
+                                <input type="date" name="end_date" value="{{ request('end_date') }}" class="date-input"
+                                    id="endDateInput">
                             </div>
                         </div>
                         <div class="date-filter-actions">
@@ -305,12 +318,14 @@
             <div class="card-header border-bottom-0 pb-0">
                 <ul class="nav nav-tabs nav-tabs-custom" id="suratTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content" type="button" role="tab" aria-controls="masuk-content" aria-selected="true">
+                        <button class="nav-link active" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content"
+                            type="button" role="tab" aria-controls="masuk-content" aria-selected="true">
                             <i class="fas fa-inbox me-2"></i>Surat Masuk
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="keluar-tab" data-bs-toggle="tab" data-bs-target="#keluar-content" type="button" role="tab" aria-controls="keluar-content" aria-selected="false">
+                        <button class="nav-link" id="keluar-tab" data-bs-toggle="tab" data-bs-target="#keluar-content"
+                            type="button" role="tab" aria-controls="keluar-content" aria-selected="false">
                             <i class="fas fa-paper-plane me-2"></i>Surat Keluar
                         </button>
                     </li>
@@ -321,13 +336,19 @@
                 <div class="tab-content tab-content-custom" id="suratTabContent">
                     <div class="tab-pane fade show active" id="masuk-content" role="tabpanel" aria-labelledby="masuk-tab">
                         <div id="table-masuk">
-                            @include('admin.surat._table', ['suratData' => $suratMasuk, 'tableId' => 'masuk'])
+                            @include('admin.surat._table', [
+                                'suratData' => $suratMasuk,
+                                'tableId' => 'masuk',
+                            ])
                         </div>
                     </div>
 
                     <div class="tab-pane fade" id="keluar-content" role="tabpanel" aria-labelledby="keluar-tab">
                         <div id="table-keluar">
-                            @include('admin.surat._table', ['suratData' => $suratKeluar, 'tableId' => 'keluar'])
+                            @include('admin.surat._table', [
+                                'suratData' => $suratKeluar,
+                                'tableId' => 'keluar',
+                            ])
                         </div>
                     </div>
                 </div>
@@ -335,7 +356,7 @@
         </div>
     </div>
 
- <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
+    <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 gap-5 px-10 py-8">
                 <div class="d-flex justify-content-between align-items-center gap-2">
@@ -343,15 +364,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="formAdd" method="POST" action="{{ route('admin.surat.store') }}" enctype="multipart/form-data" class="d-grid gap-4">
+                <form id="formAdd" method="POST" action="{{ route('admin.surat.store') }}"
+                    enctype="multipart/form-data" class="d-grid gap-4">
                     @csrf
 
                     <div>
                         <div class="fw-semibold required mb-3 text-gray-800">Nama Kegiatan</div>
-                        <input type="text" name="nama_kegiatan" placeholder="Masukkan Nama Kegiatan" class="form-control bg-light border border-gray-400" required />
+                        <input type="text" name="nama_kegiatan" placeholder="Masukkan Nama Kegiatan"
+                            class="form-control bg-light border border-gray-400" required />
                     </div>
 
-                    <!-- Hidden field untuk jenis surat -->
                     <input type="hidden" name="jenis_surat" id="hiddenJenisSurat" value="masuk">
 
                     <div>
@@ -366,7 +388,8 @@
                                     </i>
                                     <div class="ms-4">
                                         <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
-                                        <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX. Max. 10 MB.</span>
+                                        <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX. Max. 10
+                                            MB.</span>
                                     </div>
                                 </div>
                             </div>
@@ -375,7 +398,8 @@
                 </form>
 
                 <div class="d-grid py-4">
-                    <button type="button" onclick="submitForm('formAdd')" id="submitBtn" class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                    <button type="button" onclick="submitForm('formAdd')" id="submitBtn"
+                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                         Tambah Surat Masuk
                     </button>
                 </div>
@@ -385,235 +409,51 @@
 @endsection
 
 @section('script')
-<script>
-    let currentFilter = '{{ request("jenis_surat", "all") }}';
-    let currentTab = 'masuk';
-    Dropzone.autoDiscover = false;
-    const dropzones = {};
+    <script>
+        let currentFilter = '{{ request('jenis_surat', 'all') }}';
+        let currentTab = 'masuk';
+        Dropzone.autoDiscover = false;
+        const dropzones = {};
 
-    function updateAddButtonText() {
-        const isKeluar = currentTab === 'keluar';
-        const buttonText = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
-        const modalTitle = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
+        function updateAddButtonText() {
+            const isKeluar = currentTab === 'keluar';
+            const buttonText = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
+            const modalTitle = isKeluar ? 'Tambah Surat Keluar' : 'Tambah Surat Masuk';
 
-        $('#tambahSuratText').text(buttonText);
-        $('#modalTitle').text(modalTitle);
-        $('#submitBtn').text(buttonText);
-        $('#jenisSuratSelect').val(currentTab === 'keluar' ? 'keluar' : 'masuk');
-    }
-
-    function updateDateFilterButton() {
-        const endDate = $('#endDateInput').val();
-        const button = $('#dateFilterBtn');
-        const span = button.find('span');
-
-        if (endDate) {
-            button.addClass('date-filter-active');
-            const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
-            span.html(`<i class="fas fa-calendar-check me-2"></i>Tanggal ${endFormatted}`);
-        } else {
-            button.removeClass('date-filter-active');
-            span.html('<i class="fas fa-calendar me-2"></i>Filter Tanggal');
-        }
-    }
-
-    function reloadTable(url = null) {
-        let formData = $('#filter').serialize();
-        let target = url ?? "{{ route('admin.surat.index') }}";
-        formData += '&tab=' + currentTab;
-
-        $.ajax({
-            url: target,
-            data: formData,
-            beforeSend: function() {
-                $(`#table-${currentTab}`).addClass('table-loading');
-                $(`#table-${currentTab}`).html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
-            },
-            success: function(response) {
-                $(`#table-${currentTab}`).removeClass('table-loading');
-                $(`#table-${currentTab}`).html(response);
-                initializeDropzones();
-                initializeDropdownEvents();
-                updateURL(formData);
-            },
-            error: function(xhr) {
-                $(`#table-${currentTab}`).removeClass('table-loading');
-                $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
-            }
-        });
-    }
-
-    function updateURL(formData) {
-        if (window.history && window.history.pushState) {
-            const url = new URL(window.location);
-            const searchParams = new URLSearchParams(formData);
-
-            for (const [key, value] of searchParams.entries()) {
-                if (value && key !== 'tab') {
-                    url.searchParams.set(key, value);
-                } else if (key !== 'tab') {
-                    url.searchParams.delete(key);
-                }
-            }
-            window.history.pushState({}, '', url);
-        }
-    }
-
-    function initializeDropdownEvents() {
-        $(document).off('click', '.dropdown-toggle-custom');
-        $(document).on('click', '.dropdown-toggle-custom', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            $('.dropdown-menu-custom').removeClass('show');
-
-            const $menu = $(this).siblings('.dropdown-menu-custom');
-            $menu.addClass('show');
-        });
-
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.dropdown-action').length) {
-                $('.dropdown-menu-custom').removeClass('show');
-            }
-        });
-
-        $(document).on('click', '.dropdown-menu-custom', function(e) {
-            e.stopPropagation();
-        });
-    }
-
-    function debounce(func, delay) {
-        let timeout;
-        return function() {
-            const context = this, args = arguments;
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(context, args), delay);
-        };
-    }
-
-    function initializeDropzones() {
-        Object.keys(dropzones).forEach(key => {
-            if (dropzones[key] && typeof dropzones[key].destroy === 'function') {
-                dropzones[key].destroy();
-                delete dropzones[key];
-            }
-        });
-
-        if (document.getElementById('dropzone-formAdd')) {
-            dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
-                url: "#",
-                autoProcessQueue: false,
-                paramName: 'dokumen_surat',
-                maxFiles: 1,
-                maxFilesize: 10,
-                addRemoveLinks: true,
-                acceptedFiles: '.pdf,.doc,.docx',
-            });
+            $('#tambahSuratText').text(buttonText);
+            $('#modalTitle').text(modalTitle);
+            $('#submitBtn').text(buttonText);
+            $('#jenisSuratSelect').val(currentTab === 'keluar' ? 'keluar' : 'masuk');
         }
 
-        document.querySelectorAll('[id^="dropzone-form-"]').forEach(element => {
-            const formId = element.id.replace('dropzone-', '');
-            if (!dropzones[formId]) {
-                dropzones[formId] = new Dropzone(`#${element.id}`, {
-                    url: "#",
-                    autoProcessQueue: false,
-                    paramName: 'dokumen_surat',
-                    maxFiles: 1,
-                    maxFilesize: 10,
-                    addRemoveLinks: true,
-                    acceptedFiles: '.pdf,.doc,.docx',
-                });
-            }
-        });
-    }
+        function updateDateFilterButton() {
+            const endDate = $('#endDateInput').val();
+            const button = $('#dateFilterBtn');
+            const span = button.find('span');
 
-    $(document).ready(function() {
-        initializeDropzones();
-        initializeDropdownEvents();
-        updateAddButtonText();
-        updateDateFilterButton();
-
-        $('#tambahSuratBtn').on('click', function() {
-            $('#add').modal('show');
-        });
-
-        $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
-            const targetId = $(e.target).attr('data-bs-target');
-            currentTab = targetId.replace('#', '').replace('-content', '');
-            updateAddButtonText();
-            reloadTable();
-        });
-
-        $('#filterBtn').on('click', function(e) {
-            e.stopPropagation();
-            $('#filterMenu').toggleClass('show');
-            $('#dateFilterMenu').removeClass('show');
-        });
-
-        $('#dateFilterBtn').on('click', function(e) {
-            e.stopPropagation();
-            $('#dateFilterMenu').toggleClass('show');
-            $('#filterMenu').removeClass('show');
-        });
-
-        $(document).on('click', function() {
-            $('#filterMenu').removeClass('show');
-            $('#dateFilterMenu').removeClass('show');
-        });
-
-        $('.filter-option').on('click', function(e) {
-            e.stopPropagation();
-            const filterType = $(this).data('filter');
-            if (filterType === currentFilter) return;
-
-            $('.filter-option').removeClass('active');
-            $(this).addClass('active');
-
-            const filterContent = $(this).find('span').html();
-            $('#filterBtn span').html(filterContent);
-
-            if (filterType === 'all') {
-                $('#filterBtn').removeClass('filter-active');
+            if (endDate) {
+                button.addClass('date-filter-active');
+                const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
+                span.html(`<i class="fas fa-calendar-check me-2"></i>Tanggal ${endFormatted}`);
             } else {
-                $('#filterBtn').addClass('filter-active');
+                button.removeClass('date-filter-active');
+                span.html('<i class="fas fa-calendar me-2"></i>Filter Tanggal');
             }
+        }
 
-            currentFilter = filterType;
-            $('#jenis_surat_input').val(filterType);
-            reloadTable();
-            $('#filterMenu').removeClass('show');
-        });
-
-        $('#applyDateFilter').on('click', function() {
-            updateDateFilterButton();
-            reloadTable();
-            $('#dateFilterMenu').removeClass('show');
-        });
-
-        $('#clearDateFilter').on('click', function() {
-            $('#endDateInput').val('');
-            updateDateFilterButton();
-            reloadTable();
-            $('#dateFilterMenu').removeClass('show');
-        });
-
-        $(document).on('input', '#filter input[name="search"]', debounce(function() {
-            let keyword = $(this).val();
-            if (keyword.length >= 1 || keyword.length === 0) {
-                reloadTable();
-            }
-        }, 300));
-
-        $(document).on('change', 'select[name="per_page"]', function() {
-            const newPerPage = $(this).val();
-            const formData = $('#filter').serialize() + '&tab=' + currentTab + '&per_page=' + newPerPage;
+        function reloadTable(url = null) {
+            let formData = $('#filter').serialize();
+            let target = url ?? "{{ route('admin.surat.index') }}";
+            formData += '&tab=' + currentTab;
 
             $.ajax({
-                url: "{{ route('admin.surat.index') }}",
+                url: target,
                 data: formData,
                 beforeSend: function() {
                     $(`#table-${currentTab}`).addClass('table-loading');
-                    $(`#table-${currentTab}`).html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                    $(`#table-${currentTab}`).html(
+                        '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
+                        );
                 },
                 success: function(response) {
                     $(`#table-${currentTab}`).removeClass('table-loading');
@@ -624,28 +464,188 @@
                 },
                 error: function(xhr) {
                     $(`#table-${currentTab}`).removeClass('table-loading');
-                    $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                    $(`#table-${currentTab}`).html(
+                        '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                        );
                 }
             });
-        });
+        }
 
-        $(document).on('click', '.pagination-link', function(e) {
-            e.preventDefault();
-            let url = $(this).attr('href');
-            if (url) {
-                const urlObj = new URL(url);
-                const page = urlObj.searchParams.get('page');
+        function updateURL(formData) {
+            if (window.history && window.history.pushState) {
+                const url = new URL(window.location);
+                const searchParams = new URLSearchParams(formData);
 
-                let formData = $('#filter').serialize();
-                formData += '&tab=' + currentTab;
-                formData += '&page=' + page;
+                for (const [key, value] of searchParams.entries()) {
+                    if (value && key !== 'tab') {
+                        url.searchParams.set(key, value);
+                    } else if (key !== 'tab') {
+                        url.searchParams.delete(key);
+                    }
+                }
+                window.history.pushState({}, '', url);
+            }
+        }
+
+        function initializeDropdownEvents() {
+            $(document).off('click', '.dropdown-toggle-custom');
+            $(document).on('click', '.dropdown-toggle-custom', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                $('.dropdown-menu-custom').removeClass('show');
+
+                const $menu = $(this).siblings('.dropdown-menu-custom');
+                $menu.addClass('show');
+            });
+
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.dropdown-action').length) {
+                    $('.dropdown-menu-custom').removeClass('show');
+                }
+            });
+
+            $(document).on('click', '.dropdown-menu-custom', function(e) {
+                e.stopPropagation();
+            });
+        }
+
+        function debounce(func, delay) {
+            let timeout;
+            return function() {
+                const context = this,
+                    args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        function initializeDropzones() {
+            Object.keys(dropzones).forEach(key => {
+                if (dropzones[key] && typeof dropzones[key].destroy === 'function') {
+                    dropzones[key].destroy();
+                    delete dropzones[key];
+                }
+            });
+
+            if (document.getElementById('dropzone-formAdd')) {
+                dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
+                    url: "#",
+                    autoProcessQueue: false,
+                    paramName: 'dokumen_surat',
+                    maxFiles: 1,
+                    maxFilesize: 10,
+                    addRemoveLinks: true,
+                    acceptedFiles: '.pdf,.doc,.docx',
+                });
+            }
+
+            document.querySelectorAll('[id^="dropzone-form-"]').forEach(element => {
+                const formId = element.id.replace('dropzone-', '');
+                if (!dropzones[formId]) {
+                    dropzones[formId] = new Dropzone(`#${element.id}`, {
+                        url: "#",
+                        autoProcessQueue: false,
+                        paramName: 'dokumen_surat',
+                        maxFiles: 1,
+                        maxFilesize: 10,
+                        addRemoveLinks: true,
+                        acceptedFiles: '.pdf,.doc,.docx',
+                    });
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            initializeDropzones();
+            initializeDropdownEvents();
+            updateAddButtonText();
+            updateDateFilterButton();
+
+            $('#tambahSuratBtn').on('click', function() {
+                $('#add').modal('show');
+            });
+
+            $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
+                const targetId = $(e.target).attr('data-bs-target');
+                currentTab = targetId.replace('#', '').replace('-content', '');
+                updateAddButtonText();
+                reloadTable();
+            });
+
+            $('#filterBtn').on('click', function(e) {
+                e.stopPropagation();
+                $('#filterMenu').toggleClass('show');
+                $('#dateFilterMenu').removeClass('show');
+            });
+
+            $('#dateFilterBtn').on('click', function(e) {
+                e.stopPropagation();
+                $('#dateFilterMenu').toggleClass('show');
+                $('#filterMenu').removeClass('show');
+            });
+
+            $(document).on('click', function() {
+                $('#filterMenu').removeClass('show');
+                $('#dateFilterMenu').removeClass('show');
+            });
+
+            $('.filter-option').on('click', function(e) {
+                e.stopPropagation();
+                const filterType = $(this).data('filter');
+                if (filterType === currentFilter) return;
+
+                $('.filter-option').removeClass('active');
+                $(this).addClass('active');
+
+                const filterContent = $(this).find('span').html();
+                $('#filterBtn span').html(filterContent);
+
+                if (filterType === 'all') {
+                    $('#filterBtn').removeClass('filter-active');
+                } else {
+                    $('#filterBtn').addClass('filter-active');
+                }
+
+                currentFilter = filterType;
+                $('#jenis_surat_input').val(filterType);
+                reloadTable();
+                $('#filterMenu').removeClass('show');
+            });
+
+            $('#applyDateFilter').on('click', function() {
+                updateDateFilterButton();
+                reloadTable();
+                $('#dateFilterMenu').removeClass('show');
+            });
+
+            $('#clearDateFilter').on('click', function() {
+                $('#endDateInput').val('');
+                updateDateFilterButton();
+                reloadTable();
+                $('#dateFilterMenu').removeClass('show');
+            });
+
+            $(document).on('input', '#filter input[name="search"]', debounce(function() {
+                let keyword = $(this).val();
+                if (keyword.length >= 1 || keyword.length === 0) {
+                    reloadTable();
+                }
+            }, 300));
+
+            $(document).on('change', 'select[name="per_page"]', function() {
+                const newPerPage = $(this).val();
+                const formData = $('#filter').serialize() + '&tab=' + currentTab + '&per_page=' +
+                newPerPage;
 
                 $.ajax({
                     url: "{{ route('admin.surat.index') }}",
                     data: formData,
                     beforeSend: function() {
                         $(`#table-${currentTab}`).addClass('table-loading');
-                        $(`#table-${currentTab}`).html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                        $(`#table-${currentTab}`).html(
+                            '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
+                            );
                     },
                     success: function(response) {
                         $(`#table-${currentTab}`).removeClass('table-loading');
@@ -656,193 +656,277 @@
                     },
                     error: function(xhr) {
                         $(`#table-${currentTab}`).removeClass('table-loading');
-                        $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                        $(`#table-${currentTab}`).html(
+                            '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                            );
                     }
                 });
+            });
+
+            $(document).on('click', '.pagination-link', function(e) {
+                e.preventDefault();
+                let url = $(this).attr('href');
+                if (url) {
+                    const urlObj = new URL(url);
+                    const page = urlObj.searchParams.get('page');
+
+                    let formData = $('#filter').serialize();
+                    formData += '&tab=' + currentTab;
+                    formData += '&page=' + page;
+
+                    $.ajax({
+                        url: "{{ route('admin.surat.index') }}",
+                        data: formData,
+                        beforeSend: function() {
+                            $(`#table-${currentTab}`).addClass('table-loading');
+                            $(`#table-${currentTab}`).html(
+                                '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
+                                );
+                        },
+                        success: function(response) {
+                            $(`#table-${currentTab}`).removeClass('table-loading');
+                            $(`#table-${currentTab}`).html(response);
+                            initializeDropzones();
+                            initializeDropdownEvents();
+                            updateURL(formData);
+                        },
+                        error: function(xhr) {
+                            $(`#table-${currentTab}`).removeClass('table-loading');
+                            $(`#table-${currentTab}`).html(
+                                '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                                );
+                        }
+                    });
+                }
+            });
+
+            $('#filterMenu, #dateFilterMenu').on('click', function(e) {
+                e.stopPropagation();
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const filterFromURL = urlParams.get('jenis_surat') || 'all';
+            if (filterFromURL !== currentFilter) {
+                $(`.filter-option[data-filter="${filterFromURL}"]`).click();
+            }
+
+            if (filterFromURL === 'keluar') {
+                $('#keluar-tab').tab('show');
+                currentTab = 'keluar';
+                updateAddButtonText();
             }
         });
 
-        $('#filterMenu, #dateFilterMenu').on('click', function(e) {
-            e.stopPropagation();
-        });
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const filterFromURL = urlParams.get('jenis_surat') || 'all';
-        if (filterFromURL !== currentFilter) {
-            $(`.filter-option[data-filter="${filterFromURL}"]`).click();
-        }
+        function submitForm(formId) {
+            const formElement = document.getElementById(formId);
 
-        if (filterFromURL === 'keluar') {
-            $('#keluar-tab').tab('show');
-            currentTab = 'keluar';
-            updateAddButtonText();
-        }
-    });
-
-    function submitForm(formId) {
-        let form = document.getElementById(formId);
-        let formData = new FormData(form);
-
-        const dz = dropzones[formId];
-        if (dz) {
-            const files = dz.getAcceptedFiles();
-            if (files.length > 0) {
-                files.forEach((file) => {
-                    formData.append('dokumen_surat', file);
-                });
+            if (!formElement) {
+                toastr.error("Form tidak ditemukan", "Error!");
+                return;
             }
-        }
 
-        fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: formData,
-            })
-            .then(async response => {
-                const data = await response.json();
+            let formData = new FormData();
+            let actionUrl;
 
-                if (!response.ok) {
-                    $('.modal.show').modal('hide');
-                    if (data.errors) {
-                        for (let field in data.errors) {
-                            let msg = data.errors[field].join(', ');
-                            toastr.error(msg, "Error!");
+            if (formId === 'formAdd') {
+                const form = formElement;
+                formData = new FormData(form);
+                actionUrl = form.action;
+            } else {
+                const container = formElement;
+                actionUrl = container.getAttribute('data-action');
+
+                const inputs = container.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    if (input.type === 'file') {
+                        return;
+                    }
+                    if (input.type === 'checkbox' || input.type === 'radio') {
+                        if (input.checked) {
+                            formData.append(input.name, input.value);
                         }
                     } else {
-                        toastr.error(data.message || "Gagal menyimpan data", "Error!");
+                        formData.append(input.name, input.value);
                     }
-                } else {
-                    $('.modal.show').modal('hide');
-                    toastr.success(data.message || "Data berhasil disimpan", "Success!");
-
-                    form.reset();
-                    if (dropzones[formId]) {
-                        dropzones[formId].removeAllFiles();
-                    }
-
-                    updateAddButtonText();
-                    reloadTable();
-                }
-            })
-            .catch(error => {
-                $('.modal.show').modal('hide');
-                toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
-            });
-    }
-
-    function deleteItem(formId) {
-        if (confirm('Apakah Anda yakin ingin menghapus surat ini?')) {
-            fetch(document.getElementById(formId).action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: new FormData(document.getElementById(formId))
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    toastr.success(data.message || "Data berhasil dihapus", "Success!");
-                    reloadTable();
-                } else {
-                    toastr.error(data.message || "Gagal menghapus data", "Error!");
-                }
-            })
-            .catch(error => {
-                toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
-            });
-        }
-    }
-function initializeDropdownEvents() {
-    $(document).off('click', '.dropdown-toggle-custom');
-    $(document).off('mouseenter', '.dropdown-action');
-    $(document).off('mouseleave', '.dropdown-action');
-
-    $(document).on('click', '.dropdown-toggle-custom', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const $dropdownAction = $(this).closest('.dropdown-action');
-        const $menu = $dropdownAction.find('.dropdown-menu-custom');
-
-        // Close all other dropdowns
-        $('.dropdown-menu-custom').not($menu).removeClass('show');
-
-        // Toggle this dropdown
-        $menu.toggleClass('show');
-
-        // Check position
-        checkDropdownPosition($dropdownAction);
-    });
-
-    // Function to check dropdown position - modified to force dropup for bottom rows
-   function checkDropdownPosition($dropdownAction) {
-    const $menu = $dropdownAction.find('.dropdown-menu-custom');
-    if (!$menu.hasClass('show')) return;
-
-    const menuHeight = $menu.outerHeight();
-    const dropdownOffset = $dropdownAction.offset();
-    const windowHeight = $(window).height();
-    const spaceBelow = windowHeight - dropdownOffset.top - $dropdownAction.outerHeight();
-
-    // Reset position class
-    $dropdownAction.removeClass('dropup');
-
-    // Check if this is the last row of the table
-    const $row = $dropdownAction.closest('tr');
-    const $table = $row.closest('tbody');
-    const rowIndex = $table.find('tr').index($row);
-    const totalRows = $table.find('tr').length;
-
-    // Only apply dropup to the last row
-    if (rowIndex === totalRows - 1) {
-        $dropdownAction.addClass('dropup');
-    }
-}
-
-    // Close dropdown when clicking outside
-    $(document).on('click', function(e) {
-        if (!$(e.target).closest('.dropdown-action').length) {
-            $('.dropdown-menu-custom').removeClass('show');
-        }
-    });
-
-    // Handle window resize
-    $(window).on('resize', function() {
-        $('.dropdown-action').each(function() {
-            if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
-                checkDropdownPosition($(this));
+                });
             }
-        });
-    });
 
-    if (window.innerWidth > 768) {
-        $(document).on('mouseenter', '.dropdown-action', function() {
-            const $menu = $(this).find('.dropdown-menu-custom');
-            $menu.addClass('show');
-            checkDropdownPosition($(this));
-        }).on('mouseleave', '.dropdown-action', function() {
-            const $menu = $(this).find('.dropdown-menu-custom');
-            setTimeout(() => {
-                if (!$menu.is(':hover')) {
-                    $menu.removeClass('show');
+            const dz = dropzones[formId];
+            if (dz) {
+                const files = dz.getAcceptedFiles();
+                if (files.length > 0) {
+                    files.forEach((file) => {
+                        formData.append('dokumen_surat', file);
+                    });
                 }
-            }, 100);
-        });
+            }
 
-        $(document).on('mouseenter', '.dropdown-menu-custom', function() {
-            clearTimeout($(this).data('timeout'));
-        }).on('mouseleave', '.dropdown-menu-custom', function() {
-            const $menu = $(this);
-            $menu.data('timeout', setTimeout(() => {
-                $menu.removeClass('show');
-            }, 200));
-        });
-    }
-}
-</script>
+            if (formId !== 'formAdd') {
+                const hiddenJenisSurat = document.querySelector(`#${formId} input[name="jenis_surat"]`);
+                if (hiddenJenisSurat) {
+                    formData.set('jenis_surat', hiddenJenisSurat.value);
+                } else {
+                    formData.set('jenis_surat', currentTab);
+                }
+            }
+
+            fetch(actionUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                            '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData,
+                })
+                .then(async response => {
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        $('.modal.show').modal('hide');
+                        if (data.errors) {
+                            for (let field in data.errors) {
+                                let msg = data.errors[field].join(', ');
+                                toastr.error(msg, "Error!");
+                            }
+                        } else {
+                            toastr.error(data.message || "Gagal menyimpan data", "Error!");
+                        }
+                    } else {
+                        $('.modal.show').modal('hide');
+                        toastr.success(data.message || "Data berhasil disimpan", "Success!");
+
+                        if (formId === 'formAdd') {
+                            formElement.reset();
+                        }
+
+                        if (dropzones[formId]) {
+                            dropzones[formId].removeAllFiles();
+                        }
+
+                        updateAddButtonText();
+                        reloadTable();
+                    }
+                })
+                .catch(error => {
+                    $('.modal.show').modal('hide');
+                    toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+                    console.error('Error:', error);
+                });
+        }
+
+        function deleteItem(formId) {
+            if (confirm('Apakah Anda yakin ingin menghapus surat ini?')) {
+                fetch(document.getElementById(formId).action, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: new FormData(document.getElementById(formId))
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            toastr.success(data.message || "Data berhasil dihapus", "Success!");
+                            reloadTable();
+                        } else {
+                            toastr.error(data.message || "Gagal menghapus data", "Error!");
+                        }
+                    })
+                    .catch(error => {
+                        toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+                    });
+            }
+        }
+
+        function initializeDropdownEvents() {
+            $(document).off('click', '.dropdown-toggle-custom');
+            $(document).off('mouseenter', '.dropdown-action');
+            $(document).off('mouseleave', '.dropdown-action');
+
+            $(document).on('click', '.dropdown-toggle-custom', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const $dropdownAction = $(this).closest('.dropdown-action');
+                const $menu = $dropdownAction.find('.dropdown-menu-custom');
+
+                // Close all other dropdowns
+                $('.dropdown-menu-custom').not($menu).removeClass('show');
+
+                // Toggle this dropdown
+                $menu.toggleClass('show');
+
+                // Check position
+                checkDropdownPosition($dropdownAction);
+            });
+
+            // Function to check dropdown position - modified to force dropup for bottom rows
+            function checkDropdownPosition($dropdownAction) {
+                const $menu = $dropdownAction.find('.dropdown-menu-custom');
+                if (!$menu.hasClass('show')) return;
+
+                const menuHeight = $menu.outerHeight();
+                const dropdownOffset = $dropdownAction.offset();
+                const windowHeight = $(window).height();
+                const spaceBelow = windowHeight - dropdownOffset.top - $dropdownAction.outerHeight();
+
+                // Reset position class
+                $dropdownAction.removeClass('dropup');
+
+                // Check if this is the last row of the table
+                const $row = $dropdownAction.closest('tr');
+                const $table = $row.closest('tbody');
+                const rowIndex = $table.find('tr').index($row);
+                const totalRows = $table.find('tr').length;
+
+                // Only apply dropup to the last row
+                if (rowIndex === totalRows - 1) {
+                    $dropdownAction.addClass('dropup');
+                }
+            }
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.dropdown-action').length) {
+                    $('.dropdown-menu-custom').removeClass('show');
+                }
+            });
+
+            // Handle window resize
+            $(window).on('resize', function() {
+                $('.dropdown-action').each(function() {
+                    if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
+                        checkDropdownPosition($(this));
+                    }
+                });
+            });
+
+            if (window.innerWidth > 768) {
+                $(document).on('mouseenter', '.dropdown-action', function() {
+                    const $menu = $(this).find('.dropdown-menu-custom');
+                    $menu.addClass('show');
+                    checkDropdownPosition($(this));
+                }).on('mouseleave', '.dropdown-action', function() {
+                    const $menu = $(this).find('.dropdown-menu-custom');
+                    setTimeout(() => {
+                        if (!$menu.is(':hover')) {
+                            $menu.removeClass('show');
+                        }
+                    }, 100);
+                });
+
+                $(document).on('mouseenter', '.dropdown-menu-custom', function() {
+                    clearTimeout($(this).data('timeout'));
+                }).on('mouseleave', '.dropdown-menu-custom', function() {
+                    const $menu = $(this);
+                    $menu.data('timeout', setTimeout(() => {
+                        $menu.removeClass('show');
+                    }, 200));
+                });
+            }
+        }
+    </script>
 @endsection
