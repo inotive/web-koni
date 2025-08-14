@@ -454,82 +454,393 @@
 
 @section('script')
    <script>
-    let currentFilter = '{{ request('jenis_surat', 'all') }}';
-    let currentTab = 'masuk';
-    let currentSort = '{{ request('sort_by', 'created_at') }}';
-    let currentOrder = '{{ request('order', 'desc') }}';
-    Dropzone.autoDiscover = false;
-    const dropzones = {};
+let currentFilter = '{{ request('jenis_surat', 'all') }}';
+let currentTab = 'masuk';
+let currentSort = '{{ request('sort_by', 'created_at') }}';
+let currentOrder = '{{ request('order', 'desc') }}';
+Dropzone.autoDiscover = false;
+const dropzones = {};
 
-    function previewFile(fileUrl, fileName, fileExtension) {
-        const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
-        const previewContainer = document.getElementById('previewContainer');
-        const modalTitle = document.getElementById('filePreviewModalLabel');
-        const downloadBtn = document.getElementById('downloadBtn');
+function previewFile(fileUrl, fileName, fileExtension) {
+    const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
+    const previewContainer = document.getElementById('previewContainer');
+    const modalTitle = document.getElementById('filePreviewModalLabel');
+    const downloadBtn = document.getElementById('downloadBtn');
 
-        modalTitle.textContent = fileName;
-        downloadBtn.href = fileUrl;
+    modalTitle.textContent = fileName;
+    downloadBtn.href = fileUrl;
 
-        previewContainer.innerHTML = '';
+    previewContainer.innerHTML = '';
 
-        const ext = fileExtension.toLowerCase();
+    const ext = fileExtension.toLowerCase();
 
-        if (ext === 'pdf') {
-            previewContainer.innerHTML = `<iframe src="${fileUrl}" style="width:100%;height:70vh;border:none;"></iframe>`;
-        } else if (['jpg','jpeg','png','gif','bmp','svg','webp'].includes(ext)) {
-            previewContainer.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height:70vh;"><img src="${fileUrl}" class="img-fluid" style="max-height:100%;max-width:100%;" alt="${fileName}"></div>`;
-        } else if (['doc','docx'].includes(ext)) {
-            previewContainer.innerHTML = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" style="width:100%;height:70vh;border:none;"></iframe>`;
+    if (ext === 'pdf') {
+        previewContainer.innerHTML = `<iframe src="${fileUrl}" style="width:100%;height:70vh;border:none;"></iframe>`;
+    } else if (['jpg','jpeg','png','gif','bmp','svg','webp'].includes(ext)) {
+        previewContainer.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height:70vh;"><img src="${fileUrl}" class="img-fluid" style="max-height:100%;max-width:100%;" alt="${fileName}"></div>`;
+    } else if (['doc','docx'].includes(ext)) {
+        previewContainer.innerHTML = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" style="width:100%;height:70vh;border:none;"></iframe>`;
+    } else {
+        previewContainer.innerHTML = `<div class="preview-error"><i class="fas fa-file"></i><h5>Preview tidak tersedia</h5><p>Jenis file ini tidak dapat dipreview.</p><small>Jenis file: ${ext.toUpperCase()}</small></div>`;
+    }
+
+    modal.show();
+}
+
+function updateAddButtonText() {
+    const buttonText = 'Upload Template';
+    const modalTitle = 'Upload Template';
+    $('#tambahSuratText').text(buttonText);
+    $('#modalTitle').text(modalTitle);
+    $('#submitBtn').text(buttonText);
+    $('#hiddenJenisSurat').val(currentTab === 'keluar' ? 'keluar' : 'masuk');
+}
+
+function updateDateFilterButton() {
+    const startDate = $('#startDateInput').val();
+    const endDate = $('#endDateInput').val();
+    const button = $('#dateFilterBtn');
+    const span = button.find('span');
+
+    if (startDate || endDate) {
+        button.addClass('date-filter-active');
+        let text = '<i class="fas fa-calendar-check me-2"></i>';
+        if (startDate && endDate) {
+            const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
+            const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
+            text += `${startFormatted} - ${endFormatted}`;
+        } else if (startDate) {
+            const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
+            text += `Dari ${startFormatted}`;
         } else {
-            previewContainer.innerHTML = `<div class="preview-error"><i class="fas fa-file"></i><h5>Preview tidak tersedia</h5><p>Jenis file ini tidak dapat dipreview.</p><small>Jenis file: ${ext.toUpperCase()}</small></div>`;
+            const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
+            text += `Sampai ${endFormatted}`;
         }
+        span.html(text);
+    } else {
+        button.removeClass('date-filter-active');
+        span.html('<i class="fas fa-calendar me-2"></i>Filter Tanggal');
+    }
+}
 
-        modal.show();
+function reloadTable(url = null) {
+    let formData = $('#filter').serialize();
+    let target = url || "{{ route('admin.surat.index') }}";
+    formData += '&tab=' + currentTab;
+
+    $.ajax({
+        url: target,
+        data: formData,
+        beforeSend: function() {
+            $(`#table-${currentTab}`).addClass('table-loading');
+            $(`#table-${currentTab}`).html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+        },
+        success: function(response) {
+            $(`#table-${currentTab}`).removeClass('table-loading');
+            $(`#table-${currentTab}`).html(response);
+            initializeDropzones();
+            initializeDropdownEvents();
+            initializeSortingEvents();
+            updateURL(formData);
+        },
+        error: function(xhr) {
+            $(`#table-${currentTab}`).removeClass('table-loading');
+            $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+        }
+    });
+}
+
+function updateURL(formData) {
+    if (window.history && window.history.pushState) {
+        const url = new URL(window.location);
+        const searchParams = new URLSearchParams(formData);
+        for (const [key, value] of searchParams.entries()) {
+            if (value && key !== 'tab') url.searchParams.set(key, value);
+            else if (key !== 'tab') url.searchParams.delete(key);
+        }
+        window.history.pushState({}, '', url);
+    }
+}
+
+function initializeSortingEvents() {
+    $(document).off('click', '.sort-link').on('click', '.sort-link', function(e) {
+        e.preventDefault();
+        const sortBy = $(this).data('sort');
+        let order = 'asc';
+        if (currentSort === sortBy) order = currentOrder === 'asc' ? 'desc' : 'asc';
+        currentSort = sortBy;
+        currentOrder = order;
+        $('#sort_by_input').val(sortBy);
+        $('#order_input').val(order);
+        reloadTable();
+    });
+}
+
+function initializeDropdownEvents() {
+    $(document).off('click', '.dropdown-toggle-custom').on('click', '.dropdown-toggle-custom', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('.dropdown-menu-custom').removeClass('show');
+        $(this).siblings('.dropdown-menu-custom').addClass('show');
+    });
+
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.dropdown-action').length) $('.dropdown-menu-custom').removeClass('show');
+    });
+
+    $(document).on('click', '.dropdown-menu-custom', function(e) {
+        e.stopPropagation();
+    });
+}
+
+function debounce(func, delay) {
+    let timeout;
+    return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+    };
+}
+
+function initializeDropzones() {
+    Object.keys(dropzones).forEach(key => {
+        if (dropzones[key] && typeof dropzones[key].destroy === 'function') {
+            dropzones[key].destroy();
+            delete dropzones[key];
+        }
+    });
+
+    if (document.getElementById('dropzone-formAdd')) {
+        dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
+            url: "#",
+            autoProcessQueue: false,
+            paramName: 'dokumen_surat',
+            maxFiles: 1,
+            maxFilesize: 10,
+            addRemoveLinks: true,
+            acceptedFiles: '.pdf,.doc,.docx',
+        });
     }
 
-    function updateAddButtonText() {
-        const buttonText = 'Upload Template';
-        const modalTitle = 'Upload Template';
-        $('#tambahSuratText').text(buttonText);
-        $('#modalTitle').text(modalTitle);
-        $('#submitBtn').text(buttonText);
-        $('#hiddenJenisSurat').val(currentTab === 'keluar' ? 'keluar' : 'masuk');
+    document.querySelectorAll('[id^="dropzone-form-"]').forEach(element => {
+        const formId = element.id.replace('dropzone-', '');
+        if (!dropzones[formId]) {
+            dropzones[formId] = new Dropzone(`#${element.id}`, {
+                url: "#",
+                autoProcessQueue: false,
+                paramName: 'dokumen_surat',
+                maxFiles: 1,
+                maxFilesize: 10,
+                addRemoveLinks: true,
+                acceptedFiles: '.pdf,.doc,.docx',
+            });
+        }
+    });
+}
+
+function submitForm(formId) {
+    const formElement = document.getElementById(formId);
+    if (!formElement) {
+        toastr.error("Form tidak ditemukan", "Error!");
+        return;
     }
 
-    function updateDateFilterButton() {
-        const startDate = $('#startDateInput').val();
-        const endDate = $('#endDateInput').val();
-        const button = $('#dateFilterBtn');
-        const span = button.find('span');
+    let formData = new FormData();
+    let actionUrl;
 
-        if (startDate || endDate) {
-            button.addClass('date-filter-active');
-            let text = '<i class="fas fa-calendar-check me-2"></i>';
-            if (startDate && endDate) {
-                const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
-                const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
-                text += `${startFormatted} - ${endFormatted}`;
-            } else if (startDate) {
-                const startFormatted = new Date(startDate).toLocaleDateString('id-ID');
-                text += `Dari ${startFormatted}`;
-            } else {
-                const endFormatted = new Date(endDate).toLocaleDateString('id-ID');
-                text += `Sampai ${endFormatted}`;
-            }
-            span.html(text);
+    if (formId === 'formAdd') {
+        formData = new FormData(formElement);
+        actionUrl = formElement.action;
+    } else {
+        actionUrl = formElement.getAttribute('data-action');
+        formElement.querySelectorAll('input, select, textarea').forEach(input => {
+            if (input.type === 'file') return;
+            if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) formData.append(input.name, input.value);
+            else formData.append(input.name, input.value);
+        });
+    }
+
+    const dz = dropzones[formId];
+    if (dz) {
+        dz.getAcceptedFiles().forEach(file => formData.append('dokumen_surat', file));
+    }
+
+    if (formId !== 'formAdd') {
+        const hiddenJenisSurat = document.querySelector(`#${formId} input[name="jenis_surat"]`);
+        formData.set('jenis_surat', hiddenJenisSurat ? hiddenJenisSurat.value : currentTab);
+    }
+
+    fetch(actionUrl, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: formData,
+    })
+    .then(async response => {
+        const data = await response.json();
+
+        if (!response.ok) {
+            if (data.errors) Object.entries(data.errors).forEach(([field, msgs]) => toastr.error(msgs.join(', '), "Error!"));
+            else toastr.error(data.message || "Gagal menyimpan data", "Error!");
         } else {
-            button.removeClass('date-filter-active');
-            span.html('<i class="fas fa-calendar me-2"></i>Filter Tanggal');
-        }
-    }
+            $('.modal.show').addClass('submit-success');
+            $('.modal.show').modal('hide');
 
-    function reloadTable(url = null) {
-        let formData = $('#filter').serialize();
-        let target = url || "{{ route('admin.surat.index') }}";
-        formData += '&tab=' + currentTab;
+            toastr.success(data.message || "Data berhasil disimpan", "Success!");
+            updateAddButtonText();
+            reloadTable();
+        }
+    })
+    .catch(error => {
+        toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+        console.error('Error:', error);
+    });
+}
+
+function deleteItem(formId, namaKegiatan = 'surat ini') {
+    const form = document.getElementById(formId);
+    const route = form.action;
+
+    Swal.fire({
+        title: "Apakah Anda Yakin?",
+        html: `<p style='text-align:center'>Setelah <strong>${namaKegiatan}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
+        icon: "warning",
+        showCancelButton: true,
+        reverseButtons: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Hapus!',
+        cancelButtonText: 'Batalkan!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Menghapus...',
+                text: 'Mohon tunggu',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => Swal.showLoading()
+            });
+
+            fetch(route, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new FormData(form)
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.close();
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: data.message || 'Surat berhasil dihapus',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                    reloadTable();
+                } else {
+                    Swal.fire({
+                        title: 'Gagal!',
+                        text: data.message || 'Terjadi kesalahan saat menghapus',
+                        icon: 'error'
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.close();
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan jaringan.',
+                    icon: 'error'
+                });
+            });
+        } else {
+            Swal.fire({
+                title: "Aksi Dibatalkan:)",
+                icon: "info",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    });
+}
+
+$(document).ready(function() {
+    initializeDropzones();
+    initializeDropdownEvents();
+    updateAddButtonText();
+    updateDateFilterButton();
+
+    $('#tambahSuratBtn').on('click', function() {
+        $('#add').modal('show');
+    });
+
+    $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
+        currentTab = $(e.target).attr('data-bs-target').replace('#', '').replace('-content', '');
+        updateAddButtonText();
+        reloadTable();
+    });
+
+    $('#filterBtn').on('click', function(e) {
+        e.stopPropagation();
+        $('#filterMenu').toggleClass('show');
+        $('#dateFilterMenu').removeClass('show');
+    });
+
+    $('#dateFilterBtn').on('click', function(e) {
+        e.stopPropagation();
+        $('#dateFilterMenu').toggleClass('show');
+        $('#filterMenu').removeClass('show');
+    });
+
+    $(document).on('click', function() {
+        $('#filterMenu').removeClass('show');
+        $('#dateFilterMenu').removeClass('show');
+    });
+
+    $('.filter-option').on('click', function(e) {
+        e.stopPropagation();
+        const filterType = $(this).data('filter');
+        if (filterType === currentFilter) return;
+
+        $('.filter-option').removeClass('active');
+        $(this).addClass('active');
+        $('#filterBtn span').html($(this).find('span').html());
+        $('#filterBtn').toggleClass('filter-active', filterType !== 'all');
+        currentFilter = filterType;
+        $('#jenis_surat_input').val(filterType);
+        reloadTable();
+        $('#filterMenu').removeClass('show');
+    });
+
+    $('#applyDateFilter').on('click', function() {
+        updateDateFilterButton();
+        reloadTable();
+        $('#dateFilterMenu').removeClass('show');
+    });
+
+    $('#clearDateFilter').on('click', function() {
+        $('#endDateInput').val('');
+        updateDateFilterButton();
+        reloadTable();
+        $('#dateFilterMenu').removeClass('show');
+    });
+
+    $(document).on('input', '#filter input[name="search"]', debounce(function() {
+        reloadTable();
+    }, 300));
+
+    $(document).on('change', 'select[name="per_page"]', function() {
+        const newPerPage = $(this).val();
+        const formData = $('#filter').serialize() + '&tab=' + currentTab + '&per_page=' + newPerPage;
 
         $.ajax({
-            url: target,
+            url: "{{ route('admin.surat.index') }}",
             data: formData,
             beforeSend: function() {
                 $(`#table-${currentTab}`).addClass('table-loading');
@@ -540,7 +851,6 @@
                 $(`#table-${currentTab}`).html(response);
                 initializeDropzones();
                 initializeDropdownEvents();
-                initializeSortingEvents();
                 updateURL(formData);
             },
             error: function(xhr) {
@@ -548,297 +858,14 @@
                 $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
             }
         });
-    }
+    });
 
-    function updateURL(formData) {
-        if (window.history && window.history.pushState) {
-            const url = new URL(window.location);
-            const searchParams = new URLSearchParams(formData);
-            for (const [key, value] of searchParams.entries()) {
-                if (value && key !== 'tab') url.searchParams.set(key, value);
-                else if (key !== 'tab') url.searchParams.delete(key);
-            }
-            window.history.pushState({}, '', url);
-        }
-    }
-
-    function initializeSortingEvents() {
-        $(document).off('click', '.sort-link').on('click', '.sort-link', function(e) {
-            e.preventDefault();
-            const sortBy = $(this).data('sort');
-            let order = 'asc';
-            if (currentSort === sortBy) order = currentOrder === 'asc' ? 'desc' : 'asc';
-            currentSort = sortBy;
-            currentOrder = order;
-            $('#sort_by_input').val(sortBy);
-            $('#order_input').val(order);
-            reloadTable();
-        });
-    }
-
-    function initializeDropdownEvents() {
-        $(document).off('click', '.dropdown-toggle-custom').on('click', '.dropdown-toggle-custom', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $('.dropdown-menu-custom').removeClass('show');
-            $(this).siblings('.dropdown-menu-custom').addClass('show');
-        });
-
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.dropdown-action').length) $('.dropdown-menu-custom').removeClass('show');
-        });
-
-        $(document).on('click', '.dropdown-menu-custom', function(e) {
-            e.stopPropagation();
-        });
-    }
-
-    function debounce(func, delay) {
-        let timeout;
-        return function() {
-            const context = this, args = arguments;
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(context, args), delay);
-        };
-    }
-
-    function initializeDropzones() {
-        Object.keys(dropzones).forEach(key => {
-            if (dropzones[key] && typeof dropzones[key].destroy === 'function') {
-                dropzones[key].destroy();
-                delete dropzones[key];
-            }
-        });
-
-        if (document.getElementById('dropzone-formAdd')) {
-            dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
-                url: "#",
-                autoProcessQueue: false,
-                paramName: 'dokumen_surat',
-                maxFiles: 1,
-                maxFilesize: 10,
-                addRemoveLinks: true,
-                acceptedFiles: '.pdf,.doc,.docx',
-            });
-        }
-
-        document.querySelectorAll('[id^="dropzone-form-"]').forEach(element => {
-            const formId = element.id.replace('dropzone-', '');
-            if (!dropzones[formId]) {
-                dropzones[formId] = new Dropzone(`#${element.id}`, {
-                    url: "#",
-                    autoProcessQueue: false,
-                    paramName: 'dokumen_surat',
-                    maxFiles: 1,
-                    maxFilesize: 10,
-                    addRemoveLinks: true,
-                    acceptedFiles: '.pdf,.doc,.docx',
-                });
-            }
-        });
-    }
-
-    function submitForm(formId) {
-        const formElement = document.getElementById(formId);
-        if (!formElement) {
-            toastr.error("Form tidak ditemukan", "Error!");
-            return;
-        }
-
-        let formData = new FormData();
-        let actionUrl;
-
-        if (formId === 'formAdd') {
-            formData = new FormData(formElement);
-            actionUrl = formElement.action;
-        } else {
-            actionUrl = formElement.getAttribute('data-action');
-            formElement.querySelectorAll('input, select, textarea').forEach(input => {
-                if (input.type === 'file') return;
-                if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) formData.append(input.name, input.value);
-                else formData.append(input.name, input.value);
-            });
-        }
-
-        const dz = dropzones[formId];
-        if (dz) {
-            dz.getAcceptedFiles().forEach(file => formData.append('dokumen_surat', file));
-        }
-
-        if (formId !== 'formAdd') {
-            const hiddenJenisSurat = document.querySelector(`#${formId} input[name="jenis_surat"]`);
-            formData.set('jenis_surat', hiddenJenisSurat ? hiddenJenisSurat.value : currentTab);
-        }
-
-        fetch(actionUrl, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}',
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            body: formData,
-        })
-        .then(async response => {
-            const data = await response.json();
-            $('.modal.show').modal('hide');
-
-            if (!response.ok) {
-                if (data.errors) Object.entries(data.errors).forEach(([field, msgs]) => toastr.error(msgs.join(', '), "Error!"));
-                else toastr.error(data.message || "Gagal menyimpan data", "Error!");
-            } else {
-                toastr.success(data.message || "Data berhasil disimpan", "Success!");
-                if (formId === 'formAdd') formElement.reset();
-                if (dropzones[formId]) dropzones[formId].removeAllFiles();
-                updateAddButtonText();
-                reloadTable();
-            }
-        })
-        .catch(error => {
-            $('.modal.show').modal('hide');
-            toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
-            console.error('Error:', error);
-        });
-    }
-
-    function deleteItem(formId, namaKegiatan = 'surat ini') {
-        const form = document.getElementById(formId);
-        const route = form.action;
-
-        Swal.fire({
-            title: "Apakah Anda Yakin?",
-            html: `<p style='text-align:center'>Setelah <strong>${namaKegiatan}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
-            icon: "warning",
-            showCancelButton: true,
-            reverseButtons: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Hapus!',
-            cancelButtonText: 'Batalkan!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Menghapus...',
-                    text: 'Mohon tunggu',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => Swal.showLoading()
-                });
-
-                fetch(route, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: new FormData(form)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    Swal.close();
-                    if (data.success) {
-                        Swal.fire({
-                            title: 'Berhasil!',
-                            text: data.message || 'Surat berhasil dihapus',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
-                        reloadTable();
-                    } else {
-                        Swal.fire({
-                            title: 'Gagal!',
-                            text: data.message || 'Terjadi kesalahan saat menghapus',
-                            icon: 'error'
-                        });
-                    }
-                })
-                .catch(() => {
-                    Swal.close();
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Terjadi kesalahan jaringan.',
-                        icon: 'error'
-                    });
-                });
-            } else {
-                Swal.fire({
-                    title: "Aksi Dibatalkan:)",
-                    icon: "info",
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-            }
-        });
-    }
-
-    $(document).ready(function() {
-        initializeDropzones();
-        initializeDropdownEvents();
-        updateAddButtonText();
-        updateDateFilterButton();
-
-        $('#tambahSuratBtn').on('click', function() {
-            $('#add').modal('show');
-        });
-
-        $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
-            currentTab = $(e.target).attr('data-bs-target').replace('#', '').replace('-content', '');
-            updateAddButtonText();
-            reloadTable();
-        });
-
-        $('#filterBtn').on('click', function(e) {
-            e.stopPropagation();
-            $('#filterMenu').toggleClass('show');
-            $('#dateFilterMenu').removeClass('show');
-        });
-
-        $('#dateFilterBtn').on('click', function(e) {
-            e.stopPropagation();
-            $('#dateFilterMenu').toggleClass('show');
-            $('#filterMenu').removeClass('show');
-        });
-
-        $(document).on('click', function() {
-            $('#filterMenu').removeClass('show');
-            $('#dateFilterMenu').removeClass('show');
-        });
-
-        $('.filter-option').on('click', function(e) {
-            e.stopPropagation();
-            const filterType = $(this).data('filter');
-            if (filterType === currentFilter) return;
-
-            $('.filter-option').removeClass('active');
-            $(this).addClass('active');
-            $('#filterBtn span').html($(this).find('span').html());
-            $('#filterBtn').toggleClass('filter-active', filterType !== 'all');
-            currentFilter = filterType;
-            $('#jenis_surat_input').val(filterType);
-            reloadTable();
-            $('#filterMenu').removeClass('show');
-        });
-
-        $('#applyDateFilter').on('click', function() {
-            updateDateFilterButton();
-            reloadTable();
-            $('#dateFilterMenu').removeClass('show');
-        });
-
-        $('#clearDateFilter').on('click', function() {
-            $('#endDateInput').val('');
-            updateDateFilterButton();
-            reloadTable();
-            $('#dateFilterMenu').removeClass('show');
-        });
-
-        $(document).on('input', '#filter input[name="search"]', debounce(function() {
-            reloadTable();
-        }, 300));
-
-        $(document).on('change', 'select[name="per_page"]', function() {
-            const newPerPage = $(this).val();
-            const formData = $('#filter').serialize() + '&tab=' + currentTab + '&per_page=' + newPerPage;
+    $(document).on('click', '.pagination-link', function(e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+        if (url) {
+            const page = new URL(url).searchParams.get('page');
+            const formData = $('#filter').serialize() + '&tab=' + currentTab + '&page=' + page;
 
             $.ajax({
                 url: "{{ route('admin.surat.index') }}",
@@ -859,74 +886,98 @@
                     $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
                 }
             });
-        });
+        }
+    });
 
-        $(document).on('click', '.pagination-link', function(e) {
-            e.preventDefault();
-            const url = $(this).attr('href');
-            if (url) {
-                const page = new URL(url).searchParams.get('page');
-                const formData = $('#filter').serialize() + '&tab=' + currentTab + '&page=' + page;
+    $('#filterMenu, #dateFilterMenu').on('click', function(e) {
+        e.stopPropagation();
+    });
 
-                $.ajax({
-                    url: "{{ route('admin.surat.index') }}",
-                    data: formData,
-                    beforeSend: function() {
-                        $(`#table-${currentTab}`).addClass('table-loading');
-                        $(`#table-${currentTab}`).html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
-                    },
-                    success: function(response) {
-                        $(`#table-${currentTab}`).removeClass('table-loading');
-                        $(`#table-${currentTab}`).html(response);
-                        initializeDropzones();
-                        initializeDropdownEvents();
-                        updateURL(formData);
-                    },
-                    error: function(xhr) {
-                        $(`#table-${currentTab}`).removeClass('table-loading');
-                        $(`#table-${currentTab}`).html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+    const urlParams = new URLSearchParams(window.location.search);
+    const filterFromURL = urlParams.get('jenis_surat') || 'all';
+    if (filterFromURL !== currentFilter) {
+        $(`.filter-option[data-filter="${filterFromURL}"]`).click();
+    }
+
+    if (filterFromURL === 'keluar') {
+        $('#keluar-tab').tab('show');
+        currentTab = 'keluar';
+        updateAddButtonText();
+    }
+
+    $(document).on('show.bs.modal', '.modal', function(e) {
+        const modalId = $(this).attr('id');
+        const modal = $(this);
+
+        modal.removeClass('has-changes submit-success');
+
+        setTimeout(() => {
+            const form = modal.find('form, [id^="form-"]').first();
+            if (form.length) {
+                const originalData = {};
+                form.find('input, select, textarea').each(function() {
+                    const input = $(this);
+                    if (input.attr('type') !== 'file') {
+                        originalData[input.attr('name')] = input.val();
                     }
                 });
+                modal.data('original-data', originalData);
             }
-        });
+        }, 100);
+    });
 
-        $('#filterMenu, #dateFilterMenu').on('click', function(e) {
-            e.stopPropagation();
-        });
+    $(document).on('hidden.bs.modal', '.modal', function(e) {
+        const modalId = $(this).attr('id');
+        const modal = $(this);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const filterFromURL = urlParams.get('jenis_surat') || 'all';
-        if (filterFromURL !== currentFilter) {
-            $(`.filter-option[data-filter="${filterFromURL}"]`).click();
-        }
-
-        if (filterFromURL === 'keluar') {
-            $('#keluar-tab').tab('show');
-            currentTab = 'keluar';
-            updateAddButtonText();
-        }
-
-        $(document).on('hidden.bs.modal', '.modal', function(e) {
-            const modalId = $(this).attr('id');
+        if (!modal.hasClass('submit-success')) {
+            const originalData = modal.data('original-data');
+            if (originalData) {
+                const form = modal.find('form, [id^="form-"]').first();
+                if (form.length) {
+                    form.find('input, select, textarea').each(function() {
+                        const input = $(this);
+                        const name = input.attr('name');
+                        if (input.attr('type') !== 'file' && originalData.hasOwnProperty(name)) {
+                            input.val(originalData[name]);
+                        }
+                    });
+                }
+            }
 
             if (modalId.startsWith('edit-')) {
                 const suratId = modalId.split('-')[1];
                 const formId = `form-${suratId}`;
-                const form = document.getElementById(formId);
-
-                if (form) {
-                    form.reset();
-                    if (dropzones[formId]) dropzones[formId].removeAllFiles();
+                if (dropzones[formId]) {
+                    dropzones[formId].removeAllFiles();
                 }
-            }
-            else if (modalId === 'add') {
+            } else if (modalId === 'add') {
                 const form = document.getElementById('formAdd');
                 if (form) {
                     form.reset();
-                    if (dropzones['formAdd']) dropzones['formAdd'].removeAllFiles();
+                }
+                if (dropzones['formAdd']) {
+                    dropzones['formAdd'].removeAllFiles();
                 }
             }
-        });
+        }
+
+        modal.removeClass('has-changes submit-success');
+        modal.removeData('original-data');
     });
+
+    $(document).on('input change', '.modal input, .modal select, .modal textarea', function() {
+        const modal = $(this).closest('.modal');
+        modal.addClass('has-changes');
+    });
+
+    $(document).on('hide.bs.modal', '.modal', function(e) {
+        const modal = $(this);
+
+        if (modal.hasClass('submit-success') || !modal.hasClass('has-changes')) {
+            return;
+        }
+    });
+});
 </script>
 @endsection
