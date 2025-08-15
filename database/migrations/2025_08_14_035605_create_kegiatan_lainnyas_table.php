@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('nama_program_kegiatan');
             $table->string('jenis_kegiatan');
-            $table->date('tanggal_kegiatan');
             $table->string('volume');
             $table->decimal('jumlah_harga_satuan', 15, 2);
             $table->decimal('jumlah_harga', 15, 2);

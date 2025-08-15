@@ -1,144 +1,337 @@
 <?php
 
-namespace App\Http\Controllers\Admin; // Namespace ini sudah benar sesuai lokasi file Anda
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\KegiatanLainnya;
-use Carbon\Carbon; // Diimpor karena Anda menggunakannya di view untuk format tanggal
-use Illuminate\Support\Facades\Storage; // Diimpor karena Anda menggunakannya untuk operasi file
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class KegiatanLainnyaController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->query('search');
-        $jenis_kegiatan_filter = $request->query('jenis_kegiatan_filter');
-        $start_date = $request->query('start_date');
-        $end_date = $request->query('end_date');
-        $perPage = $request->query('per_page', 10);
-        $sortBy = $request->query('sort_by', 'created_at');
-        $sortOrder = $request->query('sort_order', 'desc');
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+        $jenisKegiatanFilter = $request->input('jenis_kegiatan_filter');
+        $sortBy = $request->input('sort', 'created_at');
+        $sortDirection = $request->input('direction', 'desc');
 
         $query = KegiatanLainnya::query();
 
+        // Search
         if ($search) {
             $query->where(function($q) use ($search) {
-                $q->where('nama_program_kegiatan', 'like', '%' . $search . '%')
-                  ->orWhere('jenis_kegiatan', 'like', '%' . $search . '%')
-                  ->orWhere('volume', 'like', '%' . $search . '%');
+                $q->whereRaw('LOWER(nama_program_kegiatan) LIKE ?', ['%'.strtolower($search).'%'])
+                  ->orWhereRaw('LOWER(jenis_kegiatan) LIKE ?', ['%'.strtolower($search).'%'])
+                  ->orWhereRaw('LOWER(volume) LIKE ?', ['%'.strtolower($search).'%']);
             });
         }
 
-        if ($jenis_kegiatan_filter) {
-            $query->where('jenis_kegiatan', $jenis_kegiatan_filter);
+        // Filter jenis kegiatan
+        if ($jenisKegiatanFilter) {
+            $query->where('jenis_kegiatan', $jenisKegiatanFilter);
         }
 
-        if ($start_date) {
-            $query->whereDate('tanggal_kegiatan', '>=', $start_date);
-        }
-        if ($end_date) {
-            $query->whereDate('tanggal_kegiatan', '<=', $end_date);
-        }
+        // Sorting
+        $query->orderBy($sortBy, $sortDirection);
 
-        $query->orderBy($sortBy, $sortOrder);
+        // Pagination
+        $kegiatanLainnya = $query->paginate($perPage)->appends($request->query());
 
-        // Baris ini yang memicu peringatan Intelephense, tetapi secara fungsional benar di Laravel
-        $kegiatanLainnya = $query->paginate($perPage)->withQueryString();
+        return view('admin.laporan-lpj.kegiatan_lainnya.index', compact('kegiatanLainnya'));
+    }
 
-        // Judul halaman utama (karena tidak ada model Bidang)
-        $namaBidangUntukJudul = 'Manajemen'; // Atau 'Kegiatan' atau sesuai keinginan Anda
-
-        // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/index.blade.php
-        return view('admin.laporan-lpj.kegiatan_lainnya.index', compact('kegiatanLainnya', 'namaBidangUntukJudul'));
+    public function create()
+    {
+        return view('admin.laporan-lpj.kegiatan_lainnya.create');
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_program_kegiatan' => 'required|string|max:255',
+        // Custom validation messages
+        $messages = [
+            'nama_program_kegiatan.required' => 'Nama Program & Kegiatan wajib diisi.',
+            'nama_program_kegiatan.unique' => 'Nama Program & Kegiatan sudah terdaftar. Silakan gunakan nama yang berbeda.',
+            'nama_program_kegiatan.max' => 'Nama Program & Kegiatan maksimal 255 karakter.',
+            'jenis_kegiatan.required' => 'Jenis Kegiatan wajib diisi.',
+            'jenis_kegiatan.max' => 'Jenis Kegiatan maksimal 255 karakter.',
+            'volume.required' => 'Volume wajib diisi.',
+            'volume.max' => 'Volume maksimal 255 karakter.',
+            'jumlah_harga_satuan.required' => 'Jumlah Harga Satuan wajib diisi.',
+            'jumlah_harga_satuan.numeric' => 'Jumlah Harga Satuan harus berupa angka.',
+            'jumlah_harga_satuan.min' => 'Jumlah Harga Satuan tidak boleh kurang dari 0.',
+            'jumlah_harga.required' => 'Jumlah Harga wajib diisi.',
+            'jumlah_harga.numeric' => 'Jumlah Harga harus berupa angka.',
+            'jumlah_harga.min' => 'Jumlah Harga tidak boleh kurang dari 0.',
+            'foto_jurnal.required' => 'Foto Jurnal wajib diunggah.',
+            'foto_jurnal.image' => 'File Foto Jurnal harus berupa gambar.',
+            'foto_jurnal.mimes' => 'Format Foto Jurnal harus: JPEG, PNG, JPG, GIF, atau WebP.',
+            'foto_jurnal.max' => 'Ukuran Foto Jurnal maksimal 10MB.',
+            'dokumen_pendukung.file' => 'File Dokumen Pendukung tidak valid.',
+            'dokumen_pendukung.mimes' => 'Format Dokumen Pendukung harus: PDF, DOC, DOCX, XLS, atau XLSX.',
+            'dokumen_pendukung.max' => 'Ukuran Dokumen Pendukung maksimal 10MB.',
+            'keterangan_tambahan.max' => 'Keterangan Tambahan maksimal 500 karakter.',
+        ];
+
+        // Validation with custom messages
+        $validated = $request->validate([
+            'nama_program_kegiatan' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('kegiatan_lainnya', 'nama_program_kegiatan')
+            ],
             'jenis_kegiatan' => 'required|string|max:255',
-            'tanggal_kegiatan' => 'required|date',
             'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric',
-            'jumlah_harga' => 'required|numeric',
-            'foto_jurnal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'dokumen_pendukung' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
-        ]);
+            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'jumlah_harga' => 'required|numeric|min:0',
+            'foto_jurnal' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'dokumen_pendukung' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'keterangan_tambahan' => 'nullable|string|max:500'
+        ], $messages);
 
-        $data = $request->all();
+        // Check for duplicate combination of program name and jenis kegiatan
+        $existingData = KegiatanLainnya::where('nama_program_kegiatan', $validated['nama_program_kegiatan'])
+            ->where('jenis_kegiatan', $validated['jenis_kegiatan'])
+            ->first();
 
-        if ($request->hasFile('foto_jurnal')) {
-            $data['foto_jurnal'] = $request->file('foto_jurnal')->store('kegiatan_lainnya/foto_jurnal', 'public');
+        if ($existingData) {
+            return back()->withInput()->withErrors([
+                'nama_program_kegiatan' => 'Kombinasi Nama Program & Jenis Kegiatan ini sudah ada dalam database.',
+                'jenis_kegiatan' => 'Kombinasi Nama Program & Jenis Kegiatan ini sudah ada dalam database.'
+            ]);
         }
-        if ($request->hasFile('dokumen_pendukung')) {
-            $data['dokumen_pendukung'] = $request->file('dokumen_pendukung')->store('kegiatan_lainnya/dokumen_pendukung', 'public');
+
+        DB::beginTransaction();
+        try {
+            // Handle file uploads with better error handling
+            if ($request->hasFile('foto_jurnal')) {
+                if (!$request->file('foto_jurnal')->isValid()) {
+                    throw new \Exception('File foto jurnal tidak valid atau corrupt.');
+                }
+                
+                $validated['foto_jurnal'] = $request->file('foto_jurnal')
+                    ->store('kegiatan_lainnya/foto', 'public');
+                
+                if (!$validated['foto_jurnal']) {
+                    throw new \Exception('Gagal mengunggah foto jurnal.');
+                }
+            }
+
+            if ($request->hasFile('dokumen_pendukung')) {
+                if (!$request->file('dokumen_pendukung')->isValid()) {
+                    throw new \Exception('File dokumen pendukung tidak valid atau corrupt.');
+                }
+                
+                $validated['dokumen_pendukung'] = $request->file('dokumen_pendukung')
+                    ->store('kegiatan_lainnya/dokumen', 'public');
+                
+                if (!$validated['dokumen_pendukung']) {
+                    throw new \Exception('Gagal mengunggah dokumen pendukung.');
+                }
+            }
+
+            // Create the record
+            $kegiatanLainnya = KegiatanLainnya::create($validated);
+            
+            if (!$kegiatanLainnya) {
+                throw new \Exception('Gagal menyimpan data ke database.');
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
+                ->with('success', 'Data Kegiatan Lainnya berhasil ditambahkan!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            // Clean up uploaded files if any
+            if (isset($validated['foto_jurnal']) && Storage::disk('public')->exists($validated['foto_jurnal'])) {
+                Storage::disk('public')->delete($validated['foto_jurnal']);
+            }
+            if (isset($validated['dokumen_pendukung']) && Storage::disk('public')->exists($validated['dokumen_pendukung'])) {
+                Storage::disk('public')->delete($validated['dokumen_pendukung']);
+            }
+
+            return back()->withInput()
+                ->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
         }
-
-        KegiatanLainnya::create($data);
-
-        // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
-        return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')->with('success', 'Kegiatan berhasil ditambahkan!');
     }
 
-    public function show(KegiatanLainnya $kegiatan_lainnya)
+    public function show(KegiatanLainnya $kegiatanLainnya)
     {
-        // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/show.blade.php
-        return view('admin.kegiatan_lainnya.show', compact('kegiatan_lainnya'));
+        return view('admin.laporan-lpj.kegiatan_lainnya.show', compact('kegiatanLainnya'));
     }
 
     public function edit(KegiatanLainnya $kegiatan_lainnya)
     {
-        // PASTIKAN NAMA VIEW INI BENAR SESUAI LOKASI FILE ANDA: resources/views/admin/kegiatan_lainnya/edit.blade.php
-        return view('admin.kegiatan_lainnya.edit', compact('kegiatan_lainnya'));
+        return view('admin.laporan-lpj.kegiatan_lainnya.edit', compact('kegiatan_lainnya'));
     }
 
     public function update(Request $request, KegiatanLainnya $kegiatan_lainnya)
     {
-        $request->validate([
-            'nama_program_kegiatan' => 'required|string|max:255',
+        // Custom validation messages for update
+        $messages = [
+            'nama_program_kegiatan.required' => 'Nama Program & Kegiatan wajib diisi.',
+            'nama_program_kegiatan.unique' => 'Nama Program & Kegiatan sudah terdaftar. Silakan gunakan nama yang berbeda.',
+            'nama_program_kegiatan.max' => 'Nama Program & Kegiatan maksimal 255 karakter.',
+            'jenis_kegiatan.required' => 'Jenis Kegiatan wajib diisi.',
+            'jenis_kegiatan.max' => 'Jenis Kegiatan maksimal 255 karakter.',
+            'volume.required' => 'Volume wajib diisi.',
+            'volume.max' => 'Volume maksimal 255 karakter.',
+            'jumlah_harga_satuan.required' => 'Jumlah Harga Satuan wajib diisi.',
+            'jumlah_harga_satuan.numeric' => 'Jumlah Harga Satuan harus berupa angka.',
+            'jumlah_harga_satuan.min' => 'Jumlah Harga Satuan tidak boleh kurang dari 0.',
+            'jumlah_harga.required' => 'Jumlah Harga wajib diisi.',
+            'jumlah_harga.numeric' => 'Jumlah Harga harus berupa angka.',
+            'jumlah_harga.min' => 'Jumlah Harga tidak boleh kurang dari 0.',
+            'foto_jurnal.image' => 'File Foto Jurnal harus berupa gambar.',
+            'foto_jurnal.mimes' => 'Format Foto Jurnal harus: JPEG, PNG, JPG, GIF, atau WebP.',
+            'foto_jurnal.max' => 'Ukuran Foto Jurnal maksimal 10MB.',
+            'dokumen_pendukung.file' => 'File Dokumen Pendukung tidak valid.',
+            'dokumen_pendukung.mimes' => 'Format Dokumen Pendukung harus: PDF, DOC, DOCX, XLS, atau XLSX.',
+            'dokumen_pendukung.max' => 'Ukuran Dokumen Pendukung maksimal 10MB.',
+            'keterangan_tambahan.max' => 'Keterangan Tambahan maksimal 500 karakter.',
+        ];
+
+        $validated = $request->validate([
+            'nama_program_kegiatan' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('kegiatan_lainnya', 'nama_program_kegiatan')
+                    ->ignore($kegiatan_lainnya->id)
+            ],
             'jenis_kegiatan' => 'required|string|max:255',
-            'tanggal_kegiatan' => 'required|date',
             'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric',
-            'jumlah_harga' => 'required|numeric',
-            'foto_jurnal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'dokumen_pendukung' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
-        ]);
+            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'jumlah_harga' => 'required|numeric|min:0',
+            'foto_jurnal' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'dokumen_pendukung' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'keterangan_tambahan' => 'nullable|string|max:500'
+        ], $messages);
 
-        $data = $request->all();
+        // Check for duplicate combination (excluding current record)
+        $existingData = KegiatanLainnya::where('nama_program_kegiatan', $validated['nama_program_kegiatan'])
+            ->where('jenis_kegiatan', $validated['jenis_kegiatan'])
+            ->where('id', '!=', $kegiatan_lainnya->id)
+            ->first();
 
-        if ($request->hasFile('foto_jurnal')) {
-            if ($kegiatan_lainnya->foto_jurnal) {
-                Storage::disk('public')->delete($kegiatan_lainnya->foto_jurnal);
-            }
-            $data['foto_jurnal'] = $request->file('foto_jurnal')->store('kegiatan_lainnya/foto_jurnal', 'public');
+        if ($existingData) {
+            return back()->withInput()->withErrors([
+                'nama_program_kegiatan' => 'Kombinasi Nama Program & Jenis Kegiatan ini sudah ada dalam database.',
+                'jenis_kegiatan' => 'Kombinasi Nama Program & Jenis Kegiatan ini sudah ada dalam database.'
+            ]);
         }
-        if ($request->hasFile('dokumen_pendukung')) {
-            if ($kegiatan_lainnya->dokumen_pendukung) {
-                Storage::disk('public')->delete($kegiatan_lainnya->dokumen_pendukung);
+
+        DB::beginTransaction();
+        try {
+            $oldFotoJurnal = $kegiatan_lainnya->foto_jurnal;
+            $oldDokumenPendukung = $kegiatan_lainnya->dokumen_pendukung;
+
+            // Handle foto jurnal upload
+            if ($request->hasFile('foto_jurnal')) {
+                if (!$request->file('foto_jurnal')->isValid()) {
+                    throw new \Exception('File foto jurnal tidak valid atau corrupt.');
+                }
+
+                $validated['foto_jurnal'] = $request->file('foto_jurnal')
+                    ->store('kegiatan_lainnya/foto', 'public');
+
+                if (!$validated['foto_jurnal']) {
+                    throw new \Exception('Gagal mengunggah foto jurnal baru.');
+                }
             }
-            $data['dokumen_pendukung'] = $request->file('dokumen_pendukung')->store('kegiatan_lainnya/dokumen_pendukung', 'public');
+
+            // Handle dokumen pendukung upload
+            if ($request->hasFile('dokumen_pendukung')) {
+                if (!$request->file('dokumen_pendukung')->isValid()) {
+                    throw new \Exception('File dokumen pendukung tidak valid atau corrupt.');
+                }
+
+                $validated['dokumen_pendukung'] = $request->file('dokumen_pendukung')
+                    ->store('kegiatan_lainnya/dokumen', 'public');
+
+                if (!$validated['dokumen_pendukung']) {
+                    throw new \Exception('Gagal mengunggah dokumen pendukung baru.');
+                }
+            }
+
+            // Update the record
+            $updated = $kegiatan_lainnya->update($validated);
+            
+            if (!$updated) {
+                throw new \Exception('Gagal memperbarui data di database.');
+            }
+
+            // Delete old files only after successful update
+            if ($request->hasFile('foto_jurnal') && $oldFotoJurnal) {
+                Storage::disk('public')->delete($oldFotoJurnal);
+            }
+
+            if ($request->hasFile('dokumen_pendukung') && $oldDokumenPendukung) {
+                Storage::disk('public')->delete($oldDokumenPendukung);
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
+                ->with('success', 'Data Kegiatan Lainnya berhasil diperbarui!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            // Clean up newly uploaded files if any
+            if (isset($validated['foto_jurnal']) && $validated['foto_jurnal'] !== $oldFotoJurnal) {
+                Storage::disk('public')->delete($validated['foto_jurnal']);
+            }
+            if (isset($validated['dokumen_pendukung']) && $validated['dokumen_pendukung'] !== $oldDokumenPendukung) {
+                Storage::disk('public')->delete($validated['dokumen_pendukung']);
+            }
+
+            return back()->withInput()
+                ->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
         }
-
-        $kegiatan_lainnya->update($data);
-
-        // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
-        return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')->with('success', 'Kegiatan berhasil diperbarui!');
     }
 
     public function destroy(KegiatanLainnya $kegiatan_lainnya)
     {
-        if ($kegiatan_lainnya->foto_jurnal) {
-            Storage::disk('public')->delete($kegiatan_lainnya->foto_jurnal);
-        }
-        if ($kegiatan_lainnya->dokumen_pendukung) {
-            Storage::disk('public')->delete($kegiatan_lainnya->dokumen_pendukung);
-        }
+        DB::beginTransaction();
+        try {
+            // Store file paths before deletion
+            $fotoJurnal = $kegiatan_lainnya->foto_jurnal;
+            $dokumenPendukung = $kegiatan_lainnya->dokumen_pendukung;
 
-        $kegiatan_lainnya->delete();
+            // Delete the record first
+            $deleted = $kegiatan_lainnya->delete();
+            
+            if (!$deleted) {
+                throw new \Exception('Gagal menghapus data dari database.');
+            }
 
-        // KOREKSI: Ubah rute redirect ke 'admin.kegiatan-lainnya.index'
-        return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')->with('success', 'Kegiatan berhasil dihapus!');
+            // Delete associated files only after successful database deletion
+            if ($fotoJurnal && Storage::disk('public')->exists($fotoJurnal)) {
+                Storage::disk('public')->delete($fotoJurnal);
+            }
+
+            if ($dokumenPendukung && Storage::disk('public')->exists($dokumenPendukung)) {
+                Storage::disk('public')->delete($dokumenPendukung);
+            }
+
+            DB::commit();
+
+            return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
+                ->with('success', 'Data Kegiatan Lainnya berhasil dihapus!');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
+                ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
+        }
     }
 }
