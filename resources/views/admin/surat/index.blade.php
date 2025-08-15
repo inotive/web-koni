@@ -195,45 +195,6 @@
             pointer-events: none;
         }
 
-        .preview-modal .modal-dialog {
-            max-width: 90vw;
-            height: 90vh;
-        }
-
-        .preview-modal .modal-content {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .preview-modal .modal-body {
-            flex: 1;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .preview-modal iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .preview-error {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 300px;
-            text-align: center;
-            color: #6c757d;
-        }
-
-        .preview-error i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: #dc3545;
-        }
-
         @media (max-width: 768px) {
             .filter-container {
                 flex-direction: column;
@@ -282,8 +243,7 @@
                             class="form-control border border-gray-500 py-2 search-input" />
                     </div>
                 </div>
-
-
+            </form>
         </div>
 
         <div class="container">
@@ -328,6 +288,7 @@
         </div>
     </div>
 
+    <!-- Modal untuk Add Surat -->
     <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 gap-5 px-10 py-8">
@@ -384,28 +345,6 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade preview-modal" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="filePreviewModalLabel">Preview Dokumen</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <div id="previewContainer" class="w-100 h-100">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a id="downloadBtn" href="#" class="btn btn-primary" target="_blank">
-                        <i class="ki-outline ki-down me-2"></i>Download File
-                    </a>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('script')
@@ -416,36 +355,6 @@
         let currentOrder = '{{ request('order', 'desc') }}';
         Dropzone.autoDiscover = false;
         const dropzones = {};
-
-        function previewFile(fileUrl, fileName, fileExtension) {
-            const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
-            const previewContainer = document.getElementById('previewContainer');
-            const modalTitle = document.getElementById('filePreviewModalLabel');
-            const downloadBtn = document.getElementById('downloadBtn');
-
-            modalTitle.textContent = fileName;
-            downloadBtn.href = fileUrl;
-
-            previewContainer.innerHTML = '';
-
-            const ext = fileExtension.toLowerCase();
-
-            if (ext === 'pdf') {
-                previewContainer.innerHTML =
-                    `<iframe src="${fileUrl}" style="width:100%;height:70vh;border:none;"></iframe>`;
-            } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
-                previewContainer.innerHTML =
-                    `<div class="d-flex justify-content-center align-items-center" style="height:70vh;"><img src="${fileUrl}" class="img-fluid" style="max-height:100%;max-width:100%;" alt="${fileName}"></div>`;
-            } else if (['doc', 'docx'].includes(ext)) {
-                previewContainer.innerHTML =
-                    `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" style="width:100%;height:70vh;border:none;"></iframe>`;
-            } else {
-                previewContainer.innerHTML =
-                    `<div class="preview-error"><i class="fas fa-file"></i><h5>Preview tidak tersedia</h5><p>Jenis file ini tidak dapat dipreview.</p><small>Jenis file: ${ext.toUpperCase()}</small></div>`;
-            }
-
-            modal.show();
-        }
 
         function updateAddButtonText() {
             const buttonText = 'Upload Template';
