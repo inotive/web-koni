@@ -70,26 +70,20 @@ class FileKesekretariatController extends Controller
         $perPage = $this->getValidPerPage($request->input('per_page'));
         
         // Execute query with pagination
-        $files = $query->paginate($perPage)
-                      ->withQueryString()
-                      ->through(function ($file) {
-                          $file->path = 'documents/' . $file->dokumen_file;
-                          $file->file_exists = Storage::disk('public')->exists($file->path);
-                          $file->file_size = $file->file_exists 
-                              ? $this->formatFileSize(Storage::disk('public')->size($file->path))
-                              : '0 KB';
-                          $file->file_extension = pathinfo($file->dokumen_file, PATHINFO_EXTENSION);
-                          return $file;
-                      });
+$files = $query->paginate($perPage)
+        ->withQueryString()
+        ->through(function ($file) {
+            $file->path = 'documents/' . $file->dokumen_file;
+            $file->file_exists = Storage::disk('public')->exists($file->path);
+            $file->file_size = $file->file_exists 
+                ? $this->formatFileSize(Storage::disk('public')->size($file->path))
+                : '0 KB';
+            $file->file_extension = pathinfo($file->dokumen_file, PATHINFO_EXTENSION);
+            return $file;
+        });
 
-        // Cache the results for 5 minutes (only if no search/filter)
-        if (!$request->filled('search') && !$request->filled('file_type')) {
-            Cache::put($cacheKey, $files, now()->addMinutes(5));
-        }
-
-        return view('admin.file-kesekretariat.index', compact('files'));
-    }
-
+    return view('admin.file-kesekretariat.index', compact('files'));
+}
     /**
      * Validate and return proper per_page value
      */

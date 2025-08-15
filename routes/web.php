@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\BendaharaController;
 use App\Http\Controllers\Admin\SuratController;
 use App\Http\Controllers\Admin\SumberdayaController;
 use App\Http\Controllers\LaporanRKAController;
+use App\Http\Controllers\Admin\KegiatanLainnyaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +50,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     // Letakkan rute 'download' sebelum rute resourc    e
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
-        
+
 
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {
         Route::resource('permission', PermissionController::class)->except('show', 'create', 'edit');
@@ -176,16 +177,21 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/sport-science', [App\Http\Controllers\Admin\BidangController::class, 'sportScience'])->name('sport-science');
             Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
         });
-        Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
-        Route::get('/', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'index'])->name('index');
-        Route::get('/create', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'create'])->name('create');
-        Route::post('/', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'store'])->name('store');
-        Route::get('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'show'])->name('show');
-        Route::get('/{kegiatanLainnya}/edit', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'edit'])->name('edit');
-        Route::put('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'update'])->name('update');
-        Route::delete('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'destroy'])->name('destroy');
-    });
 
+        Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
+            Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
+            Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
+            Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
+
+            // PERBAIKAN: Route export harus didefinisikan sebelum route dengan parameter
+            Route::get('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+
+            // Route dengan parameter harus di bawah
+            Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
+            Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
+            Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
+            Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
+        });
     }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
         Route::get('/', [BendaharaController::class, 'index'])->name('index');
@@ -198,8 +204,6 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::get('/{bendahara}/download', [BendaharaController::class, 'download'])->name('download');
     });
 }); //Batas Admin
-
-
 
 
 // TAMBAHAN: Rute untuk panggilan API jika diperlukan (opsional)

@@ -26,73 +26,92 @@
             object-fit: cover;
         }
 
-        /* Fixed Column Width Settings with text truncation */
+        /* Fixed Column Width Settings dengan perbaikan */
+        /* PERBAIKAN: Kolom No - diperbesar agar tidak terpotong */
         .table th:nth-child(1),
         .table td:nth-child(1) {
-            width: 50px !important;
-            max-width: 50px !important;
+            width: 70px !important;
+            max-width: 70px !important;
+            text-align: center !important;
         }
 
-        /* No */
-        .table th:nth-child(2),
-        .table td:nth-child(2) {
+        /* PERBAIKAN: Kolom Nama Program & Kegiatan - header tetap rata */
+        .table th:nth-child(2) {
             width: 250px !important;
             max-width: 250px !important;
+            white-space: nowrap !important;
+            /* Header tetap dalam satu baris */
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
         }
 
-        /* Nama Program & Kegiatan */
+        /* Konten dalam td bisa wrap */
+        .table td:nth-child(2) {
+            white-space: normal !important;
+            /* Allow text wrapping untuk konten */
+            overflow: visible !important;
+            max-width: 250px !important;
+            width: 250px !important;
+        }
+
+        /* Volume */
         .table th:nth-child(3),
         .table td:nth-child(3) {
             width: 100px !important;
             max-width: 100px !important;
         }
 
-        /* Volume */
+        /* Jumlah Harga Satuan */
         .table th:nth-child(4),
         .table td:nth-child(4) {
             width: 150px !important;
             max-width: 150px !important;
         }
 
-        /* Jumlah Harga Satuan */
+        /* Jumlah Harga */
         .table th:nth-child(5),
         .table td:nth-child(5) {
             width: 150px !important;
             max-width: 150px !important;
         }
 
-        /* Jumlah Harga */
+        /* Foto Jurnal */
         .table th:nth-child(6),
         .table td:nth-child(6) {
             width: 100px !important;
             max-width: 100px !important;
         }
 
-        /* Foto Jurnal */
+        /* Dokumen */
         .table th:nth-child(7),
         .table td:nth-child(7) {
             width: 100px !important;
             max-width: 100px !important;
         }
 
-        /* Dokumen */
+        /* Tanggal Ditambahkan */
         .table th:nth-child(8),
         .table td:nth-child(8) {
             width: 120px !important;
             max-width: 120px !important;
         }
 
-        /* Tanggal Ditambahkan */
+        /* Aksi */
         .table th:nth-child(9),
         .table td:nth-child(9) {
             width: 100px !important;
             max-width: 100px !important;
         }
 
-        /* Aksi */
+        /* Text truncation untuk semua header kecuali kolom aksi */
+        .table th:not(:last-child):not(:nth-child(2)) {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-        /* Text truncation for all cells except action column */
-        .table td:not(:last-child) {
+        /* Text truncation untuk semua cell kecuali action column dan kolom nama program */
+        .table td:not(:last-child):not(:nth-child(2)) {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -136,11 +155,18 @@
         }
 
         .highlight {
-    background-color: #FFD700;
-    padding: 0 2px;
-    border-radius: 3px;
-}
+            background-color: #FFD700;
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+
+        /* TAMBAHAN: Pastikan semua header rata */
+        .table thead th {
+            vertical-align: middle !important;
+            text-align: center !important;
+        }
     </style>
+
 
 
     {{-- Page Header --}}
@@ -155,40 +181,41 @@
             {{-- Card Header --}}
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
                 <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Kegiatan Lainnya - 2025</h3>
-                
-@if(request('jenis_kegiatan_filter'))
-<div class="card-header border-0 pt-3 pb-3 bg-light">
-    <div class="card-title">
-        <div class="d-flex align-items-center position-relative my-1">
-            <i class="ki-duotone ki-filter fs-3 position-absolute ms-4">
-                <span class="path1"></span>
-                <span class="path2"></span>
-            </i>
-            <span class="fs-6 fw-semibold text-gray-700 ms-10">Filter Aktif:</span>
-            <span class="badge badge-light-primary ms-2">
-                Jenis: {{ request('jenis_kegiatan_filter') }}
-            </span>
-            <button class="btn btn-sm btn-icon btn-light-danger ms-5" 
-                onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'" 
-                title="Hapus filter">
-                <i class="fa-solid fa-times"></i>
-            </button>
-        </div>
-    </div>
-</div>
-@endif
+
+                @if (request('jenis_kegiatan_filter'))
+                    <div class="card-header border-0 pt-3 pb-3 bg-light">
+                        <div class="card-title">
+                            <div class="d-flex align-items-center position-relative my-1">
+                                <i class="ki-duotone ki-filter fs-3 position-absolute ms-4">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                </i>
+                                <span class="fs-6 fw-semibold text-gray-700 ms-10">Filter Aktif:</span>
+                                <span class="badge badge-light-primary ms-2">
+                                    Jenis: {{ request('jenis_kegiatan_filter') }}
+                                </span>
+                                <button class="btn btn-sm btn-icon btn-light-danger ms-5"
+                                    onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'"
+                                    title="Hapus filter">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button --}}
-<a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.create') }}" class="btn custom-red-button"
-    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-</a>
+                    <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.create') }}" class="btn custom-red-button"
+                        style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+                    </a>
 
                     {{-- Export Button --}}
-                    <button type="button" class="btn btn-light-primary">
+                    <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.export', request()->query()) }}"
+                        class="btn btn-light-primary" target="_blank">
                         <i class="ki-duotone ki-document fs-2"></i>Export Data
-                    </button>
+                    </a>
 
                     {{-- Search Input --}}
                     <div class="input-group" style="width: 250px;">
@@ -237,32 +264,34 @@
             {{-- Card Body --}}
             <div class="card-body">
                 @if ($kegiatanLainnya->isEmpty())
-    @if(request('search'))
-        {{-- Empty State untuk Search Tidak Ditemukan --}}
-        <div class="text-center text-muted py-10">
-            <i class="ki-duotone ki-magnifier fs-3x mb-3"></i>
-            <h4>Data tidak ditemukan untuk pencarian "{{ request('search') }}"</h4>
-            <button class="btn btn-light-primary" onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
-                Reset Pencarian
-            </button>
-        </div>
-    @elseif(request('jenis_kegiatan_filter'))
-        {{-- Empty State untuk Filter Tidak Ditemukan --}}
-        <div class="text-center text-muted py-10">
-            <i class="ki-duotone ki-filter fs-3x mb-3"></i>
-            <h4>Data tidak ditemukan untuk jenis kegiatan "{{ request('jenis_kegiatan_filter') }}"</h4>
-            <button class="btn btn-light-primary" onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
-                Reset Filter
-            </button>
-        </div>
-    @else
-        {{-- Empty State untuk Data Kosong --}}
-        <div class="text-center text-muted py-10">
-            <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
-            <h4>Data tidak tersedia</h4>
-        </div>
-    @endif
-@else
+                    @if (request('search'))
+                        {{-- Empty State untuk Search Tidak Ditemukan --}}
+                        <div class="text-center text-muted py-10">
+                            <i class="ki-duotone ki-magnifier fs-3x mb-3"></i>
+                            <h4>Data tidak ditemukan untuk pencarian "{{ request('search') }}"</h4>
+                            <button class="btn btn-light-primary"
+                                onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
+                                Reset Pencarian
+                            </button>
+                        </div>
+                    @elseif(request('jenis_kegiatan_filter'))
+                        {{-- Empty State untuk Filter Tidak Ditemukan --}}
+                        <div class="text-center text-muted py-10">
+                            <i class="ki-duotone ki-filter fs-3x mb-3"></i>
+                            <h4>Data tidak ditemukan untuk jenis kegiatan "{{ request('jenis_kegiatan_filter') }}"</h4>
+                            <button class="btn btn-light-primary"
+                                onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
+                                Reset Filter
+                            </button>
+                        </div>
+                    @else
+                        {{-- Empty State untuk Data Kosong --}}
+                        <div class="text-center text-muted py-10">
+                            <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
+                            <h4>Data tidak tersedia</h4>
+                        </div>
+                    @endif
+                @else
                     {{-- Data Table --}}
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle"
@@ -615,12 +644,12 @@
 
 
                 // Handle filter functionality
-$('#apply-filters').on('click', function() {
-    const jenisKegiatan = $('#filter-jenis-kegiatan').val();
-    updateUrlAndRedirect({
-        'jenis_kegiatan_filter': jenisKegiatan
-    });
-});
+                $('#apply-filters').on('click', function() {
+                    const jenisKegiatan = $('#filter-jenis-kegiatan').val();
+                    updateUrlAndRedirect({
+                        'jenis_kegiatan_filter': jenisKegiatan
+                    });
+                });
 
 
 
@@ -629,39 +658,39 @@ $('#apply-filters').on('click', function() {
                 });
 
                 // Update filter count badge (sederhanakan)
-function updateFilterCount() {
-    const hasFilter = new URLSearchParams(window.location.search).has('jenis_kegiatan_filter');
-    const badge = $('#filter-count');
-    if (hasFilter) {
-        badge.text('1').removeClass('d-none');
-    } else {
-        badge.addClass('d-none');
-    }
-}
+                function updateFilterCount() {
+                    const hasFilter = new URLSearchParams(window.location.search).has('jenis_kegiatan_filter');
+                    const badge = $('#filter-count');
+                    if (hasFilter) {
+                        badge.text('1').removeClass('d-none');
+                    } else {
+                        badge.addClass('d-none');
+                    }
+                }
 
                 // Tambahkan fungsi ini di bagian paling bawah script
-function highlightSearchTerm() {
-    const searchTerm = "{{ request('search') }}";
-    if (searchTerm) {
-        $('td').each(function() {
-            const text = $(this).text();
-            const highlighted = text.replace(
-                new RegExp(searchTerm, 'gi'), 
-                match => `<span class="bg-warning">${match}</span>`
-            );
-            if (highlighted !== text) {
-                $(this).html(highlighted);
-            }
-        });
-    }
-}
+                function highlightSearchTerm() {
+                    const searchTerm = "{{ request('search') }}";
+                    if (searchTerm) {
+                        $('td').each(function() {
+                            const text = $(this).text();
+                            const highlighted = text.replace(
+                                new RegExp(searchTerm, 'gi'),
+                                match => `<span class="bg-warning">${match}</span>`
+                            );
+                            if (highlighted !== text) {
+                                $(this).html(highlighted);
+                            }
+                        });
+                    }
+                }
 
-// Panggil fungsi saat dokumen siap
-$(document).ready(function() {
-    highlightSearchTerm();
-    
-    // ... kode yang sudah ada ...
-});
+                // Panggil fungsi saat dokumen siap
+                $(document).ready(function() {
+                    highlightSearchTerm();
+
+                    // ... kode yang sudah ada ...
+                });
 
                 // Initialize filter count on page load
                 updateFilterCount();

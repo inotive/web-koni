@@ -200,14 +200,6 @@
             border-color: #dee2e6;
         }
 
-        /* File preview button styling */
-        .preview-file {
-            background-color: #1B84FF !important;
-            border-color: #1B84FF !important;
-            color: white !important;
-            transition: all 0.2s ease;
-        }
-
 
         .preview-file:hover {
             background-color: #1570e6 !important;
@@ -390,13 +382,6 @@
             text-align: center;
         }
 
-        /* File Preview Modal Styling */
-        .file-preview-modal .modal-dialog {
-            max-width: 90vw;
-            width: 90vw;
-            height: 90vh;
-        }
-
         .file-preview-modal .modal-content {
             height: 100%;
             display: flex;
@@ -481,6 +466,84 @@
                 margin-top: 0 !important;
                 margin-bottom: 0.125rem !important;
             }
+        }
+
+        /* Style untuk link file */
+        .file-link {
+            color: #1B84FF;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+
+        .file-link:hover {
+            color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+
+
+        .file-link i {
+            margin-right: 8px;
+        }
+
+        /* Ikon berdasarkan tipe file */
+        .file-icon-pdf {
+            color: #e74c3c;
+            margin-right: 8px;
+        }
+
+        .file-icon-doc {
+            color: #2c3e50;
+            margin-right: 8px;
+        }
+
+        .file-icon-xls {
+            color: #27ae60;
+            margin-right: 8px;
+        }
+
+        .file-icon-default {
+            color: #7f8c8d;
+            margin-right: 8px;
+        }
+
+        /* Ukuran kolom */
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            width: 50px;
+            text-align: center;
+        }
+
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            width: 25%;
+        }
+
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            width: 30%;
+        }
+
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            width: 100px;
+            text-align: center;
+        }
+
+        .table th:nth-child(5),
+        .table td:nth-child(5) {
+            width: 150px;
+            text-align: center;
+        }
+
+        .table th:nth-child(6),
+        .table td:nth-child(6) {
+            width: 80px;
+            text-align: center;
         }
     </style>
 
@@ -584,240 +647,224 @@
 
             {{-- Card Body --}}
             <div class="card-body" id="tableContainer">
-                @if ($files->isEmpty())
-                    {{-- Empty State --}}
-                    <div class="empty-state" id="emptyState">
-                        @if (request('search') || request('file_type'))
-                            {{-- No search results --}}
-                            <i class="fas fa-search"></i>
-                            <h4>Data tidak ditemukan</h4>
-                            <p>
-                                Tidak ada file yang sesuai dengan pencarian
-                                @if (request('search'))
-                                    <strong>"{{ request('search') }}"</strong>
-                                @endif
-                                @if (request('file_type'))
-                                    dengan tipe <strong>{{ strtoupper(request('file_type')) }}</strong>
-                                @endif
-                            </p>
-                            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="resetAllFilters()">
-                                <i class="fas fa-times me-1"></i> Reset Pencarian
-                            </button>
-                        @else
-                            {{-- No data at all --}}
-                            <i class="fas fa-folder-open"></i>
-                            <h4>Belum ada file yang ditambahkan</h4>
-                            <p>Klik tombol "Tambah File" untuk menambahkan file baru</p>
-                        @endif
-                    </div>
-                @else
-                    {{-- Data Table --}}
-                    <div class="table-responsive" id="dataTable">
-                        <table class="table table-bordered table-hover align-middle">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th>No</th>
-                                    <th>
-                                        <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama_dokumen', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                                            class="text-dark text-decoration-none d-flex align-items-center">
-                                            Nama Dokumen
-                                            @if (request('sort_by') == 'nama_dokumen')
-                                                <i
-                                                    class="fas fa-arrow-{{ request('order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
-                                            @else
-                                                <i class="fas fa-sort ms-1 text-muted"></i>
-                                            @endif
+    @if ($files->isEmpty())
+        <div class="empty-state" id="emptyState">
+            @if (request('search') || request('file_type'))
+                <i class="fas fa-search"></i>
+                <h4>Data tidak ditemukan</h4>
+                <p>
+                    Tidak ada file yang sesuai dengan pencarian
+                    @if (request('search'))
+                        <strong>"{{ request('search') }}"</strong>
+                    @endif
+                    @if (request('file_type'))
+                        dengan tipe <strong>{{ strtoupper(request('file_type')) }}</strong>
+                    @endif
+                </p>
+                <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="resetAllFilters()">
+                    <i class="fas fa-times me-1"></i> Reset Pencarian
+                </button>
+            @else
+                <i class="fas fa-folder-open"></i>
+                <h4>Belum ada file yang ditambahkan</h4>
+                <p>Klik tombol "Tambah File" untuk menambahkan file baru</p>
+            @endif
+        </div>
+            @else
+                {{-- Data Table --}}
+                <div class="table-responsive" id="dataTable">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>No</th>
+                                <th>
+                                    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'nama_dokumen', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
+                                        class="text-dark text-decoration-none d-flex align-items-center">
+                                        Nama Dokumen
+                                        @if (request('sort_by') == 'nama_dokumen')
+                                            <i
+                                                class="fas fa-arrow-{{ request('order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
+                                        @else
+                                            <i class="fas fa-sort ms-1 text-muted"></i>
+                                        @endif
+                                    </a>
+                                </th>
+                                <th>File Dokumen</th>
+                                <th>Ukuran</th>
+                                <th>Tanggal Upload</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            @forelse ($files as $index => $file)
+                                <tr id="file-row-{{ $file->id }}">
+                                    <td class="text-center">{{ $files->firstItem() + $index }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-file-alt file-icon"></i>
+                                            <strong class="text-truncate-custom">{{ $file->nama_dokumen }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="{{ asset('storage/documents/' . $file->dokumen_file) }}" target="_blank"
+                                            class="file-link" title="Klik untuk melihat dokumen">
+                                            {{ $file->dokumen_file }}
                                         </a>
-                                    </th>
-                                    <th>
-                                        <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'created_at', 'order' => request('order') == 'asc' ? 'desc' : 'asc']) }}"
-                                            class="text-dark text-decoration-none d-flex align-items-center">
-                                            Aksi Preview
-                                            @if (request('sort_by') == 'created_at')
-                                                <i
-                                                    class="fas fa-arrow-{{ request('order') == 'asc' ? 'up' : 'down' }} ms-1"></i>
-                                            @else
-                                                <i class="fas fa-sort ms-1 text-muted"></i>
-                                            @endif
-                                        </a>
-                                    </th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-                                @forelse ($files as $index => $file)
-                                    <tr id="file-row-{{ $file->id }}">
-                                        <td class="text-center">{{ $files->firstItem() + $index }}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-file-alt file-icon"></i>
-                                                <strong class="text-truncate-custom">{{ $file->nama_dokumen }}</strong>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-sm preview-file"
-                                                data-file-url="{{ asset('storage/' . $file->path) }}"
-                                                data-file-name="{{ $file->nama_dokumen }}"
-                                                data-file-type="{{ pathinfo($file->path, PATHINFO_EXTENSION) }}"
-                                                title="Klik untuk melihat preview file">
-                                                <i class="fas fa-eye me-1"></i>
-                                                Lihat Dokumen
+                                    </td>
+                                    <td>{{ $file->file_size }}</td>
+                                    <td>{{ $file->created_at->format('d/m/Y H:i') }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm p-0" type="button" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <rect width="32" height="32" rx="6" fill="#EFF6FF" />
+                                                    <rect x="0.5" y="0.5" width="31" height="31" rx="5.5"
+                                                        stroke="#1B84FF" stroke-opacity="0.2" />
+                                                    <g clip-path="url(#clip0_2223_4269)">
+                                                        <path opacity="0.3"
+                                                            d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
+                                                            fill="#1B84FF" />
+                                                        <path
+                                                            d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
+                                                            fill="#1B84FF" />
+                                                    </g>
+                                                </svg>
                                             </button>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm p-0" type="button" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <svg width="32" height="32" viewBox="0 0 32 32"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <rect width="32" height="32" rx="6"
-                                                            fill="#EFF6FF" />
-                                                        <rect x="0.5" y="0.5" width="31" height="31"
-                                                            rx="5.5" stroke="#1B84FF" stroke-opacity="0.2" />
-                                                        <g clip-path="url(#clip0_2223_4269)">
-                                                            <path opacity="0.3"
-                                                                d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
-                                                                fill="#1B84FF" />
-                                                            <path
-                                                                d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
-                                                                fill="#1B84FF" />
-                                                        </g>
-                                                        <defs>
-                                                            <clipPath id="clip0_2223_4269">
-                                                                <rect width="18" height="18" fill="white"
-                                                                    transform="translate(7 7)" />
-                                                            </clipPath>
-                                                        </defs>
-                                                    </svg>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
-                                                    <li>
-                                                        <a href="{{ route('admin.file-kesekretariat.edit', $file) }}"
-                                                            class="dropdown-item">
-                                                            <i class="fas fa-edit me-2"></i>Edit File
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="dropdown-item delete-btn"
-                                                            data-file-id="{{ $file->id }}"
-                                                            data-file-name="{{ $file->nama_dokumen }}"
-                                                            data-delete-url="{{ route('admin.file-kesekretariat.destroy', $file) }}">
-                                                            <i class="fas fa-trash me-2"></i>Hapus File
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr id="noDataRow">
-                                        <td colspan="4" class="text-center py-5 text-muted">
-                                            <div class="empty-state">
-                                                <i class="fas fa-search"></i>
-                                                <h5>Data tidak ditemukan</h5>
-                                                <p class="mb-0">Silakan coba kata kunci pencarian yang lain</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {{-- Pagination --}}
-                    @if ($files->total() >= 0)
-                        <div class="pagination-wrapper">
-                            <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-                                {{-- Per Page Dropdown --}}
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="text-muted small">Show</span>
-                                    <div class="dropdown">
-                                        <button class="btn btn-sm btn-light border dropdown-toggle" type="button"
-                                            id="perPageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                            {{ request('per_page', 10) }}
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perPageDropdown">
-                                            @foreach ([10, 20, 30, 40] as $perPage)
+                                            <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
                                                 <li>
-                                                    <a class="dropdown-item {{ request('per_page', 10) == $perPage ? 'active' : '' }}"
-                                                        href="#" onclick="updatePerPage({{ $perPage }})">
-                                                        {{ $perPage }}
+                                                    <a href="{{ route('admin.file-kesekretariat.edit', $file) }}"
+                                                        class="dropdown-item">
+                                                        <i class="fas fa-edit me-2"></i>Edit
                                                     </a>
                                                 </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                    <span class="text-muted small">per page</span>
-                                </div>
+                                                <li>
+                                                    <a href="#" class="dropdown-item delete-btn"
+                                                        data-file-id="{{ $file->id }}"
+                                                        data-file-name="{{ $file->nama_dokumen }}"
+                                                        data-delete-url="{{ route('admin.file-kesekretariat.destroy', $file) }}">
+                                                        <i class="fas fa-trash me-2"></i>Hapus
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{{ route('admin.file-kesekretariat.download', $file) }}"
+                                                        class="dropdown-item">
+                                                        <i class="fas fa-download me-2"></i>Download
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr id="noDataRow">
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <div class="empty-state">
+                                            <i class="fas fa-search"></i>
+                                            <h5>Data tidak ditemukan</h5>
+                                            <p class="mb-0">Silakan coba kata kunci pencarian yang lain</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
 
-                                {{-- Pagination Info and Controls --}}
-                                <div class="d-flex align-items-center gap-3">
-                                    <div class="text-muted small">
-                                        {{ $files->firstItem() }}-{{ $files->lastItem() }} of {{ $files->total() }}
-                                    </div>
-
-                                    <nav aria-label="Page navigation">
-                                        <ul class="pagination pagination-sm mb-0">
-                                            {{-- Previous --}}
-                                            <li class="page-item {{ $files->onFirstPage() ? 'disabled' : '' }}">
-                                                <a class="page-link" href="#"
-                                                    onclick="event.preventDefault(); goToPage({{ $files->currentPage() - 1 }})">
-                                                    &lt;
+                {{-- Pagination --}}
+                @if ($files->total() >= 0)
+                    <div class="pagination-wrapper">
+                        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+                            {{-- Per Page Dropdown --}}
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="text-muted small">Show</span>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light border dropdown-toggle" type="button"
+                                        id="perPageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{ request('per_page', 10) }}
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perPageDropdown">
+                                        @foreach ([10, 20, 30, 40] as $perPage)
+                                            <li>
+                                                <a class="dropdown-item {{ request('per_page', 10) == $perPage ? 'active' : '' }}"
+                                                    href="#" onclick="updatePerPage({{ $perPage }})">
+                                                    {{ $perPage }}
                                                 </a>
                                             </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <span class="text-muted small">per page</span>
+                            </div>
 
-                                            {{-- First Page --}}
-                                            @if ($files->currentPage() > 3)
-                                                <li class="page-item">
-                                                    <a class="page-link" href="#"
-                                                        onclick="event.preventDefault(); goToPage(1)">1</a>
-                                                </li>
-                                                @if ($files->currentPage() > 4)
-                                                    <li class="page-item disabled">
-                                                        <span class="page-link">...</span>
-                                                    </li>
-                                                @endif
-                                            @endif
+                            {{-- Pagination Info and Controls --}}
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="text-muted small">
+                                    {{ $files->firstItem() }}-{{ $files->lastItem() }} of {{ $files->total() }}
+                                </div>
 
-                                            {{-- Page Numbers --}}
-                                            @foreach (range(max(1, $files->currentPage() - 2), min($files->lastPage(), $files->currentPage() + 2)) as $page)
-                                                <li
-                                                    class="page-item {{ $page == $files->currentPage() ? 'active' : '' }}">
-                                                    <a class="page-link" href="#"
-                                                        onclick="event.preventDefault(); goToPage({{ $page }})">
-                                                        {{ $page }}
-                                                    </a>
-                                                </li>
-                                            @endforeach
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination pagination-sm mb-0">
+                                        {{-- Previous --}}
+                                        <li class="page-item {{ $files->onFirstPage() ? 'disabled' : '' }}">
+                                            <a class="page-link" href="#"
+                                                onclick="event.preventDefault(); goToPage({{ $files->currentPage() - 1 }})">
+                                                &lt;
+                                            </a>
+                                        </li>
 
-                                            {{-- Last Page --}}
-                                            @if ($files->currentPage() < $files->lastPage() - 2)
-                                                @if ($files->currentPage() < $files->lastPage() - 3)
-                                                    <li class="page-item disabled">
-                                                        <span class="page-link">...</span>
-                                                    </li>
-                                                @endif
-                                                <li class="page-item">
-                                                    <a class="page-link" href="#"
-                                                        onclick="event.preventDefault(); goToPage({{ $files->lastPage() }})">
-                                                        {{ $files->lastPage() }}
-                                                    </a>
-                                                </li>
-                                            @endif
-
-                                            {{-- Next --}}
-                                            <li class="page-item {{ !$files->hasMorePages() ? 'disabled' : '' }}">
+                                        {{-- First Page --}}
+                                        @if ($files->currentPage() > 3)
+                                            <li class="page-item">
                                                 <a class="page-link" href="#"
-                                                    onclick="event.preventDefault(); goToPage({{ $files->currentPage() + 1 }})">
-                                                    &gt;
+                                                    onclick="event.preventDefault(); goToPage(1)">1</a>
+                                            </li>
+                                            @if ($files->currentPage() > 4)
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">...</span>
+                                                </li>
+                                            @endif
+                                        @endif
+
+                                        {{-- Page Numbers --}}
+                                        @foreach (range(max(1, $files->currentPage() - 2), min($files->lastPage(), $files->currentPage() + 2)) as $page)
+                                            <li class="page-item {{ $page == $files->currentPage() ? 'active' : '' }}">
+                                                <a class="page-link" href="#"
+                                                    onclick="event.preventDefault(); goToPage({{ $page }})">
+                                                    {{ $page }}
                                                 </a>
                                             </li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                                        @endforeach
+
+                                        {{-- Last Page --}}
+                                        @if ($files->currentPage() < $files->lastPage() - 2)
+                                            @if ($files->currentPage() < $files->lastPage() - 3)
+                                                <li class="page-item disabled">
+                                                    <span class="page-link">...</span>
+                                                </li>
+                                            @endif
+                                            <li class="page-item">
+                                                <a class="page-link" href="#"
+                                                    onclick="event.preventDefault(); goToPage({{ $files->lastPage() }})">
+                                                    {{ $files->lastPage() }}
+                                                </a>
+                                            </li>
+                                        @endif
+
+                                        {{-- Next --}}
+                                        <li class="page-item {{ !$files->hasMorePages() ? 'disabled' : '' }}">
+                                            <a class="page-link" href="#"
+                                                onclick="event.preventDefault(); goToPage({{ $files->currentPage() + 1 }})">
+                                                &gt;
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
-                    @endif
+                    </div>
+                @endif
                 @endif
             </div>
         </div>
@@ -869,39 +916,7 @@
         </div>
     </div>
 
-    {{-- File Preview Modal --}}
-    <div class="modal fade file-preview-modal" id="filePreviewModal" tabindex="-1"
-        aria-labelledby="filePreviewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold" id="filePreviewModalLabel">
-                        <i class="fas fa-file-alt me-2"></i>
-                        <span id="previewFileName">Preview File</span>
-                        <span class="file-info-badge" id="previewFileType">PDF</span>
-                    </h5>
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="#" id="downloadFileBtn" class="btn btn-outline-primary btn-sm" download>
-                            <i class="fas fa-download me-1"></i>Download
-                        </a>
-                        <a href="#" id="openNewTabBtn" class="btn btn-outline-secondary btn-sm" target="_blank">
-                            <i class="fas fa-external-link-alt me-1"></i>Buka Tab Baru
-                        </a>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <div class="file-preview-container" id="filePreviewContainer">
-                        <div class="file-preview-loading" id="previewLoading">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <h5>Memuat file...</h5>
-                            <p>Mohon tunggu sebentar</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     {{-- Delete Confirmation Modal --}}
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -945,8 +960,44 @@
     </div>
 @endsection
 
+
+
 @section('script')
+
     <script>
+        function getFileIcon(extension) {
+            const icons = {
+                'pdf': 'fas fa-file-pdf file-icon-pdf',
+                'doc': 'fas fa-file-word file-icon-doc',
+                'docx': 'fas fa-file-word file-icon-doc',
+                'xls': 'fas fa-file-excel file-icon-xls',
+                'xlsx': 'fas fa-file-excel file-icon-xls',
+                'default': 'fas fa-file file-icon-default'
+            };
+            return icons[extension.toLowerCase()] || icons['default'];
+        }
+
+        // Fungsi untuk menambahkan ikon file
+        function addFileIcons() {
+            $('.file-link').each(function() {
+                const fileName = $(this).text().trim();
+                const extension = fileName.split('.').pop();
+                const iconClass = getFileIcon(extension);
+
+                // Tambahkan ikon sebelum nama file
+                $(this).prepend(`<i class="${iconClass}"></i>`);
+            });
+        }
+
+        $(document).ready(function() {
+            // Panggil fungsi untuk menambahkan ikon
+            addFileIcons();
+
+            // Tambahkan juga di callback success AJAX search
+            $(document).ajaxSuccess(function() {
+                addFileIcons();
+            });
+        });
         $(document).ready(function() {
             let isLoading = false;
             let searchTimeout;
@@ -965,26 +1016,8 @@
                 isLoading = false;
             }
 
-            // Show notification function
-            function showNotification(message, type = 'success') {
-                const toast = $(`
-                    <div class="toast ${type}" role="alert" aria-live="assertive" aria-atomic="true">
-                        <div class="toast-header">
-                            <strong class="me-auto">${type === 'success' ? 'Berhasil' : 'Error'}</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-                        </div>
-                        <div class="toast-body">${message}</div>
-                    </div>
-                `);
+            // Fungsi untuk mendapatkan ikon berdasarkan ekstensi file
 
-                $('#toast-container').append(toast);
-                const bsToast = new bootstrap.Toast(toast[0]);
-                bsToast.show();
-
-                setTimeout(() => {
-                    toast.remove();
-                }, 5000);
-            }
 
             // Clear form validation errors
             function clearFormErrors() {
@@ -1017,77 +1050,6 @@
                 return icons[fileType.toLowerCase()] || icons['default'];
             }
 
-            // File Preview functionality
-            function showFilePreview(fileUrl, fileName, fileType) {
-                const modal = $('#filePreviewModal');
-                const container = $('#filePreviewContainer');
-                const loading = $('#previewLoading');
-
-                // Update modal title and info
-                $('#previewFileName').text(fileName);
-                $('#previewFileType').text(fileType.toUpperCase());
-                $('#downloadFileBtn').attr('href', fileUrl);
-                $('#openNewTabBtn').attr('href', fileUrl);
-
-                // Show loading
-                container.html(loading);
-                modal.modal('show');
-
-                // Create preview content based on file type
-                setTimeout(() => {
-                    let previewContent = '';
-
-                    if (fileType.toLowerCase() === 'pdf') {
-                        previewContent = `
-                            <iframe src="${fileUrl}" 
-                                    class="file-preview-iframe" 
-                                    title="${fileName}">
-                            </iframe>
-                        `;
-                    } else if (['doc', 'docx'].includes(fileType.toLowerCase())) {
-                        // For Word documents, use Google Docs Viewer
-                        const viewerUrl =
-                            `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
-                        previewContent = `
-                            <iframe src="${viewerUrl}" 
-                                    class="file-preview-iframe" 
-                                    title="${fileName}">
-                            </iframe>
-                        `;
-                    } else if (['xls', 'xlsx'].includes(fileType.toLowerCase())) {
-                        // For Excel files, use Google Docs Viewer
-                        const viewerUrl =
-                            `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
-                        previewContent = `
-                            <iframe src="${viewerUrl}" 
-                                    class="file-preview-iframe" 
-                                    title="${fileName}">
-                            </iframe>
-                        `;
-                    } else {
-                        previewContent = `
-                            <div class="file-preview-error">
-                                <i class="fas fa-exclamation-triangle"></i>
-                                <h5>Preview tidak tersedia</h5>
-                                <p>File ini tidak dapat ditampilkan secara langsung.</p>
-                                <p>Silakan unduh file untuk melihat isinya.</p>
-                            </div>
-                        `;
-                    }
-
-                    container.html(previewContent);
-                }, 500);
-            }
-
-            // Handle file preview click
-            $(document).on('click', '.preview-file', function(e) {
-                e.preventDefault();
-                const fileUrl = $(this).data('file-url');
-                const fileName = $(this).data('file-name');
-                const fileType = $(this).data('file-type');
-
-                showFilePreview(fileUrl, fileName, fileType);
-            });
 
             // Perform AJAX search request
             function performSearch(params = {}, showLoadingIndicator = true) {

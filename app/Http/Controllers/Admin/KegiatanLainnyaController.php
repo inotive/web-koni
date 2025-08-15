@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class KegiatanLainnyaController extends Controller
 {
@@ -18,6 +19,13 @@ class KegiatanLainnyaController extends Controller
         $jenisKegiatanFilter = $request->input('jenis_kegiatan_filter');
         $sortBy = $request->input('sort', 'created_at');
         $sortDirection = $request->input('direction', 'desc');
+
+        // PERBAIKAN: Pastikan jika tidak ada sorting custom, selalu gunakan created_at desc
+        // untuk memastikan data terbaru selalu di atas
+        if (!$request->has('sort')) {
+            $sortBy = 'created_at';
+            $sortDirection = 'desc';
+        }
 
         $query = KegiatanLainnya::query();
 
@@ -35,8 +43,13 @@ class KegiatanLainnyaController extends Controller
             $query->where('jenis_kegiatan', $jenisKegiatanFilter);
         }
 
-        // Sorting
+        // Sorting - PERBAIKAN: Tambahkan secondary sort untuk konsistensi
         $query->orderBy($sortBy, $sortDirection);
+        
+        // Tambahkan secondary sort berdasarkan created_at desc jika primary sort bukan created_at
+        if ($sortBy !== 'created_at') {
+            $query->orderBy('created_at', 'desc');
+        }
 
         // Pagination
         $kegiatanLainnya = $query->paginate($perPage)->appends($request->query());
@@ -143,6 +156,7 @@ class KegiatanLainnyaController extends Controller
 
             DB::commit();
 
+            // PERBAIKAN: Redirect tanpa parameter sorting untuk memastikan data baru muncul di atas
             return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
                 ->with('success', 'Data Kegiatan Lainnya berhasil ditambahkan!');
 
@@ -334,4 +348,54 @@ class KegiatanLainnyaController extends Controller
                 ->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
+
+    public function export(Request $request)
+{
+    try {
+        $query = KegiatanLainnya::query();
+        
+        // Filter pencarian
+        if ($request->has('search') && !empty($request->input('search'))) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(nama_program_kegiatan) LIKE ?', ['%'.strtolower($search).'%'])
+                  ->orWhereRaw('LOWER(jenis_kegiatan) LIKE ?', ['%'.strtolower($search).'%'])
+                  ->orWhereRaw('LOWER(volume) LIKE ?', ['%'.strtolower($search).'%']);
+            });
+        }
+
+        // Filter jenis kegiatan
+        if ($request->has('jenis_kegiatan_filter') && !empty($request->input('jenis_kegiatan_filter'))) {
+            $query->where('jenis_kegiatan', $request->input('jenis_kegiatan_filter'));
+        }
+
+        // Pastikan ada data sebelum export
+        $data = $query->orderBy('created_at', 'desc')->get();
+
+        // Jika tidak ada data, kembalikan response dengan pesan
+        if ($data->isEmpty()) {
+            return redirect()->back()->with('error', 'Tidak ada data untuk di-export');
+        }
+
+        // Pastikan view export ada
+        $viewPath = 'admin.laporan-lpj.kegiatan_lainnya.export';
+        if (!view()->exists($viewPath)) {
+            return redirect()->back()->with('error', 'Template export tidak ditemukan');
+        }
+
+        $filename = 'LPJ_Kegiatan_Lainnya_' . now()->format('Ymd_His') . '.pdf';
+
+        // Gunakan try-catch untuk PDF generation
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($viewPath, [
+            'data' => $data,
+            'title' => 'Laporan Pertanggungjawaban Kegiatan Lainnya'
+        ]);
+
+        return $pdf->download($filename);
+
+    } catch (\Exception $e) {
+        Log::error('Export Error: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Gagal mengexport data: ' . $e->getMessage());
+    }
+}
 }
