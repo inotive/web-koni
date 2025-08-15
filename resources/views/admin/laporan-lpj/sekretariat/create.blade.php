@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Tambah Sekretariat')
+@section('pageTitle', 'Tambah Laporan Sekretariat')
 @section('mainSection', 'Laporan Pertanggungjawaban')
 @section('subSection', 'Sekretariat')
 @section('subSectionUrl', route('admin.laporan-lpj.sekretariat.index'))
-@section('currentSection', 'Tambah Sekretariat')
+@section('currentSection', 'Tambah Laporan')
 
 @section('content')
-
     <style>
         body {
             background-color: #f5f5f5 !important;
@@ -43,12 +42,17 @@
             padding: 16px 20px;
             cursor: pointer;
             transition: all 0.2s ease-in-out;
-            min-height: 80px;
         }
 
         .file-upload-wrapper:hover {
             border-color: #0d6efd;
             background-color: #e6f0ff;
+        }
+
+        .file-upload-wrapper.dragover {
+            border-color: #0d6efd;
+            background-color: #e6f0ff;
+            transform: scale(1.02);
         }
 
         .file-upload-wrapper input[type="file"] {
@@ -62,7 +66,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
         }
 
         .file-upload-icon {
@@ -117,57 +120,103 @@
             box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
         }
 
-        .preview-image {
-            max-width: 80px;
-            max-height: 80px;
+        .preview-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid #e9ecef;
             border-radius: 8px;
-            object-fit: cover;
-            margin-right: 8px;
-            margin-bottom: 8px;
+            padding: 15px;
+            background-color: #f8f9fa;
         }
 
-        .file-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .file-item {
+        .file-preview-item {
             display: flex;
             align-items: center;
-            background: #f8f9fa;
-            padding: 8px 12px;
+            gap: 12px;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: white;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .file-preview-item:hover {
+            border-color: #0d6efd;
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+        }
+
+        .file-preview-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .preview-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
             border-radius: 6px;
-            font-size: 0.85rem;
-            color: #495057;
-            max-width: 250px;
+            border: 1px solid #e9ecef;
         }
 
-        .file-item i {
-            margin-right: 8px;
-            color: #6c757d;
+        .file-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
         }
 
-        .file-name {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .file-info {
             flex: 1;
         }
 
-        .file-counter {
-            background: #007bff;
+        .file-name {
+            font-weight: 500;
+            color: #212529;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
+
+        .file-size {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .remove-file {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .remove-file:hover {
+            background-color: #dc3545;
             color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 0.75rem;
-            margin-left: 8px;
+        }
+
+        .file-counter {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 8px;
+        }
+
+        .max-files-warning {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 8px;
         }
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Sekretariat</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Laporan Sekretariat</h3>
     </div>
 
     <div class="main-content">
@@ -176,125 +225,148 @@
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Tambah Data</h3>
-                        <form action="{{ route('admin.laporan-lpj.sekretariat.store') }}" method="POST"
-                            enctype="multipart/form-data">
+                        <form action="{{ route('admin.laporan-lpj.sekretariat.store') }}" method="POST" enctype="multipart/form-data" id="sekretariatForm">
                             @csrf
-
-                            <!-- Foto Jurnal Upload -->
-                            <div class="row align-items-start mb-4">
-                                <div class="col-md-3">
-                                    <label class="form-label">Foto Jurnal</label>
-                                    <p class="file-upload-hint">Maksimal 10 foto, masing-masing hingga 10 MB</p>
-                                </div>
-                                <div class="col-md-9">
-                                    <label for="foto_jurnal" class="file-upload-wrapper">
-                                        <input type="file" name="foto_jurnal[]" id="foto_jurnal"
-                                            class="@error('foto_jurnal') is-invalid @enderror"
-                                            accept="image/jpeg,image/jpg,image/png,image/gif" multiple>
-
-                                        <div class="d-flex align-items-center gap-12 w-100">
-                                            <div class="file-upload-icon-wrapper">
-                                                <i class="fas fa-upload file-upload-icon"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="file-upload-text" id="foto-file-name-display">
-                                                    Seret dan lepas foto di sini, atau klik untuk mengunggah
-                                                </p>
-                                                <div id="fotoPreviewContainer" class="file-preview"></div>
-                                            </div>
-                                        </div>
-                                    </label>
-
-                                    @error('foto_jurnal')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
-                                    @error('foto_jurnal.*')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <!-- Dokumen Pendukung Upload -->
-                            <div class="row align-items-start mb-4">
-                                <div class="col-md-3">
-                                    <label class="form-label">Dokumen Pendukung</label>
-                                    <p class="file-upload-hint">Maksimal 10 dokumen, masing-masing hingga 10MB</p>
-                                </div>
-                                <div class="col-md-9">
-                                    <label for="dokumen_pendukung" class="file-upload-wrapper">
-                                        <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung"
-                                            class="form-control @error('dokumen_pendukung') is-invalid @enderror"
-                                            accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
-
-                                        <div class="d-flex align-items-center gap-12 w-100">
-                                            <div class="file-upload-icon-wrapper">
-                                                <i class="fas fa-upload file-upload-icon"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <p class="file-upload-text" id="dokumen-file-name-display">
-                                                    Seret dan lepas dokumen di sini, atau klik untuk mengunggah
-                                                </p>
-                                                <div id="dokumenPreviewContainer" class="file-preview"></div>
-                                            </div>
-                                        </div>
-                                    </label>
-
-                                    @error('dokumen_pendukung')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
-                                    @error('dokumen_pendukung.*')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
 
                             @php
                                 $fields = [
                                     'nama_program_kegiatan' => [
-                                        'label' => 'Nama Program',
+                                        'label' => 'Nama Program & Kegiatan',
                                         'type' => 'text',
-                                        'placeholder' => 'Masukkan nama program',
+                                        'placeholder' => 'Masukkan nama program & kegiatan',
+                                        'required' => true,
                                     ],
                                     'jenis_kegiatan' => [
-                                        'label' => 'Nama Kegiatan',
+                                        'label' => 'Jenis Kegiatan',
                                         'type' => 'text',
-                                        'placeholder' => 'Contoh: Rapat, Pelatihan, Pembelian',
+                                        'placeholder' => 'Masukkan jenis kegiatan',
+                                        'required' => true,
                                     ],
                                     'volume' => [
                                         'label' => 'Volume',
                                         'type' => 'text',
                                         'placeholder' => 'Masukkan volume kegiatan (contoh: 20 unit, 1 kegiatan)',
+                                        'required' => true,
                                     ],
                                     'jumlah_harga_satuan' => [
                                         'label' => 'Jumlah Harga Satuan',
                                         'type' => 'number',
                                         'placeholder' => 'Masukkan jumlah harga satuan',
+                                        'required' => true,
                                     ],
                                     'jumlah_harga' => [
                                         'label' => 'Jumlah Harga',
                                         'type' => 'number',
                                         'placeholder' => 'Masukkan jumlah harga',
+                                        'required' => true,
                                     ],
                                     'keterangan_tambahan' => [
                                         'label' => 'Keterangan Tambahan',
-                                        'type' => 'text',
-                                        'placeholder' => 'Masukkan keterangan tambahan',
+                                        'type' => 'textarea',
+                                        'placeholder' => 'Masukkan keterangan tambahan (opsional)',
+                                        'required' => false,
                                     ],
                                 ];
                             @endphp
 
                             @foreach ($fields as $key => $field)
+                                @if($key === 'keterangan_tambahan')
+                                    <div class="row align-items-start mb-4">
+                                        <div class="col-md-3">
+                                            <label class="form-label">Foto Jurnal</label>
+                                            <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <label for="foto_jurnal" class="file-upload-wrapper">
+                                                <input type="file" name="foto_jurnal[]" id="foto_jurnal"
+                                                    class="@error('foto_jurnal') is-invalid @enderror"
+                                                    accept="image/*" multiple>
+
+                                                <div class="d-flex align-items-center gap-12">
+                                                    <div class="file-upload-icon-wrapper">
+                                                        <i class="fas fa-upload file-upload-icon"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="file-upload-text" id="foto-file-name-display">
+                                                            Seret dan lepas foto di sini, atau klik untuk mengunggah.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </label>
+
+                                            <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
+                                            <div id="fotoCounter" class="file-counter"></div>
+                                            <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
+                                                Maksimal 10 foto yang dapat diunggah.
+                                            </div>
+
+                                            @error('foto_jurnal')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="row align-items-start mb-4">
+                                        <div class="col-md-3">
+                                            <label class="form-label">Dokumen Pendukung</label>
+                                            <p class="file-upload-hint">Maksimal 10 file PDF/Office, masing-masing hingga 10MB</p>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <label for="dokumen_pendukung" class="file-upload-wrapper">
+                                                <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung"
+                                                    class="form-control @error('dokumen_pendukung') is-invalid @enderror"
+                                                    accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+
+                                                <div class="d-flex align-items-center gap-12">
+                                                    <div class="file-upload-icon-wrapper">
+                                                        <i class="fas fa-upload file-upload-icon"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="file-upload-text" id="dokumen-file-name-display">
+                                                            Seret dan lepas dokumen di sini, atau klik untuk mengunggah.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </label>
+
+                                            <div id="dokumenPreviewContainer" class="preview-container" style="display: none;"></div>
+                                            <div id="dokumenCounter" class="file-counter"></div>
+                                            <div id="dokumenMaxWarning" class="max-files-warning" style="display: none;">
+                                                Maksimal 10 dokumen yang dapat diunggah.
+                                            </div>
+
+                                            @error('dokumen_pendukung')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <div class="row align-items-center mb-3">
                                     <div class="col-md-3">
-                                        <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
+                                        <label for="{{ $key }}" class="form-label">
+                                            {{ $field['label'] }}
+                                            @if($field['required'])
+                                                <span class="text-danger">*</span>
+                                            @endif
+                                        </label>
                                     </div>
                                     <div class="col-md-9">
-                                        <input type="{{ $field['type'] }}" name="{{ $key }}"
-                                            id="{{ $key }}"
-                                            class="form-control @error($key) is-invalid @enderror"
-                                            placeholder="{{ $field['placeholder'] ?? '' }}"
-                                            value="{{ old($key) }}"
-                                            {{ in_array($key, ['nama_program_kegiatan', 'jenis_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga']) ? 'required' : '' }}>
+                                        @if ($field['type'] === 'textarea')
+                                            <textarea name="{{ $key }}" id="{{ $key }}"
+                                                class="form-control @error($key) is-invalid @enderror"
+                                                placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                rows="3"
+                                                {{ $field['required'] ? 'required' : '' }}>{{ old($key) }}</textarea>
+                                        @else
+                                            <input type="{{ $field['type'] }}" name="{{ $key }}"
+                                                id="{{ $key }}"
+                                                class="form-control @error($key) is-invalid @enderror"
+                                                placeholder="{{ $field['placeholder'] ?? '' }}"
+                                                value="{{ old($key) }}"
+                                                {{ $field['required'] ? 'required' : '' }}
+                                                @if($field['type'] === 'number') min="0" step="0.01" @endif>
+                                        @endif
 
                                         @error($key)
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -306,8 +378,7 @@
                             <div class="row mt-4">
                                 <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                                     <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
-                                    <a href="{{ route('admin.laporan-lpj.sekretariat.index') }}"
-                                        class="btn btn-secondary px-4">Kembali</a>
+                                    <a href="{{ route('admin.laporan-lpj.sekretariat.index') }}" class="btn btn-secondary px-4">Kembali</a>
                                 </div>
                             </div>
                         </form>
@@ -316,183 +387,248 @@
             </div>
         </div>
     </div>
+@endsection
 
+@section('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const fotoUploadInput = document.getElementById('foto_jurnal');
+            const MAX_FILES = 10;
+            const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+            let selectedFotoFiles = [];
+            let selectedDokumenFiles = [];
+
+            const fotoInput = document.getElementById('foto_jurnal');
             const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
             const fotoFileNameDisplay = document.getElementById('foto-file-name-display');
+            const fotoCounter = document.getElementById('fotoCounter');
+            const fotoMaxWarning = document.getElementById('fotoMaxWarning');
 
-            fotoUploadInput.addEventListener('change', function() {
-                const files = Array.from(this.files);
-
-                if (files.length > 10) {
-                    alert('Maksimal 10 foto yang dapat diunggah');
-                    this.value = '';
-                    return;
-                }
-
-                if (files.length > 0) {
-                    const validFiles = files.filter(file => {
-                        if (!file.type.match('image.*')) {
-                            alert(`File ${file.name} bukan gambar yang valid`);
-                            return false;
-                        }
-                        if (file.size > 10 * 1024 * 1024) {
-                            alert(`File ${file.name} terlalu besar (maksimal 10MB)`);
-                            return false;
-                        }
-                        return true;
-                    });
-
-                    if (validFiles.length !== files.length) {
-                        this.value = '';
-                        return;
-                    }
-
-                    fotoFileNameDisplay.textContent = `${files.length} foto dipilih`;
-
-                    fotoPreviewContainer.innerHTML = '';
-                    files.forEach((file, index) => {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const imageDiv = document.createElement('div');
-                            imageDiv.innerHTML = `
-                                <img src="${e.target.result}" class="preview-image" alt="Preview ${index + 1}">
-                            `;
-                            fotoPreviewContainer.appendChild(imageDiv);
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                } else {
-                    fotoFileNameDisplay.textContent = 'Seret dan lepas foto di sini, atau klik untuk mengunggah';
-                    fotoPreviewContainer.innerHTML = '';
-                }
+            fotoInput.addEventListener('change', function() {
+                handleFileSelection(this.files, 'foto');
             });
 
-            const dokumenUploadInput = document.getElementById('dokumen_pendukung');
+            const dokumenInput = document.getElementById('dokumen_pendukung');
             const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
             const dokumenFileNameDisplay = document.getElementById('dokumen-file-name-display');
+            const dokumenCounter = document.getElementById('dokumenCounter');
+            const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
 
-            dokumenUploadInput.addEventListener('change', function() {
-                const files = Array.from(this.files);
+            dokumenInput.addEventListener('change', function() {
+                handleFileSelection(this.files, 'dokumen');
+            });
 
-                if (files.length > 10) {
-                    alert('Maksimal 10 dokumen yang dapat diunggah');
-                    this.value = '';
+            function handleFileSelection(files, type) {
+                const isPhoto = type === 'foto';
+                const currentFiles = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+                const input = isPhoto ? fotoInput : dokumenInput;
+
+                const newFiles = Array.from(files).filter(file => {
+                    if (file.size > MAX_FILE_SIZE) {
+                        alert(`File "${file.name}" terlalu besar. Maksimal 10MB per file.`);
+                        return false;
+                    }
+
+                    if (isPhoto && !file.type.match('image.*')) {
+                        alert(`File "${file.name}" bukan file gambar yang valid.`);
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                if (currentFiles.length + newFiles.length > MAX_FILES) {
+                    alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${currentFiles.length} file.`);
                     return;
                 }
 
-                if (files.length > 0) {
-                    const validExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
-                    const validFiles = files.filter(file => {
-                        const extension = file.name.split('.').pop().toLowerCase();
-                        if (!validExtensions.includes(extension)) {
-                            alert(`File ${file.name} format tidak didukung`);
-                            return false;
-                        }
-                        if (file.size > 10 * 1024 * 1024) {
-                            alert(`File ${file.name} terlalu besar (maksimal 10MB)`);
-                            return false;
-                        }
-                        return true;
-                    });
-
-                    if (validFiles.length !== files.length) {
-                        this.value = '';
-                        return;
-                    }
-
-                    dokumenFileNameDisplay.textContent = `${files.length} dokumen dipilih`;
-
-                    dokumenPreviewContainer.innerHTML = '';
-                    files.forEach((file) => {
-                        const fileDiv = document.createElement('div');
-                        fileDiv.className = 'file-item';
-
-                        const getFileIcon = (fileName) => {
-                            const extension = fileName.split('.').pop().toLowerCase();
-                            switch(extension) {
-                                case 'pdf': return 'fas fa-file-pdf';
-                                case 'doc':
-                                case 'docx': return 'fas fa-file-word';
-                                case 'xls':
-                                case 'xlsx': return 'fas fa-file-excel';
-                                default: return 'fas fa-file-alt';
-                            }
-                        };
-
-                        fileDiv.innerHTML = `
-                            <i class="${getFileIcon(file.name)}"></i>
-                            <span class="file-name" title="${file.name}">${file.name}</span>
-                        `;
-                        dokumenPreviewContainer.appendChild(fileDiv);
-                    });
+                if (isPhoto) {
+                    selectedFotoFiles = [...currentFiles, ...newFiles];
                 } else {
-                    dokumenFileNameDisplay.textContent = 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah';
-                    dokumenPreviewContainer.innerHTML = '';
+                    selectedDokumenFiles = [...currentFiles, ...newFiles];
                 }
-            });
 
-            const fotoFileUploadWrapper = document.querySelector('label[for="foto_jurnal"]');
-
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                fotoFileUploadWrapper.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
+                updateFilePreview(type);
+                updateFileInput(type);
             }
 
-            ['dragenter', 'dragover'].forEach(eventName => {
-                fotoFileUploadWrapper.addEventListener(eventName, () => {
-                    fotoFileUploadWrapper.style.borderColor = '#0d6efd';
-                    fotoFileUploadWrapper.style.backgroundColor = '#e6f0ff';
-                }, false);
+            function updateFilePreview(type) {
+                const isPhoto = type === 'foto';
+                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+                const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
+                const counter = isPhoto ? fotoCounter : dokumenCounter;
+                const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
+                const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
+
+                if (files.length === 0) {
+                    container.style.display = 'none';
+                    counter.textContent = '';
+                    maxWarning.style.display = 'none';
+                    nameDisplay.textContent = isPhoto ?
+                        'Seret dan lepas foto di sini, atau klik untuk mengunggah.' :
+                        'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.';
+                    return;
+                }
+
+                container.style.display = 'block';
+                nameDisplay.textContent = `${files.length} file dipilih`;
+                counter.textContent = `${files.length}/${MAX_FILES} file`;
+
+                if (files.length >= MAX_FILES) {
+                    maxWarning.style.display = 'block';
+                } else {
+                    maxWarning.style.display = 'none';
+                }
+
+                let previewHTML = '';
+                files.forEach((file, index) => {
+                    let fileSize = (file.size / 1024).toFixed(1) + ' KB';
+                    if (file.size > 1024 * 1024) {
+                        fileSize = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+                    }
+
+                    if (isPhoto) {
+                        const imageUrl = URL.createObjectURL(file);
+                        previewHTML += `
+                            <div class="file-preview-item" data-index="${index}">
+                                <img src="${imageUrl}" alt="Preview" class="preview-image">
+                                <div class="file-info">
+                                    <div class="file-name">${file.name}</div>
+                                    <div class="file-size">${fileSize}</div>
+                                </div>
+                                <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        const extension = file.name.split('.').pop().toLowerCase();
+                        const iconClass = getFileIcon(extension);
+                        const colorClass = getFileColor(extension);
+
+                        previewHTML += `
+                            <div class="file-preview-item" data-index="${index}">
+                                <div class="file-icon">
+                                    <i class="${iconClass} ${colorClass} fs-4"></i>
+                                </div>
+                                <div class="file-info">
+                                    <div class="file-name">${file.name}</div>
+                                    <div class="file-size">${fileSize}</div>
+                                </div>
+                                <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                });
+
+                container.innerHTML = previewHTML;
+            }
+
+            function updateFileInput(type) {
+                const isPhoto = type === 'foto';
+                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+                const input = isPhoto ? fotoInput : dokumenInput;
+
+                const dt = new DataTransfer();
+                files.forEach(file => {
+                    dt.items.add(file);
+                });
+                input.files = dt.files;
+            }
+
+            window.removeFile = function(index, type) {
+                const isPhoto = type === 'foto';
+
+                if (isPhoto) {
+                    const file = selectedFotoFiles[index];
+                    if (file) {
+                        const imgElements = document.querySelectorAll('.preview-image');
+                        imgElements.forEach(img => {
+                            if (img.src && img.src.startsWith('blob:')) {
+                                URL.revokeObjectURL(img.src);
+                            }
+                        });
+                    }
+                    selectedFotoFiles.splice(index, 1);
+                } else {
+                    selectedDokumenFiles.splice(index, 1);
+                }
+
+                updateFilePreview(type);
+                updateFileInput(type);
+            };
+
+            function getFileIcon(extension) {
+                const icons = {
+                    'pdf': 'fas fa-file-pdf',
+                    'doc': 'fas fa-file-word',
+                    'docx': 'fas fa-file-word',
+                    'xls': 'fas fa-file-excel',
+                    'xlsx': 'fas fa-file-excel',
+                    'ppt': 'fas fa-file-powerpoint',
+                    'pptx': 'fas fa-file-powerpoint'
+                };
+                return icons[extension] || 'fas fa-file';
+            }
+
+            function getFileColor(extension) {
+                const colors = {
+                    'pdf': 'text-danger',
+                    'doc': 'text-primary',
+                    'docx': 'text-primary',
+                    'xls': 'text-success',
+                    'xlsx': 'text-success',
+                    'ppt': 'text-warning',
+                    'pptx': 'text-warning'
+                };
+                return colors[extension] || 'text-muted';
+            }
+
+            const fileUploadWrappers = document.querySelectorAll('.file-upload-wrapper');
+
+            fileUploadWrappers.forEach(wrapper => {
+                wrapper.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    wrapper.classList.add('dragover');
+                });
+
+                wrapper.addEventListener('dragleave', () => {
+                    wrapper.classList.remove('dragover');
+                });
+
+                wrapper.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    wrapper.classList.remove('dragover');
+
+                    const input = wrapper.querySelector('input[type="file"]');
+                    if (e.dataTransfer.files.length && input) {
+                        const type = input.id === 'foto_jurnal' ? 'foto' : 'dokumen';
+                        handleFileSelection(e.dataTransfer.files, type);
+                    }
+                });
             });
 
-            ['dragleave', 'drop'].forEach(eventName => {
-                fotoFileUploadWrapper.addEventListener(eventName, () => {
-                    fotoFileUploadWrapper.style.borderColor = '#cfe2ff';
-                    fotoFileUploadWrapper.style.backgroundColor = '#edf5ff';
-                }, false);
-            });
+            const volumeInput = document.getElementById('volume');
+            const hargaSatuanInput = document.getElementById('jumlah_harga_satuan');
+            const jumlahHargaInput = document.getElementById('jumlah_harga');
 
-            fotoFileUploadWrapper.addEventListener('drop', function(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                fotoUploadInput.files = files;
-                fotoUploadInput.dispatchEvent(new Event('change'));
-            });
+            function calculateTotal() {
+                const volume = parseFloat(volumeInput.value) || 0;
+                const hargaSatuan = parseFloat(hargaSatuanInput.value) || 0;
+                const total = hargaSatuan * (volume || 1);
+                jumlahHargaInput.value = total;
+            }
 
-            const dokumenFileUploadWrapper = document.querySelector('label[for="dokumen_pendukung"]');
-
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dokumenFileUploadWrapper.addEventListener(eventName, preventDefaults, false);
-            });
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dokumenFileUploadWrapper.addEventListener(eventName, () => {
-                    dokumenFileUploadWrapper.style.borderColor = '#0d6efd';
-                    dokumenFileUploadWrapper.style.backgroundColor = '#e6f0ff';
-                }, false);
-            });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dokumenFileUploadWrapper.addEventListener(eventName, () => {
-                    dokumenFileUploadWrapper.style.borderColor = '#cfe2ff';
-                    dokumenFileUploadWrapper.style.backgroundColor = '#edf5ff';
-                }, false);
-            });
-
-            dokumenFileUploadWrapper.addEventListener('drop', function(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                dokumenUploadInput.files = files;
-                dokumenUploadInput.dispatchEvent(new Event('change'));
+            hargaSatuanInput.addEventListener('input', calculateTotal);
+            volumeInput.addEventListener('input', function() {
+                const volumeValue = this.value;
+                const numericVolume = parseFloat(volumeValue.replace(/[^\d.]/g, ''));
+                if (!isNaN(numericVolume)) {
+                    calculateTotal();
+                }
             });
         });
     </script>
-
 @endsection

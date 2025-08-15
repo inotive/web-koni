@@ -10,6 +10,7 @@ class Sekretariat extends Model
     use HasFactory;
 
     protected $table = 'sekretariat';
+
     protected $fillable = [
         'nama_program_kegiatan',
         'jenis_kegiatan',
@@ -18,6 +19,13 @@ class Sekretariat extends Model
         'jumlah_harga_satuan',
         'jumlah_harga',
         'foto_jurnal',
-        'dokumen_pendukung',
+        'dokumen_pendukung'
+    ];
+
+    protected $casts = [
+        'foto_jurnal' => 'array',
+        'dokumen_pendukung' => 'array',
+        'jumlah_harga_satuan' => 'decimal:2',
+        'jumlah_harga' => 'decimal:2'
     ];
 }
