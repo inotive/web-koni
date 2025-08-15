@@ -34,12 +34,8 @@ class SuratController extends Controller
             $query->where('jenis_surat', $request->get('jenis_surat'));
         }
 
-        if ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->get('start_date'));
-        }
-
-        if ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->get('end_date'));
+        if ($request->filled('created_date')) {
+            $query->whereDate('created_at', $request->get('created_date'));
         }
 
         $perPage = $request->get('per_page', 10);
