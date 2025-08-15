@@ -146,7 +146,7 @@ class KegiatanLainnyaController extends Controller
                     throw new \Exception('Gagal mengunggah dokumen pendukung.');
                 }
             }
-
+            
             // Create the record
             $kegiatanLainnya = KegiatanLainnya::create($validated);
             
@@ -170,6 +170,11 @@ class KegiatanLainnyaController extends Controller
             if (isset($validated['dokumen_pendukung']) && Storage::disk('public')->exists($validated['dokumen_pendukung'])) {
                 Storage::disk('public')->delete($validated['dokumen_pendukung']);
             }
+
+            return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index', [
+    'sort' => 'created_at',
+    'direction' => 'desc'
+])->with('success', 'Data Kegiatan Lainnya berhasil ditambahkan!');
 
             return back()->withInput()
                 ->with('error', 'Gagal menyimpan data: ' . $e->getMessage());

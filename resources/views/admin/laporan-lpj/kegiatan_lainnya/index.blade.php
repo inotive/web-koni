@@ -165,8 +165,180 @@
             vertical-align: middle !important;
             text-align: center !important;
         }
-    </style>
 
+        /* Toast Styling */
+.toast {
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.toast-body {
+    font-weight: 500;
+}
+
+/* Loading indicator untuk button */
+[data-kt-indicator="on"] .indicator-label {
+    display: none;
+}
+
+[data-kt-indicator="on"] .indicator-progress {
+    display: inline-block;
+}
+
+.indicator-progress {
+    display: none;
+}
+
+/* Modal styling */
+#modal_delete_confirmation .modal-content {
+    border: none;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+#modal_delete_confirmation .modal-header.bg-danger {
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Animation for row removal */
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease-in-out;
+}
+
+body {
+    background-color: #f8f9fa !important;
+}
+
+/* Background abu-abu untuk container utama */
+.container-fluid,
+.container-xxl {
+    background-color: #f8f9fa !important;
+}
+
+/* Background putih untuk card utama agar terlihat kontras */
+.card {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border: none !important;
+}
+
+/* Background abu-abu muda untuk header table */
+.table thead {
+    background-color: #e9ecef !important;
+}
+
+/* Background abu-abu sangat muda untuk row genap (striped effect) */
+.table tbody tr:nth-child(even) {
+    background-color: #f8f9fa !important;
+}
+
+/* Background putih untuk row ganjil */
+.table tbody tr:nth-child(odd) {
+    background-color: #ffffff !important;
+}
+
+/* Hover effect untuk row */
+.table tbody tr:hover {
+    background-color: #e3f2fd !important;
+}
+
+/* Background abu-abu untuk dropdown menu */
+.dropdown-menu {
+    background-color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Background abu-abu untuk pagination */
+.pagination-wrapper {
+    background-color: #f8f9fa !important;
+    padding: 15px !important;
+    border-radius: 8px !important;
+    margin-top: 20px !important;
+}
+
+/* Background putih untuk card header (Daftar Table Kegiatan Lainnya - 2025) */
+.card-header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e9ecef !important;
+}
+
+/* Background abu-abu untuk search dan filter controls */
+.input-group, 
+.dropdown {
+    background-color: transparent !important;
+}
+
+.form-control, 
+.form-select {
+    background-color: #ffffff !important;
+    border: 1px solid #d1d3e2 !important;
+}
+
+/* Background untuk empty state */
+.text-center.text-muted.py-10 {
+    background-color: #f8f9fa !important;
+    border-radius: 8px !important;
+    margin: 20px 0 !important;
+}
+
+/* Background untuk modal */
+.modal-content {
+    background-color: #ffffff !important;
+}
+
+/* Background putih khusus untuk area filter yang aktif */
+.card-header.border-0.pt-3.pb-3.bg-light {
+    background-color: #ffffff !important;
+}
+
+/* Background untuk toast notifications */
+.toast {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Responsive background adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        background-color: #ffffff !important;
+    }
+    
+    .table-responsive {
+        background-color: #ffffff !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+    }
+}
+
+/* Additional styling untuk konsistensi */
+.breadcrumb {
+    background-color: transparent !important;
+}
+
+.btn-light {
+    background-color: #f8f9fa !important;
+    border-color: #d6d8db !important;
+}
+
+.btn-light:hover {
+    background-color: #e2e6ea !important;
+    border-color: #dae0e5 !important;
+}
+
+/* Background untuk area konten utama */
+#kt_app_content {
+    background-color: #f8f9fa !important;
+    min-height: 100vh !important;
+}
+
+/* Background untuk wrapper content */
+#kt_app_content_container {
+    background-color: #f8f9fa !important;
+}
+    </style>    
 
 
     {{-- Page Header --}}
@@ -203,6 +375,7 @@
                         </div>
                     </div>
                 @endif
+                
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button --}}
@@ -371,31 +544,56 @@
                                         </td>
                                         <td>{{ \Carbon\Carbon::parse($kegiatan->created_at)->format('d M Y') }}</td>
                                         <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-1">
-                                                {{-- Detail Button --}}
-                                                <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.show', $kegiatan->id) }}"
-                                                    class="btn btn-icon btn-sm btn-light-primary" title="Detail">
-                                                    <i class="fa-solid fa-eye"></i>
-                                                </a>
-
-                                                {{-- Edit Button --}}
-                                                <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
-                                                    class="btn btn-icon btn-sm btn-light-warning" title="Edit">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </a>
-
-                                                {{-- Delete Button --}}
-                                                <form
-                                                    action="{{ route('admin.laporan-lpj.kegiatan_lainnya.destroy', $kegiatan->id) }}"
-                                                    method="POST" class="d-inline"
-                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus kegiatan ini?')">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-icon btn-sm btn-light-danger"
-                                                        title="Hapus">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm p-0" type="button" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <svg width="32" height="32" viewBox="0 0 32 32"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect width="32" height="32" rx="6"
+                                                            fill="#EFF6FF" />
+                                                        <rect x="0.5" y="0.5" width="31" height="31"
+                                                            rx="5.5" stroke="#1B84FF" stroke-opacity="0.2" />
+                                                        <g clip-path="url(#clip0_2223_4269)">
+                                                            <path opacity="0.3"
+                                                                d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
+                                                                fill="#1B84FF" />
+                                                            <path
+                                                                d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
+                                                                fill="#1B84FF" />
+                                                        </g>
+                                                        <defs>
+                                                            <clipPath id="clip0_2223_4269">
+                                                                <rect width="16" height="16" fill="white"
+                                                                    transform="translate(8 8)" />
+                                                            </clipPath>
+                                                        </defs>
+                                                    </svg>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
+                                                    <li>
+                                                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.show', $kegiatan->id) }}"
+                                                            class="dropdown-item">
+                                                            <i class="fa-solid fa-eye me-2"></i>Lihat Detail
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
+                                                            class="dropdown-item">
+                                                            <i class="fa-solid fa-pen-to-square me-2"></i>Modifikasi
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <hr class="dropdown-divider">
+                                                    </li>
+                                                    <li>
+                                                        <button type="button"
+                                                            class="dropdown-item text-danger border-0 bg-transparent w-100 text-start delete-btn"
+                                                            data-id="{{ $kegiatan->id }}"
+                                                            data-name="{{ $kegiatan->nama_program_kegiatan }}">
+                                                            <i class="fa-solid fa-trash me-2"></i>Hapus
+                                                        </button>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </td>
                                     </tr>
@@ -475,8 +673,9 @@
         </div>
     </div>
 
+
     {{-- Add Modal --}}
-    <div class="modal fade" id="modal_add_kegiatan_lainnya" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modal_add_kegiatan_lainnya" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered mw-650px">
             <div class="modal-content">
                 {{-- Modal Header --}}
@@ -570,6 +769,60 @@
             </div>
         </div>
     </div>
+
+     {{-- Delete Confirmation Modal --}}
+    <div class="modal fade" id="modal_delete_confirmation" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h2 class="fw-bold text-white">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Konfirmasi Hapus
+                    </h2>
+                    <div class="btn btn-icon btn-sm btn-active-light-primary" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-times fs-1 text-white"></i>
+                    </div>
+                </div>
+                <div class="modal-body text-center py-8">
+                    <i class="fas fa-trash-alt text-danger fs-3x mb-4"></i>
+                    <h4 class="mb-3">Apakah Anda yakin?</h4>
+                    <p class="text-muted mb-0">Data yang telah dihapus tidak dapat dikembalikan.</p>
+                    <p class="fw-bold text-dark mt-2" id="delete-item-name"></p>
+                </div>
+                <div class="modal-footer justify-content-center border-0 pb-6">
+                    <button type="button" class="btn btn-light me-3" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Batal
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">
+                        <span class="indicator-label">
+                            <i class="fas fa-trash me-1"></i>Ya, Hapus
+                        </span>
+                        <span class="indicator-progress">
+                            <span class="spinner-border spinner-border-sm align-middle me-2"></span>
+                            Menghapus...
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{-- Toast Notification Container --}}
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        <div id="toast-success" class="toast align-items-center text-bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="toast-success-message">Data berhasil dihapus.</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                    data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>  
+
+
+               
 @endsection
 
 @section('script')
@@ -624,8 +877,7 @@
                     window.location.href = currentUrl.toString();
                 });
 
-
-                /// Handle search functionality
+                // Handle search functionality
                 $('#search-button').on('click', function() {
                     updateUrlAndRedirect({
                         'search': $('#search').val()
@@ -642,7 +894,6 @@
                     }, 500);
                 });
 
-
                 // Handle filter functionality
                 $('#apply-filters').on('click', function() {
                     const jenisKegiatan = $('#filter-jenis-kegiatan').val();
@@ -651,13 +902,11 @@
                     });
                 });
 
-
-
                 $('#reset-filters').on('click', function() {
                     window.location.href = "{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}";
                 });
 
-                // Update filter count badge (sederhanakan)
+                // Update filter count badge
                 function updateFilterCount() {
                     const hasFilter = new URLSearchParams(window.location.search).has('jenis_kegiatan_filter');
                     const badge = $('#filter-count');
@@ -668,7 +917,7 @@
                     }
                 }
 
-                // Tambahkan fungsi ini di bagian paling bawah script
+                // Highlight search term
                 function highlightSearchTerm() {
                     const searchTerm = "{{ request('search') }}";
                     if (searchTerm) {
@@ -685,15 +934,146 @@
                     }
                 }
 
-                // Panggil fungsi saat dokumen siap
-                $(document).ready(function() {
-                    highlightSearchTerm();
+                // Initialize highlight and filter count
+                highlightSearchTerm();
+                updateFilterCount();
 
-                    // ... kode yang sudah ada ...
+                // === DELETE FUNCTIONALITY === 
+                let deleteId = null;
+                let deleteUrl = null;
+
+                // Handle delete button click
+                $(document).on('click', '.delete-btn', function(e) {
+                    e.preventDefault();
+                    
+                    deleteId = $(this).data('id');
+                    const itemName = $(this).data('name');
+                    deleteUrl = "{{ route('admin.laporan-lpj.kegiatan_lainnya.destroy', '') }}/" + deleteId;
+                    
+                    // Set item name in modal
+                    $('#delete-item-name').text(itemName);
+                    
+                    // Show modal
+                    $('#modal_delete_confirmation').modal('show');
                 });
 
-                // Initialize filter count on page load
-                updateFilterCount();
+                // Handle confirm delete
+                $('#confirm-delete-btn').click(function() {
+                    if (!deleteId || !deleteUrl) return;
+
+                    const $btn = $(this);
+                    const $modal = $('#modal_delete_confirmation');
+
+                    // Show loading state
+                    $btn.attr('data-kt-indicator', 'on');
+                    $btn.prop('disabled', true);
+
+                    // Create CSRF token
+                    const token = $('meta[name="csrf-token"]').attr('content');
+
+                    // Perform AJAX delete
+                    $.ajax({
+                        url: deleteUrl,
+                        type: 'POST',
+                        data: {
+                            _method: 'DELETE',
+                            _token: token
+                        },
+                        timeout: 10000, // 10 seconds timeout
+                        success: function(response) {
+                            // Hide modal
+                            $modal.modal('hide');
+                            
+                            // Show success notification
+                            showSuccessToast('✔️ Data berhasil dihapus.');
+                            
+                            // Remove row from table with animation
+                            const $row = $(`tr:has(button[data-id="${deleteId}"])`);
+                            $row.fadeOut(500, function() {
+                                $(this).remove();
+                                updateRowNumbers();
+                                checkEmptyTable();
+                            });
+                            
+                            // Reset states
+                            resetDeleteState($btn);
+                            
+                        },
+                        error: function(xhr, status, error) {
+                            // Hide modal
+                            $modal.modal('hide');
+                            
+                            let errorMessage = '❌ Gagal menghapus data. Silakan coba lagi.';
+                            
+                            // Handle different error types
+                            if (status === 'timeout') {
+                                errorMessage = '❌ Koneksi timeout. Silakan coba lagi.';
+                            } else if (xhr.status === 500) {
+                                errorMessage = '❌ Terjadi kesalahan server. Silakan coba lagi.';
+                            } else if (xhr.status === 403) {
+                                errorMessage = '❌ Anda tidak memiliki akses untuk menghapus data ini.';
+                            } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = '❌ ' + xhr.responseJSON.message;
+                            }
+                            
+                            // Show error notification
+                            showErrorToast(errorMessage);
+                            
+                            // Reset states
+                            resetDeleteState($btn);
+                        }
+                    });
+                });
+
+                // Reset modal when closed
+                $('#modal_delete_confirmation').on('hidden.bs.modal', function() {
+                    const $btn = $('#confirm-delete-btn');
+                    resetDeleteState($btn);
+                    deleteId = null;
+                    deleteUrl = null;
+                });
+
+                // Helper functions for delete
+                function resetDeleteState($btn) {
+                    $btn.attr('data-kt-indicator', 'off');
+                    $btn.prop('disabled', false);
+                }
+
+                function showSuccessToast(message) {
+                    $('#toast-success-message').text(message);
+                    const toast = new bootstrap.Toast(document.getElementById('toast-success'));
+                    toast.show();
+                }
+
+                function showErrorToast(message) {
+                    $('#toast-error-message').text(message);
+                    const toast = new bootstrap.Toast(document.getElementById('toast-error'));
+                    toast.show();
+                }
+
+                function updateRowNumbers() {
+                    const currentPage = {{ $kegiatanLainnya->currentPage() ?? 1 }};
+                    const perPage = {{ $kegiatanLainnya->perPage() ?? 10 }};
+                    const startNumber = (currentPage - 1) * perPage;
+                    
+                    $('#kt_datatable_dom_positioning_kegiatan tbody tr').each(function(index) {
+                        $(this).find('td:first').text(startNumber + index + 1);
+                    });
+                }
+
+                function checkEmptyTable() {
+                    const $tbody = $('#kt_datatable_dom_positioning_kegiatan tbody');
+                    if ($tbody.find('tr').length === 0) {
+                        $tbody.html(`
+                            <tr>
+                                <td colspan="9" class="text-center py-5 text-muted">
+                                    <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
+                                    <br>Data tidak tersedia
+                                </td>
+                            </tr>
+                        `);
+                    }
+                }
             });
         </script>
     @endif
