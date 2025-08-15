@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use app\models\pembinaanhukum;
-use app\models\hubunganlembaga;
-use app\models\Kesehatan;
-use app\models\organisasi;
-use app\models\perencanaanprogram;
-use app\models\sportscience;
-use app\models\sumberdaya;
+use App\Models\PembinaanHukum;
+use App\Models\HubunganLembaga;
+use App\Models\Kesehatan;
+use App\Models\Organisasi;
+use App\Models\PerencanaanProgram;
+use App\Models\SportScience;
+use App\Models\SumberDaya;
 
 class BidangController extends Controller
 {
@@ -19,7 +19,18 @@ class BidangController extends Controller
      */
     public function index()
     {
-        return view('admin.laporan-lpj.bidang.index');
+        // Get count for Mobilisasi Sumberdaya
+        $mobilisasiCount = SumberDaya::count();
+
+        // You can also get counts for other bidang if needed
+        // $hubunganLembagaCount = HubunganLembaga::count();
+        // $kesehatanCount = Kesehatan::count();
+        // $organisasiCount = Organisasi::count();
+        // $pembinaanHukumCount = PembinaanHukum::count();
+        // $sportScienceCount = SportScience::count();
+        // $perencanaanProgramCount = PerencanaanProgram::count();
+
+        return view('admin.laporan-lpj.bidang.index', compact('mobilisasiCount'));
     }
 
     /**
@@ -81,7 +92,7 @@ class BidangController extends Controller
 
     public function caborBeladiri(){
         return view ('admin.laporan-lpj.bidang.prestasi.Beladiri.index');
-    }   
+    }
 
     public function caborPermainan(){
         return view ('admin.laporan-lpj.bidang.prestasi.Permainan.index');
@@ -90,6 +101,4 @@ class BidangController extends Controller
     public function caborTerukur(){
         return view ('admin.laporan-lpj.bidang.prestasi.Terukur.index');
     }
-
-
 }

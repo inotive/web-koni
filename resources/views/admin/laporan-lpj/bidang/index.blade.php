@@ -361,12 +361,12 @@
         <!-- Bidang Grid -->
         <div class="bidang-grid grid-default" id="bidangGrid">
             <!-- Mobilisasi Sumberdaya -->
-            <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index') }}" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="13">
+            <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index') }}" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="{{ $mobilisasiCount ?? 0 }}">
                 <div class="bidang-icon icon-mobilisasi">
                     <img src="{{ asset('assets2/media/misc/bidang/bank.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Mobilisasi Sumberdaya</h4>
-                <p class="bidang-count">13 Dokumen</p>
+                <p class="bidang-count">{{ $mobilisasiCount ?? 0 }} Dokumen</p>
             </a>
 
             <!-- Hubungan Antar Lembaga -->
