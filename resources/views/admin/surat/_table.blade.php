@@ -48,18 +48,6 @@
                     </th>
                     <th class="bg-light text-center">Dokumen</th>
                     <th class="bg-light text-center">
-                        <a href="#" class="text-decoration-none text-dark sort-link" data-sort="created_at">
-                            Tanggal Dibuat
-                            @if (request('sort_by') == 'created_at')
-                                @if (request('order') == 'asc')
-                                    <i class="fas fa-sort-up"></i>
-                                @else
-                                    <i class="fas fa-sort-down"></i>
-                                @endif
-                            @else
-                                <i class="fas fa-sort text-muted"></i>
-                            @endif
-                        </a>
                     </th>
                     <th class="bg-light px-8 text-center">Aksi</th>
                 </tr>

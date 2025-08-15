@@ -283,40 +283,7 @@
                     </div>
                 </div>
 
-                <div class="date-filter-container">
-                    <div class="date-filter-btn {{ request('created_date') ? 'date-filter-active' : '' }}"
-                        id="dateFilterBtn">
-                        <span>
-                            @if (request('created_date'))
-                                <i class="fas fa-calendar-check me-2"></i>
-                                {{ \Carbon\Carbon::parse(request('created_date'))->format('d/m/Y') }}
-                            @else
-                                <i class="fas fa-calendar me-2"></i>Tanggal Dibuat
-                            @endif
-                        </span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
-                    </div>
 
-                    <!-- Ganti bagian date filter menu -->
-                    <div class="date-filter-menu" id="dateFilterMenu">
-                        <div class="date-input-group">
-                            <div class="date-input-wrapper">
-                                <label class="date-input-label">Pilih Tanggal Dibuat</label>
-                                <input type="date" name="created_date" value="{{ request('created_date') }}"
-                                    class="date-input" id="createdDateInput">
-                            </div>
-                        </div>
-                        <div class="date-filter-actions">
-                            <button type="button" class="date-filter-apply" id="applyDateFilter">Terapkan</button>
-                            <button type="button" class="date-filter-clear" id="clearDateFilter">Reset</button>
-                        </div>
-                    </div>
-                </div>
-
-                <input type="hidden" name="jenis_surat" id="jenis_surat_input" value="{{ request('jenis_surat', 'all') }}">
-                <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
-                <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
-            </form>
         </div>
 
         <div class="container">
@@ -369,8 +336,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="formAdd" method="POST" action="{{ route('admin.surat.store') }}"
-                    enctype="multipart/form-data" class="d-grid gap-4">
+                <form id="formAdd" method="POST" action="{{ route('admin.surat.store') }}" enctype="multipart/form-data"
+                    class="d-grid gap-4">
                     @csrf
 
                     <div>
