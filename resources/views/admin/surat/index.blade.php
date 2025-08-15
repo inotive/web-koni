@@ -230,6 +230,11 @@
             </div>
 
             <form id="filter" class="d-flex gap-3 filter-container">
+                <!-- Hidden inputs untuk sorting -->
+                <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
+                <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
+                <input type="hidden" name="jenis_surat" id="jenis_surat_input" value="{{ request('jenis_surat', 'all') }}">
+
                 <button type="button" id="tambahSuratBtn"
                     class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
@@ -424,15 +429,32 @@
         }
 
         function initializeSortingEvents() {
-            $(document).off('click', '.sort-link').on('click', '.sort-link', function(e) {
+            // Remove existing handlers first to prevent duplicate bindings
+            $(document).off('click', '.sort-link');
+
+            // Add new handler for sorting links
+            $(document).on('click', '.sort-link', function(e) {
                 e.preventDefault();
+
                 const sortBy = $(this).data('sort');
                 let order = 'asc';
-                if (currentSort === sortBy) order = currentOrder === 'asc' ? 'desc' : 'asc';
+
+                // If already sorted by this column, toggle order
+                if (currentSort === sortBy) {
+                    order = currentOrder === 'asc' ? 'desc' : 'asc';
+                }
+
+                // Update current values
                 currentSort = sortBy;
                 currentOrder = order;
+
+                // Update hidden inputs
                 $('#sort_by_input').val(sortBy);
                 $('#order_input').val(order);
+
+                console.log('Sorting by:', sortBy, 'Order:', order); // Debug log
+
+                // Reload table with new sorting
                 reloadTable();
             });
         }
@@ -638,6 +660,7 @@
         $(document).ready(function() {
             initializeDropzones();
             initializeDropdownEvents();
+            initializeSortingEvents(); // Initialize sorting events on page load
             updateAddButtonText();
             updateDateFilterButton();
 
@@ -719,6 +742,7 @@
                         $(`#table-${currentTab}`).html(response);
                         initializeDropzones();
                         initializeDropdownEvents();
+                        initializeSortingEvents(); // Re-initialize sorting after AJAX
                         updateURL(formData);
                     },
                     error: function(xhr) {
@@ -751,6 +775,7 @@
                             $(`#table-${currentTab}`).html(response);
                             initializeDropzones();
                             initializeDropdownEvents();
+                            initializeSortingEvents(); // Re-initialize sorting after pagination
                             updateURL(formData);
                         },
                         error: function(xhr) {

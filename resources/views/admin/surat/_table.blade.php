@@ -37,17 +37,43 @@
                             Nama Kegiatan
                             @if (request('sort_by') == 'nama_kegiatan')
                                 @if (request('order') == 'asc')
-                                    <i class="fas fa-sort-up"></i>
+                                    <i class="fas fa-sort-up text-primary"></i>
                                 @else
-                                    <i class="fas fa-sort-down"></i>
+                                    <i class="fas fa-sort-down text-primary"></i>
                                 @endif
                             @else
                                 <i class="fas fa-sort text-muted"></i>
                             @endif
                         </a>
                     </th>
-                    <th class="bg-light text-center">Dokumen</th>
-                    <th class="bg-light text-center">Tanggal</th>
+                    <th class="bg-light text-center">
+                        <a href="#" class="text-decoration-none text-dark sort-link" data-sort="dokumen_surat">
+                            Dokumen
+                            @if (request('sort_by') == 'dokumen_surat')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up text-primary"></i>
+                                @else
+                                    <i class="fas fa-sort-down text-primary"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
+                        </a>
+                    </th>
+                    <th class="bg-light text-center">
+                        <a href="#" class="text-decoration-none text-dark sort-link" data-sort="created_at">
+                            Tanggal
+                            @if (request('sort_by') == 'created_at')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up text-primary"></i>
+                                @else
+                                    <i class="fas fa-sort-down text-primary"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
+                        </a>
+                    </th>
                     <th class="bg-light px-8 text-center">Aksi</th>
                 </tr>
             </thead>
@@ -370,6 +396,9 @@
     .sort-link {
         cursor: pointer;
         transition: color 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .sort-link:hover {
@@ -378,9 +407,19 @@
     }
 
     .sort-link i {
-        transition: color 0.2s ease;
+        transition: all 0.2s ease;
         font-size: 0.8rem;
-        margin-left: 4px;
+        opacity: 0.7;
+    }
+
+    .sort-link:hover i {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    .sort-link i.text-primary {
+        opacity: 1;
+        color: #F8285A !important;
     }
 
     #per_page {
