@@ -45,7 +45,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::put('profile/{profile}/update-profile', [ProfileController::class, 'updateProfile'])->name('profile-update');
     });
 
-    Route::resource('file-kesekretariat', \App\Http\Controllers\Admin\FileKesekretariatController::class);  
+    Route::resource('file-kesekretariat', \App\Http\Controllers\Admin\FileKesekretariatController::class);
     // Letakkan rute 'download' sebelum rute resourc    e
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
@@ -185,7 +185,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::put('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'update'])->name('update');
         Route::delete('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'destroy'])->name('destroy');
     });
-    
+
     }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
         Route::get('/', [BendaharaController::class, 'index'])->name('index');
@@ -193,7 +193,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::post('/', [BendaharaController::class, 'store'])->name('store');
         Route::get('/{bendahara}', [BendaharaController::class, 'show'])->name('show');
         Route::get('/{bendahara}/edit', [BendaharaController::class, 'edit'])->name('edit');
-        Route::put('/{bendahara}', [BendaharaController::class, 'update'])->name('update');
+        Route::post('/{bendahara}', [BendaharaController::class, 'update'])->name('update');
         Route::delete('/{bendahara}', [BendaharaController::class, 'destroy'])->name('destroy');
         Route::get('/{bendahara}/download', [BendaharaController::class, 'download'])->name('download');
     });
