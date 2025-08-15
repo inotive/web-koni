@@ -301,7 +301,12 @@ class BendaharaController extends Controller
     public function update(Request $request, Bendahara $bendahara)
     {
         try {
-            // Updated validation for PDF and Excel only
+            \Log::info('Update request data:', [
+                'judul' => $request->input('judul'),
+                'all_data' => $request->all(),
+                'has_file' => $request->hasFile('dokumen')
+            ]);
+
             $data = $request->validate([
                 'judul' => 'required|string|max:255',
                 'dokumen' => 'nullable|mimes:pdf,xls,xlsx|max:10240',
@@ -312,9 +317,9 @@ class BendaharaController extends Controller
                 'dokumen.max' => 'Ukuran file tidak boleh lebih dari 10MB.',
             ]);
 
-            // Handle file update if new file is uploaded
+            \Log::info('Validated data:', $data);
+
             if ($request->hasFile('dokumen')) {
-                // Delete old file if exists
                 if ($bendahara->dokumen) {
                     Storage::disk('public')->delete($bendahara->dokumen);
                 }
@@ -323,7 +328,6 @@ class BendaharaController extends Controller
 
             $bendahara->update($data);
 
-            // Check if it's AJAX request
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
@@ -336,6 +340,12 @@ class BendaharaController extends Controller
                 ->with('action', 'update');
 
         } catch (ValidationException $e) {
+            \Log::error('Validation failed:', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+                'validator_failed_rules' => $e->validator->failed()
+            ]);
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -345,6 +355,12 @@ class BendaharaController extends Controller
             }
             return back()->withInput()->withErrors($e->errors());
         } catch (\Exception $e) {
+            \Log::error('Update failed:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $request->all()
+            ]);
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,

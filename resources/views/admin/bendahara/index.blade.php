@@ -730,7 +730,7 @@
                     </div>
                 </div>
 
-                <!-- Enhanced Filter Dropdown (Updated for PDF and Excel only) -->
+                <!-- Enhanced Filter Dropdown -->
                 <div class="filter-dropdown">
                     <div class="filter-btn {{ (request('filter_type') && request('filter_type') != 'all') ? 'filter-active' : '' }}" id="filterBtn">
                         <span>
@@ -904,7 +904,7 @@
 @endsection
 
 @section('script')
-    <script>
+<script>
         // Global variables
         let isSubmitting = false;
         let hasUnsavedChanges = false;
@@ -1059,11 +1059,9 @@
                     dropzones[formId].on('removedfile', function() {
                         if (formId.startsWith('form-')) {
                             const itemId = formId.replace('form-', '');
-                            // Check if any files remain
                             const hasFiles = this.getAcceptedFiles().length > 0;
 
                             if (!hasFiles && originalFormData[itemId]) {
-                                // No new files, check if form text changed
                                 const $form = $(`#${formId}`);
                                 const currentJudul = $form.find('input[name="judul"]').val() || '';
                                 const originalJudul = originalFormData[itemId].judul || '';
@@ -1076,54 +1074,70 @@
             });
         }
 
-        // ==================== MODAL MANAGEMENT (FIXED) ====================
+        // ==================== ENHANCED MODAL MANAGEMENT ====================
 
         function initializeModalHandlers() {
-            // Edit modal show handler - Store original form data
+            // Remove existing handlers
+            $(document).off('show.bs.modal', '[id^="edit-"]');
+            $(document).off('hide.bs.modal', '[id^="edit-"]');
+            $(document).off('hidden.bs.modal', '[id^="edit-"]');
+
+            // Edit modal show handler
             $(document).on('show.bs.modal', '[id^="edit-"]', function() {
                 const modalId = $(this).attr('id');
                 const itemId = modalId.replace('edit-', '');
-                const form = document.getElementById(`form-${itemId}`);
 
                 console.log(`Opening modal: ${modalId}`);
 
-                if (form) {
-                    const judulInput = form.querySelector('input[name="judul"]');
+                // Wait for modal to be fully rendered
+                setTimeout(() => {
+                    const form = document.getElementById(`form-${itemId}`);
+                    console.log(`Looking for form: form-${itemId}`, form);
 
-                    // Store original form data INCLUDING the exact input values
-                    originalFormData[itemId] = {
-                        judul: judulInput?.value || '',
-                        dropzoneFiles: [],
-                        // Store the original HTML form state
-                        originalFormHTML: form.innerHTML
-                    };
+                    if (form) {
+                        const judulInput = form.querySelector('input[name="judul"]');
+                        console.log(`Looking for judul input in form-${itemId}:`, judulInput);
 
-                    clearFormErrors(`form-${itemId}`);
-                    isSubmitting = false;
-                    hasUnsavedChanges = false;
-                    setButtonLoading(`submitBtn${itemId}`, false);
+                        if (judulInput) {
+                            originalFormData[itemId] = {
+                                judul: judulInput.value || '',
+                                dropzoneFiles: [],
+                            };
+                            console.log(`Storing original data for ${itemId}:`, originalFormData[itemId]);
+                        } else {
+                            console.error(`Judul input not found in form-${itemId}`);
+                            // Try alternative selector
+                            const altJudulInput = $(`#form-${itemId} input[name="judul"]`)[0];
+                            console.log('Alternative judul input search:', altJudulInput);
+                            if (altJudulInput) {
+                                originalFormData[itemId] = {
+                                    judul: altJudulInput.value || '',
+                                    dropzoneFiles: [],
+                                };
+                            }
+                        }
 
-                    // Clear dropzone files but don't reset original state
-                    const dropzone = dropzones[`form-${itemId}`];
-                    if (dropzone) dropzone.removeAllFiles(true);
-                } else {
-                    console.warn(`Form not found: form-${itemId}`);
-                }
+                        clearFormErrors(`form-${itemId}`);
+                        isSubmitting = false;
+                        hasUnsavedChanges = false;
+                        setButtonLoading(`submitBtn${itemId}`, false);
+
+                        const dropzone = dropzones[`form-${itemId}`];
+                        if (dropzone) dropzone.removeAllFiles(true);
+                    } else {
+                        console.error(`Form not found: form-${itemId}`);
+                    }
+                }, 200); // Increased timeout to ensure modal is rendered
             });
 
-            // Enhanced modal hide handler with proper unsaved changes check
+            // Edit modal hide handler
             $(document).on('hide.bs.modal', '[id^="edit-"]', function(e) {
                 const modalId = $(this).attr('id');
-                const itemId = modalId.replace('edit-', '');
                 const focusedElement = this.querySelector(':focus');
                 if (focusedElement) focusedElement.blur();
 
-                $(this).find('[tabindex]').removeAttr('tabindex');
-
-                // Check if form was successfully submitted
                 const wasSuccessfullySubmitted = $(this).data('success-submitted');
 
-                // Check for unsaved changes only if not successfully submitted
                 if (hasUnsavedChanges && !wasSuccessfullySubmitted) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
@@ -1140,7 +1154,6 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             hasUnsavedChanges = false;
-                            $(this).data('force-close', true);
                             $(this).modal('hide');
                         }
                     });
@@ -1148,7 +1161,7 @@
                 }
             });
 
-            // Modal hidden handler - PROPER cleanup and form reset
+            // Edit modal hidden handler
             $(document).on('hidden.bs.modal', '[id^="edit-"]', function() {
                 const modalId = $(this).attr('id');
                 const itemId = modalId.replace('edit-', '');
@@ -1156,57 +1169,38 @@
 
                 console.log(`Modal closed: ${modalId}`);
 
-                // Clean up modal state
-                $(this).removeAttr('aria-hidden').removeClass('show').css('display', '');
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open').css('padding-right', '');
+                enablePageInteractions();
 
                 const wasSuccessfullySubmitted = $(this).data('success-submitted');
-                const wasForceCloseD = $(this).data('force-close');
 
-                if (form && originalFormData[itemId]) {
-                    // Only reset if NOT successfully submitted
-                    if (!wasSuccessfullySubmitted) {
-                        console.log('Resetting form to original state for item:', itemId);
+                if (form && originalFormData[itemId] && !wasSuccessfullySubmitted) {
+                    console.log('Resetting form to original state for item:', itemId);
 
-                        // Reset form fields to original values
-                        const judulInput = form.querySelector('input[name="judul"]');
-                        if (judulInput && originalFormData[itemId].judul !== undefined) {
-                            judulInput.value = originalFormData[itemId].judul;
-                            console.log(`Reset judul to: "${originalFormData[itemId].judul}"`);
-                        }
+                    const judulInput = form.querySelector('input[name="judul"]') ||
+                                     $(`#form-${itemId} input[name="judul"]`)[0];
 
-                        // Reset dropzone
-                        const dropzone = dropzones[`form-${itemId}`];
-                        if (dropzone) {
-                            dropzone.removeAllFiles(true);
-                            console.log('Dropzone files cleared');
-                        }
-
-                        // Clear any form errors
-                        clearFormErrors(`form-${itemId}`);
-
-                        // Force update input appearance
-                        if (judulInput) {
-                            judulInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        }
-                    } else {
-                        console.log('Form was successfully submitted, no reset needed');
+                    if (judulInput && originalFormData[itemId].judul !== undefined) {
+                        judulInput.value = originalFormData[itemId].judul;
+                        console.log(`Reset judul to: "${originalFormData[itemId].judul}"`);
                     }
 
-                    // Clean up stored data
-                    delete originalFormData[itemId];
+                    const dropzone = dropzones[`form-${itemId}`];
+                    if (dropzone) {
+                        dropzone.removeAllFiles(true);
+                    }
+
+                    clearFormErrors(`form-${itemId}`);
                 }
 
-                // Reset all modal flags
+                delete originalFormData[itemId];
                 $(this).removeData('success-submitted');
-                $(this).removeData('force-close');
-
-                // Reset global state
                 isSubmitting = false;
                 hasUnsavedChanges = false;
                 setButtonLoading(`submitBtn${itemId}`, false);
-                enablePageInteractions();
+
+                setTimeout(() => {
+                    initializeDropzones();
+                }, 50);
             });
 
             // Add modal handlers
@@ -1216,14 +1210,11 @@
                 clearFormErrors('formAdd');
                 setButtonLoading('submitBtnAdd', false);
 
-                if (dropzones['formAdd']) {
-                    dropzones['formAdd'].removeAllFiles(true);
-                }
-            });
-
-            $('#add').on('hide.bs.modal', function() {
-                const focusedElement = this.querySelector(':focus');
-                if (focusedElement) focusedElement.blur();
+                setTimeout(() => {
+                    if (dropzones['formAdd']) {
+                        dropzones['formAdd'].removeAllFiles(true);
+                    }
+                }, 50);
             });
 
             $('#add').on('hidden.bs.modal', function() {
@@ -1238,55 +1229,17 @@
                 isSubmitting = false;
                 hasUnsavedChanges = false;
                 setButtonLoading('submitBtnAdd', false);
-
-                $(this).removeAttr('aria-hidden').css('display', '');
-                $('.modal-backdrop').remove();
-                $('body').removeClass('modal-open').css('padding-right', '');
                 enablePageInteractions();
+
+                setTimeout(() => {
+                    initializeDropzones();
+                }, 50);
             });
         }
 
-        function initializeModalEvents() {
-            $(document).off('click', '[data-bs-toggle="modal"][data-bs-target^="#edit-"]');
+        // ==================== ENHANCED FORM SUBMISSION ====================
 
-            $(document).on('click', '[data-bs-toggle="modal"][data-bs-target^="#edit-"]', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const targetModalId = $(this).data('bs-target');
-                const modalElement = document.querySelector(targetModalId);
-
-                console.log('Edit button clicked, target:', targetModalId);
-
-                if (modalElement) {
-                    try {
-                        const existingModal = bootstrap.Modal.getInstance(modalElement);
-                        if (existingModal) existingModal.dispose();
-
-                        const modal = new bootstrap.Modal(modalElement, {
-                            backdrop: true,
-                            keyboard: true,
-                            focus: true
-                        });
-
-                        modal.show();
-                    } catch (error) {
-                        console.error('Error showing modal:', error);
-                        try {
-                            $(targetModalId).modal('show');
-                        } catch (jqueryError) {
-                            console.error('jQuery modal fallback failed:', jqueryError);
-                        }
-                    }
-                } else {
-                    console.error('Modal not found:', targetModalId);
-                }
-            });
-        }
-
-        // ==================== FORM SUBMISSION ====================
-
-        function submitFormEnhanced(formId) {
+        function submitForm(formId) {
             if (isSubmitting) return;
 
             let form = document.getElementById(formId);
@@ -1295,44 +1248,94 @@
                 return;
             }
 
+            console.log('=== FORM SUBMISSION DEBUG START ===');
+            console.log('Form ID:', formId);
+            console.log('Form element:', form);
+
+            // Check for judul input with multiple selectors
+            let judulInput = form.querySelector('input[name="judul"]');
+            if (!judulInput) {
+                judulInput = $(`#${formId} input[name="judul"]`)[0];
+            }
+
+            console.log('Judul input element:', judulInput);
+
+            if (!judulInput || !judulInput.value.trim()) {
+                console.error('Judul is required but missing or empty');
+                if (judulInput) {
+                    judulInput.classList.add('is-invalid');
+                    const feedback = judulInput.parentElement?.querySelector('.invalid-feedback');
+                    if (feedback) {
+                        feedback.textContent = 'Judul laporan wajib diisi.';
+                    }
+                }
+                toastr.error('Silakan isi semua field yang wajib diisi.', 'Validasi Gagal!');
+                return;
+            }
+
             let formData = new FormData(form);
+            const isEditForm = formId.startsWith('form-') && formId !== 'formAdd';
+
+            if (isEditForm) {
+                if (!formData.has('_method')) {
+                    formData.append('_method', 'PUT');
+                }
+            } else {
+                formData.delete('_method');
+            }
+
+            let csrfToken = formData.get('_token');
+            if (!csrfToken) {
+                csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                        document.querySelector('input[name="_token"]')?.value;
+                if (csrfToken) {
+                    formData.append('_token', csrfToken);
+                }
+            }
+
             let submitBtnId = formId === 'formAdd' ? 'submitBtnAdd' : `submitBtn${formId.replace('form-', '')}`;
 
             clearFormErrors(formId);
             isSubmitting = true;
             setButtonLoading(submitBtnId, true);
 
+            // Add dropzone files
             const dz = dropzones[formId];
             if (dz) {
                 const files = dz.getAcceptedFiles();
-                files.forEach((file) => formData.append('dokumen', file));
+                files.forEach((file) => {
+                    formData.append('dokumen', file);
+                });
             }
 
             fetch(form.action, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': csrfToken,
                         'X-Requested-With': 'XMLHttpRequest',
                     },
                     body: formData,
                 })
                 .then(async response => {
-                    const data = await response.json();
+                    const responseText = await response.text();
+                    let data;
+
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        console.error('Failed to parse JSON response:', e);
+                        throw new Error('Invalid JSON response from server');
+                    }
 
                     if (!response.ok) {
-                        if (data.errors) {
+                        if (response.status === 422 && data.errors) {
                             showFormErrors(formId, data.errors);
                             const firstError = Object.values(data.errors)[0][0];
                             toastr.error(firstError, "Validasi Gagal!");
                         } else {
                             const currentModal = $('.modal.show');
                             if (currentModal.length) {
-                                const modalInstance = bootstrap.Modal.getInstance(currentModal[0]);
-                                if (modalInstance) {
-                                    modalInstance.hide();
-                                } else {
-                                    currentModal.modal('hide');
-                                }
+                                currentModal.modal('hide');
                             }
                             toastr.error(data.message || "Gagal menyimpan data", "Error!");
                         }
@@ -1340,17 +1343,14 @@
                         const currentModal = $('.modal.show');
                         if (currentModal.length) {
                             currentModal.data('success-submitted', true);
-
-                            const modalInstance = bootstrap.Modal.getInstance(currentModal[0]);
-                            if (modalInstance) {
-                                modalInstance.hide();
-                            } else {
-                                currentModal.modal('hide');
-                            }
+                            currentModal.modal('hide');
                         }
 
                         toastr.success(data.message || "Data berhasil disimpan", "Success!");
-                        form.reset();
+
+                        if (formId === 'formAdd') {
+                            form.reset();
+                        }
 
                         if (dropzones[formId]) {
                             dropzones[formId].removeAllFiles(true);
@@ -1364,14 +1364,9 @@
                     console.error('Fetch error:', error);
                     const currentModal = $('.modal.show');
                     if (currentModal.length) {
-                        const modalInstance = bootstrap.Modal.getInstance(currentModal[0]);
-                        if (modalInstance) {
-                            modalInstance.hide();
-                        } else {
-                            currentModal.modal('hide');
-                        }
+                        currentModal.modal('hide');
                     }
-                    toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+                    toastr.error("Terjadi kesalahan jaringan. Silakan coba lagi.", "Error!");
                 })
                 .finally(() => {
                     isSubmitting = false;
@@ -1379,82 +1374,95 @@
                 });
         }
 
-        function deleteItemEnhanced(formId) {
-            const form = document.getElementById(formId);
-            const route = form.action;
-            const row = form.closest('tr');
-            const itemName = row ? row.querySelector('.fw-bold').textContent.trim() : 'item ini';
+        // ==================== DELETE FUNCTION ====================
 
+        function deleteItem(id, title) {
             Swal.fire({
-                title: "Apakah Anda Yakin?",
-                html: `<p style='text-align:center'>Data laporan akan dihapus secara permanen!</p>
-                    <p style='text-align:center; color: #6c757d; font-size: 0.9rem;'>Setelah dihapus, Anda tidak bisa mengembalikannya!</p>`,
-                icon: "warning",
+                title: 'Hapus Laporan?',
+                text: `Apakah Anda yakin ingin menghapus laporan "${title}"?`,
+                icon: 'warning',
                 showCancelButton: true,
-                reverseButtons: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batalkan',
+                cancelButtonText: 'Batal',
                 customClass: {
-                    confirmButton: 'btn btn-danger me-2',
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    content: 'swal2-content',
+                    confirmButton: 'btn btn-danger',
                     cancelButton: 'btn btn-secondary'
-                }
+                },
+                buttonsStyling: false,
+                reverseButtons: true
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Menghapus...',
-                        text: 'Mohon tunggu',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        willOpen: () => Swal.showLoading()
-                    });
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `{{ route('admin.bendahara.index') }}/${id}`;
+                    form.style.display = 'none';
 
-                    fetch(route, {
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    if (csrfToken) {
+                        const tokenInput = document.createElement('input');
+                        tokenInput.type = 'hidden';
+                        tokenInput.name = '_token';
+                        tokenInput.value = csrfToken;
+                        form.appendChild(tokenInput);
+                    }
+
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'DELETE';
+                    form.appendChild(methodInput);
+
+                    document.body.appendChild(form);
+
+                    const formData = new FormData(form);
+
+                    fetch(form.action, {
                         method: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-CSRF-TOKEN': csrfToken,
                             'X-Requested-With': 'XMLHttpRequest',
                         },
-                        body: new FormData(form)
+                        body: formData
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
                             Swal.fire({
                                 title: 'Berhasil!',
-                                text: data.message || 'Data berhasil dihapus',
+                                text: data.message,
                                 icon: 'success',
                                 timer: 2000,
                                 showConfirmButton: false,
-                                timerProgressBar: true
+                                customClass: {
+                                    popup: 'swal2-popup'
+                                }
                             });
-                            reloadTable();
+                            setTimeout(() => reloadTable(), 500);
                         } else {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: data.message || 'Gagal menghapus data',
-                                icon: 'error',
-                                confirmButtonText: 'OK'
-                            });
+                            throw new Error(data.message || 'Gagal menghapus data');
                         }
                     })
                     .catch(error => {
                         console.error('Delete error:', error);
                         Swal.fire({
                             title: 'Error!',
-                            text: 'Terjadi kesalahan saat menghapus data',
+                            text: error.message || 'Gagal menghapus laporan. Silakan coba lagi.',
                             icon: 'error',
-                            confirmButtonText: 'OK'
+                            confirmButtonText: 'OK',
+                            customClass: {
+                                popup: 'swal2-popup',
+                                confirmButton: 'btn btn-primary'
+                            },
+                            buttonsStyling: false
                         });
-                    });
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire({
-                        title: "Aksi Dibatalkan",
-                        text: "Data Anda tetap aman :)",
-                        icon: "info",
-                        timer: 1500,
-                        showConfirmButton: false
+                    })
+                    .finally(() => {
+                        document.body.removeChild(form);
                     });
                 }
             });
@@ -1489,7 +1497,6 @@
                         initializeDropdownEvents();
                         initializeSortingEvents();
                         initializeModalHandlers();
-                        initializeModalEvents();
                         updateFilterCountsFromResponse(response);
                         updateURL(formData);
                         enablePageInteractions();
@@ -1512,7 +1519,6 @@
                 data: formData,
                 beforeSend: function() {
                     $('#table').addClass('table-loading');
-                    $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
                 },
                 success: function(response) {
                     $('#table').removeClass('table-loading');
@@ -1539,10 +1545,6 @@
                     }
 
                     window.history.pushState({}, '', url);
-                },
-                error: function(xhr) {
-                    $('#table').removeClass('table-loading');
-                    $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
                 }
             });
         }
@@ -1590,17 +1592,15 @@
             }
         }
 
-        // ==================== DROPDOWN MANAGEMENT (FIXED WITH COOLDOWN) ====================
+        // ==================== DROPDOWN MANAGEMENT ====================
 
         function initializeDropdownEvents() {
-            // Clear any existing event handlers
             $(document).off('click', '.dropdown-toggle-custom');
             $(document).off('mouseenter', '.dropdown-action');
             $(document).off('mouseleave', '.dropdown-action');
 
             let showTimeout, hideTimeout;
 
-            // Click handler for dropdown toggle
             $(document).on('click', '.dropdown-toggle-custom', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1608,14 +1608,10 @@
                 const $dropdownAction = $(this).closest('.dropdown-action');
                 const $menu = $dropdownAction.find('.dropdown-menu-custom');
 
-                // Clear any pending timeouts
                 clearTimeout(showTimeout);
                 clearTimeout(hideTimeout);
 
-                // Close other dropdowns immediately
                 $('.dropdown-menu-custom').not($menu).removeClass('show');
-
-                // Toggle current dropdown
                 $menu.toggleClass('show');
                 checkDropdownPosition($dropdownAction);
             });
@@ -1631,27 +1627,20 @@
                 const rowIndex = $table.find('tr').index($row);
                 const totalRows = $table.find('tr').length;
 
-                // Check if it's one of the last 2 rows
                 if (rowIndex >= totalRows - 2) {
                     $dropdownAction.addClass('dropup');
                 }
             }
 
-            // Enhanced hover functionality with cooldown (only for desktop)
             if (window.innerWidth > 768) {
                 $(document).on('mouseenter', '.dropdown-action', function() {
                     const $dropdownAction = $(this);
                     const $menu = $dropdownAction.find('.dropdown-menu-custom');
 
-                    // Clear any pending hide timeout
                     clearTimeout(hideTimeout);
 
-                    // Add cooldown for showing (300ms delay)
                     showTimeout = setTimeout(() => {
-                        // Close other dropdowns first
                         $('.dropdown-menu-custom').not($menu).removeClass('show');
-
-                        // Show current dropdown
                         $menu.addClass('show');
                         checkDropdownPosition($dropdownAction);
                     }, 300);
@@ -1661,36 +1650,16 @@
                     const $dropdownAction = $(this);
                     const $menu = $dropdownAction.find('.dropdown-menu-custom');
 
-                    // Clear any pending show timeout
                     clearTimeout(showTimeout);
 
-                    // Add cooldown for hiding (200ms delay to allow moving to menu)
                     hideTimeout = setTimeout(() => {
                         if (!$menu.is(':hover') && !$dropdownAction.is(':hover')) {
                             $menu.removeClass('show');
                         }
                     }, 200);
                 });
-
-                // Keep dropdown open when hovering over the menu itself
-                $(document).on('mouseenter', '.dropdown-menu-custom', function() {
-                    clearTimeout(hideTimeout);
-                });
-
-                $(document).on('mouseleave', '.dropdown-menu-custom', function() {
-                    const $menu = $(this);
-                    const $dropdownAction = $menu.closest('.dropdown-action');
-
-                    // Add delay before hiding when leaving the menu
-                    hideTimeout = setTimeout(() => {
-                        if (!$dropdownAction.is(':hover')) {
-                            $menu.removeClass('show');
-                        }
-                    }, 200);
-                });
             }
 
-            // Close dropdowns when clicking outside
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.dropdown-action').length) {
                     clearTimeout(showTimeout);
@@ -1698,23 +1667,7 @@
                     $('.dropdown-menu-custom').removeClass('show');
                 }
             });
-
-            // Handle window resize
-            $(window).on('resize', function() {
-                $('.dropdown-action').each(function() {
-                    if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
-                        checkDropdownPosition($(this));
-                    }
-                });
-            });
-
-            // Clear timeouts when page unloads
-            $(window).on('beforeunload', function() {
-                clearTimeout(showTimeout);
-                clearTimeout(hideTimeout);
-            });
         }
-
 
         // ==================== FILE PREVIEW ====================
 
@@ -1768,45 +1721,78 @@
         // ==================== DOCUMENT READY ====================
 
         $(document).ready(function() {
-            // Clean up any existing modal states on page load
+            console.log('Document ready - initializing...');
+
             enablePageInteractions();
 
-            // Initialize all functionality
+            // Initialize all functionality in the correct order
             initializeDropzones();
             initializeDropdownEvents();
             initializeSortingEvents();
             initializeModalHandlers();
-            initializeModalEvents();
 
-            // Replace global function references
-            window.submitForm = submitFormEnhanced;
-            window.deleteItem = deleteItemEnhanced;
+            // Set global function references
+            window.submitForm = submitForm;
+            window.deleteItem = deleteItem;
+            window.previewFile = previewFile;
 
-            // Track form changes for unsaved changes warning
-            $(document).on('input change', '[id^="form-"] input, [id^="form-"] select, [id^="form-"] textarea', function() {
-                const formId = $(this).closest('form').attr('id');
-                if (formId && formId.startsWith('form-')) {
-                    hasUnsavedChanges = true;
-                }
-            });
+            // Enhanced form change tracking
+            $(document).on('input change', '[id^="form-"] input, [id^="form-"] select, [id^="form-"] textarea', function(e) {
+                setTimeout(() => {
+                    const $input = $(this);
+                    const formId = $input.closest('form').attr('id');
 
-            $(document).on('hidden.bs.modal', '[id^="edit-"]', function() {
-                hasUnsavedChanges = false;
+                    if (formId && formId.startsWith('form-')) {
+                        const itemId = formId.replace('form-', '');
+
+                        if (originalFormData[itemId]) {
+                            const currentValue = $input.val() || '';
+                            const fieldName = $input.attr('name');
+
+                            if (fieldName === 'judul') {
+                                const originalValue = originalFormData[itemId].judul || '';
+                                const hasChanged = currentValue !== originalValue;
+                                hasUnsavedChanges = hasChanged;
+                                console.log(`Judul changed: "${originalValue}" -> "${currentValue}", hasUnsavedChanges:`, hasUnsavedChanges);
+                            } else {
+                                hasUnsavedChanges = true;
+                                console.log(`Field ${fieldName} changed in ${formId}, hasUnsavedChanges:`, hasUnsavedChanges);
+                            }
+                        } else if (formId !== 'formAdd') {
+                            hasUnsavedChanges = true;
+                            console.log('No original data found for edit form, marking as changed');
+                        }
+                    }
+                }, 10);
             });
 
             // ==================== FILTER FUNCTIONALITY ====================
 
             // Main filter dropdown
-            $('#filterBtn').on('click', function(e) {
+            $(document).off('click', '#filterBtn');
+            $(document).on('click', '#filterBtn', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
-                $('#filterMenu').toggleClass('show');
-                $('#dateFilterMenu').removeClass('show'); // Close date filter
+                console.log('Filter button clicked');
+
+                const $menu = $('#filterMenu');
+                const $dateMenu = $('#dateFilterMenu');
+
+                $dateMenu.removeClass('show');
+                $menu.toggleClass('show');
+
+                console.log('Filter menu show class:', $menu.hasClass('show'));
             });
 
             // Filter option selection
-            $('.filter-option').on('click', function(e) {
+            $(document).off('click', '.filter-option');
+            $(document).on('click', '.filter-option', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
+
                 const filterType = $(this).data('filter');
+                console.log('Filter option clicked:', filterType);
+
                 if (filterType === currentFilter) return;
 
                 $('.filter-option').removeClass('active');
@@ -1829,14 +1815,27 @@
 
             // ==================== DATE FILTER FUNCTIONALITY ====================
 
-            $('#dateFilterBtn').on('click', function(e) {
+            // Date filter button
+            $(document).off('click', '#dateFilterBtn');
+            $(document).on('click', '#dateFilterBtn', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
-                $('#dateFilterMenu').toggleClass('show');
-                $('#filterMenu').removeClass('show'); // Close main filter
+                console.log('Date filter button clicked');
+
+                const $menu = $('#dateFilterMenu');
+                const $filterMenu = $('#filterMenu');
+
+                $filterMenu.removeClass('show');
+                $menu.toggleClass('show');
+
+                console.log('Date filter menu show class:', $menu.hasClass('show'));
             });
 
             // Date preset buttons
-            $('.date-preset-btn').on('click', function() {
+            $(document).off('click', '.date-preset-btn');
+            $(document).on('click', '.date-preset-btn', function(e) {
+                e.preventDefault();
+
                 const preset = $(this).data('preset');
                 const today = new Date();
                 let fromDate, toDate;
@@ -1877,7 +1876,10 @@
             });
 
             // Apply date filter
-            $('#applyDateFilter').on('click', function() {
+            $(document).off('click', '#applyDateFilter');
+            $(document).on('click', '#applyDateFilter', function(e) {
+                e.preventDefault();
+
                 const dateFrom = $('#dateFrom').val();
                 const dateTo = $('#dateTo').val();
 
@@ -1905,7 +1907,10 @@
             });
 
             // Reset date filter
-            $('#resetDateFilter').on('click', function() {
+            $(document).off('click', '#resetDateFilter');
+            $(document).on('click', '#resetDateFilter', function(e) {
+                e.preventDefault();
+
                 $('#dateFrom').val('');
                 $('#dateTo').val('');
                 $('#date_from_input').val('');
@@ -1941,26 +1946,7 @@
                 if (sortBy) formData += '&sort_by=' + encodeURIComponent(sortBy);
                 if (order) formData += '&order=' + encodeURIComponent(order);
 
-                $.ajax({
-                    url: "{{ route('admin.bendahara.index') }}",
-                    data: formData,
-                    beforeSend: function() {
-                        $('#table').addClass('table-loading');
-                        $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
-                    },
-                    success: function(response) {
-                        $('#table').removeClass('table-loading');
-                        $('#table').html(response);
-                        initializeDropzones();
-                        initializeDropdownEvents();
-                        initializeSortingEvents();
-                        updateURL(formData);
-                    },
-                    error: function(xhr) {
-                        $('#table').removeClass('table-loading');
-                        $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
-                    }
-                });
+                reloadTableWithData(formData);
             });
 
             // Pagination clicks
@@ -1981,26 +1967,7 @@
                     if (sortBy) formData += '&sort_by=' + encodeURIComponent(sortBy);
                     if (order) formData += '&order=' + encodeURIComponent(order);
 
-                    $.ajax({
-                        url: "{{ route('admin.bendahara.index') }}",
-                        data: formData,
-                        beforeSend: function() {
-                            $('#table').addClass('table-loading');
-                            $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
-                        },
-                        success: function(response) {
-                            $('#table').removeClass('table-loading');
-                            $('#table').html(response);
-                            initializeDropzones();
-                            initializeDropdownEvents();
-                            initializeSortingEvents();
-                            updateURL(formData);
-                        },
-                        error: function(xhr) {
-                            $('#table').removeClass('table-loading');
-                            $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
-                        }
-                    });
+                    reloadTableWithData(formData);
                 }
             });
 
@@ -2008,16 +1975,56 @@
 
             // Close dropdowns when clicking outside
             $(document).on('click', function(e) {
-                if (!$(e.target).closest('.filter-dropdown, .date-filter-dropdown').length) {
+                const $target = $(e.target);
+
+                // Check if click is outside filter dropdowns
+                if (!$target.closest('.filter-dropdown, .date-filter-dropdown, #filterBtn, #dateFilterBtn').length) {
                     $('#filterMenu').removeClass('show');
                     $('#dateFilterMenu').removeClass('show');
+                    console.log('Clicked outside filters, closing menus');
                 }
             });
 
-            // Prevent dropdowns from closing when clicking inside
-            $('#filterMenu, #dateFilterMenu').on('click', function(e) {
+            // Prevent dropdowns from closing when clicking inside them
+            $(document).on('click', '#filterMenu, #dateFilterMenu', function(e) {
+                e.stopPropagation();
+                console.log('Clicked inside menu, preventing close');
+            });
+
+            // Also prevent closing when clicking the buttons themselves
+            $(document).on('click', '#filterBtn, #dateFilterBtn', function(e) {
                 e.stopPropagation();
             });
+
+            // ==================== HELPER FUNCTION FOR TABLE RELOAD ====================
+
+            function reloadTableWithData(formData) {
+                $.ajax({
+                    url: "{{ route('admin.bendahara.index') }}",
+                    data: formData,
+                    beforeSend: function() {
+                        $('#table').addClass('table-loading');
+                        $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                    },
+                    success: function(response) {
+                        $('#table').removeClass('table-loading');
+                        $('#table').html(response);
+
+                        setTimeout(() => {
+                            initializeDropzones();
+                            initializeDropdownEvents();
+                            initializeSortingEvents();
+                            initializeModalHandlers();
+                            updateURL(formData);
+                            console.log('Table reloaded and re-initialized');
+                        }, 50);
+                    },
+                    error: function(xhr) {
+                        $('#table').removeClass('table-loading');
+                        $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                    }
+                });
+            }
 
             // ==================== INITIALIZATION ====================
 
@@ -2025,7 +2032,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const filterFromURL = urlParams.get('filter_type') || 'all';
             if (filterFromURL !== currentFilter) {
-                $(`.filter-option[data-filter="${filterFromURL}"]`).click();
+                $(`.filter-option[data-filter="${filterFromURL}"]`).trigger('click');
             }
 
             // Initialize date filter state on page load
@@ -2040,6 +2047,8 @@
                     $('.date-preset-btn[data-preset="today"]').addClass('active');
                 }
             }
+
+            console.log('Document ready initialization completed');
         });
 
         // ==================== SWEETALERT2 STYLING ====================
@@ -2086,6 +2095,6 @@
 
         // Inject the CSS
         $('head').append(additionalCSS);
-        
+
     </script>
 @endsection
