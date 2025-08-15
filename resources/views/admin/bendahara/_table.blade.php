@@ -1,14 +1,37 @@
-    <div style="display: none;" data-filter-counts="{{ json_encode($fileCounts ?? []) }}"></div>
-
+@if ($laporanBendahara->isEmpty())
+    <div class="text-center text-muted py-10">
+        <div class="d-flex flex-column align-items-center gap-3">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#F8F9FA" />
+                <path d="M32 20C25.3726 20 20 25.3726 20 32C20 38.6274 25.3726 44 32 44C38.6274 44 44 38.6274 44 32C44 25.3726 38.6274 20 32 20ZM32 22C37.5467 22 42 26.4533 42 32C42 37.5467 37.5467 42 32 42C26.4533 42 22 37.5467 22 32C22 26.4533 26.4533 22 32 22Z" fill="#6C7B7F" />
+                <path d="M30 28V36H34V28H30ZM30 24V27H34V24H30Z" fill="#6C7B7F" />
+            </svg>
+            <div class="text-center">
+                <div class="fw-bold text-gray-800 mb-1">
+                    @if (request('search') || request('filter_type') || request('date_from') || request('date_to'))
+                        Tidak ada laporan yang sesuai dengan pencarian/filter
+                    @else
+                        Belum ada laporan bendahara
+                    @endif
+                </div>
+                <div class="text-muted">
+                    @if (request('search') || request('filter_type') || request('date_from') || request('date_to'))
+                        Coba ubah kata kunci pencarian atau filter yang Anda gunakan
+                    @else
+                        Klik tombol "Tambah Laporan" untuk menambah laporan baru
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+@else
     <div style="overflow-x:auto;">
         <table class="table-row-bordered gy-4 table align-middle">
             <thead>
                 <tr class="fw-bold text-uppercase text-muted">
                     <th class="bg-light px-6 text-center" style="width: 60px;">No</th>
-                    <th class="bg-light px-20 sortable"
-                        data-sort="judul"
-                        data-order="{{ ($currentSort['sort_by'] ?? '') === 'judul' && ($currentSort['order'] ?? '') === 'asc' ? 'desc' : 'asc' }}">
-                        <div class="d-flex align-items-center justify-content-between cursor-pointer">
+                    <th class="bg-light px-20 sortable cursor-pointer" data-sort="judul" data-order="{{ ($currentSort['sort_by'] ?? '') === 'judul' && ($currentSort['order'] ?? '') === 'asc' ? 'desc' : 'asc' }}">
+                        <div class="d-flex align-items-center justify-content-between">
                             <span>Judul Laporan</span>
                             <div class="sort-icons">
                                 @if(($currentSort['sort_by'] ?? '') === 'judul')
@@ -23,10 +46,8 @@
                             </div>
                         </div>
                     </th>
-                    <th class="bg-light text-center sortable"
-                        data-sort="file_size"
-                        data-order="{{ ($currentSort['sort_by'] ?? '') === 'file_size' && ($currentSort['order'] ?? '') === 'desc' ? 'asc' : 'desc' }}">
-                        <div class="d-flex align-items-center justify-content-center cursor-pointer">
+                    <th class="bg-light text-center sortable cursor-pointer" data-sort="file_size" data-order="{{ ($currentSort['sort_by'] ?? '') === 'file_size' && ($currentSort['order'] ?? '') === 'desc' ? 'asc' : 'desc' }}">
+                        <div class="d-flex align-items-center justify-content-center">
                             <span>Ukuran File</span>
                             <div class="sort-icons ms-2">
                                 @if(($currentSort['sort_by'] ?? '') === 'file_size')
@@ -49,31 +70,30 @@
                 @forelse ($laporanBendahara as $index => $item)
                     @php
                         $extension = $item->dokumen ? strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) : '';
-                        // Calculate proper row number based on pagination
                         $rowNumber = ($laporanBendahara->currentPage() - 1) * $laporanBendahara->perPage() + $index + 1;
                     @endphp
                     <tr data-extension="{{ $extension }}" data-dokumen="{{ $item->dokumen }}">
-                        <td class="text-center fw-bold px-2">
-                            {{ $rowNumber }}
-                        </td>
+                        <td class="text-center fw-bold px-2">{{ $rowNumber }}</td>
                         <td class="fw-bold px-6">
-                            @if($item->dokumen)
-                                <a href="#" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ $extension }}')" class="text-decoration-none cursor-pointer">
+                            <div class="d-flex flex-column">
+                                @if($item->dokumen)
+                                    <a href="#" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ $extension }}')"
+                                       class="text-decoration-none cursor-pointer text-primary" style="font-size: large">
+                                        @if(request('search'))
+                                            {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
+                                        @else
+                                            {{ $item->judul }}
+                                        @endif
+                                    </a>
+                                @else
                                     @if(request('search'))
                                         {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
                                     @else
                                         {{ $item->judul }}
                                     @endif
-                                </a>
-                            @else
-                                @if(request('search'))
-                                    {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
-                                @else
-                                    {{ $item->judul }}
                                 @endif
-                            @endif
-                            <br>
-                            <small class="text-muted">{{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}</small>
+                            </div>
+                            <span class="text-muted">{{ \Carbon\Carbon::parse($item->jadwal)->format('d M Y') }}</span>
                         </td>
                         <td class="px-2 text-center">
                             @if($item->dokumen && Storage::disk('public')->exists($item->dokumen))
@@ -85,20 +105,20 @@
                         <td class="px-2 text-center">
                             @if($item->dokumen)
                                 @php
-                                    $extension = strtoupper(pathinfo($item->dokumen, PATHINFO_EXTENSION));
-                                    $badgeClass = match($extension) {
+                                    $fileExtension = strtoupper(pathinfo($item->dokumen, PATHINFO_EXTENSION));
+                                    $badgeClass = match($fileExtension) {
                                         'PDF' => 'badge-danger',
                                         'XLS', 'XLSX' => 'badge-success',
                                         default => 'badge-secondary'
                                     };
                                 @endphp
-                                <span class="badge {{ $badgeClass }}">{{ $extension }}</span>
+                                <span class="badge {{ $badgeClass }}">{{ $fileExtension }}</span>
                             @else
                                 -
                             @endif
                         </td>
                         <td class="px-2 text-center">
-                            <div class="dropdown-action" data-row-id="{{ $item->id }}">
+                            <div class="dropdown dropdown-action" data-row-id="{{ $item->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <rect width="32" height="32" rx="6" fill="#EFF6FF" />
@@ -116,14 +136,14 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     @if($item->dokumen)
-                                    <li class="dropdown-item preview" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')">
-                                        <i class="ki-outline ki-eye me-2"></i>Preview Dokumen
-                                    </li>
+                                        <li class="dropdown-item preview" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')">
+                                            <i class="ki-outline ki-eye me-2"></i>Preview Dokumen
+                                        </li>
                                     @endif
                                     <li class="dropdown-item edit" data-bs-toggle="modal" data-bs-target="#edit-{{ $item->id }}">
                                         <i class="ki-outline ki-pencil me-2"></i>Edit Laporan
                                     </li>
-                                    <li class="dropdown-item delete" onclick="deleteItemEnhanced('delete-form-{{ $item->id }}')">
+                                    <li class="dropdown-item delete" onclick="deleteItemEnhanced('delete-form-{{ $item->id }}', '{{ $item->judul }}')">
                                         <i class="ki-outline ki-trash me-2"></i>Hapus
                                     </li>
                                 </ul>
@@ -140,17 +160,25 @@
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content rounded-4 gap-5 px-10 py-8">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <div class="fs-2 fw-bold text-truncate leading-5">Edit Laporan: {{ Str::limit($item->judul, 20) }}</div>
+                                    <div class="fs-2 fw-bold text-truncate leading-5">
+                                        Edit Laporan: {{ Str::limit($item->judul, 20) }}
+                                    </div>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
 
-                                <form id="form-{{ $item->id }}" method="POST" action="{{ route('admin.bendahara.update', $item->id) }}" enctype="multipart/form-data" class="d-grid gap-4">
-                                    @csrf
-                                    @method('PUT')
+                                <div id="form-{{ $item->id }}" data-action="{{ route('admin.bendahara.update', $item->id) }}" class="d-grid gap-4">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="_method" value="PUT">
 
                                     <div>
                                         <div class="fw-semibold required mb-3 text-gray-800">Judul Laporan</div>
                                         <input type="text" name="judul" value="{{ $item->judul }}" placeholder="Masukkan Judul Laporan" class="form-control bg-light border border-gray-400" required />
+                                        <div class="invalid-feedback"></div>
+                                    </div>
+
+                                    <div>
+                                        <div class="fw-semibold required mb-3 text-gray-800">Tanggal Laporan</div>
+                                        <input type="date" name="tanggal" value="{{ $item->tanggal }}" class="form-control bg-light border border-gray-400" required />
                                         <div class="invalid-feedback"></div>
                                     </div>
 
@@ -175,15 +203,15 @@
                                         </div>
 
                                         @if($item->dokumen)
-                                        <div class="mt-2 p-3 bg-light rounded">
-                                            <small class="text-muted">File saat ini: </small>
-                                            <a href="#" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')" class="text-primary text-decoration-none fw-bold">
-                                                {{ basename($item->dokumen) }}
-                                            </a>
-                                        </div>
+                                            <div class="mt-2 p-3 bg-light rounded">
+                                                <small class="text-muted">File saat ini: </small>
+                                                <a href="#" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')" class="text-primary text-decoration-none fw-bold">
+                                                    {{ basename($item->dokumen) }}
+                                                </a>
+                                            </div>
                                         @endif
                                     </div>
-                                </form>
+                                </div>
 
                                 <div class="d-grid py-4">
                                     <button type="button" onclick="submitForm('form-{{ $item->id }}')" id="submitBtn{{ $item->id }}" class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
@@ -195,7 +223,7 @@
                     </div>
                 @empty
                     <tr>
-                        <td class="fw-bold p-6 text-center" colspan="5">
+                        <td class="fw-bold p-6 text-center" colspan="6">
                             <div class="d-flex flex-column align-items-center gap-3">
                                 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="32" cy="32" r="32" fill="#F8F9FA"/>
@@ -204,14 +232,14 @@
                                 </svg>
                                 <div class="text-center">
                                     <div class="fw-bold text-gray-800 mb-1">
-                                        @if(request('search') || request('filter_type'))
+                                        @if(request('search') || request('filter_type') || request('date_from') || request('date_to'))
                                             Tidak ada laporan yang sesuai dengan pencarian/filter
                                         @else
                                             Belum ada laporan bendahara
                                         @endif
                                     </div>
                                     <div class="text-muted">
-                                        @if(request('search') || request('filter_type'))
+                                        @if(request('search') || request('filter_type') || request('date_from') || request('date_to'))
                                             Coba ubah kata kunci pencarian atau filter yang Anda gunakan
                                         @else
                                             Klik tombol "Tambah Laporan" untuk menambah laporan baru
@@ -294,8 +322,9 @@
             @endif
         </div>
     </div>
+@endif
 
-    <style>
+<style>
     .search-highlight {
         background-color: #fff3cd;
         padding: 1px 3px;
@@ -303,7 +332,10 @@
         font-weight: bold;
     }
 
-    /* Sortable column styles */
+    .preview:hover {
+        background-color: #F4EEFF !important;
+    }
+
     .sortable {
         cursor: pointer;
         user-select: none;
@@ -339,6 +371,7 @@
 
     .dropdown-toggle-custom:hover {
         background-color: rgba(0, 0, 0, 0.05);
+        transform: scale(1.05);
     }
 
     .dropdown-menu-custom {
@@ -354,19 +387,53 @@
         margin-top: 5px;
         display: none;
         list-style: none;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.2s ease;
+        pointer-events: none;
     }
 
     .dropdown-menu-custom.show {
         display: block;
-        animation: fadeIn 0.2s ease;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+        animation: dropdownFadeIn 0.2s ease forwards;
     }
 
-    /* Dropup style */
+    @keyframes dropdownFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     .dropup .dropdown-menu-custom {
         bottom: 100%;
         top: auto;
         margin-top: 0;
         margin-bottom: 5px;
+        transform: translateY(10px);
+    }
+
+    .dropup .dropdown-menu-custom.show {
+        transform: translateY(0);
+        animation: dropupFadeIn 0.2s ease forwards;
+    }
+
+    @keyframes dropupFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .dropdown-item {
@@ -378,28 +445,55 @@
         color: #495057;
         text-decoration: none;
         font-size: 0.9rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dropdown-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, transparent, rgba(248, 40, 90, 0.1));
+        transition: width 0.3s ease;
+        z-index: -1;
+    }
+
+    .dropdown-item:hover::before {
+        width: 100%;
     }
 
     .dropdown-item i {
         margin-right: 8px;
         width: 20px;
         text-align: center;
+        transition: transform 0.2s ease;
+    }
+
+    .dropdown-item:hover i {
+        transform: scale(1.1);
     }
 
     .dropdown-item:hover {
         background-color: #f8f9fa;
+        transform: translateX(2px);
     }
 
     .dropdown-item.preview:hover {
         background-color: #F4EEFF !important;
+        color: #6f42c1;
     }
 
     .dropdown-item.edit:hover {
         background-color: rgb(249, 245, 172) !important;
+        color: #856404;
     }
 
     .dropdown-item.delete:hover {
         background-color: #ffcad7 !important;
+        color: #721c24;
     }
 
     .pagination-arrow {
@@ -460,8 +554,26 @@
         padding-right: 32px !important;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+    @media (max-width: 768px) {
+        .dropdown-menu-custom {
+            position: fixed;
+            right: 10px;
+            left: auto;
+            min-width: 200px;
+            max-width: calc(100vw - 20px);
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            font-size: 1rem;
+        }
+
+        .dropdown-item:hover::before {
+            width: 0;
+        }
+
+        .dropdown-item:hover {
+            transform: none;
+        }
     }
-    </style>
+</style>
