@@ -852,59 +852,161 @@
                 }
             });
         });
-        function showDetailModal(kegiatan) {
+      function showDetailModal(kegiatan) {
     const modalBody = document.getElementById('detailModalBody');
 
     // Format harga
     const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
 
     // Generate foto preview
-    let fotoHtml = '<span class="text-muted">Tidak ada foto</span>';
+    let fotoHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
     if (kegiatan.foto_jurnal && kegiatan.foto_jurnal.length > 0) {
-        fotoHtml = kegiatan.foto_jurnal.map(f => `
-            <div class="col-6 col-md-4 mb-3">
-                <img src="/storage/${f}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+        fotoHtml = `
+            <div class="row g-3">
+                ${kegiatan.foto_jurnal.map(f => `
+                    <div class="col-6 col-md-4">
+                        <div class="border rounded overflow-hidden" style="height: 120px;">
+                            <img src="/storage/${f}"
+                                 class="w-100 h-100"
+                                 style="object-fit: cover; cursor: pointer;"
+                                 onclick="window.open('/storage/${f}', '_blank')">
+                        </div>
+                    </div>
+                `).join('')}
             </div>
-        `).join('');
+        `;
     }
 
     // Generate dokumen
-    let dokumenHtml = '<span class="text-muted">Tidak ada dokumen</span>';
+    let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
     if (kegiatan.dokumen_pendukung && kegiatan.dokumen_pendukung.length > 0) {
-        dokumenHtml = kegiatan.dokumen_pendukung.map(d => {
-            const name = d.split('/').pop();
-            return `
-                <div class="mb-2">
-                    <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-file-download me-1"></i> ${name}
-                    </a>
-                </div>
-            `;
-        }).join('');
+        dokumenHtml = `
+            <div class="d-flex flex-column gap-2">
+                ${kegiatan.dokumen_pendukung.map(d => {
+                    const name = d.split('/').pop();
+                    const extension = name.split('.').pop().toLowerCase();
+
+                    // Icon berdasarkan tipe file
+                    let iconClass = 'fas fa-file text-secondary';
+                    if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
+                    else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
+                    else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
+                    else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
+
+                    return `
+                        <div class="d-flex align-items-center p-2 border rounded bg-light">
+                            <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                            <div class="flex-grow-1">
+                                <div class="fw-medium text-dark">${name}</div>
+                                <small class="text-muted">${extension.toUpperCase()}</small>
+                            </div>
+                            <a href="/storage/${d}"
+                               target="_blank"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-download me-1"></i>Unduh
+                            </a>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
     }
 
     modalBody.innerHTML = `
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title mb-2">${kegiatan.nama_program_kegiatan}</h5>
-                ${kegiatan.jenis_kegiatan ? `<p class="text-muted mb-2">Jenis: ${kegiatan.jenis_kegiatan}</p>` : ''}
-                <p><strong>Volume:</strong> ${kegiatan.volume}</p>
-                <p><strong>Harga Satuan:</strong> ${formatRupiah(kegiatan.jumlah_harga_satuan)}</p>
-                <p><strong>Jumlah Harga:</strong> ${formatRupiah(kegiatan.jumlah_harga)}</p>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
 
-                <hr>
+                <!-- Informasi Program & Kegiatan -->
+                <div class="mb-4">
+                    <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Informasi Program & Kegiatan
+                    </h6>
+                    <div class="bg-light p-3 rounded">
+                        <div class="mb-2">
+                            <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
+                            <p class="mb-0 text-dark">${kegiatan.nama_program_kegiatan}</p>
+                        </div>
+                        ${kegiatan.jenis_kegiatan ? `
+                            <div>
+                                <label class="fw-semibold text-dark mb-1">Jenis Kegiatan:</label>
+                                <p class="mb-0 text-dark">${kegiatan.jenis_kegiatan}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
 
-                <h6>Foto Jurnal</h6>
-                <div class="row">${fotoHtml}</div>
+                <!-- Rincian Anggaran -->
+                <div class="mb-4">
+                    <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
+                        <i class="fas fa-calculator me-2"></i>
+                        Rincian Anggaran
+                    </h6>
+                    <div class="bg-light p-3 rounded">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="fw-semibold text-dark mb-1">Volume:</label>
+                                <p class="mb-0 text-dark fs-5 fw-bold">${kegiatan.volume}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
+                                <p class="mb-0 text-dark fs-5 fw-bold">${formatRupiah(kegiatan.jumlah_harga_satuan)}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="fw-semibold text-dark mb-1">Jumlah Harga:</label>
+                                <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(kegiatan.jumlah_harga)}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <hr>
+                <!-- Lampiran -->
+                <div class="mb-4">
+                    <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
+                        <i class="fas fa-paperclip me-2"></i>
+                        Lampiran
+                    </h6>
 
-                <h6>Dokumen Pendukung</h6>
-                ${dokumenHtml}
+                    <!-- Foto Jurnal -->
+                    <div class="mb-3">
+                        <label class="fw-semibold text-dark mb-2 d-block">
+                            <i class="fas fa-camera me-1"></i>Foto Jurnal:
+                        </label>
+                        <div class="bg-light p-3 rounded">
+                            ${fotoHtml}
+                        </div>
+                    </div>
+
+                    <!-- Dokumen Pendukung -->
+                    <div>
+                        <label class="fw-semibold text-dark mb-2 d-block">
+                            <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
+                        </label>
+                        <div class="bg-light p-3 rounded">
+                            ${dokumenHtml}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Keterangan Tambahan -->
+                <div class="mb-2">
+                    <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
+                        <i class="fas fa-sticky-note me-2"></i>
+                        Keterangan Tambahan
+                    </h6>
+                    <div class="bg-light p-3 rounded">
+                        ${kegiatan.keterangan_tambahan ?
+                            `<p class="mb-0 text-dark">${kegiatan.keterangan_tambahan}</p>` :
+                            '<div class="text-muted fst-italic">Tidak ada keterangan tambahan</div>'
+                        }
+                    </div>
+                </div>
+
             </div>
         </div>
     `;
 
+    // Show modal
     const modal = new bootstrap.Modal(document.getElementById('detailModal'));
     modal.show();
 }
