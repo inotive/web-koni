@@ -450,6 +450,23 @@
             </div>
         </div>
     </div>
+    <!-- Modal Detail Card -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: #F8285A; color: white;">
+                <h5 class="modal-title" id="detailModalLabel" style="color: white">Detail Kegiatan</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detailModalBody">
+                <!-- Konten akan diisi via JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @section('script')
@@ -835,5 +852,61 @@
                 }
             });
         });
+        function showDetailModal(kegiatan) {
+    const modalBody = document.getElementById('detailModalBody');
+
+    // Format harga
+    const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
+
+    // Generate foto preview
+    let fotoHtml = '<span class="text-muted">Tidak ada foto</span>';
+    if (kegiatan.foto_jurnal && kegiatan.foto_jurnal.length > 0) {
+        fotoHtml = kegiatan.foto_jurnal.map(f => `
+            <div class="col-6 col-md-4 mb-3">
+                <img src="/storage/${f}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+            </div>
+        `).join('');
+    }
+
+    // Generate dokumen
+    let dokumenHtml = '<span class="text-muted">Tidak ada dokumen</span>';
+    if (kegiatan.dokumen_pendukung && kegiatan.dokumen_pendukung.length > 0) {
+        dokumenHtml = kegiatan.dokumen_pendukung.map(d => {
+            const name = d.split('/').pop();
+            return `
+                <div class="mb-2">
+                    <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-file-download me-1"></i> ${name}
+                    </a>
+                </div>
+            `;
+        }).join('');
+    }
+
+    modalBody.innerHTML = `
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-2">${kegiatan.nama_program_kegiatan}</h5>
+                ${kegiatan.jenis_kegiatan ? `<p class="text-muted mb-2">Jenis: ${kegiatan.jenis_kegiatan}</p>` : ''}
+                <p><strong>Volume:</strong> ${kegiatan.volume}</p>
+                <p><strong>Harga Satuan:</strong> ${formatRupiah(kegiatan.jumlah_harga_satuan)}</p>
+                <p><strong>Jumlah Harga:</strong> ${formatRupiah(kegiatan.jumlah_harga)}</p>
+
+                <hr>
+
+                <h6>Foto Jurnal</h6>
+                <div class="row">${fotoHtml}</div>
+
+                <hr>
+
+                <h6>Dokumen Pendukung</h6>
+                ${dokumenHtml}
+            </div>
+        </div>
+    `;
+
+    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+    modal.show();
+}
     </script>
 @endsection

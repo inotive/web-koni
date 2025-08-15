@@ -10,10 +10,10 @@
                 <tr>
                     <th style="text-align: left">No</th>
                     <th>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'nama_program_kegiatan', 'direction' => (request()->get('sort') == 'nama_program_kegiatan' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
+                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'nama_program_kegiatan', 'direction' => request()->get('sort') == 'nama_program_kegiatan' && request()->get('direction') == 'asc' ? 'desc' : 'asc']) }}"
                             class="text-dark text-decoration-none sortable-header">
                             Nama Program & Kegiatan
-                            @if(request()->get('sort') == 'nama_program_kegiatan')
+                            @if (request()->get('sort') == 'nama_program_kegiatan')
                                 <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
                             @else
                                 <i class="fas fa-sort"></i>
@@ -21,10 +21,10 @@
                         </a>
                     </th>
                     <th>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'volume', 'direction' => (request()->get('sort') == 'volume' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
+                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'volume', 'direction' => request()->get('sort') == 'volume' && request()->get('direction') == 'asc' ? 'desc' : 'asc']) }}"
                             class="text-dark text-decoration-none sortable-header">
                             Volume
-                            @if(request()->get('sort') == 'volume')
+                            @if (request()->get('sort') == 'volume')
                                 <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
                             @else
                                 <i class="fas fa-sort"></i>
@@ -32,10 +32,10 @@
                         </a>
                     </th>
                     <th>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'jumlah_harga_satuan', 'direction' => (request()->get('sort') == 'jumlah_harga_satuan' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
+                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'jumlah_harga_satuan', 'direction' => request()->get('sort') == 'jumlah_harga_satuan' && request()->get('direction') == 'asc' ? 'desc' : 'asc']) }}"
                             class="text-dark text-decoration-none sortable-header">
                             Jumlah Harga Satuan
-                            @if(request()->get('sort') == 'jumlah_harga_satuan')
+                            @if (request()->get('sort') == 'jumlah_harga_satuan')
                                 <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
                             @else
                                 <i class="fas fa-sort"></i>
@@ -43,10 +43,10 @@
                         </a>
                     </th>
                     <th>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'jumlah_harga', 'direction' => (request()->get('sort') == 'jumlah_harga' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
+                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'jumlah_harga', 'direction' => request()->get('sort') == 'jumlah_harga' && request()->get('direction') == 'asc' ? 'desc' : 'asc']) }}"
                             class="text-dark text-decoration-none sortable-header">
                             Jumlah Harga
-                            @if(request()->get('sort') == 'jumlah_harga')
+                            @if (request()->get('sort') == 'jumlah_harga')
                                 <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
                             @else
                                 <i class="fas fa-sort"></i>
@@ -78,13 +78,10 @@
                         <td>Rp {{ number_format($kegiatan->jumlah_harga, 0, ',', '.') }}</td>
                         <td>
                             @if ($kegiatan->foto_jurnal && count($kegiatan->foto_jurnal) > 0)
-                                <button type="button"
-                                        class="btn btn-sm btn-light-info preview-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#previewModal"
-                                        data-type="image"
-                                        data-files="{{ json_encode($kegiatan->foto_jurnal) }}"
-                                        data-title="Foto Jurnal - {{ $kegiatan->nama_program_kegiatan }}">
+                                <button type="button" class="btn btn-sm btn-light-info preview-btn"
+                                    data-bs-toggle="modal" data-bs-target="#previewModal" data-type="image"
+                                    data-files="{{ json_encode($kegiatan->foto_jurnal) }}"
+                                    data-title="Foto Jurnal - {{ $kegiatan->nama_program_kegiatan }}">
                                     <i class="fas fa-images me-1"></i>
                                     {{ count($kegiatan->foto_jurnal) }} Foto
                                 </button>
@@ -94,13 +91,10 @@
                         </td>
                         <td>
                             @if ($kegiatan->dokumen_pendukung && count($kegiatan->dokumen_pendukung) > 0)
-                                <button type="button"
-                                        class="btn btn-sm btn-light-primary preview-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#previewModal"
-                                        data-type="document"
-                                        data-files="{{ json_encode($kegiatan->dokumen_pendukung) }}"
-                                        data-title="Dokumen Pendukung - {{ $kegiatan->nama_program_kegiatan }}">
+                                <button type="button" class="btn btn-sm btn-light-primary preview-btn"
+                                    data-bs-toggle="modal" data-bs-target="#previewModal" data-type="document"
+                                    data-files="{{ json_encode($kegiatan->dokumen_pendukung) }}"
+                                    data-title="Dokumen Pendukung - {{ $kegiatan->nama_program_kegiatan }}">
                                     <i class="fas fa-file-alt me-1"></i>
                                     {{ count($kegiatan->dokumen_pendukung) }} Dokumen
                                 </button>
@@ -111,29 +105,36 @@
                         <td class="text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
-                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
                                         <rect width="32" height="32" rx="6" fill="#EFF6FF" />
-                                        <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" stroke="#1B84FF" stroke-opacity="0.2" />
+                                        <rect x="0.5" y="0.5" width="31" height="31" rx="5.5"
+                                            stroke="#1B84FF" stroke-opacity="0.2" />
                                         <g clip-path="url(#clip0_2223_4269)">
-                                            <path opacity="0.3" d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z" fill="#1B84FF" />
-                                            <path d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z" fill="#1B84FF" />
+                                            <path opacity="0.3"
+                                                d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
+                                                fill="#1B84FF" />
+                                            <path
+                                                d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
+                                                fill="#1B84FF" />
                                         </g>
                                         <defs>
                                             <clipPath id="clip0_2223_4269">
-                                                <rect width="18" height="18" fill="white" transform="translate(7 7)" />
+                                                <rect width="18" height="18" fill="white"
+                                                    transform="translate(7 7)" />
                                             </clipPath>
                                         </defs>
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li>
-                                        <a href="{{ route('admin.laporan-lpj.sekretariat.show', $kegiatan->id) }}"
-                                            class="dropdown-item-custom">
+                                        <a href="javascript:void(0)" class="dropdown-item-custom"
+                                            onclick="showDetailModal({{ json_encode($kegiatan) }})">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail
                                         </a>
                                     </li>
 
-                                    @if(auth()->user()->hasRole('superadmin'))
+                                    @if (auth()->user()->hasRole('superadmin'))
                                         <li>
                                             <a href="{{ route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) }}"
                                                 class="dropdown-item-custom edit">
@@ -143,10 +144,8 @@
                                     @else
                                         <li>
                                             <span class="dropdown-item-custom restricted-action"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="left"
-                                                data-bs-custom-class="custom-tooltip"
-                                                data-bs-html="true"
+                                                data-bs-toggle="tooltip" data-bs-placement="left"
+                                                data-bs-custom-class="custom-tooltip" data-bs-html="true"
                                                 title="<div class='tooltip-content'>
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
@@ -158,14 +157,16 @@
                                         </li>
                                     @endif
 
-                                    @if(auth()->user()->hasRole('superadmin'))
+                                    @if (auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <form action="{{ route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id) }}"
+                                            <form
+                                                action="{{ route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id) }}"
                                                 method="POST" class="d-inline"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus kegiatan ini?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="dropdown-item-custom delete border-0 bg-transparent w-100 text-start text-danger">
+                                                <button type="submit"
+                                                    class="dropdown-item-custom delete border-0 bg-transparent w-100 text-start text-danger">
                                                     <i class="fas fa-trash me-2"></i> Hapus
                                                 </button>
                                             </form>
@@ -173,10 +174,8 @@
                                     @else
                                         <li>
                                             <span class="dropdown-item-custom restricted-action"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="left"
-                                                data-bs-custom-class="custom-tooltip"
-                                                data-bs-html="true"
+                                                data-bs-toggle="tooltip" data-bs-placement="left"
+                                                data-bs-custom-class="custom-tooltip" data-bs-html="true"
                                                 title="<div class='tooltip-content'>
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
@@ -374,7 +373,7 @@
             max-height: 80%;
             object-fit: contain;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             background: white;
             padding: 10px;
         }
@@ -384,7 +383,7 @@
             height: 80%;
             border: none;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .document-placeholder {
@@ -457,8 +456,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 @endif
