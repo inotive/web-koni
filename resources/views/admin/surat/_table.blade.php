@@ -75,18 +75,13 @@
                         <td class="text-center fw-bold px-2">{{ $rowNumber }}</td>
                         <td class="fw-bold px-6">
                             <div class="d-flex flex-column">
-                                @if (request('search'))
-                                    {!! preg_replace(
-                                        '/(' . preg_quote(request('search'), '/') . ')/i',
-                                        '<span class="search-highlight">$1</span>',
-                                        $surat->nama_kegiatan,
-                                    ) !!}
-                                @else
-                                    {{ $surat->nama_kegiatan }}
-                                @endif
+                                {{ $surat->nama_kegiatan }}
                             </div>
                             <br>
-                            <small class="text-muted">{{ $surat->no_surat }}</small>
+                            <small class="text-muted">
+                                {{ $surat->no_surat }}
+
+                            </small>
                         </td>
                         <td class="px-2 text-center">
                             @if ($surat->dokumen_surat)
