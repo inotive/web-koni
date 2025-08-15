@@ -264,7 +264,7 @@
             max-height: 80%;
             object-fit: contain;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             background: white;
             padding: 10px;
         }
@@ -274,7 +274,7 @@
             height: 80%;
             border: none;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .document-placeholder {
@@ -322,8 +322,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 
@@ -338,7 +345,7 @@
                 <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Sekretariat - 2025</h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    @if(auth()->user()->hasRole('superadmin'))
+                    @if (auth()->user()->hasRole('superadmin'))
                         <a href="{{ route('admin.laporan-lpj.sekretariat.create') }}" class="btn custom-red-button"
                             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
@@ -346,12 +353,10 @@
                     @else
                         <div class="position-relative">
                             <button class="btn custom-red-button btn-restricted"
-                                    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;"
-                                    data-bs-toggle="tooltip"
-                                    data-bs-placement="bottom"
-                                    data-bs-custom-class="custom-tooltip"
-                                    data-bs-html="true"
-                                    title="<div class='tooltip-content'>
+                                style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;"
+                                data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-custom-class="custom-tooltip"
+                                data-bs-html="true"
+                                title="<div class='tooltip-content'>
                                               <strong>Informasi</strong><br>
                                               Ajukan approval untuk<br>
                                               modifikasi laporan
@@ -361,12 +366,25 @@
                         </div>
                     @endif
 
-                    <div class="input-group" style="width: 250px;">
+                    <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari kegiatan..." value="{{ request('search') }}">
+                            placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
+
+                        <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
+                            style="position: absolute; right: 45px; z-index: 10; border: none; background: transparent; padding: 8px;">
+                            <i class="fas fa-times text-muted"></i>
+                        </button>
+
                         <button class="btn btn-outline-secondary" type="button" id="search-button">
                             <i class="fas fa-search"></i>
                         </button>
+
+                        <div class="search-loading-indicator d-none position-absolute"
+                            style="right: 50px; top: 50%; transform: translateY(-50%); z-index: 10;">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Cari Kegiatan...</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="dropdown" style="z-index: 1055">
@@ -420,16 +438,22 @@
             <div class="modal-content">
                 <div class="modal-header" style="background: #F8285A; color: white;">
                     <h5 class="modal-title text-white" id="previewModalLabel">Preview Files</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0" style="height: 70vh;">
-                    <div class="preview-container h-100 position-relative d-flex align-items-center justify-content-center" style="background: #f8f9fa;">
+                    <div class="preview-container h-100 position-relative d-flex align-items-center justify-content-center"
+                        style="background: #f8f9fa;">
                         <div id="previewSlides" class="w-100 h-100"></div>
 
-                        <button type="button" id="prevBtn" class="btn btn-primary position-absolute start-0 top-50 translate-middle-y ms-3" style="z-index: 10; display: none;">
+                        <button type="button" id="prevBtn"
+                            class="btn btn-primary position-absolute start-0 top-50 translate-middle-y ms-3"
+                            style="z-index: 10; display: none;">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-                        <button type="button" id="nextBtn" class="btn btn-primary position-absolute end-0 top-50 translate-middle-y me-3" style="z-index: 10; display: none;">
+                        <button type="button" id="nextBtn"
+                            class="btn btn-primary position-absolute end-0 top-50 translate-middle-y me-3"
+                            style="z-index: 10; display: none;">
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
@@ -451,28 +475,30 @@
         </div>
     </div>
     <!-- Modal Detail Card -->
-<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header" style="background: #F8285A; color: white;">
-                <h5 class="modal-title" id="detailModalLabel" style="color: white">Detail Kegiatan</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="detailModalBody">
-                <!-- Konten akan diisi via JavaScript -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #F8285A; color: white;">
+                    <h5 class="modal-title" id="detailModalLabel" style="color: white">Detail Kegiatan</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailModalBody">
+                    <!-- Konten akan diisi via JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 
 @section('script')
     <script>
         $(document).ready(function() {
             let dataTable = null;
+            let searchTimeout;
+            let isSearching = false;
 
             function initializeDataTable() {
                 const table = $("#kt_datatable_dom_positioning_kegiatan");
@@ -507,7 +533,7 @@
 
             function initializeTooltips() {
                 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
                     return new bootstrap.Tooltip(tooltipTriggerEl, {
                         trigger: 'hover focus'
                     });
@@ -599,58 +625,171 @@
                 $('#loading-overlay').addClass('d-none');
             }
 
-            function updateTable(params = {}) {
-                showLoading();
+            function showSearchLoading() {
+                if (!isSearching) {
+                    isSearching = true;
+                    $('.search-loading-indicator').removeClass('d-none');
+                    $('#search-button').find('i').removeClass('fa-search').addClass('fa-spinner fa-spin');
+                }
+            }
 
-                const currentUrl = new URL(window.location.href);
+            function hideSearchLoading() {
+                isSearching = false;
+                $('.search-loading-indicator').addClass('d-none');
+                $('#search-button').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
+            }
 
-                for (const key in params) {
-                    if (params[key]) {
-                        currentUrl.searchParams.set(key, params[key]);
-                    } else {
-                        currentUrl.searchParams.delete(key);
-                    }
+            function toggleClearButton() {
+                const $searchInput = $('#search');
+                const $clearBtn = $('#clear-search');
+
+                if ($searchInput.val().length > 0) {
+                    $clearBtn.removeClass('d-none');
+                } else {
+                    $clearBtn.addClass('d-none');
+                }
+            }
+
+            function performSearch(searchValue, immediate = false) {
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
                 }
 
-                if (!params.page) {
-                    currentUrl.searchParams.set('page', 1);
+                if (immediate || searchValue === '') {
+                    doSearch(searchValue);
+                } else {
+                    searchTimeout = setTimeout(() => {
+                        doSearch(searchValue);
+                    }, 300);
                 }
+            }
 
-                $.ajax({
-                    url: currentUrl.toString(),
-                    type: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    success: function(response) {
-                        $('#table-container').html(response);
-                        hideLoading();
+            function doSearch(searchValue) {
+                showSearchLoading();
 
-                        window.history.pushState(null, null, currentUrl.toString());
-
-                        initializeDataTable();
-                        initializeTooltips();
-                        initializeDropdownEvents();
-                        updateFilterCount();
-                    },
-                    error: function() {
-                        hideLoading();
-                        alert('Terjadi kesalahan saat memuat data');
-                    }
+                updateTable({
+                    'search': searchValue
+                }).finally(() => {
+                    hideSearchLoading();
                 });
             }
 
-            $('#search-button').on('click', function() {
-                updateTable({
-                    'search': $('#search').val()
+            function updateTable(params = {}) {
+                return new Promise((resolve, reject) => {
+                    if (params.search === undefined) {
+                        showLoading();
+                    }
+
+                    const currentUrl = new URL(window.location.href);
+
+                    for (const key in params) {
+                        if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                            currentUrl.searchParams.set(key, params[key]);
+                        } else {
+                            currentUrl.searchParams.delete(key);
+                        }
+                    }
+
+                    if (params.search !== undefined || params.jenis_kegiatan_filter !== undefined) {
+                        if (!params.page) {
+                            currentUrl.searchParams.set('page', 1);
+                        }
+                    }
+
+                    $.ajax({
+                        url: currentUrl.toString(),
+                        type: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function(response) {
+                            $('#table-container').html(response);
+                            hideLoading();
+
+                            window.history.pushState(null, null, currentUrl.toString());
+
+                            initializeDataTable();
+                            initializeTooltips();
+                            initializeDropdownEvents();
+                            updateFilterCount();
+
+                            resolve(response);
+                        },
+                        error: function(xhr, status, error) {
+                            hideLoading();
+
+                            const errorMsg = xhr.status === 0 ?
+                                'Koneksi terputus. Silakan coba lagi.' :
+                                'Terjadi kesalahan saat memuat data.';
+
+                            showNotification(errorMsg, 'error');
+                            reject(error);
+                        }
+                    });
                 });
+            }
+
+            function showNotification(message, type = 'info') {
+                const alertClass = {
+                    'success': 'alert-success',
+                    'error': 'alert-danger',
+                    'warning': 'alert-warning',
+                    'info': 'alert-info'
+                } [type] || 'alert-info';
+
+                const notification = $(`
+            <div class="alert ${alertClass} alert-dismissible fade show notification-toast"
+                 role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
+
+                $('body').append(notification);
+
+                setTimeout(() => {
+                    notification.alert('close');
+                }, 5000);
+            }
+
+            $('#search').on('input', function() {
+                const searchValue = $(this).val().trim();
+                toggleClearButton();
+                performSearch(searchValue);
             });
 
-            $('#search').on('keypress', function(e) {
-                if (e.which === 13) {
-                    $('#search-button').click();
+            $('#clear-search').on('click', function() {
+                $('#search').val('').focus();
+                toggleClearButton();
+                performSearch('', true);
+            });
+
+            $('#search-button').on('click', function() {
+                const searchValue = $('#search').val().trim();
+                performSearch(searchValue, true);
+            });
+
+            $('#search').on('keydown', function(e) {
+                switch (e.key) {
+                    case 'Escape':
+                        $(this).val('');
+                        toggleClearButton();
+                        performSearch('', true);
+                        break;
+
+                    case 'Enter':
+                        e.preventDefault();
+                        const searchValue = $(this).val().trim();
+                        performSearch(searchValue, true);
+                        break;
                 }
             });
+
+            $('#search').on('focus', function() {
+                $(this).select();
+            });
+
+            toggleClearButton();
 
             $('#apply-filters').on('click', function() {
                 const jenisKegiatan = $('#filter-jenis-kegiatan').val();
@@ -669,6 +808,7 @@
                 $('#filter-start-date').val('');
                 $('#filter-end-date').val('');
                 $('#search').val('');
+                toggleClearButton();
 
                 updateTable({
                     'search': '',
@@ -756,28 +896,28 @@
 
                     if (currentType === 'image') {
                         slide.innerHTML = `
-                            <img src="/storage/${file}" alt="Preview" class="preview-image">
-                        `;
+                    <img src="/storage/${file}" alt="Preview" class="preview-image">
+                `;
                     } else {
                         const fileName = file.split('/').pop();
                         const fileExtension = fileName.split('.').pop().toLowerCase();
 
                         if (fileExtension === 'pdf') {
                             slide.innerHTML = `
-                                <iframe src="/storage/${file}" class="preview-document"></iframe>
-                            `;
+                        <iframe src="/storage/${file}" class="preview-document"></iframe>
+                    `;
                         } else {
                             const iconClass = getFileIcon(fileExtension);
                             slide.innerHTML = `
-                                <div class="document-placeholder">
-                                    <i class="${iconClass}"></i>
-                                    <h5>${fileName}</h5>
-                                    <p>Click download to view this ${fileExtension.toUpperCase()} file</p>
-                                    <a href="/storage/${file}" class="btn btn-primary" target="_blank">
-                                        <i class="fas fa-external-link-alt me-2"></i>Open File
-                                    </a>
-                                </div>
-                            `;
+                        <div class="document-placeholder">
+                            <i class="${iconClass}"></i>
+                            <h5>${fileName}</h5>
+                            <p>Click download to view this ${fileExtension.toUpperCase()} file</p>
+                            <a href="/storage/${file}" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt me-2"></i>Open File
+                            </a>
+                        </div>
+                    `;
                         }
                     }
 
@@ -851,42 +991,91 @@
                     showSlide(0);
                 }
             });
+
+            const additionalCSS = `
+        <style id="enhanced-search-styles">
+            .search-loading-indicator {
+                pointer-events: none;
+            }
+
+            .search-clear-btn {
+                opacity: 0.7;
+                transition: opacity 0.2s ease;
+            }
+
+            .search-clear-btn:hover {
+                opacity: 1;
+            }
+
+            #search:focus {
+                box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+                border-color: #F8285A;
+            }
+
+            .notification-toast {
+                animation: slideInRight 0.3s ease-out;
+            }
+
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            #search.searching {
+                background-image: url("data:image/svg+xml,%3csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%23999' fill-rule='nonzero'%3e%3cpath d='M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm0-3a10 10 0 1 1 0 20 10 10 0 0 1 0-20z'/%3e%3cpath d='M10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0-2a5 5 0 1 1 0 10 5 5 0 0 1 0-10z'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 45px center;
+                animation: spin 1s linear infinite;
+            }
+
+            @keyframes spin {
+                to { transform: rotate(360deg); }
+            }
+        </style>
+    `;
+
+            if (!$('#enhanced-search-styles').length) {
+                $('head').append(additionalCSS);
+            }
         });
-      function showDetailModal(kegiatan) {
-    const modalBody = document.getElementById('detailModalBody');
 
-    // Format harga
-    const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
+        function showDetailModal(kegiatan) {
+            const modalBody = document.getElementById('detailModalBody');
 
-    // Generate foto preview
-    let fotoHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-    if (kegiatan.foto_jurnal && kegiatan.foto_jurnal.length > 0) {
-        fotoHtml = `
+            const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
+
+            let fotoHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+            if (kegiatan.foto_jurnal && kegiatan.foto_jurnal.length > 0) {
+                fotoHtml = `
             <div class="row g-3">
                 ${kegiatan.foto_jurnal.map(f => `
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded overflow-hidden" style="height: 120px;">
-                            <img src="/storage/${f}"
-                                 class="w-100 h-100"
-                                 style="object-fit: cover; cursor: pointer;"
-                                 onclick="window.open('/storage/${f}', '_blank')">
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded overflow-hidden" style="height: 120px;">
+                                <img src="/storage/${f}"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover; cursor: pointer;"
+                                     onclick="window.open('/storage/${f}', '_blank')">
+                            </div>
                         </div>
-                    </div>
-                `).join('')}
+                    `).join('')}
             </div>
         `;
-    }
+            }
 
-    // Generate dokumen
-    let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-    if (kegiatan.dokumen_pendukung && kegiatan.dokumen_pendukung.length > 0) {
-        dokumenHtml = `
+            let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+            if (kegiatan.dokumen_pendukung && kegiatan.dokumen_pendukung.length > 0) {
+                dokumenHtml = `
             <div class="d-flex flex-column gap-2">
                 ${kegiatan.dokumen_pendukung.map(d => {
                     const name = d.split('/').pop();
                     const extension = name.split('.').pop().toLowerCase();
 
-                    // Icon berdasarkan tipe file
                     let iconClass = 'fas fa-file text-secondary';
                     if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
                     else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
@@ -894,29 +1083,28 @@
                     else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
 
                     return `
-                        <div class="d-flex align-items-center p-2 border rounded bg-light">
-                            <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
-                            <div class="flex-grow-1">
-                                <div class="fw-medium text-dark">${name}</div>
-                                <small class="text-muted">${extension.toUpperCase()}</small>
+                            <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-medium text-dark">${name}</div>
+                                    <small class="text-muted">${extension.toUpperCase()}</small>
+                                </div>
+                                <a href="/storage/${d}"
+                                   target="_blank"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-download me-1"></i>Unduh
+                                </a>
                             </div>
-                            <a href="/storage/${d}"
-                               target="_blank"
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-download me-1"></i>Unduh
-                            </a>
-                        </div>
-                    `;
+                        `;
                 }).join('')}
             </div>
         `;
-    }
+            }
 
-    modalBody.innerHTML = `
+            modalBody.innerHTML = `
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
 
-                <!-- Informasi Program & Kegiatan -->
                 <div class="mb-4">
                     <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
                         <i class="fas fa-info-circle me-2"></i>
@@ -928,15 +1116,14 @@
                             <p class="mb-0 text-dark">${kegiatan.nama_program_kegiatan}</p>
                         </div>
                         ${kegiatan.jenis_kegiatan ? `
-                            <div>
-                                <label class="fw-semibold text-dark mb-1">Jenis Kegiatan:</label>
-                                <p class="mb-0 text-dark">${kegiatan.jenis_kegiatan}</p>
-                            </div>
-                        ` : ''}
+                                <div>
+                                    <label class="fw-semibold text-dark mb-1">Jenis Kegiatan:</label>
+                                    <p class="mb-0 text-dark">${kegiatan.jenis_kegiatan}</p>
+                                </div>
+                            ` : ''}
                     </div>
                 </div>
 
-                <!-- Rincian Anggaran -->
                 <div class="mb-4">
                     <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
                         <i class="fas fa-calculator me-2"></i>
@@ -960,14 +1147,12 @@
                     </div>
                 </div>
 
-                <!-- Lampiran -->
                 <div class="mb-4">
                     <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
                         <i class="fas fa-paperclip me-2"></i>
                         Lampiran
                     </h6>
 
-                    <!-- Foto Jurnal -->
                     <div class="mb-3">
                         <label class="fw-semibold text-dark mb-2 d-block">
                             <i class="fas fa-camera me-1"></i>Foto Jurnal:
@@ -977,7 +1162,6 @@
                         </div>
                     </div>
 
-                    <!-- Dokumen Pendukung -->
                     <div>
                         <label class="fw-semibold text-dark mb-2 d-block">
                             <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
@@ -988,7 +1172,6 @@
                     </div>
                 </div>
 
-                <!-- Keterangan Tambahan -->
                 <div class="mb-2">
                     <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
                         <i class="fas fa-sticky-note me-2"></i>
@@ -1006,9 +1189,8 @@
         </div>
     `;
 
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-    modal.show();
-}
+            const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+            modal.show();
+        }
     </script>
 @endsection
