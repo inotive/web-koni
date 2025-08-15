@@ -134,8 +134,14 @@
             background-color: #e9ecef;
             border-color: #dee2e6;
         }
+
+        .highlight {
+    background-color: #FFD700;
+    padding: 0 2px;
+    border-radius: 3px;
+}
     </style>
-    
+
 
     {{-- Page Header --}}
     <div class="d-flex flex-column mb-8">
@@ -149,15 +155,35 @@
             {{-- Card Header --}}
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
                 <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Kegiatan Lainnya - 2025</h3>
-
+                
+@if(request('jenis_kegiatan_filter'))
+<div class="card-header border-0 pt-3 pb-3 bg-light">
+    <div class="card-title">
+        <div class="d-flex align-items-center position-relative my-1">
+            <i class="ki-duotone ki-filter fs-3 position-absolute ms-4">
+                <span class="path1"></span>
+                <span class="path2"></span>
+            </i>
+            <span class="fs-6 fw-semibold text-gray-700 ms-10">Filter Aktif:</span>
+            <span class="badge badge-light-primary ms-2">
+                Jenis: {{ request('jenis_kegiatan_filter') }}
+            </span>
+            <button class="btn btn-sm btn-icon btn-light-danger ms-5" 
+                onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'" 
+                title="Hapus filter">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+    </div>
+</div>
+@endif
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button --}}
-                    <button type="button" class="btn custom-red-button" data-bs-toggle="modal"
-                        data-bs-target="#modal_add_kegiatan_lainnya"
-                        style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-                    </button>
+<a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.create') }}" class="btn custom-red-button"
+    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+</a>
 
                     {{-- Export Button --}}
                     <button type="button" class="btn btn-light-primary">
@@ -194,15 +220,6 @@
                                 </select>
                             </div>
 
-                            {{-- Filter by Date Range --}}
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Rentang Tanggal</label>
-                                <input type="date" id="filter-start-date" class="form-control mb-2"
-                                    value="{{ request('start_date') }}">
-                                <input type="date" id="filter-end-date" class="form-control"
-                                    value="{{ request('end_date') }}">
-                            </div>
-
                             {{-- Filter Action Buttons --}}
                             <div class="d-flex gap-2">
                                 <button type="button" id="apply-filters" class="btn btn-primary btn-sm flex-fill">
@@ -220,12 +237,32 @@
             {{-- Card Body --}}
             <div class="card-body">
                 @if ($kegiatanLainnya->isEmpty())
-                    {{-- Empty State --}}
-                    <div class="text-center text-muted py-10">
-                        <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
-                        <h4>Data tidak tersedia</h4>
-                    </div>
-                @else
+    @if(request('search'))
+        {{-- Empty State untuk Search Tidak Ditemukan --}}
+        <div class="text-center text-muted py-10">
+            <i class="ki-duotone ki-magnifier fs-3x mb-3"></i>
+            <h4>Data tidak ditemukan untuk pencarian "{{ request('search') }}"</h4>
+            <button class="btn btn-light-primary" onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
+                Reset Pencarian
+            </button>
+        </div>
+    @elseif(request('jenis_kegiatan_filter'))
+        {{-- Empty State untuk Filter Tidak Ditemukan --}}
+        <div class="text-center text-muted py-10">
+            <i class="ki-duotone ki-filter fs-3x mb-3"></i>
+            <h4>Data tidak ditemukan untuk jenis kegiatan "{{ request('jenis_kegiatan_filter') }}"</h4>
+            <button class="btn btn-light-primary" onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
+                Reset Filter
+            </button>
+        </div>
+    @else
+        {{-- Empty State untuk Data Kosong --}}
+        <div class="text-center text-muted py-10">
+            <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
+            <h4>Data tidak tersedia</h4>
+        </div>
+    @endif
+@else
                     {{-- Data Table --}}
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover align-middle"
@@ -343,58 +380,61 @@
                     </div>
 
                     {{-- Pagination Controls --}}
-<div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
-    <!-- Per Page Selector -->
-    <div class="mb-2 mb-md-0">
-        <div class="d-flex align-items-center">
-            <span class="me-2">Show</span>
-            <select class="form-select form-select-sm w-auto" id="per-page-select">
-                <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-            </select>
-            <span class="ms-2">per page</span>
-        </div>
-    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
+                        <!-- Per Page Selector -->
+                        <div class="mb-2 mb-md-0">
+                            <div class="d-flex align-items-center">
+                                <span class="me-2">Show</span>
+                                <select class="form-select form-select-sm w-auto" id="per-page-select">
+                                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
+                                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
+                                </select>
+                                <span class="ms-2">per page</span>
+                            </div>
+                        </div>
 
-    <!-- Pagination Links -->
-    <div class="d-flex align-items-center gap-3">
-        <div class="d-flex align-items-center">
-            <span class="me-2">Page {{ $kegiatanLainnya->currentPage() }} of {{ $kegiatanLainnya->lastPage() }}</span>
-        </div>
-        <div class="pagination-wrapper">
-            <ul class="pagination pagination-sm">
-                <!-- Previous Page Link -->
-                <li class="page-item {{ $kegiatanLainnya->onFirstPage() ? 'disabled' : '' }}">
-                    <a class="page-link" href="{{ $kegiatanLainnya->previousPageUrl() }}" aria-label="Previous">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
+                        <!-- Pagination Links -->
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="d-flex align-items-center">
+                                <span class="me-2">Page {{ $kegiatanLainnya->currentPage() }} of
+                                    {{ $kegiatanLainnya->lastPage() }}</span>
+                            </div>
+                            <div class="pagination-wrapper">
+                                <ul class="pagination pagination-sm">
+                                    <!-- Previous Page Link -->
+                                    <li class="page-item {{ $kegiatanLainnya->onFirstPage() ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ $kegiatanLainnya->previousPageUrl() }}"
+                                            aria-label="Previous">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
 
-                <!-- Pagination Elements -->
-                @foreach ($kegiatanLainnya->getUrlRange(1, $kegiatanLainnya->lastPage()) as $page => $url)
-                    @if ($page == $kegiatanLainnya->currentPage())
-                        <li class="page-item active" aria-current="page">
-                            <span class="page-link">{{ $page }}</span>
-                        </li>
-                    @else
-                        <li class="page-item">
-                            <a class="page-link" href="{{ $url }}">{{ $page }}</a>
-                        </li>
-                    @endif
-                @endforeach
+                                    <!-- Pagination Elements -->
+                                    @foreach ($kegiatanLainnya->getUrlRange(1, $kegiatanLainnya->lastPage()) as $page => $url)
+                                        @if ($page == $kegiatanLainnya->currentPage())
+                                            <li class="page-item active" aria-current="page">
+                                                <span class="page-link">{{ $page }}</span>
+                                            </li>
+                                        @else
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                            </li>
+                                        @endif
+                                    @endforeach
 
-                <!-- Next Page Link -->
-                <li class="page-item {{ !$kegiatanLainnya->hasMorePages() ? 'disabled' : '' }}">
-                    <a class="page-link" href="{{ $kegiatanLainnya->nextPageUrl() }}" aria-label="Next">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
+                                    <!-- Next Page Link -->
+                                    <li class="page-item {{ !$kegiatanLainnya->hasMorePages() ? 'disabled' : '' }}">
+                                        <a class="page-link" href="{{ $kegiatanLainnya->nextPageUrl() }}"
+                                            aria-label="Next">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
 
                     {{-- Results Info --}}
                     <div class="text-muted mt-2 text-center">
@@ -543,65 +583,85 @@
                 }
 
                 // Handle per page selection
-    $('#per-page-select').on('change', function() {
-        const perPage = $(this).val();
-        const currentUrl = new URL(window.location.href);
-        
-        // Update per_page parameter
-        currentUrl.searchParams.set('per_page', perPage);
-        // Reset to first page when changing per_page
-        currentUrl.searchParams.set('page', 1);
-        
-        window.location.href = currentUrl.toString();
-    });
-            
+                $('#per-page-select').on('change', function() {
+                    const perPage = $(this).val();
+                    const currentUrl = new URL(window.location.href);
+
+                    // Update per_page parameter
+                    currentUrl.searchParams.set('per_page', perPage);
+                    // Reset to first page when changing per_page
+                    currentUrl.searchParams.set('page', 1);
+
+                    window.location.href = currentUrl.toString();
+                });
+
 
                 /// Handle search functionality
-    $('#search-button').on('click', function() {
-        updateUrlAndRedirect({
-            'search': $('#search').val()
-        });
-    });
-
-                $('#search').on('keypress', function(e) {
-                    if (e.which === 13) { // Enter key
-                        $('#search-button').click();
-                    }
-                });
-
-                // Handle filter functionality
-                $('#apply-filters').on('click', function() {
-                    const jenisKegiatan = $('#filter-jenis-kegiatan').val();
-                    const startDate = $('#filter-start-date').val();
-                    const endDate = $('#filter-end-date').val();
-
+                $('#search-button').on('click', function() {
                     updateUrlAndRedirect({
-                        'jenis_kegiatan_filter': jenisKegiatan,
-                        'start_date': startDate,
-                        'end_date': endDate
+                        'search': $('#search').val()
                     });
                 });
+
+                let searchTimer;
+                $('#search').on('keyup', function() {
+                    clearTimeout(searchTimer);
+                    searchTimer = setTimeout(() => {
+                        updateUrlAndRedirect({
+                            'search': $('#search').val()
+                        });
+                    }, 500);
+                });
+
+
+                // Handle filter functionality
+$('#apply-filters').on('click', function() {
+    const jenisKegiatan = $('#filter-jenis-kegiatan').val();
+    updateUrlAndRedirect({
+        'jenis_kegiatan_filter': jenisKegiatan
+    });
+});
+
+
 
                 $('#reset-filters').on('click', function() {
                     window.location.href = "{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}";
                 });
 
-                // Update filter count badge
-                function updateFilterCount() {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    let count = 0;
+                // Update filter count badge (sederhanakan)
+function updateFilterCount() {
+    const hasFilter = new URLSearchParams(window.location.search).has('jenis_kegiatan_filter');
+    const badge = $('#filter-count');
+    if (hasFilter) {
+        badge.text('1').removeClass('d-none');
+    } else {
+        badge.addClass('d-none');
+    }
+}
 
-                    if (urlParams.get('jenis_kegiatan_filter')) count++;
-                    if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
-                    if (urlParams.get('search')) count++;
+                // Tambahkan fungsi ini di bagian paling bawah script
+function highlightSearchTerm() {
+    const searchTerm = "{{ request('search') }}";
+    if (searchTerm) {
+        $('td').each(function() {
+            const text = $(this).text();
+            const highlighted = text.replace(
+                new RegExp(searchTerm, 'gi'), 
+                match => `<span class="bg-warning">${match}</span>`
+            );
+            if (highlighted !== text) {
+                $(this).html(highlighted);
+            }
+        });
+    }
+}
 
-                    const badge = $('#filter-count');
-                    if (count > 0) {
-                        badge.text(count).removeClass('d-none');
-                    } else {
-                        badge.addClass('d-none');
-                    }
-                }
+// Panggil fungsi saat dokumen siap
+$(document).ready(function() {
+    highlightSearchTerm();
+    
+    // ... kode yang sudah ada ...
+});
 
                 // Initialize filter count on page load
                 updateFilterCount();
