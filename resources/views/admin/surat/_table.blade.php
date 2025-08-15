@@ -37,24 +37,37 @@
                             Nama Kegiatan
                             @if (request('sort_by') == 'nama_kegiatan')
                                 @if (request('order') == 'asc')
-                                    <i class="fas fa-sort-up"></i>
+                                    <i class="fas fa-sort-up text-primary"></i>
                                 @else
-                                    <i class="fas fa-sort-down"></i>
+                                    <i class="fas fa-sort-down text-primary"></i>
                                 @endif
                             @else
                                 <i class="fas fa-sort text-muted"></i>
                             @endif
                         </a>
                     </th>
-                    <th class="bg-light text-center">Dokumen</th>
+                    <th class="bg-light text-center">
+                        <a href="#" class="text-decoration-none text-dark sort-link" data-sort="dokumen_surat">
+                            Dokumen
+                            @if (request('sort_by') == 'dokumen_surat')
+                                @if (request('order') == 'asc')
+                                    <i class="fas fa-sort-up text-primary"></i>
+                                @else
+                                    <i class="fas fa-sort-down text-primary"></i>
+                                @endif
+                            @else
+                                <i class="fas fa-sort text-muted"></i>
+                            @endif
+                        </a>
+                    </th>
                     <th class="bg-light text-center">
                         <a href="#" class="text-decoration-none text-dark sort-link" data-sort="created_at">
-                            Tanggal Dibuat
+                            Tanggal
                             @if (request('sort_by') == 'created_at')
                                 @if (request('order') == 'asc')
-                                    <i class="fas fa-sort-up"></i>
+                                    <i class="fas fa-sort-up text-primary"></i>
                                 @else
-                                    <i class="fas fa-sort-down"></i>
+                                    <i class="fas fa-sort-down text-primary"></i>
                                 @endif
                             @else
                                 <i class="fas fa-sort text-muted"></i>
@@ -80,26 +93,26 @@
                             <br>
                             <small class="text-muted">
                                 {{ $surat->no_surat }}
-
                             </small>
                         </td>
                         <td class="px-2 text-center">
                             @if ($surat->dokumen_surat)
                                 @php
-                                    $fileExtension = pathinfo($surat->dokumen_surat, PATHINFO_EXTENSION);
                                     $fileName = basename($surat->dokumen_surat);
                                     $fileUrl = asset('storage/' . $surat->dokumen_surat);
+                                    $fileExtension = pathinfo($surat->dokumen_surat, PATHINFO_EXTENSION);
                                 @endphp
-                                <button type="button" class="btn btn-sm btn-light-primary preview"
-                                    onclick="previewFile('{{ $fileUrl }}', '{{ $fileName }}', '{{ $fileExtension }}')">
-                                    <i class="fas fa-eye me-1"></i>Lihat Dokumen
-                                </button>
+                                <div class="document-link-container">
+                                    <a href="{{ $fileUrl }}" target="_blank" class="document-link" title="Klik untuk melihat {{ $fileName }}">
+                                        <i class="fas fa-file-{{ $fileExtension == 'pdf' ? 'pdf' : 'alt' }} me-2"></i>
+                                        {{ Str::limit($fileName, 25) }}
+                                    </a>
+                                </div>
                             @else
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        <td class="px-2 text-center">{{ \Carbon\Carbon::parse($surat->created_at)->format('d M Y') }}
-                        </td>
+                        <td class="px-2 text-center">{{ \Carbon\Carbon::parse($surat->created_at)->format('d M Y') }}</td>
                         <td class="px-2 text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $surat->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
@@ -340,13 +353,52 @@
         font-weight: bold;
     }
 
-    .preview:hover {
-        background-color: #F4EEFF !important;
+    /* Styling untuk document link yang baru */
+    .document-link-container {
+        display: inline-block;
+        max-width: 200px;
+    }
+
+    .document-link {
+        color: #0d6efd !important;
+        text-decoration: none !important;
+        font-weight: 500;
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        word-break: break-all;
+        line-height: 1.4;
+    }
+
+    .document-link:hover {
+        background-color: #e3f2fd;
+        color: #1976d2 !important;
+        text-decoration: underline !important;
+        transform: translateY(-1px);
+    }
+
+    .document-link i {
+        color: #dc3545;
+        flex-shrink: 0;
+    }
+
+    .document-link i.fa-file-pdf {
+        color: #dc3545;
+    }
+
+    .document-link i.fa-file-alt {
+        color: #28a745;
     }
 
     .sort-link {
         cursor: pointer;
         transition: color 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .sort-link:hover {
@@ -355,9 +407,19 @@
     }
 
     .sort-link i {
-        transition: color 0.2s ease;
+        transition: all 0.2s ease;
         font-size: 0.8rem;
-        margin-left: 4px;
+        opacity: 0.7;
+    }
+
+    .sort-link:hover i {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    .sort-link i.text-primary {
+        opacity: 1;
+        color: #F8285A !important;
     }
 
     #per_page {
@@ -494,5 +556,17 @@
 
     .badge-primary {
         background-color: #0d6efd !important;
+    }
+
+    /* Responsive design untuk document link */
+    @media (max-width: 768px) {
+        .document-link-container {
+            max-width: 150px;
+        }
+
+        .document-link {
+            font-size: 0.8rem;
+            padding: 2px 6px;
+        }
     }
 </style>
