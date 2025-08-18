@@ -195,6 +195,22 @@
                                 </div>
                             </div>
 
+                            <!-- Tanggal Dokumen -->
+                            <div class="form-row row align-items-center">
+                                <div class="col-md-3">
+                                    <label for="tanggal_dokumen" class="form-label">Tanggal Dokumen <span
+                                            class="text-danger">*</span></label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="date" name="tanggal_dokumen" id="tanggal_dokumen"
+                                        class="form-control @error('tanggal_dokumen') is-invalid @enderror"
+                                        value="{{ old('tanggal_dokumen') }}" required>
+                                    @error('tanggal_dokumen')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <!-- File Upload -->
                             <div class="form-row row align-items-start">
                                 <div class="col-md-3">

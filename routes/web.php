@@ -136,63 +136,66 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
     Route::prefix('laporan-lpj')->name('laporan-lpj.')->group(function () {
 
-        Route::prefix('sekretariat')->name('sekretariat.')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\SekretariatController::class, 'index'])->name('index');
-            Route::get('/create', [App\Http\Controllers\Admin\SekretariatController::class, 'create'])->name('create');
-            Route::post('/', [App\Http\Controllers\Admin\SekretariatController::class, 'store'])->name('store');
-            Route::get('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'show'])->name('show');
-            Route::get('/{sekretariat}/edit', [App\Http\Controllers\Admin\SekretariatController::class, 'edit'])->name('edit');
-            Route::put('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'update'])->name('update');
-            Route::delete('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'destroy'])->name('destroy');
+    Route::prefix('sekretariat')->name('sekretariat.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\SekretariatController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\SekretariatController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\SekretariatController::class, 'store'])->name('store');
+        Route::get('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'show'])->name('show');
+        Route::get('/{sekretariat}/edit', [App\Http\Controllers\Admin\SekretariatController::class, 'edit'])->name('edit');
+        Route::put('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'update'])->name('update');
+        Route::delete('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'destroy'])->name('destroy');
+    });
+
+    // Route untuk Bidang
+    Route::prefix('bidang')->name('bidang.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'index'])->name('index');
+
+        // Prestasi routes
+        Route::prefix('prestasi')->name('prestasi.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
+            Route::get('/cabor-terukur', [App\Http\Controllers\Admin\BidangController::class, 'caborTerukur'])->name('cabor-terukur');
+            Route::get('/cabor-permainan', [App\Http\Controllers\Admin\BidangController::class, 'caborPermainan'])->name('cabor-permainan');
+            Route::get('/cabor-beladiri', [App\Http\Controllers\Admin\BidangController::class, 'caborBeladiri'])->name('cabor-beladiri');
+            Route::get('/cabor-akurasi', [App\Http\Controllers\Admin\BidangController::class, 'caborAkurasi'])->name('cabor-akurasi');
         });
 
-        // Route untuk Bidang
-        Route::prefix('bidang')->name('bidang.')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'index'])->name('index');
-
-            // Prestasi routes (menghapus duplikasi dari kode sebelumnya)
-            Route::prefix('prestasi')->name('prestasi.')->group(function () {
-                Route::get('/', [App\Http\Controllers\Admin\BidangController::class, 'prestasiIndex'])->name('index');
-                Route::get('/cabor-terukur', [App\Http\Controllers\Admin\BidangController::class, 'caborTerukur'])->name('cabor-terukur');
-                Route::get('/cabor-permainan', [App\Http\Controllers\Admin\BidangController::class, 'caborPermainan'])->name('cabor-permainan');
-                Route::get('/cabor-beladiri', [App\Http\Controllers\Admin\BidangController::class, 'caborBeladiri'])->name('cabor-beladiri');
-                Route::get('/cabor-akurasi', [App\Http\Controllers\Admin\BidangController::class, 'caborAkurasi'])->name('cabor-akurasi');
-            });
-
-            //sumberdaya
-            Route::prefix('mobilisasi-sumberdaya')->name('mobilisasi-sumberdaya.')->group(function () {
-                Route::get('/', [App\Http\Controllers\Admin\SumberdayaController::class, 'index'])->name('index');
-                Route::get('/create', [App\Http\Controllers\Admin\SumberdayaController::class, 'create'])->name('create');
-                Route::post('/', [App\Http\Controllers\Admin\SumberdayaController::class, 'store'])->name('store');
-                Route::get('/{sumberdaya}', [App\Http\Controllers\Admin\SumberdayaController::class, 'show'])->name('show');
-                Route::get('/{sumberdaya}/edit', [App\Http\Controllers\Admin\SumberdayaController::class, 'edit'])->name('edit');
-                Route::put('/{sumberdaya}', [App\Http\Controllers\Admin\SumberdayaController::class, 'update'])->name('update');
-                Route::delete('/{sumberdaya}', [App\Http\Controllers\Admin\SumberdayaController::class, 'destroy'])->name('destroy');
-            });
-
-            Route::get('/hubungan-antar-lembaga', [App\Http\Controllers\Admin\BidangController::class, 'hubunganAntarLembaga'])->name('hubungan-antar-lembaga');
-            Route::get('/kesehatan', [App\Http\Controllers\Admin\BidangController::class, 'kesehatan'])->name('kesehatan');
-            Route::get('/organisasi', [App\Http\Controllers\Admin\BidangController::class, 'organisasi'])->name('organisasi');
-            Route::get('/pembinaan-hukum', [App\Http\Controllers\Admin\BidangController::class, 'pembinaanHukum'])->name('pembinaan-hukum');
-            Route::get('/sport-science', [App\Http\Controllers\Admin\BidangController::class, 'sportScience'])->name('sport-science');
-            Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
+        //sumberdaya
+        Route::prefix('mobilisasi-sumberdaya')->name('mobilisasi-sumberdaya.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\SumberdayaController::class, 'index'])->name('index');
+            Route::get('/create', [App\Http\Controllers\Admin\SumberdayaController::class, 'create'])->name('create');
+            Route::post('/', [App\Http\Controllers\Admin\SumberdayaController::class, 'store'])->name('store');
+            Route::get('/{sumberdaya}', [App\Http\Controllers\Admin\SumberdayaController::class, 'show'])->name('show');
+            Route::get('/{sumberdaya}/edit', [App\Http\Controllers\Admin\SumberdayaController::class, 'edit'])->name('edit');
+            Route::put('/{sumberdaya}', [App\Http\Controllers\Admin\SumberdayaController::class, 'update'])->name('update');
+            Route::delete('/{sumberdaya}', [App\Http\Controllers\Admin\SumberdayaController::class, 'destroy'])->name('destroy');
         });
 
-        Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
-            Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
-            Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
-            Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
+        Route::get('/hubungan-antar-lembaga', [App\Http\Controllers\Admin\BidangController::class, 'hubunganAntarLembaga'])->name('hubungan-antar-lembaga');
+        Route::get('/kesehatan', [App\Http\Controllers\Admin\BidangController::class, 'kesehatan'])->name('kesehatan');
+        Route::get('/organisasi', [App\Http\Controllers\Admin\BidangController::class, 'organisasi'])->name('organisasi');
+        Route::get('/pembinaan-hukum', [App\Http\Controllers\Admin\BidangController::class, 'pembinaanHukum'])->name('pembinaan-hukum');
+        Route::get('/sport-science', [App\Http\Controllers\Admin\BidangController::class, 'sportScience'])->name('sport-science');
+        Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
+    });
 
-            // PERBAIKAN: Route export harus didefinisikan sebelum route dengan parameter
-            Route::get('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
-
-            // Route dengan parameter harus di bawah
-            Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
-            Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
-            Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
-            Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
-        });
-    }); //Batas LPJ
+    // FIXED: Kegiatan Lainnya Routes - Properly structured
+    Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
+        Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
+        Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
+        Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
+        
+        // IMPORTANT: Export route must come BEFORE parameterized routes
+        Route::get('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+        
+        // Parameterized routes come after static routes
+        Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
+        Route::get('/{kegiatan_lainnya}/detail', [KegiatanLainnyaController::class, 'showDetail'])
+        ->name('detail');
+        Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
+        Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
+        Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
+    });
+}); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
         Route::get('/', [BendaharaController::class, 'index'])->name('index');
         Route::get('/create', [BendaharaController::class, 'create'])->name('create');

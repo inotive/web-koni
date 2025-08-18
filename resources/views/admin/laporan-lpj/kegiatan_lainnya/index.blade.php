@@ -673,6 +673,29 @@ body {
         </div>
     </div>
 
+    {{-- Modal Detail Kegiatan --}}
+    <div class="modal fade" id="modal_detail_kegiatan" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="fw-bold">Detail Kegiatan</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="detail-kegiatan-content">
+                    <!-- Konten akan diisi via AJAX -->
+                    <div class="text-center py-10">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     {{-- Add Modal --}}
 <div class="modal fade" id="modal_add_kegiatan_lainnya" tabindex="-1" aria-hidden="true">
@@ -941,6 +964,30 @@ body {
                 // === DELETE FUNCTIONALITY === 
                 let deleteId = null;
                 let deleteUrl = null;
+
+                // Handle klik tombol lihat detail
+            $(document).on('click', '.view-detail-btn', function() {
+                const kegiatanId = $(this).data('id');
+                const modal = $('#modal_detail_kegiatan');
+
+                modal.modal('show');
+
+                $.ajax({
+                    url: `/admin/laporan-lpj/kegiatan_lainnya/${kegiatanId}/detail`,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#detail-kegiatan-content').html(response);
+                    },
+                    error: function() {
+                        $('#detail-kegiatan-content').html(`
+                            <div class="alert alert-danger">
+                                Gagal memuat detail kegiatan. Silakan coba lagi.
+                            </div>
+                        `);
+                    }
+                });
+            });
+        });
 
                 // Handle delete button click
                 $(document).on('click', '.delete-btn', function(e) {

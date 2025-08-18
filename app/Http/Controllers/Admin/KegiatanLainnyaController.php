@@ -181,10 +181,6 @@ class KegiatanLainnyaController extends Controller
         }
     }
 
-    public function show(KegiatanLainnya $kegiatanLainnya)
-    {
-        return view('admin.laporan-lpj.kegiatan_lainnya.show', compact('kegiatanLainnya'));
-    }
 
     public function edit(KegiatanLainnya $kegiatan_lainnya)
     {
@@ -316,6 +312,12 @@ class KegiatanLainnyaController extends Controller
                 ->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
         }
     }
+
+    public function show($id)
+{
+    $kegiatan = KegiatanLainnya::findOrFail($id);
+    return view('admin.laporan-lpj.kegiatan_lainnya.detail', compact('kegiatan'));
+}
 
     public function destroy(KegiatanLainnya $kegiatan_lainnya)
     {
