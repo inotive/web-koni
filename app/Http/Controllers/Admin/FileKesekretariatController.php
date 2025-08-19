@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FileKesekretariat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log; // Tambahkan ini untuk Log
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
@@ -70,26 +70,20 @@ class FileKesekretariatController extends Controller
         $perPage = $this->getValidPerPage($request->input('per_page'));
         
         // Execute query with pagination
-        $files = $query->paginate($perPage)
-                ->withQueryString()
-                ->through(function ($file) {
-                    $file->path = 'documents/' . $file->dokumen_file;
-                    $file->file_exists = Storage::disk('public')->exists($file->path);
-                    $file->file_size = $file->file_exists 
-                        ? $this->formatFileSize(Storage::disk('public')->size($file->path))
-                        : '0 KB';
-                    $file->file_extension = pathinfo($file->dokumen_file, PATHINFO_EXTENSION);
-                    return $file;
-                });
+$files = $query->paginate($perPage)
+        ->withQueryString()
+        ->through(function ($file) {
+            $file->path = 'documents/' . $file->dokumen_file;
+            $file->file_exists = Storage::disk('public')->exists($file->path);
+            $file->file_size = $file->file_exists 
+                ? $this->formatFileSize(Storage::disk('public')->size($file->path))
+                : '0 KB';
+            $file->file_extension = pathinfo($file->dokumen_file, PATHINFO_EXTENSION);
+            return $file;
+        });
 
-        // If AJAX request, return only table partial
-        if ($request->ajax() || $request->wantsJson()) {
-            return view('admin.file-kesekretariat._table', compact('files'));
-        }
-
-        return view('admin.file-kesekretariat.index', compact('files'));
-    }
-
+    return view('admin.file-kesekretariat.index', compact('files'));
+}
     /**
      * Validate and return proper per_page value
      */
@@ -132,109 +126,41 @@ class FileKesekretariatController extends Controller
     /**
      * Store a newly created resource in storage and database.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        // Log request untuk debug
-        Log::info('Store request received', [
-            'has_file' => $request->hasFile('dokumen_file'),
-            'nama_dokumen' => $request->input('nama_dokumen'),
-            'tanggal_dokumen' => $request->input('tanggal_dokumen'),
-            'all_files' => $request->allFiles()
-        ]);
-
-        // Validasi input
         $validated = $request->validate([
             'nama_dokumen' => 'required|string|max:255',
-            'tanggal_dokumen' => 'required|date',
-            'dokumen_file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx|max:10240', // 10MB max
-        ], [
-            'nama_dokumen.required' => 'Nama dokumen harus diisi.',
-            'nama_dokumen.max' => 'Nama dokumen maksimal 255 karakter.',
-            'tanggal_dokumen.required' => 'Tanggal dokumen harus diisi.',
-            'tanggal_dokumen.date' => 'Format tanggal tidak valid.',
-            'dokumen_file.required' => 'File dokumen harus diupload.',
-            'dokumen_file.file' => 'File dokumen tidak valid.',
-            'dokumen_file.mimes' => 'File harus berformat PDF, DOC, DOCX, XLS, atau XLSX.',
-            'dokumen_file.max' => 'Ukuran file maksimal 10MB.',
+            'dokumen_file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx|max:2048',
         ]);
 
+
         try {
-            // Pastikan directory ada
-            $documentsPath = storage_path('app/public/documents');
-            if (!is_dir($documentsPath)) {
-                mkdir($documentsPath, 0755, true);
-                Log::info('Created documents directory: ' . $documentsPath);
-            }
-
             $file = $request->file('dokumen_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
             
-            // Buat nama file yang unik
-            $originalName = $file->getClientOriginalName();
-            $extension = $file->getClientOriginalExtension();
-            $fileName = time() . '_' . uniqid() . '.' . $extension;
-            
-            Log::info('File upload attempt', [
-                'original_name' => $originalName,
-                'new_name' => $fileName,
-                'size' => $file->getSize(),
-                'mime_type' => $file->getMimeType()
-            ]);
-
-            // Simpan file
             $path = $file->storeAs('documents', $fileName, 'public');
             
-            if (!$path) {
-                throw new \Exception('Gagal menyimpan file ke storage');
-            }
-
-            Log::info('File stored successfully', ['path' => $path]);
-
-            // Simpan ke database
-            $fileRecord = FileKesekretariat::create([
+            FileKesekretariat::create([
                 'nama_dokumen' => $validated['nama_dokumen'],
-                'tanggal_dokumen' => $validated['tanggal_dokumen'],
                 'dokumen_file' => $fileName,
             ]);
-
-            Log::info('Database record created', ['id' => $fileRecord->id]);
-
-            // Response untuk AJAX
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'File berhasil ditambahkan.',
-                    'data' => $fileRecord
-                ]);
-            }
 
             return redirect()
                 ->route('admin.file-kesekretariat.index')
                 ->with('success', 'File berhasil ditambahkan.');
 
         } catch (\Exception $e) {
-            Log::error('Error storing file', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal menyimpan file: ' . $e->getMessage(),
-                    'errors' => []
-                ], 500);
-            }
-
+            Log::error('Error storing file: ' . $e->getMessage()); // Diubah dari \Log ke Log
             return back()
                 ->withInput()
-                ->with('error', 'Gagal menyimpan file: ' . $e->getMessage());
+                ->with('error', 'Gagal menyimpan file. Silakan coba lagi.');
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(FileKesekretariat $fileKesekretariat): View
+     public function show(FileKesekretariat $fileKesekretariat): View
     {
         // Perbaikan untuk method url()
         $fileUrl = Storage::disk('public')->exists('documents/' . $fileKesekretariat->dokumen_file)
@@ -254,85 +180,57 @@ class FileKesekretariatController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(FileKesekretariat $fileKesekretariat): View
-    {
-        return view('admin.file-kesekretariat.edit', [
-            'file' => $fileKesekretariat,
-            'fileKesekretariat' => $fileKesekretariat,
-            'current_file_size' => $this->formatFileSize(
-                Storage::disk('public')->size('documents/' . $fileKesekretariat->dokumen_file)
-            ),
-        ]);
-    }
+{
+    return view('admin.file-kesekretariat.edit', [
+        'file' => $fileKesekretariat, // Ini sudah benar
+        'fileKesekretariat' => $fileKesekretariat, // Tambahkan ini untuk konsistensi
+        'current_file_size' => $this->formatFileSize(
+            Storage::disk('public')->size('documents/' . $fileKesekretariat->dokumen_file)
+        ),
+    ]);
+}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, FileKesekretariat $fileKesekretariat)
-    {
-        // Validasi
-        $validated = $request->validate([
-            'nama_dokumen' => 'required|string|max:255',
-            'tanggal_dokumen' => 'required|date',
-            'dokumen_file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
-        ], [
-            'nama_dokumen.required' => 'Nama dokumen harus diisi.',
-            'nama_dokumen.max' => 'Nama dokumen maksimal 255 karakter.',
-            'tanggal_dokumen.required' => 'Tanggal dokumen harus diisi.',
-            'tanggal_dokumen.date' => 'Format tanggal tidak valid.',
-            'dokumen_file.file' => 'File dokumen tidak valid.',
-            'dokumen_file.mimes' => 'File harus berformat PDF, DOC, DOCX, XLS, atau XLSX.',
-            'dokumen_file.max' => 'Ukuran file maksimal 10MB.',
-        ]);
+    public function update(Request $request, FileKesekretariat $fileKesekretariat): RedirectResponse
+{
+    // Validasi
+    $validated = $request->validate([
+        'nama_dokumen' => 'required|string|max:255',
+        'dokumen_file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:2048',
+    ]);
 
-        try {
-            $data = [
-                'nama_dokumen' => $validated['nama_dokumen'],
-                'tanggal_dokumen' => $validated['tanggal_dokumen']
-            ];
+    try {
+        $data = ['nama_dokumen' => $validated['nama_dokumen']];
 
-            if ($request->hasFile('dokumen_file')) {
-                // Hapus file lama jika ada
-                if ($fileKesekretariat->dokumen_file) {
-                    Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
-                }
-                
-                // Simpan file baru
-                $file = $request->file('dokumen_file');
-                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $file->storeAs('documents', $fileName, 'public');
-                
-                $data['dokumen_file'] = $fileName;
+        if ($request->hasFile('dokumen_file')) {
+            // Hapus file lama jika ada
+            if ($fileKesekretariat->dokumen_file) {
+                Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
             }
-
-            $fileKesekretariat->update($data);
-
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'File berhasil diupdate.'
-                ]);
-            }
-
-            return redirect()
-                ->route('admin.file-kesekretariat.index')
-                ->with('success', 'File berhasil diupdate.');
-
-        } catch (\Exception $e) {
-            Log::error('Error updating file: ' . $e->getMessage());
             
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal mengupdate file: ' . $e->getMessage()
-                ], 500);
-            }
-
-            return back()
-                ->withInput()
-                ->with('error', 'Gagal mengupdate file: ' . $e->getMessage());
+            // Simpan file baru
+            $file = $request->file('dokumen_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('documents', $fileName, 'public');
+            
+            $data['dokumen_file'] = $fileName;
         }
-    }
 
+        $fileKesekretariat->update($data);
+
+        return redirect()
+            ->route('admin.file-kesekretariat.index')
+            ->with('success', 'File berhasil diupdate.');
+
+    } catch (\Exception $e) {
+        Log::error('Error updating file: ' . $e->getMessage());
+        return back()
+            ->withInput()
+            ->with('error', 'Gagal mengupdate file. Silakan coba lagi.');
+    }
+}
     /**
      * Remove the specified resource from storage.
      */
@@ -340,14 +238,12 @@ class FileKesekretariatController extends Controller
     {
         try {
             // Delete physical file
-            if ($fileKesekretariat->dokumen_file) {
-                Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
-            }
+            Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
             
             // Delete record
             $fileKesekretariat->delete();
 
-            if ($request->expectsJson() || $request->ajax()) {
+            if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Data berhasil dihapus.'
@@ -359,9 +255,9 @@ class FileKesekretariatController extends Controller
                 ->with('success', 'Data berhasil dihapus.');
                            
         } catch (\Exception $e) {
-            Log::error('Error deleting file: ' . $e->getMessage());
+            Log::error('Error deleting file: ' . $e->getMessage()); // Diubah dari \Log ke Log
             
-            if ($request->expectsJson() || $request->ajax()) {
+            if ($request->expectsJson()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Gagal menghapus data. Silakan coba lagi.'
@@ -373,6 +269,7 @@ class FileKesekretariatController extends Controller
                 ->with('error', 'Gagal menghapus data. Silakan coba lagi.');
         }
     }
+
 
     /**
      * Download the specified file to the user's device.

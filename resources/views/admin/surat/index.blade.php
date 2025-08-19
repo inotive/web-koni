@@ -6,6 +6,8 @@
 
 @section('style')
     <style>
+
+    
         .filter-container {
             display: flex;
             align-items: center;
