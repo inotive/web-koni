@@ -13,7 +13,8 @@ class SuratController extends Controller
     {
         $query = Surat::query();
 
-        $allowedSorts = ['nama_kegiatan', 'no_surat', 'created_at', 'updated_at'];
+        // Expanded allowed sorts to include all sortable columns
+        $allowedSorts = ['nama_kegiatan', 'no_surat', 'dokumen_surat', 'created_at', 'updated_at'];
         $sortBy = $request->get('sort_by', 'created_at');
         $order = strtolower($request->get('order', 'desc'));
 
@@ -25,22 +26,37 @@ class SuratController extends Controller
             $order = 'desc';
         }
 
+        // Search functionality
         if ($request->filled('search')) {
             $search = $request->get('search');
-            $query->where('nama_kegiatan', 'LIKE', "%{$search}%");
+            $query->where(function($q) use ($search) {
+                $q->where('nama_kegiatan', 'LIKE', "%{$search}%")
+                  ->orWhere('no_surat', 'LIKE', "%{$search}%");
+            });
         }
 
+        // Filter by jenis_surat
         if ($request->filled('jenis_surat') && $request->get('jenis_surat') !== 'all') {
             $query->where('jenis_surat', $request->get('jenis_surat'));
         }
 
+        // Filter by date
         if ($request->filled('created_date')) {
             $query->whereDate('created_at', $request->get('created_date'));
         }
 
         $perPage = $request->get('per_page', 10);
 
-        $query->orderBy($sortBy, $order);
+        // Apply sorting with special handling for different columns
+        if ($sortBy === 'dokumen_surat') {
+            // For dokumen_surat, we'll sort by whether the document exists or not, then by filename
+            $query->orderByRaw("CASE WHEN dokumen_surat IS NULL OR dokumen_surat = '' THEN 1 ELSE 0 END")
+                  ->orderBy('dokumen_surat', $order);
+        } else {
+            $query->orderBy($sortBy, $order);
+        }
+
+        // Add secondary sorting to ensure consistent results
         if ($sortBy !== 'created_at') {
             $query->orderBy('created_at', 'desc');
         }
@@ -48,10 +64,14 @@ class SuratController extends Controller
 
         $currentTab = $request->get('tab', 'masuk');
 
+        // Handle AJAX requests for dynamic table loading
         if ($request->ajax()) {
             $tabQuery = clone $query;
             $tabQuery->where('jenis_surat', $currentTab);
             $suratData = $tabQuery->paginate($perPage);
+
+            // Preserve query parameters in pagination
+            $suratData->appends($request->query());
 
             return view('admin.surat._table', [
                 'suratData' => $suratData,
@@ -59,11 +79,14 @@ class SuratController extends Controller
             ])->render();
         }
 
+        // For non-AJAX requests, get data for both tabs
         $suratMasukQuery = clone $query;
         $suratMasuk = $suratMasukQuery->where('jenis_surat', 'masuk')->paginate($perPage);
+        $suratMasuk->appends($request->query());
 
         $suratKeluarQuery = clone $query;
         $suratKeluar = $suratKeluarQuery->where('jenis_surat', 'keluar')->paginate($perPage);
+        $suratKeluar->appends($request->query());
 
         return view('admin.surat.index', compact('suratMasuk', 'suratKeluar'));
     }
@@ -72,16 +95,16 @@ class SuratController extends Controller
     {
         try {
             $validated = $request->validate([
-    'nama_kegiatan' => 'required|string|max:255',
-    'no_surat' => 'required|string|max:255|unique:surat,no_surat',
-    'jenis_surat' => 'required|in:masuk,keluar',
-    'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-]);
+                'nama_kegiatan' => 'required|string|max:255',
+                'no_surat' => 'required|string|max:255|unique:surat,no_surat',
+                'jenis_surat' => 'required|in:masuk,keluar',
+                'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            ]);
 
             $surat = new Surat();
             $surat->nama_kegiatan = $validated['nama_kegiatan'];
             $surat->jenis_surat = $validated['jenis_surat'];
-            $surat->no_surat = $this->generateNoSurat($validated['jenis_surat']);
+            $surat->no_surat = $validated['no_surat']; // Use the provided no_surat instead of generating
 
             if ($request->hasFile('dokumen_surat')) {
                 $file = $request->file('dokumen_surat');
@@ -135,16 +158,18 @@ class SuratController extends Controller
             $surat = Surat::findOrFail($id);
 
             $validated = $request->validate([
-    'nama_kegiatan' => 'required|string|max:255',
-    'no_surat' => 'required|string|max:255|unique:surat,no_surat,' . $id,
-    'jenis_surat' => 'required|in:masuk,keluar',
-    'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-]);
+                'nama_kegiatan' => 'required|string|max:255',
+                'no_surat' => 'required|string|max:255|unique:surat,no_surat,' . $id,
+                'jenis_surat' => 'required|in:masuk,keluar',
+                'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+            ]);
 
             $surat->nama_kegiatan = $validated['nama_kegiatan'];
+            $surat->no_surat = $validated['no_surat'];
             $surat->jenis_surat = $validated['jenis_surat'];
 
             if ($request->hasFile('dokumen_surat')) {
+                // Delete old file if exists
                 if ($surat->dokumen_surat && Storage::disk('public')->exists($surat->dokumen_surat)) {
                     Storage::disk('public')->delete($surat->dokumen_surat);
                 }
@@ -199,6 +224,7 @@ class SuratController extends Controller
         try {
             $surat = Surat::findOrFail($id);
 
+            // Delete associated file if exists
             if ($surat->dokumen_surat && Storage::disk('public')->exists($surat->dokumen_surat)) {
                 Storage::disk('public')->delete($surat->dokumen_surat);
             }
@@ -227,6 +253,7 @@ class SuratController extends Controller
                 ->with('error', 'Terjadi kesalahan saat menghapus data');
         }
     }
+
 
     private function generateNoSurat($jenisSurat)
     {

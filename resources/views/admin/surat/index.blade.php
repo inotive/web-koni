@@ -195,45 +195,6 @@
             pointer-events: none;
         }
 
-        .preview-modal .modal-dialog {
-            max-width: 90vw;
-            height: 90vh;
-        }
-
-        .preview-modal .modal-content {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .preview-modal .modal-body {
-            flex: 1;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        .preview-modal iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .preview-error {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 300px;
-            text-align: center;
-            color: #6c757d;
-        }
-
-        .preview-error i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: #dc3545;
-        }
-
         @media (max-width: 768px) {
             .filter-container {
                 flex-direction: column;
@@ -269,6 +230,11 @@
             </div>
 
             <form id="filter" class="d-flex gap-3 filter-container">
+                <!-- Hidden inputs untuk sorting -->
+                <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
+                <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
+                <input type="hidden" name="jenis_surat" id="jenis_surat_input" value="{{ request('jenis_surat', 'all') }}">
+
                 <button type="button" id="tambahSuratBtn"
                     class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
@@ -282,40 +248,6 @@
                             class="form-control border border-gray-500 py-2 search-input" />
                     </div>
                 </div>
-
-                <div class="date-filter-container">
-                    <div class="date-filter-btn {{ request('created_date') ? 'date-filter-active' : '' }}"
-                        id="dateFilterBtn">
-                        <span>
-                            @if (request('created_date'))
-                                <i class="fas fa-calendar-check me-2"></i>
-                                {{ \Carbon\Carbon::parse(request('created_date'))->format('d/m/Y') }}
-                            @else
-                                <i class="fas fa-calendar me-2"></i>Tanggal Dibuat
-                            @endif
-                        </span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
-                    </div>
-
-                    <!-- Ganti bagian date filter menu -->
-                    <div class="date-filter-menu" id="dateFilterMenu">
-                        <div class="date-input-group">
-                            <div class="date-input-wrapper">
-                                <label class="date-input-label">Pilih Tanggal Dibuat</label>
-                                <input type="date" name="created_date" value="{{ request('created_date') }}"
-                                    class="date-input" id="createdDateInput">
-                            </div>
-                        </div>
-                        <div class="date-filter-actions">
-                            <button type="button" class="date-filter-apply" id="applyDateFilter">Terapkan</button>
-                            <button type="button" class="date-filter-clear" id="clearDateFilter">Reset</button>
-                        </div>
-                    </div>
-                </div>
-
-                <input type="hidden" name="jenis_surat" id="jenis_surat_input" value="{{ request('jenis_surat', 'all') }}">
-                <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
-                <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
             </form>
         </div>
 
@@ -361,6 +293,7 @@
         </div>
     </div>
 
+    <!-- Modal untuk Add Surat -->
     <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 gap-5 px-10 py-8">
@@ -369,8 +302,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="formAdd" method="POST" action="{{ route('admin.surat.store') }}"
-                    enctype="multipart/form-data" class="d-grid gap-4">
+                <form id="formAdd" method="POST" action="{{ route('admin.surat.store') }}" enctype="multipart/form-data"
+                    class="d-grid gap-4">
                     @csrf
 
                     <div>
@@ -417,28 +350,6 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade preview-modal" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="filePreviewModalLabel">Preview Dokumen</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <div id="previewContainer" class="w-100 h-100">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a id="downloadBtn" href="#" class="btn btn-primary" target="_blank">
-                        <i class="ki-outline ki-down me-2"></i>Download File
-                    </a>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('script')
@@ -449,36 +360,6 @@
         let currentOrder = '{{ request('order', 'desc') }}';
         Dropzone.autoDiscover = false;
         const dropzones = {};
-
-        function previewFile(fileUrl, fileName, fileExtension) {
-            const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
-            const previewContainer = document.getElementById('previewContainer');
-            const modalTitle = document.getElementById('filePreviewModalLabel');
-            const downloadBtn = document.getElementById('downloadBtn');
-
-            modalTitle.textContent = fileName;
-            downloadBtn.href = fileUrl;
-
-            previewContainer.innerHTML = '';
-
-            const ext = fileExtension.toLowerCase();
-
-            if (ext === 'pdf') {
-                previewContainer.innerHTML =
-                    `<iframe src="${fileUrl}" style="width:100%;height:70vh;border:none;"></iframe>`;
-            } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
-                previewContainer.innerHTML =
-                    `<div class="d-flex justify-content-center align-items-center" style="height:70vh;"><img src="${fileUrl}" class="img-fluid" style="max-height:100%;max-width:100%;" alt="${fileName}"></div>`;
-            } else if (['doc', 'docx'].includes(ext)) {
-                previewContainer.innerHTML =
-                    `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" style="width:100%;height:70vh;border:none;"></iframe>`;
-            } else {
-                previewContainer.innerHTML =
-                    `<div class="preview-error"><i class="fas fa-file"></i><h5>Preview tidak tersedia</h5><p>Jenis file ini tidak dapat dipreview.</p><small>Jenis file: ${ext.toUpperCase()}</small></div>`;
-            }
-
-            modal.show();
-        }
 
         function updateAddButtonText() {
             const buttonText = 'Upload Template';
@@ -548,15 +429,32 @@
         }
 
         function initializeSortingEvents() {
-            $(document).off('click', '.sort-link').on('click', '.sort-link', function(e) {
+            // Remove existing handlers first to prevent duplicate bindings
+            $(document).off('click', '.sort-link');
+
+            // Add new handler for sorting links
+            $(document).on('click', '.sort-link', function(e) {
                 e.preventDefault();
+
                 const sortBy = $(this).data('sort');
                 let order = 'asc';
-                if (currentSort === sortBy) order = currentOrder === 'asc' ? 'desc' : 'asc';
+
+                // If already sorted by this column, toggle order
+                if (currentSort === sortBy) {
+                    order = currentOrder === 'asc' ? 'desc' : 'asc';
+                }
+
+                // Update current values
                 currentSort = sortBy;
                 currentOrder = order;
+
+                // Update hidden inputs
                 $('#sort_by_input').val(sortBy);
                 $('#order_input').val(order);
+
+                console.log('Sorting by:', sortBy, 'Order:', order); // Debug log
+
+                // Reload table with new sorting
                 reloadTable();
             });
         }
@@ -762,6 +660,7 @@
         $(document).ready(function() {
             initializeDropzones();
             initializeDropdownEvents();
+            initializeSortingEvents(); // Initialize sorting events on page load
             updateAddButtonText();
             updateDateFilterButton();
 
@@ -843,6 +742,7 @@
                         $(`#table-${currentTab}`).html(response);
                         initializeDropzones();
                         initializeDropdownEvents();
+                        initializeSortingEvents(); // Re-initialize sorting after AJAX
                         updateURL(formData);
                     },
                     error: function(xhr) {
@@ -875,6 +775,7 @@
                             $(`#table-${currentTab}`).html(response);
                             initializeDropzones();
                             initializeDropdownEvents();
+                            initializeSortingEvents(); // Re-initialize sorting after pagination
                             updateURL(formData);
                         },
                         error: function(xhr) {

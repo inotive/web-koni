@@ -202,7 +202,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::post('/', [BendaharaController::class, 'store'])->name('store');
         Route::get('/{bendahara}', [BendaharaController::class, 'show'])->name('show');
         Route::get('/{bendahara}/edit', [BendaharaController::class, 'edit'])->name('edit');
-        Route::post('/{bendahara}', [BendaharaController::class, 'update'])->name('update');
+        Route::put('/{bendahara}', [BendaharaController::class, 'update'])->name('update');
         Route::delete('/{bendahara}', [BendaharaController::class, 'destroy'])->name('destroy');
         Route::get('/{bendahara}/download', [BendaharaController::class, 'download'])->name('download');
     });
