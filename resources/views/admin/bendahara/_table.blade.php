@@ -93,7 +93,7 @@
                                     @endif
                                 @endif
                             </div>
-                            <span class="text-muted">{{ \Carbon\Carbon::parse($item->jadwal)->format('d M Y') }}</span>
+                            <span class="text-muted">{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</span>
                         </td>
                         <td class="px-2 text-center">
                             @if($item->dokumen && Storage::disk('public')->exists($item->dokumen))
