@@ -15,6 +15,7 @@ class Bendahara extends Model
     protected $fillable = [
         'judul',
         'dokumen',
+        'tanggal',
     ];
 
     protected $dates = [
