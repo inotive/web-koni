@@ -22,16 +22,13 @@ class BidangController extends Controller
         // Get count for Mobilisasi Sumberdaya
         $mobilisasiCount = SumberDaya::count();
         $scienceCount = SportScience::count();
+        $hubunganLembagaCount = HubunganLembaga::count();
+        $kesehatanCount = Kesehatan::count();
+        $organisasiCount = Organisasi::count();
+        $pembinaanHukumCount = PembinaanHukum::count();
+        $perencanaanProgramCount = PerencanaanProgram::count();
 
-        // You can also get counts for other bidang if needed
-        // $hubunganLembagaCount = HubunganLembaga::count();
-        // $kesehatanCount = Kesehatan::count();
-        // $organisasiCount = Organisasi::count();
-        // $pembinaanHukumCount = PembinaanHukum::count();
-        // $sportScienceCount = SportScience::count();
-        // $perencanaanProgramCount = PerencanaanProgram::count();
-
-        return view('admin.laporan-lpj.bidang.index', compact('mobilisasiCount', 'scienceCount'));
+        return view('admin.laporan-lpj.bidang.index', compact('mobilisasiCount', 'scienceCount', 'hubunganLembagaCount', 'kesehatanCount', 'organisasiCount', 'pembinaanHukumCount', 'perencanaanProgramCount'));
     }
 
     /**

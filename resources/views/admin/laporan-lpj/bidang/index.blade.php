@@ -370,40 +370,40 @@
             </a>
 
             <!-- Hubungan Antar Lembaga -->
-            <a href="{{ route('admin.laporan-lpj.bidang.hubungan-antar-lembaga.index') }}" class="bidang-card" data-title="hubungan antar lembaga" data-docs="5">
+            <a href="{{ route('admin.laporan-lpj.bidang.hubungan-antar-lembaga.index') }}" class="bidang-card" data-title="hubungan antar lembaga" data-docs="{{ $hubunganLembagaCount ?? 0 }}">
                 <div class="bidang-icon icon-hubungan">
                     <img src="{{ asset('assets2/media/misc/bidang/data.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Hubungan Antar Lembaga</h4>
-                <p class="bidang-count">5 Dokumen</p>
+                <p class="bidang-count">{{ $hubunganLembagaCount ?? 0 }} Dokumen</p>
             </a>
 
             <!-- Continue for other cards... -->
             <!-- Kesehatan -->
-            <a href="{{ route('admin.laporan-lpj.bidang.kesehatan.index') }}" class="bidang-card" data-title="kesehatan" data-docs="15">
+            <a href="{{ route('admin.laporan-lpj.bidang.kesehatan.index') }}" class="bidang-card" data-title="kesehatan" data-docs="{{ $kesehatanCount ?? 0 }}">
                 <div class="bidang-icon icon-kesehatan">
                     <img src="{{ asset('assets2/media/misc/bidang/pulse.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Kesehatan</h4>
-                <p class="bidang-count">15 Dokumen</p>
+                <p class="bidang-count">{{ $kesehatanCount ?? 0 }} Dokumen</p>
             </a>
 
             <!-- Organisasi -->
-            <a href="{{ route('admin.laporan-lpj.bidang.organisasi.index') }}" class="bidang-card" data-title="organisasi" data-docs="0">
+            <a href="{{ route('admin.laporan-lpj.bidang.organisasi.index') }}" class="bidang-card" data-title="organisasi" data-docs="{{ $organisasiCount ?? 0 }}">
                 <div class="bidang-icon icon-organisasi">
                     <img src="{{ asset('assets2/media/misc/bidang/people.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Organisasi</h4>
-                <p class="bidang-count">5 Days Ago</p>
+                <p class="bidang-count">{{ $organisasiCount ?? 0 }} Dokumen</p>
             </a>
 
             <!-- Pembinaan Hukum Olahraga -->
-            <a href="{{ route('admin.laporan-lpj.bidang.pembinaan-hukum.index') }}" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="9">
+            <a href="{{ route('admin.laporan-lpj.bidang.pembinaan-hukum.index') }}" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="{{ $pembinaanHukumCount ?? 0 }}">
                 <div class="bidang-icon icon-hukum">
                     <img src="{{ asset('assets2/media/misc/bidang/shield.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Pembinaan Hukum Olahraga</h4>
-                <p class="bidang-count">9 Dokumen</p>
+                <p class="bidang-count">{{ $pembinaanHukumCount ?? 0 }} Dokumen</p>
             </a>
 
             <!-- Pembinaan Prestasi -->
@@ -425,12 +425,12 @@
             </a>
 
             <!-- Perencanaan Program dan Anggaran -->
-            <a href="{{ route('admin.laporan-lpj.bidang.perencanaan-program.index') }}" class="bidang-card" data-title="perencanaan program anggaran" data-docs="35">
+            <a href="{{ route('admin.laporan-lpj.bidang.perencanaan-program.index') }}" class="bidang-card" data-title="perencanaan program anggaran" data-docs="{{ $perencanaanProgramCount ?? 0 }}">
                 <div class="bidang-icon icon-perencanaan">
                     <img src="{{ asset('assets2/media/misc/bidang/tab-tablet.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Perencanaan Program dan Anggaran</h4>
-                <p class="bidang-count">35 Dokumen</p>
+                <p class="bidang-count">{{ $perencanaanProgramCount ?? 0 }} Dokumen</p>
             </a>
         </div>
     </div>
