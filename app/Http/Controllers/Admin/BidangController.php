@@ -21,6 +21,7 @@ class BidangController extends Controller
     {
         // Get count for Mobilisasi Sumberdaya
         $mobilisasiCount = SumberDaya::count();
+        $scienceCount = SportScience::count();
 
         // You can also get counts for other bidang if needed
         // $hubunganLembagaCount = HubunganLembaga::count();
@@ -30,7 +31,7 @@ class BidangController extends Controller
         // $sportScienceCount = SportScience::count();
         // $perencanaanProgramCount = PerencanaanProgram::count();
 
-        return view('admin.laporan-lpj.bidang.index', compact('mobilisasiCount'));
+        return view('admin.laporan-lpj.bidang.index', compact('mobilisasiCount', 'scienceCount'));
     }
 
     /**
@@ -86,7 +87,12 @@ class BidangController extends Controller
         return view('admin.laporan-lpj.bidang.perencanaan-program.index');
     }
 
-    public function caborAkurasi(){
+    public function caborAkurasi(Request $request){
+
+        if ($request->ajax()) {
+            return view('admin.laporan-lpj-bidang.prestasi.Akurasi._table');
+        }
+
         return view ('admin.laporan-lpj.bidang.prestasi.Akurasi.index');
     }
 
@@ -94,7 +100,12 @@ class BidangController extends Controller
         return view ('admin.laporan-lpj.bidang.prestasi.Beladiri.index');
     }
 
-    public function caborPermainan(){
+    public function caborPermainan(Request $request){
+
+        if ($request->ajax()) {
+            return view('admin.laporan-lpj-bidang.prestasi.Permainan._table');
+        }
+
         return view ('admin.laporan-lpj.bidang.prestasi.Permainan.index');
     }
 

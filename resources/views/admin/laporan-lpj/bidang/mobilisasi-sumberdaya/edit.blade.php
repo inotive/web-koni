@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Edit Mobilisasi Sumber Daya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Mobilisasi Sumber Daya')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index'))
 @section('currentSection', 'Edit Mobilisasi Sumber Daya')
