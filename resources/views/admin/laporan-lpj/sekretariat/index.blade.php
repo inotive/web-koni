@@ -389,31 +389,12 @@
                     </div>
 
                     <div class="dropdown" style="z-index: 1055">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-filter me-1"></i> Filter
-                            <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
-                        </button>
+
                         <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
-                            <div class="mb-3">
-                                <label class="form-label fw-semibold">Jenis Kegiatan</label>
-                                <select id="filter-jenis-kegiatan" class="form-select">
-                                    <option value="">Semua Jenis</option>
-                                    @foreach ($kegiatanLainnya->pluck('jenis_kegiatan')->unique()->filter() as $jenis)
-                                        <option value="{{ $jenis }}"
-                                            {{ request('jenis_kegiatan_filter') == $jenis ? 'selected' : '' }}>
-                                            {{ $jenis }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+
 
                             <div class="d-flex gap-2">
-                                <button type="button" id="apply-filters" class="btn btn-primary btn-sm flex-fill">
-                                    <i class="ki-duotone ki-check fs-3"></i>Terapkan
-                                </button>
-                                <button type="button" id="reset-filters" class="btn btn-light btn-sm flex-fill">
-                                    <i class="ki-duotone ki-arrows-circle fs-3"></i>Reset
-                                </button>
+
                             </div>
                         </div>
                     </div>
