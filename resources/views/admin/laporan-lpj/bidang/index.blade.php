@@ -412,7 +412,7 @@
                     <img src="{{ asset('assets2/media/misc/bidang/dribbble.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Pembinaan Prestasi</h4>
-                <p class="bidang-count">48 Cabang Olahraga</p>
+                <p class="bidang-count">4 Cabang Olahraga</p>
             </a>
 
             <!-- Sport Science & Iptek -->

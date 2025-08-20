@@ -1266,7 +1266,7 @@ $(document).ready(function() {
             }
 
             const submitBtn = $(this);
-            const url = "{{ route('admin.laporan-lpj.bidang.sumberdaya.destroy', ':id') }}".replace(':id', deleteId);
+            const url = "{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.destroy', ':id') }}".replace(':id', deleteId);
 
             // Add loading state
             submitBtn.addClass('btn-loading');
@@ -1330,7 +1330,7 @@ $(document).ready(function() {
 
         // Alternative: Use SweetAlert2 for delete confirmation (like in paste 1)
         function deleteItemWithSwal(itemId, itemName = 'item ini') {
-            const url = "{{ route('admin.laporan-lpj.bidang.sumberdaya.destroy', ':id') }}".replace(':id', itemId);
+            const url = "{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.destroy', ':id') }}".replace(':id', itemId);
 
             Swal.fire({
                 title: "Apakah Anda Yakin?",
