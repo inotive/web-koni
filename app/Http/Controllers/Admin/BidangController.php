@@ -21,16 +21,14 @@ class BidangController extends Controller
     {
         // Get count for Mobilisasi Sumberdaya
         $mobilisasiCount = SumberDaya::count();
+        $scienceCount = SportScience::count();
+        $hubunganLembagaCount = HubunganLembaga::count();
+        $kesehatanCount = Kesehatan::count();
+        $organisasiCount = Organisasi::count();
+        $pembinaanHukumCount = PembinaanHukum::count();
+        $perencanaanProgramCount = PerencanaanProgram::count();
 
-        // You can also get counts for other bidang if needed
-        // $hubunganLembagaCount = HubunganLembaga::count();
-        // $kesehatanCount = Kesehatan::count();
-        // $organisasiCount = Organisasi::count();
-        // $pembinaanHukumCount = PembinaanHukum::count();
-        // $sportScienceCount = SportScience::count();
-        // $perencanaanProgramCount = PerencanaanProgram::count();
-
-        return view('admin.laporan-lpj.bidang.index', compact('mobilisasiCount'));
+        return view('admin.laporan-lpj.bidang.index', compact('mobilisasiCount', 'scienceCount', 'hubunganLembagaCount', 'kesehatanCount', 'organisasiCount', 'pembinaanHukumCount', 'perencanaanProgramCount'));
     }
 
     /**
@@ -86,7 +84,12 @@ class BidangController extends Controller
         return view('admin.laporan-lpj.bidang.perencanaan-program.index');
     }
 
-    public function caborAkurasi(){
+    public function caborAkurasi(Request $request){
+
+        if ($request->ajax()) {
+            return view('admin.laporan-lpj-bidang.prestasi.Akurasi._table');
+        }
+
         return view ('admin.laporan-lpj.bidang.prestasi.Akurasi.index');
     }
 
@@ -94,7 +97,12 @@ class BidangController extends Controller
         return view ('admin.laporan-lpj.bidang.prestasi.Beladiri.index');
     }
 
-    public function caborPermainan(){
+    public function caborPermainan(Request $request){
+
+        if ($request->ajax()) {
+            return view('admin.laporan-lpj-bidang.prestasi.Permainan._table');
+        }
+
         return view ('admin.laporan-lpj.bidang.prestasi.Permainan.index');
     }
 

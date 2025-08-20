@@ -913,6 +913,13 @@
                         toastr.error(data.message || "Gagal menyimpan data", "Error!");
                     }
                 } else {
+                    // Reset form immediately after successful submission
+                    if (formId === 'formAdd') {
+                        resetFormAdd();
+                    } else {
+                        resetEditForm(formId);
+                    }
+
                     $('.modal.show').addClass('submit-success');
                     $('.modal.show').modal('hide');
 
@@ -930,6 +937,56 @@
                 toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
                 console.error('Error:', error);
             });
+        }
+
+        function resetFormAdd() {
+            const form = document.getElementById('formAdd');
+            if (form) {
+                form.reset();
+                // Clear validation errors
+                form.querySelectorAll('.invalid-feedback').forEach(el => {
+                    el.textContent = '';
+                });
+                form.querySelectorAll('.is-invalid').forEach(el => {
+                    el.classList.remove('is-invalid');
+                });
+            }
+
+            // Reset dropzone
+            if (dropzones['formAdd']) {
+                dropzones['formAdd'].removeAllFiles();
+            }
+        }
+
+        function resetEditForm(formId) {
+            const form = document.getElementById(formId);
+            if (form) {
+                // Reset form fields to their original values
+                const modal = $(form).closest('.modal');
+                const originalData = modal.data('original-data');
+
+                if (originalData) {
+                    form.querySelectorAll('input, select, textarea').forEach(input => {
+                        const name = input.getAttribute('name');
+                        if (input.type !== 'file' && originalData.hasOwnProperty(name)) {
+                            input.value = originalData[name];
+                        }
+                    });
+                }
+
+                // Clear validation errors
+                form.querySelectorAll('.invalid-feedback').forEach(el => {
+                    el.textContent = '';
+                });
+                form.querySelectorAll('.is-invalid').forEach(el => {
+                    el.classList.remove('is-invalid');
+                });
+            }
+
+            // Reset dropzone
+            if (dropzones[formId]) {
+                dropzones[formId].removeAllFiles();
+            }
         }
 
         function deleteItemEnhanced(formId, itemName = 'item ini') {
@@ -1313,7 +1370,7 @@
             });
 
             // Modal event handlers
-            $(document).on('show.bs.modal', '.modal', function(e) {
+           $(document).on('show.bs.modal', '.modal', function(e) {
                 const modalId = $(this).attr('id');
                 const modal = $(this);
 
@@ -1339,7 +1396,8 @@
                 const modalId = $(this).attr('id');
                 const modal = $(this);
 
-                // Reset form if not submitted successfully
+                // Only reset if the form was not successfully submitted
+                // (successful submissions are already reset in submitForm)
                 if (!modal.hasClass('submit-success')) {
                     const originalData = modal.data('original-data');
                     if (originalData) {
@@ -1363,16 +1421,13 @@
                             dropzones[formId].removeAllFiles();
                         }
                     } else if (modalId === 'add') {
-                        const form = document.getElementById('formAdd');
-                        if (form) {
-                            form.reset();
-                        }
                         if (dropzones['formAdd']) {
                             dropzones['formAdd'].removeAllFiles();
                         }
                     }
                 }
 
+                // Always clean up modal state
                 modal.removeClass('has-changes submit-success');
                 modal.removeData('original-data');
             });
