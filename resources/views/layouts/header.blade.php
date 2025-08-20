@@ -79,6 +79,32 @@
                                 <i class="ki-duotone ki-right text-muted mx-1 px-0"></i>
                             @endif
 
+                            @hasSection('subSection3')
+                                <li class="breadcrumb-item mx-0 px-0">
+                                    @if (View::hasSection('subSection3Url'))
+                                        <a href="@yield('subSection3Url')" class="text-muted text-hover-primary">
+                                            @yield('subSection3')
+                                        </a>
+                                    @else
+                                        <span class="text-muted">@yield('subSection3')</span>
+                                    @endif
+                                </li>
+                                <i class="ki-duotone ki-right text-muted mx-1 px-0"></i>
+                            @endif
+
+                            @hasSection('subSection4')
+                                <li class="breadcrumb-item mx-0 px-0">
+                                    @if (View::hasSection('subSection4Url'))
+                                        <a href="@yield('subSection4Url')" class="text-muted text-hover-primary">
+                                            @yield('subSection4')
+                                        </a>
+                                    @else
+                                        <span class="text-muted">@yield('subSection4')</span>
+                                    @endif
+                                </li>
+                                <i class="ki-duotone ki-right text-muted mx-1 px-0"></i>
+                            @endif
+
                             {{-- Current Section - Active (tidak clickable) --}}
                             <li class="breadcrumb-item active mx-0 px-0" aria-current="page">
                                 <span style="color: #071437; font-weight: 500;">@yield('currentSection')</span>
