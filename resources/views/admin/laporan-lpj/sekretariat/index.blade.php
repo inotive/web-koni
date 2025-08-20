@@ -495,6 +495,7 @@
 
 @section('script')
     <script>
+
 $(document).ready(function() {
     let dataTable = null;
     let searchTimeout;
@@ -900,7 +901,6 @@ $(document).ready(function() {
         });
     });
 
-    // FIXED: Per page selector (using name attribute from table)
     $(document).on('change', 'select[name="per_page"]', function() {
         const perPage = $(this).val();
         updateTable({
@@ -909,7 +909,6 @@ $(document).ready(function() {
         });
     });
 
-    // FIXED: Pagination links
     $(document).on('click', '.pagination-link', function(e) {
         e.preventDefault();
         const href = $(this).attr('href');
@@ -945,7 +944,6 @@ $(document).ready(function() {
 
         if (urlParams.get('jenis_kegiatan_filter')) count++;
         if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
-        if (urlParams.get('search')) count++;
 
         const badge = $('#filter-count');
         if (count > 0) {
