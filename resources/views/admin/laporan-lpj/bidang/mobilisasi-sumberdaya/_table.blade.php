@@ -130,8 +130,8 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li>
-                                        <a href="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.show', $data->id) }}"
-                                            class="dropdown-item-custom">
+                                        <a href="javascript:void(0)" class="dropdown-item-custom"
+                                           onclick="showDetailModal({{ json_encode($data) }})">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail
                                         </a>
                                     </li>
@@ -164,16 +164,9 @@
 
                                     {{-- Check if user is superadmin for Delete button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
-                                        <li>
-                                            <form action="{{ route('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.destroy', $data->id) }}"
-                                                method="POST" class="d-inline"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="dropdown-item-custom delete border-0 bg-transparent w-100 text-start text-danger">
-                                                    <i class="fas fa-trash me-2"></i> Hapus
-                                                </button>
-                                            </form>
+                                        <li class="dropdown-item-custom delete"
+                                            onclick="deleteItemWithSwal({{ $data->id }}, '{{ addslashes($data->nama_program ?? $data->nama_kegiatan ?? 'laporan ini') }}')">
+                                            <i class="ki-outline ki-trash me-2"></i>Hapus Laporan
                                         </li>
                                     @else
                                         <li>
@@ -205,35 +198,84 @@
         </table>
     </div>
 
-    {{-- Pagination Controls --}}
-    <div class="d-flex justify-content-between align-items-center mt-4 flex-wrap">
-        {{-- Per Page Selector --}}
-        <div class="mb-2 mb-md-0">
-            <div class="d-flex align-items-center">
-                <span class="me-2">Show</span>
-                <select class="form-select form-select-sm w-auto" id="per-page-select">
-                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                    <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                </select>
-                <span class="ms-2">per page</span>
+    {{-- Enhanced Pagination Section --}}
+    <div class="table-footer">
+        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+            <div class="mb-2 mb-md-0">
+                <div class="d-flex align-items-center">
+                    <span class="me-2">Show</span>
+                    <select name="per_page" class="form-select form-select-sm w-auto">
+                        @foreach ([10, 25, 50, 100] as $limit)
+                            <option value="{{ $limit }}"
+                                {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
+                                {{ $limit }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <span class="ms-2">per page</span>
+                </div>
             </div>
-        </div>
 
-        {{-- Pagination Links --}}
-        <div class="d-flex align-items-center gap-3">
-            <div class="d-flex align-items-center">
-                <span class="me-2">Page {{ $sumberDayaData->currentPage() }} of
-                    {{ $sumberDayaData->lastPage() }}</span>
-            </div>
-            <div class="pagination-wrapper">
-                {{ $sumberDayaData->appends(request()->query())->links('pagination::bootstrap-4') }}
-            </div>
+            @if (isset($sumberDayaData) && method_exists($sumberDayaData, 'hasPages') && $sumberDayaData->hasPages())
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-muted small">
+                        {{ $sumberDayaData->firstItem() }}-{{ $sumberDayaData->lastItem() }} of
+                        {{ $sumberDayaData->total() }}
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        @if ($sumberDayaData->onFirstPage())
+                            <span class="pagination-arrow disabled">←</span>
+                        @else
+                            <a href="{{ $sumberDayaData->appends(request()->query())->previousPageUrl() }}"
+                               class="pagination-arrow pagination-link"
+                               aria-label="Previous">←</a>
+                        @endif
+
+                        @php
+                            $current = $sumberDayaData->currentPage();
+                            $total = $sumberDayaData->lastPage();
+                            $start = max(1, $current - 2);
+                            $end = min($total, $current + 2);
+
+                            if ($end - $start < 4) {
+                                if ($start == 1) {
+                                    $end = min($total, $start + 4);
+                                } else {
+                                    $start = max(1, $end - 4);
+                                }
+                            }
+                        @endphp
+
+                        <div class="d-flex align-items-center">
+                            @for ($i = $start; $i <= $end; $i++)
+                                @if ($i == $current)
+                                    <span class="pagination-number active">{{ $i }}</span>
+                                @else
+                                    <a href="{{ $sumberDayaData->appends(request()->query())->url($i) }}"
+                                       class="pagination-number pagination-link">{{ $i }}</a>
+                                @endif
+                            @endfor
+                        </div>
+
+                        @if ($sumberDayaData->hasMorePages())
+                            <a href="{{ $sumberDayaData->appends(request()->query())->nextPageUrl() }}"
+                               class="pagination-arrow pagination-link"
+                               aria-label="Next">→</a>
+                        @else
+                            <span class="pagination-arrow disabled">→</span>
+                        @endif
+                    </div>
+                </div>
+            @elseif(isset($sumberDayaData) && method_exists($sumberDayaData, 'hasPages'))
+                <div class="text-muted small">
+                    1-{{ $sumberDayaData->count() }} of {{ $sumberDayaData->total() }}
+                </div>
+            @endif
         </div>
     </div>
 
-    {{-- Custom CSS for the integrated dropdown styles --}}
+    {{-- Complete Custom CSS from both files --}}
     <style>
         .search-highlight {
             background-color: #fff3cd;
@@ -280,7 +322,6 @@
             animation: fadeIn 0.2s ease;
         }
 
-        /* Dropup style */
         .dropup .dropdown-menu-custom {
             bottom: 100%;
             top: auto;
@@ -319,6 +360,67 @@
             background-color: #ffcad7 !important;
         }
 
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 1px;
+        }
+
+        .pagination-sm .page-link {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+            margin: 0 2px;
+        }
+
+        .pagination-sm .page-item.active .page-link {
+            background-color: #F8285A;
+            border-color: #F8285A;
+            color: white;
+        }
+
+        .pagination-sm .page-link:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #495057;
+        }
+
+        .pagination-sm .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+
+        /* Simple Pagination Styles */
+        .simple-pagination .page-link {
+            border: none !important;
+            margin: 0 2px;
+            border-radius: 4px !important;
+            padding: 6px 12px !important;
+            color: #6c757d !important;
+            background-color: #f8f9fa !important;
+            transition: all 0.2s ease;
+        }
+
+        .simple-pagination .page-link:hover {
+            background-color: #e9ecef !important;
+            color: #495057 !important;
+        }
+
+        .simple-pagination .page-item.active .page-link {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+
+        .simple-pagination .page-link:focus {
+            box-shadow: none !important;
+        }
+
+        /* Pagination Arrows and Numbers */
         .pagination-arrow {
             color: #6c757d;
             text-decoration: none;
@@ -362,30 +464,46 @@
             border-color: #e0e1e4;
         }
 
-        /* Preview Modal Styles */
-        .preview-slide {
-            display: none;
-            width: 100%;
-            height: 100%;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 20px;
+        /* Loading States */
+        .loading-spinner {
             position: absolute;
-            top: 0;
-            left: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
         }
 
-        .preview-slide.active {
-            display: flex;
+        .table-loading {
+            position: relative;
+            opacity: 0.7;
+            pointer-events: none;
         }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        /* Toast Notifications */
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+        }
+
+        .toast-success { background-color: #51a351; color: white; }
+        .toast-error { background-color: #bd362f; color: white; }
+        .toast-warning { background-color: #f89406; color: white; }
+        .toast-info { background-color: #2f96b4; color: white; }
 
         .preview-image {
             max-width: 100%;
             max-height: 80%;
             object-fit: contain;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             background: white;
             padding: 10px;
         }
@@ -395,7 +513,7 @@
             height: 80%;
             border: none;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .document-placeholder {
@@ -428,7 +546,6 @@
             margin-bottom: 1rem;
         }
 
-        /* Custom tooltip styling to match the image */
         .custom-tooltip {
             --bs-tooltip-bg: #ffffff;
             --bs-tooltip-border-color: #e0e0e0;
@@ -460,7 +577,6 @@
             font-weight: 600;
         }
 
-        /* Restricted action styling */
         .restricted-action {
             position: relative;
         }
@@ -469,9 +585,77 @@
             background-color: transparent !important;
         }
 
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .table-header,
+            .table-footer {
+                padding: 15px;
+            }
+
+            .d-flex.justify-content-between.align-items-center.flex-wrap {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .d-flex.align-items-center.gap-2.flex-wrap {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .table-responsive {
+                border-radius: 6px;
+            }
+
+            .table thead th,
+            .table tbody tr td {
+                padding: 8px 6px !important;
+                font-size: 0.8rem;
+            }
+
+            .table thead th .sort-link {
+                gap: 4px;
+                font-size: 0.8rem;
+            }
+
+            .d-flex.justify-content-between.align-items-center.flex-wrap {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center !important;
+            }
+
+            .pagination-sm .page-link {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .d-flex.align-items-center.gap-3 {
+                flex-direction: column;
+                gap: 0.5rem !important;
+            }
+
+            .pagination-arrow,
+            .pagination-number {
+                padding: 4px 6px;
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .pagination-sm .page-link {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.7rem;
+            }
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 @endif

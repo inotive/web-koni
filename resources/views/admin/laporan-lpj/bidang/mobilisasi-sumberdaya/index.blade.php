@@ -2,7 +2,7 @@
 
 @section('pageTitle', 'Manajemen Mobilisasi Sumber Daya')
 @section('mainSection', 'Laporan LPJ')
-@section('subSection', 'Bidang-Bidang')
+@section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
 @section('currentSection', 'Mobilisasi Sumber Daya')
 
@@ -380,12 +380,25 @@
                     @endif
 
                     {{-- Search Input --}}
-                    <div class="input-group" style="width: 250px;">
+                    <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari program/kegiatan..." value="{{ request('search') }}">
+                            placeholder="Cari program/kegiatan..." value="{{ request('search') }}" autocomplete="off">
+
+                        <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
+                            style="position: absolute; right: 45px; z-index: 10; border: none; background: transparent; padding: 8px;">
+                            <i class="fas fa-times text-muted"></i>
+                        </button>
+
                         <button class="btn btn-outline-secondary" type="button" id="search-button">
                             <i class="fas fa-search"></i>
                         </button>
+
+                        <div class="search-loading-indicator d-none position-absolute"
+                            style="right: 50px; top: 50%; transform: translateY(-50%); z-index: 10;">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Cari Kegiatan...</span>
+                            </div>
+                        </div>
                     </div>
 
                     {{-- Filter Dropdown --}}
@@ -399,7 +412,7 @@
                                 <label class="form-label fw-semibold">Nama Kegiatan</label>
                                 <select id="filter-jenis-kegiatan" class="form-select">
                                     <option value="">Semua Kegiatan</option>
-                                    @foreach ($sumberDayaData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
+                                    @foreach ($sumberDayaData->pluck('nama_program')->unique()->filter() as $kegiatan)
                                         <option value="{{ $kegiatan }}"
                                             {{ request('jenis_kegiatan_filter') == $kegiatan ? 'selected' : '' }}>
                                             {{ $kegiatan }}
@@ -475,18 +488,36 @@
             </div>
         </div>
     </div>
+
+    {{-- Detail Modal Card --}}
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background: #F8285A; color: white;">
+                    <h5 class="modal-title" id="detailModalLabel" style="color: white">Detail Mobilisasi Sumber Daya</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailModalBody">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
     <script>
         $(document).ready(function() {
-            // Initialize DataTable functionality but disable default features
             let dataTable = null;
+            let searchTimeout;
+            let isSearching = false;
 
             function initializeDataTable() {
                 const table = $("#kt_datatable_dom_positioning_sumberdaya");
 
-                // Destroy existing DataTable if it exists
                 if (dataTable) {
                     dataTable.destroy();
                 }
@@ -513,10 +544,8 @@
                 }
             }
 
-            // Initialize DataTable on page load
             initializeDataTable();
 
-            // Initialize tooltips and dropdown events
             function initializeTooltips() {
                 var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
                 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
@@ -538,44 +567,35 @@
                     const $dropdownAction = $(this).closest('.dropdown-action');
                     const $menu = $dropdownAction.find('.dropdown-menu-custom');
 
-                    // Close all other dropdowns
                     $('.dropdown-menu-custom').not($menu).removeClass('show');
 
-                    // Toggle this dropdown
                     $menu.toggleClass('show');
 
-                    // Check position
                     checkDropdownPosition($dropdownAction);
                 });
 
-                // Function to check dropdown position - modified to force dropup for bottom rows
                 function checkDropdownPosition($dropdownAction) {
                     const $menu = $dropdownAction.find('.dropdown-menu-custom');
                     if (!$menu.hasClass('show')) return;
 
-                    // Reset position class
                     $dropdownAction.removeClass('dropup');
 
-                    // Check if this is the last row of the table
                     const $row = $dropdownAction.closest('tr');
                     const $table = $row.closest('tbody');
                     const rowIndex = $table.find('tr').index($row);
                     const totalRows = $table.find('tr').length;
 
-                    // Only apply dropup to the last row
                     if (rowIndex === totalRows - 1) {
                         $dropdownAction.addClass('dropup');
                     }
                 }
 
-                // Close dropdown when clicking outside
                 $(document).on('click', function(e) {
                     if (!$(e.target).closest('.dropdown-action').length) {
                         $('.dropdown-menu-custom').removeClass('show');
                     }
                 });
 
-                // Handle window resize
                 $(window).on('resize', function() {
                     $('.dropdown-action').each(function() {
                         if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
@@ -609,11 +629,9 @@
                 }
             }
 
-            // Initialize tooltips and dropdown events
             initializeTooltips();
             initializeDropdownEvents();
 
-            // AJAX functions
             function showLoading() {
                 $('#loading-overlay').removeClass('d-none');
             }
@@ -622,66 +640,172 @@
                 $('#loading-overlay').addClass('d-none');
             }
 
-            function updateTable(params = {}) {
-                showLoading();
+            function showSearchLoading() {
+                if (!isSearching) {
+                    isSearching = true;
+                    $('.search-loading-indicator').removeClass('d-none');
+                    $('#search-button').find('i').removeClass('fa-search').addClass('fa-spinner fa-spin');
+                }
+            }
 
-                // Get current URL parameters
-                const currentUrl = new URL(window.location.href);
+            function hideSearchLoading() {
+                isSearching = false;
+                $('.search-loading-indicator').addClass('d-none');
+                $('#search-button').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
+            }
 
-                // Merge with new parameters
-                for (const key in params) {
-                    if (params[key]) {
-                        currentUrl.searchParams.set(key, params[key]);
-                    } else {
-                        currentUrl.searchParams.delete(key);
-                    }
+            function toggleClearButton() {
+                const $searchInput = $('#search');
+                const $clearBtn = $('#clear-search');
+
+                if ($searchInput.val().length > 0) {
+                    $clearBtn.removeClass('d-none');
+                } else {
+                    $clearBtn.addClass('d-none');
+                }
+            }
+
+            function performSearch(searchValue, immediate = false) {
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
                 }
 
-                // Always reset to page 1 when filtering/searching
-                if (!params.page) {
-                    currentUrl.searchParams.set('page', 1);
+                if (immediate || searchValue === '') {
+                    doSearch(searchValue);
+                } else {
+                    searchTimeout = setTimeout(() => {
+                        doSearch(searchValue);
+                    }, 300);
                 }
+            }
 
-                $.ajax({
-                    url: currentUrl.toString(),
-                    type: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    success: function(response) {
-                        $('#table-container').html(response);
-                        hideLoading();
+            function doSearch(searchValue) {
+                showSearchLoading();
 
-                        // Update URL without page reload
-                        window.history.pushState(null, null, currentUrl.toString());
-
-                        // Reinitialize DataTable, tooltips and dropdown events for new content
-                        initializeDataTable();
-                        initializeTooltips();
-                        initializeDropdownEvents();
-                        updateFilterCount();
-                    },
-                    error: function() {
-                        hideLoading();
-                        alert('Terjadi kesalahan saat memuat data');
-                    }
+                updateTable({
+                    'search': searchValue
+                }).finally(() => {
+                    hideSearchLoading();
                 });
             }
 
-            // Search functionality
-            $('#search-button').on('click', function() {
-                updateTable({
-                    'search': $('#search').val()
+            function updateTable(params = {}) {
+                return new Promise((resolve, reject) => {
+                    if (params.search === undefined) {
+                        showLoading();
+                    }
+
+                    const currentUrl = new URL(window.location.href);
+
+                    for (const key in params) {
+                        if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                            currentUrl.searchParams.set(key, params[key]);
+                        } else {
+                            currentUrl.searchParams.delete(key);
+                        }
+                    }
+
+                    if (params.search !== undefined || params.jenis_kegiatan_filter !== undefined) {
+                        if (!params.page) {
+                            currentUrl.searchParams.set('page', 1);
+                        }
+                    }
+
+                    $.ajax({
+                        url: currentUrl.toString(),
+                        type: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function(response) {
+                            $('#table-container').html(response);
+                            hideLoading();
+
+                            window.history.pushState(null, null, currentUrl.toString());
+
+                            initializeDataTable();
+                            initializeTooltips();
+                            initializeDropdownEvents();
+                            updateFilterCount();
+
+                            resolve(response);
+                        },
+                        error: function(xhr, status, error) {
+                            hideLoading();
+
+                            const errorMsg = xhr.status === 0 ?
+                                'Koneksi terputus. Silakan coba lagi.' :
+                                'Terjadi kesalahan saat memuat data.';
+
+                            showNotification(errorMsg, 'error');
+                            reject(error);
+                        }
+                    });
                 });
+            }
+
+            function showNotification(message, type = 'info') {
+                const alertClass = {
+                    'success': 'alert-success',
+                    'error': 'alert-danger',
+                    'warning': 'alert-warning',
+                    'info': 'alert-info'
+                }[type] || 'alert-info';
+
+                const notification = $(`
+                    <div class="alert ${alertClass} alert-dismissible fade show notification-toast"
+                         role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `);
+
+                $('body').append(notification);
+
+                setTimeout(() => {
+                    notification.alert('close');
+                }, 5000);
+            }
+
+            $('#search').on('input', function() {
+                const searchValue = $(this).val().trim();
+                toggleClearButton();
+                performSearch(searchValue);
             });
 
-            $('#search').on('keypress', function(e) {
-                if (e.which === 13) {
-                    $('#search-button').click();
+            $('#clear-search').on('click', function() {
+                $('#search').val('').focus();
+                toggleClearButton();
+                performSearch('', true);
+            });
+
+            $('#search-button').on('click', function() {
+                const searchValue = $('#search').val().trim();
+                performSearch(searchValue, true);
+            });
+
+            $('#search').on('keydown', function(e) {
+                switch (e.key) {
+                    case 'Escape':
+                        $(this).val('');
+                        toggleClearButton();
+                        performSearch('', true);
+                        break;
+
+                    case 'Enter':
+                        e.preventDefault();
+                        const searchValue = $(this).val().trim();
+                        performSearch(searchValue, true);
+                        break;
                 }
             });
 
-            // Filter functionality
+            $('#search').on('focus', function() {
+                $(this).select();
+            });
+
+            toggleClearButton();
+
             $('#apply-filters').on('click', function() {
                 const jenisKegiatan = $('#filter-jenis-kegiatan').val();
                 const startDate = $('#filter-start-date').val();
@@ -699,6 +823,7 @@
                 $('#filter-start-date').val('');
                 $('#filter-end-date').val('');
                 $('#search').val('');
+                toggleClearButton();
 
                 updateTable({
                     'search': '',
@@ -708,14 +833,12 @@
                 });
             });
 
-            // Per page functionality - delegated event
             $(document).on('change', '#per-page-select', function() {
                 updateTable({
                     'per_page': $(this).val()
                 });
             });
 
-            // Pagination functionality - delegated event
             $(document).on('click', '.pagination a', function(e) {
                 e.preventDefault();
                 const url = new URL($(this).attr('href'));
@@ -726,7 +849,6 @@
                 });
             });
 
-            // Sort functionality - delegated event
             $(document).on('click', '.sortable-header', function(e) {
                 e.preventDefault();
                 const url = new URL($(this).attr('href'));
@@ -771,7 +893,6 @@
             const nextBtn = document.getElementById('nextBtn');
             const modalTitle = document.getElementById('previewModalLabel');
 
-            // Handle preview button clicks
             $(document).on('click', '.preview-btn', function() {
                 const btn = $(this);
                 currentFiles = JSON.parse(btn.attr('data-files'));
@@ -827,7 +948,6 @@
                 currentFileName.textContent = fileName;
                 fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
 
-                // Show/hide navigation buttons
                 if (currentFiles.length > 1) {
                     prevBtn.style.display = 'block';
                     nextBtn.style.display = 'block';
@@ -836,7 +956,6 @@
                     nextBtn.style.display = 'none';
                 }
 
-                // Update download button
                 downloadBtn.onclick = function() {
                     window.open('/storage/' + currentFiles[currentIndex], '_blank');
                 };
@@ -860,7 +979,6 @@
                 showSlide(newIndex);
             });
 
-            // Keyboard navigation
             document.addEventListener('keydown', function(e) {
                 if (previewModal.classList.contains('show')) {
                     if (e.key === 'ArrowLeft') {
@@ -884,13 +1002,411 @@
                 return icons[extension] || 'fas fa-file text-muted';
             }
 
-            // Initialize the modal when it's shown
             $('#previewModal').on('show.bs.modal', function() {
-                // Reset to first slide when modal is shown
                 if (currentFiles.length > 0) {
                     showSlide(0);
                 }
             });
+
+            const additionalCSS = `
+                <style id="enhanced-search-styles">
+                    .search-loading-indicator {
+                        pointer-events: none;
+                    }
+
+                    .search-clear-btn {
+                        opacity: 0.7;
+                        transition: opacity 0.2s ease;
+                    }
+
+                    .search-clear-btn:hover {
+                        opacity: 1;
+                    }
+
+                    #search:focus {
+                        box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+                        border-color: #F8285A;
+                    }
+
+                    .notification-toast {
+                        animation: slideInRight 0.3s ease-out;
+                    }
+
+                    @keyframes slideInRight {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+
+                    #search.searching {
+                        background-image: url("data:image/svg+xml,%3csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%23999' fill-rule='nonzero'%3e%3cpath d='M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm0-3a10 10 0 1 1 0 20 10 10 0 0 1 0-20z'/%3e%3cpath d='M10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0-2a5 5 0 1 1 0 10 5 5 0 0 1 0-10z'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e");
+                        background-repeat: no-repeat;
+                        background-position: right 45px center;
+                        animation: spin 1s linear infinite;
+                    }
+
+                    @keyframes spin {
+                        to { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+
+            if (!$('#enhanced-search-styles').length) {
+                $('head').append(additionalCSS);
+            }
         });
+
+        // Detail Modal Function - adapted for Mobilisasi Sumber Daya
+        function showDetailModal(sumberDaya) {
+            const modalBody = document.getElementById('detailModalBody');
+
+            const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
+
+            // Handle foto_kegiatan display
+            let fotoHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+            if (sumberDaya.foto_jurnal && sumberDaya.foto_jurnal.length > 0) {
+                fotoHtml = `
+                    <div class="row g-3">
+                        ${sumberDaya.foto_jurnal.map(f => `
+                            <div class="col-6 col-md-4">
+                                <div class="border rounded overflow-hidden" style="height: 120px;">
+                                    <img src="/storage/${f}"
+                                         class="w-100 h-100"
+                                         style="object-fit: cover; cursor: pointer;"
+                                         onclick="window.open('/storage/${f}', '_blank')">
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Handle dokumen_pendukung display
+            let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+            if (sumberDaya.dokumen_lpj && sumberDaya.dokumen_lpj.length > 0) {
+                dokumenHtml = `
+                    <div class="d-flex flex-column gap-2">
+                        ${sumberDaya.dokumen_lpj.map(d => {
+                            const name = d.split('/').pop();
+                            const extension = name.split('.').pop().toLowerCase();
+
+                            let iconClass = 'fas fa-file text-secondary';
+                            if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
+                            else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
+                            else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
+                            else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
+
+                            return `
+                                <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                    <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-medium text-dark">${name}</div>
+                                        <small class="text-muted">${extension.toUpperCase()}</small>
+                                    </div>
+                                    <a href="/storage/${d}"
+                                       target="_blank"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-download me-1"></i>Unduh
+                                    </a>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+            }
+
+            modalBody.innerHTML = `
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Informasi Kegiatan
+                            </h6>
+                            <div class="bg-light p-3 rounded">
+                                <div class="mb-2">
+                                    <label class="fw-semibold text-dark mb-1">Nama Kegiatan & Program:</label>
+                                    <p class="mb-0 text-dark">${sumberDaya.nama_program}</p>
+                                    <small class="text-muted">${sumberDaya.nama_kegiatan}</small>
+                                </div>
+                                ${sumberDaya.tempat_kegiatan ? `
+                                    <div class="mb-2">
+                                        <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
+                                        <p class="mb-0 text-dark">${sumberDaya.tempat_kegiatan}</p>
+                                    </div>
+                                ` : ''}
+                                ${sumberDaya.tanggal_kegiatan ? `
+                                    <div>
+                                        <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
+                                        <p class="mb-0 text-dark">${new Date(sumberDaya.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        ${sumberDaya.jumlah_anggaran ? `
+                            <div class="mb-4">
+                                <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
+                                    <i class="fas fa-calculator me-2"></i>
+                                    Rincian Anggaran
+                                </h6>
+                                <div class="bg-light p-3 rounded">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
+                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(sumberDaya.jumlah_anggaran)}</p>
+                                        </div>
+                                        ${sumberDaya.jumlah_realisasi ? `
+                                            <div class="col-md-6">
+                                                <label class="fw-semibold text-dark mb-1">Realisasi:</label>
+                                                <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(sumberDaya.jumlah_realisasi)}</p>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${sumberDaya.sumber_dana ? `
+                            <div class="mb-4">
+                                <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
+                                    <i class="fas fa-money-bill me-2"></i>
+                                    Sumber Dana
+                                </h6>
+                                <div class="bg-light p-3 rounded">
+                                    <p class="mb-0 text-dark">${sumberDaya.sumber_dana}</p>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
+                                <i class="fas fa-paperclip me-2"></i>
+                                Lampiran
+                            </h6>
+
+                            <div class="mb-3">
+                                <label class="fw-semibold text-dark mb-2 d-block">
+                                    <i class="fas fa-camera me-1"></i>Foto Kegiatan:
+                                </label>
+                                <div class="bg-light p-3 rounded">
+                                    ${fotoHtml}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="fw-semibold text-dark mb-2 d-block">
+                                    <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
+                                </label>
+                                <div class="bg-light p-3 rounded">
+                                    ${dokumenHtml}
+                                </div>
+                            </div>
+                        </div>
+
+                        ${sumberDaya.keterangan ? `
+                            <div class="mb-2">
+                                <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center">
+                                    <i class="fas fa-sticky-note me-2"></i>
+                                    Keterangan
+                                </h6>
+                                <div class="bg-light p-3 rounded">
+                                    <p class="mb-0 text-dark">${sumberDaya.keterangan}</p>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                    </div>
+                </div>
+            `;
+
+            const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+            modal.show();
+        }
+    </script>
+
+    <script>
+$(document).ready(function() {
+        let deleteId = null;
+        let deleteItemName = null;
+
+        // Enhanced delete function (similar to deleteItemEnhanced from paste 1)
+        function deleteItemEnhanced(itemId, itemName = 'item ini') {
+            // Set the delete ID and item name
+            deleteId = itemId;
+            deleteItemName = itemName;
+
+            // Update modal content
+            $('#deleteId').val(deleteId);
+            $('#deleteItemName').text(itemName);
+
+            // Show the modal
+            $('#deleteModal').modal('show');
+        }
+
+        // When delete button is clicked from dropdown
+        $(document).on('click', '.dropdown-item-custom.delete', function(e) {
+            e.preventDefault();
+            const itemId = $(this).data('id');
+            const itemName = $(this).data('name') || 'laporan ini';
+            deleteItemEnhanced(itemId, itemName);
+        });
+
+        // Handle delete submit with enhanced functionality
+        $('#submitBtnDelete').on('click', function() {
+            if (!deleteId) {
+                toastr.error("ID laporan tidak ditemukan", "Error!");
+                return;
+            }
+
+            const submitBtn = $(this);
+            const url = "{{ route('admin.laporan-lpj.bidang.sumberdaya.destroy', ':id') }}".replace(':id', deleteId);
+
+            // Add loading state
+            submitBtn.addClass('btn-loading');
+            submitBtn.prop('disabled', true);
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    _method: 'DELETE'
+                },
+                success: function(response) {
+                    // Remove loading state
+                    submitBtn.removeClass('btn-loading');
+                    submitBtn.prop('disabled', false);
+
+                    // Close modal
+                    $('#deleteModal').modal('hide');
+
+                    // Show success message
+                    if (typeof toastr !== 'undefined') {
+                        toastr.success(response.message || "Laporan berhasil dihapus", "Success!");
+                    } else {
+                        alert(response.message || "Laporan berhasil dihapus");
+                    }
+
+                    // Reload table if updateTable function exists, otherwise reload page
+                    if (typeof updateTable === 'function') {
+                        updateTable();
+                    } else {
+                        location.reload();
+                    }
+                },
+                error: function(xhr) {
+                    // Remove loading state
+                    submitBtn.removeClass('btn-loading');
+                    submitBtn.prop('disabled', false);
+
+                    const errorMsg = xhr.responseJSON?.message || 'Gagal menghapus laporan';
+
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error(errorMsg, "Error!");
+                    } else {
+                        alert(errorMsg);
+                    }
+                }
+            });
+        });
+
+        // Reset modal when closed
+        $('#deleteModal').on('hidden.bs.modal', function () {
+            deleteId = null;
+            deleteItemName = null;
+            $('#deleteId').val('');
+            $('#deleteItemName').text('item ini');
+
+            // Remove loading state if still present
+            $('#submitBtnDelete').removeClass('btn-loading').prop('disabled', false);
+        });
+
+        // Alternative: Use SweetAlert2 for delete confirmation (like in paste 1)
+        function deleteItemWithSwal(itemId, itemName = 'item ini') {
+            const url = "{{ route('admin.laporan-lpj.bidang.sumberdaya.destroy', ':id') }}".replace(':id', itemId);
+
+            Swal.fire({
+                title: "Apakah Anda Yakin?",
+                html: `<p style='text-align:center'>Setelah <strong>${itemName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
+                icon: "warning",
+                showCancelButton: true,
+                reverseButtons: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Hapus!',
+                cancelButtonText: 'Batalkan!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        text: 'Mohon tunggu',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => Swal.showLoading()
+                    });
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            _method: 'DELETE'
+                        },
+                        success: function(response) {
+                            Swal.close();
+                            if (response.success !== false) {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: response.message || 'Laporan berhasil dihapus',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+
+                                // Reload table
+                                if (typeof updateTable === 'function') {
+                                    updateTable();
+                                } else {
+                                    location.reload();
+                                }
+                            } else {
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: response.message || 'Terjadi kesalahan saat menghapus',
+                                    icon: 'error'
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            Swal.close();
+                            Swal.fire({
+                                title: 'Error!',
+                                text: xhr.responseJSON?.message || 'Terjadi kesalahan jaringan.',
+                                icon: 'error'
+                            });
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Aksi Dibatalkan :)",
+                        icon: "info",
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+
+        // Make functions globally available
+        window.deleteItemEnhanced = deleteItemEnhanced;
+        window.deleteItemWithSwal = deleteItemWithSwal;
+    });
     </script>
 @endsection

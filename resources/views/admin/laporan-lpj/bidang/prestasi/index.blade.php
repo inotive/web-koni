@@ -387,7 +387,7 @@
                     <img src="{{ asset('assets2/media/misc/bidang/cup.png') }}" alt="">
                 </div>
                 <h4 class="bidang-title">Cabor Permainan</h4>
-                <p class="bidang-count">14 Olahraga</p>
+                <p class="bidang-count">12 Olahraga</p>
             </a>
 
             <!-- Cabor Beladiri -->
