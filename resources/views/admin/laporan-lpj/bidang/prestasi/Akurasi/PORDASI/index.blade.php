@@ -447,7 +447,7 @@
                                 <label class="form-label fw-semibold">Nama Kegiatan</label>
                                 <select id="filter-jenis-kegiatan" class="form-select">
                                     <option value="">Semua Kegiatan</option>
-                                    @foreach ($PORDASIData->pluck('nama_program')->unique()->filter() as $kegiatan)
+                                    @foreach ($PORDASIData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
                                         <option value="{{ $kegiatan }}"
                                             {{ request('jenis_kegiatan_filter') == $kegiatan ? 'selected' : '' }}>
                                             {{ $kegiatan }}
