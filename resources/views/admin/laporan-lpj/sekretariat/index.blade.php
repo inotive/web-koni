@@ -332,6 +332,14 @@
                 transform: translateY(0);
             }
         }
+
+        input[type="search"]::-webkit-search-decoration,
+        input[type="search"]::-webkit-search-cancel-button,
+        input[type="search"]::-webkit-search-results-button,
+        input[type="search"]::-webkit-search-results-decoration {
+            -webkit-appearance: none;
+            appearance: none;
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -371,7 +379,7 @@
                             placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
 
                         <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
-                            style="position: absolute; right: 45px; z-index: 10; border: none; background: transparent; padding: 8px;">
+                            style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
                             <i class="fas fa-times text-muted"></i>
                         </button>
 
@@ -1077,34 +1085,6 @@
                 }
             });
 
-            // Updated CSS - removed search highlighting and search-specific loading
-            const additionalCSS = `
-    <style id="enhanced-search-styles">
-        .search-clear-btn {
-            opacity: 0.7;
-            transition: opacity 0.2s ease;
-        }
-
-        .search-clear-btn:hover {
-            opacity: 1;
-        }
-
-        .notification-toast {
-            animation: slideInRight 0.3s ease-out;
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-    </style>
-`;
 
             if (!$('#enhanced-search-styles').length) {
                 $('head').append(additionalCSS);
