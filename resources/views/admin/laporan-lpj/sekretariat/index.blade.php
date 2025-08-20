@@ -378,13 +378,6 @@
                         <button class="btn btn-outline-secondary" type="button" id="search-button">
                             <i class="fas fa-search"></i>
                         </button>
-
-                        <div class="search-loading-indicator d-none position-absolute"
-                            style="right: 50px; top: 50%; transform: translateY(-50%); z-index: 10;">
-                            <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                <span class="visually-hidden">Cari Kegiatan...</span>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="dropdown" style="z-index: 1055">
@@ -495,245 +488,244 @@
 
 @section('script')
     <script>
+        $(document).ready(function() {
+            let dataTable = null;
+            let searchTimeout;
+            let isSearching = false;
 
-$(document).ready(function() {
-    let dataTable = null;
-    let searchTimeout;
-    let isSearching = false;
+            function initializeDataTable() {
+                const table = $("#kt_datatable_dom_positioning_kegiatan");
 
-    function initializeDataTable() {
-        const table = $("#kt_datatable_dom_positioning_kegiatan");
-
-        if (dataTable) {
-            dataTable.destroy();
-        }
-
-        if (table.length > 0) {
-            dataTable = table.DataTable({
-                paging: false,
-                info: false,
-                searching: false,
-                ordering: false,
-                responsive: false,
-                autoWidth: false,
-                scrollX: false,
-                language: {
-                    emptyTable: "Data tidak ditemukan",
-                    zeroRecords: "Tidak ada data yang cocok dengan pencarian"
-                },
-                columnDefs: [{
-                    targets: -1,
-                    orderable: false,
-                    searchable: false
-                }]
-            });
-        }
-    }
-
-    initializeDataTable();
-
-    function initializeTooltips() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl, {
-                trigger: 'hover focus'
-            });
-        });
-    }
-
-    function initializeDropdownEvents() {
-        $(document).off('click', '.dropdown-toggle-custom');
-        $(document).off('mouseenter', '.dropdown-action');
-        $(document).off('mouseleave', '.dropdown-action');
-
-        $(document).on('click', '.dropdown-toggle-custom', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const $dropdownAction = $(this).closest('.dropdown-action');
-            const $menu = $dropdownAction.find('.dropdown-menu-custom');
-
-            $('.dropdown-menu-custom').not($menu).removeClass('show');
-
-            $menu.toggleClass('show');
-
-            checkDropdownPosition($dropdownAction);
-        });
-
-        function checkDropdownPosition($dropdownAction) {
-            const $menu = $dropdownAction.find('.dropdown-menu-custom');
-            if (!$menu.hasClass('show')) return;
-
-            $dropdownAction.removeClass('dropup');
-
-            const $row = $dropdownAction.closest('tr');
-            const $table = $row.closest('tbody');
-            const rowIndex = $table.find('tr').index($row);
-            const totalRows = $table.find('tr').length;
-
-            if (rowIndex === totalRows - 1) {
-                $dropdownAction.addClass('dropup');
-            }
-        }
-
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.dropdown-action').length) {
-                $('.dropdown-menu-custom').removeClass('show');
-            }
-        });
-
-        $(window).on('resize', function() {
-            $('.dropdown-action').each(function() {
-                if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
-                    checkDropdownPosition($(this));
+                if (dataTable) {
+                    dataTable.destroy();
                 }
-            });
-        });
 
-        if (window.innerWidth > 768) {
-            $(document).on('mouseenter', '.dropdown-action', function() {
-                const $menu = $(this).find('.dropdown-menu-custom');
-                $menu.addClass('show');
-                checkDropdownPosition($(this));
-            }).on('mouseleave', '.dropdown-action', function() {
-                const $menu = $(this).find('.dropdown-menu-custom');
-                setTimeout(() => {
-                    if (!$menu.is(':hover')) {
-                        $menu.removeClass('show');
+                if (table.length > 0) {
+                    dataTable = table.DataTable({
+                        paging: false,
+                        info: false,
+                        searching: false,
+                        ordering: false,
+                        responsive: false,
+                        autoWidth: false,
+                        scrollX: false,
+                        language: {
+                            emptyTable: "Data tidak ditemukan",
+                            zeroRecords: "Tidak ada data yang cocok dengan pencarian"
+                        },
+                        columnDefs: [{
+                            targets: -1,
+                            orderable: false,
+                            searchable: false
+                        }]
+                    });
+                }
+            }
+
+            initializeDataTable();
+
+            function initializeTooltips() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl, {
+                        trigger: 'hover focus'
+                    });
+                });
+            }
+
+            function initializeDropdownEvents() {
+                $(document).off('click', '.dropdown-toggle-custom');
+                $(document).off('mouseenter', '.dropdown-action');
+                $(document).off('mouseleave', '.dropdown-action');
+
+                $(document).on('click', '.dropdown-toggle-custom', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const $dropdownAction = $(this).closest('.dropdown-action');
+                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
+
+                    $('.dropdown-menu-custom').not($menu).removeClass('show');
+
+                    $menu.toggleClass('show');
+
+                    checkDropdownPosition($dropdownAction);
+                });
+
+                function checkDropdownPosition($dropdownAction) {
+                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
+                    if (!$menu.hasClass('show')) return;
+
+                    $dropdownAction.removeClass('dropup');
+
+                    const $row = $dropdownAction.closest('tr');
+                    const $table = $row.closest('tbody');
+                    const rowIndex = $table.find('tr').index($row);
+                    const totalRows = $table.find('tr').length;
+
+                    if (rowIndex === totalRows - 1) {
+                        $dropdownAction.addClass('dropup');
                     }
-                }, 100);
-            });
+                }
 
-            $(document).on('mouseenter', '.dropdown-menu-custom', function() {
-                clearTimeout($(this).data('timeout'));
-            }).on('mouseleave', '.dropdown-menu-custom', function() {
-                const $menu = $(this);
-                $menu.data('timeout', setTimeout(() => {
-                    $menu.removeClass('show');
-                }, 200));
-            });
-        }
-    }
+                $(document).on('click', function(e) {
+                    if (!$(e.target).closest('.dropdown-action').length) {
+                        $('.dropdown-menu-custom').removeClass('show');
+                    }
+                });
 
-    initializeTooltips();
-    initializeDropdownEvents();
+                $(window).on('resize', function() {
+                    $('.dropdown-action').each(function() {
+                        if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
+                            checkDropdownPosition($(this));
+                        }
+                    });
+                });
 
-    function showLoading() {
-        $('#loading-overlay').removeClass('d-none');
-    }
+                if (window.innerWidth > 768) {
+                    $(document).on('mouseenter', '.dropdown-action', function() {
+                        const $menu = $(this).find('.dropdown-menu-custom');
+                        $menu.addClass('show');
+                        checkDropdownPosition($(this));
+                    }).on('mouseleave', '.dropdown-action', function() {
+                        const $menu = $(this).find('.dropdown-menu-custom');
+                        setTimeout(() => {
+                            if (!$menu.is(':hover')) {
+                                $menu.removeClass('show');
+                            }
+                        }, 100);
+                    });
 
-    function hideLoading() {
-        $('#loading-overlay').addClass('d-none');
-    }
-
-    function showSearchLoading() {
-        if (!isSearching) {
-            isSearching = true;
-            $('.search-loading-indicator').removeClass('d-none');
-            $('#search-button').find('i').removeClass('fa-search').addClass('fa-spinner fa-spin');
-        }
-    }
-
-    function hideSearchLoading() {
-        isSearching = false;
-        $('.search-loading-indicator').addClass('d-none');
-        $('#search-button').find('i').removeClass('fa-spinner fa-spin').addClass('fa-search');
-    }
-
-    function toggleClearButton() {
-        const $searchInput = $('#search');
-        const $clearBtn = $('#clear-search');
-
-        if ($searchInput.val().length > 0) {
-            $clearBtn.removeClass('d-none');
-        } else {
-            $clearBtn.addClass('d-none');
-        }
-    }
-
-    function performSearch(searchValue, immediate = false) {
-        if (searchTimeout) {
-            clearTimeout(searchTimeout);
-        }
-
-        if (immediate || searchValue === '') {
-            doSearch(searchValue);
-        } else {
-            searchTimeout = setTimeout(() => {
-                doSearch(searchValue);
-            }, 300);
-        }
-    }
-
-    function doSearch(searchValue) {
-        showSearchLoading();
-
-        updateTable({
-            'search': searchValue,
-            'page': 1
-        }).finally(() => {
-            hideSearchLoading();
-        });
-    }
-
-    function updateTable(params = {}) {
-        return new Promise((resolve, reject) => {
-            if (params.search === undefined) {
-                showLoading();
+                    $(document).on('mouseenter', '.dropdown-menu-custom', function() {
+                        clearTimeout($(this).data('timeout'));
+                    }).on('mouseleave', '.dropdown-menu-custom', function() {
+                        const $menu = $(this);
+                        $menu.data('timeout', setTimeout(() => {
+                            $menu.removeClass('show');
+                        }, 200));
+                    });
+                }
             }
 
-            const currentUrl = new URL(window.location.href);
+            initializeTooltips();
+            initializeDropdownEvents();
 
-            for (const key in params) {
-                if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
-                    currentUrl.searchParams.set(key, params[key]);
+            // Updated loading functions to show loading in center of table
+            function showLoading() {
+                $('#loading-overlay').removeClass('d-none');
+            }
+
+            function hideLoading() {
+                $('#loading-overlay').addClass('d-none');
+            }
+
+            // Updated search loading to show in center of table instead of search input
+            function showSearchLoading() {
+                if (!isSearching) {
+                    isSearching = true;
+                    showLoading(); // Use main loading overlay instead of search-specific loading
+                }
+            }
+
+            function hideSearchLoading() {
+                isSearching = false;
+                hideLoading(); // Use main loading overlay
+            }
+
+            function toggleClearButton() {
+                const $searchInput = $('#search');
+                const $clearBtn = $('#clear-search');
+
+                if ($searchInput.val().length > 0) {
+                    $clearBtn.removeClass('d-none');
                 } else {
-                    currentUrl.searchParams.delete(key);
+                    $clearBtn.addClass('d-none');
                 }
             }
 
-            $.ajax({
-                url: currentUrl.toString(),
-                type: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                success: function(response) {
-                    $('#table-container').html(response);
-                    hideLoading();
-
-                    window.history.pushState(null, null, currentUrl.toString());
-
-                    initializeDataTable();
-                    initializeTooltips();
-                    initializeDropdownEvents();
-                    updateFilterCount();
-
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    hideLoading();
-
-                    const errorMsg = xhr.status === 0 ?
-                        'Koneksi terputus. Silakan coba lagi.' :
-                        'Terjadi kesalahan saat memuat data.';
-
-                    showNotification(errorMsg, 'error');
-                    reject(error);
+            function performSearch(searchValue, immediate = false) {
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
                 }
-            });
-        });
-    }
 
-    function showNotification(message, type = 'info') {
-        const alertClass = {
-            'success': 'alert-success',
-            'error': 'alert-danger',
-            'warning': 'alert-warning',
-            'info': 'alert-info'
-        } [type] || 'alert-info';
+                if (immediate || searchValue === '') {
+                    doSearch(searchValue);
+                } else {
+                    searchTimeout = setTimeout(() => {
+                        doSearch(searchValue);
+                    }, 300);
+                }
+            }
 
-        const notification = $(`
+            function doSearch(searchValue) {
+                showSearchLoading();
+
+                updateTable({
+                    'search': searchValue,
+                    'page': 1
+                }).finally(() => {
+                    hideSearchLoading();
+                });
+            }
+
+            function updateTable(params = {}) {
+                return new Promise((resolve, reject) => {
+                    if (params.search === undefined) {
+                        showLoading();
+                    }
+
+                    const currentUrl = new URL(window.location.href);
+
+                    for (const key in params) {
+                        if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                            currentUrl.searchParams.set(key, params[key]);
+                        } else {
+                            currentUrl.searchParams.delete(key);
+                        }
+                    }
+
+                    $.ajax({
+                        url: currentUrl.toString(),
+                        type: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function(response) {
+                            $('#table-container').html(response);
+                            hideLoading();
+
+                            window.history.pushState(null, null, currentUrl.toString());
+
+                            initializeDataTable();
+                            initializeTooltips();
+                            initializeDropdownEvents();
+                            updateFilterCount();
+
+                            resolve(response);
+                        },
+                        error: function(xhr, status, error) {
+                            hideLoading();
+
+                            const errorMsg = xhr.status === 0 ?
+                                'Koneksi terputus. Silakan coba lagi.' :
+                                'Terjadi kesalahan saat memuat data.';
+
+                            showNotification(errorMsg, 'error');
+                            reject(error);
+                        }
+                    });
+                });
+            }
+
+            function showNotification(message, type = 'info') {
+                const alertClass = {
+                    'success': 'alert-success',
+                    'error': 'alert-danger',
+                    'warning': 'alert-warning',
+                    'info': 'alert-info'
+                } [type] || 'alert-info';
+
+                const notification = $(`
         <div class="alert ${alertClass} alert-dismissible fade show notification-toast"
              role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
             ${message}
@@ -741,265 +733,267 @@ $(document).ready(function() {
         </div>
     `);
 
-        $('body').append(notification);
+                $('body').append(notification);
 
-        setTimeout(() => {
-            notification.alert('close');
-        }, 5000);
-    }
+                setTimeout(() => {
+                    notification.alert('close');
+                }, 5000);
+            }
 
-    window.destroyItem = function(button) {
-        const route = button.dataset.route;
+            window.destroyItem = function(button) {
+                const route = button.dataset.route;
 
-        Swal.fire({
-            title: "Apakah Anda Yakin?",
-            html: "<p style='text-align:center'>Setelah data laporan sekretariat dihapus, Anda tidak bisa mengembalikannya!</p>",
-            icon: "warning",
-            showCancelButton: true,
-            reverseButtons: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Hapus!',
-            cancelButtonText: 'Batalkan!'
-        }).then((result) => {
-            if (result.isConfirmed) {
                 Swal.fire({
-                    title: 'Menghapus...',
-                    text: 'Mohon tunggu',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                $.ajax({
-                    url: route,
-                    type: 'DELETE',
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data laporan sekretariat dihapus, Anda tidak bisa mengembalikannya!</p>",
+                    icon: "warning",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         Swal.fire({
-                            title: 'Berhasil!',
-                            text: response.message || 'Data laporan sekretariat berhasil dihapus',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false
+                            title: 'Menghapus...',
+                            text: 'Mohon tunggu',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            willOpen: () => {
+                                Swal.showLoading();
+                            }
                         });
 
-                        updateTable({});
-                    },
-                    error: function(xhr) {
-                        Swal.close();
-
-                        try {
-                            const response = JSON.parse(xhr.responseText);
-
-                            if (response.reason === 'has_dependencies') {
+                        $.ajax({
+                            url: route,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
                                 Swal.fire({
-                                    title: 'Tidak Dapat Menghapus Data',
-                                    html: `Data laporan <strong>${response.item_name}</strong> tidak dapat dihapus karena masih memiliki data terkait.<br><br>
+                                    title: 'Berhasil!',
+                                    text: response.message ||
+                                        'Data laporan sekretariat berhasil dihapus',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+
+                                updateTable({});
+                            },
+                            error: function(xhr) {
+                                Swal.close();
+
+                                try {
+                                    const response = JSON.parse(xhr.responseText);
+
+                                    if (response.reason === 'has_dependencies') {
+                                        Swal.fire({
+                                            title: 'Tidak Dapat Menghapus Data',
+                                            html: `Data laporan <strong>${response.item_name}</strong> tidak dapat dihapus karena masih memiliki data terkait.<br><br>
                                     <p class="text-muted">
                                         Silakan hapus atau ubah data yang terkait terlebih dahulu.
                                     </p>`,
-                                    icon: "warning",
-                                    confirmButtonText: 'Mengerti'
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: response.message || 'Gagal menghapus data laporan sekretariat',
-                                    icon: 'error'
-                                });
+                                            icon: "warning",
+                                            confirmButtonText: 'Mengerti'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: response.message ||
+                                                'Gagal menghapus data laporan sekretariat',
+                                            icon: 'error'
+                                        });
+                                    }
+                                } catch (e) {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: 'Gagal menghapus data laporan sekretariat',
+                                        icon: 'error'
+                                    });
+                                }
                             }
-                        } catch (e) {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'Gagal menghapus data laporan sekretariat',
-                                icon: 'error'
-                            });
-                        }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Aksi Dibatalkan :)",
+                            icon: "info",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
                     }
                 });
-            } else {
-                Swal.fire({
-                    title: "Aksi Dibatalkan :)",
-                    icon: "info",
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-            }
-        });
-    };
+            };
 
-    $('#search').on('input', function() {
-        const searchValue = $(this).val().trim();
-        toggleClearButton();
-        performSearch(searchValue);
-    });
+            $('#search').on('input', function() {
+                const searchValue = $(this).val().trim();
+                toggleClearButton();
+                performSearch(searchValue);
+            });
 
-    $('#clear-search').on('click', function() {
-        $('#search').val('').focus();
-        toggleClearButton();
-        performSearch('', true);
-    });
-
-    $('#search-button').on('click', function() {
-        const searchValue = $('#search').val().trim();
-        performSearch(searchValue, true);
-    });
-
-    $('#search').on('keydown', function(e) {
-        switch (e.key) {
-            case 'Escape':
-                $(this).val('');
+            $('#clear-search').on('click', function() {
+                $('#search').val('').focus();
                 toggleClearButton();
                 performSearch('', true);
-                break;
+            });
 
-            case 'Enter':
-                e.preventDefault();
-                const searchValue = $(this).val().trim();
+            $('#search-button').on('click', function() {
+                const searchValue = $('#search').val().trim();
                 performSearch(searchValue, true);
-                break;
-        }
-    });
+            });
 
-    $('#search').on('focus', function() {
-        $(this).select();
-    });
+            $('#search').on('keydown', function(e) {
+                switch (e.key) {
+                    case 'Escape':
+                        $(this).val('');
+                        toggleClearButton();
+                        performSearch('', true);
+                        break;
 
-    toggleClearButton();
+                    case 'Enter':
+                        e.preventDefault();
+                        const searchValue = $(this).val().trim();
+                        performSearch(searchValue, true);
+                        break;
+                }
+            });
 
-    $('#apply-filters').on('click', function() {
-        const jenisKegiatan = $('#filter-jenis-kegiatan').val();
-        const startDate = $('#filter-start-date').val();
-        const endDate = $('#filter-end-date').val();
+            $('#search').on('focus', function() {
+                $(this).select();
+            });
 
-        updateTable({
-            'jenis_kegiatan_filter': jenisKegiatan,
-            'start_date': startDate,
-            'end_date': endDate,
-            'page': 1
-        });
-    });
+            toggleClearButton();
 
-    $('#reset-filters').on('click', function() {
-        $('#filter-jenis-kegiatan').val('');
-        $('#filter-start-date').val('');
-        $('#filter-end-date').val('');
-        $('#search').val('');
-        toggleClearButton();
+            $('#apply-filters').on('click', function() {
+                const jenisKegiatan = $('#filter-jenis-kegiatan').val();
+                const startDate = $('#filter-start-date').val();
+                const endDate = $('#filter-end-date').val();
 
-        updateTable({
-            'search': '',
-            'jenis_kegiatan_filter': '',
-            'start_date': '',
-            'end_date': '',
-            'page': 1
-        });
-    });
-
-    $(document).on('change', 'select[name="per_page"]', function() {
-        const perPage = $(this).val();
-        updateTable({
-            'per_page': perPage,
-            'page': 1
-        });
-    });
-
-    $(document).on('click', '.pagination-link', function(e) {
-        e.preventDefault();
-        const href = $(this).attr('href');
-
-        if (href && href !== '#') {
-            const url = new URL(href);
-            const page = url.searchParams.get('page');
-
-            if (page) {
                 updateTable({
-                    'page': page
+                    'jenis_kegiatan_filter': jenisKegiatan,
+                    'start_date': startDate,
+                    'end_date': endDate,
+                    'page': 1
                 });
+            });
+
+            $('#reset-filters').on('click', function() {
+                $('#filter-jenis-kegiatan').val('');
+                $('#filter-start-date').val('');
+                $('#filter-end-date').val('');
+                $('#search').val('');
+                toggleClearButton();
+
+                updateTable({
+                    'search': '',
+                    'jenis_kegiatan_filter': '',
+                    'start_date': '',
+                    'end_date': '',
+                    'page': 1
+                });
+            });
+
+            $(document).on('change', 'select[name="per_page"]', function() {
+                const perPage = $(this).val();
+                updateTable({
+                    'per_page': perPage,
+                    'page': 1
+                });
+            });
+
+            $(document).on('click', '.pagination-link', function(e) {
+                e.preventDefault();
+                const href = $(this).attr('href');
+
+                if (href && href !== '#') {
+                    const url = new URL(href);
+                    const page = url.searchParams.get('page');
+
+                    if (page) {
+                        updateTable({
+                            'page': page
+                        });
+                    }
+                }
+            });
+
+            $(document).on('click', '.sortable-header', function(e) {
+                e.preventDefault();
+                const url = new URL($(this).attr('href'));
+                const sort = url.searchParams.get('sort');
+                const direction = url.searchParams.get('direction');
+
+                updateTable({
+                    'sort': sort,
+                    'direction': direction,
+                    'page': 1
+                });
+            });
+
+            function updateFilterCount() {
+                const urlParams = new URLSearchParams(window.location.search);
+                let count = 0;
+
+                if (urlParams.get('jenis_kegiatan_filter')) count++;
+                if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
+
+                const badge = $('#filter-count');
+                if (count > 0) {
+                    badge.text(count).removeClass('d-none');
+                } else {
+                    badge.addClass('d-none');
+                }
             }
-        }
-    });
 
-    $(document).on('click', '.sortable-header', function(e) {
-        e.preventDefault();
-        const url = new URL($(this).attr('href'));
-        const sort = url.searchParams.get('sort');
-        const direction = url.searchParams.get('direction');
+            updateFilterCount();
 
-        updateTable({
-            'sort': sort,
-            'direction': direction,
-            'page': 1
-        });
-    });
+            let currentFiles = [];
+            let currentIndex = 0;
+            let currentType = '';
 
-    function updateFilterCount() {
-        const urlParams = new URLSearchParams(window.location.search);
-        let count = 0;
+            const previewModal = document.getElementById('previewModal');
+            const previewSlides = document.getElementById('previewSlides');
+            const currentFileName = document.getElementById('currentFileName');
+            const fileCounter = document.getElementById('fileCounter');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const modalTitle = document.getElementById('previewModalLabel');
 
-        if (urlParams.get('jenis_kegiatan_filter')) count++;
-        if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
+            $(document).on('click', '.preview-btn', function() {
+                const btn = $(this);
+                currentFiles = JSON.parse(btn.attr('data-files'));
+                currentType = btn.attr('data-type');
+                currentIndex = 0;
+                modalTitle.textContent = btn.attr('data-title');
 
-        const badge = $('#filter-count');
-        if (count > 0) {
-            badge.text(count).removeClass('d-none');
-        } else {
-            badge.addClass('d-none');
-        }
-    }
+                loadPreview();
+            });
 
-    updateFilterCount();
+            function loadPreview() {
+                previewSlides.innerHTML = '';
 
-    let currentFiles = [];
-    let currentIndex = 0;
-    let currentType = '';
+                currentFiles.forEach((file, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
 
-    const previewModal = document.getElementById('previewModal');
-    const previewSlides = document.getElementById('previewSlides');
-    const currentFileName = document.getElementById('currentFileName');
-    const fileCounter = document.getElementById('fileCounter');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const modalTitle = document.getElementById('previewModalLabel');
-
-    $(document).on('click', '.preview-btn', function() {
-        const btn = $(this);
-        currentFiles = JSON.parse(btn.attr('data-files'));
-        currentType = btn.attr('data-type');
-        currentIndex = 0;
-        modalTitle.textContent = btn.attr('data-title');
-
-        loadPreview();
-    });
-
-    function loadPreview() {
-        previewSlides.innerHTML = '';
-
-        currentFiles.forEach((file, index) => {
-            const slide = document.createElement('div');
-            slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
-
-            if (currentType === 'image') {
-                slide.innerHTML = `
+                    if (currentType === 'image') {
+                        slide.innerHTML = `
                 <img src="/storage/${file}" alt="Preview" class="preview-image">
             `;
-            } else {
-                const fileName = file.split('/').pop();
-                const fileExtension = fileName.split('.').pop().toLowerCase();
+                    } else {
+                        const fileName = file.split('/').pop();
+                        const fileExtension = fileName.split('.').pop().toLowerCase();
 
-                if (fileExtension === 'pdf') {
-                    slide.innerHTML = `
+                        if (fileExtension === 'pdf') {
+                            slide.innerHTML = `
                     <iframe src="/storage/${file}" class="preview-document"></iframe>
                 `;
-                } else {
-                    const iconClass = getFileIcon(fileExtension);
-                    slide.innerHTML = `
+                        } else {
+                            const iconClass = getFileIcon(fileExtension);
+                            slide.innerHTML = `
                     <div class="document-placeholder">
                         <i class="${iconClass}"></i>
                         <h5>${fileName}</h5>
@@ -1009,86 +1003,83 @@ $(document).ready(function() {
                         </a>
                     </div>
                 `;
+                        }
+                    }
+
+                    previewSlides.appendChild(slide);
+                });
+
+                updateUI();
+            }
+
+            function updateUI() {
+                const fileName = currentFiles[currentIndex].split('/').pop();
+                currentFileName.textContent = fileName;
+                fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
+
+                if (currentFiles.length > 1) {
+                    prevBtn.style.display = 'block';
+                    nextBtn.style.display = 'block';
+                } else {
+                    prevBtn.style.display = 'none';
+                    nextBtn.style.display = 'none';
                 }
+
+                downloadBtn.onclick = function() {
+                    window.open('/storage/' + currentFiles[currentIndex], '_blank');
+                };
             }
 
-            previewSlides.appendChild(slide);
-        });
-
-        updateUI();
-    }
-
-    function updateUI() {
-        const fileName = currentFiles[currentIndex].split('/').pop();
-        currentFileName.textContent = fileName;
-        fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
-
-        if (currentFiles.length > 1) {
-            prevBtn.style.display = 'block';
-            nextBtn.style.display = 'block';
-        } else {
-            prevBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-        }
-
-        downloadBtn.onclick = function() {
-            window.open('/storage/' + currentFiles[currentIndex], '_blank');
-        };
-    }
-
-    function showSlide(index) {
-        document.querySelectorAll('.preview-slide').forEach((slide, i) => {
-            slide.classList.toggle('active', i === index);
-        });
-        currentIndex = index;
-        updateUI();
-    }
-
-    prevBtn.addEventListener('click', function() {
-        const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
-        showSlide(newIndex);
-    });
-
-    nextBtn.addEventListener('click', function() {
-        const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
-        showSlide(newIndex);
-    });
-
-    document.addEventListener('keydown', function(e) {
-        if (previewModal.classList.contains('show')) {
-            if (e.key === 'ArrowLeft') {
-                prevBtn.click();
-            } else if (e.key === 'ArrowRight') {
-                nextBtn.click();
+            function showSlide(index) {
+                document.querySelectorAll('.preview-slide').forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+                currentIndex = index;
+                updateUI();
             }
-        }
-    });
 
-    function getFileIcon(extension) {
-        const icons = {
-            'pdf': 'fas fa-file-pdf text-danger',
-            'doc': 'fas fa-file-word text-primary',
-            'docx': 'fas fa-file-word text-primary',
-            'xls': 'fas fa-file-excel text-success',
-            'xlsx': 'fas fa-file-excel text-success',
-            'ppt': 'fas fa-file-powerpoint text-warning',
-            'pptx': 'fas fa-file-powerpoint text-warning'
-        };
-        return icons[extension] || 'fas fa-file text-muted';
-    }
+            prevBtn.addEventListener('click', function() {
+                const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
+                showSlide(newIndex);
+            });
 
-    $('#previewModal').on('show.bs.modal', function() {
-        if (currentFiles.length > 0) {
-            showSlide(0);
-        }
-    });
+            nextBtn.addEventListener('click', function() {
+                const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
+                showSlide(newIndex);
+            });
 
-    const additionalCSS = `
+            document.addEventListener('keydown', function(e) {
+                if (previewModal.classList.contains('show')) {
+                    if (e.key === 'ArrowLeft') {
+                        prevBtn.click();
+                    } else if (e.key === 'ArrowRight') {
+                        nextBtn.click();
+                    }
+                }
+            });
+
+            function getFileIcon(extension) {
+                const icons = {
+                    'pdf': 'fas fa-file-pdf text-danger',
+                    'doc': 'fas fa-file-word text-primary',
+                    'docx': 'fas fa-file-word text-primary',
+                    'xls': 'fas fa-file-excel text-success',
+                    'xlsx': 'fas fa-file-excel text-success',
+                    'ppt': 'fas fa-file-powerpoint text-warning',
+                    'pptx': 'fas fa-file-powerpoint text-warning'
+                };
+                return icons[extension] || 'fas fa-file text-muted';
+            }
+
+            $('#previewModal').on('show.bs.modal', function() {
+                if (currentFiles.length > 0) {
+                    showSlide(0);
+                }
+            });
+
+            // Updated CSS - removed search highlighting and search-specific loading
+            const additionalCSS = `
     <style id="enhanced-search-styles">
-        .search-loading-indicator {
-            pointer-events: none;
-        }
-
         .search-clear-btn {
             opacity: 0.7;
             transition: opacity 0.2s ease;
@@ -1096,11 +1087,6 @@ $(document).ready(function() {
 
         .search-clear-btn:hover {
             opacity: 1;
-        }
-
-        #search:focus {
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
-            border-color: #F8285A;
         }
 
         .notification-toast {
@@ -1117,171 +1103,12 @@ $(document).ready(function() {
                 opacity: 1;
             }
         }
-
-        #search.searching {
-            background-image: url("data:image/svg+xml,%3csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3e%3cg fill='none' fill-rule='evenodd'%3e%3cg fill='%23999' fill-rule='nonzero'%3e%3cpath d='M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm0-3a10 10 0 1 1 0 20 10 10 0 0 1 0-20z'/%3e%3cpath d='M10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm0-2a5 5 0 1 1 0 10 5 5 0 0 1 0-10z'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 45px center;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 `;
 
-    if (!$('#enhanced-search-styles').length) {
-        $('head').append(additionalCSS);
-    }
-});
-
-function showDetailModal(kegiatan) {
-    const modalBody = document.getElementById('detailModalBody');
-
-    const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
-
-    let fotoHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-    if (kegiatan.foto_jurnal && kegiatan.foto_jurnal.length > 0) {
-        fotoHtml = `
-        <div class="row g-3">
-            ${kegiatan.foto_jurnal.map(f => `
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded overflow-hidden" style="height: 120px;">
-                            <img src="/storage/${f}"
-                                 class="w-100 h-100"
-                                 style="object-fit: cover; cursor: pointer;"
-                                 onclick="window.open('/storage/${f}', '_blank')">
-                        </div>
-                    </div>
-                `).join('')}
-        </div>
-    `;
-    }
-
-    let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-    if (kegiatan.dokumen_pendukung && kegiatan.dokumen_pendukung.length > 0) {
-        dokumenHtml = `
-        <div class="d-flex flex-column gap-2">
-            ${kegiatan.dokumen_pendukung.map(d => {
-                const name = d.split('/').pop();
-                const extension = name.split('.').pop().toLowerCase();
-
-                let iconClass = 'fas fa-file text-secondary';
-                if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
-                else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
-                else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
-                else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
-
-                return `
-                        <div class="d-flex align-items-center p-2 border rounded bg-light">
-                            <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
-                            <div class="flex-grow-1">
-                                <div class="fw-medium text-dark">${name}</div>
-                                <small class="text-muted">${extension.toUpperCase()}</small>
-                            </div>
-                            <a href="/storage/${d}"
-                               target="_blank"
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-download me-1"></i>Unduh
-                            </a>
-                        </div>
-                    `;
-            }).join('')}
-        </div>
-    `;
-    }
-
-    modalBody.innerHTML = `
-    <div class="card border-0 shadow-sm">
-        <div class="card-body p-4">
-
-            <div class="mb-4">
-                <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Informasi Program & Kegiatan
-                </h6>
-                <div class="bg-light p-3 rounded">
-                    <div class="mb-2">
-                        <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
-                        <p class="mb-0 text-dark">${kegiatan.nama_program_kegiatan}</p>
-                    </div>
-                    ${kegiatan.jenis_kegiatan ? `
-                            <div>
-                                <label class="fw-semibold text-dark mb-1">Jenis Kegiatan:</label>
-                                <p class="mb-0 text-dark">${kegiatan.jenis_kegiatan}</p>
-                            </div>
-                        ` : ''}
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
-                    <i class="fas fa-calculator me-2"></i>
-                    Rincian Anggaran
-                </h6>
-                <div class="bg-light p-3 rounded">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="fw-semibold text-dark mb-1">Volume:</label>
-                            <p class="mb-0 text-dark fs-5 fw-bold">${kegiatan.volume}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
-                            <p class="mb-0 text-dark fs-5 fw-bold">${formatRupiah(kegiatan.jumlah_harga_satuan)}</p>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="fw-semibold text-dark mb-1">Jumlah Harga:</label>
-                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(kegiatan.jumlah_harga)}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
-                    <i class="fas fa-paperclip me-2"></i>
-                    Lampiran
-                </h6>
-
-                <div class="mb-3">
-                    <label class="fw-semibold text-dark mb-2 d-block">
-                        <i class="fas fa-camera me-1"></i>Foto Jurnal:
-                    </label>
-                    <div class="bg-light p-3 rounded">
-                        ${fotoHtml}
-                    </div>
-                </div>
-
-                <div>
-                    <label class="fw-semibold text-dark mb-2 d-block">
-                        <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
-                    </label>
-                    <div class="bg-light p-3 rounded">
-                        ${dokumenHtml}
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-2">
-                <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
-                    <i class="fas fa-sticky-note me-2"></i>
-                    Keterangan Tambahan
-                </h6>
-                <div class="bg-light p-3 rounded">
-                    ${kegiatan.keterangan_tambahan ?
-                        `<p class="mb-0 text-dark">${kegiatan.keterangan_tambahan}</p>` :
-                        '<div class="text-muted fst-italic">Tidak ada keterangan tambahan</div>'
-                    }
-                </div>
-            </div>
-
-        </div>
-    </div>
-`;
-
-    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-    modal.show();
-}
+            if (!$('#enhanced-search-styles').length) {
+                $('head').append(additionalCSS);
+            }
+        });
     </script>
 @endsection

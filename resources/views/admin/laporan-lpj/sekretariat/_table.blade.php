@@ -219,13 +219,6 @@
     </div>
 
     <style>
-        .search-highlight {
-            background-color: #fff3cd;
-            padding: 1px 3px;
-            border-radius: 3px;
-            font-weight: bold;
-        }
-
         .dropdown-action {
             position: relative;
             display: inline-block;
