@@ -194,6 +194,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
         Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
         Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])->name('detail-ajax');
     });
 }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
