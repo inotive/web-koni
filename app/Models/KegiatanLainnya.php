@@ -10,6 +10,7 @@ class KegiatanLainnya extends Model
     use HasFactory;
 
     protected $table = 'kegiatan_lainnya';
+
     protected $fillable = [
         'nama_program_kegiatan',
         'jenis_kegiatan',
@@ -18,6 +19,12 @@ class KegiatanLainnya extends Model
         'jumlah_harga_satuan',
         'jumlah_harga',
         'foto_jurnal',
-        'dokumen_pendukung',
+        'dokumen_pendukung'
+    ];
+
+    protected $dates = [
+        'tanggal_kegiatan',
+        'created_at',
+        'updated_at'
     ];
 }
