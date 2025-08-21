@@ -6,8 +6,11 @@
 
 @section('style')
     <style>
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
 
-    
+
         .filter-container {
             display: flex;
             align-items: center;
@@ -531,6 +534,31 @@
                 return;
             }
 
+            // Validasi manual untuk field kosong
+            const requiredFields = formElement.querySelectorAll('[required]');
+            let isValid = true;
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('is-invalid');
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            if (!isValid) {
+                toastr.error("Harap lengkapi semua field yang wajib diisi.", "Validasi Gagal!");
+                return; // Jangan tutup modal
+            }
+
+            const submitBtn = formElement.closest('.modal').querySelector('button[type="button"][onclick*="submitForm"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Mengirim...
+    `;
+
             let formData = new FormData();
             let actionUrl;
 
@@ -541,9 +569,11 @@
                 actionUrl = formElement.getAttribute('data-action');
                 formElement.querySelectorAll('input, select, textarea').forEach(input => {
                     if (input.type === 'file') return;
-                    if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) formData.append(
-                        input.name, input.value);
-                    else formData.append(input.name, input.value);
+                    if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
+                        formData.append(input.name, input.value);
+                    } else {
+                        formData.append(input.name, input.value);
+                    }
                 });
             }
 
@@ -569,20 +599,27 @@
                 .then(async response => {
                     const data = await response.json();
 
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+
                     if (!response.ok) {
-                        if (data.errors) Object.entries(data.errors).forEach(([field, msgs]) => toastr.error(msgs
-                            .join(', '), "Error!"));
-                        else toastr.error(data.message || "Gagal menyimpan data", "Error!");
+                        if (data.errors) {
+                            Object.entries(data.errors).forEach(([field, msgs]) => toastr.error(msgs.join(', '),
+                                "Error!"));
+                        } else {
+                            toastr.error(data.message || "Gagal menyimpan data", "Error!");
+                        }
                     } else {
                         $('.modal.show').addClass('submit-success');
                         $('.modal.show').modal('hide');
-
                         toastr.success(data.message || "Data berhasil disimpan", "Success!");
                         updateAddButtonText();
                         reloadTable();
                     }
                 })
                 .catch(error => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
                     toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
                     console.error('Error:', error);
                 });
