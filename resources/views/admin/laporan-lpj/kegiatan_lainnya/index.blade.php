@@ -134,60 +134,6 @@
                 z-index: 1055;
             }
         }
-
-        /* === APPROVAL STATUS STYLES === */
-.disabled-action {
-    opacity: 0.6;
-    cursor: not-allowed !important;
-    pointer-events: none;
-}
-
-.disabled-action:hover {
-    background-color: transparent !important;
-}
-
-/* Status badges in dropdown */
-.dropdown-menu .badge {
-    font-size: 0.75rem;
-}
-
-/* Approval action buttons */
-.approve-btn:hover {
-    background-color: #d4edda !important;
-}
-
-.reject-btn:hover {
-    background-color: #fff3cd !important;
-}
-
-/* Lock icon animation */
-.fa-info-circle {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* Status column styling */
-.status-badge {
-    font-size: 0.8rem;
-    padding: 0.25rem 0.5rem;
-}
-
-/* Tooltip custom styles */
-.tooltip-inner {
-    max-width: 300px;
-    text-align: left;
-}
     </style>
 
 
@@ -428,6 +374,9 @@
                             {{-- Table Body --}}
                             <tbody>
                                 @forelse ($kegiatanLainnya as $index => $kegiatan)
+                                    @php
+                                        $isApproved = $kegiatan->status_approval === 'approved';
+                                    @endphp
                                     <tr data-jenis-kegiatan="{{ $kegiatan->jenis_kegiatan ?? '' }}"
                                         data-tanggal="{{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan ?? $kegiatan->created_at)->format('Y-m-d') }}">
                                         <td class="text-center">
@@ -463,96 +412,58 @@
                                         </td>
                                         <td>{{ \Carbon\Carbon::parse($kegiatan->created_at)->format('d M Y') }}</td>
                                         <td class="text-center">
-    <div class="dropdown">
-        <button class="btn btn-sm p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="32" height="32" rx="6" fill="#EFF6FF" />
-                <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" stroke="#1B84FF" stroke-opacity="0.2" />
-                <g clip-path="url(#clip0_2223_4269)">
-                    <path opacity="0.3" d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z" fill="#1B84FF" />
-                    <path d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z" fill="#1B84FF" />
-                </g>
-            </svg>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
-            <!-- Status Badge -->
-            <li class="px-3 py-2 border-bottom">
-                <small class="text-muted">Status:</small><br>
-                @if($kegiatan->isApproved())
-                    <span class="badge bg-success">Disetujui</span>
-                @elseif($kegiatan->isPending())
-                    <span class="badge bg-warning">Menunggu Persetujuan</span>
-                @else
-                    <span class="badge bg-danger">Ditolak</span>
-                @endif
-            </li>
-            
-            <!-- View Detail -->
-            <li>
-                <button type="button" class="dropdown-item view-detail-btn"
-                    data-id="{{ $kegiatan->id }}"
-                    data-name="{{ $kegiatan->nama_program_kegiatan }}">
-                    <i class="fa-solid fa-eye me-2"></i>Lihat Detail
-                </button>
-            </li>
-            
-            <!-- Edit/Modifikasi Button with Conditional Logic -->
-            <li>
-                @if($kegiatan->isApproved() || auth()->user()->hasRole('superadmin'))
-                    <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
-                       class="dropdown-item">
-                        <i class="fa-solid fa-pen-to-square me-2"></i>Modifikasi
-                    </a>
-                @else
-                    <button type="button" 
-                            class="dropdown-item text-muted disabled-action"
-                            data-bs-toggle="tooltip" 
-                            data-bs-placement="left"
-                            title="Data hanya dapat diubah setelah mendapat persetujuan dari superadmin"
-                            onclick="showLockedModal('{{ $kegiatan->nama_program_kegiatan }}')">
-                        <i class="fa-solid fa-pen-to-square me-2 text-muted"></i>
-                        <span class="text-muted">Modifikasi</span>
-                        <i class="fa-solid fa-info-circle ms-1 text-warning"></i>
-                    </button>
-                @endif
-            </li>
-            
-            <!-- Approval Actions (Only for Superadmin) -->
-            @if(auth()->user()->hasRole('superadmin'))
-                @if($kegiatan->isPending())
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <button type="button" 
-                                class="dropdown-item text-success approve-btn"
-                                data-id="{{ $kegiatan->id }}"
-                                data-name="{{ $kegiatan->nama_program_kegiatan }}">
-                            <i class="fa-solid fa-check me-2"></i>Setujui
-                        </button>
-                    </li>
-                    <li>
-                        <button type="button" 
-                                class="dropdown-item text-warning reject-btn"
-                                data-id="{{ $kegiatan->id }}"
-                                data-name="{{ $kegiatan->nama_program_kegiatan }}">
-                            <i class="fa-solid fa-times me-2"></i>Tolak
-                        </button>
-                    </li>
-                @endif
-            @endif
-            
-            <!-- Delete Button -->
-            <li><hr class="dropdown-divider"></li>
-            <li>
-                <button type="button"
-                        class="dropdown-item text-danger border-0 bg-transparent w-100 text-start delete-btn"
-                        data-id="{{ $kegiatan->id }}"
-                        data-name="{{ $kegiatan->nama_program_kegiatan }}">
-                    <i class="fa-solid fa-trash me-2"></i>Hapus
-                </button>
-            </li>
-        </ul>
-    </div>
-</td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm p-0" type="button" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <svg width="32" height="32" viewBox="0 0 32 32"
+                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <rect width="32" height="32" rx="6"
+                                                            fill="#EFF6FF" />
+                                                        <rect x="0.5" y="0.5" width="31" height="31"
+                                                            rx="5.5" stroke="#1B84FF" stroke-opacity="0.2" />
+                                                        <g clip-path="url(#clip0_2223_4269)">
+                                                            <path opacity="0.3"
+                                                                d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
+                                                                fill="#1B84FF" />
+                                                            <path
+                                                                d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
+                                                                fill="#1B84FF" />
+                                                        </g>
+                                                        <defs>
+                                                            <clipPath id="clip0_2223_4269">
+                                                                <rect width="16" height="16" fill="white"
+                                                                    transform="translate(8 8)" />
+                                                            </clipPath>
+                                                        </defs>
+                                                    </svg>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
+                                                    <li>
+                                                        <button type="button" class="dropdown-item view-detail-btn"
+                                                            data-id="{{ $kegiatan->id }}"
+                                                            data-name="{{ $kegiatan->nama_program_kegiatan }}">
+                                                            <i class="fa-solid fa-eye me-2"></i>Lihat Detail
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.show', $kegiatan->id) }}"
+                                                            class="dropdown-item text-muted">
+                                                            <i class="fas fa-info-circle me-2"></i>Modifikasi
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <hr class="dropdown-divider">
+                                                    </li>
+                                                    <li>
+                                                        <button type="button"
+                                                            class="dropdown-item text-danger border-0 bg-transparent w-100 text-start delete-btn"
+                                                            data-id="{{ $kegiatan->id }}"
+                                                            data-name="{{ $kegiatan->nama_program_kegiatan }}">
+                                                            <i class="fa-solid fa-trash me-2"></i>Hapus
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -800,123 +711,6 @@
         </div>
     </div>
 
-    {{-- Modal Approval --}}
-<div class="modal fade" id="modal_approve_kegiatan" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-success">
-                <h2 class="fw-bold text-white">
-                    <i class="fas fa-check-circle me-2"></i>Setujui Kegiatan
-                </h2>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body py-8">
-                <div class="text-center mb-4">
-                    <i class="fas fa-check-circle text-success fs-3x mb-4"></i>
-                    <h4 class="mb-3">Setujui Kegiatan Ini?</h4>
-                    <p class="text-muted mb-0">Kegiatan yang disetujui dapat diedit oleh user.</p>
-                    <p class="fw-bold text-dark mt-2" id="approve-item-name"></p>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label fw-semibold">Catatan (Opsional)</label>
-                    <textarea class="form-control" id="approve-notes" rows="3" 
-                              placeholder="Tambahkan catatan persetujuan..."></textarea>
-                </div>
-            </div>
-            <div class="modal-footer justify-content-center border-0 pb-6">
-                <button type="button" class="btn btn-light me-3" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i>Batal
-                </button>
-                <button type="button" class="btn btn-success" id="confirm-approve-btn">
-                    <span class="indicator-label">
-                        <i class="fas fa-check me-1"></i>Ya, Setujui
-                    </span>
-                    <span class="indicator-progress">
-                        <span class="spinner-border spinner-border-sm align-middle me-2"></span>
-                        Menyetujui...
-                    </span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Modal Reject --}}
-<div class="modal fade" id="modal_reject_kegiatan" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-warning">
-                <h2 class="fw-bold text-dark">
-                    <i class="fas fa-exclamation-triangle me-2"></i>Tolak Kegiatan
-                </h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body py-8">
-                <div class="text-center mb-4">
-                    <i class="fas fa-exclamation-triangle text-warning fs-3x mb-4"></i>
-                    <h4 class="mb-3">Tolak Kegiatan Ini?</h4>
-                    <p class="text-muted mb-0">Kegiatan yang ditolak tidak dapat diedit oleh user.</p>
-                    <p class="fw-bold text-dark mt-2" id="reject-item-name"></p>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="form-label fw-semibold required">Alasan Penolakan</label>
-                    <textarea class="form-control" id="reject-notes" rows="4" 
-                              placeholder="Jelaskan alasan penolakan..." required></textarea>
-                    <div class="invalid-feedback">Alasan penolakan wajib diisi.</div>
-                </div>
-            </div>
-            <div class="modal-footer justify-content-center border-0 pb-6">
-                <button type="button" class="btn btn-light me-3" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i>Batal
-                </button>
-                <button type="button" class="btn btn-warning" id="confirm-reject-btn">
-                    <span class="indicator-label">
-                        <i class="fas fa-times me-1"></i>Ya, Tolak
-                    </span>
-                    <span class="indicator-progress">
-                        <span class="spinner-border spinner-border-sm align-middle me-2"></span>
-                        Menolak...
-                    </span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Modal Locked Info --}}
-<div class="modal fade" id="modal_locked_info" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-info">
-                <h2 class="fw-bold text-white">
-                    <i class="fas fa-lock me-2"></i>Data Terkunci
-                </h2>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body py-8 text-center">
-                <i class="fas fa-lock text-info fs-3x mb-4"></i>
-                <h4 class="mb-3">Data Tidak Dapat Diubah</h4>
-                <p class="text-muted mb-2">Kegiatan ini belum mendapat persetujuan dari superadmin.</p>
-                <p class="fw-bold text-dark" id="locked-item-name"></p>
-                
-                <div class="alert alert-light-info mt-4">
-                    <div class="alert-text">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Hubungi superadmin untuk mendapatkan persetujuan agar data dapat diubah.
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer justify-content-center border-0 pb-6">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-                    <i class="fas fa-check me-1"></i>Mengerti
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
     {{-- Toast Notification Container --}}
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
         <div id="toast-success" class="toast align-items-center text-bg-success border-0" role="alert"
@@ -1069,6 +863,10 @@
                         badge.addClass('d-none');
                     }
                 }
+
+                $(document).ready(function() {
+                    $('[data-bs-toggle="tooltip"]').tooltip();
+                });
 
                 // Highlight search term
                 function highlightSearchTerm() {

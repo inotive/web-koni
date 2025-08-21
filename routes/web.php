@@ -238,15 +238,6 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
                 Route::delete('/{hubunganlembaga}', [App\Http\Controllers\Admin\hubunganlembagaController::class, 'destroy'])->name('destroy');
             });
         });
-        Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'index'])->name('index');
-            Route::get('/create', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'create'])->name('create');
-            Route::post('/', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'store'])->name('store');
-            Route::get('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'show'])->name('show');
-            Route::get('/{kegiatanLainnya}/edit', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'edit'])->name('edit');
-            Route::put('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'update'])->name('update');
-            Route::delete('/{kegiatanLainnya}', [App\Http\Controllers\Admin\KegiatanLainnyaController::class, 'destroy'])->name('destroy');
-        });
 
         // Route untuk Bidang
         Route::prefix('bidang')->name('bidang.')->group(function () {
@@ -282,32 +273,24 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
         // FIXED: Kegiatan Lainnya Routes - Properly structured
         Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
-    Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
-    Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
-    Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
+            Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
+            Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
+            Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
 
-    // PENTING: Export route harus sebelum parameterized routes
-    Route::get('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
-    
-    // Route untuk AJAX detail - HARUS sebelum {kegiatan_lainnya}
-    Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
-        ->name('detail-ajax')
-        ->where('id', '[0-9]+'); // Pastikan ID adalah angka
+            // Route untuk AJAX detail - HARUS sebelum {kegiatan_lainnya}
+            Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
+                ->name('detail-ajax')
+                ->where('id', '[0-9]+');
 
-    // Parameterized routes
-    Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
-    Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
-    Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
-    Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
+            // Parameterized routes
+            Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
+            Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
+            Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
+            Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
 
-    Route::post('/kegiatan-lainnya/{kegiatan_lainnya}/approve', [KegiatanLainnyaController::class, 'approve'])
-    ->name('admin.laporan-lpj.kegiatan_lainnya.approve')
-    ->middleware('role:superadmin');
-    
-    Route::post('/kegiatan-lainnya/{kegiatan_lainnya}/reject', [KegiatanLainnyaController::class, 'reject'])
-    ->name('admin.laporan-lpj.kegiatan_lainnya.reject')
-    ->middleware('role:superadmin');
-});
+            // Export route
+            Route::get('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+        });
     }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
         Route::get('/', [BendaharaController::class, 'index'])->name('index');

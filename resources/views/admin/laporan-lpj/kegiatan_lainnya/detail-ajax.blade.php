@@ -9,6 +9,15 @@
                     </h5>
                 </div>
                 <div class="card-body">
+                    @if($kegiatan->status_approval !== 'approved')
+        <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+            <i class="fas fa-lock me-2 fs-4"></i>
+            <div>
+                <strong>Status: Terkunci</strong><br>
+                <small>Data ini belum disetujui oleh Superadmin. Tidak dapat diedit.</small>
+            </div>
+        </div>
+    @endif
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
