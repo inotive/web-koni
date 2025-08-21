@@ -152,15 +152,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::get('/{sekretariat}/edit', [App\Http\Controllers\Admin\SekretariatController::class, 'edit'])->name('edit');
         Route::put('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'update'])->name('update');
         Route::delete('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'destroy'])->name('destroy');
-        Route::prefix('sekretariat')->name('sekretariat.')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\SekretariatController::class, 'index'])->name('index');
-            Route::get('/create', [App\Http\Controllers\Admin\SekretariatController::class, 'create'])->name('create');
-            Route::post('/', [App\Http\Controllers\Admin\SekretariatController::class, 'store'])->name('store');
-            Route::get('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'show'])->name('show');
-            Route::get('/{sekretariat}/edit', [App\Http\Controllers\Admin\SekretariatController::class, 'edit'])->name('edit');
-            Route::put('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'update'])->name('update');
-            Route::delete('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'destroy'])->name('destroy');
-        });
+       });
 
         // Route untuk Bidang
         Route::prefix('bidang')->name('bidang.')->group(function () {

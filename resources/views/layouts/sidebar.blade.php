@@ -76,18 +76,17 @@
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Sekretariat</span>
                                 </a>
-                            </li> 
+                            </li>
                              <li class="menu-item">
                                 <a class="menu-link {{ request()->is('admin/laporan-lpj/bidang*') ? 'active' : '' }}"
-                                    href="{{ route('admin.laporan-lpj.bidang.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+?                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Bidang Bidang</span>
                                 </a>
                             </li>
-                            </li> 
+                            </li>
                              <li class="menu-item">
                                 <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan_lainnya*') ? 'active' : '' }}"
-                                    href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}">
+                                    {{-- href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}"> --}}
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Kegiatan lainnya</span>
                                 </a>
@@ -96,7 +95,7 @@
                     </div>
                     <div class="menu-item">
                         <a class="menu-link {{ request()->is('admin/bendahara*') ? 'active' : '' }}"
-                            href="{{ route('admin.bendahara.index') }}">
+                            {{-- href="{{ route('admin.bendahara.index') }}"> --}}
                             <span class="menu-icon">
                                 <i class="fa-solid fa-address-book fs-2"></i>
                             </span> <span class="menu-title">Database Bendahara</span>
@@ -242,7 +241,7 @@
                         <span class="menu-icon">
                             <i class="fa-solid fa-diagram-project fs-2"
                                 style="color: {{ request()->is('admin/manajemen-pengguna/role*') ? '#ffffff' : '#6c757d' }}"></i>
-                        </span> 
+                        </span>
                         <span class="menu-title {{ request()->is('admin/manajemen-pengguna/role*') ? 'text-white' : 'text-gray-800' }}">Jabatan</span>
                     </a>
                 </div>
