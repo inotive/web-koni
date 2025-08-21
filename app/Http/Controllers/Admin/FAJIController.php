@@ -112,7 +112,7 @@ class fajiController extends Controller
 
         faji::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.terukur.faji.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.faji.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
@@ -203,7 +203,7 @@ class fajiController extends Controller
 
         $faji->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.terukur.faji.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.faji.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
@@ -229,7 +229,7 @@ class fajiController extends Controller
 
         $faji->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.terukur.faji.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.faji.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 

@@ -1,4 +1,4 @@
-@if ($PORSEROSIData->isEmpty())
+@if ($porserosiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PORSEROSIData as $index => $data)
+                @forelse ($porserosiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PORSEROSIData->currentPage() - 1) * $PORSEROSIData->perPage() + $index + 1 }}
+                            {{ ($porserosiData->currentPage() - 1) * $porserosiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PORSEROSI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.porserosi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -205,10 +205,10 @@
                 <div class="d-flex align-items-center">
                     <span class="me-2">Show</span>
                     <select name="per_page" class="form-select form-select-sm w-auto">
-                        @foreach ([10, 25, 50, 100] as $lPORSEROSIt)
-                            <option value="{{ $lPORSEROSIt }}"
-                                {{ request('per_page', 10) == $lPORSEROSIt ? 'selected' : '' }}>
-                                {{ $lPORSEROSIt }}
+                        @foreach ([10, 25, 50, 100] as $lporserosit)
+                            <option value="{{ $lporserosit }}"
+                                {{ request('per_page', 10) == $lporserosit ? 'selected' : '' }}>
+                                {{ $lporserosit }}
                             </option>
                         @endforeach
                     </select>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PORSEROSIData) && method_exists($PORSEROSIData, 'hasPages') && $PORSEROSIData->hasPages())
+            @if (isset($porserosiData) && method_exists($porserosiData, 'hasPages') && $porserosiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PORSEROSIData->firstItem() }}-{{ $PORSEROSIData->lastItem() }} of
-                        {{ $PORSEROSIData->total() }}
+                        {{ $porserosiData->firstItem() }}-{{ $porserosiData->lastItem() }} of
+                        {{ $porserosiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PORSEROSIData->onFirstPage())
+                        @if ($porserosiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PORSEROSIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $porserosiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PORSEROSIData->currentPage();
-                            $total = $PORSEROSIData->lastPage();
+                            $current = $porserosiData->currentPage();
+                            $total = $porserosiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PORSEROSIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $porserosiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PORSEROSIData->hasMorePages())
-                            <a href="{{ $PORSEROSIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($porserosiData->hasMorePages())
+                            <a href="{{ $porserosiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PORSEROSIData) && method_exists($PORSEROSIData, 'hasPages'))
+            @elseif(isset($porserosiData) && method_exists($porserosiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PORSEROSIData->count() }} of {{ $PORSEROSIData->total() }}
+                    1-{{ $porserosiData->count() }} of {{ $porserosiData->total() }}
                 </div>
             @endif
         </div>

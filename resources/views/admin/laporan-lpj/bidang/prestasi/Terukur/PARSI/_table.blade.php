@@ -1,4 +1,4 @@
-@if ($PARSIData->isEmpty())
+@if ($parsiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PARSIData as $index => $data)
+                @forelse ($parsiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PARSIData->currentPage() - 1) * $PARSIData->perPage() + $index + 1 }}
+                            {{ ($parsiData->currentPage() - 1) * $parsiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PARSI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.parsi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -205,10 +205,10 @@
                 <div class="d-flex align-items-center">
                     <span class="me-2">Show</span>
                     <select name="per_page" class="form-select form-select-sm w-auto">
-                        @foreach ([10, 25, 50, 100] as $lPARSIt)
-                            <option value="{{ $lPARSIt }}"
-                                {{ request('per_page', 10) == $lPARSIt ? 'selected' : '' }}>
-                                {{ $lPARSIt }}
+                        @foreach ([10, 25, 50, 100] as $lparsit)
+                            <option value="{{ $lparsit }}"
+                                {{ request('per_page', 10) == $lparsit ? 'selected' : '' }}>
+                                {{ $lparsit }}
                             </option>
                         @endforeach
                     </select>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PARSIData) && method_exists($PARSIData, 'hasPages') && $PARSIData->hasPages())
+            @if (isset($parsiData) && method_exists($parsiData, 'hasPages') && $parsiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PARSIData->firstItem() }}-{{ $PARSIData->lastItem() }} of
-                        {{ $PARSIData->total() }}
+                        {{ $parsiData->firstItem() }}-{{ $parsiData->lastItem() }} of
+                        {{ $parsiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PARSIData->onFirstPage())
+                        @if ($parsiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PARSIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $parsiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PARSIData->currentPage();
-                            $total = $PARSIData->lastPage();
+                            $current = $parsiData->currentPage();
+                            $total = $parsiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PARSIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $parsiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PARSIData->hasMorePages())
-                            <a href="{{ $PARSIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($parsiData->hasMorePages())
+                            <a href="{{ $parsiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PARSIData) && method_exists($PARSIData, 'hasPages'))
+            @elseif(isset($parsiData) && method_exists($parsiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PARSIData->count() }} of {{ $PARSIData->total() }}
+                    1-{{ $parsiData->count() }} of {{ $parsiData->total() }}
                 </div>
             @endif
         </div>

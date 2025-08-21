@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PERKEMI;
+use App\Models\Perkemi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PERKEMIController extends Controller
+class PerkemiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PERKEMI::query();
+        $query = Perkemi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PERKEMIController extends Controller
             $direction = 'desc';
         }
 
-        $PERKEMIData = $query
+        $PerkemiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.PERKEMI._table', compact('PERKEMIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Perkemi._table', compact('PerkemiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.PERKEMI.index', compact('PERKEMIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Perkemi.index', compact('PerkemiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.PERKEMI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Perkemi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PERKEMIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PERKEMI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Perkemi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PERKEMIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PERKEMI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Perkemi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        PERKEMI::create($data);
+        Perkemi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.PERKEMI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Perkemi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(PERKEMI $PERKEMI)
+    public function show(Perkemi $Perkemi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.PERKEMI.show', compact('PERKEMI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Perkemi.show', compact('Perkemi'));
     }
 
-    public function edit(PERKEMI $PERKEMI)
+    public function edit(Perkemi $Perkemi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.PERKEMI.edit', compact('PERKEMI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Perkemi.edit', compact('Perkemi'));
     }
 
-    public function update(Request $request, PERKEMI $PERKEMI)
+    public function update(Request $request, Perkemi $Perkemi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PERKEMIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($PERKEMI->foto_jurnal) {
-                foreach ($PERKEMI->foto_jurnal as $oldFoto) {
+            if ($Perkemi->foto_jurnal) {
+                foreach ($Perkemi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PERKEMI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Perkemi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PERKEMIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($PERKEMI->dokumen_lpj) {
-                foreach ($PERKEMI->dokumen_lpj as $oldDokumen) {
+            if ($Perkemi->dokumen_lpj) {
+                foreach ($Perkemi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PERKEMI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Perkemi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $PERKEMI->update($data);
+        $Perkemi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.PERKEMI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Perkemi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(PERKEMI $PERKEMI)
+    public function destroy(Perkemi $Perkemi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PERKEMIController extends Controller
         }
 
         // Delete associated files
-        if ($PERKEMI->foto_jurnal) {
-            foreach ($PERKEMI->foto_jurnal as $foto) {
+        if ($Perkemi->foto_jurnal) {
+            foreach ($Perkemi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($PERKEMI->dokumen_lpj) {
-            foreach ($PERKEMI->dokumen_lpj as $dokumen) {
+        if ($Perkemi->dokumen_lpj) {
+            foreach ($Perkemi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $PERKEMI->delete();
+        $Perkemi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.PERKEMI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Perkemi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PERKEMIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, PERKEMI $PERKEMI)
+    public function removeFile(Request $request, Perkemi $Perkemi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PERKEMIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $PERKEMI->$fileType ?? [];
+        $files = $Perkemi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PERKEMIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $PERKEMI->update([$fileType => $files]);
+        $Perkemi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

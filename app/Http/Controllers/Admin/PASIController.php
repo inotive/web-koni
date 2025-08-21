@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PASI;
+use App\Models\pasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PASIController extends Controller
+class pasiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PASI::query();
+        $query = pasi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PASIController extends Controller
             $direction = 'desc';
         }
 
-        $PASIData = $query
+        $pasiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.terukur.PASI._table', compact('PASIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.terukur.pasi._table', compact('pasiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PASI.index', compact('PASIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.pasi.index', compact('pasiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PASI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.pasi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PASIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PASI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pasi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PASIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PASI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pasi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        PASI::create($data);
+        pasi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PASI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pasi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(PASI $PASI)
+    public function show(pasi $pasi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PASI.show', compact('PASI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.pasi.show', compact('pasi'));
     }
 
-    public function edit(PASI $PASI)
+    public function edit(pasi $pasi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PASI.edit', compact('PASI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.pasi.edit', compact('pasi'));
     }
 
-    public function update(Request $request, PASI $PASI)
+    public function update(Request $request, pasi $pasi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PASIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($PASI->foto_jurnal) {
-                foreach ($PASI->foto_jurnal as $oldFoto) {
+            if ($pasi->foto_jurnal) {
+                foreach ($pasi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PASI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pasi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PASIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($PASI->dokumen_lpj) {
-                foreach ($PASI->dokumen_lpj as $oldDokumen) {
+            if ($pasi->dokumen_lpj) {
+                foreach ($pasi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PASI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pasi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $PASI->update($data);
+        $pasi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PASI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pasi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(PASI $PASI)
+    public function destroy(pasi $pasi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PASIController extends Controller
         }
 
         // Delete associated files
-        if ($PASI->foto_jurnal) {
-            foreach ($PASI->foto_jurnal as $foto) {
+        if ($pasi->foto_jurnal) {
+            foreach ($pasi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($PASI->dokumen_lpj) {
-            foreach ($PASI->dokumen_lpj as $dokumen) {
+        if ($pasi->dokumen_lpj) {
+            foreach ($pasi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $PASI->delete();
+        $pasi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PASI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pasi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PASIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, PASI $PASI)
+    public function removeFile(Request $request, pasi $pasi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PASIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $PASI->$fileType ?? [];
+        $files = $pasi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PASIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $PASI->update([$fileType => $files]);
+        $pasi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

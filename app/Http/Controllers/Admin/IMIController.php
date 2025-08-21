@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\IMI;
+use App\Models\imi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class IMIController extends Controller
+class imiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = IMI::query();
+        $query = imi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class IMIController extends Controller
             $direction = 'desc';
         }
 
-        $IMIData = $query
+        $imiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.terukur.IMI._table', compact('IMIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.terukur.imi._table', compact('imiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.IMI.index', compact('IMIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.imi.index', compact('imiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.IMI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.imi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class IMIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('IMI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('imi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class IMIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('IMI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('imi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        IMI::create($data);
+        imi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.IMI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.imi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(IMI $IMI)
+    public function show(imi $imi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.IMI.show', compact('IMI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.imi.show', compact('imi'));
     }
 
-    public function edit(IMI $IMI)
+    public function edit(imi $imi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.IMI.edit', compact('IMI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.imi.edit', compact('imi'));
     }
 
-    public function update(Request $request, IMI $IMI)
+    public function update(Request $request, imi $imi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class IMIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($IMI->foto_jurnal) {
-                foreach ($IMI->foto_jurnal as $oldFoto) {
+            if ($imi->foto_jurnal) {
+                foreach ($imi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('IMI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('imi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class IMIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($IMI->dokumen_lpj) {
-                foreach ($IMI->dokumen_lpj as $oldDokumen) {
+            if ($imi->dokumen_lpj) {
+                foreach ($imi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('IMI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('imi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $IMI->update($data);
+        $imi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.IMI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.imi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(IMI $IMI)
+    public function destroy(imi $imi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class IMIController extends Controller
         }
 
         // Delete associated files
-        if ($IMI->foto_jurnal) {
-            foreach ($IMI->foto_jurnal as $foto) {
+        if ($imi->foto_jurnal) {
+            foreach ($imi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($IMI->dokumen_lpj) {
-            foreach ($IMI->dokumen_lpj as $dokumen) {
+        if ($imi->dokumen_lpj) {
+            foreach ($imi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $IMI->delete();
+        $imi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.IMI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.imi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class IMIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, IMI $IMI)
+    public function removeFile(Request $request, imi $imi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class IMIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $IMI->$fileType ?? [];
+        $files = $imi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class IMIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $IMI->update([$fileType => $files]);
+        $imi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

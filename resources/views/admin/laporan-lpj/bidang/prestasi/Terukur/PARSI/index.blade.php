@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'PARSI')
+@section('pageTitle', 'parsi')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,7 +8,7 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor Terukur')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur'))
-@section('currentSection', 'PARSI')
+@section('currentSection', 'parsi')
 
 @section('breadcrumb-title')
 @endsection
@@ -378,7 +378,7 @@
     </style>
 
     <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">Laporan PARSI</h1>
+        <h1 class="text-dark fw-bold mb-1">Laporan parsi</h1>
     </div>
 
     {{-- Main Content Card --}}
@@ -386,13 +386,13 @@
         <div class="card">
             {{-- Card Header --}}
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar PARSI - 2025</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar parsi - 2025</h3>
 
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button with Access Control --}}
                     @if(auth()->user()->hasRole('superadmin'))
-                        <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PARSI.create') }}" class="btn custom-red-button"
+                        <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.parsi.create') }}" class="btn custom-red-button"
                             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                         </a>
@@ -447,7 +447,7 @@
                                 <label class="form-label fw-semibold">Nama Kegiatan</label>
                                 <select id="filter-jenis-kegiatan" class="form-select">
                                     <option value="">Semua Kegiatan</option>
-                                    @foreach ($PARSIData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
+                                    @foreach ($parsiData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
                                         <option value="{{ $kegiatan }}"
                                             {{ request('jenis_kegiatan_filter') == $kegiatan ? 'selected' : '' }}>
                                             {{ $kegiatan }}
@@ -479,7 +479,7 @@
                 </div>
 
                 <div id="table-container">
-                    @include('admin.laporan-lpj.bidang.prestasi.terukur.PARSI._table')
+                    @include('admin.laporan-lpj.bidang.prestasi.terukur.parsi._table')
                 </div>
             </div>
         </div>
@@ -788,7 +788,7 @@
                 }[type] || 'alert-info';
 
                 const notification = $(`
-                    <div class="alert ${alertClass} alert-dismPARSIble fade show notification-toast"
+                    <div class="alert ${alertClass} alert-dismparsible fade show notification-toast"
                          role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
                         ${message}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -1097,17 +1097,17 @@
         });
 
         // Detail Modal Function - adapted for Mobilisasi Sumber Daya
-        function showDetailModal(PARSI) {
+        function showDetailModal(parsi) {
             const modalBody = document.getElementById('detailModalBody');
 
             const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
 
             // Handle foto_kegiatan display
             let fotoHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-            if (PARSI.foto_jurnal && PARSI.foto_jurnal.length > 0) {
+            if (parsi.foto_jurnal && parsi.foto_jurnal.length > 0) {
                 fotoHtml = `
                     <div class="row g-3">
-                        ${PARSI.foto_jurnal.map(f => `
+                        ${parsi.foto_jurnal.map(f => `
                             <div class="col-6 col-md-4">
                                 <div class="border rounded overflow-hidden" style="height: 120px;">
                                     <img src="/storage/${f}"
@@ -1123,10 +1123,10 @@
 
             // Handle dokumen_pendukung display
             let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-            if (PARSI.dokumen_lpj && PARSI.dokumen_lpj.length > 0) {
+            if (parsi.dokumen_lpj && parsi.dokumen_lpj.length > 0) {
                 dokumenHtml = `
                     <div class="d-flex flex-column gap-2">
-                        ${PARSI.dokumen_lpj.map(d => {
+                        ${parsi.dokumen_lpj.map(d => {
                             const name = d.split('/').pop();
                             const extension = name.split('.').pop().toLowerCase();
 
@@ -1167,25 +1167,25 @@
                             <div class="bg-light p-3 rounded">
                                 <div class="mb-2">
                                     <label class="fw-semibold text-dark mb-1">Nama Kegiatan & Program:</label>
-                                    <p class="mb-0 text-dark">${PARSI.nama_program}</p>
-                                    <small class="text-muted">${PARSI.nama_kegiatan}</small>
+                                    <p class="mb-0 text-dark">${parsi.nama_program}</p>
+                                    <small class="text-muted">${parsi.nama_kegiatan}</small>
                                 </div>
-                                ${PARSI.tempat_kegiatan ? `
+                                ${parsi.tempat_kegiatan ? `
                                     <div class="mb-2">
                                         <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                        <p class="mb-0 text-dark">${PARSI.tempat_kegiatan}</p>
+                                        <p class="mb-0 text-dark">${parsi.tempat_kegiatan}</p>
                                     </div>
                                 ` : ''}
-                                ${PARSI.tanggal_kegiatan ? `
+                                ${parsi.tanggal_kegiatan ? `
                                     <div>
                                         <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                        <p class="mb-0 text-dark">${new Date(PARSI.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                        <p class="mb-0 text-dark">${new Date(parsi.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
                                     </div>
                                 ` : ''}
                             </div>
                         </div>
 
-                        ${PARSI.jumlah_anggaran ? `
+                        ${parsi.jumlah_anggaran ? `
                             <div class="mb-4">
                                 <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
                                     <i class="fas fa-calculator me-2"></i>
@@ -1195,12 +1195,12 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
-                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(PARSI.jumlah_anggaran)}</p>
+                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(parsi.jumlah_anggaran)}</p>
                                         </div>
-                                        ${PARSI.jumlah_realisasi ? `
+                                        ${parsi.jumlah_realisasi ? `
                                             <div class="col-md-6">
                                                 <label class="fw-semibold text-dark mb-1">Realisasi:</label>
-                                                <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(PARSI.jumlah_realisasi)}</p>
+                                                <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(parsi.jumlah_realisasi)}</p>
                                             </div>
                                         ` : ''}
                                     </div>
@@ -1208,14 +1208,14 @@
                             </div>
                         ` : ''}
 
-                        ${PARSI.sumber_dana ? `
+                        ${parsi.sumber_dana ? `
                             <div class="mb-4">
                                 <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
                                     <i class="fas fa-money-bill me-2"></i>
                                     Sumber Dana
                                 </h6>
                                 <div class="bg-light p-3 rounded">
-                                    <p class="mb-0 text-dark">${PARSI.sumber_dana}</p>
+                                    <p class="mb-0 text-dark">${parsi.sumber_dana}</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -1245,14 +1245,14 @@
                             </div>
                         </div>
 
-                        ${PARSI.keterangan ? `
+                        ${parsi.keterangan ? `
                             <div class="mb-2">
                                 <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center">
                                     <i class="fas fa-sticky-note me-2"></i>
                                     Keterangan
                                 </h6>
                                 <div class="bg-light p-3 rounded">
-                                    <p class="mb-0 text-dark">${PARSI.keterangan}</p>
+                                    <p class="mb-0 text-dark">${parsi.keterangan}</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -1271,7 +1271,7 @@ $(document).ready(function() {
         let deleteId = null;
         let deleteItemName = null;
 
-        // Enhanced delete function (sPARSIlar to deleteItemEnhanced from paste 1)
+        // Enhanced delete function (sparsilar to deleteItemEnhanced from paste 1)
         function deleteItemEnhanced(itemId, itemName = 'item ini') {
             // Set the delete ID and item name
             deleteId = itemId;
@@ -1301,7 +1301,7 @@ $(document).ready(function() {
             }
 
             const submitBtn = $(this);
-            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PARSI.destroy', ':id') }}".replace(':id', deleteId);
+            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.parsi.destroy', ':id') }}".replace(':id', deleteId);
 
             // Add loading state
             submitBtn.addClass('btn-loading');
@@ -1365,7 +1365,7 @@ $(document).ready(function() {
 
         // Alternative: Use SweetAlert2 for delete confirmation (like in paste 1)
         function deleteItemWithSwal(itemId, itemName = 'item ini') {
-            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PARSI.destroy', ':id') }}".replace(':id', itemId);
+            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.parsi.destroy', ':id') }}".replace(':id', itemId);
 
             Swal.fire({
                 title: "Apakah Anda Yakin?",

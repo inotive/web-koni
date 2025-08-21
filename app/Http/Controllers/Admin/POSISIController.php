@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\POSISI;
+use App\Models\posisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class POSISIController extends Controller
+class posisiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = POSISI::query();
+        $query = posisi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class POSISIController extends Controller
             $direction = 'desc';
         }
 
-        $POSISIData = $query
+        $posisiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.terukur.POSISI._table', compact('POSISIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.terukur.posisi._table', compact('posisiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.POSISI.index', compact('POSISIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.posisi.index', compact('posisiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.POSISI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.posisi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class POSISIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('POSISI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('posisi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class POSISIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('POSISI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('posisi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        POSISI::create($data);
+        posisi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.POSISI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.posisi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(POSISI $POSISI)
+    public function show(posisi $posisi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.POSISI.show', compact('POSISI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.posisi.show', compact('posisi'));
     }
 
-    public function edit(POSISI $POSISI)
+    public function edit(posisi $posisi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.POSISI.edit', compact('POSISI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.posisi.edit', compact('posisi'));
     }
 
-    public function update(Request $request, POSISI $POSISI)
+    public function update(Request $request, posisi $posisi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class POSISIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($POSISI->foto_jurnal) {
-                foreach ($POSISI->foto_jurnal as $oldFoto) {
+            if ($posisi->foto_jurnal) {
+                foreach ($posisi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('POSISI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('posisi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class POSISIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($POSISI->dokumen_lpj) {
-                foreach ($POSISI->dokumen_lpj as $oldDokumen) {
+            if ($posisi->dokumen_lpj) {
+                foreach ($posisi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('POSISI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('posisi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $POSISI->update($data);
+        $posisi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.POSISI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.posisi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(POSISI $POSISI)
+    public function destroy(posisi $posisi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class POSISIController extends Controller
         }
 
         // Delete associated files
-        if ($POSISI->foto_jurnal) {
-            foreach ($POSISI->foto_jurnal as $foto) {
+        if ($posisi->foto_jurnal) {
+            foreach ($posisi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($POSISI->dokumen_lpj) {
-            foreach ($POSISI->dokumen_lpj as $dokumen) {
+        if ($posisi->dokumen_lpj) {
+            foreach ($posisi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $POSISI->delete();
+        $posisi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.POSISI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.posisi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class POSISIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, POSISI $POSISI)
+    public function removeFile(Request $request, posisi $posisi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class POSISIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $POSISI->$fileType ?? [];
+        $files = $posisi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class POSISIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $POSISI->update([$fileType => $files]);
+        $posisi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

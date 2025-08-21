@@ -1,4 +1,4 @@
-@if ($PABERSIData->isEmpty())
+@if ($pabersiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PABERSIData as $index => $data)
+                @forelse ($pabersiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PABERSIData->currentPage() - 1) * $PABERSIData->perPage() + $index + 1 }}
+                            {{ ($pabersiData->currentPage() - 1) * $pabersiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PABERSI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pabersi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -205,10 +205,10 @@
                 <div class="d-flex align-items-center">
                     <span class="me-2">Show</span>
                     <select name="per_page" class="form-select form-select-sm w-auto">
-                        @foreach ([10, 25, 50, 100] as $lPABERSIt)
-                            <option value="{{ $lPABERSIt }}"
-                                {{ request('per_page', 10) == $lPABERSIt ? 'selected' : '' }}>
-                                {{ $lPABERSIt }}
+                        @foreach ([10, 25, 50, 100] as $lpabersit)
+                            <option value="{{ $lpabersit }}"
+                                {{ request('per_page', 10) == $lpabersit ? 'selected' : '' }}>
+                                {{ $lpabersit }}
                             </option>
                         @endforeach
                     </select>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PABERSIData) && method_exists($PABERSIData, 'hasPages') && $PABERSIData->hasPages())
+            @if (isset($pabersiData) && method_exists($pabersiData, 'hasPages') && $pabersiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PABERSIData->firstItem() }}-{{ $PABERSIData->lastItem() }} of
-                        {{ $PABERSIData->total() }}
+                        {{ $pabersiData->firstItem() }}-{{ $pabersiData->lastItem() }} of
+                        {{ $pabersiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PABERSIData->onFirstPage())
+                        @if ($pabersiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PABERSIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $pabersiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PABERSIData->currentPage();
-                            $total = $PABERSIData->lastPage();
+                            $current = $pabersiData->currentPage();
+                            $total = $pabersiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PABERSIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $pabersiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PABERSIData->hasMorePages())
-                            <a href="{{ $PABERSIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($pabersiData->hasMorePages())
+                            <a href="{{ $pabersiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PABERSIData) && method_exists($PABERSIData, 'hasPages'))
+            @elseif(isset($pabersiData) && method_exists($pabersiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PABERSIData->count() }} of {{ $PABERSIData->total() }}
+                    1-{{ $pabersiData->count() }} of {{ $pabersiData->total() }}
                 </div>
             @endif
         </div>

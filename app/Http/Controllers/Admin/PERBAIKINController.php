@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PERBAIKIN;
+use App\Models\Perbaikin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PERBAIKINController extends Controller
+class PerbaikinController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PERBAIKIN::query();
+        $query = Perbaikin::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PERBAIKINController extends Controller
             $direction = 'desc';
         }
 
-        $PERBAIKINData = $query
+        $PerbaikinData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.PERBAIKIN._table', compact('PERBAIKINData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Perbaikin._table', compact('PerbaikinData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.PERBAIKIN.index', compact('PERBAIKINData'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Perbaikin.index', compact('PerbaikinData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.PERBAIKIN.create');
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Perbaikin.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PERBAIKINController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PERBAIKIN/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Perbaikin/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PERBAIKINController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PERBAIKIN/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Perbaikin/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        PERBAIKIN::create($data);
+        Perbaikin::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.PERBAIKIN.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Perbaikin.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(PERBAIKIN $PERBAIKIN)
+    public function show(Perbaikin $Perbaikin)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.PERBAIKIN.show', compact('PERBAIKIN'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Perbaikin.show', compact('Perbaikin'));
     }
 
-    public function edit(PERBAIKIN $PERBAIKIN)
+    public function edit(Perbaikin $Perbaikin)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.PERBAIKIN.edit', compact('PERBAIKIN'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Perbaikin.edit', compact('Perbaikin'));
     }
 
-    public function update(Request $request, PERBAIKIN $PERBAIKIN)
+    public function update(Request $request, Perbaikin $Perbaikin)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PERBAIKINController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($PERBAIKIN->foto_jurnal) {
-                foreach ($PERBAIKIN->foto_jurnal as $oldFoto) {
+            if ($Perbaikin->foto_jurnal) {
+                foreach ($Perbaikin->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PERBAIKIN/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Perbaikin/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PERBAIKINController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($PERBAIKIN->dokumen_lpj) {
-                foreach ($PERBAIKIN->dokumen_lpj as $oldDokumen) {
+            if ($Perbaikin->dokumen_lpj) {
+                foreach ($Perbaikin->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PERBAIKIN/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Perbaikin/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $PERBAIKIN->update($data);
+        $Perbaikin->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.PERBAIKIN.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Perbaikin.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(PERBAIKIN $PERBAIKIN)
+    public function destroy(Perbaikin $Perbaikin)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PERBAIKINController extends Controller
         }
 
         // Delete associated files
-        if ($PERBAIKIN->foto_jurnal) {
-            foreach ($PERBAIKIN->foto_jurnal as $foto) {
+        if ($Perbaikin->foto_jurnal) {
+            foreach ($Perbaikin->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($PERBAIKIN->dokumen_lpj) {
-            foreach ($PERBAIKIN->dokumen_lpj as $dokumen) {
+        if ($Perbaikin->dokumen_lpj) {
+            foreach ($Perbaikin->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $PERBAIKIN->delete();
+        $Perbaikin->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.PERBAIKIN.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Perbaikin.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PERBAIKINController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, PERBAIKIN $PERBAIKIN)
+    public function removeFile(Request $request, Perbaikin $Perbaikin)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PERBAIKINController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $PERBAIKIN->$fileType ?? [];
+        $files = $Perbaikin->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PERBAIKINController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $PERBAIKIN->update([$fileType => $files]);
+        $Perbaikin->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

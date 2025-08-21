@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\FORKI;
+use App\Models\Forki;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class FORKIController extends Controller
+class ForkiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = FORKI::query();
+        $query = Forki::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class FORKIController extends Controller
             $direction = 'desc';
         }
 
-        $FORKIData = $query
+        $ForkiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.FORKI._table', compact('FORKIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Forki._table', compact('ForkiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.FORKI.index', compact('FORKIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Forki.index', compact('ForkiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.FORKI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Forki.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class FORKIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('FORKI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Forki/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class FORKIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('FORKI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Forki/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        FORKI::create($data);
+        Forki::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.FORKI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Forki.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(FORKI $FORKI)
+    public function show(Forki $Forki)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.FORKI.show', compact('FORKI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Forki.show', compact('Forki'));
     }
 
-    public function edit(FORKI $FORKI)
+    public function edit(Forki $Forki)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.FORKI.edit', compact('FORKI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Forki.edit', compact('Forki'));
     }
 
-    public function update(Request $request, FORKI $FORKI)
+    public function update(Request $request, Forki $Forki)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class FORKIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($FORKI->foto_jurnal) {
-                foreach ($FORKI->foto_jurnal as $oldFoto) {
+            if ($Forki->foto_jurnal) {
+                foreach ($Forki->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('FORKI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Forki/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class FORKIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($FORKI->dokumen_lpj) {
-                foreach ($FORKI->dokumen_lpj as $oldDokumen) {
+            if ($Forki->dokumen_lpj) {
+                foreach ($Forki->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('FORKI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Forki/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $FORKI->update($data);
+        $Forki->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.FORKI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Forki.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(FORKI $FORKI)
+    public function destroy(Forki $Forki)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class FORKIController extends Controller
         }
 
         // Delete associated files
-        if ($FORKI->foto_jurnal) {
-            foreach ($FORKI->foto_jurnal as $foto) {
+        if ($Forki->foto_jurnal) {
+            foreach ($Forki->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($FORKI->dokumen_lpj) {
-            foreach ($FORKI->dokumen_lpj as $dokumen) {
+        if ($Forki->dokumen_lpj) {
+            foreach ($Forki->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $FORKI->delete();
+        $Forki->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.FORKI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Forki.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class FORKIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, FORKI $FORKI)
+    public function removeFile(Request $request, Forki $Forki)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class FORKIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $FORKI->$fileType ?? [];
+        $files = $Forki->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class FORKIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $FORKI->update([$fileType => $files]);
+        $Forki->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

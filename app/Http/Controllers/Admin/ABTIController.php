@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ABTI;
+use App\Models\Abti;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class ABTIController extends Controller
+class AbtiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ABTI::query();
+        $query = Abti::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class ABTIController extends Controller
             $direction = 'desc';
         }
 
-        $ABTIData = $query
+        $AbtiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.permainan.ABTI._table', compact('ABTIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.permainan.Abti._table', compact('AbtiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.ABTI.index', compact('ABTIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Abti.index', compact('AbtiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.ABTI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Abti.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class ABTIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('ABTI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Abti/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class ABTIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('ABTI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Abti/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        ABTI::create($data);
+        Abti::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.ABTI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Abti.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(ABTI $ABTI)
+    public function show(Abti $Abti)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.ABTI.show', compact('ABTI'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Abti.show', compact('Abti'));
     }
 
-    public function edit(ABTI $ABTI)
+    public function edit(Abti $Abti)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.ABTI.edit', compact('ABTI'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Abti.edit', compact('Abti'));
     }
 
-    public function update(Request $request, ABTI $ABTI)
+    public function update(Request $request, Abti $Abti)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class ABTIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($ABTI->foto_jurnal) {
-                foreach ($ABTI->foto_jurnal as $oldFoto) {
+            if ($Abti->foto_jurnal) {
+                foreach ($Abti->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('ABTI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Abti/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class ABTIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($ABTI->dokumen_lpj) {
-                foreach ($ABTI->dokumen_lpj as $oldDokumen) {
+            if ($Abti->dokumen_lpj) {
+                foreach ($Abti->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('ABTI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Abti/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $ABTI->update($data);
+        $Abti->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.ABTI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Abti.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(ABTI $ABTI)
+    public function destroy(Abti $Abti)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class ABTIController extends Controller
         }
 
         // Delete associated files
-        if ($ABTI->foto_jurnal) {
-            foreach ($ABTI->foto_jurnal as $foto) {
+        if ($Abti->foto_jurnal) {
+            foreach ($Abti->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($ABTI->dokumen_lpj) {
-            foreach ($ABTI->dokumen_lpj as $dokumen) {
+        if ($Abti->dokumen_lpj) {
+            foreach ($Abti->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $ABTI->delete();
+        $Abti->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.ABTI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Abti.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class ABTIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, ABTI $ABTI)
+    public function removeFile(Request $request, Abti $Abti)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class ABTIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $ABTI->$fileType ?? [];
+        $files = $Abti->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class ABTIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $ABTI->update([$fileType => $files]);
+        $Abti->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PARSI;
+use App\Models\parsi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PARSIController extends Controller
+class parsiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PARSI::query();
+        $query = parsi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PARSIController extends Controller
             $direction = 'desc';
         }
 
-        $PARSIData = $query
+        $parsiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.terukur.PARSI._table', compact('PARSIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.terukur.parsi._table', compact('parsiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PARSI.index', compact('PARSIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.parsi.index', compact('parsiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PARSI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.parsi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PARSIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PARSI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('parsi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PARSIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PARSI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('parsi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        PARSI::create($data);
+        parsi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PARSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.parsi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(PARSI $PARSI)
+    public function show(parsi $parsi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PARSI.show', compact('PARSI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.parsi.show', compact('parsi'));
     }
 
-    public function edit(PARSI $PARSI)
+    public function edit(parsi $parsi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PARSI.edit', compact('PARSI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.parsi.edit', compact('parsi'));
     }
 
-    public function update(Request $request, PARSI $PARSI)
+    public function update(Request $request, parsi $parsi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PARSIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($PARSI->foto_jurnal) {
-                foreach ($PARSI->foto_jurnal as $oldFoto) {
+            if ($parsi->foto_jurnal) {
+                foreach ($parsi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PARSI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('parsi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PARSIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($PARSI->dokumen_lpj) {
-                foreach ($PARSI->dokumen_lpj as $oldDokumen) {
+            if ($parsi->dokumen_lpj) {
+                foreach ($parsi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PARSI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('parsi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $PARSI->update($data);
+        $parsi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PARSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.parsi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(PARSI $PARSI)
+    public function destroy(parsi $parsi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PARSIController extends Controller
         }
 
         // Delete associated files
-        if ($PARSI->foto_jurnal) {
-            foreach ($PARSI->foto_jurnal as $foto) {
+        if ($parsi->foto_jurnal) {
+            foreach ($parsi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($PARSI->dokumen_lpj) {
-            foreach ($PARSI->dokumen_lpj as $dokumen) {
+        if ($parsi->dokumen_lpj) {
+            foreach ($parsi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $PARSI->delete();
+        $parsi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PARSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.parsi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PARSIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, PARSI $PARSI)
+    public function removeFile(Request $request, parsi $parsi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PARSIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $PARSI->$fileType ?? [];
+        $files = $parsi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PARSIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $PARSI->update([$fileType => $files]);
+        $parsi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

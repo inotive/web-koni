@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PABERSI;
+use App\Models\pabersi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PABERSIController extends Controller
+class pabersiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PABERSI::query();
+        $query = pabersi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PABERSIController extends Controller
             $direction = 'desc';
         }
 
-        $PABERSIData = $query
+        $pabersiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.terukur.PABERSI._table', compact('PABERSIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.terukur.pabersi._table', compact('pabersiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PABERSI.index', compact('PABERSIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.pabersi.index', compact('pabersiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PABERSI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.pabersi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PABERSIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PABERSI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pabersi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PABERSIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PABERSI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pabersi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        PABERSI::create($data);
+        pabersi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PABERSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pabersi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(PABERSI $PABERSI)
+    public function show(pabersi $pabersi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PABERSI.show', compact('PABERSI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.pabersi.show', compact('pabersi'));
     }
 
-    public function edit(PABERSI $PABERSI)
+    public function edit(pabersi $pabersi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PABERSI.edit', compact('PABERSI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.pabersi.edit', compact('pabersi'));
     }
 
-    public function update(Request $request, PABERSI $PABERSI)
+    public function update(Request $request, pabersi $pabersi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PABERSIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($PABERSI->foto_jurnal) {
-                foreach ($PABERSI->foto_jurnal as $oldFoto) {
+            if ($pabersi->foto_jurnal) {
+                foreach ($pabersi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PABERSI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pabersi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PABERSIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($PABERSI->dokumen_lpj) {
-                foreach ($PABERSI->dokumen_lpj as $oldDokumen) {
+            if ($pabersi->dokumen_lpj) {
+                foreach ($pabersi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PABERSI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pabersi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $PABERSI->update($data);
+        $pabersi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PABERSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pabersi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(PABERSI $PABERSI)
+    public function destroy(pabersi $pabersi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PABERSIController extends Controller
         }
 
         // Delete associated files
-        if ($PABERSI->foto_jurnal) {
-            foreach ($PABERSI->foto_jurnal as $foto) {
+        if ($pabersi->foto_jurnal) {
+            foreach ($pabersi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($PABERSI->dokumen_lpj) {
-            foreach ($PABERSI->dokumen_lpj as $dokumen) {
+        if ($pabersi->dokumen_lpj) {
+            foreach ($pabersi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $PABERSI->delete();
+        $pabersi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PABERSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pabersi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PABERSIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, PABERSI $PABERSI)
+    public function removeFile(Request $request, pabersi $pabersi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PABERSIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $PABERSI->$fileType ?? [];
+        $files = $pabersi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PABERSIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $PABERSI->update([$fileType => $files]);
+        $pabersi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PBVSI;
+use App\Models\Pbvsi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PBVSIController extends Controller
+class PbvsiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PBVSI::query();
+        $query = Pbvsi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PBVSIController extends Controller
             $direction = 'desc';
         }
 
-        $PBVSIData = $query
+        $PbvsiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.permainan.PBVSI._table', compact('PBVSIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.permainan.Pbvsi._table', compact('PbvsiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.PBVSI.index', compact('PBVSIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pbvsi.index', compact('PbvsiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.PBVSI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pbvsi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PBVSIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PBVSI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Pbvsi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PBVSIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PBVSI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Pbvsi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        PBVSI::create($data);
+        Pbvsi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PBVSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pbvsi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(PBVSI $PBVSI)
+    public function show(Pbvsi $Pbvsi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.PBVSI.show', compact('PBVSI'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pbvsi.show', compact('Pbvsi'));
     }
 
-    public function edit(PBVSI $PBVSI)
+    public function edit(Pbvsi $Pbvsi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.PBVSI.edit', compact('PBVSI'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pbvsi.edit', compact('Pbvsi'));
     }
 
-    public function update(Request $request, PBVSI $PBVSI)
+    public function update(Request $request, Pbvsi $Pbvsi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PBVSIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($PBVSI->foto_jurnal) {
-                foreach ($PBVSI->foto_jurnal as $oldFoto) {
+            if ($Pbvsi->foto_jurnal) {
+                foreach ($Pbvsi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PBVSI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Pbvsi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PBVSIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($PBVSI->dokumen_lpj) {
-                foreach ($PBVSI->dokumen_lpj as $oldDokumen) {
+            if ($Pbvsi->dokumen_lpj) {
+                foreach ($Pbvsi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PBVSI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Pbvsi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $PBVSI->update($data);
+        $Pbvsi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PBVSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pbvsi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(PBVSI $PBVSI)
+    public function destroy(Pbvsi $Pbvsi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PBVSIController extends Controller
         }
 
         // Delete associated files
-        if ($PBVSI->foto_jurnal) {
-            foreach ($PBVSI->foto_jurnal as $foto) {
+        if ($Pbvsi->foto_jurnal) {
+            foreach ($Pbvsi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($PBVSI->dokumen_lpj) {
-            foreach ($PBVSI->dokumen_lpj as $dokumen) {
+        if ($Pbvsi->dokumen_lpj) {
+            foreach ($Pbvsi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $PBVSI->delete();
+        $Pbvsi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PBVSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pbvsi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PBVSIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, PBVSI $PBVSI)
+    public function removeFile(Request $request, Pbvsi $Pbvsi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PBVSIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $PBVSI->$fileType ?? [];
+        $files = $Pbvsi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PBVSIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $PBVSI->update([$fileType => $files]);
+        $Pbvsi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

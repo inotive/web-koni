@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Edit FAJI')
+@section('pageTitle', 'Edit Faji')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,9 +8,9 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor Terukur')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur'))
-@section('subSection4', 'FAJI')
+@section('subSection4', 'Faji')
 @section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.faji.index'))
-@section('currentSection', 'Edit FAJI')
+@section('currentSection', 'Edit Faji')
 
 @section('content')
     <style>

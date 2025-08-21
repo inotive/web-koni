@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\TI;
+use App\Models\Ti;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class TIController extends Controller
+class TiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = TI::query();
+        $query = Ti::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class TIController extends Controller
             $direction = 'desc';
         }
 
-        $TIData = $query
+        $TiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.TI._table', compact('TIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ti._table', compact('TiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.TI.index', compact('TIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ti.index', compact('TiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.TI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ti.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class TIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('TI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Ti/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class TIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('TI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Ti/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        TI::create($data);
+        Ti::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.TI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ti.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(TI $TI)
+    public function show(Ti $Ti)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.TI.show', compact('TI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ti.show', compact('Ti'));
     }
 
-    public function edit(TI $TI)
+    public function edit(Ti $Ti)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.TI.edit', compact('TI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ti.edit', compact('Ti'));
     }
 
-    public function update(Request $request, TI $TI)
+    public function update(Request $request, Ti $Ti)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class TIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($TI->foto_jurnal) {
-                foreach ($TI->foto_jurnal as $oldFoto) {
+            if ($Ti->foto_jurnal) {
+                foreach ($Ti->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('TI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Ti/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class TIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($TI->dokumen_lpj) {
-                foreach ($TI->dokumen_lpj as $oldDokumen) {
+            if ($Ti->dokumen_lpj) {
+                foreach ($Ti->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('TI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Ti/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $TI->update($data);
+        $Ti->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.TI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ti.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(TI $TI)
+    public function destroy(Ti $Ti)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class TIController extends Controller
         }
 
         // Delete associated files
-        if ($TI->foto_jurnal) {
-            foreach ($TI->foto_jurnal as $foto) {
+        if ($Ti->foto_jurnal) {
+            foreach ($Ti->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($TI->dokumen_lpj) {
-            foreach ($TI->dokumen_lpj as $dokumen) {
+        if ($Ti->dokumen_lpj) {
+            foreach ($Ti->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $TI->delete();
+        $Ti->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.TI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ti.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class TIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, TI $TI)
+    public function removeFile(Request $request, Ti $Ti)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class TIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $TI->$fileType ?? [];
+        $files = $Ti->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class TIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $TI->update([$fileType => $files]);
+        $Ti->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

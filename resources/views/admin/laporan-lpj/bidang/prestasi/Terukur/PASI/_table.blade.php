@@ -1,4 +1,4 @@
-@if ($PASIData->isEmpty())
+@if ($pasiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PASIData as $index => $data)
+                @forelse ($pasiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PASIData->currentPage() - 1) * $PASIData->perPage() + $index + 1 }}
+                            {{ ($pasiData->currentPage() - 1) * $pasiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PASI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pasi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -205,10 +205,10 @@
                 <div class="d-flex align-items-center">
                     <span class="me-2">Show</span>
                     <select name="per_page" class="form-select form-select-sm w-auto">
-                        @foreach ([10, 25, 50, 100] as $lPASIt)
-                            <option value="{{ $lPASIt }}"
-                                {{ request('per_page', 10) == $lPASIt ? 'selected' : '' }}>
-                                {{ $lPASIt }}
+                        @foreach ([10, 25, 50, 100] as $lpasit)
+                            <option value="{{ $lpasit }}"
+                                {{ request('per_page', 10) == $lpasit ? 'selected' : '' }}>
+                                {{ $lpasit }}
                             </option>
                         @endforeach
                     </select>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PASIData) && method_exists($PASIData, 'hasPages') && $PASIData->hasPages())
+            @if (isset($pasiData) && method_exists($pasiData, 'hasPages') && $pasiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PASIData->firstItem() }}-{{ $PASIData->lastItem() }} of
-                        {{ $PASIData->total() }}
+                        {{ $pasiData->firstItem() }}-{{ $pasiData->lastItem() }} of
+                        {{ $pasiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PASIData->onFirstPage())
+                        @if ($pasiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PASIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $pasiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PASIData->currentPage();
-                            $total = $PASIData->lastPage();
+                            $current = $pasiData->currentPage();
+                            $total = $pasiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PASIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $pasiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PASIData->hasMorePages())
-                            <a href="{{ $PASIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($pasiData->hasMorePages())
+                            <a href="{{ $pasiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PASIData) && method_exists($PASIData, 'hasPages'))
+            @elseif(isset($pasiData) && method_exists($pasiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PASIData->count() }} of {{ $PASIData->total() }}
+                    1-{{ $pasiData->count() }} of {{ $pasiData->total() }}
                 </div>
             @endif
         </div>

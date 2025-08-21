@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\AFKAB;
+use App\Models\Afkab;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class AFKABController extends Controller
+class AfkabController extends Controller
 {
     public function index(Request $request)
     {
-        $query = AFKAB::query();
+        $query = Afkab::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class AFKABController extends Controller
             $direction = 'desc';
         }
 
-        $AFKABData = $query
+        $AfkabData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.permainan.AFKAB._table', compact('AFKABData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.permainan.Afkab._table', compact('AfkabData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.AFKAB.index', compact('AFKABData'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Afkab.index', compact('AfkabData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.AFKAB.create');
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Afkab.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class AFKABController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('AFKAB/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Afkab/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class AFKABController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('AFKAB/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Afkab/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        AFKAB::create($data);
+        Afkab::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.AFKAB.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Afkab.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(AFKAB $AFKAB)
+    public function show(Afkab $Afkab)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.AFKAB.show', compact('AFKAB'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Afkab.show', compact('Afkab'));
     }
 
-    public function edit(AFKAB $AFKAB)
+    public function edit(Afkab $Afkab)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.AFKAB.edit', compact('AFKAB'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Afkab.edit', compact('Afkab'));
     }
 
-    public function update(Request $request, AFKAB $AFKAB)
+    public function update(Request $request, Afkab $Afkab)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class AFKABController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($AFKAB->foto_jurnal) {
-                foreach ($AFKAB->foto_jurnal as $oldFoto) {
+            if ($Afkab->foto_jurnal) {
+                foreach ($Afkab->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('AFKAB/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Afkab/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class AFKABController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($AFKAB->dokumen_lpj) {
-                foreach ($AFKAB->dokumen_lpj as $oldDokumen) {
+            if ($Afkab->dokumen_lpj) {
+                foreach ($Afkab->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('AFKAB/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Afkab/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $AFKAB->update($data);
+        $Afkab->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.AFKAB.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Afkab.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(AFKAB $AFKAB)
+    public function destroy(Afkab $Afkab)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class AFKABController extends Controller
         }
 
         // Delete associated files
-        if ($AFKAB->foto_jurnal) {
-            foreach ($AFKAB->foto_jurnal as $foto) {
+        if ($Afkab->foto_jurnal) {
+            foreach ($Afkab->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($AFKAB->dokumen_lpj) {
-            foreach ($AFKAB->dokumen_lpj as $dokumen) {
+        if ($Afkab->dokumen_lpj) {
+            foreach ($Afkab->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $AFKAB->delete();
+        $Afkab->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.AFKAB.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Afkab.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class AFKABController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, AFKAB $AFKAB)
+    public function removeFile(Request $request, Afkab $Afkab)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class AFKABController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $AFKAB->$fileType ?? [];
+        $files = $Afkab->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class AFKABController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $AFKAB->update([$fileType => $files]);
+        $Afkab->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

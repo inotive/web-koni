@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\IKASI;
+use App\Models\Ikasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class IKASIController extends Controller
+class IkasiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = IKASI::query();
+        $query = Ikasi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class IKASIController extends Controller
             $direction = 'desc';
         }
 
-        $IKASIData = $query
+        $IkasiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.IKASI._table', compact('IKASIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ikasi._table', compact('IkasiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.IKASI.index', compact('IKASIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ikasi.index', compact('IkasiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.IKASI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ikasi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class IKASIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('IKASI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Ikasi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class IKASIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('IKASI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Ikasi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        IKASI::create($data);
+        Ikasi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.IKASI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ikasi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(IKASI $IKASI)
+    public function show(Ikasi $Ikasi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.IKASI.show', compact('IKASI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ikasi.show', compact('Ikasi'));
     }
 
-    public function edit(IKASI $IKASI)
+    public function edit(Ikasi $Ikasi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.IKASI.edit', compact('IKASI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ikasi.edit', compact('Ikasi'));
     }
 
-    public function update(Request $request, IKASI $IKASI)
+    public function update(Request $request, Ikasi $Ikasi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class IKASIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($IKASI->foto_jurnal) {
-                foreach ($IKASI->foto_jurnal as $oldFoto) {
+            if ($Ikasi->foto_jurnal) {
+                foreach ($Ikasi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('IKASI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Ikasi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class IKASIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($IKASI->dokumen_lpj) {
-                foreach ($IKASI->dokumen_lpj as $oldDokumen) {
+            if ($Ikasi->dokumen_lpj) {
+                foreach ($Ikasi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('IKASI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Ikasi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $IKASI->update($data);
+        $Ikasi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.IKASI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ikasi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(IKASI $IKASI)
+    public function destroy(Ikasi $Ikasi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class IKASIController extends Controller
         }
 
         // Delete associated files
-        if ($IKASI->foto_jurnal) {
-            foreach ($IKASI->foto_jurnal as $foto) {
+        if ($Ikasi->foto_jurnal) {
+            foreach ($Ikasi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($IKASI->dokumen_lpj) {
-            foreach ($IKASI->dokumen_lpj as $dokumen) {
+        if ($Ikasi->dokumen_lpj) {
+            foreach ($Ikasi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $IKASI->delete();
+        $Ikasi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.IKASI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ikasi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class IKASIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, IKASI $IKASI)
+    public function removeFile(Request $request, Ikasi $Ikasi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class IKASIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $IKASI->$fileType ?? [];
+        $files = $Ikasi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class IKASIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $IKASI->update([$fileType => $files]);
+        $Ikasi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

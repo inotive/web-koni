@@ -1,4 +1,4 @@
-@if ($IMIData->isEmpty())
+@if ($imiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($IMIData as $index => $data)
+                @forelse ($imiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($IMIData->currentPage() - 1) * $IMIData->perPage() + $index + 1 }}
+                            {{ ($imiData->currentPage() - 1) * $imiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.IMI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.imi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($IMIData) && method_exists($IMIData, 'hasPages') && $IMIData->hasPages())
+            @if (isset($imiData) && method_exists($imiData, 'hasPages') && $imiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $IMIData->firstItem() }}-{{ $IMIData->lastItem() }} of
-                        {{ $IMIData->total() }}
+                        {{ $imiData->firstItem() }}-{{ $imiData->lastItem() }} of
+                        {{ $imiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($IMIData->onFirstPage())
+                        @if ($imiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $IMIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $imiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $IMIData->currentPage();
-                            $total = $IMIData->lastPage();
+                            $current = $imiData->currentPage();
+                            $total = $imiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $IMIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $imiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($IMIData->hasMorePages())
-                            <a href="{{ $IMIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($imiData->hasMorePages())
+                            <a href="{{ $imiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($IMIData) && method_exists($IMIData, 'hasPages'))
+            @elseif(isset($imiData) && method_exists($imiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $IMIData->count() }} of {{ $IMIData->total() }}
+                    1-{{ $imiData->count() }} of {{ $imiData->total() }}
                 </div>
             @endif
         </div>

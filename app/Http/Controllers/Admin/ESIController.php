@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ESI;
+use App\Models\Esi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class ESIController extends Controller
+class EsiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = ESI::query();
+        $query = Esi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class ESIController extends Controller
             $direction = 'desc';
         }
 
-        $ESIData = $query
+        $EsiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.ESI._table', compact('ESIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Esi._table', compact('EsiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.ESI.index', compact('ESIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Esi.index', compact('EsiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.ESI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Esi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class ESIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('ESI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Esi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class ESIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('ESI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Esi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        ESI::create($data);
+        Esi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.ESI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Esi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(ESI $ESI)
+    public function show(Esi $Esi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.ESI.show', compact('ESI'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Esi.show', compact('Esi'));
     }
 
-    public function edit(ESI $ESI)
+    public function edit(Esi $Esi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.ESI.edit', compact('ESI'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Esi.edit', compact('Esi'));
     }
 
-    public function update(Request $request, ESI $ESI)
+    public function update(Request $request, Esi $Esi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class ESIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($ESI->foto_jurnal) {
-                foreach ($ESI->foto_jurnal as $oldFoto) {
+            if ($Esi->foto_jurnal) {
+                foreach ($Esi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('ESI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Esi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class ESIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($ESI->dokumen_lpj) {
-                foreach ($ESI->dokumen_lpj as $oldDokumen) {
+            if ($Esi->dokumen_lpj) {
+                foreach ($Esi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('ESI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Esi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $ESI->update($data);
+        $Esi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.ESI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Esi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(ESI $ESI)
+    public function destroy(Esi $Esi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class ESIController extends Controller
         }
 
         // Delete associated files
-        if ($ESI->foto_jurnal) {
-            foreach ($ESI->foto_jurnal as $foto) {
+        if ($Esi->foto_jurnal) {
+            foreach ($Esi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($ESI->dokumen_lpj) {
-            foreach ($ESI->dokumen_lpj as $dokumen) {
+        if ($Esi->dokumen_lpj) {
+            foreach ($Esi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $ESI->delete();
+        $Esi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.ESI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Esi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class ESIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, ESI $ESI)
+    public function removeFile(Request $request, Esi $Esi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class ESIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $ESI->$fileType ?? [];
+        $files = $Esi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class ESIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $ESI->update([$fileType => $files]);
+        $Esi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

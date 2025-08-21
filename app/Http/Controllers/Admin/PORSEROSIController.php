@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PORSEROSI;
+use App\Models\porserosi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PORSEROSIController extends Controller
+class porserosiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PORSEROSI::query();
+        $query = porserosi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PORSEROSIController extends Controller
             $direction = 'desc';
         }
 
-        $PORSEROSIData = $query
+        $porserosiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.terukur.PORSEROSI._table', compact('PORSEROSIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.terukur.porserosi._table', compact('porserosiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PORSEROSI.index', compact('PORSEROSIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.porserosi.index', compact('porserosiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PORSEROSI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.porserosi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PORSEROSIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PORSEROSI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('porserosi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PORSEROSIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PORSEROSI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('porserosi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        PORSEROSI::create($data);
+        porserosi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PORSEROSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.porserosi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(PORSEROSI $PORSEROSI)
+    public function show(porserosi $porserosi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PORSEROSI.show', compact('PORSEROSI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.porserosi.show', compact('porserosi'));
     }
 
-    public function edit(PORSEROSI $PORSEROSI)
+    public function edit(porserosi $porserosi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.terukur.PORSEROSI.edit', compact('PORSEROSI'));
+        return view('admin.laporan-lpj.bidang.prestasi.terukur.porserosi.edit', compact('porserosi'));
     }
 
-    public function update(Request $request, PORSEROSI $PORSEROSI)
+    public function update(Request $request, porserosi $porserosi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PORSEROSIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($PORSEROSI->foto_jurnal) {
-                foreach ($PORSEROSI->foto_jurnal as $oldFoto) {
+            if ($porserosi->foto_jurnal) {
+                foreach ($porserosi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PORSEROSI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('porserosi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PORSEROSIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($PORSEROSI->dokumen_lpj) {
-                foreach ($PORSEROSI->dokumen_lpj as $oldDokumen) {
+            if ($porserosi->dokumen_lpj) {
+                foreach ($porserosi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PORSEROSI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('porserosi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $PORSEROSI->update($data);
+        $porserosi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PORSEROSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.porserosi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(PORSEROSI $PORSEROSI)
+    public function destroy(porserosi $porserosi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PORSEROSIController extends Controller
         }
 
         // Delete associated files
-        if ($PORSEROSI->foto_jurnal) {
-            foreach ($PORSEROSI->foto_jurnal as $foto) {
+        if ($porserosi->foto_jurnal) {
+            foreach ($porserosi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($PORSEROSI->dokumen_lpj) {
-            foreach ($PORSEROSI->dokumen_lpj as $dokumen) {
+        if ($porserosi->dokumen_lpj) {
+            foreach ($porserosi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $PORSEROSI->delete();
+        $porserosi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PORSEROSI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.porserosi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PORSEROSIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, PORSEROSI $PORSEROSI)
+    public function removeFile(Request $request, porserosi $porserosi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PORSEROSIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $PORSEROSI->$fileType ?? [];
+        $files = $porserosi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PORSEROSIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $PORSEROSI->update([$fileType => $files]);
+        $porserosi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

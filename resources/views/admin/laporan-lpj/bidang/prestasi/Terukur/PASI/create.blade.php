@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Tambah PASI')
+@section('pageTitle', 'Tambah pasi')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,9 +8,9 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor Terukur')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur'))
-@section('subSection4', 'PASI')
-@section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PASI.index'))
-@section('currentSection', 'Tambah PASI')
+@section('subSection4', 'pasi')
+@section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pasi.index'))
+@section('currentSection', 'Tambah pasi')
 
 @section('content')
 
@@ -223,7 +223,7 @@
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Data PASI</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Data pasi</h3>
     </div>
 
     <div class="main-content">
@@ -232,7 +232,7 @@
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Tambah Data</h3>
-                        <form action="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PASI.store') }}" method="POST"
+                        <form action="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pasi.store') }}" method="POST"
                             enctype="multipart/form-data" id="sumberDayaForm">
                             @csrf
 
@@ -387,7 +387,7 @@
                             <div class="row mt-4">
                                 <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                                     <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
-                                    <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.PASI.index') }}"
+                                    <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pasi.index') }}"
                                         class="btn btn-secondary px-4">Kembali</a>
                                 </div>
                             </div>
@@ -449,7 +449,7 @@
                     return true;
                 });
 
-                // Check if adding new files would exceed the lPASIt
+                // Check if adding new files would exceed the lpasit
                 if (currentFiles.length + newFiles.length > MAX_FILES) {
                     alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${currentFiles.length} file.`);
                     return;

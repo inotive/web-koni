@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\KBI;
+use App\Models\Kbi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class KBIController extends Controller
+class KbiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = KBI::query();
+        $query = Kbi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class KBIController extends Controller
             $direction = 'desc';
         }
 
-        $KBIData = $query
+        $KbiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.KBI._table', compact('KBIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Kbi._table', compact('KbiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.KBI.index', compact('KBIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Kbi.index', compact('KbiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.KBI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Kbi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class KBIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('KBI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Kbi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class KBIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('KBI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Kbi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        KBI::create($data);
+        Kbi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.KBI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Kbi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(KBI $KBI)
+    public function show(Kbi $Kbi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.KBI.show', compact('KBI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Kbi.show', compact('Kbi'));
     }
 
-    public function edit(KBI $KBI)
+    public function edit(Kbi $Kbi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.KBI.edit', compact('KBI'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Kbi.edit', compact('Kbi'));
     }
 
-    public function update(Request $request, KBI $KBI)
+    public function update(Request $request, Kbi $Kbi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class KBIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($KBI->foto_jurnal) {
-                foreach ($KBI->foto_jurnal as $oldFoto) {
+            if ($Kbi->foto_jurnal) {
+                foreach ($Kbi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('KBI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Kbi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class KBIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($KBI->dokumen_lpj) {
-                foreach ($KBI->dokumen_lpj as $oldDokumen) {
+            if ($Kbi->dokumen_lpj) {
+                foreach ($Kbi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('KBI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Kbi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $KBI->update($data);
+        $Kbi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.KBI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Kbi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(KBI $KBI)
+    public function destroy(Kbi $Kbi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class KBIController extends Controller
         }
 
         // Delete associated files
-        if ($KBI->foto_jurnal) {
-            foreach ($KBI->foto_jurnal as $foto) {
+        if ($Kbi->foto_jurnal) {
+            foreach ($Kbi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($KBI->dokumen_lpj) {
-            foreach ($KBI->dokumen_lpj as $dokumen) {
+        if ($Kbi->dokumen_lpj) {
+            foreach ($Kbi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $KBI->delete();
+        $Kbi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.KBI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Kbi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class KBIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, KBI $KBI)
+    public function removeFile(Request $request, Kbi $Kbi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class KBIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $KBI->$fileType ?? [];
+        $files = $Kbi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class KBIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $KBI->update([$fileType => $files]);
+        $Kbi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

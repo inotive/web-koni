@@ -23,50 +23,50 @@ use App\Http\Controllers\Admin\organisasiController;
 use App\Http\Controllers\Admin\kesehatanController;
 use App\Http\Controllers\Admin\hubunganlembagaController;
 use App\Http\Controllers\Admin\AkuatikController;
-use App\Http\Controllers\Admin\FAJIController;
-use App\Http\Controllers\Admin\FPTIController;
-use App\Http\Controllers\Admin\IMIController;
-use App\Http\Controllers\Admin\ISSIController;
-use App\Http\Controllers\Admin\PABERSIController;
-use App\Http\Controllers\Admin\PASIController;
-use App\Http\Controllers\Admin\PORSEROSIController;
-use App\Http\Controllers\Admin\POSISIController;
-use App\Http\Controllers\Admin\ESIController;
-use App\Http\Controllers\Admin\FASIController;
-use App\Http\Controllers\Admin\FTIController;
-use App\Http\Controllers\Admin\IODIController;
-use App\Http\Controllers\Admin\PBFIController;
-use App\Http\Controllers\Admin\PERBAIKINController;
-use App\Http\Controllers\Admin\PERPANIController;
-use App\Http\Controllers\Admin\PERSANIController;
-use App\Http\Controllers\Admin\PGIController;
-use App\Http\Controllers\Admin\POBSIController;
-use App\Http\Controllers\Admin\PORDASIController;
-use App\Http\Controllers\Admin\ABTIController;
-use App\Http\Controllers\Admin\AFKABController;
-use App\Http\Controllers\Admin\GABSIController;
-use App\Http\Controllers\Admin\PBSIController;
-use App\Http\Controllers\Admin\PBVSIController;
-use App\Http\Controllers\Admin\PDBIController;
-use App\Http\Controllers\Admin\PELTIController;
-use App\Http\Controllers\Admin\PERBASIController;
-use App\Http\Controllers\Admin\PERCASIController;
-use App\Http\Controllers\Admin\PSSIController;
-use App\Http\Controllers\Admin\PSTIController;
-use App\Http\Controllers\Admin\PTMSIController;
-use App\Http\Controllers\Admin\FERKUSHIController;
-use App\Http\Controllers\Admin\FORKIController;
-use App\Http\Controllers\Admin\IBCAController;
-use App\Http\Controllers\Admin\IKASIController;
-use App\Http\Controllers\Admin\IPSIController;
-use App\Http\Controllers\Admin\KBIController;
-use App\Http\Controllers\Admin\MIController;
-use App\Http\Controllers\Admin\PERKEMIController;
-use App\Http\Controllers\Admin\PERSAMBIController;
-use App\Http\Controllers\Admin\PERTINAController;
-use App\Http\Controllers\Admin\PGSIController;
-use App\Http\Controllers\Admin\PJSIController;
-use App\Http\Controllers\Admin\TIController;
+use App\Http\Controllers\Admin\FajiController;
+use App\Http\Controllers\Admin\FptiController;
+use App\Http\Controllers\Admin\ImiController;
+use App\Http\Controllers\Admin\IssiController;
+use App\Http\Controllers\Admin\PabersiController;
+use App\Http\Controllers\Admin\PasiController;
+use App\Http\Controllers\Admin\PorserosiController;
+use App\Http\Controllers\Admin\PosisiController;
+use App\Http\Controllers\Admin\EsiController;
+use App\Http\Controllers\Admin\FasiController;
+use App\Http\Controllers\Admin\FtiController;
+use App\Http\Controllers\Admin\IodiController;
+use App\Http\Controllers\Admin\PbfiController;
+use App\Http\Controllers\Admin\PerbaikinController;
+use App\Http\Controllers\Admin\PerpaniController;
+use App\Http\Controllers\Admin\PersaniController;
+use App\Http\Controllers\Admin\PgiController;
+use App\Http\Controllers\Admin\PobsiController;
+use App\Http\Controllers\Admin\PordasiController;
+use App\Http\Controllers\Admin\AbtiController;
+use App\Http\Controllers\Admin\AfkabController;
+use App\Http\Controllers\Admin\GabsiController;
+use App\Http\Controllers\Admin\PbsiController;
+use App\Http\Controllers\Admin\PbvsiController;
+use App\Http\Controllers\Admin\PdbiController;
+use App\Http\Controllers\Admin\PeltiController;
+use App\Http\Controllers\Admin\PerbasiController;
+use App\Http\Controllers\Admin\PercasiController;
+use App\Http\Controllers\Admin\PssiController;
+use App\Http\Controllers\Admin\PstiController;
+use App\Http\Controllers\Admin\PtmsiController;
+use App\Http\Controllers\Admin\FerkushiController;
+use App\Http\Controllers\Admin\ForkiController;
+use App\Http\Controllers\Admin\IbcaController;
+use App\Http\Controllers\Admin\IkasiController;
+use App\Http\Controllers\Admin\IpsiController;
+use App\Http\Controllers\Admin\KbiController;
+use App\Http\Controllers\Admin\MiController;
+use App\Http\Controllers\Admin\PerkemiController;
+use App\Http\Controllers\Admin\PersambiController;
+use App\Http\Controllers\Admin\PertinaController;
+use App\Http\Controllers\Admin\PgsiController;
+use App\Http\Controllers\Admin\PjsiController;
+use App\Http\Controllers\Admin\TiController;
 use App\Http\Controllers\LaporanRKAController;
 use App\Http\Controllers\Admin\KegiatanLainnyaController;
 
@@ -101,7 +101,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     });
 
     Route::resource('file-kesekretariat', \App\Http\Controllers\Admin\FileKesekretariatController::class);
-    // Letakkan rute 'download' sebelum rute resourc    e
+    // Letakkan rute 'download' sebelum rute resource
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
 
@@ -220,445 +220,445 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
                             Route::delete('/{akuatik}', [App\Http\Controllers\Admin\AkuatikController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('FAJI')->name('FAJI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\FAJIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\FAJIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\FAJIController::class, 'store'])->name('store');
-                            Route::get('/{FAJI}', [App\Http\Controllers\Admin\FAJIController::class, 'show'])->name('show');
-                            Route::get('/{FAJI}/edit', [App\Http\Controllers\Admin\FAJIController::class, 'edit'])->name('edit');
-                            Route::put('/{FAJI}', [App\Http\Controllers\Admin\FAJIController::class, 'update'])->name('update');
-                            Route::delete('/{FAJI}', [App\Http\Controllers\Admin\FAJIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('faji')->name('faji.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\FajiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\FajiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\FajiController::class, 'store'])->name('store');
+                            Route::get('/{faji}', [App\Http\Controllers\Admin\FajiController::class, 'show'])->name('show');
+                            Route::get('/{faji}/edit', [App\Http\Controllers\Admin\FajiController::class, 'edit'])->name('edit');
+                            Route::put('/{faji}', [App\Http\Controllers\Admin\FajiController::class, 'update'])->name('update');
+                            Route::delete('/{faji}', [App\Http\Controllers\Admin\FajiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('FPTI')->name('FPTI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\FPTIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\FPTIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\FPTIController::class, 'store'])->name('store');
-                            Route::get('/{FPTI}', [App\Http\Controllers\Admin\FPTIController::class, 'show'])->name('show');
-                            Route::get('/{FPTI}/edit', [App\Http\Controllers\Admin\FPTIController::class, 'edit'])->name('edit');
-                            Route::put('/{FPTI}', [App\Http\Controllers\Admin\FPTIController::class, 'update'])->name('update');
-                            Route::delete('/{FPTI}', [App\Http\Controllers\Admin\FPTIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('fpti')->name('fpti.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\FptiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\FptiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\FptiController::class, 'store'])->name('store');
+                            Route::get('/{fpti}', [App\Http\Controllers\Admin\FptiController::class, 'show'])->name('show');
+                            Route::get('/{fpti}/edit', [App\Http\Controllers\Admin\FptiController::class, 'edit'])->name('edit');
+                            Route::put('/{fpti}', [App\Http\Controllers\Admin\FptiController::class, 'update'])->name('update');
+                            Route::delete('/{fpti}', [App\Http\Controllers\Admin\FptiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('IMI')->name('IMI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\IMIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\IMIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\IMIController::class, 'store'])->name('store');
-                            Route::get('/{IMI}', [App\Http\Controllers\Admin\IMIController::class, 'show'])->name('show');
-                            Route::get('/{IMI}/edit', [App\Http\Controllers\Admin\IMIController::class, 'edit'])->name('edit');
-                            Route::put('/{IMI}', [App\Http\Controllers\Admin\IMIController::class, 'update'])->name('update');
-                            Route::delete('/{IMI}', [App\Http\Controllers\Admin\IMIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('imi')->name('imi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\ImiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\ImiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\ImiController::class, 'store'])->name('store');
+                            Route::get('/{imi}', [App\Http\Controllers\Admin\ImiController::class, 'show'])->name('show');
+                            Route::get('/{imi}/edit', [App\Http\Controllers\Admin\ImiController::class, 'edit'])->name('edit');
+                            Route::put('/{imi}', [App\Http\Controllers\Admin\ImiController::class, 'update'])->name('update');
+                            Route::delete('/{imi}', [App\Http\Controllers\Admin\ImiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('ISSI')->name('ISSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\ISSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\ISSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\ISSIController::class, 'store'])->name('store');
-                            Route::get('/{ISSI}', [App\Http\Controllers\Admin\ISSIController::class, 'show'])->name('show');
-                            Route::get('/{ISSI}/edit', [App\Http\Controllers\Admin\ISSIController::class, 'edit'])->name('edit');
-                            Route::put('/{ISSI}', [App\Http\Controllers\Admin\ISSIController::class, 'update'])->name('update');
-                            Route::delete('/{ISSI}', [App\Http\Controllers\Admin\ISSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('issi')->name('issi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\IssiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\IssiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\IssiController::class, 'store'])->name('store');
+                            Route::get('/{issi}', [App\Http\Controllers\Admin\IssiController::class, 'show'])->name('show');
+                            Route::get('/{issi}/edit', [App\Http\Controllers\Admin\IssiController::class, 'edit'])->name('edit');
+                            Route::put('/{issi}', [App\Http\Controllers\Admin\IssiController::class, 'update'])->name('update');
+                            Route::delete('/{issi}', [App\Http\Controllers\Admin\IssiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PABERSI')->name('PABERSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PABERSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PABERSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PABERSIController::class, 'store'])->name('store');
-                            Route::get('/{PABERSI}', [App\Http\Controllers\Admin\PABERSIController::class, 'show'])->name('show');
-                            Route::get('/{PABERSI}/edit', [App\Http\Controllers\Admin\PABERSIController::class, 'edit'])->name('edit');
-                            Route::put('/{PABERSI}', [App\Http\Controllers\Admin\PABERSIController::class, 'update'])->name('update');
-                            Route::delete('/{PABERSI}', [App\Http\Controllers\Admin\PABERSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pabersi')->name('pabersi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PabersiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PabersiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PabersiController::class, 'store'])->name('store');
+                            Route::get('/{pabersi}', [App\Http\Controllers\Admin\PabersiController::class, 'show'])->name('show');
+                            Route::get('/{pabersi}/edit', [App\Http\Controllers\Admin\PabersiController::class, 'edit'])->name('edit');
+                            Route::put('/{pabersi}', [App\Http\Controllers\Admin\PabersiController::class, 'update'])->name('update');
+                            Route::delete('/{pabersi}', [App\Http\Controllers\Admin\PabersiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PARSI')->name('PARSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PARSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PARSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PARSIController::class, 'store'])->name('store');
-                            Route::get('/{PARSI}', [App\Http\Controllers\Admin\PARSIController::class, 'show'])->name('show');
-                            Route::get('/{PARSI}/edit', [App\Http\Controllers\Admin\PARSIController::class, 'edit'])->name('edit');
-                            Route::put('/{PARSI}', [App\Http\Controllers\Admin\PARSIController::class, 'update'])->name('update');
-                            Route::delete('/{PARSI}', [App\Http\Controllers\Admin\PARSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('parsi')->name('parsi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\ParsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\ParsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\ParsiController::class, 'store'])->name('store');
+                            Route::get('/{parsi}', [App\Http\Controllers\Admin\ParsiController::class, 'show'])->name('show');
+                            Route::get('/{parsi}/edit', [App\Http\Controllers\Admin\ParsiController::class, 'edit'])->name('edit');
+                            Route::put('/{parsi}', [App\Http\Controllers\Admin\ParsiController::class, 'update'])->name('update');
+                            Route::delete('/{parsi}', [App\Http\Controllers\Admin\ParsiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PASI')->name('PASI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PASIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PASIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PASIController::class, 'store'])->name('store');
-                            Route::get('/{PASI}', [App\Http\Controllers\Admin\PASIController::class, 'show'])->name('show');
-                            Route::get('/{PASI}/edit', [App\Http\Controllers\Admin\PASIController::class, 'edit'])->name('edit');
-                            Route::put('/{PASI}', [App\Http\Controllers\Admin\PASIController::class, 'update'])->name('update');
-                            Route::delete('/{PASI}', [App\Http\Controllers\Admin\PASIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pasi')->name('pasi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PasiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PasiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PasiController::class, 'store'])->name('store');
+                            Route::get('/{pasi}', [App\Http\Controllers\Admin\PasiController::class, 'show'])->name('show');
+                            Route::get('/{pasi}/edit', [App\Http\Controllers\Admin\PasiController::class, 'edit'])->name('edit');
+                            Route::put('/{pasi}', [App\Http\Controllers\Admin\PasiController::class, 'update'])->name('update');
+                            Route::delete('/{pasi}', [App\Http\Controllers\Admin\PasiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PORSEROSI')->name('PORSEROSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PORSEROSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PORSEROSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PORSEROSIController::class, 'store'])->name('store');
-                            Route::get('/{PORSEROSI}', [App\Http\Controllers\Admin\PORSEROSIController::class, 'show'])->name('show');
-                            Route::get('/{PORSEROSI}/edit', [App\Http\Controllers\Admin\PORSEROSIController::class, 'edit'])->name('edit');
-                            Route::put('/{PORSEROSI}', [App\Http\Controllers\Admin\PORSEROSIController::class, 'update'])->name('update');
-                            Route::delete('/{PORSEROSI}', [App\Http\Controllers\Admin\PORSEROSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('porserosi')->name('porserosi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PorserosiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PorserosiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PorserosiController::class, 'store'])->name('store');
+                            Route::get('/{porserosi}', [App\Http\Controllers\Admin\PorserosiController::class, 'show'])->name('show');
+                            Route::get('/{porserosi}/edit', [App\Http\Controllers\Admin\PorserosiController::class, 'edit'])->name('edit');
+                            Route::put('/{porserosi}', [App\Http\Controllers\Admin\PorserosiController::class, 'update'])->name('update');
+                            Route::delete('/{porserosi}', [App\Http\Controllers\Admin\PorserosiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('POSISI')->name('POSISI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\POSISIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\POSISIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\POSISIController::class, 'store'])->name('store');
-                            Route::get('/{POSISI}', [App\Http\Controllers\Admin\POSISIController::class, 'show'])->name('show');
-                            Route::get('/{POSISI}/edit', [App\Http\Controllers\Admin\POSISIController::class, 'edit'])->name('edit');
-                            Route::put('/{POSISI}', [App\Http\Controllers\Admin\POSISIController::class, 'update'])->name('update');
-                            Route::delete('/{POSISI}', [App\Http\Controllers\Admin\POSISIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('posisi')->name('posisi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PosisiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PosisiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PosisiController::class, 'store'])->name('store');
+                            Route::get('/{posisi}', [App\Http\Controllers\Admin\PosisiController::class, 'show'])->name('show');
+                            Route::get('/{posisi}/edit', [App\Http\Controllers\Admin\PosisiController::class, 'edit'])->name('edit');
+                            Route::put('/{posisi}', [App\Http\Controllers\Admin\PosisiController::class, 'update'])->name('update');
+                            Route::delete('/{posisi}', [App\Http\Controllers\Admin\PosisiController::class, 'destroy'])->name('destroy');
                         });
 
                     });
 
                 Route::get('/cabor-permainan', [App\Http\Controllers\Admin\BidangController::class, 'caborPermainan'])->name('cabor-permainan');
                     Route::prefix('cabor-permainan')->name('cabor-permainan.')->group(function () {
-                        Route::prefix('ABTI')->name('ABTI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\ABTIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\ABTIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\ABTIController::class, 'store'])->name('store');
-                            Route::get('/{ABTI}', [App\Http\Controllers\Admin\ABTIController::class, 'show'])->name('show');
-                            Route::get('/{ABTI}/edit', [App\Http\Controllers\Admin\ABTIController::class, 'edit'])->name('edit');
-                            Route::put('/{ABTI}', [App\Http\Controllers\Admin\ABTIController::class, 'update'])->name('update');
-                            Route::delete('/{ABTI}', [App\Http\Controllers\Admin\ABTIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('abti')->name('abti.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\AbtiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\AbtiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\AbtiController::class, 'store'])->name('store');
+                            Route::get('/{abti}', [App\Http\Controllers\Admin\AbtiController::class, 'show'])->name('show');
+                            Route::get('/{abti}/edit', [App\Http\Controllers\Admin\AbtiController::class, 'edit'])->name('edit');
+                            Route::put('/{abti}', [App\Http\Controllers\Admin\AbtiController::class, 'update'])->name('update');
+                            Route::delete('/{abti}', [App\Http\Controllers\Admin\AbtiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('AFKAB')->name('AFKAB.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\AFKABController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\AFKABController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\AFKABController::class, 'store'])->name('store');
-                            Route::get('/{AFKAB}', [App\Http\Controllers\Admin\AFKABController::class, 'show'])->name('show');
-                            Route::get('/{AFKAB}/edit', [App\Http\Controllers\Admin\AFKABController::class, 'edit'])->name('edit');
-                            Route::put('/{AFKAB}', [App\Http\Controllers\Admin\AFKABController::class, 'update'])->name('update');
-                            Route::delete('/{AFKAB}', [App\Http\Controllers\Admin\AFKABController::class, 'destroy'])->name('destroy');
+                        Route::prefix('afkab')->name('afkab.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\AfkabController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\AfkabController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\AfkabController::class, 'store'])->name('store');
+                            Route::get('/{afkab}', [App\Http\Controllers\Admin\AfkabController::class, 'show'])->name('show');
+                            Route::get('/{afkab}/edit', [App\Http\Controllers\Admin\AfkabController::class, 'edit'])->name('edit');
+                            Route::put('/{afkab}', [App\Http\Controllers\Admin\AfkabController::class, 'update'])->name('update');
+                            Route::delete('/{afkab}', [App\Http\Controllers\Admin\AfkabController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('GABSI')->name('GABSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\GABSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\GABSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\GABSIController::class, 'store'])->name('store');
-                            Route::get('/{GABSI}', [App\Http\Controllers\Admin\GABSIController::class, 'show'])->name('show');
-                            Route::get('/{GABSI}/edit', [App\Http\Controllers\Admin\GABSIController::class, 'edit'])->name('edit');
-                            Route::put('/{GABSI}', [App\Http\Controllers\Admin\GABSIController::class, 'update'])->name('update');
-                            Route::delete('/{GABSI}', [App\Http\Controllers\Admin\GABSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('gabsi')->name('gabsi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\GabsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\GabsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\GabsiController::class, 'store'])->name('store');
+                            Route::get('/{gabsi}', [App\Http\Controllers\Admin\GabsiController::class, 'show'])->name('show');
+                            Route::get('/{gabsi}/edit', [App\Http\Controllers\Admin\GabsiController::class, 'edit'])->name('edit');
+                            Route::put('/{gabsi}', [App\Http\Controllers\Admin\GabsiController::class, 'update'])->name('update');
+                            Route::delete('/{gabsi}', [App\Http\Controllers\Admin\GabsiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PBSI')->name('PBSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PBSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PBSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PBSIController::class, 'store'])->name('store');
-                            Route::get('/{PBSI}', [App\Http\Controllers\Admin\PBSIController::class, 'show'])->name('show');
-                            Route::get('/{PBSI}/edit', [App\Http\Controllers\Admin\PBSIController::class, 'edit'])->name('edit');
-                            Route::put('/{PBSI}', [App\Http\Controllers\Admin\PBSIController::class, 'update'])->name('update');
-                            Route::delete('/{PBSI}', [App\Http\Controllers\Admin\PBSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pbsi')->name('pbsi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PbsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PbsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PbsiController::class, 'store'])->name('store');
+                            Route::get('/{pbsi}', [App\Http\Controllers\Admin\PbsiController::class, 'show'])->name('show');
+                            Route::get('/{pbsi}/edit', [App\Http\Controllers\Admin\PbsiController::class, 'edit'])->name('edit');
+                            Route::put('/{pbsi}', [App\Http\Controllers\Admin\PbsiController::class, 'update'])->name('update');
+                            Route::delete('/{pbsi}', [App\Http\Controllers\Admin\PbsiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PBVSI')->name('PBVSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PBVSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PBVSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PBVSIController::class, 'store'])->name('store');
-                            Route::get('/{PBVSI}', [App\Http\Controllers\Admin\PBVSIController::class, 'show'])->name('show');
-                            Route::get('/{PBVSI}/edit', [App\Http\Controllers\Admin\PBVSIController::class, 'edit'])->name('edit');
-                            Route::put('/{PBVSI}', [App\Http\Controllers\Admin\PBVSIController::class, 'update'])->name('update');
-                            Route::delete('/{PBVSI}', [App\Http\Controllers\Admin\PBVSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pbvsi')->name('pbvsi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PbvsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PbvsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PbvsiController::class, 'store'])->name('store');
+                            Route::get('/{pbvsi}', [App\Http\Controllers\Admin\PbvsiController::class, 'show'])->name('show');
+                            Route::get('/{pbvsi}/edit', [App\Http\Controllers\Admin\PbvsiController::class, 'edit'])->name('edit');
+                            Route::put('/{pbvsi}', [App\Http\Controllers\Admin\PbvsiController::class, 'update'])->name('update');
+                            Route::delete('/{pbvsi}', [App\Http\Controllers\Admin\PbvsiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PDBI')->name('PDBI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PDBIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PDBIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PDBIController::class, 'store'])->name('store');
-                            Route::get('/{PDBI}', [App\Http\Controllers\Admin\PDBIController::class, 'show'])->name('show');
-                            Route::get('/{PDBI}/edit', [App\Http\Controllers\Admin\PDBIController::class, 'edit'])->name('edit');
-                            Route::put('/{PDBI}', [App\Http\Controllers\Admin\PDBIController::class, 'update'])->name('update');
-                            Route::delete('/{PDBI}', [App\Http\Controllers\Admin\PDBIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pdbi')->name('pdbi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PdbiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PdbiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PdbiController::class, 'store'])->name('store');
+                            Route::get('/{pdbi}', [App\Http\Controllers\Admin\PdbiController::class, 'show'])->name('show');
+                            Route::get('/{pdbi}/edit', [App\Http\Controllers\Admin\PdbiController::class, 'edit'])->name('edit');
+                            Route::put('/{pdbi}', [App\Http\Controllers\Admin\PdbiController::class, 'update'])->name('update');
+                            Route::delete('/{pdbi}', [App\Http\Controllers\Admin\PdbiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PELTI')->name('PELTI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PELTIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PELTIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PELTIController::class, 'store'])->name('store');
-                            Route::get('/{PELTI}', [App\Http\Controllers\Admin\PELTIController::class, 'show'])->name('show');
-                            Route::get('/{PELTI}/edit', [App\Http\Controllers\Admin\PELTIController::class, 'edit'])->name('edit');
-                            Route::put('/{PELTI}', [App\Http\Controllers\Admin\PELTIController::class, 'update'])->name('update');
-                            Route::delete('/{PELTI}', [App\Http\Controllers\Admin\PELTIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pelti')->name('pelti.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PeltiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PeltiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PeltiController::class, 'store'])->name('store');
+                            Route::get('/{pelti}', [App\Http\Controllers\Admin\PeltiController::class, 'show'])->name('show');
+                            Route::get('/{pelti}/edit', [App\Http\Controllers\Admin\PeltiController::class, 'edit'])->name('edit');
+                            Route::put('/{pelti}', [App\Http\Controllers\Admin\PeltiController::class, 'update'])->name('update');
+                            Route::delete('/{pelti}', [App\Http\Controllers\Admin\PeltiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PERBASI')->name('PERBASI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PERBASIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PERBASIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PERBASIController::class, 'store'])->name('store');
-                            Route::get('/{PERBASI}', [App\Http\Controllers\Admin\PERBASIController::class, 'show'])->name('show');
-                            Route::get('/{PERBASI}/edit', [App\Http\Controllers\Admin\PERBASIController::class, 'edit'])->name('edit');
-                            Route::put('/{PERBASI}', [App\Http\Controllers\Admin\PERBASIController::class, 'update'])->name('update');
-                            Route::delete('/{PERBASI}', [App\Http\Controllers\Admin\PERBASIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('perbasi')->name('perbasi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PerbasiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PerbasiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PerbasiController::class, 'store'])->name('store');
+                            Route::get('/{perbasi}', [App\Http\Controllers\Admin\PerbasiController::class, 'show'])->name('show');
+                            Route::get('/{perbasi}/edit', [App\Http\Controllers\Admin\PerbasiController::class, 'edit'])->name('edit');
+                            Route::put('/{perbasi}', [App\Http\Controllers\Admin\PerbasiController::class, 'update'])->name('update');
+                            Route::delete('/{perbasi}', [App\Http\Controllers\Admin\PerbasiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PERCASI')->name('PERCASI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PERCASIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PERCASIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PERCASIController::class, 'store'])->name('store');
-                            Route::get('/{PERCASI}', [App\Http\Controllers\Admin\PERCASIController::class, 'show'])->name('show');
-                            Route::get('/{PERCASI}/edit', [App\Http\Controllers\Admin\PERCASIController::class, 'edit'])->name('edit');
-                            Route::put('/{PERCASI}', [App\Http\Controllers\Admin\PERCASIController::class, 'update'])->name('update');
-                            Route::delete('/{PERCASI}', [App\Http\Controllers\Admin\PERCASIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('percasi')->name('percasi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PercasiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PercasiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PercasiController::class, 'store'])->name('store');
+                            Route::get('/{percasi}', [App\Http\Controllers\Admin\PercasiController::class, 'show'])->name('show');
+                            Route::get('/{percasi}/edit', [App\Http\Controllers\Admin\PercasiController::class, 'edit'])->name('edit');
+                            Route::put('/{percasi}', [App\Http\Controllers\Admin\PercasiController::class, 'update'])->name('update');
+                            Route::delete('/{percasi}', [App\Http\Controllers\Admin\PercasiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PSSI')->name('PSSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PSSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PSSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PSSIController::class, 'store'])->name('store');
-                            Route::get('/{PSSI}', [App\Http\Controllers\Admin\PSSIController::class, 'show'])->name('show');
-                            Route::get('/{PSSI}/edit', [App\Http\Controllers\Admin\PSSIController::class, 'edit'])->name('edit');
-                            Route::put('/{PSSI}', [App\Http\Controllers\Admin\PSSIController::class, 'update'])->name('update');
-                            Route::delete('/{PSSI}', [App\Http\Controllers\Admin\PSSIController::class, 'destroy'])->name('destroy');
-                        });
-
-                        Route::prefix('PSTI')->name('PSTI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PSTIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PSTIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PSTIController::class, 'store'])->name('store');
-                            Route::get('/{PSTI}', [App\Http\Controllers\Admin\PSTIController::class, 'show'])->name('show');
-                            Route::get('/{PSTI}/edit', [App\Http\Controllers\Admin\PSTIController::class, 'edit'])->name('edit');
-                            Route::put('/{PSTI}', [App\Http\Controllers\Admin\PSTIController::class, 'update'])->name('update');
-                            Route::delete('/{PSTI}', [App\Http\Controllers\Admin\PSTIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pssi')->name('pssi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PssiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PssiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PssiController::class, 'store'])->name('store');
+                            Route::get('/{pssi}', [App\Http\Controllers\Admin\PssiController::class, 'show'])->name('show');
+                            Route::get('/{pssi}/edit', [App\Http\Controllers\Admin\PssiController::class, 'edit'])->name('edit');
+                            Route::put('/{pssi}', [App\Http\Controllers\Admin\PssiController::class, 'update'])->name('update');
+                            Route::delete('/{pssi}', [App\Http\Controllers\Admin\PssiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PTMSI')->name('PTMSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PTMSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PTMSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PTMSIController::class, 'store'])->name('store');
-                            Route::get('/{PTMSI}', [App\Http\Controllers\Admin\PTMSIController::class, 'show'])->name('show');
-                            Route::get('/{PTMSI}/edit', [App\Http\Controllers\Admin\PTMSIController::class, 'edit'])->name('edit');
-                            Route::put('/{PTMSI}', [App\Http\Controllers\Admin\PTMSIController::class, 'update'])->name('update');
-                            Route::delete('/{PTMSI}', [App\Http\Controllers\Admin\PTMSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('psti')->name('psti.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PstiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PstiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PstiController::class, 'store'])->name('store');
+                            Route::get('/{psti}', [App\Http\Controllers\Admin\PstiController::class, 'show'])->name('show');
+                            Route::get('/{psti}/edit', [App\Http\Controllers\Admin\PstiController::class, 'edit'])->name('edit');
+                            Route::put('/{psti}', [App\Http\Controllers\Admin\PstiController::class, 'update'])->name('update');
+                            Route::delete('/{psti}', [App\Http\Controllers\Admin\PstiController::class, 'destroy'])->name('destroy');
+                        });
+
+                        Route::prefix('ptmsi')->name('ptmsi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PtmsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PtmsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PtmsiController::class, 'store'])->name('store');
+                            Route::get('/{ptmsi}', [App\Http\Controllers\Admin\PtmsiController::class, 'show'])->name('show');
+                            Route::get('/{ptmsi}/edit', [App\Http\Controllers\Admin\PtmsiController::class, 'edit'])->name('edit');
+                            Route::put('/{ptmsi}', [App\Http\Controllers\Admin\PtmsiController::class, 'update'])->name('update');
+                            Route::delete('/{ptmsi}', [App\Http\Controllers\Admin\PtmsiController::class, 'destroy'])->name('destroy');
                         });
                     });
 
                 Route::get('/cabor-beladiri', [App\Http\Controllers\Admin\BidangController::class, 'caborBeladiri'])->name('cabor-beladiri');
                     Route::prefix('cabor-beladiri')->name('cabor-beladiri.')->group(function () {
-                        Route::prefix('FERKUSHI')->name('FERKUSHI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\FERKUSHIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\FERKUSHIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\FERKUSHIController::class, 'store'])->name('store');
-                            Route::get('/{FERKUSHI}', [App\Http\Controllers\Admin\FERKUSHIController::class, 'show'])->name('show');
-                            Route::get('/{FERKUSHI}/edit', [App\Http\Controllers\Admin\FERKUSHIController::class, 'edit'])->name('edit');
-                            Route::put('/{FERKUSHI}', [App\Http\Controllers\Admin\FERKUSHIController::class, 'update'])->name('update');
-                            Route::delete('/{FERKUSHI}', [App\Http\Controllers\Admin\FERKUSHIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('ferkushi')->name('ferkushi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\FerkushiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\FerkushiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\FerkushiController::class, 'store'])->name('store');
+                            Route::get('/{ferkushi}', [App\Http\Controllers\Admin\FerkushiController::class, 'show'])->name('show');
+                            Route::get('/{ferkushi}/edit', [App\Http\Controllers\Admin\FerkushiController::class, 'edit'])->name('edit');
+                            Route::put('/{ferkushi}', [App\Http\Controllers\Admin\FerkushiController::class, 'update'])->name('update');
+                            Route::delete('/{ferkushi}', [App\Http\Controllers\Admin\FerkushiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('FORKI')->name('FORKI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\FORKIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\FORKIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\FORKIController::class, 'store'])->name('store');
-                            Route::get('/{FORKI}', [App\Http\Controllers\Admin\FORKIController::class, 'show'])->name('show');
-                            Route::get('/{FORKI}/edit', [App\Http\Controllers\Admin\FORKIController::class, 'edit'])->name('edit');
-                            Route::put('/{FORKI}', [App\Http\Controllers\Admin\FORKIController::class, 'update'])->name('update');
-                            Route::delete('/{FORKI}', [App\Http\Controllers\Admin\FORKIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('forki')->name('forki.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\ForkiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\ForkiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\ForkiController::class, 'store'])->name('store');
+                            Route::get('/{forki}', [App\Http\Controllers\Admin\ForkiController::class, 'show'])->name('show');
+                            Route::get('/{forki}/edit', [App\Http\Controllers\Admin\ForkiController::class, 'edit'])->name('edit');
+                            Route::put('/{forki}', [App\Http\Controllers\Admin\ForkiController::class, 'update'])->name('update');
+                            Route::delete('/{forki}', [App\Http\Controllers\Admin\ForkiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('IBCA-MMA')->name('IBCA-MMA.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\IBCAController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\IBCAController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\IBCAController::class, 'store'])->name('store');
-                            Route::get('/{IBCA}', [App\Http\Controllers\Admin\IBCAController::class, 'show'])->name('show');
-                            Route::get('/{IBCA}/edit', [App\Http\Controllers\Admin\IBCAController::class, 'edit'])->name('edit');
-                            Route::put('/{IBCA}', [App\Http\Controllers\Admin\IBCAController::class, 'update'])->name('update');
-                            Route::delete('/{IBCA}', [App\Http\Controllers\Admin\IBCAController::class, 'destroy'])->name('destroy');
+                        Route::prefix('ibca-mma')->name('ibca-mma.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\IbcaController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\IbcaController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\IbcaController::class, 'store'])->name('store');
+                            Route::get('/{ibca}', [App\Http\Controllers\Admin\IbcaController::class, 'show'])->name('show');
+                            Route::get('/{ibca}/edit', [App\Http\Controllers\Admin\IbcaController::class, 'edit'])->name('edit');
+                            Route::put('/{ibca}', [App\Http\Controllers\Admin\IbcaController::class, 'update'])->name('update');
+                            Route::delete('/{ibca}', [App\Http\Controllers\Admin\IbcaController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('IKASI')->name('IKASI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\IKASIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\IKASIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\IKASIController::class, 'store'])->name('store');
-                            Route::get('/{IKASI}', [App\Http\Controllers\Admin\IKASIController::class, 'show'])->name('show');
-                            Route::get('/{IKASI}/edit', [App\Http\Controllers\Admin\IKASIController::class, 'edit'])->name('edit');
-                            Route::put('/{IKASI}', [App\Http\Controllers\Admin\IKASIController::class, 'update'])->name('update');
-                            Route::delete('/{IKASI}', [App\Http\Controllers\Admin\IKASIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('ikasi')->name('ikasi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\IkasiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\IkasiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\IkasiController::class, 'store'])->name('store');
+                            Route::get('/{ikasi}', [App\Http\Controllers\Admin\IkasiController::class, 'show'])->name('show');
+                            Route::get('/{ikasi}/edit', [App\Http\Controllers\Admin\IkasiController::class, 'edit'])->name('edit');
+                            Route::put('/{ikasi}', [App\Http\Controllers\Admin\IkasiController::class, 'update'])->name('update');
+                            Route::delete('/{ikasi}', [App\Http\Controllers\Admin\IkasiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('IPSI')->name('IPSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\IPSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\IPSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\IPSIController::class, 'store'])->name('store');
-                            Route::get('/{IPSI}', [App\Http\Controllers\Admin\IPSIController::class, 'show'])->name('show');
-                            Route::get('/{IPSI}/edit', [App\Http\Controllers\Admin\IPSIController::class, 'edit'])->name('edit');
-                            Route::put('/{IPSI}', [App\Http\Controllers\Admin\IPSIController::class, 'update'])->name('update');
-                            Route::delete('/{IPSI}', [App\Http\Controllers\Admin\IPSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('ipsi')->name('ipsi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\IpsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\IpsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\IpsiController::class, 'store'])->name('store');
+                            Route::get('/{ipsi}', [App\Http\Controllers\Admin\IpsiController::class, 'show'])->name('show');
+                            Route::get('/{ipsi}/edit', [App\Http\Controllers\Admin\IpsiController::class, 'edit'])->name('edit');
+                            Route::put('/{ipsi}', [App\Http\Controllers\Admin\IpsiController::class, 'update'])->name('update');
+                            Route::delete('/{ipsi}', [App\Http\Controllers\Admin\IpsiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('KBI')->name('KBI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\KBIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\KBIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\KBIController::class, 'store'])->name('store');
-                            Route::get('/{KBI}', [App\Http\Controllers\Admin\KBIController::class, 'show'])->name('show');
-                            Route::get('/{KBI}/edit', [App\Http\Controllers\Admin\KBIController::class, 'edit'])->name('edit');
-                            Route::put('/{KBI}', [App\Http\Controllers\Admin\KBIController::class, 'update'])->name('update');
-                            Route::delete('/{KBI}', [App\Http\Controllers\Admin\KBIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('kbi')->name('kbi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\KbiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\KbiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\KbiController::class, 'store'])->name('store');
+                            Route::get('/{kbi}', [App\Http\Controllers\Admin\KbiController::class, 'show'])->name('show');
+                            Route::get('/{kbi}/edit', [App\Http\Controllers\Admin\KbiController::class, 'edit'])->name('edit');
+                            Route::put('/{kbi}', [App\Http\Controllers\Admin\KbiController::class, 'update'])->name('update');
+                            Route::delete('/{kbi}', [App\Http\Controllers\Admin\KbiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('MI')->name('MI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\MIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\MIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\MIController::class, 'store'])->name('store');
-                            Route::get('/{MI}', [App\Http\Controllers\Admin\MIController::class, 'show'])->name('show');
-                            Route::get('/{MI}/edit', [App\Http\Controllers\Admin\MIController::class, 'edit'])->name('edit');
-                            Route::put('/{MI}', [App\Http\Controllers\Admin\MIController::class, 'update'])->name('update');
-                            Route::delete('/{MI}', [App\Http\Controllers\Admin\MIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('mi')->name('mi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\MiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\MiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\MiController::class, 'store'])->name('store');
+                            Route::get('/{mi}', [App\Http\Controllers\Admin\MiController::class, 'show'])->name('show');
+                            Route::get('/{mi}/edit', [App\Http\Controllers\Admin\MiController::class, 'edit'])->name('edit');
+                            Route::put('/{mi}', [App\Http\Controllers\Admin\MiController::class, 'update'])->name('update');
+                            Route::delete('/{mi}', [App\Http\Controllers\Admin\MiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PERKEMI')->name('PERKEMI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PERKEMIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PERKEMIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PERKEMIController::class, 'store'])->name('store');
-                            Route::get('/{PERKEMI}', [App\Http\Controllers\Admin\PERKEMIController::class, 'show'])->name('show');
-                            Route::get('/{PERKEMI}/edit', [App\Http\Controllers\Admin\PERKEMIController::class, 'edit'])->name('edit');
-                            Route::put('/{PERKEMI}', [App\Http\Controllers\Admin\PERKEMIController::class, 'update'])->name('update');
-                            Route::delete('/{PERKEMI}', [App\Http\Controllers\Admin\PERKEMIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('perkemi')->name('perkemi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PerkemiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PerkemiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PerkemiController::class, 'store'])->name('store');
+                            Route::get('/{perkemi}', [App\Http\Controllers\Admin\PerkemiController::class, 'show'])->name('show');
+                            Route::get('/{perkemi}/edit', [App\Http\Controllers\Admin\PerkemiController::class, 'edit'])->name('edit');
+                            Route::put('/{perkemi}', [App\Http\Controllers\Admin\PerkemiController::class, 'update'])->name('update');
+                            Route::delete('/{perkemi}', [App\Http\Controllers\Admin\PerkemiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PERSAMBI')->name('PERSAMBI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PERSAMBIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PERSAMBIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PERSAMBIController::class, 'store'])->name('store');
-                            Route::get('/{PERSAMBI}', [App\Http\Controllers\Admin\PERSAMBIController::class, 'show'])->name('show');
-                            Route::get('/{PERSAMBI}/edit', [App\Http\Controllers\Admin\PERSAMBIController::class, 'edit'])->name('edit');
-                            Route::put('/{PERSAMBI}', [App\Http\Controllers\Admin\PERSAMBIController::class, 'update'])->name('update');
-                            Route::delete('/{PERSAMBI}', [App\Http\Controllers\Admin\PERSAMBIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('persambi')->name('persambi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PersambiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PersambiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PersambiController::class, 'store'])->name('store');
+                            Route::get('/{persambi}', [App\Http\Controllers\Admin\PersambiController::class, 'show'])->name('show');
+                            Route::get('/{persambi}/edit', [App\Http\Controllers\Admin\PersambiController::class, 'edit'])->name('edit');
+                            Route::put('/{persambi}', [App\Http\Controllers\Admin\PersambiController::class, 'update'])->name('update');
+                            Route::delete('/{persambi}', [App\Http\Controllers\Admin\PersambiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PERTINA')->name('PERTINA.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PERTINAController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PERTINAController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PERTINAController::class, 'store'])->name('store');
-                            Route::get('/{PERTINA}', [App\Http\Controllers\Admin\PERTINAController::class, 'show'])->name('show');
-                            Route::get('/{PERTINA}/edit', [App\Http\Controllers\Admin\PERTINAController::class, 'edit'])->name('edit');
-                            Route::put('/{PERTINA}', [App\Http\Controllers\Admin\PERTINAController::class, 'update'])->name('update');
-                            Route::delete('/{PERTINA}', [App\Http\Controllers\Admin\PERTINAController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pertina')->name('pertina.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PertinaController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PertinaController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PertinaController::class, 'store'])->name('store');
+                            Route::get('/{pertina}', [App\Http\Controllers\Admin\PertinaController::class, 'show'])->name('show');
+                            Route::get('/{pertina}/edit', [App\Http\Controllers\Admin\PertinaController::class, 'edit'])->name('edit');
+                            Route::put('/{pertina}', [App\Http\Controllers\Admin\PertinaController::class, 'update'])->name('update');
+                            Route::delete('/{pertina}', [App\Http\Controllers\Admin\PertinaController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PGSI')->name('PGSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PGSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PGSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PGSIController::class, 'store'])->name('store');
-                            Route::get('/{PGSI}', [App\Http\Controllers\Admin\PGSIController::class, 'show'])->name('show');
-                            Route::get('/{PGSI}/edit', [App\Http\Controllers\Admin\PGSIController::class, 'edit'])->name('edit');
-                            Route::put('/{PGSI}', [App\Http\Controllers\Admin\PGSIController::class, 'update'])->name('update');
-                            Route::delete('/{PGSI}', [App\Http\Controllers\Admin\PGSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pgsi')->name('pgsi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PgsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PgsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PgsiController::class, 'store'])->name('store');
+                            Route::get('/{pgsi}', [App\Http\Controllers\Admin\PgsiController::class, 'show'])->name('show');
+                            Route::get('/{pgsi}/edit', [App\Http\Controllers\Admin\PgsiController::class, 'edit'])->name('edit');
+                            Route::put('/{pgsi}', [App\Http\Controllers\Admin\PgsiController::class, 'update'])->name('update');
+                            Route::delete('/{pgsi}', [App\Http\Controllers\Admin\PgsiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('PJSI')->name('PJSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PJSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PJSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PJSIController::class, 'store'])->name('store');
-                            Route::get('/{PJSI}', [App\Http\Controllers\Admin\PJSIController::class, 'show'])->name('show');
-                            Route::get('/{PJSI}/edit', [App\Http\Controllers\Admin\PJSIController::class, 'edit'])->name('edit');
-                            Route::put('/{PJSI}', [App\Http\Controllers\Admin\PJSIController::class, 'update'])->name('update');
-                            Route::delete('/{PJSI}', [App\Http\Controllers\Admin\PJSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pjsi')->name('pjsi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PjsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PjsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PjsiController::class, 'store'])->name('store');
+                            Route::get('/{pjsi}', [App\Http\Controllers\Admin\PjsiController::class, 'show'])->name('show');
+                            Route::get('/{pjsi}/edit', [App\Http\Controllers\Admin\PjsiController::class, 'edit'])->name('edit');
+                            Route::put('/{pjsi}', [App\Http\Controllers\Admin\PjsiController::class, 'update'])->name('update');
+                            Route::delete('/{pjsi}', [App\Http\Controllers\Admin\PjsiController::class, 'destroy'])->name('destroy');
                         });
 
-                        Route::prefix('TI')->name('TI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\TIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\TIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\TIController::class, 'store'])->name('store');
-                            Route::get('/{TI}', [App\Http\Controllers\Admin\TIController::class, 'show'])->name('show');
-                            Route::get('/{TI}/edit', [App\Http\Controllers\Admin\TIController::class, 'edit'])->name('edit');
-                            Route::put('/{TI}', [App\Http\Controllers\Admin\TIController::class, 'update'])->name('update');
-                            Route::delete('/{TI}', [App\Http\Controllers\Admin\TIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('ti')->name('ti.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\TiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\TiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\TiController::class, 'store'])->name('store');
+                            Route::get('/{ti}', [App\Http\Controllers\Admin\TiController::class, 'show'])->name('show');
+                            Route::get('/{ti}/edit', [App\Http\Controllers\Admin\TiController::class, 'edit'])->name('edit');
+                            Route::put('/{ti}', [App\Http\Controllers\Admin\TiController::class, 'update'])->name('update');
+                            Route::delete('/{ti}', [App\Http\Controllers\Admin\TiController::class, 'destroy'])->name('destroy');
                         });
                     });
 
                 Route::get('/cabor-akurasi', [App\Http\Controllers\Admin\BidangController::class, 'caborAkurasi'])->name('cabor-akurasi');
                     Route::prefix('cabor-akurasi')->name('cabor-akurasi.')->group(function () {
-                        Route::prefix('ESI')->name('ESI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\ESIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\ESIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\ESIController::class, 'store'])->name('store');
-                            Route::get('/{ESI}', [App\Http\Controllers\Admin\ESIController::class, 'show'])->name('show');
-                            Route::get('/{ESI}/edit', [App\Http\Controllers\Admin\ESIController::class, 'edit'])->name('edit');
-                            Route::put('/{ESI}', [App\Http\Controllers\Admin\ESIController::class, 'update'])->name('update');
-                            Route::delete('/{ESI}', [App\Http\Controllers\Admin\ESIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('esi')->name('esi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\EsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\EsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\EsiController::class, 'store'])->name('store');
+                            Route::get('/{esi}', [App\Http\Controllers\Admin\EsiController::class, 'show'])->name('show');
+                            Route::get('/{esi}/edit', [App\Http\Controllers\Admin\EsiController::class, 'edit'])->name('edit');
+                            Route::put('/{esi}', [App\Http\Controllers\Admin\EsiController::class, 'update'])->name('update');
+                            Route::delete('/{esi}', [App\Http\Controllers\Admin\EsiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('FASI')->name('FASI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\FASIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\FASIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\FASIController::class, 'store'])->name('store');
-                            Route::get('/{FASI}', [App\Http\Controllers\Admin\FASIController::class, 'show'])->name('show');
-                            Route::get('/{FASI}/edit', [App\Http\Controllers\Admin\FASIController::class, 'edit'])->name('edit');
-                            Route::put('/{FASI}', [App\Http\Controllers\Admin\FASIController::class, 'update'])->name('update');
-                            Route::delete('/{FASI}', [App\Http\Controllers\Admin\FASIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('fasi')->name('fasi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\FasiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\FasiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\FasiController::class, 'store'])->name('store');
+                            Route::get('/{fasi}', [App\Http\Controllers\Admin\FasiController::class, 'show'])->name('show');
+                            Route::get('/{fasi}/edit', [App\Http\Controllers\Admin\FasiController::class, 'edit'])->name('edit');
+                            Route::put('/{fasi}', [App\Http\Controllers\Admin\FasiController::class, 'update'])->name('update');
+                            Route::delete('/{fasi}', [App\Http\Controllers\Admin\FasiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('FTI')->name('FTI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\FTIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\FTIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\FTIController::class, 'store'])->name('store');
-                            Route::get('/{FTI}', [App\Http\Controllers\Admin\FTIController::class, 'show'])->name('show');
-                            Route::get('/{FTI}/edit', [App\Http\Controllers\Admin\FTIController::class, 'edit'])->name('edit');
-                            Route::put('/{FTI}', [App\Http\Controllers\Admin\FTIController::class, 'update'])->name('update');
-                            Route::delete('/{FTI}', [App\Http\Controllers\Admin\FTIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('fti')->name('fti.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\FtiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\FtiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\FtiController::class, 'store'])->name('store');
+                            Route::get('/{fti}', [App\Http\Controllers\Admin\FtiController::class, 'show'])->name('show');
+                            Route::get('/{fti}/edit', [App\Http\Controllers\Admin\FtiController::class, 'edit'])->name('edit');
+                            Route::put('/{fti}', [App\Http\Controllers\Admin\FtiController::class, 'update'])->name('update');
+                            Route::delete('/{fti}', [App\Http\Controllers\Admin\FtiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('IODI')->name('IODI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\IODIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\IODIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\IODIController::class, 'store'])->name('store');
-                            Route::get('/{IODI}', [App\Http\Controllers\Admin\IODIController::class, 'show'])->name('show');
-                            Route::get('/{IODI}/edit', [App\Http\Controllers\Admin\IODIController::class, 'edit'])->name('edit');
-                            Route::put('/{IODI}', [App\Http\Controllers\Admin\IODIController::class, 'update'])->name('update');
-                            Route::delete('/{IODI}', [App\Http\Controllers\Admin\IODIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('iodi')->name('iodi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\IodiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\IodiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\IodiController::class, 'store'])->name('store');
+                            Route::get('/{iodi}', [App\Http\Controllers\Admin\IodiController::class, 'show'])->name('show');
+                            Route::get('/{iodi}/edit', [App\Http\Controllers\Admin\IodiController::class, 'edit'])->name('edit');
+                            Route::put('/{iodi}', [App\Http\Controllers\Admin\IodiController::class, 'update'])->name('update');
+                            Route::delete('/{iodi}', [App\Http\Controllers\Admin\IodiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PBFI')->name('PBFI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PBFIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PBFIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PBFIController::class, 'store'])->name('store');
-                            Route::get('/{PBFI}', [App\Http\Controllers\Admin\PBFIController::class, 'show'])->name('show');
-                            Route::get('/{PBFI}/edit', [App\Http\Controllers\Admin\PBFIController::class, 'edit'])->name('edit');
-                            Route::put('/{PBFI}', [App\Http\Controllers\Admin\PBFIController::class, 'update'])->name('update');
-                            Route::delete('/{PBFI}', [App\Http\Controllers\Admin\PBFIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pbfi')->name('pbfi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PbfiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PbfiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PbfiController::class, 'store'])->name('store');
+                            Route::get('/{pbfi}', [App\Http\Controllers\Admin\PbfiController::class, 'show'])->name('show');
+                            Route::get('/{pbfi}/edit', [App\Http\Controllers\Admin\PbfiController::class, 'edit'])->name('edit');
+                            Route::put('/{pbfi}', [App\Http\Controllers\Admin\PbfiController::class, 'update'])->name('update');
+                            Route::delete('/{pbfi}', [App\Http\Controllers\Admin\PbfiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PERBAIKIN')->name('PERBAIKIN.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PERBAIKINController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PERBAIKINController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PERBAIKINController::class, 'store'])->name('store');
-                            Route::get('/{PERBAIKIN}', [App\Http\Controllers\Admin\PERBAIKINController::class, 'show'])->name('show');
-                            Route::get('/{PERBAIKIN}/edit', [App\Http\Controllers\Admin\PERBAIKINController::class, 'edit'])->name('edit');
-                            Route::put('/{PERBAIKIN}', [App\Http\Controllers\Admin\PERBAIKINController::class, 'update'])->name('update');
-                            Route::delete('/{PERBAIKIN}', [App\Http\Controllers\Admin\PERBAIKINController::class, 'destroy'])->name('destroy');
+                        Route::prefix('perbaikin')->name('perbaikin.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PerbaikinController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PerbaikinController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PerbaikinController::class, 'store'])->name('store');
+                            Route::get('/{perbaikin}', [App\Http\Controllers\Admin\PerbaikinController::class, 'show'])->name('show');
+                            Route::get('/{perbaikin}/edit', [App\Http\Controllers\Admin\PerbaikinController::class, 'edit'])->name('edit');
+                            Route::put('/{perbaikin}', [App\Http\Controllers\Admin\PerbaikinController::class, 'update'])->name('update');
+                            Route::delete('/{perbaikin}', [App\Http\Controllers\Admin\PerbaikinController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PERPANI')->name('PERPANI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PERPANIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PERPANIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PERPANIController::class, 'store'])->name('store');
-                            Route::get('/{PERPANI}', [App\Http\Controllers\Admin\PERPANIController::class, 'show'])->name('show');
-                            Route::get('/{PERPANI}/edit', [App\Http\Controllers\Admin\PERPANIController::class, 'edit'])->name('edit');
-                            Route::put('/{PERPANI}', [App\Http\Controllers\Admin\PERPANIController::class, 'update'])->name('update');
-                            Route::delete('/{PERPANI}', [App\Http\Controllers\Admin\PERPANIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('perpani')->name('perpani.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PerpaniController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PerpaniController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PerpaniController::class, 'store'])->name('store');
+                            Route::get('/{perpani}', [App\Http\Controllers\Admin\PerpaniController::class, 'show'])->name('show');
+                            Route::get('/{perpani}/edit', [App\Http\Controllers\Admin\PerpaniController::class, 'edit'])->name('edit');
+                            Route::put('/{perpani}', [App\Http\Controllers\Admin\PerpaniController::class, 'update'])->name('update');
+                            Route::delete('/{perpani}', [App\Http\Controllers\Admin\PerpaniController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PERSANI')->name('PERSANI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PERSANIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PERSANIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PERSANIController::class, 'store'])->name('store');
-                            Route::get('/{PERSANI}', [App\Http\Controllers\Admin\PERSANIController::class, 'show'])->name('show');
-                            Route::get('/{PERSANI}/edit', [App\Http\Controllers\Admin\PERSANIController::class, 'edit'])->name('edit');
-                            Route::put('/{PERSANI}', [App\Http\Controllers\Admin\PERSANIController::class, 'update'])->name('update');
-                            Route::delete('/{PERSANI}', [App\Http\Controllers\Admin\PERSANIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('persani')->name('persani.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PersaniController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PersaniController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PersaniController::class, 'store'])->name('store');
+                            Route::get('/{persani}', [App\Http\Controllers\Admin\PersaniController::class, 'show'])->name('show');
+                            Route::get('/{persani}/edit', [App\Http\Controllers\Admin\PersaniController::class, 'edit'])->name('edit');
+                            Route::put('/{persani}', [App\Http\Controllers\Admin\PersaniController::class, 'update'])->name('update');
+                            Route::delete('/{persani}', [App\Http\Controllers\Admin\PersaniController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PGI')->name('PGI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PGIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PGIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PGIController::class, 'store'])->name('store');
-                            Route::get('/{PGI}', [App\Http\Controllers\Admin\PGIController::class, 'show'])->name('show');
-                            Route::get('/{PGI}/edit', [App\Http\Controllers\Admin\PGIController::class, 'edit'])->name('edit');
-                            Route::put('/{PGI}', [App\Http\Controllers\Admin\PGIController::class, 'update'])->name('update');
-                            Route::delete('/{PGI}', [App\Http\Controllers\Admin\PGIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pgi')->name('pgi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PgiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PgiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PgiController::class, 'store'])->name('store');
+                            Route::get('/{pgi}', [App\Http\Controllers\Admin\PgiController::class, 'show'])->name('show');
+                            Route::get('/{pgi}/edit', [App\Http\Controllers\Admin\PgiController::class, 'edit'])->name('edit');
+                            Route::put('/{pgi}', [App\Http\Controllers\Admin\PgiController::class, 'update'])->name('update');
+                            Route::delete('/{pgi}', [App\Http\Controllers\Admin\PgiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('POBSI')->name('POBSI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\POBSIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\POBSIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\POBSIController::class, 'store'])->name('store');
-                            Route::get('/{POBSI}', [App\Http\Controllers\Admin\POBSIController::class, 'show'])->name('show');
-                            Route::get('/{POBSI}/edit', [App\Http\Controllers\Admin\POBSIController::class, 'edit'])->name('edit');
-                            Route::put('/{POBSI}', [App\Http\Controllers\Admin\POBSIController::class, 'update'])->name('update');
-                            Route::delete('/{POBSI}', [App\Http\Controllers\Admin\POBSIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pobsi')->name('pobsi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PobsiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PobsiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PobsiController::class, 'store'])->name('store');
+                            Route::get('/{pobsi}', [App\Http\Controllers\Admin\PobsiController::class, 'show'])->name('show');
+                            Route::get('/{pobsi}/edit', [App\Http\Controllers\Admin\PobsiController::class, 'edit'])->name('edit');
+                            Route::put('/{pobsi}', [App\Http\Controllers\Admin\PobsiController::class, 'update'])->name('update');
+                            Route::delete('/{pobsi}', [App\Http\Controllers\Admin\PobsiController::class, 'destroy'])->name('destroy');
                         });
-                        Route::prefix('PORDASI')->name('PORDASI.')->group(function () {
-                            Route::get('/', [App\Http\Controllers\Admin\PORDASIController::class, 'index'])->name('index');
-                            Route::get('/create', [App\Http\Controllers\Admin\PORDASIController::class, 'create'])->name('create');
-                            Route::post('/', [App\Http\Controllers\Admin\PORDASIController::class, 'store'])->name('store');
-                            Route::get('/{PORDASI}', [App\Http\Controllers\Admin\PORDASIController::class, 'show'])->name('show');
-                            Route::get('/{PORDASI}/edit', [App\Http\Controllers\Admin\PORDASIController::class, 'edit'])->name('edit');
-                            Route::put('/{PORDASI}', [App\Http\Controllers\Admin\PORDASIController::class, 'update'])->name('update');
-                            Route::delete('/{PORDASI}', [App\Http\Controllers\Admin\PORDASIController::class, 'destroy'])->name('destroy');
+                        Route::prefix('pordasi')->name('pordasi.')->group(function () {
+                            Route::get('/', [App\Http\Controllers\Admin\PordasiController::class, 'index'])->name('index');
+                            Route::get('/create', [App\Http\Controllers\Admin\PordasiController::class, 'create'])->name('create');
+                            Route::post('/', [App\Http\Controllers\Admin\PordasiController::class, 'store'])->name('store');
+                            Route::get('/{pordasi}', [App\Http\Controllers\Admin\PordasiController::class, 'show'])->name('show');
+                            Route::get('/{pordasi}/edit', [App\Http\Controllers\Admin\PordasiController::class, 'edit'])->name('edit');
+                            Route::put('/{pordasi}', [App\Http\Controllers\Admin\PordasiController::class, 'update'])->name('update');
+                            Route::delete('/{pordasi}', [App\Http\Controllers\Admin\PordasiController::class, 'destroy'])->name('destroy');
                         });
                     });
                 });

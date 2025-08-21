@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PDBI;
+use App\Models\Pdbi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PDBIController extends Controller
+class PdbiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = PDBI::query();
+        $query = Pdbi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PDBIController extends Controller
             $direction = 'desc';
         }
 
-        $PDBIData = $query
+        $PdbiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.permainan.PDBI._table', compact('PDBIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.permainan.Pdbi._table', compact('PdbiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.PDBI.index', compact('PDBIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pdbi.index', compact('PdbiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.PDBI.create');
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pdbi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PDBIController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PDBI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Pdbi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PDBIController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PDBI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Pdbi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        PDBI::create($data);
+        Pdbi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PDBI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pdbi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(PDBI $PDBI)
+    public function show(Pdbi $Pdbi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.PDBI.show', compact('PDBI'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pdbi.show', compact('Pdbi'));
     }
 
-    public function edit(PDBI $PDBI)
+    public function edit(Pdbi $Pdbi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.PDBI.edit', compact('PDBI'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pdbi.edit', compact('Pdbi'));
     }
 
-    public function update(Request $request, PDBI $PDBI)
+    public function update(Request $request, Pdbi $Pdbi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PDBIController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($PDBI->foto_jurnal) {
-                foreach ($PDBI->foto_jurnal as $oldFoto) {
+            if ($Pdbi->foto_jurnal) {
+                foreach ($Pdbi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('PDBI/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('Pdbi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PDBIController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($PDBI->dokumen_lpj) {
-                foreach ($PDBI->dokumen_lpj as $oldDokumen) {
+            if ($Pdbi->dokumen_lpj) {
+                foreach ($Pdbi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('PDBI/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('Pdbi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $PDBI->update($data);
+        $Pdbi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PDBI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pdbi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(PDBI $PDBI)
+    public function destroy(Pdbi $Pdbi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PDBIController extends Controller
         }
 
         // Delete associated files
-        if ($PDBI->foto_jurnal) {
-            foreach ($PDBI->foto_jurnal as $foto) {
+        if ($Pdbi->foto_jurnal) {
+            foreach ($Pdbi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($PDBI->dokumen_lpj) {
-            foreach ($PDBI->dokumen_lpj as $dokumen) {
+        if ($Pdbi->dokumen_lpj) {
+            foreach ($Pdbi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $PDBI->delete();
+        $Pdbi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PDBI.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pdbi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PDBIController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, PDBI $PDBI)
+    public function removeFile(Request $request, Pdbi $Pdbi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PDBIController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $PDBI->$fileType ?? [];
+        $files = $Pdbi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PDBIController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $PDBI->update([$fileType => $files]);
+        $Pdbi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,
