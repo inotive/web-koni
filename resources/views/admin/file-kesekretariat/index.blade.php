@@ -54,33 +54,32 @@ table th {
     white-space: nowrap;
     text-align: center;
     padding: 0.5rem 0.25rem !important;
-    font-size: 0.9rem !important; /* Font diperbesar */
-    font-weight: 700 !important; /* Bold untuk nomor */
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
     line-height: 1.2;
     min-width: 40px;
 }
 
 .table th:nth-child(2),
 .table td:nth-child(2) {
-    width: 40% !important; /* Nama dokumen + tanggal */
+    width: 40% !important;
     padding: 0.75rem !important;
 }
 
 .table th:nth-child(3),
 .table td:nth-child(3) {
-    width: 35% !important; /* File dokumen */
+    width: 35% !important;
     padding: 0.75rem !important;
 }
 
 .table th:nth-child(4),
 .table td:nth-child(4) {
     width: 5% !important;
-    min-width: 50px !important; /* Minimal width untuk aksi */
+    min-width: 50px !important;
     max-width: 6% !important;
     text-align: center;
     padding: 0.5rem 0.25rem !important;
 }
-
 
 .document-info {
     display: flex;
@@ -92,16 +91,16 @@ table th {
     font-weight: 600;
     color: #495057;
     text-decoration: none;
-    display: block;        /* ganti inline-block → block */
+    display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    min-width: 0;          /* penting supaya bisa menciut */
+    min-width: 0;
 }
 
 .document-name:hover {
-    color: #1B84FF; /* Warna saat hover */
-    text-decoration: underline; /* Garis bawah saat hover */
+    color: #1B84FF;
+    text-decoration: underline;
 }
 
 .document-name i {
@@ -112,19 +111,20 @@ table th {
 
 .document-date {
     font-size: 12px;
-    color: #6c757d;
+    color: #6c757d !important;
     font-weight: 400;
     padding-left: 8px;
     font-style: italic;
+    user-select: none;
+    pointer-events: none;
+    cursor: default !important;
 }
 
 .text-truncate-custom {
-    
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
 
 .file-link {
     color: #495057;
@@ -151,8 +151,6 @@ table th {
     margin-right: 6px;
 }
 
-
-/* Container untuk overflow */
 .card {
     overflow: visible !important;
 }
@@ -165,13 +163,11 @@ table th {
     overflow: visible !important;
 }
 
-/* Dropdown container */
 .dropdown-action {
     position: relative;
     z-index: 1;
 }
 
-/* Tombol dropdown */
 .dropdown-toggle-action {
     background: transparent !important;
     border: 1px solid #e9ecef !important;
@@ -205,7 +201,6 @@ table th {
     height: 18px !important;
 }
 
-/* Dropdown menu - PERBAIKAN UTAMA UNTUK OVERLAP */
 .dropdown-menu-action {
     position: absolute !important;
     right: 0 !important;
@@ -215,7 +210,7 @@ table th {
     border: 1px solid #dee2e6 !important;
     border-radius: 10px !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
-    z-index: 99999 !important; /* Z-index sangat tinggi */
+    z-index: 99999 !important;
     min-width: 180px !important;
     padding: 10px 0 !important;
     background: white !important;
@@ -227,7 +222,6 @@ table th {
     display: block !important;
 }
 
-/* Dropdown items */
 .dropdown-item-action {
     display: flex !important;
     align-items: center !important;
@@ -256,7 +250,6 @@ table th {
     flex-shrink: 0 !important;
 }
 
-/* DROPUP untuk baris terakhir - PERBAIKAN UTAMA */
 .table tbody tr:nth-last-child(-n+2) .dropdown-menu-action {
     top: auto !important;
     bottom: 100% !important;
@@ -264,7 +257,6 @@ table th {
     margin-bottom: 6px !important;
 }
 
-/* Table body z-index management */
 .table tbody {
     position: relative;
     z-index: 1;
@@ -280,7 +272,6 @@ table th {
     background-color: rgba(27, 132, 255, 0.03);
 }
 
-
 .search-loading {
     display: none;
     position: absolute;
@@ -293,7 +284,6 @@ table th {
 .search-container {
     position: relative;
 }
-
 
 .empty-state {
     padding: 4rem 2rem;
@@ -317,7 +307,6 @@ table th {
     color: #6c757d;
     margin-bottom: 1.5rem;
 }
-
 
 .pagination-wrapper {
     margin-top: 1.5rem;
@@ -383,7 +372,6 @@ table th {
     border-color: #dee2e6;
 }
 
-
 .table-footer {
     display: flex;
     justify-content: space-between;
@@ -394,7 +382,6 @@ table th {
     flex-wrap: wrap;
     gap: 1rem;
 }
-
 
 .table th.sortable {
     cursor: pointer;
@@ -425,7 +412,6 @@ table th {
     color: #1B84FF;
 }
 
-
 .file-icon-pdf {
     color: #dc3545;
 }
@@ -441,7 +427,6 @@ table th {
 .file-icon-default {
     color: #6c757d;
 }
-
 
 .toast-container {
     position: fixed;
@@ -477,7 +462,6 @@ table th {
     font-size: 14px;
 }
 
-
 .modal-content {
     border-radius: 12px;
     border: none;
@@ -498,7 +482,6 @@ table th {
     padding: 16px 24px;
 }
 
-
 .custom-red-button {
     background-color: #F8285A;
     border-color: #F8285A;
@@ -515,7 +498,6 @@ table th {
 }
 
 @media (max-width: 768px) {
-    /* Dropdown positioning di mobile */
     .dropdown-menu-action {
         right: 0 !important;
         left: auto !important;
@@ -528,7 +510,6 @@ table th {
         overflow-y: visible !important;
     }
     
-    /* Mobile dropup rule - mulai dari baris ke-2 */
     .table tbody tr:nth-child(n+2) .dropdown-menu-action {
         top: auto !important;
         bottom: 100% !important;
@@ -536,7 +517,6 @@ table th {
         margin-bottom: 6px !important;
     }
     
-    /* Baris pertama tetap dropdown biasa */
     .table tbody tr:first-child .dropdown-menu-action {
         top: 100% !important;
         bottom: auto !important;
@@ -544,7 +524,6 @@ table th {
         margin-bottom: 0 !important;
     }
 
-    /* Column widths for mobile */
     .table th:nth-child(1),
     .table td:nth-child(1) {
         width: 5% !important;
@@ -567,7 +546,6 @@ table th {
         min-width: 60px !important;
     }
 
-    /* Table footer responsive */
     .table-footer {
         flex-direction: column;
         align-items: stretch;
@@ -585,7 +563,6 @@ table th {
         gap: 2px;
     }
 
-    /* Document info mobile */
     .document-name {
         padding: 4px 6px;
         font-size: 0.875rem;
@@ -618,78 +595,91 @@ table th {
     height: 2.5rem;
     color: #1B84FF;
 }
+
+/* Kolom nama dokumen dipaksa 30% dan bisa dipotong */
+.table td:nth-child(2) {
+    max-width: 30% !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Wrapper flex supaya "mau" menciut */
+.document-name-display {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+/* Teksnya sendiri dipotong kalau panjang */
+.document-name-display > .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 4px;
+}
+
         </style>
 
         <div class="d-flex flex-column mb-8">
-            <h1 class="text-dark fw-bold mb-1">File Kesekretariat</h1>
-            <div class="text-muted fw-semibold fs-6">Manajemen File Dokumen Kesekretariat Anda Sekarang</div>
-        </div>
+    <h1 class="text-dark fw-bold mb-1">File Kesekretariat</h1>
+    <div class="text-muted fw-semibold fs-6">Manajemen File Dokumen Kesekretariat Anda Sekarang</div>
+</div>
 
-        {{-- Toast Notification Container --}}
-        <div class="toast-container" id="toast-container"></div>
+<div class="toast-container" id="toast-container"></div>
 
-        {{-- Main Content Card --}}
-        <div class="row col-12 mt-5">
-            <div class="card">
-                {{-- Card Header --}}
-<div class="card-header d-flex justify-content-between align-items-center flex-wrap py-3">
-    {{-- Judul di kiri --}}
-    <div class="d-flex flex-column">
-        <h3 class="card-title fw-bold fs-4 mb-0">Daftar File Kesekretariat - 2025</h3>
-        <span class="text-muted fs-6">
-            Menampilkan <span id="showing-start">1</span>-<span id="showing-end">{{ $files->count() }}</span> dari <b>{{ $files->total() }}</b> data
-        </span>
-    </div>
-                    {{-- Action Buttons --}}
-                    <div class="d-flex align-items-center gap-8 flex-wrap ms-auto">
-                        {{-- Add Button --}}
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#tambahFileModal"
-                            class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
-                            Tambah File
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0_851_8468)">
-                                    <path
-                                        d="M12.3782 17.0625H5.61375C4.37344 17.0582 3.18528 16.5631 2.309 15.6853C1.43272 14.8075 0.939624 13.6185 0.9375 12.3782V5.62182C0.939624 4.38151 1.43272 3.19249 2.309 2.3147C3.18528 1.43692 4.37344 0.941767 5.61375 0.937507H12.3701C12.9853 0.936447 13.5946 1.05656 14.1633 1.29099C14.7321 1.52542 15.2491 1.86958 15.6848 2.30381C16.1205 2.73804 16.4664 3.25384 16.7028 3.82176C16.9392 4.38968 17.0614 4.9986 17.0625 5.61375V12.3701C17.0636 12.986 16.9432 13.596 16.7082 14.1652C16.4733 14.7345 16.1284 15.2518 15.6933 15.6876C15.2583 16.1235 14.7415 16.4692 14.1727 16.7052C13.6038 16.9411 12.994 17.0625 12.3782 17.0625ZM13.0312 8.19375H9.80625V4.96876C9.80625 4.75492 9.7213 4.54985 9.5701 4.39865C9.4189 4.24745 9.21383 4.16251 9 4.16251C8.78617 4.16251 8.58109 4.24745 8.42989 4.39865C8.27869 4.54985 8.19375 4.75492 8.19375 4.96876V8.19375H4.96875C4.75492 8.19375 4.54984 8.2787 4.39864 8.4299C4.24744 8.5811 4.1625 8.78617 4.1625 9C4.1625 9.21383 4.24744 9.41891 4.39864 9.57011C4.54984 9.72131 4.75492 9.80625 4.96875 9.80625H8.19375V13.0313C8.19375 13.2451 8.27869 13.4502 8.42989 13.6014C8.58109 13.7526 8.78617 13.8375 9 13.8375C9.21383 13.8375 9.4189 13.7526 9.5701 13.6014C9.7213 13.4502 9.80625 13.2451 9.80625 13.0313V9.80625H13.0312C13.2451 9.80625 13.4501 9.72131 13.6013 9.57011C13.7526 9.41891 13.8375 9.21383 13.8375 9C13.8375 8.78617 13.7526 8.5811 13.6013 8.4299C13.4501 8.2787 13.2451 8.19375 13.0312 8.19375Z"
-                                        fill="white" />
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0_851_8468">
-                                        <rect width="18" height="18" fill="white" />
-                                    </clipPath>
-                                </defs>
-                            </svg>
-                        </button>
+<div class="row col-12 mt-5">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-3">
+            <div class="d-flex flex-column">
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar File Kesekretariat - 2025</h3>
+                <span class="text-muted fs-6">
+                    Menampilkan <span id="showing-start">1</span>-<span id="showing-end">{{ $files->count() }}</span> dari <b>{{ $files->total() }}</b> data
+                </span>
+            </div>
+            <div class="d-flex align-items-center gap-8 flex-wrap ms-auto">
+                <button type="button" data-bs-toggle="modal" data-bs-target="#tambahFileModal"
+                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                    Tambah File
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_851_8468)">
+                            <path
+                                d="M12.3782 17.0625H5.61375C4.37344 17.0582 3.18528 16.5631 2.309 15.6853C1.43272 14.8075 0.939624 13.6185 0.9375 12.3782V5.62182C0.939624 4.38151 1.43272 3.19249 2.309 2.3147C3.18528 1.43692 4.37344 0.941767 5.61375 0.937507H12.3701C12.9853 0.936447 13.5946 1.05656 14.1633 1.29099C14.7321 1.52542 15.2491 1.86958 15.6848 2.30381C16.1205 2.73804 16.4664 3.25384 16.7028 3.82176C16.9392 4.38968 17.0614 4.9986 17.0625 5.61375V12.3701C17.0636 12.986 16.9432 13.596 16.7082 14.1652C16.4733 14.7345 16.1284 15.2518 15.6933 15.6876C15.2583 16.1235 14.7415 16.4692 14.1727 16.7052C13.6038 16.9411 12.994 17.0625 12.3782 17.0625ZM13.0312 8.19375H9.80625V4.96876C9.80625 4.75492 9.7213 4.54985 9.5701 4.39865C9.4189 4.24745 9.21383 4.16251 9 4.16251C8.78617 4.16251 8.58109 4.24745 8.42989 4.39865C8.27869 4.54985 8.19375 4.75492 8.19375 4.96876V8.19375H4.96875C4.75492 8.19375 4.54984 8.2787 4.39864 8.4299C4.24744 8.5811 4.1625 8.78617 4.1625 9C4.1625 9.21383 4.24744 9.41891 4.39864 9.57011C4.54984 9.72131 4.75492 9.80625 4.96875 9.80625H8.19375V13.0313C8.19375 13.2451 8.27869 13.4502 8.42989 13.6014C8.58109 13.7526 8.78617 13.8375 9 13.8375C9.21383 13.8375 9.4189 13.7526 9.5701 13.6014C9.7213 13.4502 9.80625 13.2451 9.80625 13.0313V9.80625H13.0312C13.2451 9.80625 13.4501 9.72131 13.6013 9.57011C13.7526 9.41891 13.8375 9.21383 13.8375 9C13.8375 8.78617 13.7526 8.5811 13.6013 8.4299C13.4501 8.2787 13.2451 8.19375 13.0312 8.19375Z"
+                                fill="white" />
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_851_8468">
+                                <rect width="18" height="18" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </button>
 
-                        {{-- Search + Filter --}}
-                        <div class="d-flex align-items-center gap-7 flex-wrap">
-                            {{-- Search --}}
-                            <div class="search-container">
-                                <div class="input-group border rounded" style="width: 200px;">
-                                    <span class="input-group-text bg-transparent border-0">
-                                        <i class="fas fa-search"></i>
-                                    </span>
-                                    <input type="search" name="search" id="search" class="form-control border-0 py-2"
-                                        placeholder="Cari nama dokumen..." value="{{ request('search') }}"
-                                        autocomplete="off">
-                                    <div class="search-loading">
-                                        <i class="fas fa-spinner fa-spin"></i>
-                                    </div>
-                                </div>
+                <div class="d-flex align-items-center gap-7 flex-wrap">
+                    <div class="search-container">
+                        <div class="input-group border rounded" style="width: 200px;">
+                            <span class="input-group-text bg-transparent border-0">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="search" name="search" id="search" class="form-control border-0 py-2"
+                                placeholder="Cari nama dokumen..." value="{{ request('search') }}"
+                                autocomplete="off">
+                            <div class="search-loading">
+                                <i class="fas fa-spinner fa-spin"></i>
                             </div>
-
                         </div>
                     </div>
-                </div>
-
-                {{-- Card Body --}}
-                <div class="card-body" id="tableContainer">
-                    @include('admin.file-kesekretariat._table', ['files' => $files])
                 </div>
             </div>
         </div>
 
- {{-- Tambah File Modal --}}
+        <div class="card-body" id="tableContainer">
+            @include('admin.file-kesekretariat._table', ['files' => $files])
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="tambahFileModal" tabindex="-1" aria-labelledby="tambahFileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 gap-5 px-10 py-8">
@@ -701,7 +691,6 @@ table th {
             <form id="tambahFileForm" method="POST" action="{{ route('admin.file-kesekretariat.store') }}" enctype="multipart/form-data" class="d-grid gap-4">
                 @csrf
 
-                {{-- Nama Dokumen --}}
                 <div>
                     <div class="fw-semibold required mb-3 text-gray-800">Nama Dokumen</div>
                     <input type="text" 
@@ -712,7 +701,6 @@ table th {
                     <div class="invalid-feedback" id="nama_dokumen_error"></div>
                 </div>
 
-                {{-- Tanggal Dokumen --}}
                 <div>
                     <div class="fw-semibold required mb-3 text-gray-800">Tanggal Dokumen</div>
                     <input type="date" 
@@ -726,7 +714,6 @@ table th {
                     </div>
                 </div>
 
-                {{-- File Upload --}}
                 <div>
                     <div class="fw-semibold required mb-3 text-gray-800">File Dokumen</div>
                     <div class="dropzone" id="dropzone-tambahFileForm">
@@ -753,164 +740,158 @@ table th {
         </div>
     </div>
 </div>
-
-    @endsection
-
+@endsection
 
 
     @section('script')
 <script>
-
 function deleteFile(fileId, fileName, deleteUrl) {
-        Swal.fire({
-            title: "Apakah Anda Yakin?",
-            html: `<p style='text-align:center'>Setelah <strong>${fileName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
-            icon: "warning",
-            showCancelButton: true,
-            reverseButtons: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Hapus!',
-            cancelButtonText: 'Batalkan!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Show loading
-                Swal.fire({
-                    title: 'Menghapus...',
-                    text: 'Mohon tunggu',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => Swal.showLoading()
-                });
+    Swal.fire({
+        title: "Apakah Anda Yakin?",
+        html: `<p style='text-align:center'>Setelah <strong>${fileName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
+        icon: "warning",
+        showCancelButton: true,
+        reverseButtons: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Hapus!',
+        cancelButtonText: 'Batalkan!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading
+            Swal.fire({
+                title: 'Menghapus...',
+                text: 'Mohon tunggu',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => Swal.showLoading()
+            });
 
-                // Perform delete request
-                $.ajax({
-                    url: deleteUrl,
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    success: function(response) {
-                        Swal.close();
-                        if (response.success) {
-                            Swal.fire({
-                                title: 'Berhasil!',
-                                text: response.message || 'File berhasil dihapus',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-
-                            // Remove the row from table
-                            $(`#file-row-${fileId}`).fadeOut(300, function() {
-                                $(this).remove();
-
-                                // Check if table is empty after deletion
-                                if ($('#tableBody tr:visible').length === 0) {
-                                    performSearch(); // Reload the page content
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Gagal!',
-                                text: response.message || 'Terjadi kesalahan saat menghapus',
-                                icon: 'error'
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.close();
-                        let errorMessage = 'Terjadi kesalahan saat menghapus file';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        }
+            // Perform delete request
+            $.ajax({
+                url: deleteUrl,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    Swal.close();
+                    if (response.success) {
                         Swal.fire({
-                            title: 'Error!',
-                            text: errorMessage,
+                            title: 'Berhasil!',
+                            text: response.message || 'File berhasil dihapus',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        // Remove the row from table
+                        $(`#file-row-${fileId}`).fadeOut(300, function() {
+                            $(this).remove();
+
+                            // Check if table is empty after deletion
+                            if ($('#tableBody tr:visible').length === 0) {
+                                performSearch(); // Reload the page content
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Gagal!',
+                            text: response.message || 'Terjadi kesalahan saat menghapus',
                             icon: 'error'
                         });
                     }
-                });
-            } else {
-                Swal.fire({
-                    title: "Aksi Dibatalkan :)",
-                    icon: "info",
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-            }
-        });
-    }
-
-
-    // Fungsi untuk menambahkan notifikasi
-    function showNotification(message, type = 'success') {
-        const toastId = 'toast-' + Date.now();
-        const icon = type === 'success' ? 'check-circle' : 'exclamation-triangle';
-        const bgColor = type === 'success' ? 'success' : 'error';
-        
-        const toastHtml = `
-            <div class="toast ${bgColor}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-                <div class="toast-header">
-                    <i class="fas fa-${icon} me-2 ${type === 'success' ? 'text-success' : 'text-danger'}"></i>
-                    <strong class="me-auto">${type === 'success' ? 'Berhasil' : 'Error'}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div class="toast-body">
-                    ${message}
-                </div>
-            </div>
-        `;
-        
-        $('#toast-container').append(toastHtml);
-        
-        const toastElement = new bootstrap.Toast(document.getElementById(toastId));
-        toastElement.show();
-        
-        // Auto remove after hide
-        document.getElementById(toastId).addEventListener('hidden.bs.toast', function () {
-            $(this).remove();
-        });
-    }
-
-    
-
-    function getFileIcon(extension) {
-        const icons = {
-            'pdf': 'fas fa-file-pdf file-icon-pdf',
-            'doc': 'fas fa-file-word file-icon-doc',
-            'docx': 'fas fa-file-word file-icon-doc',
-            'xls': 'fas fa-file-excel file-icon-xls',
-            'xlsx': 'fas fa-file-excel file-icon-xls',
-            'default': 'fas fa-file file-icon-default'
-        };
-        return icons[extension.toLowerCase()] || icons['default'];
-    }
-
-    // Fungsi untuk menambahkan ikon file
-    function addFileIcons() {
-        $('.file-link').each(function() {
-            const fileName = $(this).text().trim();
-            const extension = fileName.split('.').pop();
-            const iconClass = getFileIcon(extension);
-
-            // Tambahkan ikon sebelum nama file
-            $(this).prepend(`<i class="${iconClass}"></i>`);
-        });
-    }
-
-    $(document).ready(function() {
-        // Panggil fungsi untuk menambahkan ikon
-        addFileIcons();
-
-        // Tambahkan juga di callback success AJAX search
-        $(document).ajaxSuccess(function() {
-            addFileIcons();
-        });
+                },
+                error: function(xhr) {
+                    Swal.close();
+                    let errorMessage = 'Terjadi kesalahan saat menghapus file';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                title: "Aksi Dibatalkan :)",
+                icon: "info",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
     });
+}
 
-    // Fixed JavaScript code for file management
+// Fungsi untuk menambahkan notifikasi
+function showNotification(message, type = 'success') {
+    const toastId = 'toast-' + Date.now();
+    const icon = type === 'success' ? 'check-circle' : 'exclamation-triangle';
+    const bgColor = type === 'success' ? 'success' : 'error';
+    
+    const toastHtml = `
+        <div class="toast ${bgColor}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+            <div class="toast-header">
+                <i class="fas fa-${icon} me-2 ${type === 'success' ? 'text-success' : 'text-danger'}"></i>
+                <strong class="me-auto">${type === 'success' ? 'Berhasil' : 'Error'}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        </div>
+    `;
+    
+    $('#toast-container').append(toastHtml);
+    
+    const toastElement = new bootstrap.Toast(document.getElementById(toastId));
+    toastElement.show();
+    
+    // Auto remove after hide
+    document.getElementById(toastId).addEventListener('hidden.bs.toast', function () {
+        $(this).remove();
+    });
+}
+
+function getFileIcon(extension) {
+    const icons = {
+        'pdf': 'fas fa-file-pdf file-icon-pdf',
+        'doc': 'fas fa-file-word file-icon-doc',
+        'docx': 'fas fa-file-word file-icon-doc',
+        'xls': 'fas fa-file-excel file-icon-xls',
+        'xlsx': 'fas fa-file-excel file-icon-xls',
+        'default': 'fas fa-file file-icon-default'
+    };
+    return icons[extension.toLowerCase()] || icons['default'];
+}
+
+// Fungsi untuk menambahkan ikon file
+function addFileIcons() {
+    $('.file-link').each(function() {
+        const fileName = $(this).text().trim();
+        const extension = fileName.split('.').pop();
+        const iconClass = getFileIcon(extension);
+
+        // Tambahkan ikon sebelum nama file
+        $(this).prepend(`<i class="${iconClass}"></i>`);
+    });
+}
+
+$(document).ready(function() {
+    // Panggil fungsi untuk menambahkan ikon
+    addFileIcons();
+
+    // Tambahkan juga di callback success AJAX search
+    $(document).ajaxSuccess(function() {
+        addFileIcons();
+    });
+});
+
+// Fixed JavaScript code for file management
 $(document).ready(function() {
     let isLoading = false;
     let searchTimeout;
@@ -947,193 +928,193 @@ $(document).ready(function() {
         });
     }
 
-function initializeCustomDropzone() {
-    const dropzoneElement = document.getElementById('dropzone-tambahFileForm');
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.name = 'dokumen_file';
-    fileInput.accept = '.pdf,.doc,.docx,.xls,.xlsx';
-    fileInput.style.display = 'none';
-    fileInput.required = true;
-    
-    // Append hidden file input to form
-    document.getElementById('tambahFileForm').appendChild(fileInput);
-    
-    let dragCounter = 0;
-    
-    // Click to select file
-    dropzoneElement.addEventListener('click', function(e) {
-        e.preventDefault();
-        fileInput.click();
-    });
-    
-    // File selection handler
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            handleFileSelection(file, dropzoneElement);
-        }
-    });
-    
-    // Drag and drop handlers
-    dropzoneElement.addEventListener('dragenter', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dragCounter++;
-        dropzoneElement.classList.add('drag-over');
-    });
-    
-    dropzoneElement.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dragCounter--;
-        if (dragCounter === 0) {
-            dropzoneElement.classList.remove('drag-over');
-        }
-    });
-    
-    dropzoneElement.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    });
-    
-    dropzoneElement.addEventListener('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dragCounter = 0;
-        dropzoneElement.classList.remove('drag-over');
+    function initializeCustomDropzone() {
+        const dropzoneElement = document.getElementById('dropzone-tambahFileForm');
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.name = 'dokumen_file';
+        fileInput.accept = '.pdf,.doc,.docx,.xls,.xlsx';
+        fileInput.style.display = 'none';
+        fileInput.required = true;
         
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            const file = files[0];
-            // Set file to input
-            const dt = new DataTransfer();
-            dt.items.add(file);
-            fileInput.files = dt.files;
+        // Append hidden file input to form
+        document.getElementById('tambahFileForm').appendChild(fileInput);
+        
+        let dragCounter = 0;
+        
+        // Click to select file
+        dropzoneElement.addEventListener('click', function(e) {
+            e.preventDefault();
+            fileInput.click();
+        });
+        
+        // File selection handler
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileSelection(file, dropzoneElement);
+            }
+        });
+        
+        // Drag and drop handlers
+        dropzoneElement.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter++;
+            dropzoneElement.classList.add('drag-over');
+        });
+        
+        dropzoneElement.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter--;
+            if (dragCounter === 0) {
+                dropzoneElement.classList.remove('drag-over');
+            }
+        });
+        
+        dropzoneElement.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        
+        dropzoneElement.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter = 0;
+            dropzoneElement.classList.remove('drag-over');
             
-            handleFileSelection(file, dropzoneElement);
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                // Set file to input
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                fileInput.files = dt.files;
+                
+                handleFileSelection(file, dropzoneElement);
+            }
+        });
+    }
+
+    // Handle file selection and validation
+    function handleFileSelection(file, dropzoneElement) {
+        // File validation
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const allowedTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+        
+        // Clear previous errors
+        const errorDiv = document.getElementById('dokumen_file_error');
+        errorDiv.textContent = '';
+        dropzoneElement.classList.remove('error');
+        
+        // Validate file size
+        if (file.size > maxSize) {
+            errorDiv.textContent = 'Ukuran file tidak boleh lebih dari 10MB';
+            dropzoneElement.classList.add('error');
+            return false;
         }
-    });
-}
-
-// Handle file selection and validation
-function handleFileSelection(file, dropzoneElement) {
-    // File validation
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    const allowedTypes = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-excel',
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ];
-    
-    // Clear previous errors
-    const errorDiv = document.getElementById('dokumen_file_error');
-    errorDiv.textContent = '';
-    dropzoneElement.classList.remove('error');
-    
-    // Validate file size
-    if (file.size > maxSize) {
-        errorDiv.textContent = 'Ukuran file tidak boleh lebih dari 10MB';
-        dropzoneElement.classList.add('error');
-        return false;
+        
+        // Validate file type
+        if (!allowedTypes.includes(file.type)) {
+            errorDiv.textContent = 'Format file tidak didukung. Gunakan PDF, DOC, DOCX, XLS, atau XLSX';
+            dropzoneElement.classList.add('error');
+            return false;
+        }
+        
+        // Show file preview
+        showFilePreview(file, dropzoneElement);
+        return true;
     }
-    
-    // Validate file type
-    if (!allowedTypes.includes(file.type)) {
-        errorDiv.textContent = 'Format file tidak didukung. Gunakan PDF, DOC, DOCX, XLS, atau XLSX';
-        dropzoneElement.classList.add('error');
-        return false;
-    }
-    
-    // Show file preview
-    showFilePreview(file, dropzoneElement);
-    return true;
-}
 
-// Show file preview in dropzone
-function showFilePreview(file, dropzoneElement) {
-    const fileExtension = file.name.split('.').pop().toLowerCase();
-    const fileIcon = getFileIconForPreview(fileExtension);
-    const fileSize = (file.size / (1024 * 1024)).toFixed(2);
-    
-    dropzoneElement.innerHTML = `
-        <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded">
-            <div class="d-flex align-items-center">
-                <i class="${fileIcon} fa-2x me-3"></i>
-                <div>
-                    <div class="fw-bold text-truncate" style="max-width: 200px;" title="${file.name}">
-                        ${file.name}
+    // Show file preview in dropzone
+    function showFilePreview(file, dropzoneElement) {
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        const fileIcon = getFileIconForPreview(fileExtension);
+        const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+        
+        dropzoneElement.innerHTML = `
+            <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded">
+                <div class="d-flex align-items-center">
+                    <i class="${fileIcon} fa-2x me-3"></i>
+                    <div>
+                        <div class="fw-bold text-truncate" style="max-width: 200px;" title="${file.name}">
+                            ${file.name}
+                        </div>
+                        <small class="text-muted">${fileSize} MB</small>
                     </div>
-                    <small class="text-muted">${fileSize} MB</small>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeSelectedFile()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+    }
+
+    // Get file icon for preview
+    function getFileIconForPreview(extension) {
+        const icons = {
+            'pdf': 'fas fa-file-pdf text-danger',
+            'doc': 'fas fa-file-word text-primary',
+            'docx': 'fas fa-file-word text-primary',
+            'xls': 'fas fa-file-excel text-success',
+            'xlsx': 'fas fa-file-excel text-success'
+        };
+        return icons[extension] || 'fas fa-file text-secondary';
+    }
+
+    // Remove selected file
+    function removeSelectedFile() {
+        const dropzoneElement = document.getElementById('dropzone-tambahFileForm');
+        const fileInput = document.querySelector('#tambahFileForm input[type="file"]');
+        
+        // Clear file input
+        if (fileInput) {
+            fileInput.value = '';
+        }
+        
+        // Reset dropzone to original state
+        dropzoneElement.innerHTML = `
+            <div class="dz-message needsclick">
+                <i class="ki-duotone ki-file-up fs-3x text-primary">
+                    <span class="path1"></span><span class="path2"></span>
+                </i>
+                <div class="ms-4">
+                    <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
+                    <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB.</span>
                 </div>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeSelectedFile()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    `;
-}
-
-// Get file icon for preview
-function getFileIconForPreview(extension) {
-    const icons = {
-        'pdf': 'fas fa-file-pdf text-danger',
-        'doc': 'fas fa-file-word text-primary',
-        'docx': 'fas fa-file-word text-primary',
-        'xls': 'fas fa-file-excel text-success',
-        'xlsx': 'fas fa-file-excel text-success'
-    };
-    return icons[extension] || 'fas fa-file text-secondary';
-}
-
-// Remove selected file
-function removeSelectedFile() {
-    const dropzoneElement = document.getElementById('dropzone-tambahFileForm');
-    const fileInput = document.querySelector('#tambahFileForm input[type="file"]');
-    
-    // Clear file input
-    if (fileInput) {
-        fileInput.value = '';
+        `;
+        
+        // Clear any error messages
+        const errorDiv = document.getElementById('dokumen_file_error');
+        if (errorDiv) {
+            errorDiv.textContent = '';
+        }
+        dropzoneElement.classList.remove('error');
     }
-    
-    // Reset dropzone to original state
-    dropzoneElement.innerHTML = `
-        <div class="dz-message needsclick">
-            <i class="ki-duotone ki-file-up fs-3x text-primary">
-                <span class="path1"></span><span class="path2"></span>
-            </i>
-            <div class="ms-4">
-                <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
-                <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB.</span>
-            </div>
-        </div>
-    `;
-    
-    // Clear any error messages
-    const errorDiv = document.getElementById('dokumen_file_error');
-    if (errorDiv) {
-        errorDiv.textContent = '';
-    }
-    dropzoneElement.classList.remove('error');
-}
 
-// Make removeSelectedFile globally available
-window.removeSelectedFile = removeSelectedFile;
+    // Make removeSelectedFile globally available
+    window.removeSelectedFile = removeSelectedFile;
 
-// Reset modal when closed
-$('#tambahFileModal').on('hidden.bs.modal', function() {
-    $('#tambahFileForm').trigger('reset');
-    clearFormErrors();
-    removeSelectedFile(); // Reset file selection
-});
+    // Reset modal when closed
+    $('#tambahFileModal').on('hidden.bs.modal', function() {
+        $('#tambahFileForm').trigger('reset');
+        clearFormErrors();
+        removeSelectedFile(); // Reset file selection
+    });
 
-// Initialize dropzone when modal is shown
-$('#tambahFileModal').on('shown.bs.modal', function() {
-    initializeCustomDropzone();
-});
-    
+    // Initialize dropzone when modal is shown
+    $('#tambahFileModal').on('shown.bs.modal', function() {
+        initializeCustomDropzone();
+    });
+        
     // Get file icon based on file type
     function getFileIcon(fileType) {
         const icons = {
@@ -1159,7 +1140,72 @@ $('#tambahFileModal').on('shown.bs.modal', function() {
         });
     }
 
-    // Perform AJAX search request
+    // Initialize all event handlers (called after AJAX content update)
+    function initializeEventHandlers() {
+        // Remove existing handlers to prevent duplicates
+        $(document).off('click.sorting', 'th.sortable');
+        $(document).off('click.dropdown', '.dropdown-toggle-action');
+        $(document).off('click.delete', '.delete-btn');
+        $(document).off('click.pagination', '.page-link');
+
+        // Sorting functionality - FIXED
+        $(document).on('click.sorting', 'th.sortable', function(e) {
+            e.preventDefault();
+            
+            const sortBy = $(this).data('sort');
+            let currentOrder = $(this).data('order') || 'asc';
+            const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+
+            console.log('Sorting clicked:', sortBy, 'Current:', currentOrder, 'New:', newOrder);
+
+            // Update the data-order attribute for next click
+            $(this).data('order', newOrder);
+
+            // Perform search with sorting
+            performSearch({
+                page: 1,
+                sort_by: sortBy,
+                order: newOrder
+            }, true);
+        });
+
+        // Dropdown functionality
+        $(document).on('click.dropdown', '.dropdown-toggle-action', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Close other dropdowns
+            $('.dropdown-menu-action').removeClass('show');
+            
+            // Toggle current dropdown
+            $(this).next('.dropdown-menu-action').toggleClass('show');
+        });
+
+        // Delete functionality
+        $(document).on('click.delete', '.delete-btn', function(e) {
+            e.preventDefault();
+            const fileId = $(this).data('file-id');
+            const fileName = $(this).data('file-name');
+            const deleteUrl = $(this).data('delete-url');
+            
+            deleteFile(fileId, fileName, deleteUrl);
+        });
+
+        // Pagination functionality
+        $(document).on('click.pagination', '.page-link', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            if (url && url !== '#' && !$(this).parent().hasClass('disabled')) {
+                const urlParams = new URLSearchParams(url.split('?')[1]);
+                const page = urlParams.get('page');
+                if (page) {
+                    performSearch({ page: page }, true);
+                }
+            }
+        });
+    }
+
+    // Perform AJAX search request - ORIGINAL FUNCTION PRESERVED
     function performSearch(params = {}, showLoadingIndicator = true) {
         if (isLoading) return;
 
@@ -1174,11 +1220,15 @@ $('#tambahFileModal').on('shown.bs.modal', function() {
         if (search) searchParams.set('search', search);
         if (params.page) searchParams.set('page', params.page);
         if (params.per_page) searchParams.set('per_page', params.per_page);
+        if (params.sort_by) searchParams.set('sort_by', params.sort_by);
+        if (params.order) searchParams.set('order', params.order);
 
-        // Add sorting parameters from current URL if they exist
-        const currentUrl = new URLSearchParams(window.location.search);
-        if (currentUrl.get('sort_by')) searchParams.set('sort_by', currentUrl.get('sort_by'));
-        if (currentUrl.get('order')) searchParams.set('order', currentUrl.get('order'));
+        // Keep existing sort parameters if not being changed
+        if (!params.sort_by && !params.order) {
+            const currentUrl = new URLSearchParams(window.location.search);
+            if (currentUrl.get('sort_by')) searchParams.set('sort_by', currentUrl.get('sort_by'));
+            if (currentUrl.get('order')) searchParams.set('order', currentUrl.get('order'));
+        }
 
         const url = `${baseUrl}?${searchParams.toString()}`;
 
@@ -1196,7 +1246,9 @@ $('#tambahFileModal').on('shown.bs.modal', function() {
 
                 if ($newTableContainer.length) {
                     $('#tableContainer').html($newTableContainer.html());
-                    // Add file icons after updating content
+                    
+                    // Re-initialize all event handlers after content update
+                    initializeEventHandlers();
                     addFileIcons();
                 }
 
@@ -1278,82 +1330,6 @@ $('#tambahFileModal').on('shown.bs.modal', function() {
         }, 300);
     });
 
-    // Delete file function
-    function deleteFile(fileId, fileName, deleteUrl) {
-        Swal.fire({
-            title: "Apakah Anda Yakin?",
-            html: `<p style='text-align:center'>Setelah <strong>${fileName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
-            icon: "warning",
-            showCancelButton: true,
-            reverseButtons: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Hapus!',
-            cancelButtonText: 'Batalkan!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Show loading
-                Swal.fire({
-                    title: 'Menghapus...',
-                    text: 'Mohon tunggu',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => Swal.showLoading()
-                });
-
-                // Perform delete request
-                $.ajax({
-                    url: deleteUrl,
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    success: function(response) {
-                        Swal.close();
-                        if (response.success) {
-                            Swal.fire({
-                                title: 'Berhasil!',
-                                text: response.message || 'File berhasil dihapus',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-
-                            // Remove the row from table or reload if needed
-                            $(`#file-row-${fileId}`).fadeOut(300, function() {
-                                $(this).remove();
-                                
-                                // Check if table is empty after deletion
-                                if ($('#tableBody tr:visible').length === 0) {
-                                    performSearch(); // Reload the page content
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Gagal!',
-                                text: response.message || 'Terjadi kesalahan saat menghapus',
-                                icon: 'error'
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.close();
-                        let errorMessage = 'Terjadi kesalahan saat menghapus file';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        }
-                        Swal.fire({
-                            title: 'Error!',
-                            text: errorMessage,
-                            icon: 'error'
-                        });
-                    }
-                });
-            }
-        });
-    }
-
     // Make deleteFile globally available
     window.deleteFile = deleteFile;
 
@@ -1366,36 +1342,6 @@ $('#tambahFileModal').on('shown.bs.modal', function() {
         
         deleteFile(fileId, fileName, deleteUrl);
     });
-
-    // Show notification function
-    function showNotification(message, type = 'success') {
-        const toastId = 'toast-' + Date.now();
-        const icon = type === 'success' ? 'check-circle' : 'exclamation-triangle';
-        const bgColor = type === 'success' ? 'success' : 'error';
-        
-        const toastHtml = `
-            <div class="toast ${bgColor}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-                <div class="toast-header">
-                    <i class="fas fa-${icon} me-2 ${type === 'success' ? 'text-success' : 'text-danger'}"></i>
-                    <strong class="me-auto">${type === 'success' ? 'Berhasil' : 'Error'}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div class="toast-body">
-                    ${message}
-                </div>
-            </div>
-        `;
-        
-        $('#toast-container').append(toastHtml);
-        
-        const toastElement = new bootstrap.Toast(document.getElementById(toastId));
-        toastElement.show();
-        
-        // Auto remove after hide
-        document.getElementById(toastId).addEventListener('hidden.bs.toast', function () {
-            $(this).remove();
-        });
-    }
 
     // Make showNotification globally available
     window.showNotification = showNotification;
@@ -1454,18 +1400,6 @@ $('#tambahFileModal').on('shown.bs.modal', function() {
         }
     });
 
-    // Dropdown functionality
-    $(document).on('click', '.dropdown-toggle-action', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Close other dropdowns
-        $('.dropdown-menu-action').removeClass('show');
-        
-        // Toggle current dropdown
-        $(this).next('.dropdown-menu-action').toggleClass('show');
-    });
-
     // Close dropdowns when clicking outside
     $(document).on('click', function() {
         $('.dropdown-menu-action').removeClass('show');
@@ -1492,34 +1426,37 @@ $('#tambahFileModal').on('shown.bs.modal', function() {
         performSearch({ page: 1, per_page: perPage }, true);
     });
 
+    // Per page dropdown - ALTERNATIVE
+    $(document).on('change', 'select[name="per_page"]', function() {
+        const perPage = $(this).val();
+        performSearch({ page: 1, per_page: perPage }, true);
+    });
+
+    // Make functions globally available
+    window.performSearch = performSearch;
+
+    // Initialize event handlers on page load
+    initializeEventHandlers();
+    
     // Initial file icons setup
     addFileIcons();
 });
 
-    // Per page dropdown
-    $(document).on('click', '.per-page-option', function() {
-        const perPage = $(this).data('value');
-        performSearch({
-            page: 1,
-            per_page: perPage
-        }, true);
-    });
+function updatePerPage(perPage) {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('per_page', perPage);
+    searchParams.delete('page'); // Reset ke halaman pertama
 
-    function updatePerPage(perPage) {
-        const searchParams = new URLSearchParams(window.location.search);
-        searchParams.set('per_page', perPage);
-        searchParams.delete('page'); // Reset ke halaman pertama
+    const url = "{{ route('admin.file-kesekretariat.index') }}?" + searchParams.toString();
+    window.location.href = url;
+}
 
-        const url = "{{ route('admin.file-kesekretariat.index') }}?" + searchParams.toString();
-        window.location.href = url;
-    }
+function resetAllFilters() {
+    $('#search').val('');
+    $('#filter-file-type').val('');
 
-    function resetAllFilters() {
-        $('#search').val('');
-        $('#filter-file-type').val('');
-
-        // Trigger search to reload content
-        $('#search').trigger('input');
-    }
+    // Trigger search to reload content
+    $('#search').trigger('input');
+}
 </script>
 @endsection

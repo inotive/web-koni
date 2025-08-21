@@ -26,7 +26,8 @@
                 <thead class="bg-light">
                     <tr>
                         <th style="width: 3% !important;">No</th>
-                        <th class="sortable" data-sort="nama_dokumen" style="width: 30% !important;">
+                        <th class="sortable" data-sort="nama_dokumen"
+                            data-order="{{ request('sort_by') == 'nama_dokumen' && request('order') == 'asc' ? 'desc' : 'asc' }}">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span>Nama Dokumen</span>
                                 <span class="sort-icon">
@@ -58,18 +59,18 @@
                         <tr id="file-row-{{ $file->id }}">
                             <td class="text-center">{{ $files->firstItem() + $index }}</td>
                             <td>
-                                <div class="document-info">
-                                    {{-- Nama dokumen - tidak bisa diklik --}}
-                                    <div class="document-name-display">
-                                        <i class="fas fa-file-alt"></i>
-                                        <span class="text-truncate d-block">{{ $file->nama_dokumen }}</span>
-                                    </div>
-                                    {{-- Tanggal - bisa diklik untuk melihat detail --}}
-                                    <div class="document-date clickable-date" title="Klik untuk melihat detail">
-                                        {{ optional($file->created_at)->format('d/m/Y H:i') ?? '-' }}
-                                    </div>
-                                </div>
-                            </td>
+    <div class="document-info">
+        <div class="document-name-wrapper">
+            <i class="fas fa-file-alt me-2"></i>
+            <span class="document-name-text" title="{{ $file->nama_dokumen }}">
+                {{ $file->nama_dokumen }}
+            </span>
+        </div>
+        <div class="document-date clickable-date" title="Klik untuk melihat detail">
+            {{ optional($file->created_at)->format('d/m/Y H:i') ?? '-' }}
+        </div>
+    </div>
+</td>
                             <td>
                                 <a href="{{ asset('storage/documents/' . $file->dokumen_file) }}" target="_blank"
                                     class="file-link" title="Klik untuk melihat dokumen">
@@ -100,7 +101,8 @@
                                             <i class="fas fa-edit"></i>Edit
                                         </a>
                                         <a href="#" class="dropdown-item-action delete-btn"
-                                            data-file-id="{{ $file->id }}" data-file-name="{{ $file->nama_dokumen }}"
+                                            data-file-id="{{ $file->id }}"
+                                            data-file-name="{{ $file->nama_dokumen }}"
                                             data-delete-url="{{ route('admin.file-kesekretariat.destroy', $file) }}">
                                             <i class="fas fa-trash"></i>Hapus
                                         </a>
@@ -142,7 +144,8 @@
                 {{-- Pagination Info and Navigation - Right Side --}}
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        Showing {{ $files->firstItem() }} to {{ $files->lastItem() }} of {{ $files->total() }} entries
+                        Showing {{ $files->firstItem() }} to {{ $files->lastItem() }} of {{ $files->total() }}
+                        entries
                     </div>
 
                     <nav aria-label="Page navigation">
@@ -422,26 +425,33 @@
         }
 
         /* 1. Kolom nama dokumen dipaksa 30% dan bisa dipotong */
-    .table td:nth-child(2) {
-        max-width: 30% !important;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
+       .table td:nth-child(2) {
+    width: 25% !important;
+    max-width: 25% !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
-    /* 2. Wrapper flex supaya “mau” menciut */
-    .document-name-display   {
-        display: flex;
-        align-items: center;
-        min-width: 0;  /* kunci agar flex-item mengecil */
-    }
+/* Biar teks tetap rapi di kiri */
+.table td:nth-child(2) {
+    text-align: left !important;
+    vertical-align: middle;
+}
 
-    /* 3. Teksnya sendiri dipotong kalau panjang */
-    .document-name-display > .text-truncate {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        padding-right: 4px; /* sedikit jarak agar titik-titik tidak menempel ikon */
-    }
+/* Wrapper agar teks bisa dipotong */
+.document-name-wrapper {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+}
 
+/* Teks nama dokumen dengan ellipsis */
+.document-name-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+        
     </style>

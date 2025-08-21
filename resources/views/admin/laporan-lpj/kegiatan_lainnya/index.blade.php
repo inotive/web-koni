@@ -15,330 +15,126 @@
 @section('content')
 
     <style>
-        /* Table Styling */
-        table td,
-        table th {
+        /* === BASE STYLING === */
+        body {
+            background-color: #f5f5f5 !important;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* === TABLE STYLING === */
+        .table th,
+        .table td {
             vertical-align: middle;
             word-wrap: break-word;
         }
 
-        .object-fit-cover {
-            object-fit: cover;
+        .table th {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: 600;
         }
 
-        /* Fixed Column Width Settings dengan perbaikan */
-        /* PERBAIKAN: Kolom No - diperbesar agar tidak terpotong */
+        .table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        /* === COLUMN WIDTH === */
         .table th:nth-child(1),
         .table td:nth-child(1) {
-            width: 70px !important;
-            max-width: 70px !important;
-            text-align: center !important;
+            width: 50px;
+            text-align: center;
         }
 
-        /* PERBAIKAN: Kolom Nama Program & Kegiatan - header tetap rata */
-        .table th:nth-child(2) {
-            width: 250px !important;
-            max-width: 250px !important;
-            white-space: nowrap !important;
-            /* Header tetap dalam satu baris */
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-        }
-
-        /* Konten dalam td bisa wrap */
+        .table th:nth-child(2),
         .table td:nth-child(2) {
-            white-space: normal !important;
-            /* Allow text wrapping untuk konten */
-            overflow: visible !important;
-            max-width: 250px !important;
-            width: 250px !important;
+            max-width: 250px;
         }
 
-        /* Volume */
         .table th:nth-child(3),
         .table td:nth-child(3) {
-            width: 100px !important;
-            max-width: 100px !important;
+            width: 100px;
         }
 
-        /* Jumlah Harga Satuan */
         .table th:nth-child(4),
         .table td:nth-child(4) {
-            width: 150px !important;
-            max-width: 150px !important;
+            width: 150px;
         }
 
-        /* Jumlah Harga */
         .table th:nth-child(5),
         .table td:nth-child(5) {
-            width: 150px !important;
-            max-width: 150px !important;
+            width: 150px;
         }
 
-        /* Foto Jurnal */
         .table th:nth-child(6),
         .table td:nth-child(6) {
-            width: 100px !important;
-            max-width: 100px !important;
+            width: 100px;
         }
 
-        /* Dokumen */
         .table th:nth-child(7),
         .table td:nth-child(7) {
-            width: 100px !important;
-            max-width: 100px !important;
+            width: 100px;
         }
 
-        /* Tanggal Ditambahkan */
         .table th:nth-child(8),
         .table td:nth-child(8) {
-            width: 120px !important;
-            max-width: 120px !important;
+            width: 120px;
         }
 
-        /* Aksi */
         .table th:nth-child(9),
         .table td:nth-child(9) {
-            width: 100px !important;
-            max-width: 100px !important;
+            width: 80px;
+            text-align: center;
         }
 
-        /* Text truncation untuk semua header kecuali kolom aksi */
-        .table th:not(:last-child):not(:nth-child(2)) {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        /* === DROPDOWN ACTION === */
+        .dropdown-action .dropdown-menu {
+            min-width: 180px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* Text truncation untuk semua cell kecuali action column dan kolom nama program */
-        .table td:not(:last-child):not(:nth-child(2)) {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .dropdown-action .dropdown-item {
+            padding: 8px 16px;
+            font-size: 0.9rem;
         }
 
-        /* Responsive Design */
+        .dropdown-action .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-action .dropdown-item.text-danger:hover {
+            background-color: #ffcad7;
+        }
+
+        /* === MODAL HEADER === */
+        .modal-header.bg-primary {
+            background-color: #F8285A !important;
+            color: white;
+        }
+
+        /* === RESPONSIVE === */
         @media (max-width: 768px) {
-            .card-body {
-                overflow-x: hidden !important;
-            }
-
             .table-responsive {
                 overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+            }
+
+            .dropdown-menu {
+                position: absolute !important;
+                right: 0 !important;
+                left: auto !important;
+                z-index: 1055;
             }
         }
-
-        /* Custom Pagination Styling */
-        .pagination-wrapper .pagination {
-            margin-bottom: 0;
-        }
-
-        .pagination-wrapper .page-link {
-            padding: 0.375rem 0.75rem;
-            margin-left: -1px;
-            color: #6c757d;
-            background-color: #fff;
-            border: 1px solid #dee2e6;
-        }
-
-        .pagination-wrapper .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
-            color: #fff;
-        }
-
-        .pagination-wrapper .page-link:hover {
-            color: #495057;
-            background-color: #e9ecef;
-            border-color: #dee2e6;
-        }
-
-        .highlight {
-            background-color: #FFD700;
-            padding: 0 2px;
-            border-radius: 3px;
-        }
-
-        /* TAMBAHAN: Pastikan semua header rata */
-        .table thead th {
-            vertical-align: middle !important;
-            text-align: center !important;
-        }
-
-        /* Toast Styling */
-.toast {
-    min-width: 300px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.toast-body {
-    font-weight: 500;
-}
-
-/* Loading indicator untuk button */
-[data-kt-indicator="on"] .indicator-label {
-    display: none;
-}
-
-[data-kt-indicator="on"] .indicator-progress {
-    display: inline-block;
-}
-
-.indicator-progress {
-    display: none;
-}
-
-/* Modal styling */
-#modal_delete_confirmation .modal-content {
-    border: none;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-}
-
-#modal_delete_confirmation .modal-header.bg-danger {
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-
-/* Animation for row removal */
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-
-.fade-out {
-    animation: fadeOut 0.5s ease-in-out;
-}
-
-body {
-    background-color: #f8f9fa !important;
-}
-
-/* Background abu-abu untuk container utama */
-.container-fluid,
-.container-xxl {
-    background-color: #f8f9fa !important;
-}
-
-/* Background putih untuk card utama agar terlihat kontras */
-.card {
-    background-color: #ffffff !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-    border: none !important;
-}
-
-/* Background abu-abu muda untuk header table */
-.table thead {
-    background-color: #e9ecef !important;
-}
-
-/* Background abu-abu sangat muda untuk row genap (striped effect) */
-.table tbody tr:nth-child(even) {
-    background-color: #f8f9fa !important;
-}
-
-/* Background putih untuk row ganjil */
-.table tbody tr:nth-child(odd) {
-    background-color: #ffffff !important;
-}
-
-/* Hover effect untuk row */
-.table tbody tr:hover {
-    background-color: #e3f2fd !important;
-}
-
-/* Background abu-abu untuk dropdown menu */
-.dropdown-menu {
-    background-color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-/* Background abu-abu untuk pagination */
-.pagination-wrapper {
-    background-color: #f8f9fa !important;
-    padding: 15px !important;
-    border-radius: 8px !important;
-    margin-top: 20px !important;
-}
-
-/* Background putih untuk card header (Daftar Table Kegiatan Lainnya - 2025) */
-.card-header {
-    background-color: #ffffff !important;
-    border-bottom: 1px solid #e9ecef !important;
-}
-
-/* Background abu-abu untuk search dan filter controls */
-.input-group, 
-.dropdown {
-    background-color: transparent !important;
-}
-
-.form-control, 
-.form-select {
-    background-color: #ffffff !important;
-    border: 1px solid #d1d3e2 !important;
-}
-
-/* Background untuk empty state */
-.text-center.text-muted.py-10 {
-    background-color: #f8f9fa !important;
-    border-radius: 8px !important;
-    margin: 20px 0 !important;
-}
-
-/* Background untuk modal */
-.modal-content {
-    background-color: #ffffff !important;
-}
-
-/* Background putih khusus untuk area filter yang aktif */
-.card-header.border-0.pt-3.pb-3.bg-light {
-    background-color: #ffffff !important;
-}
-
-/* Background untuk toast notifications */
-.toast {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-}
-
-/* Responsive background adjustments */
-@media (max-width: 768px) {
-    .card-body {
-        background-color: #ffffff !important;
-    }
-    
-    .table-responsive {
-        background-color: #ffffff !important;
-        border-radius: 8px !important;
-        padding: 10px !important;
-    }
-}
-
-/* Additional styling untuk konsistensi */
-.breadcrumb {
-    background-color: transparent !important;
-}
-
-.btn-light {
-    background-color: #f8f9fa !important;
-    border-color: #d6d8db !important;
-}
-
-.btn-light:hover {
-    background-color: #e2e6ea !important;
-    border-color: #dae0e5 !important;
-}
-
-/* Background untuk area konten utama */
-#kt_app_content {
-    background-color: #f8f9fa !important;
-    min-height: 100vh !important;
-}
-
-/* Background untuk wrapper content */
-#kt_app_content_container {
-    background-color: #f8f9fa !important;
-}
-    </style>    
+    </style>
 
 
     {{-- Page Header --}}
@@ -375,7 +171,7 @@ body {
                         </div>
                     </div>
                 @endif
-                
+
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button --}}
@@ -474,41 +270,113 @@ body {
                                 <tr>
                                     <th>No</th>
                                     <th>
-                                        <a href="{{ sortUrl('nama_program_kegiatan') }}"
+                                        <a href="{{ request()->fullUrlWithQuery([
+                                            'sort_by' => 'nama_program_kegiatan',
+                                            'sort_order' => request('sort_by') === 'nama_program_kegiatan' && request('sort_order') === 'asc' ? 'desc' : 'asc',
+                                            'page' => 1,
+                                        ]) }}"
                                             class="text-dark text-decoration-none">
-                                            Nama Program & Kegiatan {!! sortIcon('nama_program_kegiatan') !!}
+                                            Nama Program & Kegiatan
+                                            @if (request('sort_by') === 'nama_program_kegiatan')
+                                                @if (request('sort_order') === 'asc')
+                                                    <i class="fas fa-sort-up text-primary ms-1"></i>
+                                                @else
+                                                    <i class="fas fa-sort-down text-primary ms-1"></i>
+                                                @endif
+                                            @else
+                                                <i class="fas fa-sort text-muted ms-1"></i>
+                                            @endif
                                         </a>
                                     </th>
                                     <th>
-                                        <a href="{{ sortUrl('volume') }}" class="text-dark text-decoration-none">
-                                            Volume {!! sortIcon('volume') !!}
-                                        </a>
-                                    </th>
-                                    <th>
-                                        <a href="{{ sortUrl('jumlah_harga_satuan') }}"
+                                        <a href="{{ request()->fullUrlWithQuery([
+                                            'sort_by' => 'volume',
+                                            'sort_order' => request('sort_by') === 'volume' && request('sort_order') === 'asc' ? 'desc' : 'asc',
+                                            'page' => 1,
+                                        ]) }}"
                                             class="text-dark text-decoration-none">
-                                            Jumlah Harga Satuan {!! sortIcon('jumlah_harga_satuan') !!}
+                                            Volume
+                                            @if (request('sort_by') === 'volume')
+                                                @if (request('sort_order') === 'asc')
+                                                    <i class="fas fa-sort-up text-primary ms-1"></i>
+                                                @else
+                                                    <i class="fas fa-sort-down text-primary ms-1"></i>
+                                                @endif
+                                            @else
+                                                <i class="fas fa-sort text-muted ms-1"></i>
+                                            @endif
                                         </a>
                                     </th>
                                     <th>
-                                        <a href="{{ sortUrl('jumlah_harga') }}" class="text-dark text-decoration-none">
-                                            Jumlah Harga {!! sortIcon('jumlah_harga') !!}
+                                        <a href="{{ request()->fullUrlWithQuery([
+                                            'sort_by' => 'jumlah_harga_satuan',
+                                            'sort_order' => request('sort_by') === 'jumlah_harga_satuan' && request('sort_order') === 'asc' ? 'desc' : 'asc',
+                                            'page' => 1,
+                                        ]) }}"
+                                            class="text-dark text-decoration-none">
+                                            Jumlah Harga Satuan
+                                            @if (request('sort_by') === 'jumlah_harga_satuan')
+                                                @if (request('sort_order') === 'asc')
+                                                    <i class="fas fa-sort-up text-primary ms-1"></i>
+                                                @else
+                                                    <i class="fas fa-sort-down text-primary ms-1"></i>
+                                                @endif
+                                            @else
+                                                <i class="fas fa-sort text-muted ms-1"></i>
+                                            @endif
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="{{ request()->fullUrlWithQuery([
+                                            'sort_by' => 'jumlah_harga',
+                                            'sort_order' => request('sort_by') === 'jumlah_harga' && request('sort_order') === 'asc' ? 'desc' : 'asc',
+                                            'page' => 1,
+                                        ]) }}"
+                                            class="text-dark text-decoration-none">
+                                            Jumlah Harga
+                                            @if (request('sort_by') === 'jumlah_harga')
+                                                @if (request('sort_order') === 'asc')
+                                                    <i class="fas fa-sort-up text-primary ms-1"></i>
+                                                @else
+                                                    <i class="fas fa-sort-down text-primary ms-1"></i>
+                                                @endif
+                                            @else
+                                                <i class="fas fa-sort text-muted ms-1"></i>
+                                            @endif
                                         </a>
                                     </th>
                                     <th>Foto Jurnal</th>
                                     <th>Dokumen</th>
                                     <th>
-                                        <a href="{{ sortUrl('created_at') }}" class="text-dark text-decoration-none">
-                                            Ditambahkan {!! sortIcon('created_at') !!}
+                                        <a href="{{ request()->fullUrlWithQuery([
+                                            'sort_by' => 'created_at',
+                                            'sort_order' => request('sort_by') === 'created_at' && request('sort_order') === 'asc' ? 'desc' : 'asc',
+                                            'page' => 1,
+                                        ]) }}"
+                                            class="text-dark text-decoration-none">
+                                            Ditambahkan
+                                            @if (request('sort_by') === 'created_at')
+                                                @if (request('sort_order') === 'asc')
+                                                    <i class="fas fa-sort-up text-primary ms-1"></i>
+                                                @else
+                                                    <i class="fas fa-sort-down text-primary ms-1"></i>
+                                                @endif
+                                            @else
+                                                <i class="fas fa-sort text-muted ms-1"></i>
+                                            @endif
                                         </a>
                                     </th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
 
+
                             {{-- Table Body --}}
                             <tbody>
                                 @forelse ($kegiatanLainnya as $index => $kegiatan)
+                                    @php
+                                        $isApproved = $kegiatan->status_approval === 'approved';
+                                    @endphp
                                     <tr data-jenis-kegiatan="{{ $kegiatan->jenis_kegiatan ?? '' }}"
                                         data-tanggal="{{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan ?? $kegiatan->created_at)->format('Y-m-d') }}">
                                         <td class="text-center">
@@ -528,8 +396,8 @@ body {
                                         <td>Rp {{ number_format($kegiatan->jumlah_harga, 0, ',', '.') }}</td>
                                         <td>
                                             @if ($kegiatan->foto_jurnal)
-                                                <a href="{{ asset('storage/' . $kegiatan->foto_jurnal) }}" target="_blank"
-                                                    class="btn btn-sm btn-light-info">Lihat Foto</a>
+                                                <a href="{{ asset('storage/' . $kegiatan->foto_jurnal) }}"
+                                                    target="_blank" class="btn btn-sm btn-light-info">Lihat Foto</a>
                                             @else
                                                 <span class="text-muted">-</span>
                                             @endif
@@ -571,15 +439,16 @@ body {
                                                 </button>
                                                 <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
                                                     <li>
-                                                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.show', $kegiatan->id) }}"
-                                                            class="dropdown-item">
+                                                        <button type="button" class="dropdown-item view-detail-btn"
+                                                            data-id="{{ $kegiatan->id }}"
+                                                            data-name="{{ $kegiatan->nama_program_kegiatan }}">
                                                             <i class="fa-solid fa-eye me-2"></i>Lihat Detail
-                                                        </a>
+                                                        </button>
                                                     </li>
                                                     <li>
-                                                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
-                                                            class="dropdown-item">
-                                                            <i class="fa-solid fa-pen-to-square me-2"></i>Modifikasi
+                                                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.show', $kegiatan->id) }}"
+                                                            class="dropdown-item text-muted">
+                                                            <i class="fas fa-info-circle me-2"></i>Modifikasi
                                                         </a>
                                                     </li>
                                                     <li>
@@ -673,24 +542,37 @@ body {
         </div>
     </div>
 
-    {{-- Modal Detail Kegiatan --}}
+    {{-- Modal Detail Kegiatan (Updated) --}}
     <div class="modal fade" id="modal_detail_kegiatan" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="fw-bold">Detail Kegiatan</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary">
+                    <h2 class="fw-bold text-white mb-0">
+                        <i class="fas fa-eye me-2"></i>Detail Laporan LPJ
+                    </h2>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-light" id="export-detail-btn">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
                 </div>
-                <div class="modal-body" id="detail-kegiatan-content">
-                    <!-- Konten akan diisi via AJAX -->
-                    <div class="text-center py-10">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                <div class="modal-body p-0">
+                    <div id="detail-kegiatan-content">
+                        <!-- Konten akan diisi via AJAX -->
+                        <div class="text-center py-10">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Memuat detail kegiatan...</p>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Tutup</button>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Tutup
+                    </button>
                 </div>
             </div>
         </div>
@@ -698,7 +580,7 @@ body {
 
 
     {{-- Add Modal --}}
-<div class="modal fade" id="modal_add_kegiatan_lainnya" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="modal_add_kegiatan_lainnya" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered mw-650px">
             <div class="modal-content">
                 {{-- Modal Header --}}
@@ -793,7 +675,7 @@ body {
         </div>
     </div>
 
-     {{-- Delete Confirmation Modal --}}
+    {{-- Delete Confirmation Modal --}}
     <div class="modal fade" id="modal_delete_confirmation" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -829,7 +711,7 @@ body {
         </div>
     </div>
 
-{{-- Toast Notification Container --}}
+    {{-- Toast Notification Container --}}
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
         <div id="toast-success" class="toast align-items-center text-bg-success border-0" role="alert"
             aria-live="assertive" aria-atomic="true">
@@ -838,14 +720,13 @@ body {
                     <i class="fas fa-check-circle me-2"></i>
                     <span id="toast-success-message">Data berhasil dihapus.</span>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                    data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
-    </div>  
+    </div>
 
 
-               
+
 @endsection
 
 @section('script')
@@ -900,21 +781,64 @@ body {
                     window.location.href = currentUrl.toString();
                 });
 
-                // Handle search functionality
-                $('#search-button').on('click', function() {
-                    updateUrlAndRedirect({
-                        'search': $('#search').val()
-                    });
+                // Handle search functionality with improved debounce
+                let searchTimer;
+                const searchDelay = 800; // Increase delay untuk mengurangi request yang berlebihan
+
+                // Handle search button click
+                $('#search-button').on('click', function(e) {
+                    e.preventDefault();
+                    clearTimeout(searchTimer);
+                    performSearch();
                 });
 
-                let searchTimer;
-                $('#search').on('keyup', function() {
+                // Handle search input with improved debounce
+                $('#search').on('keyup', function(e) {
                     clearTimeout(searchTimer);
-                    searchTimer = setTimeout(() => {
-                        updateUrlAndRedirect({
-                            'search': $('#search').val()
-                        });
-                    }, 500);
+
+                    // Jika tekan Enter, langsung search
+                    if (e.keyCode === 13) {
+                        e.preventDefault();
+                        performSearch();
+                        return;
+                    }
+
+                    const searchValue = $(this).val().trim();
+
+                    // Jika search kosong, langsung redirect untuk reset
+                    if (searchValue === '') {
+                        searchTimer = setTimeout(() => {
+                            performSearch();
+                        }, 300);
+                    } else {
+                        // Untuk search dengan value, gunakan delay lebih lama
+                        searchTimer = setTimeout(() => {
+                            performSearch();
+                        }, searchDelay);
+                    }
+                });
+
+                // Improved search function
+                function performSearch() {
+                    const searchValue = $('#search').val().trim();
+
+                    // Show loading indicator if available
+                    showSearchLoading(true);
+
+                    updateUrlAndRedirect({
+                        'search': searchValue
+                    });
+                }
+
+                // Handle search input focus and blur events
+                $('#search').on('focus', function() {
+                    $(this).select(); // Select all text when focused
+                });
+
+                // Prevent form submission if there's a parent form
+                $('#search').closest('form').on('submit', function(e) {
+                    e.preventDefault();
+                    performSearch();
                 });
 
                 // Handle filter functionality
@@ -940,6 +864,10 @@ body {
                     }
                 }
 
+                $(document).ready(function() {
+                    $('[data-bs-toggle="tooltip"]').tooltip();
+                });
+
                 // Highlight search term
                 function highlightSearchTerm() {
                     const searchTerm = "{{ request('search') }}";
@@ -957,49 +885,277 @@ body {
                     }
                 }
 
+                // Function to show/hide search loading
+                function showSearchLoading(show) {
+                    const $searchButton = $('#search-button');
+                    const $searchInput = $('#search');
+
+                    if (show) {
+                        $searchButton.html('<i class="fas fa-spinner fa-spin"></i>');
+                        $searchInput.addClass('pe-5');
+                    } else {
+                        $searchButton.html('<i class="fas fa-search"></i>');
+                        $searchInput.removeClass('pe-5');
+                    }
+                }
+
+                // Clear search functionality
+                function addClearSearchButton() {
+                    const searchValue = $('#search').val();
+                    const $searchGroup = $('#search').closest('.input-group');
+
+                    if (searchValue && searchValue.length > 0) {
+                        if (!$searchGroup.find('.clear-search-btn').length) {
+                            const clearBtn = $(`
+                                <button class="btn btn-outline-secondary clear-search-btn" type="button" title="Clear search">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            `);
+
+                            clearBtn.insertAfter('#search-button');
+
+                            clearBtn.on('click', function() {
+                                $('#search').val('').focus();
+                                performSearch();
+                            });
+                        }
+                    } else {
+                        $searchGroup.find('.clear-search-btn').remove();
+                    }
+                }
+
                 // Initialize highlight and filter count
                 highlightSearchTerm();
                 updateFilterCount();
+                addClearSearchButton();
+
+                // Update clear button on input change
+                $('#search').on('input', function() {
+                    addClearSearchButton();
+                });
 
                 // === DELETE FUNCTIONALITY === 
                 let deleteId = null;
                 let deleteUrl = null;
 
-                // Handle klik tombol lihat detail
-            $(document).on('click', '.view-detail-btn', function() {
+                // Tambahkan script ini ke bagian JavaScript dalam section script
+
+                // Handle view detail button click - UPDATE
                 const kegiatanId = $(this).data('id');
+                const kegiatanName = $(this).data('name') || 'Detail Kegiatan';
                 const modal = $('#modal_detail_kegiatan');
 
-                modal.modal('show');
+                // Debugging: Log ID yang didapat
+                $(document).on('click', '.view-detail-btn', function(e) {
+                    e.preventDefault();
 
-                $.ajax({
-                    url: `/admin/laporan-lpj/kegiatan_lainnya/${kegiatanId}/detail`,
-                    type: 'GET',
-                    success: function(response) {
-                        $('#detail-kegiatan-content').html(response);
-                    },
-                    error: function() {
-                        $('#detail-kegiatan-content').html(`
-                            <div class="alert alert-danger">
-                                Gagal memuat detail kegiatan. Silakan coba lagi.
-                            </div>
-                        `);
+                    const kegiatanId = $(this).data('id');
+                    const kegiatanName = $(this).data('name') || 'Detail Kegiatan';
+                    const modal = $('#modal_detail_kegiatan');
+
+                    // Debugging: Log ID yang didapat
+                    console.log('Kegiatan ID:', kegiatanId);
+
+                    // Validasi ID
+                    if (!kegiatanId) {
+                        showDetailError('ID kegiatan tidak ditemukan');
+                        return;
                     }
+
+                    // Reset modal content
+                    $('#detail-kegiatan-content').html(`
+        <div class="text-center py-10">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Memuat detail kegiatan...</p>
+        </div>
+    `);
+
+                    // Show modal immediately
+                    modal.modal('show');
+
+                    // PERBAIKAN: URL yang benar sesuai dengan route
+                    const ajaxUrl =
+                        `{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}/${kegiatanId}/detail-ajax`;
+
+                    console.log('AJAX URL:', ajaxUrl); // Debugging
+
+                    // Fetch detail via AJAX
+                    $.ajax({
+                        url: ajaxUrl,
+                        type: 'GET',
+                        timeout: 15000,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            console.log('AJAX Response:', response); // Debugging
+
+                            if (response.success) {
+                                $('#detail-kegiatan-content').html(response.html);
+
+                                // Update export button if available
+                                if (response.data && response.data.export_url) {
+                                    $('#export-detail-btn').off('click').on('click', function() {
+                                        window.open(response.data.export_url, '_blank');
+                                    });
+                                }
+
+                                // Initialize any additional functionality for the loaded content
+                                initializeModalContent();
+
+                            } else {
+                                showDetailError(response.message || 'Gagal memuat detail kegiatan');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', {
+                                status: status,
+                                error: error,
+                                responseText: xhr.responseText,
+                                xhr: xhr
+                            });
+
+                            let errorMessage = 'Gagal memuat detail kegiatan';
+
+                            if (status === 'timeout') {
+                                errorMessage = 'Koneksi timeout. Silakan coba lagi.';
+                            } else if (xhr.status === 404) {
+                                errorMessage =
+                                    'Data kegiatan tidak ditemukan atau route tidak tersedia.';
+                            } else if (xhr.status === 500) {
+                                errorMessage = 'Terjadi kesalahan server. Silakan coba lagi.';
+                            } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            } else if (xhr.responseText) {
+                                // Coba parse error dari Laravel
+                                try {
+                                    const errorResponse = JSON.parse(xhr.responseText);
+                                    if (errorResponse.message) {
+                                        errorMessage = errorResponse.message;
+                                    }
+                                } catch (e) {
+                                    // Jika tidak bisa di-parse, ambil sebagian text
+                                    errorMessage = xhr.responseText.substring(0, 100) + '...';
+                                }
+                            }
+
+                            showDetailError(errorMessage);
+                        }
+                    });
                 });
-            });
-        });
+
+                // Function to show error in modal
+                function showDetailError(message) {
+                    $('#detail-kegiatan-content').html(`
+        <div class="text-center py-10">
+            <i class="fas fa-exclamation-triangle text-warning fs-3x mb-4"></i>
+            <h4 class="text-dark mb-3">Oops! Terjadi Kesalahan</h4>
+            <p class="text-muted mb-4">${message}</p>
+            <button type="button" class="btn btn-primary" onclick="location.reload()">
+                <i class="fas fa-refresh me-1"></i>Muat Ulang Halaman
+            </button>
+        </div>
+    `);
+                }
+
+                // Function to initialize content in modal
+                function initializeModalContent() {
+                    // Initialize tooltips in modal if any
+                    $('[data-bs-toggle="tooltip"]').tooltip();
+
+                    // Handle image click to show in larger view
+                    $('#detail-kegiatan-content').find('.image-input-wrapper').on('click', function() {
+                        const bgImage = $(this).css('background-image');
+                        if (bgImage && bgImage !== 'none') {
+                            const imageUrl = bgImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                            showImageModal(imageUrl);
+                        }
+                    });
+
+                    // Add smooth scroll behavior for modal content
+                    $('#detail-kegiatan-content').css('scroll-behavior', 'smooth');
+                }
+
+                // Function to show image in full view
+                function showImageModal(imageUrl) {
+                    const imageModal = $(`
+        <div class="modal fade" id="imageViewModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Foto Jurnal</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center p-0">
+                        <img src="${imageUrl}" class="img-fluid" style="max-height: 70vh;">
+                    </div>
+                    <div class="modal-footer">
+                        <a href="${imageUrl}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>Buka di Tab Baru
+                        </a>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+
+                    // Remove existing image modal if any
+                    $('#imageViewModal').remove();
+
+                    // Add to body and show
+                    $('body').append(imageModal);
+                    $('#imageViewModal').modal('show');
+
+                    // Clean up when modal is hidden
+                    $('#imageViewModal').on('hidden.bs.modal', function() {
+                        $(this).remove();
+                    });
+                }
+
+                // Handle modal cleanup when closed
+                $('#modal_detail_kegiatan').on('hidden.bs.modal', function() {
+                    $('#detail-kegiatan-content').html(`
+        <div class="text-center py-10">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Memuat detail kegiatan...</p>
+        </div>
+    `);
+
+                    // Reset export button
+                    $('#export-detail-btn').off('click');
+                });
+
+                // Handle keyboard shortcuts in modal
+                $('#modal_detail_kegiatan').on('shown.bs.modal', function() {
+                    $(document).on('keydown.detailModal', function(e) {
+                        // ESC key to close modal
+                        if (e.keyCode === 27) {
+                            $('#modal_detail_kegiatan').modal('hide');
+                        }
+                    });
+                });
+
+                $('#modal_detail_kegiatan').on('hidden.bs.modal', function() {
+                    $(document).off('keydown.detailModal');
+                });
 
                 // Handle delete button click
                 $(document).on('click', '.delete-btn', function(e) {
                     e.preventDefault();
-                    
+
                     deleteId = $(this).data('id');
                     const itemName = $(this).data('name');
                     deleteUrl = "{{ route('admin.laporan-lpj.kegiatan_lainnya.destroy', '') }}/" + deleteId;
-                    
+
                     // Set item name in modal
                     $('#delete-item-name').text(itemName);
-                    
+
                     // Show modal
                     $('#modal_delete_confirmation').modal('show');
                 });
@@ -1030,10 +1186,10 @@ body {
                         success: function(response) {
                             // Hide modal
                             $modal.modal('hide');
-                            
+
                             // Show success notification
                             showSuccessToast('✔️ Data berhasil dihapus.');
-                            
+
                             // Remove row from table with animation
                             const $row = $(`tr:has(button[data-id="${deleteId}"])`);
                             $row.fadeOut(500, function() {
@@ -1041,31 +1197,32 @@ body {
                                 updateRowNumbers();
                                 checkEmptyTable();
                             });
-                            
+
                             // Reset states
                             resetDeleteState($btn);
-                            
+
                         },
                         error: function(xhr, status, error) {
                             // Hide modal
                             $modal.modal('hide');
-                            
+
                             let errorMessage = '❌ Gagal menghapus data. Silakan coba lagi.';
-                            
+
                             // Handle different error types
                             if (status === 'timeout') {
                                 errorMessage = '❌ Koneksi timeout. Silakan coba lagi.';
                             } else if (xhr.status === 500) {
                                 errorMessage = '❌ Terjadi kesalahan server. Silakan coba lagi.';
                             } else if (xhr.status === 403) {
-                                errorMessage = '❌ Anda tidak memiliki akses untuk menghapus data ini.';
+                                errorMessage =
+                                    '❌ Anda tidak memiliki akses untuk menghapus data ini.';
                             } else if (xhr.responseJSON && xhr.responseJSON.message) {
                                 errorMessage = '❌ ' + xhr.responseJSON.message;
                             }
-                            
-                            // Show error notification
+
+                            // Show error notification (create error toast if doesn't exist)
                             showErrorToast(errorMessage);
-                            
+
                             // Reset states
                             resetDeleteState($btn);
                         }
@@ -1093,6 +1250,22 @@ body {
                 }
 
                 function showErrorToast(message) {
+                    // Check if error toast exists, if not create it
+                    if (!$('#toast-error').length) {
+                        const errorToast = `
+                            <div id="toast-error" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        <i class="fas fa-exclamation-circle me-2"></i>
+                                        <span id="toast-error-message">Error occurred.</span>
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                                </div>
+                            </div>
+                        `;
+                        $('.position-fixed.top-0.end-0').append(errorToast);
+                    }
+
                     $('#toast-error-message').text(message);
                     const toast = new bootstrap.Toast(document.getElementById('toast-error'));
                     toast.show();
@@ -1102,7 +1275,7 @@ body {
                     const currentPage = {{ $kegiatanLainnya->currentPage() ?? 1 }};
                     const perPage = {{ $kegiatanLainnya->perPage() ?? 10 }};
                     const startNumber = (currentPage - 1) * perPage;
-                    
+
                     $('#kt_datatable_dom_positioning_kegiatan tbody tr').each(function(index) {
                         $(this).find('td:first').text(startNumber + index + 1);
                     });
@@ -1120,6 +1293,17 @@ body {
                             </tr>
                         `);
                     }
+                }
+
+                // Handle browser back/forward
+                window.addEventListener('popstate', function(event) {
+                    location.reload();
+                });
+
+                // Auto focus search if there's search parameter in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('search')) {
+                    $('#search').focus();
                 }
             });
         </script>
