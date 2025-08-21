@@ -179,6 +179,12 @@ class KegiatanLainnyaController extends Controller
 
     public function edit(KegiatanLainnya $kegiatan_lainnya)
     {
+        // Jika belum approved dan user bukan superadmin, redirect ke detail
+        if (!$kegiatan_lainnya->isApproved() && !auth()->user()->hasRole('superadmin')) {
+            return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.show', $kegiatan_lainnya->id)
+                ->with('info', 'Data hanya dapat diedit setelah mendapat persetujuan dari superadmin.');
+        }
+
         return view('admin.laporan-lpj.kegiatan_lainnya.edit', compact('kegiatan_lainnya'));
     }
 
@@ -404,10 +410,99 @@ class KegiatanLainnyaController extends Controller
     public function getDetail($id)
 {
     try {
-        $kegiatan = KegiatanLainnya::findOrFail($id);
+        // Validasi ID dengan lebih ketat
+        if (!is_numeric($id) || $id <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'ID tidak valid atau tidak ditemukan'
+            ], 400);
+        }
+
+        // Cari data dengan pengecekan yang lebih detail
+        $kegiatan = KegiatanLainnya::find($id);
         
-        // Return HTML response untuk AJAX
-        $html = view('admin.laporan-lpj.kegiatan_lainnya.detail-ajax', compact('kegiatan'))->render();
+        if (!$kegiatan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data kegiatan dengan ID ' . $id . ' tidak ditemukan'
+            ], 404);
+        }
+
+        // Validasi file paths dan convert ke URL yang benar
+        $fotoJurnalUrl = null;
+        $dokumenPendukungUrl = null;
+        $dokumenInfo = null;
+
+        // Cek dan validasi foto jurnal
+        if ($kegiatan->foto_jurnal) {
+            $fotoPath = 'storage/' . $kegiatan->foto_jurnal;
+            if (file_exists(public_path($fotoPath))) {
+                $fotoJurnalUrl = asset($fotoPath);
+            } else {
+                Log::warning("Foto jurnal tidak ditemukan: " . $fotoPath);
+            }
+        }
+
+        // Cek dan validasi dokumen pendukung
+        if ($kegiatan->dokumen_pendukung) {
+            $dokumenPath = 'storage/' . $kegiatan->dokumen_pendukung;
+            if (file_exists(public_path($dokumenPath))) {
+                $dokumenPendukungUrl = asset($dokumenPath);
+                
+                // Dapatkan informasi file untuk ditampilkan
+                $pathInfo = pathinfo($kegiatan->dokumen_pendukung);
+                $fileExtension = strtolower($pathInfo['extension'] ?? '');
+                $fileName = $pathInfo['filename'] ?? 'Dokumen';
+                
+                // Tentukan icon berdasarkan ekstensi file
+                $iconClass = match($fileExtension) {
+                    'pdf' => 'fas fa-file-pdf text-danger',
+                    'doc', 'docx' => 'fas fa-file-word text-primary',
+                    'xls', 'xlsx' => 'fas fa-file-excel text-success',
+                    'ppt', 'pptx' => 'fas fa-file-powerpoint text-warning',
+                    'txt' => 'fas fa-file-alt text-secondary',
+                    'zip', 'rar' => 'fas fa-file-archive text-info',
+                    default => 'fas fa-file text-secondary'
+                };
+
+                $dokumenInfo = [
+                    'url' => $dokumenPendukungUrl,
+                    'fileName' => $fileName,
+                    'extension' => strtoupper($fileExtension),
+                    'iconClass' => $iconClass,
+                    'originalName' => $pathInfo['basename'] ?? 'dokumen.' . $fileExtension
+                ];
+            } else {
+                Log::warning("Dokumen pendukung tidak ditemukan: " . $dokumenPath);
+            }
+        }
+
+        // Siapkan data lengkap untuk view
+        $kegiatanData = [
+            'id' => $kegiatan->id,
+            'nama_program_kegiatan' => $kegiatan->nama_program_kegiatan,
+            'jenis_kegiatan' => $kegiatan->jenis_kegiatan,
+            'volume' => $kegiatan->volume,
+            'jumlah_harga_satuan' => $kegiatan->jumlah_harga_satuan,
+            'jumlah_harga' => $kegiatan->jumlah_harga,
+            'keterangan_tambahan' => $kegiatan->keterangan_tambahan,
+            'created_at' => $kegiatan->created_at,
+            'updated_at' => $kegiatan->updated_at,
+            'foto_jurnal_url' => $fotoJurnalUrl,
+            'dokumen_info' => $dokumenInfo
+        ];
+        
+        // Check if view exists
+        $viewPath = 'admin.laporan-lpj.kegiatan_lainnya.detail-ajax';
+        if (!view()->exists($viewPath)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Template detail tidak ditemukan. Silakan hubungi administrator.'
+            ], 500);
+        }
+        
+        // Render HTML untuk AJAX dengan data yang sudah divalidasi
+        $html = view($viewPath, ['kegiatan' => (object) $kegiatanData])->render();
         
         return response()->json([
             'success' => true,
@@ -420,13 +515,104 @@ class KegiatanLainnyaController extends Controller
         ]);
         
     } catch (\Exception $e) {
+        // Log error dengan detail yang lebih lengkap
+        Log::error('Error in getDetail method: ' . $e->getMessage(), [
+            'id' => $id,
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString(),
+            'request_ip' => request()->ip(),
+            'user_agent' => request()->userAgent()
+        ]);
+        
         return response()->json([
             'success' => false,
-            'message' => 'Gagal memuat detail kegiatan: ' . $e->getMessage()
+            'message' => 'Terjadi kesalahan sistem: ' . $e->getMessage()
         ], 500);
     }
 }
 
+public function approve(Request $request, KegiatanLainnya $kegiatan_lainnya)
+    {
+        // Check if user is superadmin
+        if (!auth()->user()->hasRole('superadmin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditolak. Hanya superadmin yang dapat menyetujui.'
+            ], 403);
+        }
 
+        DB::beginTransaction();
+        try {
+            $kegiatan_lainnya->update([
+                'status_approval' => 'approved',
+                'approved_at' => now(),
+                'approved_by' => auth()->id(),
+                'approval_notes' => $request->input('notes')
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Kegiatan berhasil disetujui.'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyetujui kegiatan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function reject(Request $request, KegiatanLainnya $kegiatan_lainnya)
+    {
+        // Check if user is superadmin
+        if (!auth()->user()->hasRole('superadmin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Akses ditolak. Hanya superadmin yang dapat menolak.'
+            ], 403);
+        }
+
+        $request->validate([
+            'notes' => 'required|string|max:500'
+        ], [
+            'notes.required' => 'Alasan penolakan wajib diisi.'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $kegiatan_lainnya->update([
+                'status_approval' => 'rejected',
+                'approved_at' => null,
+                'approved_by' => auth()->id(),
+                'approval_notes' => $request->input('notes')
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Kegiatan berhasil ditolak.'
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menolak kegiatan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function update(Request $request, KegiatanLainnya $kegiatan_lainnya)
+    {
+        // Check approval status
+        if (!$kegiatan_lainnya->isApproved() && !auth()->user()->hasRole('superadmin')) {
+            return back()->with('error', 'Data hanya dapat diubah setelah mendapat persetujuan dari superadmin.');
+        }
 
 }

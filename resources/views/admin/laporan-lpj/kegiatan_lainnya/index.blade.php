@@ -15,334 +15,179 @@
 @section('content')
 
     <style>
-        /* Table Styling */
-        table td,
-        table th {
+        /* === BASE STYLING === */
+        body {
+            background-color: #f5f5f5 !important;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* === TABLE STYLING === */
+        .table th,
+        .table td {
             vertical-align: middle;
             word-wrap: break-word;
         }
 
-        .object-fit-cover {
-            object-fit: cover;
+        .table th {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: 600;
         }
 
-        /* Fixed Column Width Settings dengan perbaikan */
-        /* PERBAIKAN: Kolom No - diperbesar agar tidak terpotong */
+        .table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        /* === COLUMN WIDTH === */
         .table th:nth-child(1),
         .table td:nth-child(1) {
-            width: 70px !important;
-            max-width: 70px !important;
-            text-align: center !important;
+            width: 50px;
+            text-align: center;
         }
 
-        /* PERBAIKAN: Kolom Nama Program & Kegiatan - header tetap rata */
-        .table th:nth-child(2) {
-            width: 250px !important;
-            max-width: 250px !important;
-            white-space: nowrap !important;
-            /* Header tetap dalam satu baris */
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-        }
-
-        /* Konten dalam td bisa wrap */
+        .table th:nth-child(2),
         .table td:nth-child(2) {
-            white-space: normal !important;
-            /* Allow text wrapping untuk konten */
-            overflow: visible !important;
-            max-width: 250px !important;
-            width: 250px !important;
+            max-width: 250px;
         }
 
-        /* Volume */
         .table th:nth-child(3),
         .table td:nth-child(3) {
-            width: 100px !important;
-            max-width: 100px !important;
+            width: 100px;
         }
 
-        /* Jumlah Harga Satuan */
         .table th:nth-child(4),
         .table td:nth-child(4) {
-            width: 150px !important;
-            max-width: 150px !important;
+            width: 150px;
         }
 
-        /* Jumlah Harga */
         .table th:nth-child(5),
         .table td:nth-child(5) {
-            width: 150px !important;
-            max-width: 150px !important;
+            width: 150px;
         }
 
-        /* Foto Jurnal */
         .table th:nth-child(6),
         .table td:nth-child(6) {
-            width: 100px !important;
-            max-width: 100px !important;
+            width: 100px;
         }
 
-        /* Dokumen */
         .table th:nth-child(7),
         .table td:nth-child(7) {
-            width: 100px !important;
-            max-width: 100px !important;
+            width: 100px;
         }
 
-        /* Tanggal Ditambahkan */
         .table th:nth-child(8),
         .table td:nth-child(8) {
-            width: 120px !important;
-            max-width: 120px !important;
+            width: 120px;
         }
 
-        /* Aksi */
         .table th:nth-child(9),
         .table td:nth-child(9) {
-            width: 100px !important;
-            max-width: 100px !important;
+            width: 80px;
+            text-align: center;
         }
 
-        /* Text truncation untuk semua header kecuali kolom aksi */
-        .table th:not(:last-child):not(:nth-child(2)) {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        /* === DROPDOWN ACTION === */
+        .dropdown-action .dropdown-menu {
+            min-width: 180px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* Text truncation untuk semua cell kecuali action column dan kolom nama program */
-        .table td:not(:last-child):not(:nth-child(2)) {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .dropdown-action .dropdown-item {
+            padding: 8px 16px;
+            font-size: 0.9rem;
         }
 
-        /* Responsive Design */
+        .dropdown-action .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-action .dropdown-item.text-danger:hover {
+            background-color: #ffcad7;
+        }
+
+        /* === MODAL HEADER === */
+        .modal-header.bg-primary {
+            background-color: #F8285A !important;
+            color: white;
+        }
+
+        /* === RESPONSIVE === */
         @media (max-width: 768px) {
-            .card-body {
-                overflow-x: hidden !important;
-            }
-
             .table-responsive {
                 overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+            }
+
+            .dropdown-menu {
+                position: absolute !important;
+                right: 0 !important;
+                left: auto !important;
+                z-index: 1055;
             }
         }
 
-        /* Custom Pagination Styling */
-        .pagination-wrapper .pagination {
-            margin-bottom: 0;
-        }
+        /* === APPROVAL STATUS STYLES === */
+.disabled-action {
+    opacity: 0.6;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
 
-        .pagination-wrapper .page-link {
-            padding: 0.375rem 0.75rem;
-            margin-left: -1px;
-            color: #6c757d;
-            background-color: #fff;
-            border: 1px solid #dee2e6;
-        }
+.disabled-action:hover {
+    background-color: transparent !important;
+}
 
-        .pagination-wrapper .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
-            color: #fff;
-        }
+/* Status badges in dropdown */
+.dropdown-menu .badge {
+    font-size: 0.75rem;
+}
 
-        .pagination-wrapper .page-link:hover {
-            color: #495057;
-            background-color: #e9ecef;
-            border-color: #dee2e6;
-        }
+/* Approval action buttons */
+.approve-btn:hover {
+    background-color: #d4edda !important;
+}
 
-        .highlight {
-            background-color: #FFD700;
-            padding: 0 2px;
-            border-radius: 3px;
-        }
+.reject-btn:hover {
+    background-color: #fff3cd !important;
+}
 
-        /* TAMBAHAN: Pastikan semua header rata */
-        .table thead th {
-            vertical-align: middle !important;
-            text-align: center !important;
-        }
+/* Lock icon animation */
+.fa-info-circle {
+    animation: pulse 2s infinite;
+}
 
-        /* Toast Styling */
-        .toast {
-            min-width: 300px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
 
-        .toast-body {
-            font-weight: 500;
-        }
+/* Status column styling */
+.status-badge {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+}
 
-        /* Loading indicator untuk button */
-        [data-kt-indicator="on"] .indicator-label {
-            display: none;
-        }
-
-        [data-kt-indicator="on"] .indicator-progress {
-            display: inline-block;
-        }
-
-        .indicator-progress {
-            display: none;
-        }
-
-        /* Modal styling */
-        #modal_delete_confirmation .modal-content {
-            border: none;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        #modal_delete_confirmation .modal-header.bg-danger {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* Animation for row removal */
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-
-            to {
-                opacity: 0;
-            }
-        }
-
-        .fade-out {
-            animation: fadeOut 0.5s ease-in-out;
-        }
-
-        body {
-            background-color: #f8f9fa !important;
-        }
-
-        /* Background abu-abu untuk container utama */
-        .container-fluid,
-        .container-xxl {
-            background-color: #f8f9fa !important;
-        }
-
-        /* Background putih untuk card utama agar terlihat kontras */
-        .card {
-            background-color: #ffffff !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-            border: none !important;
-        }
-
-        /* Background abu-abu muda untuk header table */
-        .table thead {
-            background-color: #e9ecef !important;
-        }
-
-        /* Background abu-abu sangat muda untuk row genap (striped effect) */
-        .table tbody tr:nth-child(even) {
-            background-color: #f8f9fa !important;
-        }
-
-        /* Background putih untuk row ganjil */
-        .table tbody tr:nth-child(odd) {
-            background-color: #ffffff !important;
-        }
-
-        /* Hover effect untuk row */
-        .table tbody tr:hover {
-            background-color: #e3f2fd !important;
-        }
-
-        /* Background abu-abu untuk dropdown menu */
-        .dropdown-menu {
-            background-color: #ffffff !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-        }
-
-        /* Background abu-abu untuk pagination */
-        .pagination-wrapper {
-            background-color: #f8f9fa !important;
-            padding: 15px !important;
-            border-radius: 8px !important;
-            margin-top: 20px !important;
-        }
-
-        /* Background putih untuk card header (Daftar Table Kegiatan Lainnya - 2025) */
-        .card-header {
-            background-color: #ffffff !important;
-            border-bottom: 1px solid #e9ecef !important;
-        }
-
-        /* Background abu-abu untuk search dan filter controls */
-        .input-group,
-        .dropdown {
-            background-color: transparent !important;
-        }
-
-        .form-control,
-        .form-select {
-            background-color: #ffffff !important;
-            border: 1px solid #d1d3e2 !important;
-        }
-
-        /* Background untuk empty state */
-        .text-center.text-muted.py-10 {
-            background-color: #f8f9fa !important;
-            border-radius: 8px !important;
-            margin: 20px 0 !important;
-        }
-
-        /* Background untuk modal */
-        .modal-content {
-            background-color: #ffffff !important;
-        }
-
-        /* Background putih khusus untuk area filter yang aktif */
-        .card-header.border-0.pt-3.pb-3.bg-light {
-            background-color: #ffffff !important;
-        }
-
-        /* Background untuk toast notifications */
-        .toast {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-        }
-
-        /* Responsive background adjustments */
-        @media (max-width: 768px) {
-            .card-body {
-                background-color: #ffffff !important;
-            }
-
-            .table-responsive {
-                background-color: #ffffff !important;
-                border-radius: 8px !important;
-                padding: 10px !important;
-            }
-        }
-
-        /* Additional styling untuk konsistensi */
-        .breadcrumb {
-            background-color: transparent !important;
-        }
-
-        .btn-light {
-            background-color: #f8f9fa !important;
-            border-color: #d6d8db !important;
-        }
-
-        .btn-light:hover {
-            background-color: #e2e6ea !important;
-            border-color: #dae0e5 !important;
-        }
-
-        /* Background untuk area konten utama */
-        #kt_app_content {
-            background-color: #f8f9fa !important;
-            min-height: 100vh !important;
-        }
-
-        /* Background untuk wrapper content */
-        #kt_app_content_container {
-            background-color: #f8f9fa !important;
-        }
+/* Tooltip custom styles */
+.tooltip-inner {
+    max-width: 300px;
+    text-align: left;
+}
     </style>
 
 
@@ -618,58 +463,96 @@
                                         </td>
                                         <td>{{ \Carbon\Carbon::parse($kegiatan->created_at)->format('d M Y') }}</td>
                                         <td class="text-center">
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm p-0" type="button" data-bs-toggle="dropdown"
-                                                    aria-expanded="false">
-                                                    <svg width="32" height="32" viewBox="0 0 32 32"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <rect width="32" height="32" rx="6"
-                                                            fill="#EFF6FF" />
-                                                        <rect x="0.5" y="0.5" width="31" height="31"
-                                                            rx="5.5" stroke="#1B84FF" stroke-opacity="0.2" />
-                                                        <g clip-path="url(#clip0_2223_4269)">
-                                                            <path opacity="0.3"
-                                                                d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
-                                                                fill="#1B84FF" />
-                                                            <path
-                                                                d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
-                                                                fill="#1B84FF" />
-                                                        </g>
-                                                        <defs>
-                                                            <clipPath id="clip0_2223_4269">
-                                                                <rect width="16" height="16" fill="white"
-                                                                    transform="translate(8 8)" />
-                                                            </clipPath>
-                                                        </defs>
-                                                    </svg>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
-                                                    <li>
-                                                        <button type="button" class="dropdown-item view-detail-btn"
-                                                            data-id="{{ $kegiatan->id }}"
-                                                            data-name="{{ $kegiatan->nama_program_kegiatan }}">
-                                                            <i class="fa-solid fa-eye me-2"></i>Lihat Detail
-                                                        </button>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
-                                                            class="dropdown-item">
-                                                            <i class="fa-solid fa-pen-to-square me-2"></i>Modifikasi
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <hr class="dropdown-divider">
-                                                    </li>
-                                                    <li>
-                                                        <button type="button"
-                                                            class="dropdown-item text-danger border-0 bg-transparent w-100 text-start delete-btn"
-                                                            data-id="{{ $kegiatan->id }}"
-                                                            data-name="{{ $kegiatan->nama_program_kegiatan }}">
-                                                            <i class="fa-solid fa-trash me-2"></i>Hapus
-                                                        </button>
-                                                    </li>
-                                                </ul>
-                                            </div>
+    <div class="dropdown">
+        <button class="btn btn-sm p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="6" fill="#EFF6FF" />
+                <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" stroke="#1B84FF" stroke-opacity="0.2" />
+                <g clip-path="url(#clip0_2223_4269)">
+                    <path opacity="0.3" d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z" fill="#1B84FF" />
+                    <path d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z" fill="#1B84FF" />
+                </g>
+            </svg>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
+            <!-- Status Badge -->
+            <li class="px-3 py-2 border-bottom">
+                <small class="text-muted">Status:</small><br>
+                @if($kegiatan->isApproved())
+                    <span class="badge bg-success">Disetujui</span>
+                @elseif($kegiatan->isPending())
+                    <span class="badge bg-warning">Menunggu Persetujuan</span>
+                @else
+                    <span class="badge bg-danger">Ditolak</span>
+                @endif
+            </li>
+            
+            <!-- View Detail -->
+            <li>
+                <button type="button" class="dropdown-item view-detail-btn"
+                    data-id="{{ $kegiatan->id }}"
+                    data-name="{{ $kegiatan->nama_program_kegiatan }}">
+                    <i class="fa-solid fa-eye me-2"></i>Lihat Detail
+                </button>
+            </li>
+            
+            <!-- Edit/Modifikasi Button with Conditional Logic -->
+            <li>
+                @if($kegiatan->isApproved() || auth()->user()->hasRole('superadmin'))
+                    <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
+                       class="dropdown-item">
+                        <i class="fa-solid fa-pen-to-square me-2"></i>Modifikasi
+                    </a>
+                @else
+                    <button type="button" 
+                            class="dropdown-item text-muted disabled-action"
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="left"
+                            title="Data hanya dapat diubah setelah mendapat persetujuan dari superadmin"
+                            onclick="showLockedModal('{{ $kegiatan->nama_program_kegiatan }}')">
+                        <i class="fa-solid fa-pen-to-square me-2 text-muted"></i>
+                        <span class="text-muted">Modifikasi</span>
+                        <i class="fa-solid fa-info-circle ms-1 text-warning"></i>
+                    </button>
+                @endif
+            </li>
+            
+            <!-- Approval Actions (Only for Superadmin) -->
+            @if(auth()->user()->hasRole('superadmin'))
+                @if($kegiatan->isPending())
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <button type="button" 
+                                class="dropdown-item text-success approve-btn"
+                                data-id="{{ $kegiatan->id }}"
+                                data-name="{{ $kegiatan->nama_program_kegiatan }}">
+                            <i class="fa-solid fa-check me-2"></i>Setujui
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" 
+                                class="dropdown-item text-warning reject-btn"
+                                data-id="{{ $kegiatan->id }}"
+                                data-name="{{ $kegiatan->nama_program_kegiatan }}">
+                            <i class="fa-solid fa-times me-2"></i>Tolak
+                        </button>
+                    </li>
+                @endif
+            @endif
+            
+            <!-- Delete Button -->
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <button type="button"
+                        class="dropdown-item text-danger border-0 bg-transparent w-100 text-start delete-btn"
+                        data-id="{{ $kegiatan->id }}"
+                        data-name="{{ $kegiatan->nama_program_kegiatan }}">
+                    <i class="fa-solid fa-trash me-2"></i>Hapus
+                </button>
+            </li>
+        </ul>
+    </div>
+</td>
                                         </td>
                                     </tr>
                                 @empty
@@ -917,6 +800,123 @@
         </div>
     </div>
 
+    {{-- Modal Approval --}}
+<div class="modal fade" id="modal_approve_kegiatan" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success">
+                <h2 class="fw-bold text-white">
+                    <i class="fas fa-check-circle me-2"></i>Setujui Kegiatan
+                </h2>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-8">
+                <div class="text-center mb-4">
+                    <i class="fas fa-check-circle text-success fs-3x mb-4"></i>
+                    <h4 class="mb-3">Setujui Kegiatan Ini?</h4>
+                    <p class="text-muted mb-0">Kegiatan yang disetujui dapat diedit oleh user.</p>
+                    <p class="fw-bold text-dark mt-2" id="approve-item-name"></p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Catatan (Opsional)</label>
+                    <textarea class="form-control" id="approve-notes" rows="3" 
+                              placeholder="Tambahkan catatan persetujuan..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center border-0 pb-6">
+                <button type="button" class="btn btn-light me-3" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Batal
+                </button>
+                <button type="button" class="btn btn-success" id="confirm-approve-btn">
+                    <span class="indicator-label">
+                        <i class="fas fa-check me-1"></i>Ya, Setujui
+                    </span>
+                    <span class="indicator-progress">
+                        <span class="spinner-border spinner-border-sm align-middle me-2"></span>
+                        Menyetujui...
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Modal Reject --}}
+<div class="modal fade" id="modal_reject_kegiatan" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h2 class="fw-bold text-dark">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Tolak Kegiatan
+                </h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-8">
+                <div class="text-center mb-4">
+                    <i class="fas fa-exclamation-triangle text-warning fs-3x mb-4"></i>
+                    <h4 class="mb-3">Tolak Kegiatan Ini?</h4>
+                    <p class="text-muted mb-0">Kegiatan yang ditolak tidak dapat diedit oleh user.</p>
+                    <p class="fw-bold text-dark mt-2" id="reject-item-name"></p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label fw-semibold required">Alasan Penolakan</label>
+                    <textarea class="form-control" id="reject-notes" rows="4" 
+                              placeholder="Jelaskan alasan penolakan..." required></textarea>
+                    <div class="invalid-feedback">Alasan penolakan wajib diisi.</div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center border-0 pb-6">
+                <button type="button" class="btn btn-light me-3" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Batal
+                </button>
+                <button type="button" class="btn btn-warning" id="confirm-reject-btn">
+                    <span class="indicator-label">
+                        <i class="fas fa-times me-1"></i>Ya, Tolak
+                    </span>
+                    <span class="indicator-progress">
+                        <span class="spinner-border spinner-border-sm align-middle me-2"></span>
+                        Menolak...
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Modal Locked Info --}}
+<div class="modal fade" id="modal_locked_info" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h2 class="fw-bold text-white">
+                    <i class="fas fa-lock me-2"></i>Data Terkunci
+                </h2>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-8 text-center">
+                <i class="fas fa-lock text-info fs-3x mb-4"></i>
+                <h4 class="mb-3">Data Tidak Dapat Diubah</h4>
+                <p class="text-muted mb-2">Kegiatan ini belum mendapat persetujuan dari superadmin.</p>
+                <p class="fw-bold text-dark" id="locked-item-name"></p>
+                
+                <div class="alert alert-light-info mt-4">
+                    <div class="alert-text">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Hubungi superadmin untuk mendapatkan persetujuan agar data dapat diubah.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center border-0 pb-6">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                    <i class="fas fa-check me-1"></i>Mengerti
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
     {{-- Toast Notification Container --}}
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
         <div id="toast-success" class="toast align-items-center text-bg-success border-0" role="alert"
@@ -1143,12 +1143,26 @@
                 // Tambahkan script ini ke bagian JavaScript dalam section script
 
                 // Handle view detail button click - UPDATE
+                const kegiatanId = $(this).data('id');
+                const kegiatanName = $(this).data('name') || 'Detail Kegiatan';
+                const modal = $('#modal_detail_kegiatan');
+
+                // Debugging: Log ID yang didapat
                 $(document).on('click', '.view-detail-btn', function(e) {
                     e.preventDefault();
 
                     const kegiatanId = $(this).data('id');
                     const kegiatanName = $(this).data('name') || 'Detail Kegiatan';
                     const modal = $('#modal_detail_kegiatan');
+
+                    // Debugging: Log ID yang didapat
+                    console.log('Kegiatan ID:', kegiatanId);
+
+                    // Validasi ID
+                    if (!kegiatanId) {
+                        showDetailError('ID kegiatan tidak ditemukan');
+                        return;
+                    }
 
                     // Reset modal content
                     $('#detail-kegiatan-content').html(`
@@ -1163,12 +1177,24 @@
                     // Show modal immediately
                     modal.modal('show');
 
+                    // PERBAIKAN: URL yang benar sesuai dengan route
+                    const ajaxUrl =
+                        `{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}/${kegiatanId}/detail-ajax`;
+
+                    console.log('AJAX URL:', ajaxUrl); // Debugging
+
                     // Fetch detail via AJAX
                     $.ajax({
-                        url: `/admin/laporan-lpj/kegiatan_lainnya/${kegiatanId}/detail-ajax`,
+                        url: ajaxUrl,
                         type: 'GET',
-                        timeout: 15000, // 15 seconds timeout
+                        timeout: 15000,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
                         success: function(response) {
+                            console.log('AJAX Response:', response); // Debugging
+
                             if (response.success) {
                                 $('#detail-kegiatan-content').html(response.html);
 
@@ -1187,16 +1213,35 @@
                             }
                         },
                         error: function(xhr, status, error) {
+                            console.error('AJAX Error:', {
+                                status: status,
+                                error: error,
+                                responseText: xhr.responseText,
+                                xhr: xhr
+                            });
+
                             let errorMessage = 'Gagal memuat detail kegiatan';
 
                             if (status === 'timeout') {
                                 errorMessage = 'Koneksi timeout. Silakan coba lagi.';
                             } else if (xhr.status === 404) {
-                                errorMessage = 'Data kegiatan tidak ditemukan.';
+                                errorMessage =
+                                    'Data kegiatan tidak ditemukan atau route tidak tersedia.';
                             } else if (xhr.status === 500) {
                                 errorMessage = 'Terjadi kesalahan server. Silakan coba lagi.';
                             } else if (xhr.responseJSON && xhr.responseJSON.message) {
                                 errorMessage = xhr.responseJSON.message;
+                            } else if (xhr.responseText) {
+                                // Coba parse error dari Laravel
+                                try {
+                                    const errorResponse = JSON.parse(xhr.responseText);
+                                    if (errorResponse.message) {
+                                        errorMessage = errorResponse.message;
+                                    }
+                                } catch (e) {
+                                    // Jika tidak bisa di-parse, ambil sebagian text
+                                    errorMessage = xhr.responseText.substring(0, 100) + '...';
+                                }
                             }
 
                             showDetailError(errorMessage);
