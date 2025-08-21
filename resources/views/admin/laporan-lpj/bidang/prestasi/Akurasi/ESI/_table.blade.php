@@ -1,4 +1,4 @@
-@if ($ESIData->isEmpty())
+@if ($esiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($ESIData as $index => $data)
+                @forelse ($esiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($ESIData->currentPage() - 1) * $ESIData->perPage() + $index + 1 }}
+                            {{ ($esiData->currentPage() - 1) * $esiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.ESI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.esi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($ESIData) && method_exists($ESIData, 'hasPages') && $ESIData->hasPages())
+            @if (isset($esiData) && method_exists($esiData, 'hasPages') && $esiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $ESIData->firstItem() }}-{{ $ESIData->lastItem() }} of
-                        {{ $ESIData->total() }}
+                        {{ $esiData->firstItem() }}-{{ $esiData->lastItem() }} of
+                        {{ $esiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($ESIData->onFirstPage())
+                        @if ($esiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $ESIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $esiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $ESIData->currentPage();
-                            $total = $ESIData->lastPage();
+                            $current = $esiData->currentPage();
+                            $total = $esiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $ESIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $esiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($ESIData->hasMorePages())
-                            <a href="{{ $ESIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($esiData->hasMorePages())
+                            <a href="{{ $esiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($ESIData) && method_exists($ESIData, 'hasPages'))
+            @elseif(isset($esiData) && method_exists($esiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $ESIData->count() }} of {{ $ESIData->total() }}
+                    1-{{ $esiData->count() }} of {{ $esiData->total() }}
                 </div>
             @endif
         </div>

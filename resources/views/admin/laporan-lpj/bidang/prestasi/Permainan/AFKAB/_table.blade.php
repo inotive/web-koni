@@ -1,4 +1,4 @@
-@if ($AFKABData->isEmpty())
+@if ($afkabData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($AFKABData as $index => $data)
+                @forelse ($afkabData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($AFKABData->currentPage() - 1) * $AFKABData->perPage() + $index + 1 }}
+                            {{ ($afkabData->currentPage() - 1) * $afkabData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.AFKAB.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.afkab.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($AFKABData) && method_exists($AFKABData, 'hasPages') && $AFKABData->hasPages())
+            @if (isset($afkabData) && method_exists($afkabData, 'hasPages') && $afkabData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $AFKABData->firstItem() }}-{{ $AFKABData->lastItem() }} of
-                        {{ $AFKABData->total() }}
+                        {{ $afkabData->firstItem() }}-{{ $afkabData->lastItem() }} of
+                        {{ $afkabData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($AFKABData->onFirstPage())
+                        @if ($afkabData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $AFKABData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $afkabData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $AFKABData->currentPage();
-                            $total = $AFKABData->lastPage();
+                            $current = $afkabData->currentPage();
+                            $total = $afkabData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $AFKABData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $afkabData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($AFKABData->hasMorePages())
-                            <a href="{{ $AFKABData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($afkabData->hasMorePages())
+                            <a href="{{ $afkabData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($AFKABData) && method_exists($AFKABData, 'hasPages'))
+            @elseif(isset($afkabData) && method_exists($afkabData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $AFKABData->count() }} of {{ $AFKABData->total() }}
+                    1-{{ $afkabData->count() }} of {{ $afkabData->total() }}
                 </div>
             @endif
         </div>

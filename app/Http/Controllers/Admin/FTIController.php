@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Fti;
+use App\Models\fti;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class FtiController extends Controller
+class ftiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Fti::query();
+        $query = fti::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class FtiController extends Controller
             $direction = 'desc';
         }
 
-        $FtiData = $query
+        $ftiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Fti._table', compact('FtiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.fti._table', compact('ftiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Fti.index', compact('FtiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.fti.index', compact('ftiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Fti.create');
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.fti.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class FtiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Fti/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('fti/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class FtiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Fti/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('fti/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Fti::create($data);
+        fti::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Fti.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.fti.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Fti $Fti)
+    public function show(fti $fti)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Fti.show', compact('Fti'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.fti.show', compact('fti'));
     }
 
-    public function edit(Fti $Fti)
+    public function edit(fti $fti)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Fti.edit', compact('Fti'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.fti.edit', compact('fti'));
     }
 
-    public function update(Request $request, Fti $Fti)
+    public function update(Request $request, fti $fti)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class FtiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Fti->foto_jurnal) {
-                foreach ($Fti->foto_jurnal as $oldFoto) {
+            if ($fti->foto_jurnal) {
+                foreach ($fti->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Fti/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('fti/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class FtiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Fti->dokumen_lpj) {
-                foreach ($Fti->dokumen_lpj as $oldDokumen) {
+            if ($fti->dokumen_lpj) {
+                foreach ($fti->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Fti/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('fti/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Fti->update($data);
+        $fti->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Fti.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.fti.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Fti $Fti)
+    public function destroy(fti $fti)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class FtiController extends Controller
         }
 
         // Delete associated files
-        if ($Fti->foto_jurnal) {
-            foreach ($Fti->foto_jurnal as $foto) {
+        if ($fti->foto_jurnal) {
+            foreach ($fti->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Fti->dokumen_lpj) {
-            foreach ($Fti->dokumen_lpj as $dokumen) {
+        if ($fti->dokumen_lpj) {
+            foreach ($fti->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Fti->delete();
+        $fti->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Fti.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.fti.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class FtiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Fti $Fti)
+    public function removeFile(Request $request, fti $fti)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class FtiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Fti->$fileType ?? [];
+        $files = $fti->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class FtiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Fti->update([$fileType => $files]);
+        $fti->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

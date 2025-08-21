@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Persambi;
+use App\Models\persambi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PersambiController extends Controller
+class persambiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Persambi::query();
+        $query = persambi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PersambiController extends Controller
             $direction = 'desc';
         }
 
-        $PersambiData = $query
+        $persambiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Persambi._table', compact('PersambiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.persambi._table', compact('persambiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Persambi.index', compact('PersambiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.persambi.index', compact('persambiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Persambi.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.persambi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PersambiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Persambi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('persambi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PersambiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Persambi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('persambi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Persambi::create($data);
+        persambi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Persambi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.persambi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Persambi $Persambi)
+    public function show(persambi $persambi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Persambi.show', compact('Persambi'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.persambi.show', compact('persambi'));
     }
 
-    public function edit(Persambi $Persambi)
+    public function edit(persambi $persambi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Persambi.edit', compact('Persambi'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.persambi.edit', compact('persambi'));
     }
 
-    public function update(Request $request, Persambi $Persambi)
+    public function update(Request $request, persambi $persambi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PersambiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Persambi->foto_jurnal) {
-                foreach ($Persambi->foto_jurnal as $oldFoto) {
+            if ($persambi->foto_jurnal) {
+                foreach ($persambi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Persambi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('persambi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PersambiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Persambi->dokumen_lpj) {
-                foreach ($Persambi->dokumen_lpj as $oldDokumen) {
+            if ($persambi->dokumen_lpj) {
+                foreach ($persambi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Persambi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('persambi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Persambi->update($data);
+        $persambi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Persambi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.persambi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Persambi $Persambi)
+    public function destroy(persambi $persambi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PersambiController extends Controller
         }
 
         // Delete associated files
-        if ($Persambi->foto_jurnal) {
-            foreach ($Persambi->foto_jurnal as $foto) {
+        if ($persambi->foto_jurnal) {
+            foreach ($persambi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Persambi->dokumen_lpj) {
-            foreach ($Persambi->dokumen_lpj as $dokumen) {
+        if ($persambi->dokumen_lpj) {
+            foreach ($persambi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Persambi->delete();
+        $persambi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Persambi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.persambi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PersambiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Persambi $Persambi)
+    public function removeFile(Request $request, persambi $persambi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PersambiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Persambi->$fileType ?? [];
+        $files = $persambi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PersambiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Persambi->update([$fileType => $files]);
+        $persambi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

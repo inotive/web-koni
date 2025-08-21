@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Edit fpti')
+@section('pageTitle', 'Edit FPTI - Panijat Tebing')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,9 +8,9 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor Terukur')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur'))
-@section('subSection4', 'fpti')
+@section('subSection4', 'FPTI - Panijat Tebing')
 @section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.fpti.index'))
-@section('currentSection', 'Edit fpti')
+@section('currentSection', 'Edit FPTI - Panijat Tebing')
 
 @section('content')
     <style>
@@ -268,7 +268,7 @@
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Data fpti</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Data FPTI - Panijat Tebing</h3>
     </div>
 
     <div class="main-content">

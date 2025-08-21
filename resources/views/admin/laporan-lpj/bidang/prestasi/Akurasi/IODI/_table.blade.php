@@ -1,4 +1,4 @@
-@if ($IODIData->isEmpty())
+@if ($iodiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($IODIData as $index => $data)
+                @forelse ($iodiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($IODIData->currentPage() - 1) * $IODIData->perPage() + $index + 1 }}
+                            {{ ($iodiData->currentPage() - 1) * $iodiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.IODI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.iodi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($IODIData) && method_exists($IODIData, 'hasPages') && $IODIData->hasPages())
+            @if (isset($iodiData) && method_exists($iodiData, 'hasPages') && $iodiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $IODIData->firstItem() }}-{{ $IODIData->lastItem() }} of
-                        {{ $IODIData->total() }}
+                        {{ $iodiData->firstItem() }}-{{ $iodiData->lastItem() }} of
+                        {{ $iodiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($IODIData->onFirstPage())
+                        @if ($iodiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $IODIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $iodiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $IODIData->currentPage();
-                            $total = $IODIData->lastPage();
+                            $current = $iodiData->currentPage();
+                            $total = $iodiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $IODIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $iodiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($IODIData->hasMorePages())
-                            <a href="{{ $IODIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($iodiData->hasMorePages())
+                            <a href="{{ $iodiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($IODIData) && method_exists($IODIData, 'hasPages'))
+            @elseif(isset($iodiData) && method_exists($iodiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $IODIData->count() }} of {{ $IODIData->total() }}
+                    1-{{ $iodiData->count() }} of {{ $iodiData->total() }}
                 </div>
             @endif
         </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'issi')
+@section('pageTitle', 'ISSI - Balap Sepeda')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,7 +8,7 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor Terukur')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur'))
-@section('currentSection', 'issi')
+@section('currentSection', 'ISSI - Balap Sepeda')
 
 @section('breadcrumb-title')
 @endsection
@@ -378,7 +378,7 @@
     </style>
 
     <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">Laporan issi</h1>
+        <h1 class="text-dark fw-bold mb-1">Laporan ISSI - Balap Sepeda</h1>
     </div>
 
     {{-- Main Content Card --}}
@@ -386,7 +386,7 @@
         <div class="card">
             {{-- Card Header --}}
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar issi - 2025</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar ISSI - Balap Sepeda 2025</h3>
 
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">

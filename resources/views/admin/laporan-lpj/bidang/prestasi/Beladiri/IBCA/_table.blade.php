@@ -1,4 +1,4 @@
-@if ($IBCAData->isEmpty())
+@if ($ibcaData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($IBCAData as $index => $data)
+                @forelse ($ibcaData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($IBCAData->currentPage() - 1) * $IBCAData->perPage() + $index + 1 }}
+                            {{ ($ibcaData->currentPage() - 1) * $ibcaData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.IBCA-MMA.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ibca-mma.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($IBCAData) && method_exists($IBCAData, 'hasPages') && $IBCAData->hasPages())
+            @if (isset($ibcaData) && method_exists($ibcaData, 'hasPages') && $ibcaData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $IBCAData->firstItem() }}-{{ $IBCAData->lastItem() }} of
-                        {{ $IBCAData->total() }}
+                        {{ $ibcaData->firstItem() }}-{{ $ibcaData->lastItem() }} of
+                        {{ $ibcaData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($IBCAData->onFirstPage())
+                        @if ($ibcaData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $IBCAData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $ibcaData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $IBCAData->currentPage();
-                            $total = $IBCAData->lastPage();
+                            $current = $ibcaData->currentPage();
+                            $total = $ibcaData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $IBCAData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $ibcaData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($IBCAData->hasMorePages())
-                            <a href="{{ $IBCAData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($ibcaData->hasMorePages())
+                            <a href="{{ $ibcaData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($IBCAData) && method_exists($IBCAData, 'hasPages'))
+            @elseif(isset($ibcaData) && method_exists($ibcaData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $IBCAData->count() }} of {{ $IBCAData->total() }}
+                    1-{{ $ibcaData->count() }} of {{ $ibcaData->total() }}
                 </div>
             @endif
         </div>

@@ -1,4 +1,4 @@
-@if ($PERKEMIData->isEmpty())
+@if ($perkemiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PERKEMIData as $index => $data)
+                @forelse ($perkemiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PERKEMIData->currentPage() - 1) * $PERKEMIData->perPage() + $index + 1 }}
+                            {{ ($perkemiData->currentPage() - 1) * $perkemiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.PERKEMI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.perkemi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PERKEMIData) && method_exists($PERKEMIData, 'hasPages') && $PERKEMIData->hasPages())
+            @if (isset($perkemiData) && method_exists($perkemiData, 'hasPages') && $perkemiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PERKEMIData->firstItem() }}-{{ $PERKEMIData->lastItem() }} of
-                        {{ $PERKEMIData->total() }}
+                        {{ $perkemiData->firstItem() }}-{{ $perkemiData->lastItem() }} of
+                        {{ $perkemiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PERKEMIData->onFirstPage())
+                        @if ($perkemiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PERKEMIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $perkemiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PERKEMIData->currentPage();
-                            $total = $PERKEMIData->lastPage();
+                            $current = $perkemiData->currentPage();
+                            $total = $perkemiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PERKEMIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $perkemiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PERKEMIData->hasMorePages())
-                            <a href="{{ $PERKEMIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($perkemiData->hasMorePages())
+                            <a href="{{ $perkemiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PERKEMIData) && method_exists($PERKEMIData, 'hasPages'))
+            @elseif(isset($perkemiData) && method_exists($perkemiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PERKEMIData->count() }} of {{ $PERKEMIData->total() }}
+                    1-{{ $perkemiData->count() }} of {{ $perkemiData->total() }}
                 </div>
             @endif
         </div>

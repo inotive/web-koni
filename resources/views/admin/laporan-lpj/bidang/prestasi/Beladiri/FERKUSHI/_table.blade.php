@@ -1,4 +1,4 @@
-@if ($FERKUSHIData->isEmpty())
+@if ($ferkushiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($FERKUSHIData as $index => $data)
+                @forelse ($ferkushiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($FERKUSHIData->currentPage() - 1) * $FERKUSHIData->perPage() + $index + 1 }}
+                            {{ ($ferkushiData->currentPage() - 1) * $ferkushiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.FERKUSHI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ferkushi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($FERKUSHIData) && method_exists($FERKUSHIData, 'hasPages') && $FERKUSHIData->hasPages())
+            @if (isset($ferkushiData) && method_exists($ferkushiData, 'hasPages') && $ferkushiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $FERKUSHIData->firstItem() }}-{{ $FERKUSHIData->lastItem() }} of
-                        {{ $FERKUSHIData->total() }}
+                        {{ $ferkushiData->firstItem() }}-{{ $ferkushiData->lastItem() }} of
+                        {{ $ferkushiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($FERKUSHIData->onFirstPage())
+                        @if ($ferkushiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $FERKUSHIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $ferkushiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $FERKUSHIData->currentPage();
-                            $total = $FERKUSHIData->lastPage();
+                            $current = $ferkushiData->currentPage();
+                            $total = $ferkushiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $FERKUSHIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $ferkushiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($FERKUSHIData->hasMorePages())
-                            <a href="{{ $FERKUSHIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($ferkushiData->hasMorePages())
+                            <a href="{{ $ferkushiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($FERKUSHIData) && method_exists($FERKUSHIData, 'hasPages'))
+            @elseif(isset($ferkushiData) && method_exists($ferkushiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $FERKUSHIData->count() }} of {{ $FERKUSHIData->total() }}
+                    1-{{ $ferkushiData->count() }} of {{ $ferkushiData->total() }}
                 </div>
             @endif
         </div>

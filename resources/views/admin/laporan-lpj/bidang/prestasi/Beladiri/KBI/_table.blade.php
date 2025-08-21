@@ -1,4 +1,4 @@
-@if ($KBIData->isEmpty())
+@if ($kbiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($KBIData as $index => $data)
+                @forelse ($kbiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($KBIData->currentPage() - 1) * $KBIData->perPage() + $index + 1 }}
+                            {{ ($kbiData->currentPage() - 1) * $kbiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.KBI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.kbi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($KBIData) && method_exists($KBIData, 'hasPages') && $KBIData->hasPages())
+            @if (isset($kbiData) && method_exists($kbiData, 'hasPages') && $kbiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $KBIData->firstItem() }}-{{ $KBIData->lastItem() }} of
-                        {{ $KBIData->total() }}
+                        {{ $kbiData->firstItem() }}-{{ $kbiData->lastItem() }} of
+                        {{ $kbiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($KBIData->onFirstPage())
+                        @if ($kbiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $KBIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $kbiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $KBIData->currentPage();
-                            $total = $KBIData->lastPage();
+                            $current = $kbiData->currentPage();
+                            $total = $kbiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $KBIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $kbiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($KBIData->hasMorePages())
-                            <a href="{{ $KBIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($kbiData->hasMorePages())
+                            <a href="{{ $kbiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($KBIData) && method_exists($KBIData, 'hasPages'))
+            @elseif(isset($kbiData) && method_exists($kbiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $KBIData->count() }} of {{ $KBIData->total() }}
+                    1-{{ $kbiData->count() }} of {{ $kbiData->total() }}
                 </div>
             @endif
         </div>

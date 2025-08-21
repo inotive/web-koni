@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Tambah AFKAB')
+@section('pageTitle', 'Tambah AFKAB - Futsal')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,9 +8,9 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor permainan')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-permainan'))
-@section('subSection4', 'AFKAB')
-@section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.AFKAB.index'))
-@section('currentSection', 'Tambah AFKAB')
+@section('subSection4', 'AFKAB - Futsal')
+@section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.afkab.index'))
+@section('currentSection', 'Tambah AFKAB - Futsal')
 
 @section('content')
 
@@ -223,7 +223,7 @@
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Data AFKAB</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Data AFKAB - Futsal</h3>
     </div>
 
     <div class="main-content">
@@ -232,7 +232,7 @@
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Tambah Data</h3>
-                        <form action="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.AFKAB.store') }}" method="POST"
+                        <form action="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.afkab.store') }}" method="POST"
                             enctype="multipart/form-data" id="sumberDayaForm">
                             @csrf
 
@@ -387,7 +387,7 @@
                             <div class="row mt-4">
                                 <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                                     <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
-                                    <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.AFKAB.index') }}"
+                                    <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.afkab.index') }}"
                                         class="btn btn-secondary px-4">Kembali</a>
                                 </div>
                             </div>

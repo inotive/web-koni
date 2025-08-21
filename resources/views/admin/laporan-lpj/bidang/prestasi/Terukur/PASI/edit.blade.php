@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Edit pasi')
+@section('pageTitle', 'Edit PASI - Atletik')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,9 +8,9 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor Terukur')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur'))
-@section('subSection4', 'pasi')
+@section('subSection4', 'PASI - Atletik')
 @section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.pasi.index'))
-@section('currentSection', 'Edit pasi')
+@section('currentSection', 'Edit PASI - Atletik')
 
 @section('content')
     <style>
@@ -268,7 +268,7 @@
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Data pasi</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Data PASI - Atletik</h3>
     </div>
 
     <div class="main-content">

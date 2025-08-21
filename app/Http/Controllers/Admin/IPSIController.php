@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Ipsi;
+use App\Models\ipsi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class IpsiController extends Controller
+class ipsiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ipsi::query();
+        $query = ipsi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class IpsiController extends Controller
             $direction = 'desc';
         }
 
-        $IpsiData = $query
+        $ipsiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ipsi._table', compact('IpsiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.ipsi._table', compact('ipsiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ipsi.index', compact('IpsiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ipsi.index', compact('ipsiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ipsi.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ipsi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class IpsiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Ipsi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('ipsi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class IpsiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Ipsi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('ipsi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Ipsi::create($data);
+        ipsi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ipsi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ipsi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Ipsi $Ipsi)
+    public function show(ipsi $ipsi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ipsi.show', compact('Ipsi'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ipsi.show', compact('ipsi'));
     }
 
-    public function edit(Ipsi $Ipsi)
+    public function edit(ipsi $ipsi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ipsi.edit', compact('Ipsi'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ipsi.edit', compact('ipsi'));
     }
 
-    public function update(Request $request, Ipsi $Ipsi)
+    public function update(Request $request, ipsi $ipsi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class IpsiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Ipsi->foto_jurnal) {
-                foreach ($Ipsi->foto_jurnal as $oldFoto) {
+            if ($ipsi->foto_jurnal) {
+                foreach ($ipsi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Ipsi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('ipsi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class IpsiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Ipsi->dokumen_lpj) {
-                foreach ($Ipsi->dokumen_lpj as $oldDokumen) {
+            if ($ipsi->dokumen_lpj) {
+                foreach ($ipsi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Ipsi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('ipsi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Ipsi->update($data);
+        $ipsi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ipsi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ipsi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Ipsi $Ipsi)
+    public function destroy(ipsi $ipsi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class IpsiController extends Controller
         }
 
         // Delete associated files
-        if ($Ipsi->foto_jurnal) {
-            foreach ($Ipsi->foto_jurnal as $foto) {
+        if ($ipsi->foto_jurnal) {
+            foreach ($ipsi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Ipsi->dokumen_lpj) {
-            foreach ($Ipsi->dokumen_lpj as $dokumen) {
+        if ($ipsi->dokumen_lpj) {
+            foreach ($ipsi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Ipsi->delete();
+        $ipsi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ipsi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ipsi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class IpsiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Ipsi $Ipsi)
+    public function removeFile(Request $request, ipsi $ipsi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class IpsiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Ipsi->$fileType ?? [];
+        $files = $ipsi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class IpsiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Ipsi->update([$fileType => $files]);
+        $ipsi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

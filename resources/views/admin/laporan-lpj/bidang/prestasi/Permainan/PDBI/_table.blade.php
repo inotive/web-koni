@@ -1,4 +1,4 @@
-@if ($PDBIData->isEmpty())
+@if ($pdbiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PDBIData as $index => $data)
+                @forelse ($pdbiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PDBIData->currentPage() - 1) * $PDBIData->perPage() + $index + 1 }}
+                            {{ ($pdbiData->currentPage() - 1) * $pdbiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PDBI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.pdbi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PDBIData) && method_exists($PDBIData, 'hasPages') && $PDBIData->hasPages())
+            @if (isset($pdbiData) && method_exists($pdbiData, 'hasPages') && $pdbiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PDBIData->firstItem() }}-{{ $PDBIData->lastItem() }} of
-                        {{ $PDBIData->total() }}
+                        {{ $pdbiData->firstItem() }}-{{ $pdbiData->lastItem() }} of
+                        {{ $pdbiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PDBIData->onFirstPage())
+                        @if ($pdbiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PDBIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $pdbiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PDBIData->currentPage();
-                            $total = $PDBIData->lastPage();
+                            $current = $pdbiData->currentPage();
+                            $total = $pdbiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PDBIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $pdbiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PDBIData->hasMorePages())
-                            <a href="{{ $PDBIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($pdbiData->hasMorePages())
+                            <a href="{{ $pdbiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PDBIData) && method_exists($PDBIData, 'hasPages'))
+            @elseif(isset($pdbiData) && method_exists($pdbiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PDBIData->count() }} of {{ $PDBIData->total() }}
+                    1-{{ $pdbiData->count() }} of {{ $pdbiData->total() }}
                 </div>
             @endif
         </div>

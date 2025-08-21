@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Iodi;
+use App\Models\iodi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class IodiController extends Controller
+class iodiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Iodi::query();
+        $query = iodi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class IodiController extends Controller
             $direction = 'desc';
         }
 
-        $IodiData = $query
+        $iodiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Iodi._table', compact('IodiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.iodi._table', compact('iodiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Iodi.index', compact('IodiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.iodi.index', compact('iodiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Iodi.create');
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.iodi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class IodiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Iodi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('iodi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class IodiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Iodi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('iodi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Iodi::create($data);
+        iodi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Iodi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.iodi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Iodi $Iodi)
+    public function show(iodi $iodi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Iodi.show', compact('Iodi'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.iodi.show', compact('iodi'));
     }
 
-    public function edit(Iodi $Iodi)
+    public function edit(iodi $iodi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Iodi.edit', compact('Iodi'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.iodi.edit', compact('iodi'));
     }
 
-    public function update(Request $request, Iodi $Iodi)
+    public function update(Request $request, iodi $iodi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class IodiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Iodi->foto_jurnal) {
-                foreach ($Iodi->foto_jurnal as $oldFoto) {
+            if ($iodi->foto_jurnal) {
+                foreach ($iodi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Iodi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('iodi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class IodiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Iodi->dokumen_lpj) {
-                foreach ($Iodi->dokumen_lpj as $oldDokumen) {
+            if ($iodi->dokumen_lpj) {
+                foreach ($iodi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Iodi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('iodi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Iodi->update($data);
+        $iodi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Iodi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.iodi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Iodi $Iodi)
+    public function destroy(iodi $iodi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class IodiController extends Controller
         }
 
         // Delete associated files
-        if ($Iodi->foto_jurnal) {
-            foreach ($Iodi->foto_jurnal as $foto) {
+        if ($iodi->foto_jurnal) {
+            foreach ($iodi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Iodi->dokumen_lpj) {
-            foreach ($Iodi->dokumen_lpj as $dokumen) {
+        if ($iodi->dokumen_lpj) {
+            foreach ($iodi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Iodi->delete();
+        $iodi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Iodi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.iodi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class IodiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Iodi $Iodi)
+    public function removeFile(Request $request, iodi $iodi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class IodiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Iodi->$fileType ?? [];
+        $files = $iodi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class IodiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Iodi->update([$fileType => $files]);
+        $iodi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Gabsi;
+use App\Models\gabsi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class GabsiController extends Controller
+class gabsiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Gabsi::query();
+        $query = gabsi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class GabsiController extends Controller
             $direction = 'desc';
         }
 
-        $GabsiData = $query
+        $gabsiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.permainan.Gabsi._table', compact('GabsiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.permainan.gabsi._table', compact('gabsiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Gabsi.index', compact('GabsiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.gabsi.index', compact('gabsiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Gabsi.create');
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.gabsi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class GabsiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Gabsi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('gabsi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class GabsiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Gabsi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('gabsi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Gabsi::create($data);
+        gabsi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Gabsi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.gabsi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Gabsi $Gabsi)
+    public function show(gabsi $gabsi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Gabsi.show', compact('Gabsi'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.gabsi.show', compact('gabsi'));
     }
 
-    public function edit(Gabsi $Gabsi)
+    public function edit(gabsi $gabsi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Gabsi.edit', compact('Gabsi'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.gabsi.edit', compact('gabsi'));
     }
 
-    public function update(Request $request, Gabsi $Gabsi)
+    public function update(Request $request, gabsi $gabsi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class GabsiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Gabsi->foto_jurnal) {
-                foreach ($Gabsi->foto_jurnal as $oldFoto) {
+            if ($gabsi->foto_jurnal) {
+                foreach ($gabsi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Gabsi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('gabsi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class GabsiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Gabsi->dokumen_lpj) {
-                foreach ($Gabsi->dokumen_lpj as $oldDokumen) {
+            if ($gabsi->dokumen_lpj) {
+                foreach ($gabsi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Gabsi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('gabsi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Gabsi->update($data);
+        $gabsi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Gabsi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.gabsi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Gabsi $Gabsi)
+    public function destroy(gabsi $gabsi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class GabsiController extends Controller
         }
 
         // Delete associated files
-        if ($Gabsi->foto_jurnal) {
-            foreach ($Gabsi->foto_jurnal as $foto) {
+        if ($gabsi->foto_jurnal) {
+            foreach ($gabsi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Gabsi->dokumen_lpj) {
-            foreach ($Gabsi->dokumen_lpj as $dokumen) {
+        if ($gabsi->dokumen_lpj) {
+            foreach ($gabsi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Gabsi->delete();
+        $gabsi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Gabsi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.gabsi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class GabsiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Gabsi $Gabsi)
+    public function removeFile(Request $request, gabsi $gabsi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class GabsiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Gabsi->$fileType ?? [];
+        $files = $gabsi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class GabsiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Gabsi->update([$fileType => $files]);
+        $gabsi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

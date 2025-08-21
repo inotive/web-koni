@@ -1,4 +1,4 @@
-@if ($PERSAMBIData->isEmpty())
+@if ($persambiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PERSAMBIData as $index => $data)
+                @forelse ($persambiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PERSAMBIData->currentPage() - 1) * $PERSAMBIData->perPage() + $index + 1 }}
+                            {{ ($persambiData->currentPage() - 1) * $persambiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.PERSAMBI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.persambi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PERSAMBIData) && method_exists($PERSAMBIData, 'hasPages') && $PERSAMBIData->hasPages())
+            @if (isset($persambiData) && method_exists($persambiData, 'hasPages') && $persambiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PERSAMBIData->firstItem() }}-{{ $PERSAMBIData->lastItem() }} of
-                        {{ $PERSAMBIData->total() }}
+                        {{ $persambiData->firstItem() }}-{{ $persambiData->lastItem() }} of
+                        {{ $persambiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PERSAMBIData->onFirstPage())
+                        @if ($persambiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PERSAMBIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $persambiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PERSAMBIData->currentPage();
-                            $total = $PERSAMBIData->lastPage();
+                            $current = $persambiData->currentPage();
+                            $total = $persambiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PERSAMBIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $persambiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PERSAMBIData->hasMorePages())
-                            <a href="{{ $PERSAMBIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($persambiData->hasMorePages())
+                            <a href="{{ $persambiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PERSAMBIData) && method_exists($PERSAMBIData, 'hasPages'))
+            @elseif(isset($persambiData) && method_exists($persambiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PERSAMBIData->count() }} of {{ $PERSAMBIData->total() }}
+                    1-{{ $persambiData->count() }} of {{ $persambiData->total() }}
                 </div>
             @endif
         </div>

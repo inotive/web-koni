@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Tambah issi')
+@section('pageTitle', 'Tambah ISSI - Balap Sepeda')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,9 +8,9 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor Terukur')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur'))
-@section('subSection4', 'issi')
+@section('subSection4', 'ISSI - Balap Sepeda')
 @section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-terukur.issi.index'))
-@section('currentSection', 'Tambah issi')
+@section('currentSection', 'Tambah ISSI - Balap Sepeda')
 
 @section('content')
 
@@ -223,7 +223,7 @@
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Data issi</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Data ISSI - Balap Sepeda</h3>
     </div>
 
     <div class="main-content">

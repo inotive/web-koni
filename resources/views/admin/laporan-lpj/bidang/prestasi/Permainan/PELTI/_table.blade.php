@@ -1,4 +1,4 @@
-@if ($PELTIData->isEmpty())
+@if ($peltiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PELTIData as $index => $data)
+                @forelse ($peltiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PELTIData->currentPage() - 1) * $PELTIData->perPage() + $index + 1 }}
+                            {{ ($peltiData->currentPage() - 1) * $peltiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PELTI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.pelti.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PELTIData) && method_exists($PELTIData, 'hasPages') && $PELTIData->hasPages())
+            @if (isset($peltiData) && method_exists($peltiData, 'hasPages') && $peltiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PELTIData->firstItem() }}-{{ $PELTIData->lastItem() }} of
-                        {{ $PELTIData->total() }}
+                        {{ $peltiData->firstItem() }}-{{ $peltiData->lastItem() }} of
+                        {{ $peltiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PELTIData->onFirstPage())
+                        @if ($peltiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PELTIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $peltiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PELTIData->currentPage();
-                            $total = $PELTIData->lastPage();
+                            $current = $peltiData->currentPage();
+                            $total = $peltiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PELTIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $peltiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PELTIData->hasMorePages())
-                            <a href="{{ $PELTIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($peltiData->hasMorePages())
+                            <a href="{{ $peltiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PELTIData) && method_exists($PELTIData, 'hasPages'))
+            @elseif(isset($peltiData) && method_exists($peltiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PELTIData->count() }} of {{ $PELTIData->total() }}
+                    1-{{ $peltiData->count() }} of {{ $peltiData->total() }}
                 </div>
             @endif
         </div>

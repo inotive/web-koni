@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'FASI')
+@section('pageTitle', 'FASI - Aeromodelling')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,7 +8,7 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor akurasi')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi'))
-@section('currentSection', 'FASI')
+@section('currentSection', 'FASI - Aeromodelling')
 
 @section('breadcrumb-title')
 @endsection
@@ -158,7 +158,7 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Responsive DFASIgn */
+        /* Responsive Dfasign */
         @media (max-width: 768px) {
             .table-responsive {
                 overflow-x: auto !important;
@@ -213,7 +213,7 @@
             z-index: 1000;
         }
 
-        /* Custom tooltip styling to match the dFASIgn */
+        /* Custom tooltip styling to match the dfasign */
         .custom-tooltip {
             --bs-tooltip-bg: #ffffff;
             --bs-tooltip-border-color: #e0e0e0;
@@ -378,7 +378,7 @@
     </style>
 
     <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">Laporan FASI</h1>
+        <h1 class="text-dark fw-bold mb-1">Laporan FASI - Aeromodelling</h1>
     </div>
 
     {{-- Main Content Card --}}
@@ -386,13 +386,13 @@
         <div class="card">
             {{-- Card Header --}}
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar FASI - 2025</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar FASI - Aeromodelling 2025</h3>
 
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button with Access Control --}}
                     @if(auth()->user()->hasRole('superadmin'))
-                        <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.FASI.create') }}" class="btn custom-red-button"
+                        <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.fasi.create') }}" class="btn custom-red-button"
                             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                         </a>
@@ -447,7 +447,7 @@
                                 <label class="form-label fw-semibold">Nama Kegiatan</label>
                                 <select id="filter-jenis-kegiatan" class="form-select">
                                     <option value="">Semua Kegiatan</option>
-                                    @foreach ($FASIData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
+                                    @foreach ($fasiData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
                                         <option value="{{ $kegiatan }}"
                                             {{ request('jenis_kegiatan_filter') == $kegiatan ? 'selected' : '' }}>
                                             {{ $kegiatan }}
@@ -479,7 +479,7 @@
                 </div>
 
                 <div id="table-container">
-                    @include('admin.laporan-lpj.bidang.prestasi.akurasi.FASI._table')
+                    @include('admin.laporan-lpj.bidang.prestasi.akurasi.fasi._table')
                 </div>
             </div>
         </div>
@@ -631,7 +631,7 @@
                     }
                 });
 
-                $(window).on('rFASIze', function() {
+                $(window).on('rfasize', function() {
                     $('.dropdown-action').each(function() {
                         if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
                             checkDropdownPosition($(this));
@@ -1097,17 +1097,17 @@
         });
 
         // Detail Modal Function - adapted for Mobilisasi Sumber Daya
-        function showDetailModal(FASI) {
+        function showDetailModal(fasi) {
             const modalBody = document.getElementById('detailModalBody');
 
             const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
 
             // Handle foto_kegiatan display
             let fotoHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-            if (FASI.foto_jurnal && FASI.foto_jurnal.length > 0) {
+            if (fasi.foto_jurnal && fasi.foto_jurnal.length > 0) {
                 fotoHtml = `
                     <div class="row g-3">
-                        ${FASI.foto_jurnal.map(f => `
+                        ${fasi.foto_jurnal.map(f => `
                             <div class="col-6 col-md-4">
                                 <div class="border rounded overflow-hidden" style="height: 120px;">
                                     <img src="/storage/${f}"
@@ -1123,10 +1123,10 @@
 
             // Handle dokumen_pendukung display
             let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-            if (FASI.dokumen_lpj && FASI.dokumen_lpj.length > 0) {
+            if (fasi.dokumen_lpj && fasi.dokumen_lpj.length > 0) {
                 dokumenHtml = `
                     <div class="d-flex flex-column gap-2">
-                        ${FASI.dokumen_lpj.map(d => {
+                        ${fasi.dokumen_lpj.map(d => {
                             const name = d.split('/').pop();
                             const extension = name.split('.').pop().toLowerCase();
 
@@ -1167,25 +1167,25 @@
                             <div class="bg-light p-3 rounded">
                                 <div class="mb-2">
                                     <label class="fw-semibold text-dark mb-1">Nama Kegiatan & Program:</label>
-                                    <p class="mb-0 text-dark">${FASI.nama_program}</p>
-                                    <small class="text-muted">${FASI.nama_kegiatan}</small>
+                                    <p class="mb-0 text-dark">${fasi.nama_program}</p>
+                                    <small class="text-muted">${fasi.nama_kegiatan}</small>
                                 </div>
-                                ${FASI.tempat_kegiatan ? `
+                                ${fasi.tempat_kegiatan ? `
                                     <div class="mb-2">
                                         <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                        <p class="mb-0 text-dark">${FASI.tempat_kegiatan}</p>
+                                        <p class="mb-0 text-dark">${fasi.tempat_kegiatan}</p>
                                     </div>
                                 ` : ''}
-                                ${FASI.tanggal_kegiatan ? `
+                                ${fasi.tanggal_kegiatan ? `
                                     <div>
                                         <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                        <p class="mb-0 text-dark">${new Date(FASI.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                        <p class="mb-0 text-dark">${new Date(fasi.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
                                     </div>
                                 ` : ''}
                             </div>
                         </div>
 
-                        ${FASI.jumlah_anggaran ? `
+                        ${fasi.jumlah_anggaran ? `
                             <div class="mb-4">
                                 <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
                                     <i class="fas fa-calculator me-2"></i>
@@ -1195,12 +1195,12 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
-                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(FASI.jumlah_anggaran)}</p>
+                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(fasi.jumlah_anggaran)}</p>
                                         </div>
-                                        ${FASI.jumlah_realisasi ? `
+                                        ${fasi.jumlah_realisasi ? `
                                             <div class="col-md-6">
                                                 <label class="fw-semibold text-dark mb-1">Realisasi:</label>
-                                                <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(FASI.jumlah_realisasi)}</p>
+                                                <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(fasi.jumlah_realisasi)}</p>
                                             </div>
                                         ` : ''}
                                     </div>
@@ -1208,14 +1208,14 @@
                             </div>
                         ` : ''}
 
-                        ${FASI.sumber_dana ? `
+                        ${fasi.sumber_dana ? `
                             <div class="mb-4">
                                 <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
                                     <i class="fas fa-money-bill me-2"></i>
                                     Sumber Dana
                                 </h6>
                                 <div class="bg-light p-3 rounded">
-                                    <p class="mb-0 text-dark">${FASI.sumber_dana}</p>
+                                    <p class="mb-0 text-dark">${fasi.sumber_dana}</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -1245,14 +1245,14 @@
                             </div>
                         </div>
 
-                        ${FASI.keterangan ? `
+                        ${fasi.keterangan ? `
                             <div class="mb-2">
                                 <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center">
                                     <i class="fas fa-sticky-note me-2"></i>
                                     Keterangan
                                 </h6>
                                 <div class="bg-light p-3 rounded">
-                                    <p class="mb-0 text-dark">${FASI.keterangan}</p>
+                                    <p class="mb-0 text-dark">${fasi.keterangan}</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -1301,7 +1301,7 @@ $(document).ready(function() {
             }
 
             const submitBtn = $(this);
-            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.FASI.destroy', ':id') }}".replace(':id', deleteId);
+            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.fasi.destroy', ':id') }}".replace(':id', deleteId);
 
             // Add loading state
             submitBtn.addClass('btn-loading');
@@ -1365,7 +1365,7 @@ $(document).ready(function() {
 
         // Alternative: Use SweetAlert2 for delete confirmation (like in paste 1)
         function deleteItemWithSwal(itemId, itemName = 'item ini') {
-            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.FASI.destroy', ':id') }}".replace(':id', itemId);
+            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.fasi.destroy', ':id') }}".replace(':id', itemId);
 
             Swal.fire({
                 title: "Apakah Anda Yakin?",

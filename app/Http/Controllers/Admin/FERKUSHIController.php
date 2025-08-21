@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Ferkushi;
+use App\Models\ferkushi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class FerkushiController extends Controller
+class ferkushiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ferkushi::query();
+        $query = ferkushi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class FerkushiController extends Controller
             $direction = 'desc';
         }
 
-        $FerkushiData = $query
+        $ferkushiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ferkushi._table', compact('FerkushiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.ferkushi._table', compact('ferkushiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ferkushi.index', compact('FerkushiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ferkushi.index', compact('ferkushiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ferkushi.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ferkushi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class FerkushiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Ferkushi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('ferkushi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class FerkushiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Ferkushi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('ferkushi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Ferkushi::create($data);
+        ferkushi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ferkushi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ferkushi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Ferkushi $Ferkushi)
+    public function show(ferkushi $ferkushi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ferkushi.show', compact('Ferkushi'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ferkushi.show', compact('ferkushi'));
     }
 
-    public function edit(Ferkushi $Ferkushi)
+    public function edit(ferkushi $ferkushi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ferkushi.edit', compact('Ferkushi'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ferkushi.edit', compact('ferkushi'));
     }
 
-    public function update(Request $request, Ferkushi $Ferkushi)
+    public function update(Request $request, ferkushi $ferkushi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class FerkushiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Ferkushi->foto_jurnal) {
-                foreach ($Ferkushi->foto_jurnal as $oldFoto) {
+            if ($ferkushi->foto_jurnal) {
+                foreach ($ferkushi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Ferkushi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('ferkushi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class FerkushiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Ferkushi->dokumen_lpj) {
-                foreach ($Ferkushi->dokumen_lpj as $oldDokumen) {
+            if ($ferkushi->dokumen_lpj) {
+                foreach ($ferkushi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Ferkushi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('ferkushi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Ferkushi->update($data);
+        $ferkushi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ferkushi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ferkushi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Ferkushi $Ferkushi)
+    public function destroy(ferkushi $ferkushi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class FerkushiController extends Controller
         }
 
         // Delete associated files
-        if ($Ferkushi->foto_jurnal) {
-            foreach ($Ferkushi->foto_jurnal as $foto) {
+        if ($ferkushi->foto_jurnal) {
+            foreach ($ferkushi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Ferkushi->dokumen_lpj) {
-            foreach ($Ferkushi->dokumen_lpj as $dokumen) {
+        if ($ferkushi->dokumen_lpj) {
+            foreach ($ferkushi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Ferkushi->delete();
+        $ferkushi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ferkushi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ferkushi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class FerkushiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Ferkushi $Ferkushi)
+    public function removeFile(Request $request, ferkushi $ferkushi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class FerkushiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Ferkushi->$fileType ?? [];
+        $files = $ferkushi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class FerkushiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Ferkushi->update([$fileType => $files]);
+        $ferkushi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

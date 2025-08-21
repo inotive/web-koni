@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pssi;
+use App\Models\pssi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PssiController extends Controller
+class pssiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pssi::query();
+        $query = pssi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PssiController extends Controller
             $direction = 'desc';
         }
 
-        $PssiData = $query
+        $pssiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.permainan.Pssi._table', compact('PssiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.permainan.pssi._table', compact('pssiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pssi.index', compact('PssiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.pssi.index', compact('pssiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pssi.create');
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.pssi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PssiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Pssi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pssi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PssiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Pssi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pssi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Pssi::create($data);
+        pssi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pssi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.pssi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Pssi $Pssi)
+    public function show(pssi $pssi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pssi.show', compact('Pssi'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.pssi.show', compact('pssi'));
     }
 
-    public function edit(Pssi $Pssi)
+    public function edit(pssi $pssi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pssi.edit', compact('Pssi'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.pssi.edit', compact('pssi'));
     }
 
-    public function update(Request $request, Pssi $Pssi)
+    public function update(Request $request, pssi $pssi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PssiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Pssi->foto_jurnal) {
-                foreach ($Pssi->foto_jurnal as $oldFoto) {
+            if ($pssi->foto_jurnal) {
+                foreach ($pssi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Pssi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pssi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PssiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Pssi->dokumen_lpj) {
-                foreach ($Pssi->dokumen_lpj as $oldDokumen) {
+            if ($pssi->dokumen_lpj) {
+                foreach ($pssi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Pssi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pssi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Pssi->update($data);
+        $pssi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pssi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.pssi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Pssi $Pssi)
+    public function destroy(pssi $pssi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PssiController extends Controller
         }
 
         // Delete associated files
-        if ($Pssi->foto_jurnal) {
-            foreach ($Pssi->foto_jurnal as $foto) {
+        if ($pssi->foto_jurnal) {
+            foreach ($pssi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Pssi->dokumen_lpj) {
-            foreach ($Pssi->dokumen_lpj as $dokumen) {
+        if ($pssi->dokumen_lpj) {
+            foreach ($pssi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Pssi->delete();
+        $pssi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pssi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.pssi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PssiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Pssi $Pssi)
+    public function removeFile(Request $request, pssi $pssi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PssiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Pssi->$fileType ?? [];
+        $files = $pssi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PssiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Pssi->update([$fileType => $files]);
+        $pssi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

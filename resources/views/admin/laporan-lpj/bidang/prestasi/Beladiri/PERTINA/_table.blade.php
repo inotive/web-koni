@@ -1,4 +1,4 @@
-@if ($PERTINAData->isEmpty())
+@if ($pertinaData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PERTINAData as $index => $data)
+                @forelse ($pertinaData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PERTINAData->currentPage() - 1) * $PERTINAData->perPage() + $index + 1 }}
+                            {{ ($pertinaData->currentPage() - 1) * $pertinaData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.PERTINA.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.pertina.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PERTINAData) && method_exists($PERTINAData, 'hasPages') && $PERTINAData->hasPages())
+            @if (isset($pertinaData) && method_exists($pertinaData, 'hasPages') && $pertinaData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PERTINAData->firstItem() }}-{{ $PERTINAData->lastItem() }} of
-                        {{ $PERTINAData->total() }}
+                        {{ $pertinaData->firstItem() }}-{{ $pertinaData->lastItem() }} of
+                        {{ $pertinaData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PERTINAData->onFirstPage())
+                        @if ($pertinaData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PERTINAData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $pertinaData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PERTINAData->currentPage();
-                            $total = $PERTINAData->lastPage();
+                            $current = $pertinaData->currentPage();
+                            $total = $pertinaData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PERTINAData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $pertinaData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PERTINAData->hasMorePages())
-                            <a href="{{ $PERTINAData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($pertinaData->hasMorePages())
+                            <a href="{{ $pertinaData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PERTINAData) && method_exists($PERTINAData, 'hasPages'))
+            @elseif(isset($pertinaData) && method_exists($pertinaData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PERTINAData->count() }} of {{ $PERTINAData->total() }}
+                    1-{{ $pertinaData->count() }} of {{ $pertinaData->total() }}
                 </div>
             @endif
         </div>

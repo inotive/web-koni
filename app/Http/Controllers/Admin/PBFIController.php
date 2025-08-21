@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pbfi;
+use App\Models\pbfi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PbfiController extends Controller
+class pbfiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pbfi::query();
+        $query = pbfi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PbfiController extends Controller
             $direction = 'desc';
         }
 
-        $PbfiData = $query
+        $pbfiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pbfi._table', compact('PbfiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pbfi._table', compact('pbfiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pbfi.index', compact('PbfiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pbfi.index', compact('pbfiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pbfi.create');
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pbfi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PbfiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Pbfi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pbfi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PbfiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Pbfi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pbfi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Pbfi::create($data);
+        pbfi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Pbfi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.pbfi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Pbfi $Pbfi)
+    public function show(pbfi $pbfi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pbfi.show', compact('Pbfi'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pbfi.show', compact('pbfi'));
     }
 
-    public function edit(Pbfi $Pbfi)
+    public function edit(pbfi $pbfi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pbfi.edit', compact('Pbfi'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pbfi.edit', compact('pbfi'));
     }
 
-    public function update(Request $request, Pbfi $Pbfi)
+    public function update(Request $request, pbfi $pbfi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PbfiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Pbfi->foto_jurnal) {
-                foreach ($Pbfi->foto_jurnal as $oldFoto) {
+            if ($pbfi->foto_jurnal) {
+                foreach ($pbfi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Pbfi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pbfi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PbfiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Pbfi->dokumen_lpj) {
-                foreach ($Pbfi->dokumen_lpj as $oldDokumen) {
+            if ($pbfi->dokumen_lpj) {
+                foreach ($pbfi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Pbfi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pbfi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Pbfi->update($data);
+        $pbfi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Pbfi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.pbfi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Pbfi $Pbfi)
+    public function destroy(pbfi $pbfi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PbfiController extends Controller
         }
 
         // Delete associated files
-        if ($Pbfi->foto_jurnal) {
-            foreach ($Pbfi->foto_jurnal as $foto) {
+        if ($pbfi->foto_jurnal) {
+            foreach ($pbfi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Pbfi->dokumen_lpj) {
-            foreach ($Pbfi->dokumen_lpj as $dokumen) {
+        if ($pbfi->dokumen_lpj) {
+            foreach ($pbfi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Pbfi->delete();
+        $pbfi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Pbfi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.pbfi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PbfiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Pbfi $Pbfi)
+    public function removeFile(Request $request, pbfi $pbfi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PbfiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Pbfi->$fileType ?? [];
+        $files = $pbfi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PbfiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Pbfi->update([$fileType => $files]);
+        $pbfi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

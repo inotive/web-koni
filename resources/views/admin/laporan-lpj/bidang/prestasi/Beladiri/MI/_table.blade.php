@@ -1,4 +1,4 @@
-@if ($MIData->isEmpty())
+@if ($miData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($MIData as $index => $data)
+                @forelse ($miData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($MIData->currentPage() - 1) * $MIData->perPage() + $index + 1 }}
+                            {{ ($miData->currentPage() - 1) * $miData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.MI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.mi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($MIData) && method_exists($MIData, 'hasPages') && $MIData->hasPages())
+            @if (isset($miData) && method_exists($miData, 'hasPages') && $miData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $MIData->firstItem() }}-{{ $MIData->lastItem() }} of
-                        {{ $MIData->total() }}
+                        {{ $miData->firstItem() }}-{{ $miData->lastItem() }} of
+                        {{ $miData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($MIData->onFirstPage())
+                        @if ($miData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $MIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $miData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $MIData->currentPage();
-                            $total = $MIData->lastPage();
+                            $current = $miData->currentPage();
+                            $total = $miData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $MIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $miData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($MIData->hasMorePages())
-                            <a href="{{ $MIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($miData->hasMorePages())
+                            <a href="{{ $miData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($MIData) && method_exists($MIData, 'hasPages'))
+            @elseif(isset($miData) && method_exists($miData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $MIData->count() }} of {{ $MIData->total() }}
+                    1-{{ $miData->count() }} of {{ $miData->total() }}
                 </div>
             @endif
         </div>

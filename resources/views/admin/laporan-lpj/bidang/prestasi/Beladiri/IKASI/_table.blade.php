@@ -1,4 +1,4 @@
-@if ($IKASIData->isEmpty())
+@if ($ikasiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($IKASIData as $index => $data)
+                @forelse ($ikasiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($IKASIData->currentPage() - 1) * $IKASIData->perPage() + $index + 1 }}
+                            {{ ($ikasiData->currentPage() - 1) * $ikasiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.IKASI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ikasi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($IKASIData) && method_exists($IKASIData, 'hasPages') && $IKASIData->hasPages())
+            @if (isset($ikasiData) && method_exists($ikasiData, 'hasPages') && $ikasiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $IKASIData->firstItem() }}-{{ $IKASIData->lastItem() }} of
-                        {{ $IKASIData->total() }}
+                        {{ $ikasiData->firstItem() }}-{{ $ikasiData->lastItem() }} of
+                        {{ $ikasiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($IKASIData->onFirstPage())
+                        @if ($ikasiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $IKASIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $ikasiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $IKASIData->currentPage();
-                            $total = $IKASIData->lastPage();
+                            $current = $ikasiData->currentPage();
+                            $total = $ikasiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $IKASIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $ikasiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($IKASIData->hasMorePages())
-                            <a href="{{ $IKASIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($ikasiData->hasMorePages())
+                            <a href="{{ $ikasiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($IKASIData) && method_exists($IKASIData, 'hasPages'))
+            @elseif(isset($ikasiData) && method_exists($ikasiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $IKASIData->count() }} of {{ $IKASIData->total() }}
+                    1-{{ $ikasiData->count() }} of {{ $ikasiData->total() }}
                 </div>
             @endif
         </div>

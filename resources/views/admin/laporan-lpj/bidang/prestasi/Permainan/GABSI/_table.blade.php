@@ -1,4 +1,4 @@
-@if ($GABSIData->isEmpty())
+@if ($gabsiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($GABSIData as $index => $data)
+                @forelse ($gabsiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($GABSIData->currentPage() - 1) * $GABSIData->perPage() + $index + 1 }}
+                            {{ ($gabsiData->currentPage() - 1) * $gabsiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.GABSI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.gabsi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($GABSIData) && method_exists($GABSIData, 'hasPages') && $GABSIData->hasPages())
+            @if (isset($gabsiData) && method_exists($gabsiData, 'hasPages') && $gabsiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $GABSIData->firstItem() }}-{{ $GABSIData->lastItem() }} of
-                        {{ $GABSIData->total() }}
+                        {{ $gabsiData->firstItem() }}-{{ $gabsiData->lastItem() }} of
+                        {{ $gabsiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($GABSIData->onFirstPage())
+                        @if ($gabsiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $GABSIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $gabsiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $GABSIData->currentPage();
-                            $total = $GABSIData->lastPage();
+                            $current = $gabsiData->currentPage();
+                            $total = $gabsiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $GABSIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $gabsiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($GABSIData->hasMorePages())
-                            <a href="{{ $GABSIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($gabsiData->hasMorePages())
+                            <a href="{{ $gabsiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($GABSIData) && method_exists($GABSIData, 'hasPages'))
+            @elseif(isset($gabsiData) && method_exists($gabsiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $GABSIData->count() }} of {{ $GABSIData->total() }}
+                    1-{{ $gabsiData->count() }} of {{ $gabsiData->total() }}
                 </div>
             @endif
         </div>

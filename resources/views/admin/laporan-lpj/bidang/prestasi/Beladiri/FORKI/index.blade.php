@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'FORKI')
+@section('pageTitle', 'FORKI - Karate')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,7 +8,7 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor beladiri')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri'))
-@section('currentSection', 'FORKI')
+@section('currentSection', 'FORKI - Karate')
 
 @section('breadcrumb-title')
 @endsection
@@ -378,7 +378,7 @@
     </style>
 
     <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">Laporan FORKI</h1>
+        <h1 class="text-dark fw-bold mb-1">Laporan FORKI - Karate</h1>
     </div>
 
     {{-- Main Content Card --}}
@@ -386,13 +386,13 @@
         <div class="card">
             {{-- Card Header --}}
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar FORKI - 2025</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar FORKI - Karate 2025</h3>
 
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button with Access Control --}}
                     @if(auth()->user()->hasRole('superadmin'))
-                        <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.FORKI.create') }}" class="btn custom-red-button"
+                        <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.forki.create') }}" class="btn custom-red-button"
                             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                         </a>
@@ -447,7 +447,7 @@
                                 <label class="form-label fw-semibold">Nama Kegiatan</label>
                                 <select id="filter-jenis-kegiatan" class="form-select">
                                     <option value="">Semua Kegiatan</option>
-                                    @foreach ($FORKIData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
+                                    @foreach ($forkiData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
                                         <option value="{{ $kegiatan }}"
                                             {{ request('jenis_kegiatan_filter') == $kegiatan ? 'selected' : '' }}>
                                             {{ $kegiatan }}
@@ -479,7 +479,7 @@
                 </div>
 
                 <div id="table-container">
-                    @include('admin.laporan-lpj.bidang.prestasi.beladiri.FORKI._table')
+                    @include('admin.laporan-lpj.bidang.prestasi.beladiri.forki._table')
                 </div>
             </div>
         </div>
@@ -1097,17 +1097,17 @@
         });
 
         // Detail Modal Function - adapted for Mobilisasi Sumber Daya
-        function showDetailModal(FORKI) {
+        function showDetailModal(forki) {
             const modalBody = document.getElementById('detailModalBody');
 
             const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
 
             // Handle foto_kegiatan display
             let fotoHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-            if (FORKI.foto_jurnal && FORKI.foto_jurnal.length > 0) {
+            if (forki.foto_jurnal && forki.foto_jurnal.length > 0) {
                 fotoHtml = `
                     <div class="row g-3">
-                        ${FORKI.foto_jurnal.map(f => `
+                        ${forki.foto_jurnal.map(f => `
                             <div class="col-6 col-md-4">
                                 <div class="border rounded overflow-hidden" style="height: 120px;">
                                     <img src="/storage/${f}"
@@ -1123,10 +1123,10 @@
 
             // Handle dokumen_pendukung display
             let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-            if (FORKI.dokumen_lpj && FORKI.dokumen_lpj.length > 0) {
+            if (forki.dokumen_lpj && forki.dokumen_lpj.length > 0) {
                 dokumenHtml = `
                     <div class="d-flex flex-column gap-2">
-                        ${FORKI.dokumen_lpj.map(d => {
+                        ${forki.dokumen_lpj.map(d => {
                             const name = d.split('/').pop();
                             const extension = name.split('.').pop().toLowerCase();
 
@@ -1167,25 +1167,25 @@
                             <div class="bg-light p-3 rounded">
                                 <div class="mb-2">
                                     <label class="fw-semibold text-dark mb-1">Nama Kegiatan & Program:</label>
-                                    <p class="mb-0 text-dark">${FORKI.nama_program}</p>
-                                    <small class="text-muted">${FORKI.nama_kegiatan}</small>
+                                    <p class="mb-0 text-dark">${forki.nama_program}</p>
+                                    <small class="text-muted">${forki.nama_kegiatan}</small>
                                 </div>
-                                ${FORKI.tempat_kegiatan ? `
+                                ${forki.tempat_kegiatan ? `
                                     <div class="mb-2">
                                         <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                        <p class="mb-0 text-dark">${FORKI.tempat_kegiatan}</p>
+                                        <p class="mb-0 text-dark">${forki.tempat_kegiatan}</p>
                                     </div>
                                 ` : ''}
-                                ${FORKI.tanggal_kegiatan ? `
+                                ${forki.tanggal_kegiatan ? `
                                     <div>
                                         <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                        <p class="mb-0 text-dark">${new Date(FORKI.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                        <p class="mb-0 text-dark">${new Date(forki.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
                                     </div>
                                 ` : ''}
                             </div>
                         </div>
 
-                        ${FORKI.jumlah_anggaran ? `
+                        ${forki.jumlah_anggaran ? `
                             <div class="mb-4">
                                 <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
                                     <i class="fas fa-calculator me-2"></i>
@@ -1195,12 +1195,12 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
-                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(FORKI.jumlah_anggaran)}</p>
+                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(forki.jumlah_anggaran)}</p>
                                         </div>
-                                        ${FORKI.jumlah_realisasi ? `
+                                        ${forki.jumlah_realisasi ? `
                                             <div class="col-md-6">
                                                 <label class="fw-semibold text-dark mb-1">Realisasi:</label>
-                                                <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(FORKI.jumlah_realisasi)}</p>
+                                                <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(forki.jumlah_realisasi)}</p>
                                             </div>
                                         ` : ''}
                                     </div>
@@ -1208,14 +1208,14 @@
                             </div>
                         ` : ''}
 
-                        ${FORKI.sumber_dana ? `
+                        ${forki.sumber_dana ? `
                             <div class="mb-4">
                                 <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
                                     <i class="fas fa-money-bill me-2"></i>
                                     Sumber Dana
                                 </h6>
                                 <div class="bg-light p-3 rounded">
-                                    <p class="mb-0 text-dark">${FORKI.sumber_dana}</p>
+                                    <p class="mb-0 text-dark">${forki.sumber_dana}</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -1245,14 +1245,14 @@
                             </div>
                         </div>
 
-                        ${FORKI.keterangan ? `
+                        ${forki.keterangan ? `
                             <div class="mb-2">
                                 <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center">
                                     <i class="fas fa-sticky-note me-2"></i>
                                     Keterangan
                                 </h6>
                                 <div class="bg-light p-3 rounded">
-                                    <p class="mb-0 text-dark">${FORKI.keterangan}</p>
+                                    <p class="mb-0 text-dark">${forki.keterangan}</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -1301,7 +1301,7 @@ $(document).ready(function() {
             }
 
             const submitBtn = $(this);
-            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.FORKI.destroy', ':id') }}".replace(':id', deleteId);
+            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.forki.destroy', ':id') }}".replace(':id', deleteId);
 
             // Add loading state
             submitBtn.addClass('btn-loading');
@@ -1365,7 +1365,7 @@ $(document).ready(function() {
 
         // Alternative: Use SweetAlert2 for delete confirmation (like in paste 1)
         function deleteItemWithSwal(itemId, itemName = 'item ini') {
-            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.FORKI.destroy', ':id') }}".replace(':id', itemId);
+            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.forki.destroy', ':id') }}".replace(':id', itemId);
 
             Swal.fire({
                 title: "Apakah Anda Yakin?",

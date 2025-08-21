@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pgi;
+use App\Models\pgi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PgiController extends Controller
+class pgiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pgi::query();
+        $query = pgi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PgiController extends Controller
             $direction = 'desc';
         }
 
-        $PgiData = $query
+        $pgiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pgi._table', compact('PgiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pgi._table', compact('pgiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pgi.index', compact('PgiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pgi.index', compact('pgiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pgi.create');
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pgi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PgiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Pgi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pgi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PgiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Pgi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pgi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Pgi::create($data);
+        pgi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Pgi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.pgi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Pgi $Pgi)
+    public function show(pgi $pgi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pgi.show', compact('Pgi'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pgi.show', compact('pgi'));
     }
 
-    public function edit(Pgi $Pgi)
+    public function edit(pgi $pgi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.Pgi.edit', compact('Pgi'));
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.pgi.edit', compact('pgi'));
     }
 
-    public function update(Request $request, Pgi $Pgi)
+    public function update(Request $request, pgi $pgi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PgiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Pgi->foto_jurnal) {
-                foreach ($Pgi->foto_jurnal as $oldFoto) {
+            if ($pgi->foto_jurnal) {
+                foreach ($pgi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Pgi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pgi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PgiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Pgi->dokumen_lpj) {
-                foreach ($Pgi->dokumen_lpj as $oldDokumen) {
+            if ($pgi->dokumen_lpj) {
+                foreach ($pgi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Pgi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pgi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Pgi->update($data);
+        $pgi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Pgi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.pgi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Pgi $Pgi)
+    public function destroy(pgi $pgi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PgiController extends Controller
         }
 
         // Delete associated files
-        if ($Pgi->foto_jurnal) {
-            foreach ($Pgi->foto_jurnal as $foto) {
+        if ($pgi->foto_jurnal) {
+            foreach ($pgi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Pgi->dokumen_lpj) {
-            foreach ($Pgi->dokumen_lpj as $dokumen) {
+        if ($pgi->dokumen_lpj) {
+            foreach ($pgi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Pgi->delete();
+        $pgi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.Pgi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.pgi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PgiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Pgi $Pgi)
+    public function removeFile(Request $request, pgi $pgi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PgiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Pgi->$fileType ?? [];
+        $files = $pgi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PgiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Pgi->update([$fileType => $files]);
+        $pgi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

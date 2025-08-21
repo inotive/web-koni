@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Tambah PERSANI')
+@section('pageTitle', 'Tambah PERSANI - Senam')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,9 +8,9 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor akurasi')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi'))
-@section('subSection4', 'PERSANI')
-@section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.PERSANI.index'))
-@section('currentSection', 'Tambah PERSANI')
+@section('subSection4', 'PERSANI - Senam')
+@section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.persani.index'))
+@section('currentSection', 'Tambah PERSANI - Senam')
 
 @section('content')
 
@@ -223,7 +223,7 @@
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Data PERSANI</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Data PERSANI - Senam</h3>
     </div>
 
     <div class="main-content">
@@ -232,7 +232,7 @@
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Tambah Data</h3>
-                        <form action="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.PERSANI.store') }}" method="POST"
+                        <form action="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.persani.store') }}" method="POST"
                             enctype="multipart/form-data" id="sumberDayaForm">
                             @csrf
 
@@ -387,7 +387,7 @@
                             <div class="row mt-4">
                                 <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                                     <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
-                                    <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.PERSANI.index') }}"
+                                    <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.persani.index') }}"
                                         class="btn btn-secondary px-4">Kembali</a>
                                 </div>
                             </div>
@@ -497,9 +497,9 @@
                 // Generate preview HTML
                 let previewHTML = '';
                 files.forEach((file, index) => {
-                    let filPERSANIze = (file.size / 1024).toFixed(1) + ' KB';
+                    let filpersanize = (file.size / 1024).toFixed(1) + ' KB';
                     if (file.size > 1024 * 1024) {
-                        filPERSANIze = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+                        filpersanize = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
                     }
 
                     if (isPhoto) {
@@ -509,7 +509,7 @@
                                 <img src="${imageUrl}" alt="Preview" class="preview-image">
                                 <div class="file-info">
                                     <div class="file-name">${file.name}</div>
-                                    <div class="file-size">${filPERSANIze}</div>
+                                    <div class="file-size">${filpersanize}</div>
                                 </div>
                                 <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
                                     <i class="fas fa-times"></i>
@@ -528,7 +528,7 @@
                                 </div>
                                 <div class="file-info">
                                     <div class="file-name">${file.name}</div>
-                                    <div class="file-size">${filPERSANIze}</div>
+                                    <div class="file-size">${filpersanize}</div>
                                 </div>
                                 <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
                                     <i class="fas fa-times"></i>

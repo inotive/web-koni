@@ -1,4 +1,4 @@
-@if ($FTIData->isEmpty())
+@if ($ftiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($FTIData as $index => $data)
+                @forelse ($ftiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($FTIData->currentPage() - 1) * $FTIData->perPage() + $index + 1 }}
+                            {{ ($ftiData->currentPage() - 1) * $ftiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.FTI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.fti.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($FTIData) && method_exists($FTIData, 'hasPages') && $FTIData->hasPages())
+            @if (isset($ftiData) && method_exists($ftiData, 'hasPages') && $ftiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $FTIData->firstItem() }}-{{ $FTIData->lastItem() }} of
-                        {{ $FTIData->total() }}
+                        {{ $ftiData->firstItem() }}-{{ $ftiData->lastItem() }} of
+                        {{ $ftiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($FTIData->onFirstPage())
+                        @if ($ftiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $FTIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $ftiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $FTIData->currentPage();
-                            $total = $FTIData->lastPage();
+                            $current = $ftiData->currentPage();
+                            $total = $ftiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $FTIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $ftiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($FTIData->hasMorePages())
-                            <a href="{{ $FTIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($ftiData->hasMorePages())
+                            <a href="{{ $ftiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($FTIData) && method_exists($FTIData, 'hasPages'))
+            @elseif(isset($ftiData) && method_exists($ftiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $FTIData->count() }} of {{ $FTIData->total() }}
+                    1-{{ $ftiData->count() }} of {{ $ftiData->total() }}
                 </div>
             @endif
         </div>

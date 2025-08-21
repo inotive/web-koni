@@ -1,4 +1,4 @@
-@if ($PGIData->isEmpty())
+@if ($pgiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PGIData as $index => $data)
+                @forelse ($pgiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PGIData->currentPage() - 1) * $PGIData->perPage() + $index + 1 }}
+                            {{ ($pgiData->currentPage() - 1) * $pgiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.PGI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi.pgi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PGIData) && method_exists($PGIData, 'hasPages') && $PGIData->hasPages())
+            @if (isset($pgiData) && method_exists($pgiData, 'hasPages') && $pgiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PGIData->firstItem() }}-{{ $PGIData->lastItem() }} of
-                        {{ $PGIData->total() }}
+                        {{ $pgiData->firstItem() }}-{{ $pgiData->lastItem() }} of
+                        {{ $pgiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PGIData->onFirstPage())
+                        @if ($pgiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PGIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $pgiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PGIData->currentPage();
-                            $total = $PGIData->lastPage();
+                            $current = $pgiData->currentPage();
+                            $total = $pgiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PGIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $pgiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PGIData->hasMorePages())
-                            <a href="{{ $PGIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($pgiData->hasMorePages())
+                            <a href="{{ $pgiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PGIData) && method_exists($PGIData, 'hasPages'))
+            @elseif(isset($pgiData) && method_exists($pgiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PGIData->count() }} of {{ $PGIData->total() }}
+                    1-{{ $pgiData->count() }} of {{ $pgiData->total() }}
                 </div>
             @endif
         </div>

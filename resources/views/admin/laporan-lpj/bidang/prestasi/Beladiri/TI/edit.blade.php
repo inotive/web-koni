@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Edit TI')
+@section('pageTitle', 'Edit TI - Taekwondo')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,9 +8,9 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor beladiri')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri'))
-@section('subSection4', 'TI')
-@section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.TI.index'))
-@section('currentSection', 'Edit TI')
+@section('subSection4', 'TI - Taekwondo')
+@section('subSection4Url', route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ti.index'))
+@section('currentSection', 'Edit TI - Taekwondo')
 
 @section('content')
     <style>
@@ -268,7 +268,7 @@
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Data TI</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Data TI - Taekwondo</h3>
     </div>
 
     <div class="main-content">
@@ -277,7 +277,7 @@
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Edit Data</h3>
-                        <form action="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.TI.update', $TI->id) }}" method="POST"
+                        <form action="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ti.update', $ti->id) }}" method="POST"
                             enctype="multipart/form-data" id="sumberDayaEditForm">
                             @csrf
                             @method('PUT')
@@ -326,24 +326,24 @@
                             @foreach ($fields as $key => $field)
                                 @if($key === 'keterangan_tambahan')
                                     {{-- File Upload Components --}}
-                                    @include('admin.laporan-lpj.bidang.prestasi.beladiri.TI.components.file-upload', [
+                                    @include('admin.laporan-lpj.bidang.prestasi.beladiri.ti.components.file-upload', [
                                         'name' => 'foto_jurnal',
                                         'label' => 'Foto Jurnal',
                                         'type' => 'image',
                                         'maxFiles' => 10,
                                         'maxSize' => 10,
-                                        'existingFiles' => $TI->foto_jurnal ?? [],
+                                        'existingFiles' => $ti->foto_jurnal ?? [],
                                         'accept' => 'image/*',
                                         'hint' => 'Maksimal 10 file foto, masing-masing hingga 10 MB'
                                     ])
 
-                                    @include('admin.laporan-lpj.bidang.prestasi.beladiri.TI.components.file-upload', [
+                                    @include('admin.laporan-lpj.bidang.prestasi.beladiri.ti.components.file-upload', [
                                         'name' => 'dokumen_lpj',
                                         'label' => 'Dokumen LPJ',
                                         'type' => 'document',
                                         'maxFiles' => 10,
                                         'maxSize' => 10,
-                                        'existingFiles' => $TI->dokumen_lpj ?? [],
+                                        'existingFiles' => $ti->dokumen_lpj ?? [],
                                         'accept' => '.pdf,.doc,.docx,.xls,.xlsx',
                                         'hint' => 'Maksimal 10 file PDF/Office, masing-masing hingga 10MB'
                                     ])
@@ -364,13 +364,13 @@
                                                 class="form-control @error($key) is-invalid @enderror"
                                                 placeholder="{{ $field['placeholder'] ?? '' }}"
                                                 rows="3"
-                                                {{ $field['required'] ? 'required' : '' }}>{{ old($key, $TI->$key) }}</textarea>
+                                                {{ $field['required'] ? 'required' : '' }}>{{ old($key, $ti->$key) }}</textarea>
                                         @else
                                             <input type="{{ $field['type'] }}" name="{{ $key }}"
                                                 id="{{ $key }}"
                                                 class="form-control @error($key) is-invalid @enderror"
                                                 placeholder="{{ $field['placeholder'] ?? '' }}"
-                                                value="{{ old($key, $TI->$key) }}"
+                                                value="{{ old($key, $ti->$key) }}"
                                                 {{ $field['required'] ? 'required' : '' }}
                                                 @if($field['type'] === 'number') min="0" step="0.01" @endif>
                                         @endif
@@ -385,7 +385,7 @@
                             <div class="row mt-4">
                                 <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                                     <button type="submit" class="btn btn-danger px-4">Update Data</button>
-                                    <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.TI.index') }}"
+                                    <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ti.index') }}"
                                         class="btn btn-secondary px-4">Kembali</a>
                                 </div>
                             </div>
@@ -397,7 +397,7 @@
     </div>
 
     {{-- Include JavaScript for file uploads --}}
-    @include('admin.laporan-lpj.bidang.prestasi.beladiri.TI.components.file-upload-scripts')
+    @include('admin.laporan-lpj.bidang.prestasi.beladiri.ti.components.file-upload-scripts')
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -407,7 +407,7 @@
                 type: 'image',
                 maxFiles: 10,
                 maxSize: 10 * 1024 * 1024,
-                existingFiles: @json($TI->foto_jurnal ?? [])
+                existingFiles: @json($ti->foto_jurnal ?? [])
             });
 
             initFileUpload({
@@ -415,7 +415,7 @@
                 type: 'document',
                 maxFiles: 10,
                 maxSize: 10 * 1024 * 1024,
-                existingFiles: @json($TI->dokumen_lpj ?? [])
+                existingFiles: @json($ti->dokumen_lpj ?? [])
             });
         });
     </script>

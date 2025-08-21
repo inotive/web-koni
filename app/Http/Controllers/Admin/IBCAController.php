@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Ibca;
+use App\Models\ibca;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class IbcaController extends Controller
+class ibcaController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ibca::query();
+        $query = ibca::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class IbcaController extends Controller
             $direction = 'desc';
         }
 
-        $IbcaData = $query
+        $ibcaData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ibca._table', compact('IbcaData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.ibca._table', compact('ibcaData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ibca.index', compact('IbcaData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ibca.index', compact('ibcaData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ibca.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ibca.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class IbcaController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Ibca/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('ibca/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class IbcaController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Ibca/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('ibca/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Ibca::create($data);
+        ibca::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ibca-MMA.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ibca-mma.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Ibca $Ibca)
+    public function show(ibca $ibca)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ibca.show', compact('Ibca'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ibca.show', compact('ibca'));
     }
 
-    public function edit(Ibca $Ibca)
+    public function edit(ibca $ibca)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Ibca.edit', compact('Ibca'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.ibca.edit', compact('ibca'));
     }
 
-    public function update(Request $request, Ibca $Ibca)
+    public function update(Request $request, ibca $ibca)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class IbcaController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Ibca->foto_jurnal) {
-                foreach ($Ibca->foto_jurnal as $oldFoto) {
+            if ($ibca->foto_jurnal) {
+                foreach ($ibca->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Ibca/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('ibca/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class IbcaController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Ibca->dokumen_lpj) {
-                foreach ($Ibca->dokumen_lpj as $oldDokumen) {
+            if ($ibca->dokumen_lpj) {
+                foreach ($ibca->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Ibca/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('ibca/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Ibca->update($data);
+        $ibca->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ibca-MMA.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ibca-mma.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Ibca $Ibca)
+    public function destroy(ibca $ibca)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class IbcaController extends Controller
         }
 
         // Delete associated files
-        if ($Ibca->foto_jurnal) {
-            foreach ($Ibca->foto_jurnal as $foto) {
+        if ($ibca->foto_jurnal) {
+            foreach ($ibca->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Ibca->dokumen_lpj) {
-            foreach ($Ibca->dokumen_lpj as $dokumen) {
+        if ($ibca->dokumen_lpj) {
+            foreach ($ibca->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Ibca->delete();
+        $ibca->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Ibca-MMA.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ibca-mma.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class IbcaController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Ibca $Ibca)
+    public function removeFile(Request $request, ibca $ibca)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class IbcaController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Ibca->$fileType ?? [];
+        $files = $ibca->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class IbcaController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Ibca->update([$fileType => $files]);
+        $ibca->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

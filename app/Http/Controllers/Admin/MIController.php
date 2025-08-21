@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Mi;
+use App\Models\mi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class MiController extends Controller
+class miController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Mi::query();
+        $query = mi::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -48,15 +48,15 @@ class MiController extends Controller
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.beladiri.Mi._table', compact('MIData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.beladiri.mi._table', compact('MIData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Mi.index', compact('MIData'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.mi.index', compact('MIData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Mi.create');
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.mi.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class MiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Mi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('mi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class MiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Mi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('mi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Mi::create($data);
+        mi::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Mi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.mi.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Mi $Mi)
+    public function show(mi $mi)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Mi.show', compact('Mi'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.mi.show', compact('mi'));
     }
 
-    public function edit(Mi $Mi)
+    public function edit(mi $mi)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.beladiri.Mi.edit', compact('Mi'));
+        return view('admin.laporan-lpj.bidang.prestasi.beladiri.mi.edit', compact('mi'));
     }
 
-    public function update(Request $request, Mi $Mi)
+    public function update(Request $request, mi $mi)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class MiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Mi->foto_jurnal) {
-                foreach ($Mi->foto_jurnal as $oldFoto) {
+            if ($mi->foto_jurnal) {
+                foreach ($mi->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Mi/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('mi/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class MiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Mi->dokumen_lpj) {
-                foreach ($Mi->dokumen_lpj as $oldDokumen) {
+            if ($mi->dokumen_lpj) {
+                foreach ($mi->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Mi/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('mi/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Mi->update($data);
+        $mi->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Mi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.mi.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Mi $Mi)
+    public function destroy(mi $mi)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class MiController extends Controller
         }
 
         // Delete associated files
-        if ($Mi->foto_jurnal) {
-            foreach ($Mi->foto_jurnal as $foto) {
+        if ($mi->foto_jurnal) {
+            foreach ($mi->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Mi->dokumen_lpj) {
-            foreach ($Mi->dokumen_lpj as $dokumen) {
+        if ($mi->dokumen_lpj) {
+            foreach ($mi->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Mi->delete();
+        $mi->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.Mi.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.mi.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class MiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Mi $Mi)
+    public function removeFile(Request $request, mi $mi)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class MiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Mi->$fileType ?? [];
+        $files = $mi->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class MiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Mi->update([$fileType => $files]);
+        $mi->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

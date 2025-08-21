@@ -1,4 +1,4 @@
-@if ($FORKIData->isEmpty())
+@if ($forkiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($FORKIData as $index => $data)
+                @forelse ($forkiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($FORKIData->currentPage() - 1) * $FORKIData->perPage() + $index + 1 }}
+                            {{ ($forkiData->currentPage() - 1) * $forkiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.FORKI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.forki.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($FORKIData) && method_exists($FORKIData, 'hasPages') && $FORKIData->hasPages())
+            @if (isset($forkiData) && method_exists($forkiData, 'hasPages') && $forkiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $FORKIData->firstItem() }}-{{ $FORKIData->lastItem() }} of
-                        {{ $FORKIData->total() }}
+                        {{ $forkiData->firstItem() }}-{{ $forkiData->lastItem() }} of
+                        {{ $forkiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($FORKIData->onFirstPage())
+                        @if ($forkiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $FORKIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $forkiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $FORKIData->currentPage();
-                            $total = $FORKIData->lastPage();
+                            $current = $forkiData->currentPage();
+                            $total = $forkiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $FORKIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $forkiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($FORKIData->hasMorePages())
-                            <a href="{{ $FORKIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($forkiData->hasMorePages())
+                            <a href="{{ $forkiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($FORKIData) && method_exists($FORKIData, 'hasPages'))
+            @elseif(isset($forkiData) && method_exists($forkiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $FORKIData->count() }} of {{ $FORKIData->total() }}
+                    1-{{ $forkiData->count() }} of {{ $forkiData->total() }}
                 </div>
             @endif
         </div>

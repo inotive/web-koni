@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pelti;
+use App\Models\pelti;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class PeltiController extends Controller
+class peltiController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pelti::query();
+        $query = pelti::query();
 
         // Apply filters
         if ($request->jenis_kegiatan_filter) {
@@ -42,21 +42,21 @@ class PeltiController extends Controller
             $direction = 'desc';
         }
 
-        $PeltiData = $query
+        $peltiData = $query
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
         // If AJAX request, return table partial
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.permainan.Pelti._table', compact('PeltiData'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.permainan.pelti._table', compact('peltiData'))->render();
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pelti.index', compact('PeltiData'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.pelti.index', compact('peltiData'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pelti.create');
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.pelti.create');
     }
 
     public function store(Request $request)
@@ -96,7 +96,7 @@ class PeltiController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Pelti/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pelti/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -105,33 +105,33 @@ class PeltiController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Pelti/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pelti/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Pelti::create($data);
+        pelti::create($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pelti.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.pelti.index')
                          ->with('OK', 'Data sumber daya berhasil ditambahkan.');
     }
 
-    public function show(Pelti $Pelti)
+    public function show(pelti $pelti)
     {
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pelti.show', compact('Pelti'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.pelti.show', compact('pelti'));
     }
 
-    public function edit(Pelti $Pelti)
+    public function edit(pelti $pelti)
     {
         // Check if user has permission to edit
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        return view('admin.laporan-lpj.bidang.prestasi.permainan.Pelti.edit', compact('Pelti'));
+        return view('admin.laporan-lpj.bidang.prestasi.permainan.pelti.edit', compact('pelti'));
     }
 
-    public function update(Request $request, Pelti $Pelti)
+    public function update(Request $request, pelti $pelti)
     {
         // Check if user has permission to update
         if (!auth()->user()->hasRole('superadmin')) {
@@ -172,15 +172,15 @@ class PeltiController extends Controller
         // Handle foto_jurnal uploads
         if ($request->hasFile('foto_jurnal')) {
             // Delete old photos if exists
-            if ($Pelti->foto_jurnal) {
-                foreach ($Pelti->foto_jurnal as $oldFoto) {
+            if ($pelti->foto_jurnal) {
+                foreach ($pelti->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('Pelti/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('pelti/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -188,26 +188,26 @@ class PeltiController extends Controller
         // Handle dokumen_lpj uploads
         if ($request->hasFile('dokumen_lpj')) {
             // Delete old documents if exists
-            if ($Pelti->dokumen_lpj) {
-                foreach ($Pelti->dokumen_lpj as $oldDokumen) {
+            if ($pelti->dokumen_lpj) {
+                foreach ($pelti->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('Pelti/dokumen_lpj', 'public');
+                $dokumenPaths[] = $file->store('pelti/dokumen_lpj', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $Pelti->update($data);
+        $pelti->update($data);
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pelti.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.pelti.index')
                          ->with('OK', 'Data sumber daya berhasil diperbarui.');
     }
 
-    public function destroy(Pelti $Pelti)
+    public function destroy(pelti $pelti)
     {
         // Check if user has permission to delete
         if (!auth()->user()->hasRole('superadmin')) {
@@ -215,21 +215,21 @@ class PeltiController extends Controller
         }
 
         // Delete associated files
-        if ($Pelti->foto_jurnal) {
-            foreach ($Pelti->foto_jurnal as $foto) {
+        if ($pelti->foto_jurnal) {
+            foreach ($pelti->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($Pelti->dokumen_lpj) {
-            foreach ($Pelti->dokumen_lpj as $dokumen) {
+        if ($pelti->dokumen_lpj) {
+            foreach ($pelti->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $Pelti->delete();
+        $pelti->delete();
 
-        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.Pelti.index')
+        return redirect()->route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.pelti.index')
                          ->with('OK', 'Data sumber daya berhasil dihapus.');
     }
 
@@ -250,7 +250,7 @@ class PeltiController extends Controller
     /**
      * Remove individual file from the collection
      */
-    public function removeFile(Request $request, Pelti $Pelti)
+    public function removeFile(Request $request, pelti $pelti)
     {
         // Check if user has permission to modify files
         if (!auth()->user()->hasRole('superadmin')) {
@@ -264,7 +264,7 @@ class PeltiController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $Pelti->$fileType ?? [];
+        $files = $pelti->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -279,7 +279,7 @@ class PeltiController extends Controller
         $files = array_values($files); // Reindex array
 
         // Update the model
-        $Pelti->update([$fileType => $files]);
+        $pelti->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,

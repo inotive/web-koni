@@ -1,4 +1,4 @@
-@if ($PBVSIData->isEmpty())
+@if ($pbvsiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PBVSIData as $index => $data)
+                @forelse ($pbvsiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PBVSIData->currentPage() - 1) * $PBVSIData->perPage() + $index + 1 }}
+                            {{ ($pbvsiData->currentPage() - 1) * $pbvsiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PBVSI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.pbvsi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PBVSIData) && method_exists($PBVSIData, 'hasPages') && $PBVSIData->hasPages())
+            @if (isset($pbvsiData) && method_exists($pbvsiData, 'hasPages') && $pbvsiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PBVSIData->firstItem() }}-{{ $PBVSIData->lastItem() }} of
-                        {{ $PBVSIData->total() }}
+                        {{ $pbvsiData->firstItem() }}-{{ $pbvsiData->lastItem() }} of
+                        {{ $pbvsiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PBVSIData->onFirstPage())
+                        @if ($pbvsiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PBVSIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $pbvsiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PBVSIData->currentPage();
-                            $total = $PBVSIData->lastPage();
+                            $current = $pbvsiData->currentPage();
+                            $total = $pbvsiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PBVSIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $pbvsiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PBVSIData->hasMorePages())
-                            <a href="{{ $PBVSIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($pbvsiData->hasMorePages())
+                            <a href="{{ $pbvsiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PBVSIData) && method_exists($PBVSIData, 'hasPages'))
+            @elseif(isset($pbvsiData) && method_exists($pbvsiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PBVSIData->count() }} of {{ $PBVSIData->total() }}
+                    1-{{ $pbvsiData->count() }} of {{ $pbvsiData->total() }}
                 </div>
             @endif
         </div>

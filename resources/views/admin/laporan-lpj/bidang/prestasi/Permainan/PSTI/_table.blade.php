@@ -1,4 +1,4 @@
-@if ($PSTIData->isEmpty())
+@if ($pstiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PSTIData as $index => $data)
+                @forelse ($pstiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PSTIData->currentPage() - 1) * $PSTIData->perPage() + $index + 1 }}
+                            {{ ($pstiData->currentPage() - 1) * $pstiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PSTI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.psti.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PSTIData) && method_exists($PSTIData, 'hasPages') && $PSTIData->hasPages())
+            @if (isset($pstiData) && method_exists($pstiData, 'hasPages') && $pstiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PSTIData->firstItem() }}-{{ $PSTIData->lastItem() }} of
-                        {{ $PSTIData->total() }}
+                        {{ $pstiData->firstItem() }}-{{ $pstiData->lastItem() }} of
+                        {{ $pstiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PSTIData->onFirstPage())
+                        @if ($pstiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PSTIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $pstiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PSTIData->currentPage();
-                            $total = $PSTIData->lastPage();
+                            $current = $pstiData->currentPage();
+                            $total = $pstiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PSTIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $pstiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PSTIData->hasMorePages())
-                            <a href="{{ $PSTIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($pstiData->hasMorePages())
+                            <a href="{{ $pstiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PSTIData) && method_exists($PSTIData, 'hasPages'))
+            @elseif(isset($pstiData) && method_exists($pstiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PSTIData->count() }} of {{ $PSTIData->total() }}
+                    1-{{ $pstiData->count() }} of {{ $pstiData->total() }}
                 </div>
             @endif
         </div>

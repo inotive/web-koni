@@ -1,4 +1,4 @@
-@if ($TIData->isEmpty())
+@if ($tiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($TIData as $index => $data)
+                @forelse ($tiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($TIData->currentPage() - 1) * $TIData->perPage() + $index + 1 }}
+                            {{ ($tiData->currentPage() - 1) * $tiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.TI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.ti.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($TIData) && method_exists($TIData, 'hasPages') && $TIData->hasPages())
+            @if (isset($tiData) && method_exists($tiData, 'hasPages') && $tiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $TIData->firstItem() }}-{{ $TIData->lastItem() }} of
-                        {{ $TIData->total() }}
+                        {{ $tiData->firstItem() }}-{{ $tiData->lastItem() }} of
+                        {{ $tiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($TIData->onFirstPage())
+                        @if ($tiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $TIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $tiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $TIData->currentPage();
-                            $total = $TIData->lastPage();
+                            $current = $tiData->currentPage();
+                            $total = $tiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $TIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $tiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($TIData->hasMorePages())
-                            <a href="{{ $TIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($tiData->hasMorePages())
+                            <a href="{{ $tiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($TIData) && method_exists($TIData, 'hasPages'))
+            @elseif(isset($tiData) && method_exists($tiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $TIData->count() }} of {{ $TIData->total() }}
+                    1-{{ $tiData->count() }} of {{ $tiData->total() }}
                 </div>
             @endif
         </div>

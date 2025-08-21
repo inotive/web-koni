@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'PTMSI')
+@section('pageTitle', 'PTMSI - Tenis Meja')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
@@ -8,7 +8,7 @@
 @section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
 @section('subSection3', 'Cabor permainan')
 @section('subSection3Url', route('admin.laporan-lpj.bidang.prestasi.cabor-permainan'))
-@section('currentSection', 'PTMSI')
+@section('currentSection', 'PTMSI - Tenis Meja')
 
 @section('breadcrumb-title')
 @endsection
@@ -378,7 +378,7 @@
     </style>
 
     <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">Laporan PTMSI</h1>
+        <h1 class="text-dark fw-bold mb-1">Laporan PTMSI - Tenis Meja</h1>
     </div>
 
     {{-- Main Content Card --}}
@@ -386,13 +386,13 @@
         <div class="card">
             {{-- Card Header --}}
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar PTMSI - 2025</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar PTMSI - Tenis Meja 2025</h3>
 
                 {{-- Action Buttons --}}
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button with Access Control --}}
                     @if(auth()->user()->hasRole('superadmin'))
-                        <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PTMSI.create') }}" class="btn custom-red-button"
+                        <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.ptmsi.create') }}" class="btn custom-red-button"
                             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                         </a>
@@ -447,7 +447,7 @@
                                 <label class="form-label fw-semibold">Nama Kegiatan</label>
                                 <select id="filter-jenis-kegiatan" class="form-select">
                                     <option value="">Semua Kegiatan</option>
-                                    @foreach ($PTMSIData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
+                                    @foreach ($ptmsiData->pluck('nama_kegiatan')->unique()->filter() as $kegiatan)
                                         <option value="{{ $kegiatan }}"
                                             {{ request('jenis_kegiatan_filter') == $kegiatan ? 'selected' : '' }}>
                                             {{ $kegiatan }}
@@ -479,7 +479,7 @@
                 </div>
 
                 <div id="table-container">
-                    @include('admin.laporan-lpj.bidang.prestasi.permainan.PTMSI._table')
+                    @include('admin.laporan-lpj.bidang.prestasi.permainan.ptmsi._table')
                 </div>
             </div>
         </div>
@@ -1097,17 +1097,17 @@
         });
 
         // Detail Modal Function - adapted for Mobilisasi Sumber Daya
-        function showDetailModal(PTMSI) {
+        function showDetailModal(ptmsi) {
             const modalBody = document.getElementById('detailModalBody');
 
             const formatRupiah = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
 
             // Handle foto_kegiatan display
             let fotoHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-            if (PTMSI.foto_jurnal && PTMSI.foto_jurnal.length > 0) {
+            if (ptmsi.foto_jurnal && ptmsi.foto_jurnal.length > 0) {
                 fotoHtml = `
                     <div class="row g-3">
-                        ${PTMSI.foto_jurnal.map(f => `
+                        ${ptmsi.foto_jurnal.map(f => `
                             <div class="col-6 col-md-4">
                                 <div class="border rounded overflow-hidden" style="height: 120px;">
                                     <img src="/storage/${f}"
@@ -1123,10 +1123,10 @@
 
             // Handle dokumen_pendukung display
             let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-            if (PTMSI.dokumen_lpj && PTMSI.dokumen_lpj.length > 0) {
+            if (ptmsi.dokumen_lpj && ptmsi.dokumen_lpj.length > 0) {
                 dokumenHtml = `
                     <div class="d-flex flex-column gap-2">
-                        ${PTMSI.dokumen_lpj.map(d => {
+                        ${ptmsi.dokumen_lpj.map(d => {
                             const name = d.split('/').pop();
                             const extension = name.split('.').pop().toLowerCase();
 
@@ -1167,25 +1167,25 @@
                             <div class="bg-light p-3 rounded">
                                 <div class="mb-2">
                                     <label class="fw-semibold text-dark mb-1">Nama Kegiatan & Program:</label>
-                                    <p class="mb-0 text-dark">${PTMSI.nama_program}</p>
-                                    <small class="text-muted">${PTMSI.nama_kegiatan}</small>
+                                    <p class="mb-0 text-dark">${ptmsi.nama_program}</p>
+                                    <small class="text-muted">${ptmsi.nama_kegiatan}</small>
                                 </div>
-                                ${PTMSI.tempat_kegiatan ? `
+                                ${ptmsi.tempat_kegiatan ? `
                                     <div class="mb-2">
                                         <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                        <p class="mb-0 text-dark">${PTMSI.tempat_kegiatan}</p>
+                                        <p class="mb-0 text-dark">${ptmsi.tempat_kegiatan}</p>
                                     </div>
                                 ` : ''}
-                                ${PTMSI.tanggal_kegiatan ? `
+                                ${ptmsi.tanggal_kegiatan ? `
                                     <div>
                                         <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                        <p class="mb-0 text-dark">${new Date(PTMSI.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                        <p class="mb-0 text-dark">${new Date(ptmsi.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
                                     </div>
                                 ` : ''}
                             </div>
                         </div>
 
-                        ${PTMSI.jumlah_anggaran ? `
+                        ${ptmsi.jumlah_anggaran ? `
                             <div class="mb-4">
                                 <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
                                     <i class="fas fa-calculator me-2"></i>
@@ -1195,12 +1195,12 @@
                                     <div class="row g-3">
                                         <div class="col-md-6">
                                             <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
-                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(PTMSI.jumlah_anggaran)}</p>
+                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(ptmsi.jumlah_anggaran)}</p>
                                         </div>
-                                        ${PTMSI.jumlah_realisasi ? `
+                                        ${ptmsi.jumlah_realisasi ? `
                                             <div class="col-md-6">
                                                 <label class="fw-semibold text-dark mb-1">Realisasi:</label>
-                                                <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(PTMSI.jumlah_realisasi)}</p>
+                                                <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(ptmsi.jumlah_realisasi)}</p>
                                             </div>
                                         ` : ''}
                                     </div>
@@ -1208,14 +1208,14 @@
                             </div>
                         ` : ''}
 
-                        ${PTMSI.sumber_dana ? `
+                        ${ptmsi.sumber_dana ? `
                             <div class="mb-4">
                                 <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
                                     <i class="fas fa-money-bill me-2"></i>
                                     Sumber Dana
                                 </h6>
                                 <div class="bg-light p-3 rounded">
-                                    <p class="mb-0 text-dark">${PTMSI.sumber_dana}</p>
+                                    <p class="mb-0 text-dark">${ptmsi.sumber_dana}</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -1245,14 +1245,14 @@
                             </div>
                         </div>
 
-                        ${PTMSI.keterangan ? `
+                        ${ptmsi.keterangan ? `
                             <div class="mb-2">
                                 <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center">
                                     <i class="fas fa-sticky-note me-2"></i>
                                     Keterangan
                                 </h6>
                                 <div class="bg-light p-3 rounded">
-                                    <p class="mb-0 text-dark">${PTMSI.keterangan}</p>
+                                    <p class="mb-0 text-dark">${ptmsi.keterangan}</p>
                                 </div>
                             </div>
                         ` : ''}
@@ -1301,7 +1301,7 @@ $(document).ready(function() {
             }
 
             const submitBtn = $(this);
-            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PTMSI.destroy', ':id') }}".replace(':id', deleteId);
+            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.ptmsi.destroy', ':id') }}".replace(':id', deleteId);
 
             // Add loading state
             submitBtn.addClass('btn-loading');
@@ -1365,7 +1365,7 @@ $(document).ready(function() {
 
         // Alternative: Use SweetAlert2 for delete confirmation (like in paste 1)
         function deleteItemWithSwal(itemId, itemName = 'item ini') {
-            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.PTMSI.destroy', ':id') }}".replace(':id', itemId);
+            const url = "{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan.ptmsi.destroy', ':id') }}".replace(':id', itemId);
 
             Swal.fire({
                 title: "Apakah Anda Yakin?",

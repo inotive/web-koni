@@ -1,4 +1,4 @@
-@if ($PGSIData->isEmpty())
+@if ($pgsiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PGSIData as $index => $data)
+                @forelse ($pgsiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PGSIData->currentPage() - 1) * $PGSIData->perPage() + $index + 1 }}
+                            {{ ($pgsiData->currentPage() - 1) * $pgsiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.PGSI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.pgsi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PGSIData) && method_exists($PGSIData, 'hasPages') && $PGSIData->hasPages())
+            @if (isset($pgsiData) && method_exists($pgsiData, 'hasPages') && $pgsiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PGSIData->firstItem() }}-{{ $PGSIData->lastItem() }} of
-                        {{ $PGSIData->total() }}
+                        {{ $pgsiData->firstItem() }}-{{ $pgsiData->lastItem() }} of
+                        {{ $pgsiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PGSIData->onFirstPage())
+                        @if ($pgsiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PGSIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $pgsiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PGSIData->currentPage();
-                            $total = $PGSIData->lastPage();
+                            $current = $pgsiData->currentPage();
+                            $total = $pgsiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PGSIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $pgsiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PGSIData->hasMorePages())
-                            <a href="{{ $PGSIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($pgsiData->hasMorePages())
+                            <a href="{{ $pgsiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PGSIData) && method_exists($PGSIData, 'hasPages'))
+            @elseif(isset($pgsiData) && method_exists($pgsiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PGSIData->count() }} of {{ $PGSIData->total() }}
+                    1-{{ $pgsiData->count() }} of {{ $pgsiData->total() }}
                 </div>
             @endif
         </div>

@@ -1,4 +1,4 @@
-@if ($PJSIData->isEmpty())
+@if ($pjsiData->isEmpty())
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
@@ -63,10 +63,10 @@
             </thead>
 
             <tbody>
-                @forelse ($PJSIData as $index => $data)
+                @forelse ($pjsiData as $index => $data)
                     <tr>
                         <td class="text-center">
-                            {{ ($PJSIData->currentPage() - 1) * $PJSIData->perPage() + $index + 1 }}
+                            {{ ($pjsiData->currentPage() - 1) * $pjsiData->perPage() + $index + 1 }}
                         </td>
                         <td>
                             <div class="d-flex flex-column">
@@ -139,7 +139,7 @@
                                     {{-- Check if user is superadmin for Edit button --}}
                                     @if(auth()->user()->hasRole('superadmin'))
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.PJSI.edit', $data->id) }}"
+                                            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri.pjsi.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -216,25 +216,25 @@
                 </div>
             </div>
 
-            @if (isset($PJSIData) && method_exists($PJSIData, 'hasPages') && $PJSIData->hasPages())
+            @if (isset($pjsiData) && method_exists($pjsiData, 'hasPages') && $pjsiData->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $PJSIData->firstItem() }}-{{ $PJSIData->lastItem() }} of
-                        {{ $PJSIData->total() }}
+                        {{ $pjsiData->firstItem() }}-{{ $pjsiData->lastItem() }} of
+                        {{ $pjsiData->total() }}
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($PJSIData->onFirstPage())
+                        @if ($pjsiData->onFirstPage())
                             <span class="pagination-arrow disabled">←</span>
                         @else
-                            <a href="{{ $PJSIData->appends(request()->query())->previousPageUrl() }}"
+                            <a href="{{ $pjsiData->appends(request()->query())->previousPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
                         @endif
 
                         @php
-                            $current = $PJSIData->currentPage();
-                            $total = $PJSIData->lastPage();
+                            $current = $pjsiData->currentPage();
+                            $total = $pjsiData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
 
@@ -252,14 +252,14 @@
                                 @if ($i == $current)
                                     <span class="pagination-number active">{{ $i }}</span>
                                 @else
-                                    <a href="{{ $PJSIData->appends(request()->query())->url($i) }}"
+                                    <a href="{{ $pjsiData->appends(request()->query())->url($i) }}"
                                        class="pagination-number pagination-link">{{ $i }}</a>
                                 @endif
                             @endfor
                         </div>
 
-                        @if ($PJSIData->hasMorePages())
-                            <a href="{{ $PJSIData->appends(request()->query())->nextPageUrl() }}"
+                        @if ($pjsiData->hasMorePages())
+                            <a href="{{ $pjsiData->appends(request()->query())->nextPageUrl() }}"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
                         @else
@@ -267,9 +267,9 @@
                         @endif
                     </div>
                 </div>
-            @elseif(isset($PJSIData) && method_exists($PJSIData, 'hasPages'))
+            @elseif(isset($pjsiData) && method_exists($pjsiData, 'hasPages'))
                 <div class="text-muted small">
-                    1-{{ $PJSIData->count() }} of {{ $PJSIData->total() }}
+                    1-{{ $pjsiData->count() }} of {{ $pjsiData->total() }}
                 </div>
             @endif
         </div>
