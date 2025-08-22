@@ -70,26 +70,25 @@
                     </a>
                     <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
                         <ul class="menu flex-column ms-5">
-                             <li class="menu-item">
+                            <li class="menu-item">
                                 <a class="menu-link {{ request()->is('admin/laporan-lpj/sekretariat*') ? 'active' : '' }}"
                                     href="{{ route('admin.laporan-lpj.sekretariat.index') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Sekretariat</span>
                                 </a>
-                            </li> 
-                             <li class="menu-item">
+                            </li>
+                            <li class="menu-item">
                                 <a class="menu-link {{ request()->is('admin/laporan-lpj/bidang*') ? 'active' : '' }}"
                                     href="{{ route('admin.laporan-lpj.bidang.index') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Bidang Bidang</span>
                                 </a>
                             </li>
-                            </li> 
-                             <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan_lainnya*') ? 'active' : '' }}"
+                            <li class="menu-item">
+                                <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan-lainnya*') ? 'active' : '' }}"
                                     href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Kegiatan lainnya</span>
+                                    <span class="menu-title">Kegiatan Lainnya</span>
                                 </a>
                             </li>
                         </ul>
@@ -99,7 +98,8 @@
                             href="{{ route('admin.bendahara.index') }}">
                             <span class="menu-icon">
                                 <i class="fa-solid fa-address-book fs-2"></i>
-                            </span> <span class="menu-title">Database Bendahara</span>
+                            </span>
+                            <span class="menu-title">Database Bendahara</span>
                         </a>
                     </div>
                 </div>
@@ -170,7 +170,8 @@
                             <i class="fa-solid fa-chalkboard-user fs-2"
                                 style="color: {{ $isPelatihActive ? '#ffffff' : '#6c757d' }}"></i>
                         </span>
-                        <span class="menu-title {{ $isPelatihActive ? 'text-white' : 'text-gray-800' }}">Pelatih</span>
+                        <span
+                            class="menu-title {{ $isPelatihActive ? 'text-white' : 'text-gray-800' }}">Pelatih</span>
                     </a>
                 </div>
 
@@ -232,7 +233,8 @@
                             <i class="fa-solid fa-users fs-2"
                                 style="color: {{ request()->is('admin/manajemen-pengguna/pengguna*') ? '#ffffff' : '#6c757d' }}"></i>
                         </span>
-                        <span class="menu-title {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'text-white' : 'text-gray-800' }}">Pengguna</span>
+                        <span
+                            class="menu-title {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'text-white' : 'text-gray-800' }}">Pengguna</span>
                     </a>
                 </div>
                 <div class="menu-item">
@@ -242,8 +244,9 @@
                         <span class="menu-icon">
                             <i class="fa-solid fa-diagram-project fs-2"
                                 style="color: {{ request()->is('admin/manajemen-pengguna/role*') ? '#ffffff' : '#6c757d' }}"></i>
-                        </span> 
-                        <span class="menu-title {{ request()->is('admin/manajemen-pengguna/role*') ? 'text-white' : 'text-gray-800' }}">Jabatan</span>
+                        </span>
+                        <span
+                            class="menu-title {{ request()->is('admin/manajemen-pengguna/role*') ? 'text-white' : 'text-gray-800' }}">Jabatan</span>
                     </a>
                 </div>
             </div>
