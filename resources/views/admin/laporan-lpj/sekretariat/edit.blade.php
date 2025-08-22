@@ -9,153 +9,163 @@
 @section('content')
 
     <!-- style yang sudah sama persis dengan create -->
-<style>
-    body {
-        background-color: #f5f5f5 !important;
-    }
+    <style>
+        body {
+            background-color: #f5f5f5 !important;
+        }
 
-    .main-content {
-        background-color: #f5f5f5;
-        min-height: 100vh;
-        padding: 20px 10px 40px;
-    }
+        .main-content {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px 10px 40px;
+        }
 
-    .card-form {
-        background-color: white;
-        border-radius: 12px;
-        border: 1px solid #e9ecef;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-    }
+        .card-form {
+            background-color: white;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
 
-    .section-header {
-        color: #0b153a;
-        font-weight: 700;
-        font-size: 1.6rem;
-        margin-bottom: 1rem;
-    }
+        .section-header {
+            color: #0b153a;
+            font-weight: 700;
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+        }
 
-    .file-upload-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border: 1px solid #cfe2ff;
-        background-color: #edf5ff;
-        border-radius: 10px;
-        padding: 16px 20px;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-        min-height: 80px;
-    }
-    .file-upload-wrapper:hover {
-        border-color: #0d6efd;
-        background-color: #e6f0ff;
-    }
-    .file-upload-wrapper input[type="file"] {
-        display: none;
-    }
+        .file-upload-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #cfe2ff;
+            background-color: #edf5ff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            min-height: 80px;
+        }
 
-    .file-upload-icon-wrapper {
-        background-color: #d0e7ff;
-        padding: 8px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-    }
-    .file-upload-icon {
-        font-size: 1.5rem;
-        color: #0d6efd;
-    }
-    .file-upload-text {
-        margin: 0;
-        font-size: 0.95rem;
-        font-weight: 500;
-        color: #0b153a;
-    }
-    .file-upload-hint {
-        font-size: 0.8rem;
-        color: #6c757d;
-        margin-top: 4px;
-    }
+        .file-upload-wrapper:hover {
+            border-color: #0d6efd;
+            background-color: #e6f0ff;
+        }
 
-    .form-control,
-    .form-select {
-        border-radius: 8px;
-        padding: 10px 14px;
-        font-size: 0.95rem;
-    }
-    .form-control:focus,
-    .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
-    }
+        .file-upload-wrapper input[type="file"] {
+            display: none;
+        }
 
-    .invalid-feedback {
-        font-size: 0.85rem;
-        color: #e74c3c;
-    }
+        .file-upload-icon-wrapper {
+            background-color: #d0e7ff;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
 
-    .btn-danger {
-        background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
-        border: none;
-        border-radius: 8px;
-        padding: 12px 24px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
-    }
-    .btn-danger:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
-    }
+        .file-upload-icon {
+            font-size: 1.5rem;
+            color: #0d6efd;
+        }
 
-    .preview-image {
-        max-width: 80px;
-        max-height: 80px;
-        border-radius: 8px;
-        object-fit: cover;
-        margin-right: 8px;
-        margin-bottom: 8px;
-    }
+        .file-upload-text {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #0b153a;
+        }
 
-    .file-preview {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 10px;
-    }
+        .file-upload-hint {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 4px;
+        }
 
-    .file-item {
-        display: flex;
-        align-items: center;
-        background: #f8f9fa;
-        padding: 8px 12px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        color: #495057;
-        max-width: 250px;
-    }
-    .file-item i {
-        margin-right: 8px;
-        color: #6c757d;
-    }
-    .file-name {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex: 1;
-    }
-    .file-counter {
-        background: #007bff;
-        color: white;
-        border-radius: 50%;
-        padding: 2px 6px;
-        font-size: 0.75rem;
-        margin-left: 8px;
-    }
-</style>
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+        }
+
+        .invalid-feedback {
+            font-size: 0.85rem;
+            color: #e74c3c;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+        }
+
+        .preview-image {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #495057;
+            max-width: 250px;
+        }
+
+        .file-item i {
+            margin-right: 8px;
+            color: #6c757d;
+        }
+
+        .file-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .file-counter {
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+    </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
         <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Sekretariat</h3>
@@ -179,17 +189,21 @@
                                     <p class="file-upload-hint">Maksimal 10 foto, masing-masing hingga 10 MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    @if($sekretariat->foto_jurnal)
+                                    @if ($sekretariat->foto_jurnal)
                                         <div class="current-files-container" id="currentFotoContainer">
                                             <div class="current-files-title">Foto Saat Ini:</div>
                                             <div class="d-flex flex-wrap gap-2">
-                                                @if(is_array($sekretariat->foto_jurnal))
-                                                    @foreach($sekretariat->foto_jurnal as $index => $foto)
+                                                @if (is_array($sekretariat->foto_jurnal))
+                                                    @foreach ($sekretariat->foto_jurnal as $index => $foto)
                                                         <div class="current-file-item">
-                                                            <img src="{{ asset('storage/' . $foto) }}" class="preview-image me-2" alt="Current Image {{ $index + 1 }}">
+                                                            <img src="{{ asset('storage/' . $foto) }}"
+                                                                class="preview-image me-2"
+                                                                alt="Current Image {{ $index + 1 }}">
                                                             <div>
-                                                                <small class="text-muted d-block">Foto {{ $index + 1 }}</small>
-                                                                <a href="{{ asset('storage/' . $foto) }}" target="_blank" class="text-decoration-none small">
+                                                                <small class="text-muted d-block">Foto
+                                                                    {{ $index + 1 }}</small>
+                                                                <a href="{{ asset('storage/' . $foto) }}" target="_blank"
+                                                                    class="text-decoration-none small">
                                                                     Lihat foto
                                                                 </a>
                                                             </div>
@@ -197,10 +211,12 @@
                                                     @endforeach
                                                 @else
                                                     <div class="current-file-item">
-                                                        <img src="{{ asset('storage/' . $sekretariat->foto_jurnal) }}" class="preview-image me-2" alt="Current Image">
+                                                        <img src="{{ asset('storage/' . $sekretariat->foto_jurnal) }}"
+                                                            class="preview-image me-2" alt="Current Image">
                                                         <div>
                                                             <small class="text-muted d-block">Foto saat ini</small>
-                                                            <a href="{{ asset('storage/' . $sekretariat->foto_jurnal) }}" target="_blank" class="text-decoration-none small">
+                                                            <a href="{{ asset('storage/' . $sekretariat->foto_jurnal) }}"
+                                                                target="_blank" class="text-decoration-none small">
                                                                 Lihat foto
                                                             </a>
                                                         </div>
@@ -244,17 +260,20 @@
                                     <p class="file-upload-hint">Maksimal 10 dokumen, masing-masing hingga 10MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    @if($sekretariat->dokumen_pendukung)
+                                    @if ($sekretariat->dokumen_lpj)
                                         <div class="current-files-container" id="currentDokumenContainer">
                                             <div class="current-files-title">Dokumen Saat Ini:</div>
                                             <div class="d-flex flex-wrap gap-2">
-                                                @if(is_array($sekretariat->dokumen_pendukung))
-                                                    @foreach($sekretariat->dokumen_pendukung as $index => $dokumen)
+                                                @if (is_array($sekretariat->dokumen_lpj))
+                                                    @foreach ($sekretariat->dokumen_lpj as $index => $dokumen)
                                                         <div class="current-file-item">
-                                                            <i class="fas fa-file-alt me-2 text-primary" style="font-size: 1.5rem;"></i>
+                                                            <i class="fas fa-file-alt me-2 text-primary"
+                                                                style="font-size: 1.5rem;"></i>
                                                             <div>
-                                                                <small class="text-muted d-block">Dokumen {{ $index + 1 }}</small>
-                                                                <a href="{{ asset('storage/' . $dokumen) }}" target="_blank" class="text-decoration-none small">
+                                                                <small class="text-muted d-block">Dokumen
+                                                                    {{ $index + 1 }}</small>
+                                                                <a href="{{ asset('storage/' . $dokumen) }}"
+                                                                    target="_blank" class="text-decoration-none small">
                                                                     {{ basename($dokumen) }}
                                                                 </a>
                                                             </div>
@@ -262,11 +281,13 @@
                                                     @endforeach
                                                 @else
                                                     <div class="current-file-item">
-                                                        <i class="fas fa-file-alt me-2 text-primary" style="font-size: 1.5rem;"></i>
+                                                        <i class="fas fa-file-alt me-2 text-primary"
+                                                            style="font-size: 1.5rem;"></i>
                                                         <div>
                                                             <small class="text-muted d-block">File saat ini:</small>
-                                                            <a href="{{ asset('storage/' . $sekretariat->dokumen_pendukung) }}" target="_blank" class="text-decoration-none small">
-                                                                {{ basename($sekretariat->dokumen_pendukung) }}
+                                                            <a href="{{ asset('storage/' . $sekretariat->dokumen_lpj) }}"
+                                                                target="_blank" class="text-decoration-none small">
+                                                                {{ basename($sekretariat->dokumen_lpj) }}
                                                             </a>
                                                         </div>
                                                     </div>
@@ -308,31 +329,37 @@
                                         'label' => 'Nama Program',
                                         'type' => 'text',
                                         'placeholder' => 'Masukkan nama program',
+                                        'db_field' => 'nama_program', // Mapping ke field database
                                     ],
                                     'jenis_kegiatan' => [
                                         'label' => 'Nama Kegiatan',
                                         'type' => 'text',
                                         'placeholder' => 'Contoh: Rapat, Pelatihan, Pembelian',
+                                        'db_field' => 'nama_kegiatan', // Mapping ke field database
                                     ],
                                     'volume' => [
                                         'label' => 'Volume',
                                         'type' => 'text',
                                         'placeholder' => 'Masukkan volume kegiatan (contoh: 20 unit, 1 kegiatan)',
+                                        'db_field' => 'volume',
                                     ],
                                     'jumlah_harga_satuan' => [
                                         'label' => 'Jumlah Harga Satuan',
                                         'type' => 'number',
                                         'placeholder' => 'Masukkan jumlah harga satuan',
+                                        'db_field' => 'jumlah_harga_satuan',
                                     ],
                                     'jumlah_harga' => [
                                         'label' => 'Jumlah Harga',
                                         'type' => 'number',
                                         'placeholder' => 'Masukkan jumlah harga',
+                                        'db_field' => 'jumlah_harga',
                                     ],
                                     'keterangan_tambahan' => [
                                         'label' => 'Keterangan Tambahan',
                                         'type' => 'text',
                                         'placeholder' => 'Masukkan keterangan tambahan',
+                                        'db_field' => 'keterangan_tambahan',
                                     ],
                                 ];
                             @endphp
@@ -347,7 +374,7 @@
                                             id="{{ $key }}"
                                             class="form-control @error($key) is-invalid @enderror"
                                             placeholder="{{ $field['placeholder'] ?? '' }}"
-                                            value="{{ old($key, $sekretariat->$key) }}"
+                                            value="{{ old($key, $sekretariat->{$field['db_field']}) }}"
                                             {{ in_array($key, ['nama_program_kegiatan', 'jenis_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga']) ? 'required' : '' }}>
 
                                         @error($key)
@@ -409,7 +436,8 @@
                         currentFotoContainer.style.display = 'none';
                     }
 
-                    fotoFileNameDisplay.textContent = `${files.length} foto baru dipilih (akan mengganti foto lama)`;
+                    fotoFileNameDisplay.textContent =
+                        `${files.length} foto baru dipilih (akan mengganti foto lama)`;
 
                     fotoPreviewContainer.innerHTML = '';
                     files.forEach((file, index) => {
@@ -427,7 +455,8 @@
                     if (currentFotoContainer) {
                         currentFotoContainer.style.display = 'block';
                     }
-                    fotoFileNameDisplay.textContent = '{{ $sekretariat->foto_jurnal ? "Klik untuk mengganti foto" : "Seret dan lepas foto di sini, atau klik untuk mengunggah" }}';
+                    fotoFileNameDisplay.textContent =
+                        '{{ $sekretariat->foto_jurnal ? 'Klik untuk mengganti foto' : 'Seret dan lepas foto di sini, atau klik untuk mengunggah' }}';
                     fotoPreviewContainer.innerHTML = '';
                 }
             });
@@ -470,7 +499,8 @@
                         currentDokumenContainer.style.display = 'none';
                     }
 
-                    dokumenFileNameDisplay.textContent = `${files.length} dokumen baru dipilih (akan mengganti dokumen lama)`;
+                    dokumenFileNameDisplay.textContent =
+                        `${files.length} dokumen baru dipilih (akan mengganti dokumen lama)`;
 
                     dokumenPreviewContainer.innerHTML = '';
                     files.forEach((file) => {
@@ -479,13 +509,17 @@
 
                         const getFileIcon = (fileName) => {
                             const extension = fileName.split('.').pop().toLowerCase();
-                            switch(extension) {
-                                case 'pdf': return 'fas fa-file-pdf';
+                            switch (extension) {
+                                case 'pdf':
+                                    return 'fas fa-file-pdf';
                                 case 'doc':
-                                case 'docx': return 'fas fa-file-word';
+                                case 'docx':
+                                    return 'fas fa-file-word';
                                 case 'xls':
-                                case 'xlsx': return 'fas fa-file-excel';
-                                default: return 'fas fa-file-alt';
+                                case 'xlsx':
+                                    return 'fas fa-file-excel';
+                                default:
+                                    return 'fas fa-file-alt';
                             }
                         };
 
@@ -499,7 +533,8 @@
                     if (currentDokumenContainer) {
                         currentDokumenContainer.style.display = 'block';
                     }
-                    dokumenFileNameDisplay.textContent = '{{ $sekretariat->dokumen_pendukung ? "Klik untuk mengganti dokumen" : "Seret dan lepas dokumen di sini, atau klik untuk mengunggah" }}';
+                    dokumenFileNameDisplay.textContent =
+                        '{{ $sekretariat->dokumen_pendukung ? 'Klik untuk mengganti dokumen' : 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah' }}';
                     dokumenPreviewContainer.innerHTML = '';
                 }
             });

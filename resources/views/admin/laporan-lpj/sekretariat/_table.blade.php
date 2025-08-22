@@ -42,12 +42,14 @@
                 @forelse ($kegiatanLainnya as $index => $kegiatan)
                     <tr>
                         <td class="text-start">
-                            {{ ($kegiatanLainnya->currentPage() - 1) * $kegiatanLainnya->perPage() + $index + 1 }}</td>
+                            {{ ($kegiatanLainnya->currentPage() - 1) * $kegiatanLainnya->perPage() + $index + 1 }}
+                        </td>
+                        {{-- PERBAIKAN: Ubah dari nama_program_kegiatan ke nama_program dan jenis_kegiatan ke nama_kegiatan --}}
                         <td class="text-start">
                             <div class="d-flex flex-column">
-                                <strong class="text-truncate-custom">{{ $kegiatan->nama_program_kegiatan }}</strong>
-                                @if ($kegiatan->jenis_kegiatan)
-                                    <small class="text-muted">{{ $kegiatan->jenis_kegiatan }}</small>
+                                <strong class="text-truncate-custom">{{ $kegiatan->nama_program }}</strong>
+                                @if ($kegiatan->nama_kegiatan)
+                                    <small class="text-muted">{{ $kegiatan->nama_kegiatan }}</small>
                                 @endif
                             </div>
                         </td>
@@ -59,20 +61,21 @@
                                 <button type="button" class="btn btn-sm btn-light-info preview-btn"
                                     data-bs-toggle="modal" data-bs-target="#previewModal" data-type="image"
                                     data-files="{{ json_encode($kegiatan->foto_jurnal) }}"
-                                    data-title="Foto Jurnal - {{ $kegiatan->nama_program_kegiatan }}">
+                                    data-title="Foto Jurnal - {{ $kegiatan->nama_program }}">
                                     <i class="fas fa-images me-1"></i>{{ count($kegiatan->foto_jurnal) }} Foto
                                 </button>
                             @else
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
+                        {{-- PERBAIKAN: Ubah dari dokumen_pendukung ke dokumen_lpj --}}
                         <td class="text-start">
-                            @if ($kegiatan->dokumen_pendukung && count($kegiatan->dokumen_pendukung) > 0)
+                            @if ($kegiatan->dokumen_lpj && count($kegiatan->dokumen_lpj) > 0)
                                 <button type="button" class="btn btn-sm btn-light-primary preview-btn"
                                     data-bs-toggle="modal" data-bs-target="#previewModal" data-type="document"
-                                    data-files="{{ json_encode($kegiatan->dokumen_pendukung) }}"
-                                    data-title="Dokumen Pendukung - {{ $kegiatan->nama_program_kegiatan }}">
-                                    <i class="fas fa-file-alt me-1"></i>{{ count($kegiatan->dokumen_pendukung) }}
+                                    data-files="{{ json_encode($kegiatan->dokumen_lpj) }}"
+                                    data-title="Dokumen Pendukung - {{ $kegiatan->nama_program }}">
+                                    <i class="fas fa-file-alt me-1"></i>{{ count($kegiatan->dokumen_lpj) }}
                                     Dokumen
                                 </button>
                             @else
@@ -81,7 +84,6 @@
                         </td>
                         <td class="text-start">
                             <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
-                                <!-- dropdown content tetap sama -->
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
