@@ -766,27 +766,25 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/perencanaan-program', [App\Http\Controllers\Admin\BidangController::class, 'perencanaanProgram'])->name('perencanaan-program');
         });
 
-        // FIXED: Kegiatan Lainnya Routes - Properly structured
         Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
-            Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
-            Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
-            Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
+    Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
+    Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
+    Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
 
-            // Route untuk AJAX detail - HARUS sebelum {kegiatan_lainnya}
-            Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
-                ->name('detail-ajax')
-                ->where('id', '[0-9]+');
+    // 🔒 Letakkan ini SEBELUM wildcard resource
+    Route::get('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+    Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
+        ->name('detail-ajax')
+        ->where('id', '[0-9]+');
 
-            // Parameterized routes
-            Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
-            Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
-            Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
-            Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
+    // Baru wildcard
+    Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
+    Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
+    Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
+    Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
+    Route::post('/{kegiatan_lainnya}/approve', [KegiatanLainnyaController::class, 'approve'])->name('approve');
 
-            // Export route
-            Route::get('/export', [KegiatanLainnyaController::class, 'export'])
-                ->name('export');
-        });
+});
     }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
         Route::get('/', [BendaharaController::class, 'index'])->name('index');

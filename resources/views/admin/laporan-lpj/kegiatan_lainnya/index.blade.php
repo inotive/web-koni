@@ -533,10 +533,6 @@
                             <div class="text-center text-muted py-10">
                                 <i class="fas fa-search fs-1 mb-3 text-muted"></i>
                                 <h4>Data tidak ditemukan untuk pencarian "{{ request('search') }}"</h4>
-                                <button class="btn btn-light-primary mt-3"
-                                    onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
-                                    Reset Pencarian
-                                </button>
                             </div>
                         @elseif(request('jenis_kegiatan_filter'))
                             {{-- Empty State untuk Filter Tidak Ditemukan --}}
@@ -714,55 +710,30 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <div class="dropdown">
-                                                        <button class="btn btn-sm p-0" type="button"
-                                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <svg width="32" height="32" viewBox="0 0 32 32"
-                                                                fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <rect width="32" height="32" rx="6"
-                                                                    fill="#EFF6FF" />
-                                                                <rect x="0.5" y="0.5" width="31" height="31"
-                                                                    rx="5.5" stroke="#1B84FF"
-                                                                    stroke-opacity="0.2" />
-                                                                <g clip-path="url(#clip0_2223_4269)">
-                                                                    <path opacity="0.3"
-                                                                        d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
-                                                                        fill="#1B84FF" />
-                                                                    <path
-                                                                        d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
-                                                                        fill="#1B84FF" />
-                                                                </g>
-                                                                <defs>
-                                                                    <clipPath id="clip0_2223_4269">
-                                                                        <rect width="16" height="16"
-                                                                            fill="white" transform="translate(8 8)" />
-                                                                    </clipPath>
-                                                                </defs>
-                                                            </svg>
+                                                        <button class="btn btn-sm btn-light" type="button"
+                                                            data-bs-toggle="dropdown">
+                                                            <i class="fas fa-ellipsis-v"></i>
                                                         </button>
-                                                        <ul class="dropdown-menu dropdown-menu-end cursor-pointer">
+                                                        <ul class="dropdown-menu">
                                                             <li>
-                                                                <button type="button"
-                                                                    class="dropdown-item view-detail-btn"
-                                                                    data-id="{{ $kegiatan->id }}"
-                                                                    data-name="{{ $kegiatan->nama_program_kegiatan }}">
-                                                                    <i class="fa-solid fa-eye me-2"></i>Lihat Detail
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.show', $kegiatan->id) }}"
-                                                                    class="dropdown-item text-muted">
-                                                                    <i class="fas fa-info-circle me-2"></i>Modifikasi
+                                                                <a class="dropdown-item preview-btn"
+                                                                    data-files="{{ json_encode([$kegiatan->foto_jurnal, $kegiatan->dokumen_pendukung]) }}"
+                                                                    data-type="{{ $kegiatan->foto_jurnal ? 'image' : 'document' }}"
+                                                                    data-title="Preview Laporan Kegiatan">
+                                                                    <i class="fas fa-eye me-2"></i>Lihat
                                                                 </a>
                                                             </li>
                                                             <li>
-                                                                <hr class="dropdown-divider">
+                                                                <a class="dropdown-item"
+                                                                    href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}">
+                                                                    <i class="fas fa-edit me-2"></i>Edit
+                                                                </a>
                                                             </li>
                                                             <li>
-                                                                <button type="button"
-                                                                    class="dropdown-item text-danger border-0 bg-transparent w-100 text-start delete-btn"
-                                                                    data-id="{{ $kegiatan->id }}"
-                                                                    data-name="{{ $kegiatan->nama_program_kegiatan }}">
-                                                                    <i class="fa-solid fa-trash me-2"></i>Hapus
+                                                                <button class="dropdown-item text-danger"
+                                                                    onclick="destroyItem(this)"
+                                                                    data-route="{{ route('admin.laporan-lpj.kegiatan_lainnya.destroy', $kegiatan->id) }}">
+                                                                    <i class="fas fa-trash me-2"></i>Hapus
                                                                 </button>
                                                             </li>
                                                         </ul>
@@ -1037,7 +1008,6 @@
         </div>
 
 
-
     @endsection
 
     @section('script')
@@ -1092,9 +1062,48 @@
                         window.location.href = currentUrl.toString();
                     });
 
-                    // Handle search functionality with improved debounce
+                    // ========== SEARCH FUNCTIONALITY - OPTIMIZED ==========
                     let searchTimer;
-                    const searchDelay = 800; // Increase delay untuk mengurangi request yang berlebihan
+                    const searchDelay = 800;
+                    const emptySearchDelay = 300;
+
+
+                    // Debounced search object
+                    const debouncedSearch = {
+                        timer: null,
+                        isProcessing: false,
+
+                        execute: function(callback, delay) {
+                            clearTimeout(this.timer);
+                            showSearchLoading(false); // Reset loading state
+
+                            this.timer = setTimeout(() => {
+                                showSearchLoading(true);
+                                callback();
+                            }, delay);
+                        },
+
+                        cancel: function() {
+                            clearTimeout(this.timer);
+                            showSearchLoading(false);
+                        }
+                    };
+
+                    // Main search function
+                    function performSearch() {
+                        const searchValue = $('#search').val().trim();
+
+                        if (searchValue === '') {
+                            const currentUrl = new URL(window.location.href);
+                            currentUrl.searchParams.delete('search');
+                            currentUrl.searchParams.set('page', 1);
+                            window.location.href = currentUrl.toString();
+                        } else {
+                            updateUrlAndRedirect({
+                                search: searchValue
+                            });
+                        }
+                    }
 
                     // Handle search button click
                     $('#search-button').on('click', function(e) {
@@ -1103,45 +1112,35 @@
                         performSearch();
                     });
 
-                    // Handle search input with improved debounce
-                    $('#search').on('keyup', function(e) {
+                    // UNIFIED search input handler dengan debouncing
+                    $('#search').on('keyup input paste', function(e) {
+                        const searchValue = $(this).val().trim();
                         clearTimeout(searchTimer);
 
-                        // Jika tekan Enter, langsung search
-                        if (e.keyCode === 13) {
-                            e.preventDefault();
-                            performSearch();
-                            return;
+                        updateSearchState();
+                        addClearSearchButton();
+
+                        // Handle special keys
+                        if (e.type === 'keyup') {
+                            if (e.keyCode === 13) {
+                                e.preventDefault();
+                                performSearch();
+                                return;
+                            }
+                            if (e.keyCode === 27) {
+                                e.preventDefault();
+                                $(this).val('');
+                                performSearch();
+                                return;
+                            }
                         }
 
-                        const searchValue = $(this).val().trim();
-
-                        // Jika search kosong, langsung redirect untuk reset
-                        if (searchValue === '') {
-                            searchTimer = setTimeout(() => {
-                                performSearch();
-                            }, 300);
-                        } else {
-                            // Untuk search dengan value, gunakan delay lebih lama
-                            searchTimer = setTimeout(() => {
-                                performSearch();
-                            }, searchDelay);
-                        }
+                        const delay = searchValue === '' ? emptySearchDelay : searchDelay;
+                        searchTimer = setTimeout(performSearch, delay);
                     });
 
-                    // Improved search function
-                    function performSearch() {
-                        const searchValue = $('#search').val().trim();
 
-                        // Show loading indicator if available
-                        showSearchLoading(true);
-
-                        updateUrlAndRedirect({
-                            'search': searchValue
-                        });
-                    }
-
-                    // Handle search input focus and blur events
+                    // Handle search input focus
                     $('#search').on('focus', function() {
                         $(this).select(); // Select all text when focused
                     });
@@ -1152,7 +1151,62 @@
                         performSearch();
                     });
 
-                    // Handle filter functionality
+                    // Function to show/hide search loading
+                    function showSearchLoading(show) {
+                        const $searchButton = $('#search-button');
+                        const $searchInput = $('#search');
+
+                        if (show) {
+                            $searchButton.html('<i class="fas fa-spinner fa-spin"></i>');
+                            $searchInput.addClass('pe-5').prop('disabled', true);
+                            $('.clear-search-btn').html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
+                        } else {
+                            $searchButton.html('<i class="fas fa-search"></i>');
+                            $searchInput.removeClass('pe-5').prop('disabled', false);
+                            $('.clear-search-btn').html('<i class="fas fa-times"></i>').prop('disabled', false);
+                        }
+                    }
+
+                    // Update search visual state
+                    function updateSearchState() {
+                        const searchValue = $('#search').val().trim();
+                        const $searchInput = $('#search');
+
+                        if (searchValue) {
+                            $searchInput.addClass('border-primary');
+                        } else {
+                            $searchInput.removeClass('border-primary');
+                        }
+                    }
+
+                    // Clear search button functionality
+                    function addClearSearchButton() {
+                        const searchValue = $('#search').val();
+                        const $searchGroup = $('#search').closest('.input-group');
+
+                        if (searchValue && searchValue.length > 0) {
+                            if (!$searchGroup.find('.clear-search-btn').length) {
+                                const clearBtn = $(`
+                                <button class="btn btn-outline-secondary clear-search-btn" type="button" title="Hapus pencarian">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            `);
+
+                                clearBtn.insertAfter('#search-button');
+
+                                // Clear button action - immediate reset
+                                clearBtn.on('click', function() {
+                                    $('#search').val('').focus();
+                                    debouncedSearch.cancel();
+                                    performSearch();
+                                });
+                            }
+                        } else {
+                            $searchGroup.find('.clear-search-btn').remove();
+                        }
+                    }
+
+                    // ========== FILTER FUNCTIONALITY ==========
                     $('#apply-filters').on('click', function() {
                         const jenisKegiatan = $('#filter-jenis-kegiatan').val();
                         updateUrlAndRedirect({
@@ -1175,10 +1229,6 @@
                         }
                     }
 
-                    $(document).ready(function() {
-                        $('[data-bs-toggle="tooltip"]').tooltip();
-                    });
-
                     // Highlight search term
                     function highlightSearchTerm() {
                         const searchTerm = "{{ request('search') }}";
@@ -1196,67 +1246,120 @@
                         }
                     }
 
-                    // Function to show/hide search loading
-                    function showSearchLoading(show) {
-                        const $searchButton = $('#search-button');
-                        const $searchInput = $('#search');
-
-                        if (show) {
-                            $searchButton.html('<i class="fas fa-spinner fa-spin"></i>');
-                            $searchInput.addClass('pe-5');
-                        } else {
-                            $searchButton.html('<i class="fas fa-search"></i>');
-                            $searchInput.removeClass('pe-5');
-                        }
-                    }
-
-                    // Clear search functionality
-                    function addClearSearchButton() {
-                        const searchValue = $('#search').val();
-                        const $searchGroup = $('#search').closest('.input-group');
-
-                        if (searchValue && searchValue.length > 0) {
-                            if (!$searchGroup.find('.clear-search-btn').length) {
-                                const clearBtn = $(`
-                                <button class="btn btn-outline-secondary clear-search-btn" type="button" title="Clear search">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            `);
-
-                                clearBtn.insertAfter('#search-button');
-
-                                clearBtn.on('click', function() {
-                                    $('#search').val('').focus();
-                                    performSearch();
-                                });
+                    // ========== KEYBOARD SHORTCUTS ==========
+                    // Global keyboard shortcuts
+                    $(document).on('keydown', function(e) {
+                        // Ctrl/Cmd + K atau "/" untuk focus search
+                        if (((e.ctrlKey || e.metaKey) && e.keyCode === 75) || e.keyCode === 191) {
+                            // Pastikan tidak dalam input lain atau modal
+                            if (!$(e.target).is('input, textarea, select') && !$('.modal.show').length) {
+                                e.preventDefault();
+                                $('#search').focus().select();
                             }
-                        } else {
-                            $searchGroup.find('.clear-search-btn').remove();
                         }
-                    }
-
-                    // Initialize highlight and filter count
-                    highlightSearchTerm();
-                    updateFilterCount();
-                    addClearSearchButton();
-
-                    // Update clear button on input change
-                    $('#search').on('input', function() {
-                        addClearSearchButton();
                     });
 
-                    // === DELETE FUNCTIONALITY === 
+                    // ========== WINDOW EVENTS ==========
+                    // Handle browser back/forward
+                    window.addEventListener('popstate', function(event) {
+                        debouncedSearch.cancel();
+                        showSearchLoading(false);
+                        location.reload();
+                    });
+
+                    // Re-sync search state when window gets focus
+                    $(window).on('focus', function() {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const urlSearch = urlParams.get('search') || '';
+                        const inputSearch = $('#search').val().trim();
+
+                        if (urlSearch !== inputSearch) {
+                            $('#search').val(urlSearch);
+                            updateSearchState();
+                            addClearSearchButton();
+                        }
+                    });
+
+                    window.destroyItem = function(button) {
+                        const route = button.dataset.route;
+
+                        Swal.fire({
+                            title: "Apakah Anda Yakin?",
+                            html: "<p style='text-align:center'>Setelah data laporan kegiatan dihapus, Anda tidak bisa mengembalikannya!</p>",
+                            icon: "warning",
+                            showCancelButton: true,
+                            reverseButtons: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Hapus!',
+                            cancelButtonText: 'Batalkan!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                Swal.fire({
+                                    title: 'Menghapus...',
+                                    text: 'Mohon tunggu',
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    willOpen: () => {
+                                        Swal.showLoading();
+                                    }
+                                });
+
+                                $.ajax({
+                                    url: route,
+                                    type: 'DELETE',
+                                    data: {
+                                        _token: $('meta[name="csrf-token"]').attr('content')
+                                    },
+                                    success: function(response) {
+                                        Swal.fire({
+                                            title: 'Berhasil!',
+                                            text: response.message ||
+                                                'Data laporan kegiatan berhasil dihapus',
+                                            icon: 'success',
+                                            timer: 2000,
+                                            showConfirmButton: false
+                                        });
+                                        location.reload(); // atau updateTable({}) jika pakai AJAX
+                                    },
+                                    error: function(xhr) {
+                                        Swal.close();
+                                        let msg = 'Gagal menghapus data.';
+                                        if (xhr.responseJSON && xhr.responseJSON.message) msg = xhr
+                                            .responseJSON.message;
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: msg,
+                                            icon: 'error'
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    };
+
+                    // ========== INITIALIZATION ==========
+                    // Initialize tooltips
+                    $('[data-bs-toggle="tooltip"]').tooltip();
+
+                    // Initialize states
+                    updateSearchState();
+                    addClearSearchButton();
+                    highlightSearchTerm();
+                    updateFilterCount();
+
+                    // Auto focus search if there's search parameter in URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get('search')) {
+                        $('#search').focus().select();
+                        updateSearchState();
+                    }
+
+                    // ========== DELETE FUNCTIONALITY ==========
                     let deleteId = null;
                     let deleteUrl = null;
 
-                    // Tambahkan script ini ke bagian JavaScript dalam section script
-
-                    // Handle view detail button click - UPDATE
-                    const kegiatanId = $(this).data('id');
-                    const kegiatanName = $(this).data('name') || 'Detail Kegiatan';
-                    const modal = $('#modal_detail_kegiatan');
-
-                    // Debugging: Log ID yang didapat
+                    // Handle view detail button click
                     $(document).on('click', '.view-detail-btn', function(e) {
                         e.preventDefault();
 
@@ -1264,35 +1367,26 @@
                         const kegiatanName = $(this).data('name') || 'Detail Kegiatan';
                         const modal = $('#modal_detail_kegiatan');
 
-                        // Debugging: Log ID yang didapat
                         console.log('Kegiatan ID:', kegiatanId);
 
-                        // Validasi ID
                         if (!kegiatanId) {
                             showDetailError('ID kegiatan tidak ditemukan');
                             return;
                         }
 
-                        // Reset modal content
                         $('#detail-kegiatan-content').html(`
-        <div class="text-center py-10">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-3 text-muted">Memuat detail kegiatan...</p>
-        </div>
-    `);
+                        <div class="text-center py-10">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Memuat detail kegiatan...</p>
+                        </div>
+                    `);
 
-                        // Show modal immediately
                         modal.modal('show');
 
-                        // PERBAIKAN: URL yang benar sesuai dengan route
-                        const ajaxUrl =
-                            `{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}/${kegiatanId}/detail-ajax`;
+                        const ajaxUrl = `{{ url('admin/laporan-lpj/kegiatan-lainnya') }}/${kegiatanId}`;
 
-                        console.log('AJAX URL:', ajaxUrl); // Debugging
-
-                        // Fetch detail via AJAX
                         $.ajax({
                             url: ajaxUrl,
                             type: 'GET',
@@ -1302,33 +1396,21 @@
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
                             success: function(response) {
-                                console.log('AJAX Response:', response); // Debugging
-
                                 if (response.success) {
                                     $('#detail-kegiatan-content').html(response.html);
 
-                                    // Update export button if available
                                     if (response.data && response.data.export_url) {
                                         $('#export-detail-btn').off('click').on('click', function() {
                                             window.open(response.data.export_url, '_blank');
                                         });
                                     }
 
-                                    // Initialize any additional functionality for the loaded content
                                     initializeModalContent();
-
                                 } else {
                                     showDetailError(response.message || 'Gagal memuat detail kegiatan');
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error('AJAX Error:', {
-                                    status: status,
-                                    error: error,
-                                    responseText: xhr.responseText,
-                                    xhr: xhr
-                                });
-
                                 let errorMessage = 'Gagal memuat detail kegiatan';
 
                                 if (status === 'timeout') {
@@ -1340,120 +1422,11 @@
                                     errorMessage = 'Terjadi kesalahan server. Silakan coba lagi.';
                                 } else if (xhr.responseJSON && xhr.responseJSON.message) {
                                     errorMessage = xhr.responseJSON.message;
-                                } else if (xhr.responseText) {
-                                    // Coba parse error dari Laravel
-                                    try {
-                                        const errorResponse = JSON.parse(xhr.responseText);
-                                        if (errorResponse.message) {
-                                            errorMessage = errorResponse.message;
-                                        }
-                                    } catch (e) {
-                                        // Jika tidak bisa di-parse, ambil sebagian text
-                                        errorMessage = xhr.responseText.substring(0, 100) + '...';
-                                    }
                                 }
 
                                 showDetailError(errorMessage);
                             }
                         });
-                    });
-
-                    // Function to show error in modal
-                    function showDetailError(message) {
-                        $('#detail-kegiatan-content').html(`
-        <div class="text-center py-10">
-            <i class="fas fa-exclamation-triangle text-warning fs-3x mb-4"></i>
-            <h4 class="text-dark mb-3">Oops! Terjadi Kesalahan</h4>
-            <p class="text-muted mb-4">${message}</p>
-            <button type="button" class="btn btn-primary" onclick="location.reload()">
-                <i class="fas fa-refresh me-1"></i>Muat Ulang Halaman
-            </button>
-        </div>
-    `);
-                    }
-
-                    // Function to initialize content in modal
-                    function initializeModalContent() {
-                        // Initialize tooltips in modal if any
-                        $('[data-bs-toggle="tooltip"]').tooltip();
-
-                        // Handle image click to show in larger view
-                        $('#detail-kegiatan-content').find('.image-input-wrapper').on('click', function() {
-                            const bgImage = $(this).css('background-image');
-                            if (bgImage && bgImage !== 'none') {
-                                const imageUrl = bgImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
-                                showImageModal(imageUrl);
-                            }
-                        });
-
-                        // Add smooth scroll behavior for modal content
-                        $('#detail-kegiatan-content').css('scroll-behavior', 'smooth');
-                    }
-
-                    // Function to show image in full view
-                    function showImageModal(imageUrl) {
-                        const imageModal = $(`
-        <div class="modal fade" id="imageViewModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Foto Jurnal</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body text-center p-0">
-                        <img src="${imageUrl}" class="img-fluid" style="max-height: 70vh;">
-                    </div>
-                    <div class="modal-footer">
-                        <a href="${imageUrl}" target="_blank" class="btn btn-primary">
-                            <i class="fas fa-external-link-alt me-1"></i>Buka di Tab Baru
-                        </a>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `);
-
-                        // Remove existing image modal if any
-                        $('#imageViewModal').remove();
-
-                        // Add to body and show
-                        $('body').append(imageModal);
-                        $('#imageViewModal').modal('show');
-
-                        // Clean up when modal is hidden
-                        $('#imageViewModal').on('hidden.bs.modal', function() {
-                            $(this).remove();
-                        });
-                    }
-
-                    // Handle modal cleanup when closed
-                    $('#modal_detail_kegiatan').on('hidden.bs.modal', function() {
-                        $('#detail-kegiatan-content').html(`
-        <div class="text-center py-10">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            <p class="mt-3 text-muted">Memuat detail kegiatan...</p>
-        </div>
-    `);
-
-                        // Reset export button
-                        $('#export-detail-btn').off('click');
-                    });
-
-                    // Handle keyboard shortcuts in modal
-                    $('#modal_detail_kegiatan').on('shown.bs.modal', function() {
-                        $(document).on('keydown.detailModal', function(e) {
-                            // ESC key to close modal
-                            if (e.keyCode === 27) {
-                                $('#modal_detail_kegiatan').modal('hide');
-                            }
-                        });
-                    });
-
-                    $('#modal_detail_kegiatan').on('hidden.bs.modal', function() {
-                        $(document).off('keydown.detailModal');
                     });
 
                     // Handle delete button click
@@ -1464,10 +1437,7 @@
                         const itemName = $(this).data('name');
                         deleteUrl = "{{ route('admin.laporan-lpj.kegiatan_lainnya.destroy', '') }}/" + deleteId;
 
-                        // Set item name in modal
                         $('#delete-item-name').text(itemName);
-
-                        // Show modal
                         $('#modal_delete_confirmation').modal('show');
                     });
 
@@ -1478,14 +1448,11 @@
                         const $btn = $(this);
                         const $modal = $('#modal_delete_confirmation');
 
-                        // Show loading state
                         $btn.attr('data-kt-indicator', 'on');
                         $btn.prop('disabled', true);
 
-                        // Create CSRF token
                         const token = $('meta[name="csrf-token"]').attr('content');
 
-                        // Perform AJAX delete
                         $.ajax({
                             url: deleteUrl,
                             type: 'POST',
@@ -1493,15 +1460,11 @@
                                 _method: 'DELETE',
                                 _token: token
                             },
-                            timeout: 10000, // 10 seconds timeout
+                            timeout: 10000,
                             success: function(response) {
-                                // Hide modal
                                 $modal.modal('hide');
-
-                                // Show success notification
                                 showSuccessToast('✔️ Data berhasil dihapus.');
 
-                                // Remove row from table with animation
                                 const $row = $(`tr:has(button[data-id="${deleteId}"])`);
                                 $row.fadeOut(500, function() {
                                     $(this).remove();
@@ -1509,17 +1472,13 @@
                                     checkEmptyTable();
                                 });
 
-                                // Reset states
                                 resetDeleteState($btn);
-
                             },
                             error: function(xhr, status, error) {
-                                // Hide modal
                                 $modal.modal('hide');
 
                                 let errorMessage = '❌ Gagal menghapus data. Silakan coba lagi.';
 
-                                // Handle different error types
                                 if (status === 'timeout') {
                                     errorMessage = '❌ Koneksi timeout. Silakan coba lagi.';
                                 } else if (xhr.status === 500) {
@@ -1531,10 +1490,7 @@
                                     errorMessage = '❌ ' + xhr.responseJSON.message;
                                 }
 
-                                // Show error notification (create error toast if doesn't exist)
                                 showErrorToast(errorMessage);
-
-                                // Reset states
                                 resetDeleteState($btn);
                             }
                         });
@@ -1548,7 +1504,66 @@
                         deleteUrl = null;
                     });
 
-                    // Helper functions for delete
+                    // ========== HELPER FUNCTIONS ==========
+                    function showDetailError(message) {
+                        $('#detail-kegiatan-content').html(`
+                        <div class="text-center py-10">
+                            <i class="fas fa-exclamation-triangle text-warning fs-3x mb-4"></i>
+                            <h4 class="text-dark mb-3">Oops! Terjadi Kesalahan</h4>
+                            <p class="text-muted mb-4">${message}</p>
+                            <button type="button" class="btn btn-primary" onclick="location.reload()">
+                                <i class="fas fa-refresh me-1"></i>Muat Ulang Halaman
+                            </button>
+                        </div>
+                    `);
+                    }
+
+                    function initializeModalContent() {
+                        $('[data-bs-toggle="tooltip"]').tooltip();
+
+                        $('#detail-kegiatan-content').find('.image-input-wrapper').on('click', function() {
+                            const bgImage = $(this).css('background-image');
+                            if (bgImage && bgImage !== 'none') {
+                                const imageUrl = bgImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+                                showImageModal(imageUrl);
+                            }
+                        });
+
+                        $('#detail-kegiatan-content').css('scroll-behavior', 'smooth');
+                    }
+
+                    function showImageModal(imageUrl) {
+                        const imageModal = $(`
+                        <div class="modal fade" id="imageViewModal" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Foto Jurnal</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body text-center p-0">
+                                        <img src="${imageUrl}" class="img-fluid" style="max-height: 70vh;">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="${imageUrl}" target="_blank" class="btn btn-primary">
+                                            <i class="fas fa-external-link-alt me-1"></i>Buka di Tab Baru
+                                        </a>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+
+                        $('#imageViewModal').remove();
+                        $('body').append(imageModal);
+                        $('#imageViewModal').modal('show');
+
+                        $('#imageViewModal').on('hidden.bs.modal', function() {
+                            $(this).remove();
+                        });
+                    }
+
                     function resetDeleteState($btn) {
                         $btn.attr('data-kt-indicator', 'off');
                         $btn.prop('disabled', false);
@@ -1561,7 +1576,6 @@
                     }
 
                     function showErrorToast(message) {
-                        // Check if error toast exists, if not create it
                         if (!$('#toast-error').length) {
                             const errorToast = `
                             <div id="toast-error" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
@@ -1606,16 +1620,38 @@
                         }
                     }
 
-                    // Handle browser back/forward
-                    window.addEventListener('popstate', function(event) {
-                        location.reload();
+                    // Modal cleanup handlers
+                    $('#modal_detail_kegiatan').on('hidden.bs.modal', function() {
+                        $('#detail-kegiatan-content').html(`
+                        <div class="text-center py-10">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Memuat detail kegiatan...</p>
+                        </div>
+                    `);
+                        $('#export-detail-btn').off('click');
                     });
 
-                    // Auto focus search if there's search parameter in URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    if (urlParams.get('search')) {
-                        $('#search').focus();
-                    }
+                    $('#modal_detail_kegiatan').on('shown.bs.modal', function() {
+                        $(document).on('keydown.detailModal', function(e) {
+                            if (e.keyCode === 27) {
+                                $('#modal_detail_kegiatan').modal('hide');
+                            }
+                        });
+                    });
+
+                    $('#modal_detail_kegiatan').on('hidden.bs.modal', function() {
+                        $(document).off('keydown.detailModal');
+                    });
+
+                    console.log('✅ Search auto-reset functionality initialized');
+                    console.log('📝 Features enabled:');
+                    console.log('   - Auto-reset when search is cleared (300ms delay)');
+                    console.log('   - Normal search with 800ms debounce');
+                    console.log('   - Keyboard shortcuts: Esc to clear, Ctrl+K to focus');
+                    console.log('   - Visual feedback and loading states');
+                    console.log('   - Unified input handling (keyup, input, paste)');
                 });
             </script>
         @endif
