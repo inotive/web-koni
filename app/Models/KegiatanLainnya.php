@@ -24,7 +24,8 @@ class KegiatanLainnya extends Model
         'status_approval',
         'approved_at',
         'approved_by',
-        'approval_notes'
+        'catatan_approval',  // sesuaikan dengan controller
+        'approval_notes'     // untuk fleksibilitas future
     ];
 
     protected $casts = [
@@ -49,7 +50,7 @@ class KegiatanLainnya extends Model
 
     public function isPending(): bool
     {
-        return $this->status_approval === 'pending';
+        return $this->status_approval === 'pending' || is_null($this->status_approval);
     }
 
     public function isRejected(): bool
@@ -65,11 +66,47 @@ class KegiatanLainnya extends Model
 
     public function scopePending($query)
     {
-        return $query->where('status_approval', 'pending');
+        return $query->where(function($q) {
+            $q->where('status_approval', 'pending')
+              ->orWhereNull('status_approval');
+        });
     }
 
     public function scopeRejected($query)
     {
         return $query->where('status_approval', 'rejected');
+    }
+
+    // Accessor untuk format currency
+    public function getFormattedJumlahHargaSatuanAttribute()
+    {
+        return 'Rp ' . number_format($this->jumlah_harga_satuan, 0, ',', '.');
+    }
+
+    public function getFormattedJumlahHargaAttribute()
+    {
+        return 'Rp ' . number_format($this->jumlah_harga, 0, ',', '.');
+    }
+
+    // Accessor untuk status approval dalam bahasa Indonesia
+    public function getStatusApprovalTextAttribute()
+    {
+        return match($this->status_approval) {
+            'approved' => 'Disetujui',
+            'rejected' => 'Ditolak',
+            'pending' => 'Menunggu Persetujuan',
+            default => 'Menunggu Persetujuan'
+        };
+    }
+
+    // Accessor untuk status badge class
+    public function getStatusBadgeClassAttribute()
+    {
+        return match($this->status_approval) {
+            'approved' => 'badge-light-success',
+            'rejected' => 'badge-light-danger',
+            'pending' => 'badge-light-warning',
+            default => 'badge-light-warning'
+        };
     }
 }

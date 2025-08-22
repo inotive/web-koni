@@ -1,44 +1,91 @@
-    @extends('layouts.app')
+@extends('layouts.app')
 
-    @section('pageTitle', 'Manajemen File')
-    @section('mainSection', 'File Kesekretariat')
+@section('pageTitle', 'Manajemen File')
+@section('mainSection', 'File Kesekretariat')
+@section('currentSection', 'File Kesekretariat')
 
-    @section('breadcrumb-title')
-    @endsection
-
-    @section('breadcrumb-items')
-    @endsection
-
-    @section('content')
-
-    
-        <style>
-
-/* BASIC STYLING */
+@section('style')
+    <style>
+        /* =================================
+   BASIC LAYOUT & COLORS - UPDATED
+================================= */
 body {
-    background-color: #f5f5f5;
+    background-color: #ffffff; /* Changed from #f5f5f5 to white like file 1 */
 }
 
-/* Basic table styling */
-table td,
-table th {
-    vertical-align: middle;
-    word-wrap: break-word;
-    max-width: 200px;
+.card {
+    overflow: visible !important;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    background-color: #ffffff; /* Ensure card background is white */
 }
 
-.object-fit-cover {
-    object-fit: cover;
+.card-body {
+    overflow: visible !important;
+    background-color: #ffffff; /* Ensure card body background is white */
 }
 
-/* HEADER TABLE - TENGAH & STYLING */
+/* =================================
+   FILTER & SEARCH CONTAINER
+================================= */
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    position: relative;
+    width: 250px;
+}
+
+.search-input {
+    padding-left: 45px !important;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.search-loading {
+    display: none;
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+/* =================================
+   TABLE STYLING - UPDATED TO MATCH FILE 1
+================================= */
+.table-responsive {
+    overflow: visible !important;
+    background-color: #ffffff; /* White background */
+}
+
+.table-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Table Headers - Updated to match file 1 gray styling */
 .table thead th {
     text-align: center !important;
     vertical-align: middle !important;
-    background-color: #f8f9fa;
+    background-color: #f8f9fa !important; /* Gray background like file 1 */
     border-bottom: 2px solid #e9ecef;
     font-weight: 600;
     color: #495057;
+    padding: 1rem 0.75rem; /* Added consistent padding */
 }
 
 .table thead th a {
@@ -47,7 +94,20 @@ table th {
     text-decoration: none;
 }
 
-/* COLUMN WIDTHS - 4 KOLOM */
+/* Basic table cells */
+.table {
+    background-color: #ffffff; /* White table background */
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+    word-wrap: break-word;
+    max-width: 200px;
+    background-color: #ffffff; /* White cell background */
+}
+
+/* Column Width Configuration - 4 Columns */
 .table th:nth-child(1),
 .table td:nth-child(1) {
     width: 3% !important;
@@ -58,18 +118,25 @@ table th {
     font-weight: 700 !important;
     line-height: 1.2;
     min-width: 40px;
+    background-color: #ffffff; /* White background */
 }
 
 .table th:nth-child(2),
 .table td:nth-child(2) {
     width: 40% !important;
     padding: 0.75rem !important;
+    max-width: 30% !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: #ffffff; /* White background */
 }
 
 .table th:nth-child(3),
 .table td:nth-child(3) {
     width: 35% !important;
     padding: 0.75rem !important;
+    background-color: #ffffff; /* White background */
 }
 
 .table th:nth-child(4),
@@ -79,12 +146,80 @@ table th {
     max-width: 6% !important;
     text-align: center;
     padding: 0.5rem 0.25rem !important;
+    background-color: #ffffff; /* White background */
 }
 
+/* Table Row Hover Effects */
+.table tbody {
+    position: relative;
+    z-index: 1;
+    background-color: #ffffff; /* White background */
+}
+
+.table tbody tr {
+    position: relative;
+    transition: all 0.2s ease;
+    background-color: #ffffff; /* White background */
+}
+
+.table tbody tr:hover {
+    z-index: 10;
+    background-color: rgba(248, 40, 90, 0.03);
+}
+
+/* =================================
+   SORTING FUNCTIONALITY
+================================= */
+.table th.sortable {
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s ease;
+    background-color: #f8f9fa !important; /* Ensure gray background is maintained */
+}
+
+.table th.sortable:hover {
+    background-color: #e9ecef !important; /* Darker gray on hover */
+}
+
+.table th.sortable .d-flex {
+    justify-content: center !important;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-icon {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.sort-icon i {
+    transition: color 0.2s ease;
+}
+
+.table th.sortable:hover .sort-icon i {
+    color: #F8285A;
+}
+
+/* =================================
+   DOCUMENT DISPLAY
+================================= */
 .document-info {
     display: flex;
     flex-direction: column;
     gap: 4px;
+}
+
+.document-name-display {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.document-name-display > .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 4px;
 }
 
 .document-name {
@@ -99,7 +234,7 @@ table th {
 }
 
 .document-name:hover {
-    color: #1B84FF;
+    color: #F8285A;
     text-decoration: underline;
 }
 
@@ -120,12 +255,9 @@ table th {
     cursor: default !important;
 }
 
-.text-truncate-custom {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
+/* =================================
+   FILE LINK STYLING
+================================= */
 .file-link {
     color: #495057;
     text-decoration: none;
@@ -140,9 +272,9 @@ table th {
 }
 
 .file-link:hover {
-    color: #1B84FF;
-    background: #f0f8ff;
-    border-color: #1B84FF;
+    color: #F8285A;
+    background: #fdf2f4;
+    border-color: #F8285A;
     text-decoration: none;
     transform: translateY(-1px);
 }
@@ -151,18 +283,15 @@ table th {
     margin-right: 6px;
 }
 
-.card {
-    overflow: visible !important;
-}
+/* File Icon Colors */
+.file-icon-pdf { color: #dc3545; }
+.file-icon-doc { color: #0d6efd; }
+.file-icon-xls { color: #198754; }
+.file-icon-default { color: #6c757d; }
 
-.card-body {
-    overflow: visible !important;
-}
-
-.table-responsive {
-    overflow: visible !important;
-}
-
+/* =================================
+   DROPDOWN ACTION MENU
+================================= */
 .dropdown-action {
     position: relative;
     z-index: 1;
@@ -185,15 +314,15 @@ table th {
 }
 
 .dropdown-toggle-action:hover {
-    background-color: #f0f8ff !important;
-    border-color: #1B84FF !important;
+    background-color: #fdf2f4 !important;
+    border-color: #F8285A !important;
     transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(27, 132, 255, 0.2);
+    box-shadow: 0 3px 8px rgba(248, 40, 90, 0.2);
 }
 
 .dropdown-toggle-action:focus {
     outline: none !important;
-    box-shadow: 0 0 0 3px rgba(27, 132, 255, 0.2) !important;
+    box-shadow: 0 0 0 3px rgba(248, 40, 90, 0.2) !important;
 }
 
 .dropdown-toggle-action svg {
@@ -239,7 +368,7 @@ table th {
 
 .dropdown-item-action:hover {
     background-color: #f8f9fa !important;
-    color: #1B84FF !important;
+    color: #F8285A !important;
     transform: translateX(4px) !important;
 }
 
@@ -250,6 +379,7 @@ table th {
     flex-shrink: 0 !important;
 }
 
+/* Dropdown positioning for last rows */
 .table tbody tr:nth-last-child(-n+2) .dropdown-menu-action {
     top: auto !important;
     bottom: 100% !important;
@@ -257,57 +387,67 @@ table th {
     margin-bottom: 6px !important;
 }
 
-.table tbody {
-    position: relative;
-    z-index: 1;
+/* =================================
+   MAIN CONTAINER WHITE BACKGROUND
+================================= */
+.container {
+    background-color: #ffffff; /* White background for main container */
+    border-radius: 8px;
+    padding: 1.5rem;
 }
 
-.table tbody tr {
-    position: relative;
+.d-grid {
+    background-color: #ffffff; /* White background for grid container */
+}
+
+/* =================================
+   BUTTONS & FORM CONTROLS
+================================= */
+.custom-red-button,
+.btn-active-light-danger {
+    background-color: #F8285A !important;
+    border-color: #F8285A !important;
+    color: white !important;
+    font-weight: 600;
     transition: all 0.2s ease;
 }
 
-.table tbody tr:hover {
-    z-index: 10;
-    background-color: rgba(27, 132, 255, 0.03);
+.custom-red-button:hover,
+.btn-active-light-danger:hover {
+    background-color: #e1244e !important;
+    border-color: #e1244e !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(248, 40, 90, 0.3);
 }
 
-.search-loading {
-    display: none;
-    position: absolute;
-    right: 40px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 12px 16px;
+    transition: all 0.2s ease;
+    background-color: #ffffff; /* White background */
 }
 
-.search-container {
-    position: relative;
+.form-control:focus {
+    border-color: #F8285A;
+    box-shadow: 0 0 0 3px rgba(248, 40, 90, 0.1);
+    background-color: #ffffff; /* Maintain white background on focus */
 }
 
-.empty-state {
-    padding: 4rem 2rem;
-    text-align: center;
-    color: #6c757d;
+.is-invalid {
+    border-color: #dc3545;
 }
 
-.empty-state i {
-    font-size: 4rem;
-    color: #dee2e6;
-    margin-bottom: 1.5rem;
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 4px;
 }
 
-.empty-state h4 {
-    color: #495057;
-    margin-bottom: 1rem;
-    font-weight: 600;
-}
-
-.empty-state p {
-    color: #6c757d;
-    margin-bottom: 1.5rem;
-}
-
+/* =================================
+   PAGINATION
+================================= */
 .pagination-wrapper {
     margin-top: 1.5rem;
     display: flex;
@@ -315,6 +455,7 @@ table th {
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
+    background-color: #ffffff; /* White background */
 }
 
 .pagination-info {
@@ -352,18 +493,19 @@ table th {
     min-width: 40px;
     text-align: center;
     transition: all 0.2s ease;
+    background-color: #ffffff; /* White background */
 }
 
 .page-item.active .page-link {
-    background-color: #1B84FF;
-    border-color: #1B84FF;
+    background-color: #F8285A;
+    border-color: #F8285A;
     color: white;
 }
 
 .page-item:not(.disabled) .page-link:hover {
-    background-color: #f0f8ff;
-    border-color: #1B84FF;
-    color: #1B84FF;
+    background-color: #fdf2f4;
+    border-color: #F8285A;
+    color: #F8285A;
 }
 
 .page-item.disabled .page-link {
@@ -381,51 +523,68 @@ table th {
     border-top: 1px solid #e9ecef;
     flex-wrap: wrap;
     gap: 1rem;
+    background-color: #ffffff; /* White background */
 }
 
-.table th.sortable {
+/* =================================
+   DROPZONE STYLING
+================================= */
+.dropzone {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
     cursor: pointer;
-    position: relative;
-    transition: background-color 0.2s ease;
 }
 
-.table th.sortable:hover {
-    background-color: #e9ecef;
+.dropzone:hover,
+.dropzone.drag-over {
+    border-color: #F8285A;
+    background-color: #fdf2f4;
 }
 
-.table th.sortable .d-flex {
-    justify-content: center !important;
-    align-items: center;
-    gap: 8px;
+.dropzone.error {
+    border-color: #dc3545;
+    background-color: #f8d7da;
 }
 
-.sort-icon {
-    font-size: 12px;
+.dz-message {
+    padding: 2rem;
+    text-align: center;
     color: #6c757d;
 }
 
-.sort-icon i {
-    transition: color 0.2s ease;
+.file-preview {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: white;
 }
 
-.table th.sortable:hover .sort-icon i {
-    color: #1B84FF;
+/* =================================
+   MODALS & TOASTS
+================================= */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff; /* White background */
 }
 
-.file-icon-pdf {
-    color: #dc3545;
+.modal-header {
+    border-bottom: 1px solid #eee;
+    padding: 20px 24px;
+    background-color: #ffffff; /* White background */
 }
 
-.file-icon-doc {
-    color: #0d6efd;
+.modal-body {
+    padding: 24px;
+    background-color: #ffffff; /* White background */
 }
 
-.file-icon-xls {
-    color: #198754;
-}
-
-.file-icon-default {
-    color: #6c757d;
+.modal-footer {
+    border-top: 1px solid #eee;
+    padding: 16px 24px;
+    background-color: #ffffff; /* White background */
 }
 
 .toast-container {
@@ -443,13 +602,8 @@ table th {
     border-radius: 8px;
 }
 
-.toast.success {
-    border-left-color: #28a745;
-}
-
-.toast.error {
-    border-left-color: #dc3545;
-}
+.toast.success { border-left-color: #28a745; }
+.toast.error { border-left-color: #dc3545; }
 
 .toast-header {
     background-color: transparent;
@@ -462,42 +616,84 @@ table th {
     font-size: 14px;
 }
 
-.modal-content {
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+/* =================================
+   EMPTY STATE & LOADING
+================================= */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #6c757d;
+    background-color: #ffffff; /* White background */
 }
 
-.modal-header {
-    border-bottom: 1px solid #eee;
-    padding: 20px 24px;
+.empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1.5rem;
 }
 
-.modal-body {
-    padding: 24px;
+.empty-state h4 {
+    color: #495057;
+    margin-bottom: 1rem;
+    font-weight: 600;
 }
 
-.modal-footer {
-    border-top: 1px solid #eee;
-    padding: 16px 24px;
+.empty-state p {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
 }
 
-.custom-red-button {
-    background-color: #F8285A;
-    border-color: #F8285A;
-    color: white;
-    transition: all 0.2s ease;
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    background-color: #ffffff; /* White background */
 }
 
-.custom-red-button:hover {
-    background-color: #e11e48;
-    border-color: #e11e48;
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(248, 40, 90, 0.3);
+.loading-spinner .spinner-border {
+    width: 2.5rem;
+    height: 2.5rem;
+    color: #F8285A;
 }
 
+/* =================================
+   UTILITY CLASSES
+================================= */
+.text-truncate-custom {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.object-fit-cover {
+    object-fit: cover;
+}
+
+/* =================================
+   PAGE BACKGROUND OVERRIDE
+================================= */
+html,
+body,
+.app,
+.main-content {
+    background-color: #ffffff !important; /* Force white background for entire page */
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+================================= */
 @media (max-width: 768px) {
+    .filter-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .search-container {
+        width: 100%;
+    }
+
     .dropdown-menu-action {
         right: 0 !important;
         left: auto !important;
@@ -509,14 +705,14 @@ table th {
         overflow-x: auto !important;
         overflow-y: visible !important;
     }
-    
+
     .table tbody tr:nth-child(n+2) .dropdown-menu-action {
         top: auto !important;
         bottom: 100% !important;
         margin-top: 0 !important;
         margin-bottom: 6px !important;
     }
-    
+
     .table tbody tr:first-child .dropdown-menu-action {
         top: 100% !important;
         bottom: auto !important;
@@ -524,32 +720,38 @@ table th {
         margin-bottom: 0 !important;
     }
 
+    /* Mobile Column Widths */
     .table th:nth-child(1),
     .table td:nth-child(1) {
         width: 5% !important;
         font-size: 0.8rem !important;
+        background-color: #ffffff; /* White background */
     }
 
     .table th:nth-child(2),
     .table td:nth-child(2) {
         width: 45% !important;
+        background-color: #ffffff; /* White background */
     }
 
     .table th:nth-child(3),
     .table td:nth-child(3) {
         width: 35% !important;
+        background-color: #ffffff; /* White background */
     }
 
     .table th:nth-child(4),
     .table td:nth-child(4) {
         width: 8% !important;
         min-width: 60px !important;
+        background-color: #ffffff; /* White background */
     }
 
     .table-footer {
         flex-direction: column;
         align-items: stretch;
         gap: 1rem;
+        background-color: #ffffff; /* White background */
     }
 
     .pagination-controls {
@@ -576,174 +778,128 @@ table th {
     .text-truncate-custom {
         max-width: 150px;
     }
+
+    .container {
+        background-color: #ffffff !important; /* White background on mobile */
+    }
 }
-
-.table-loading {
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.loading-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 3rem;
-}
-
-.loading-spinner .spinner-border {
-    width: 2.5rem;
-    height: 2.5rem;
-    color: #1B84FF;
-}
-
-/* Kolom nama dokumen dipaksa 30% dan bisa dipotong */
-.table td:nth-child(2) {
-    max-width: 30% !important;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Wrapper flex supaya "mau" menciut */
-.document-name-display {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-}
-
-/* Teksnya sendiri dipotong kalau panjang */
-.document-name-display > .text-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding-right: 4px;
-}
-
-        </style>
-
-        <div class="d-flex flex-column mb-8">
-    <h1 class="text-dark fw-bold mb-1">File Kesekretariat</h1>
-    <div class="text-muted fw-semibold fs-6">Manajemen File Dokumen Kesekretariat Anda Sekarang</div>
-</div>
-
-<div class="toast-container" id="toast-container"></div>
-
-<div class="row col-12 mt-5">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-3">
-            <div class="d-flex flex-column">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar File Kesekretariat - 2025</h3>
-                <span class="text-muted fs-6">
-                    Menampilkan <span id="showing-start">1</span>-<span id="showing-end">{{ $files->count() }}</span> dari <b>{{ $files->total() }}</b> data
-                </span>
-            </div>
-            <div class="d-flex align-items-center gap-8 flex-wrap ms-auto">
-                <button type="button" data-bs-toggle="modal" data-bs-target="#tambahFileModal"
-                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
-                    Tambah File
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_851_8468)">
-                            <path
-                                d="M12.3782 17.0625H5.61375C4.37344 17.0582 3.18528 16.5631 2.309 15.6853C1.43272 14.8075 0.939624 13.6185 0.9375 12.3782V5.62182C0.939624 4.38151 1.43272 3.19249 2.309 2.3147C3.18528 1.43692 4.37344 0.941767 5.61375 0.937507H12.3701C12.9853 0.936447 13.5946 1.05656 14.1633 1.29099C14.7321 1.52542 15.2491 1.86958 15.6848 2.30381C16.1205 2.73804 16.4664 3.25384 16.7028 3.82176C16.9392 4.38968 17.0614 4.9986 17.0625 5.61375V12.3701C17.0636 12.986 16.9432 13.596 16.7082 14.1652C16.4733 14.7345 16.1284 15.2518 15.6933 15.6876C15.2583 16.1235 14.7415 16.4692 14.1727 16.7052C13.6038 16.9411 12.994 17.0625 12.3782 17.0625ZM13.0312 8.19375H9.80625V4.96876C9.80625 4.75492 9.7213 4.54985 9.5701 4.39865C9.4189 4.24745 9.21383 4.16251 9 4.16251C8.78617 4.16251 8.58109 4.24745 8.42989 4.39865C8.27869 4.54985 8.19375 4.75492 8.19375 4.96876V8.19375H4.96875C4.75492 8.19375 4.54984 8.2787 4.39864 8.4299C4.24744 8.5811 4.1625 8.78617 4.1625 9C4.1625 9.21383 4.24744 9.41891 4.39864 9.57011C4.54984 9.72131 4.75492 9.80625 4.96875 9.80625H8.19375V13.0313C8.19375 13.2451 8.27869 13.4502 8.42989 13.6014C8.58109 13.7526 8.78617 13.8375 9 13.8375C9.21383 13.8375 9.4189 13.7526 9.5701 13.6014C9.7213 13.4502 9.80625 13.2451 9.80625 13.0313V9.80625H13.0312C13.2451 9.80625 13.4501 9.72131 13.6013 9.57011C13.7526 9.41891 13.8375 9.21383 13.8375 9C13.8375 8.78617 13.7526 8.5811 13.6013 8.4299C13.4501 8.2787 13.2451 8.19375 13.0312 8.19375Z"
-                                fill="white" />
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_851_8468">
-                                <rect width="18" height="18" fill="white" />
-                            </clipPath>
-                        </defs>
-                    </svg>
-                </button>
-
-                <div class="d-flex align-items-center gap-7 flex-wrap">
-                    <div class="search-container">
-                        <div class="input-group border rounded" style="width: 200px;">
-                            <span class="input-group-text bg-transparent border-0">
-                                <i class="fas fa-search"></i>
-                            </span>
-                            <input type="search" name="search" id="search" class="form-control border-0 py-2"
-                                placeholder="Cari nama dokumen..." value="{{ request('search') }}"
-                                autocomplete="off">
-                            <div class="search-loading">
-                                <i class="fas fa-spinner fa-spin"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card-body" id="tableContainer">
-            @include('admin.file-kesekretariat._table', ['files' => $files])
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="tambahFileModal" tabindex="-1" aria-labelledby="tambahFileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 gap-5 px-10 py-8">
-            <div class="d-flex justify-content-between align-items-center gap-2">
-                <div class="fs-2 fw-bold text-truncate leading-5" id="modalTitle">Tambah File Kesekretariat</div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <form id="tambahFileForm" method="POST" action="{{ route('admin.file-kesekretariat.store') }}" enctype="multipart/form-data" class="d-grid gap-4">
-                @csrf
-
-                <div>
-                    <div class="fw-semibold required mb-3 text-gray-800">Nama Dokumen</div>
-                    <input type="text" 
-                           name="nama_dokumen" 
-                           placeholder="Masukkan nama dokumen"
-                           class="form-control bg-light border border-gray-400" 
-                           required>
-                    <div class="invalid-feedback" id="nama_dokumen_error"></div>
-                </div>
-
-                <div>
-                    <div class="fw-semibold required mb-3 text-gray-800">Tanggal Dokumen</div>
-                    <input type="date" 
-                           name="tanggal_dokumen" 
-                           class="form-control bg-light border border-gray-400" 
-                           required>
-                    <div class="invalid-feedback" id="tanggal_dokumen_error"></div>
-                    <div class="form-text text-muted">
-                        <i class="fas fa-info-circle me-1"></i>
-                        Pilih tanggal pembuatan atau tanggal berlaku dokumen
-                    </div>
-                </div>
-
-                <div>
-                    <div class="fw-semibold required mb-3 text-gray-800">File Dokumen</div>
-                    <div class="dropzone" id="dropzone-tambahFileForm">
-                        <div class="dz-message needsclick">
-                            <i class="ki-duotone ki-file-up fs-3x text-primary">
-                                <span class="path1"></span><span class="path2"></span>
-                            </i>
-                            <div class="ms-4">
-                                <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
-                                <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB.</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="invalid-feedback" id="dokumen_file_error"></div>
-                </div>
-            </form>
-
-             <div class="d-grid py-4">
-                <button type="button" onclick="submitForm('tambahFileForm')" id="submitBtn"
-                    class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                    <i class="fas fa-save me-1"></i>Simpan File
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+    </style>
 @endsection
 
+@section('content')
+    <div class="d-grid gap-5 border-0">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center container">
+            <div class="d-none d-md-block">
+                <h1>File Kesekretariat</h1>
+                <span>Manajemen File Dokumen Kesekretariat Anda Sekarang</span>
+            </div>
 
-    @section('script')
+            <!-- Filter Form -->
+            <form id="filter" class="d-flex gap-3 filter-container">
+                <button type="button" id="tambahFileBtn"
+                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
+                    <span>Tambah File</span>
+                </button>
+
+                <div class="search-container">
+                    <div class="position-relative bg-light">
+                        <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
+                        <input type="text" name="search" value="{{ request('search') }}" 
+                               placeholder="Cari nama dokumen..."
+                               class="form-control border border-gray-500 py-2 search-input" />
+                        <div class="search-loading">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container">
+    <h3 class="fw-bold fs-4 mb-3">Daftar File Kesekretariat - 2025</h3>
+    <div id="tableContainer">
+        @include('admin.file-kesekretariat._table', ['files' => $files])
+    </div>
+</div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Add File Modal -->
+    <div class="modal fade" id="tambahFileModal" tabindex="-1" aria-labelledby="tambahFileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div class="fs-2 fw-bold text-truncate leading-5" id="modalTitle">Tambah File Kesekretariat</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="tambahFileForm" method="POST" action="{{ route('admin.file-kesekretariat.store') }}" 
+                      enctype="multipart/form-data" class="d-grid gap-4">
+                    @csrf
+
+                    <!-- Document Name Field -->
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Nama Dokumen</div>
+                        <input type="text" 
+                               name="nama_dokumen" 
+                               placeholder="Masukkan nama dokumen"
+                               class="form-control bg-light border border-gray-400" 
+                               required>
+                        <div class="invalid-feedback" id="nama_dokumen_error"></div>
+                    </div>
+
+                    <!-- Document Date Field -->
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Tanggal Dokumen</div>
+                        <input type="date" 
+                               name="tanggal_dokumen" 
+                               class="form-control bg-light border border-gray-400" 
+                               required>
+                        <div class="invalid-feedback" id="tanggal_dokumen_error"></div>
+                        <div class="form-text text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Pilih tanggal pembuatan atau tanggal berlaku dokumen
+                        </div>
+                    </div>
+
+                    <!-- File Upload Field -->
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">File Dokumen</div>
+                        <div class="dropzone" id="dropzone-tambahFileForm">
+                            <div class="dz-message needsclick">
+                                <i class="ki-duotone ki-file-up fs-3x text-primary">
+                                    <span class="path1"></span><span class="path2"></span>
+                                </i>
+                                <div class="ms-4">
+                                    <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
+                                    <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invalid-feedback" id="dokumen_file_error"></div>
+                    </div>
+                </form>
+
+                <!-- Submit Button -->
+                <div class="d-grid py-4">
+                    <button type="button" onclick="submitForm('tambahFileForm')" id="submitBtn"
+                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                        <i class="fas fa-save me-1"></i>Simpan File
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+@endsection
+
+@section('script')
 <script>
 function deleteFile(fileId, fileName, deleteUrl) {
     Swal.fire({
@@ -834,7 +990,7 @@ function showNotification(message, type = 'success') {
     const bgColor = type === 'success' ? 'success' : 'error';
     
     const toastHtml = `
-        <div class="toast ${bgColor}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+                    <div class="toast ${bgColor}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
             <div class="toast-header">
                 <i class="fas fa-${icon} me-2 ${type === 'success' ? 'text-success' : 'text-danger'}"></i>
                 <strong class="me-auto">${type === 'success' ? 'Berhasil' : 'Error'}</strong>
@@ -872,24 +1028,26 @@ function getFileIcon(extension) {
 // Fungsi untuk menambahkan ikon file
 function addFileIcons() {
     $('.file-link').each(function() {
-        const fileName = $(this).text().trim();
-        const extension = fileName.split('.').pop();
-        const iconClass = getFileIcon(extension);
+        if ($(this).find('i').length === 0) {
+            const fileName = $(this).text().trim();
+            const extension = fileName.split('.').pop();
+            const iconClass = getFileIcon(extension);
 
-        // Tambahkan ikon sebelum nama file
-        $(this).prepend(`<i class="${iconClass}"></i>`);
+            // Tambahkan ikon sebelum nama file
+            $(this).prepend(`<i class="${iconClass}"></i>`);
+        }
     });
 }
 
-$(document).ready(function() {
-    // Panggil fungsi untuk menambahkan ikon
-    addFileIcons();
-
-    // Tambahkan juga di callback success AJAX search
-    $(document).ajaxSuccess(function() {
-        addFileIcons();
-    });
-});
+function debounce(func, delay) {
+    let timeout;
+    return function() {
+        const context = this,
+            args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+    };
+}
 
 // Fixed JavaScript code for file management
 $(document).ready(function() {
@@ -928,8 +1086,22 @@ $(document).ready(function() {
         });
     }
 
+    // Untuk dropdown baru (kalau pakai .dropdown-toggle-custom)
+$(document).on('click', '.dropdown-toggle-custom', function (e) {
+    e.stopPropagation();
+    const $menu = $(this).next('.dropdown-menu-custom');
+    $('.dropdown-menu-custom').not($menu).removeClass('show');
+    $menu.toggleClass('show');
+});
+
+$(document).on('click', function () {
+    $('.dropdown-menu-custom').removeClass('show');
+});
+
     function initializeCustomDropzone() {
         const dropzoneElement = document.getElementById('dropzone-tambahFileForm');
+        if (!dropzoneElement) return;
+        
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.name = 'dokumen_file';
@@ -1103,43 +1275,6 @@ $(document).ready(function() {
     // Make removeSelectedFile globally available
     window.removeSelectedFile = removeSelectedFile;
 
-    // Reset modal when closed
-    $('#tambahFileModal').on('hidden.bs.modal', function() {
-        $('#tambahFileForm').trigger('reset');
-        clearFormErrors();
-        removeSelectedFile(); // Reset file selection
-    });
-
-    // Initialize dropzone when modal is shown
-    $('#tambahFileModal').on('shown.bs.modal', function() {
-        initializeCustomDropzone();
-    });
-        
-    // Get file icon based on file type
-    function getFileIcon(fileType) {
-        const icons = {
-            'pdf': 'fas fa-file-pdf text-danger',
-            'doc': 'fas fa-file-word text-primary',
-            'docx': 'fas fa-file-word text-primary',
-            'xls': 'fas fa-file-excel text-success',
-            'xlsx': 'fas fa-file-excel text-success',
-            'default': 'fas fa-file-alt text-secondary'
-        };
-        return icons[fileType.toLowerCase()] || icons['default'];
-    }
-
-    // Add file icons to file links
-    function addFileIcons() {
-        $('.file-link').each(function() {
-            if ($(this).find('i').length === 0) {
-                const fileName = $(this).text().trim();
-                const extension = fileName.split('.').pop();
-                const iconClass = getFileIcon(extension);
-                $(this).prepend(`<i class="${iconClass}" style="margin-right: 8px;"></i>`);
-            }
-        });
-    }
-
     // Initialize all event handlers (called after AJAX content update)
     function initializeEventHandlers() {
         // Remove existing handlers to prevent duplicates
@@ -1181,16 +1316,6 @@ $(document).ready(function() {
             $(this).next('.dropdown-menu-action').toggleClass('show');
         });
 
-        // Delete functionality
-        $(document).on('click.delete', '.delete-btn', function(e) {
-            e.preventDefault();
-            const fileId = $(this).data('file-id');
-            const fileName = $(this).data('file-name');
-            const deleteUrl = $(this).data('delete-url');
-            
-            deleteFile(fileId, fileName, deleteUrl);
-        });
-
         // Pagination functionality
         $(document).on('click.pagination', '.page-link', function(e) {
             e.preventDefault();
@@ -1205,7 +1330,7 @@ $(document).ready(function() {
         });
     }
 
-    // Perform AJAX search request - ORIGINAL FUNCTION PRESERVED
+    // Perform AJAX search request
     function performSearch(params = {}, showLoadingIndicator = true) {
         if (isLoading) return;
 
@@ -1214,7 +1339,7 @@ $(document).ready(function() {
         const searchParams = new URLSearchParams();
 
         // Get current form values
-        const search = $('#search').val().trim();
+        const search = $('#filter input[name="search"]').val().trim();
 
         // Add parameters
         if (search) searchParams.set('search', search);
@@ -1239,7 +1364,14 @@ $(document).ready(function() {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'text/html'
             },
+            beforeSend: function() {
+                $('#tableContainer').addClass('table-loading');
+                $('#tableContainer').html(
+                    '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
+                );
+            },
             success: function(response) {
+                $('#tableContainer').removeClass('table-loading');
                 // Update the table container with new content
                 const $response = $(response);
                 const $newTableContainer = $response.find('#tableContainer');
@@ -1256,6 +1388,10 @@ $(document).ready(function() {
                 window.history.pushState({}, '', url);
             },
             error: function(xhr, status, error) {
+                $('#tableContainer').removeClass('table-loading');
+                $('#tableContainer').html(
+                    '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                );
                 console.error('Search error:', error);
                 showNotification('Terjadi kesalahan saat mencari data', 'error');
             },
@@ -1311,8 +1447,20 @@ $(document).ready(function() {
         });
     }
 
-    // Make submitForm globally available
+    // Make functions globally available
     window.submitForm = submitForm;
+    window.deleteFile = deleteFile;
+    window.showNotification = showNotification;
+    window.performSearch = performSearch;
+
+    // Initialize event handlers on page load
+    initializeEventHandlers();
+    addFileIcons();
+
+    // Button click handlers
+    $('#tambahFileBtn').on('click', function() {
+        $('#tambahFileModal').modal('show');
+    });
 
     // Handle form submission for adding new file
     $('#tambahFileForm').on('submit', function(e) {
@@ -1320,84 +1468,21 @@ $(document).ready(function() {
         submitForm('tambahFileForm');
     });
 
-    // Auto search on input
-    $('#search').on('input', function() {
-        clearTimeout(searchTimeout);
-        const query = $(this).val().trim();
-
-        searchTimeout = setTimeout(function() {
-            performSearch({ page: 1 });
-        }, 300);
-    });
-
-    // Make deleteFile globally available
-    window.deleteFile = deleteFile;
-
-    // Handle delete button clicks
-    $(document).on('click', '.delete-btn', function(e) {
-        e.preventDefault();
-        const fileId = $(this).data('file-id');
-        const fileName = $(this).data('file-name');
-        const deleteUrl = $(this).data('delete-url');
-        
-        deleteFile(fileId, fileName, deleteUrl);
-    });
-
-    // Make showNotification globally available
-    window.showNotification = showNotification;
-
-    // File input change event for validation
-    $('#dokumen_file').on('change', function() {
-        const file = this.files[0];
-        if (file) {
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            const allowedTypes = [
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            ];
-
-            if (file.size > maxSize) {
-                $(this).addClass('is-invalid');
-                $('#dokumen_file_error').text('Ukuran file tidak boleh lebih dari 10MB');
-                return;
-            }
-
-            if (!allowedTypes.includes(file.type)) {
-                $(this).addClass('is-invalid');
-                $('#dokumen_file_error').text('Format file tidak didukung. Gunakan PDF, DOC, DOCX, XLS, atau XLSX');
-                return;
-            }
-
-            $(this).removeClass('is-invalid');
-            $('#dokumen_file_error').empty();
-            
-            // Show file preview if elements exist
-            if ($('#uploadContent').length && $('#filePreview').length) {
-                $('#uploadContent').addClass('d-none');
-                $('#filePreview').removeClass('d-none');
-                $('#fileName').text(file.name);
-                $('#fileSize').text((file.size / (1024 * 1024)).toFixed(2) + ' MB');
-                
-                // Set file icon based on type
-                const extension = file.name.split('.').pop().toLowerCase();
-                const iconClass = getFileIcon(extension);
-                $('#fileIcon').removeClass().addClass(iconClass + ' fa-2x');
-            }
-        }
-    });
+    // Auto search on input with debounce
+    $('#filter input[name="search"]').on('input', debounce(function() {
+        performSearch({ page: 1 });
+    }, 300));
 
     // Reset modal when closed
     $('#tambahFileModal').on('hidden.bs.modal', function() {
         $('#tambahFileForm').trigger('reset');
         clearFormErrors();
-        // Reset file preview if exists
-        if ($('#filePreview').length && $('#uploadContent').length) {
-            $('#filePreview').addClass('d-none');
-            $('#uploadContent').removeClass('d-none');
-        }
+        removeSelectedFile(); // Reset file selection
+    });
+
+    // Initialize dropzone when modal is shown
+    $('#tambahFileModal').on('shown.bs.modal', function() {
+        initializeCustomDropzone();
     });
 
     // Close dropdowns when clicking outside
@@ -1410,36 +1495,11 @@ $(document).ready(function() {
         e.stopPropagation();
     });
 
-    // Event listener untuk pagination links
-    $(document).on('click', '.pagination-link', function(e) {
-        e.preventDefault();
-        const url = $(this).attr('href');
-        if (url && url !== '#') {
-            const page = url.split('page=')[1];
-            performSearch({ page: page }, true);
-        }
-    });
-
     // Per page dropdown
-    $(document).on('click', '.per-page-option', function() {
-        const perPage = $(this).data('value');
-        performSearch({ page: 1, per_page: perPage }, true);
-    });
-
-    // Per page dropdown - ALTERNATIVE
     $(document).on('change', 'select[name="per_page"]', function() {
         const perPage = $(this).val();
         performSearch({ page: 1, per_page: perPage }, true);
     });
-
-    // Make functions globally available
-    window.performSearch = performSearch;
-
-    // Initialize event handlers on page load
-    initializeEventHandlers();
-    
-    // Initial file icons setup
-    addFileIcons();
 });
 
 function updatePerPage(perPage) {
@@ -1452,11 +1512,11 @@ function updatePerPage(perPage) {
 }
 
 function resetAllFilters() {
-    $('#search').val('');
+    $('#filter input[name="search"]').val('');
     $('#filter-file-type').val('');
 
     // Trigger search to reload content
-    $('#search').trigger('input');
+    $('#filter input[name="search"]').trigger('input');
 }
 </script>
 @endsection
