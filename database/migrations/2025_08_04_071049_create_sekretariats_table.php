@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('nama_program_kegiatan');
             $table->string('jenis_kegiatan');
-            $table->string('keterangan_tambahan');
+            $table->string('keterangan_tambahan')->nullable();
             $table->string('volume');
             $table->decimal('jumlah_harga_satuan', 15, 2);
             $table->decimal('jumlah_harga', 15, 2);
