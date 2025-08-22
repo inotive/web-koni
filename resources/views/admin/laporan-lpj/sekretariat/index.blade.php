@@ -465,7 +465,6 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="detailModalBody">
-                    <!-- Konten akan diisi via JavaScript -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -477,599 +476,830 @@
 
 @section('script')
     <script>
-        $(document).ready(function() {
-            let dataTable = null;
-            let searchTimeout;
-            let isSearching = false;
+       $(document).ready(function() {
+    let dataTable = null;
+    let searchTimeout;
+    let isSearching = false;
+    let currentFiles = [];
+    let currentIndex = 0;
+    let currentType = '';
 
-            function initializeDataTable() {
-                const table = $("#kt_datatable_dom_positioning_kegiatan");
+    const previewModal = document.getElementById('previewModal');
+    const previewSlides = document.getElementById('previewSlides');
+    const currentFileName = document.getElementById('currentFileName');
+    const fileCounter = document.getElementById('fileCounter');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const modalTitle = document.getElementById('previewModalLabel');
 
-                if (dataTable) {
-                    dataTable.destroy();
-                }
+    function initializeDataTable() {
+        const table = $("#kt_datatable_dom_positioning_kegiatan");
 
-                if (table.length > 0) {
-                    dataTable = table.DataTable({
-                        paging: false,
-                        info: false,
-                        searching: false,
-                        ordering: false,
-                        responsive: false,
-                        autoWidth: false,
-                        scrollX: false,
-                        language: {
-                            emptyTable: "Data tidak ditemukan",
-                            zeroRecords: "Tidak ada data yang cocok dengan pencarian"
-                        },
-                        columnDefs: [{
-                            targets: -1,
-                            orderable: false,
-                            searchable: false
-                        }]
-                    });
-                }
-            }
+        if (dataTable) {
+            dataTable.destroy();
+        }
 
-            initializeDataTable();
-
-            function initializeTooltips() {
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl, {
-                        trigger: 'hover focus'
-                    });
-                });
-            }
-
-            function initializeDropdownEvents() {
-                $(document).off('click', '.dropdown-toggle-custom');
-                $(document).off('mouseenter', '.dropdown-action');
-                $(document).off('mouseleave', '.dropdown-action');
-
-                $(document).on('click', '.dropdown-toggle-custom', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const $dropdownAction = $(this).closest('.dropdown-action');
-                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
-
-                    $('.dropdown-menu-custom').not($menu).removeClass('show');
-
-                    $menu.toggleClass('show');
-
-                    checkDropdownPosition($dropdownAction);
-                });
-
-                function checkDropdownPosition($dropdownAction) {
-                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
-                    if (!$menu.hasClass('show')) return;
-
-                    $dropdownAction.removeClass('dropup');
-
-                    const $row = $dropdownAction.closest('tr');
-                    const $table = $row.closest('tbody');
-                    const rowIndex = $table.find('tr').index($row);
-                    const totalRows = $table.find('tr').length;
-
-                    if (rowIndex === totalRows - 1) {
-                        $dropdownAction.addClass('dropup');
-                    }
-                }
-
-                $(document).on('click', function(e) {
-                    if (!$(e.target).closest('.dropdown-action').length) {
-                        $('.dropdown-menu-custom').removeClass('show');
-                    }
-                });
-
-                $(window).on('resize', function() {
-                    $('.dropdown-action').each(function() {
-                        if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
-                            checkDropdownPosition($(this));
-                        }
-                    });
-                });
-
-                if (window.innerWidth > 768) {
-                    $(document).on('mouseenter', '.dropdown-action', function() {
-                        const $menu = $(this).find('.dropdown-menu-custom');
-                        $menu.addClass('show');
-                        checkDropdownPosition($(this));
-                    }).on('mouseleave', '.dropdown-action', function() {
-                        const $menu = $(this).find('.dropdown-menu-custom');
-                        setTimeout(() => {
-                            if (!$menu.is(':hover')) {
-                                $menu.removeClass('show');
-                            }
-                        }, 100);
-                    });
-
-                    $(document).on('mouseenter', '.dropdown-menu-custom', function() {
-                        clearTimeout($(this).data('timeout'));
-                    }).on('mouseleave', '.dropdown-menu-custom', function() {
-                        const $menu = $(this);
-                        $menu.data('timeout', setTimeout(() => {
-                            $menu.removeClass('show');
-                        }, 200));
-                    });
-                }
-            }
-
-            initializeTooltips();
-            initializeDropdownEvents();
-
-            // Updated loading functions to show loading in center of table
-            function showLoading() {
-                $('#loading-overlay').removeClass('d-none');
-            }
-
-            function hideLoading() {
-                $('#loading-overlay').addClass('d-none');
-            }
-
-            // Updated search loading to show in center of table instead of search input
-            function showSearchLoading() {
-                if (!isSearching) {
-                    isSearching = true;
-                    showLoading(); // Use main loading overlay instead of search-specific loading
-                }
-            }
-
-            function hideSearchLoading() {
-                isSearching = false;
-                hideLoading(); // Use main loading overlay
-            }
-
-            function toggleClearButton() {
-                const $searchInput = $('#search');
-                const $clearBtn = $('#clear-search');
-
-                if ($searchInput.val().length > 0) {
-                    $clearBtn.removeClass('d-none');
-                } else {
-                    $clearBtn.addClass('d-none');
-                }
-            }
-
-            function performSearch(searchValue, immediate = false) {
-                if (searchTimeout) {
-                    clearTimeout(searchTimeout);
-                }
-
-                if (immediate || searchValue === '') {
-                    doSearch(searchValue);
-                } else {
-                    searchTimeout = setTimeout(() => {
-                        doSearch(searchValue);
-                    }, 300);
-                }
-            }
-
-            function doSearch(searchValue) {
-                showSearchLoading();
-
-                updateTable({
-                    'search': searchValue,
-                    'page': 1
-                }).finally(() => {
-                    hideSearchLoading();
-                });
-            }
-
-            function updateTable(params = {}) {
-                return new Promise((resolve, reject) => {
-                    if (params.search === undefined) {
-                        showLoading();
-                    }
-
-                    const currentUrl = new URL(window.location.href);
-
-                    for (const key in params) {
-                        if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
-                            currentUrl.searchParams.set(key, params[key]);
-                        } else {
-                            currentUrl.searchParams.delete(key);
-                        }
-                    }
-
-                    $.ajax({
-                        url: currentUrl.toString(),
-                        type: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        success: function(response) {
-                            $('#table-container').html(response);
-                            hideLoading();
-
-                            window.history.pushState(null, null, currentUrl.toString());
-
-                            initializeDataTable();
-                            initializeTooltips();
-                            initializeDropdownEvents();
-                            updateFilterCount();
-
-                            resolve(response);
-                        },
-                        error: function(xhr, status, error) {
-                            hideLoading();
-
-                            const errorMsg = xhr.status === 0 ?
-                                'Koneksi terputus. Silakan coba lagi.' :
-                                'Terjadi kesalahan saat memuat data.';
-
-                            showNotification(errorMsg, 'error');
-                            reject(error);
-                        }
-                    });
-                });
-            }
-
-            function showNotification(message, type = 'info') {
-                const alertClass = {
-                    'success': 'alert-success',
-                    'error': 'alert-danger',
-                    'warning': 'alert-warning',
-                    'info': 'alert-info'
-                } [type] || 'alert-info';
-
-                const notification = $(`
-        <div class="alert ${alertClass} alert-dismissible fade show notification-toast"
-             role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    `);
-
-                $('body').append(notification);
-
-                setTimeout(() => {
-                    notification.alert('close');
-                }, 5000);
-            }
-
-            window.destroyItem = function(button) {
-                const route = button.dataset.route;
-
-                Swal.fire({
-                    title: "Apakah Anda Yakin?",
-                    html: "<p style='text-align:center'>Setelah data laporan sekretariat dihapus, Anda tidak bisa mengembalikannya!</p>",
-                    icon: "warning",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus!',
-                    cancelButtonText: 'Batalkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Menghapus...',
-                            text: 'Mohon tunggu',
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            willOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
-
-                        $.ajax({
-                            url: route,
-                            type: 'DELETE',
-                            data: {
-                                _token: $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: response.message ||
-                                        'Data laporan sekretariat berhasil dihapus',
-                                    icon: 'success',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-
-                                updateTable({});
-                            },
-                            error: function(xhr) {
-                                Swal.close();
-
-                                try {
-                                    const response = JSON.parse(xhr.responseText);
-
-                                    if (response.reason === 'has_dependencies') {
-                                        Swal.fire({
-                                            title: 'Tidak Dapat Menghapus Data',
-                                            html: `Data laporan <strong>${response.item_name}</strong> tidak dapat dihapus karena masih memiliki data terkait.<br><br>
-                                    <p class="text-muted">
-                                        Silakan hapus atau ubah data yang terkait terlebih dahulu.
-                                    </p>`,
-                                            icon: "warning",
-                                            confirmButtonText: 'Mengerti'
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            title: 'Error!',
-                                            text: response.message ||
-                                                'Gagal menghapus data laporan sekretariat',
-                                            icon: 'error'
-                                        });
-                                    }
-                                } catch (e) {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Gagal menghapus data laporan sekretariat',
-                                        icon: 'error'
-                                    });
-                                }
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Aksi Dibatalkan :)",
-                            icon: "info",
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    }
-                });
-            };
-
-            $('#search').on('input', function() {
-                const searchValue = $(this).val().trim();
-                toggleClearButton();
-                performSearch(searchValue);
+        if (table.length > 0) {
+            dataTable = table.DataTable({
+                paging: false,
+                info: false,
+                searching: false,
+                ordering: false,
+                responsive: false,
+                autoWidth: false,
+                scrollX: false,
+                language: {
+                    emptyTable: "Data tidak ditemukan",
+                    zeroRecords: "Tidak ada data yang cocok dengan pencarian"
+                },
+                columnDefs: [{
+                    targets: -1,
+                    orderable: false,
+                    searchable: false
+                }]
             });
+        }
+    }
 
-            $('#clear-search').on('click', function() {
-                $('#search').val('').focus();
-                toggleClearButton();
-                performSearch('', true);
+    function initializeTooltips() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                trigger: 'hover focus'
             });
+        });
+    }
 
-            $('#search-button').on('click', function() {
-                const searchValue = $('#search').val().trim();
-                performSearch(searchValue, true);
-            });
+    function initializeDropdownEvents() {
+        $(document).off('click', '.dropdown-toggle-custom');
+        $(document).off('mouseenter', '.dropdown-action');
+        $(document).off('mouseleave', '.dropdown-action');
 
-            $('#search').on('keydown', function(e) {
-                switch (e.key) {
-                    case 'Escape':
-                        $(this).val('');
-                        toggleClearButton();
-                        performSearch('', true);
-                        break;
+        $(document).on('click', '.dropdown-toggle-custom', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-                    case 'Enter':
-                        e.preventDefault();
-                        const searchValue = $(this).val().trim();
-                        performSearch(searchValue, true);
-                        break;
-                }
-            });
+            const $dropdownAction = $(this).closest('.dropdown-action');
+            const $menu = $dropdownAction.find('.dropdown-menu-custom');
 
-            $('#search').on('focus', function() {
-                $(this).select();
-            });
+            $('.dropdown-menu-custom').not($menu).removeClass('show');
 
-            toggleClearButton();
+            $menu.toggleClass('show');
 
-            $('#apply-filters').on('click', function() {
-                const jenisKegiatan = $('#filter-jenis-kegiatan').val();
-                const startDate = $('#filter-start-date').val();
-                const endDate = $('#filter-end-date').val();
+            checkDropdownPosition($dropdownAction);
+        });
 
-                updateTable({
-                    'jenis_kegiatan_filter': jenisKegiatan,
-                    'start_date': startDate,
-                    'end_date': endDate,
-                    'page': 1
-                });
-            });
+        function checkDropdownPosition($dropdownAction) {
+            const $menu = $dropdownAction.find('.dropdown-menu-custom');
+            if (!$menu.hasClass('show')) return;
 
-            $('#reset-filters').on('click', function() {
-                $('#filter-jenis-kegiatan').val('');
-                $('#filter-start-date').val('');
-                $('#filter-end-date').val('');
-                $('#search').val('');
-                toggleClearButton();
+            $dropdownAction.removeClass('dropup');
 
-                updateTable({
-                    'search': '',
-                    'jenis_kegiatan_filter': '',
-                    'start_date': '',
-                    'end_date': '',
-                    'page': 1
-                });
-            });
+            const $row = $dropdownAction.closest('tr');
+            const $table = $row.closest('tbody');
+            const rowIndex = $table.find('tr').index($row);
+            const totalRows = $table.find('tr').length;
 
-            $(document).on('change', 'select[name="per_page"]', function() {
-                const perPage = $(this).val();
-                updateTable({
-                    'per_page': perPage,
-                    'page': 1
-                });
-            });
-
-            $(document).on('click', '.pagination-link', function(e) {
-                e.preventDefault();
-                const href = $(this).attr('href');
-
-                if (href && href !== '#') {
-                    const url = new URL(href);
-                    const page = url.searchParams.get('page');
-
-                    if (page) {
-                        updateTable({
-                            'page': page
-                        });
-                    }
-                }
-            });
-
-            $(document).on('click', '.sortable-header', function(e) {
-                e.preventDefault();
-                const url = new URL($(this).attr('href'));
-                const sort = url.searchParams.get('sort');
-                const direction = url.searchParams.get('direction');
-
-                updateTable({
-                    'sort': sort,
-                    'direction': direction,
-                    'page': 1
-                });
-            });
-
-            function updateFilterCount() {
-                const urlParams = new URLSearchParams(window.location.search);
-                let count = 0;
-
-                if (urlParams.get('jenis_kegiatan_filter')) count++;
-                if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
-
-                const badge = $('#filter-count');
-                if (count > 0) {
-                    badge.text(count).removeClass('d-none');
-                } else {
-                    badge.addClass('d-none');
-                }
+            if (rowIndex === totalRows - 1) {
+                $dropdownAction.addClass('dropup');
             }
+        }
 
-            updateFilterCount();
-
-            let currentFiles = [];
-            let currentIndex = 0;
-            let currentType = '';
-
-            const previewModal = document.getElementById('previewModal');
-            const previewSlides = document.getElementById('previewSlides');
-            const currentFileName = document.getElementById('currentFileName');
-            const fileCounter = document.getElementById('fileCounter');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const modalTitle = document.getElementById('previewModalLabel');
-
-            $(document).on('click', '.preview-btn', function() {
-                const btn = $(this);
-                currentFiles = JSON.parse(btn.attr('data-files'));
-                currentType = btn.attr('data-type');
-                currentIndex = 0;
-                modalTitle.textContent = btn.attr('data-title');
-
-                loadPreview();
-            });
-
-            function loadPreview() {
-                previewSlides.innerHTML = '';
-
-                currentFiles.forEach((file, index) => {
-                    const slide = document.createElement('div');
-                    slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
-
-                    if (currentType === 'image') {
-                        slide.innerHTML = `
-                <img src="/storage/${file}" alt="Preview" class="preview-image">
-            `;
-                    } else {
-                        const fileName = file.split('/').pop();
-                        const fileExtension = fileName.split('.').pop().toLowerCase();
-
-                        if (fileExtension === 'pdf') {
-                            slide.innerHTML = `
-                    <iframe src="/storage/${file}" class="preview-document"></iframe>
-                `;
-                        } else {
-                            const iconClass = getFileIcon(fileExtension);
-                            slide.innerHTML = `
-                    <div class="document-placeholder">
-                        <i class="${iconClass}"></i>
-                        <h5>${fileName}</h5>
-                        <p>Click download to view this ${fileExtension.toUpperCase()} file</p>
-                        <a href="/storage/${file}" class="btn btn-primary" target="_blank">
-                            <i class="fas fa-external-link-alt me-2"></i>Open File
-                        </a>
-                    </div>
-                `;
-                        }
-                    }
-
-                    previewSlides.appendChild(slide);
-                });
-
-                updateUI();
-            }
-
-            function updateUI() {
-                const fileName = currentFiles[currentIndex].split('/').pop();
-                currentFileName.textContent = fileName;
-                fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
-
-                if (currentFiles.length > 1) {
-                    prevBtn.style.display = 'block';
-                    nextBtn.style.display = 'block';
-                } else {
-                    prevBtn.style.display = 'none';
-                    nextBtn.style.display = 'none';
-                }
-
-                downloadBtn.onclick = function() {
-                    window.open('/storage/' + currentFiles[currentIndex], '_blank');
-                };
-            }
-
-            function showSlide(index) {
-                document.querySelectorAll('.preview-slide').forEach((slide, i) => {
-                    slide.classList.toggle('active', i === index);
-                });
-                currentIndex = index;
-                updateUI();
-            }
-
-            prevBtn.addEventListener('click', function() {
-                const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
-                showSlide(newIndex);
-            });
-
-            nextBtn.addEventListener('click', function() {
-                const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
-                showSlide(newIndex);
-            });
-
-            document.addEventListener('keydown', function(e) {
-                if (previewModal.classList.contains('show')) {
-                    if (e.key === 'ArrowLeft') {
-                        prevBtn.click();
-                    } else if (e.key === 'ArrowRight') {
-                        nextBtn.click();
-                    }
-                }
-            });
-
-            function getFileIcon(extension) {
-                const icons = {
-                    'pdf': 'fas fa-file-pdf text-danger',
-                    'doc': 'fas fa-file-word text-primary',
-                    'docx': 'fas fa-file-word text-primary',
-                    'xls': 'fas fa-file-excel text-success',
-                    'xlsx': 'fas fa-file-excel text-success',
-                    'ppt': 'fas fa-file-powerpoint text-warning',
-                    'pptx': 'fas fa-file-powerpoint text-warning'
-                };
-                return icons[extension] || 'fas fa-file text-muted';
-            }
-
-            $('#previewModal').on('show.bs.modal', function() {
-                if (currentFiles.length > 0) {
-                    showSlide(0);
-                }
-            });
-
-
-            if (!$('#enhanced-search-styles').length) {
-                $('head').append(additionalCSS);
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.dropdown-action').length) {
+                $('.dropdown-menu-custom').removeClass('show');
             }
         });
+
+        $(window).on('resize', function() {
+            $('.dropdown-action').each(function() {
+                if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
+                    checkDropdownPosition($(this));
+                }
+            });
+        });
+
+        if (window.innerWidth > 768) {
+            $(document).on('mouseenter', '.dropdown-action', function() {
+                const $menu = $(this).find('.dropdown-menu-custom');
+                $menu.addClass('show');
+                checkDropdownPosition($(this));
+            }).on('mouseleave', '.dropdown-action', function() {
+                const $menu = $(this).find('.dropdown-menu-custom');
+                setTimeout(() => {
+                    if (!$menu.is(':hover')) {
+                        $menu.removeClass('show');
+                    }
+                }, 100);
+            });
+
+            $(document).on('mouseenter', '.dropdown-menu-custom', function() {
+                clearTimeout($(this).data('timeout'));
+            }).on('mouseleave', '.dropdown-menu-custom', function() {
+                const $menu = $(this);
+                $menu.data('timeout', setTimeout(() => {
+                    $menu.removeClass('show');
+                }, 200));
+            });
+        }
+    }
+
+    function showLoading() {
+        $('#loading-overlay').removeClass('d-none');
+    }
+
+    function hideLoading() {
+        $('#loading-overlay').addClass('d-none');
+    }
+
+    function showSearchLoading() {
+        if (!isSearching) {
+            isSearching = true;
+            showLoading();
+        }
+    }
+
+    function hideSearchLoading() {
+        isSearching = false;
+        hideLoading();
+    }
+
+    function toggleClearButton() {
+        const $searchInput = $('#search');
+        const $clearBtn = $('#clear-search');
+
+        if ($searchInput.val().length > 0) {
+            $clearBtn.removeClass('d-none');
+        } else {
+            $clearBtn.addClass('d-none');
+        }
+    }
+
+    function performSearch(searchValue, immediate = false) {
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+
+        if (immediate || searchValue === '') {
+            doSearch(searchValue);
+        } else {
+            searchTimeout = setTimeout(() => {
+                doSearch(searchValue);
+            }, 300);
+        }
+    }
+
+    function doSearch(searchValue) {
+        showSearchLoading();
+
+        updateTable({
+            'search': searchValue,
+            'page': 1
+        }).finally(() => {
+            hideSearchLoading();
+        });
+    }
+
+    function updateTable(params = {}) {
+        return new Promise((resolve, reject) => {
+            if (params.search === undefined) {
+                showLoading();
+            }
+
+            const currentUrl = new URL(window.location.href);
+
+            for (const key in params) {
+                if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                    currentUrl.searchParams.set(key, params[key]);
+                } else {
+                    currentUrl.searchParams.delete(key);
+                }
+            }
+
+            $.ajax({
+                url: currentUrl.toString(),
+                type: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    $('#table-container').html(response);
+                    hideLoading();
+
+                    window.history.pushState(null, null, currentUrl.toString());
+
+                    initializeDataTable();
+                    initializeTooltips();
+                    initializeDropdownEvents();
+                    updateFilterCount();
+
+                    resolve(response);
+                },
+                error: function(xhr, status, error) {
+                    hideLoading();
+
+                    const errorMsg = xhr.status === 0 ?
+                        'Koneksi terputus. Silakan coba lagi.' :
+                        'Terjadi kesalahan saat memuat data.';
+
+                    showNotification(errorMsg, 'error');
+                    reject(error);
+                }
+            });
+        });
+    }
+
+    function showNotification(message, type = 'info') {
+        const alertClass = {
+            'success': 'alert-success',
+            'error': 'alert-danger',
+            'warning': 'alert-warning',
+            'info': 'alert-info'
+        }[type] || 'alert-info';
+
+        const notification = $(`
+            <div class="alert ${alertClass} alert-dismissible fade show notification-toast"
+                 role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
+
+        $('body').append(notification);
+
+        setTimeout(() => {
+            notification.alert('close');
+        }, 5000);
+    }
+
+    function updateFilterCount() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let count = 0;
+
+        if (urlParams.get('jenis_kegiatan_filter')) count++;
+        if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
+
+        const badge = $('#filter-count');
+        if (count > 0) {
+            badge.text(count).removeClass('d-none');
+        } else {
+            badge.addClass('d-none');
+        }
+    }
+
+    function getFileIcon(extension) {
+        const icons = {
+            'pdf': 'fas fa-file-pdf text-danger',
+            'doc': 'fas fa-file-word text-primary',
+            'docx': 'fas fa-file-word text-primary',
+            'xls': 'fas fa-file-excel text-success',
+            'xlsx': 'fas fa-file-excel text-success',
+            'ppt': 'fas fa-file-powerpoint text-warning',
+            'pptx': 'fas fa-file-powerpoint text-warning',
+            'jpg': 'fas fa-file-image text-info',
+            'jpeg': 'fas fa-file-image text-info',
+            'png': 'fas fa-file-image text-info',
+            'gif': 'fas fa-file-image text-info',
+            'webp': 'fas fa-file-image text-info',
+            'svg': 'fas fa-file-image text-info'
+        };
+        return icons[extension] || 'fas fa-file text-muted';
+    }
+
+    function loadPreview() {
+        if (!previewSlides || !currentFiles || currentFiles.length === 0) {
+            console.error('No preview slides container or files');
+            return;
+        }
+
+        previewSlides.innerHTML = '';
+
+        currentFiles.forEach((file, index) => {
+            const slide = document.createElement('div');
+            slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
+
+            const fileName = file.split('/').pop();
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+
+            if (currentType === 'image' || currentType === 'foto' ||
+                (currentType === 'auto' && imageExtensions.includes(fileExtension))) {
+                slide.innerHTML = `
+                    <img src="/storage/${file}"
+                         alt="Preview"
+                         class="preview-image"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'document-placeholder\\'><i class=\\'fas fa-exclamation-triangle text-warning\\' style=\\'font-size: 3rem;\\'></i><h5>Gagal memuat gambar</h5></div>'">
+                `;
+            } else {
+                if (fileExtension === 'pdf') {
+                    slide.innerHTML = `
+                        <iframe src="/storage/${file}"
+                                class="preview-document"
+                                onerror="console.error('Failed to load PDF: /storage/${file}')"></iframe>
+                    `;
+                } else {
+                    const iconClass = getFileIcon(fileExtension);
+                    slide.innerHTML = `
+                        <div class="document-placeholder">
+                            <i class="${iconClass}"></i>
+                            <h5>${fileName}</h5>
+                            <p>Klik download untuk melihat file ${fileExtension.toUpperCase()}</p>
+                            <a href="/storage/${file}" class="btn btn-primary" target="_blank">
+                                <i class="fas fa-external-link-alt me-2"></i>Buka File
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+
+            previewSlides.appendChild(slide);
+        });
+
+        updatePreviewUI();
+    }
+
+    function updatePreviewUI() {
+        if (!currentFiles || currentFiles.length === 0) return;
+
+        const fileName = currentFiles[currentIndex].split('/').pop();
+        if (currentFileName) currentFileName.textContent = fileName;
+        if (fileCounter) fileCounter.textContent = `${currentIndex + 1} dari ${currentFiles.length}`;
+
+        if (currentFiles.length > 1) {
+            if (prevBtn) prevBtn.style.display = 'block';
+            if (nextBtn) nextBtn.style.display = 'block';
+        } else {
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
+        }
+
+        if (downloadBtn) {
+            downloadBtn.onclick = function() {
+                window.open('/storage/' + currentFiles[currentIndex], '_blank');
+            };
+        }
+    }
+
+    function showSlide(index) {
+        if (!previewSlides) return;
+
+        document.querySelectorAll('.preview-slide').forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
+        currentIndex = index;
+        updatePreviewUI();
+    }
+
+    window.destroyItem = function(button) {
+        const route = button.dataset.route;
+
+        Swal.fire({
+            title: "Apakah Anda Yakin?",
+            html: "<p style='text-align:center'>Setelah data laporan sekretariat dihapus, Anda tidak bisa mengembalikannya!</p>",
+            icon: "warning",
+            showCancelButton: true,
+            reverseButtons: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Hapus!',
+            cancelButtonText: 'Batalkan!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Menghapus...',
+                    text: 'Mohon tunggu',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: route,
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: response.message || 'Data laporan sekretariat berhasil dihapus',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        updateTable({});
+                    },
+                    error: function(xhr) {
+                        Swal.close();
+
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+
+                            if (response.reason === 'has_dependencies') {
+                                Swal.fire({
+                                    title: 'Tidak Dapat Menghapus Data',
+                                    html: `Data laporan <strong>${response.item_name}</strong> tidak dapat dihapus karena masih memiliki data terkait.<br><br>
+                                <p class="text-muted">
+                                    Silakan hapus atau ubah data yang terkait terlebih dahulu.
+                                </p>`,
+                                    icon: "warning",
+                                    confirmButtonText: 'Mengerti'
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: response.message || 'Gagal menghapus data laporan sekretariat',
+                                    icon: 'error'
+                                });
+                            }
+                        } catch (e) {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Gagal menghapus data laporan sekretariat',
+                                icon: 'error'
+                            });
+                        }
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "Aksi Dibatalkan :)",
+                    icon: "info",
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+        });
+    };
+
+    window.showDetailModal = function(data) {
+        const modalBody = document.getElementById('detailModalBody');
+
+        if (!modalBody) {
+            console.error('Modal body not found');
+            return;
+        }
+
+        const formatRupiah = (num) => {
+            if (!num) return 'Rp 0';
+            return 'Rp ' + parseInt(num).toLocaleString('id-ID');
+        };
+
+        let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+        if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
+            fotoJurnalHtml = `
+                <div class="row g-3">
+                    ${data.foto_jurnal.map(f => `
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded overflow-hidden" style="height: 120px;">
+                                <img src="/storage/${f}"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover; cursor: pointer;"
+                                     onclick="window.open('/storage/${f}', '_blank')"
+                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+        if (data.dokumen_lpj && Array.isArray(data.dokumen_lpj) && data.dokumen_lpj.length > 0) {
+            dokumenHtml = `
+                <div class="d-flex flex-column gap-2">
+                    ${data.dokumen_lpj.map(d => {
+                        const name = d.split('/').pop();
+                        const extension = name.split('.').pop().toLowerCase();
+
+                        let iconClass = 'fas fa-file text-secondary';
+                        if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
+                        else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
+                        else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
+                        else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
+
+                        return `
+                            <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-medium text-dark">${name}</div>
+                                    <small class="text-muted">${extension.toUpperCase()}</small>
+                                </div>
+                                <a href="/storage/${d}"
+                                   target="_blank"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-download me-1"></i>Unduh
+                                </a>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        modalBody.innerHTML = `
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Informasi Kegiatan
+                        </h6>
+                        <div class="bg-light p-3 rounded">
+                            <div class="mb-2">
+                                <label class="fw-semibold text-dark mb-1">Nama Program:</label>
+                                <p class="mb-0 text-dark">${data.nama_program || 'N/A'}</p>
+                            </div>
+                            ${data.nama_kegiatan ? `
+                                <div class="mb-2">
+                                    <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
+                                    <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
+                                </div>
+                            ` : ''}
+                            ${data.volume ? `
+                                <div class="mb-2">
+                                    <label class="fw-semibold text-dark mb-1">Volume:</label>
+                                    <p class="mb-0 text-dark">${data.volume}</p>
+                                </div>
+                            ` : ''}
+                            ${data.tempat_kegiatan ? `
+                                <div class="mb-2">
+                                    <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
+                                    <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
+                                </div>
+                            ` : ''}
+                            ${data.tanggal_kegiatan ? `
+                                <div>
+                                    <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
+                                    <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    ${data.jumlah_harga_satuan || data.jumlah_harga ? `
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
+                                <i class="fas fa-calculator me-2"></i>
+                                Rincian Anggaran
+                            </h6>
+                            <div class="bg-light p-3 rounded">
+                                <div class="row g-3">
+                                    ${data.jumlah_harga_satuan ? `
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
+                                            <p class="mb-0 text-success fs-6 fw-bold">${formatRupiah(data.jumlah_harga_satuan)}</p>
+                                        </div>
+                                    ` : ''}
+                                    ${data.jumlah_harga ? `
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold text-dark mb-1">Total Harga:</label>
+                                            <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${data.sumber_dana ? `
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
+                                <i class="fas fa-money-bill me-2"></i>
+                                Sumber Dana
+                            </h6>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
+                            <i class="fas fa-paperclip me-2"></i>
+                            Lampiran
+                        </h6>
+
+                        <div class="mb-3">
+                            <label class="fw-semibold text-dark mb-2 d-block">
+                                <i class="fas fa-camera me-1"></i>Foto Jurnal:
+                            </label>
+                            <div class="bg-light p-3 rounded">
+                                ${fotoJurnalHtml}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="fw-semibold text-dark mb-2 d-block">
+                                <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
+                            </label>
+                            <div class="bg-light p-3 rounded">
+                                ${dokumenHtml}
+                            </div>
+                        </div>
+                    </div>
+
+                    ${data.keterangan ? `
+                        <div class="mb-2">
+                            <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center">
+                                <i class="fas fa-sticky-note me-2"></i>
+                                Keterangan
+                            </h6>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-0 text-dark">${data.keterangan}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+
+        const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+        modal.show();
+    };
+
+    window.showPreviewModal = function(files, type, title) {
+        if (!files || !Array.isArray(files) || files.length === 0) {
+            console.error('Invalid files data for preview');
+            return;
+        }
+
+        currentFiles = files;
+        currentType = type || 'auto';
+        currentIndex = 0;
+
+        if (modalTitle) {
+            modalTitle.textContent = title || 'Preview Files';
+        }
+
+        loadPreview();
+        $('#previewModal').modal('show');
+    };
+
+    initializeDataTable();
+    initializeTooltips();
+    initializeDropdownEvents();
+    updateFilterCount();
+    toggleClearButton();
+
+    $('#search').on('input', function() {
+        const searchValue = $(this).val().trim();
+        toggleClearButton();
+        performSearch(searchValue);
+    });
+
+    $('#clear-search').on('click', function() {
+        $('#search').val('').focus();
+        toggleClearButton();
+        performSearch('', true);
+    });
+
+    $('#search-button').on('click', function() {
+        const searchValue = $('#search').val().trim();
+        performSearch(searchValue, true);
+    });
+
+    $('#search').on('keydown', function(e) {
+        switch (e.key) {
+            case 'Escape':
+                $(this).val('');
+                toggleClearButton();
+                performSearch('', true);
+                break;
+
+            case 'Enter':
+                e.preventDefault();
+                const searchValue = $(this).val().trim();
+                performSearch(searchValue, true);
+                break;
+        }
+    });
+
+    $('#search').on('focus', function() {
+        $(this).select();
+    });
+
+    $('#apply-filters').on('click', function() {
+        const jenisKegiatan = $('#filter-jenis-kegiatan').val();
+        const startDate = $('#filter-start-date').val();
+        const endDate = $('#filter-end-date').val();
+
+        updateTable({
+            'jenis_kegiatan_filter': jenisKegiatan,
+            'start_date': startDate,
+            'end_date': endDate,
+            'page': 1
+        });
+    });
+
+    $('#reset-filters').on('click', function() {
+        $('#filter-jenis-kegiatan').val('');
+        $('#filter-start-date').val('');
+        $('#filter-end-date').val('');
+        $('#search').val('');
+        toggleClearButton();
+
+        updateTable({
+            'search': '',
+            'jenis_kegiatan_filter': '',
+            'start_date': '',
+            'end_date': '',
+            'page': 1
+        });
+    });
+
+    $(document).on('change', 'select[name="per_page"]', function() {
+        const perPage = $(this).val();
+        updateTable({
+            'per_page': perPage,
+            'page': 1
+        });
+    });
+
+    $(document).on('click', '.pagination-link', function(e) {
+        e.preventDefault();
+        const href = $(this).attr('href');
+
+        if (href && href !== '#') {
+            const url = new URL(href);
+            const page = url.searchParams.get('page');
+
+            if (page) {
+                updateTable({
+                    'page': page
+                });
+            }
+        }
+    });
+
+    $(document).on('click', '.sortable-header', function(e) {
+        e.preventDefault();
+        const url = new URL($(this).attr('href'));
+        const sort = url.searchParams.get('sort');
+        const direction = url.searchParams.get('direction');
+
+        updateTable({
+            'sort': sort,
+            'direction': direction,
+            'page': 1
+        });
+    });
+
+    $(document).on('click', '.preview-btn', function(e) {
+        e.preventDefault();
+        const btn = $(this);
+
+        try {
+            const filesData = btn.attr('data-files');
+            const type = btn.attr('data-type') || 'auto';
+            const title = btn.attr('data-title') || 'Preview Files';
+
+            if (filesData) {
+                const files = JSON.parse(filesData);
+                showPreviewModal(files, type, title);
+            } else {
+                console.error('No files data found');
+            }
+        } catch (error) {
+            console.error('Error parsing preview data:', error);
+        }
+    });
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
+            showSlide(newIndex);
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
+            showSlide(newIndex);
+        });
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (previewModal && previewModal.classList.contains('show')) {
+            if (e.key === 'ArrowLeft' && prevBtn) {
+                prevBtn.click();
+            } else if (e.key === 'ArrowRight' && nextBtn) {
+                nextBtn.click();
+            } else if (e.key === 'Escape') {
+                $('#previewModal').modal('hide');
+            }
+        }
+    });
+
+    $('#previewModal').on('show.bs.modal', function() {
+        if (currentFiles && currentFiles.length > 0) {
+            showSlide(0);
+        }
+    });
+});
     </script>
 @endsection

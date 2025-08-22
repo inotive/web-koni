@@ -107,9 +107,12 @@
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
-                                    <li><a href="javascript:void(0)" class="dropdown-item-custom"
-                                            onclick="showDetailModal({{ json_encode($kegiatan) }})">
-                                            <i class="fas fa-eye me-2"></i> Lihat Detail</a></li>
+                                   <li>
+                                        <a href="javascript:void(0)" class="dropdown-item-custom"
+                                           onclick="showDetailModal({{ json_encode($kegiatan) }})">
+                                            <i class="fas fa-eye me-2"></i> Lihat Detail
+                                        </a>
+                                    </li>
 
                                     @if (auth()->user()->hasRole('superadmin'))
                                         <li><a href="{{ route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) }}"
