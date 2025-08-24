@@ -10,6 +10,7 @@ use App\Models\Kesehatan;
 use App\Models\Organisasi;
 use App\Models\PerencanaanProgram;
 use App\Models\SportScience;
+use App\Models\lpj;
 use App\Models\SumberDaya;
 
 class BidangController extends Controller

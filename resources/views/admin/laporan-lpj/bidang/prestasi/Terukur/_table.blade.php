@@ -1,6 +1,6 @@
 <div class="row g-10">
     {{-- Sample Cabor Terukur folders based on the screenshot --}}
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 22]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -13,7 +13,7 @@
         </div>
     </a>
 
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 16]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -26,7 +26,7 @@
         </div>
     </a>
 
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 13]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -39,7 +39,7 @@
         </div>
     </a>
 
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 15]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -52,7 +52,7 @@
         </div>
     </a>
 
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 20]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -65,7 +65,7 @@
         </div>
     </a>
 
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 18]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -78,7 +78,7 @@
         </div>
     </a>
 
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 19]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -91,7 +91,7 @@
         </div>
     </a>
 
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 17]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -104,7 +104,7 @@
         </div>
     </a>
 
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 14]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -117,7 +117,7 @@
         </div>
     </a>
 
-    <a href="#" class="col-12 col-sm-6 col-md-3">
+    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 21]) }} class="col-12 col-sm-6 col-md-3">
         <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
             onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
             <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
