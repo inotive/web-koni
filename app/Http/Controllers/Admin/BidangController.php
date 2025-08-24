@@ -10,6 +10,7 @@ use App\Models\Kesehatan;
 use App\Models\Organisasi;
 use App\Models\PerencanaanProgram;
 use App\Models\SportScience;
+use App\Models\lpj;
 use App\Models\SumberDaya;
 
 class BidangController extends Controller
@@ -86,11 +87,21 @@ class BidangController extends Controller
 
     public function caborAkurasi(Request $request){
 
+        // The ID for 'Cabor Akurasi' is 10, based on the seeder.
+        $caborAkurasiParentId = 10;
+
+        // Eager load children count for performance
+        $parent = Lpj::findOrFail($caborAkurasiParentId);
+        $children = Lpj::where('parent_id', $caborAkurasiParentId)
+                        ->withCount('children') // Counts sub-items (dokumen)
+                        ->orderBy('nama_program', 'asc')
+                        ->get();
+
         if ($request->ajax()) {
-            return view('admin.laporan-lpj-bidang.prestasi.Akurasi._table');
+            return view('admin.laporan-lpj.bidang.prestasi.Akurasi._table', compact('children'))->render();
         }
 
-        return view ('admin.laporan-lpj.bidang.prestasi.Akurasi.index');
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.index', compact('children', 'parent'));
     }
 
     public function caborBeladiri(){

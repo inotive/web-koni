@@ -12,8 +12,8 @@
     <div class="d-grid gap-5 border-0">
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
-                <h1>Cabor Permainan</h1>
-                <span>Informasi Cabor Permainan</span>
+                <h1>Cabor Beladiri</h1>
+                <span>Informasi Cabor Beladiri</span>
             </div>
             <form id="filter" class="d-flex gap-3">
                 <div class="position-relative bg-light" style="width: 180px">
@@ -29,7 +29,7 @@
         </div>
 
         <div id="table" class="container">
-            @include('admin.laporan-lpj.bidang.prestasi.Beladiri._table')
+            @include('admin.laporan-lpj.bidang.prestasi.beladiri._table')
         </div>
     </div>
 @endsection

@@ -187,8 +187,61 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::get('pelatih/{id}/deskripsi', [PelatihController::class, 'deskripsi'])
             ->name('pelatih.deskripsi');
     });
+    Route::prefix('laporan-lpj/bidang')->name('laporan-lpj.bidang.')->group(function () {
+
+        // Dynamic LPJ Routes with hierarchical support
+        Route::prefix('dynamic')->name('dynamic.')->group(function () {
+
+            // Root level routes (no parent)
+            Route::get('/', [App\Http\Controllers\Admin\LpjController::class, 'index'])->name('index');
+            Route::get('/create', [App\Http\Controllers\Admin\LpjController::class, 'create'])->name('create');
+            Route::post('/store', [App\Http\Controllers\Admin\LpjController::class, 'store'])->name('store');
+            Route::get('/create-category', [App\Http\Controllers\Admin\LpjController::class, 'createCategory'])->name('create-category');
+            Route::post('/store-category', [App\Http\Controllers\Admin\LpjController::class, 'storeCategory'])->name('store-category');
+
+            // Child level routes (with parent)
+            Route::prefix('{parentId}')->group(function () {
+                Route::get('/', [App\Http\Controllers\Admin\LpjController::class, 'index'])->name('child.index');
+                Route::get('/create', [App\Http\Controllers\Admin\LpjController::class, 'create'])->name('child.create');
+                Route::post('/store', [App\Http\Controllers\Admin\LpjController::class, 'store'])->name('child.store');
+                Route::get('/create-category', [App\Http\Controllers\Admin\LpjController::class, 'createCategory'])->name('child.create-category');
+                Route::post('/store-category', [App\Http\Controllers\Admin\LpjController::class, 'storeCategory'])->name('child.store-category');
+                Route::get('/navigate', [App\Http\Controllers\Admin\LpjController::class, 'navigate'])->name('navigate');
+
+                // Nested child routes (for deeper hierarchies)
+                Route::prefix('{childId}')->group(function () {
+                    Route::get('/', [App\Http\Controllers\Admin\LpjController::class, 'index'])->name('nested.index');
+                    Route::get('/create', [App\Http\Controllers\Admin\LpjController::class, 'create'])->name('nested.create');
+                    Route::post('/store', [App\Http\Controllers\Admin\LpjController::class, 'store'])->name('nested.store');
+                    Route::get('/create-category', [App\Http\Controllers\Admin\LpjController::class, 'createCategory'])->name('nested.create-category');
+                    Route::post('/store-category', [App\Http\Controllers\Admin\LpjController::class, 'storeCategory'])->name('nested.store-category');
+                });
+            });
+
+            // Individual item routes (can be at any level)
+            Route::get('/item/{id}', [App\Http\Controllers\Admin\LpjController::class, 'show'])->name('show');
+            Route::get('/item/{id}/edit', [App\Http\Controllers\Admin\LpjController::class, 'edit'])->name('edit');
+            Route::put('/item/{id}', [App\Http\Controllers\Admin\LpjController::class, 'update'])->name('update');
+            Route::delete('/item/{id}', [App\Http\Controllers\Admin\LpjController::class, 'destroy'])->name('destroy');
+
+            // API routes for tree structure
+            Route::get('/api/tree/{parentId?}', [App\Http\Controllers\Admin\LpjController::class, 'getTreeStructure'])->name('api.tree');
+        });
+
+        // Keep your existing specific routes for backward compatibility
+        Route::prefix('pembinaan-hukum')->name('pembinaan-hukum.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\LpjController::class, 'index'])->defaults('parentId', 1)->name('index');
+            Route::get('/create', [App\Http\Controllers\Admin\LpjController::class, 'create'])->defaults('parentId', 1)->name('create');
+            Route::post('/', [App\Http\Controllers\Admin\LpjController::class, 'store'])->defaults('parentId', 1)->name('store');
+            Route::get('/{id}', [App\Http\Controllers\Admin\LpjController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [App\Http\Controllers\Admin\LpjController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [App\Http\Controllers\Admin\LpjController::class, 'update'])->name('update');
+            Route::delete('/{id}', [App\Http\Controllers\Admin\LpjController::class, 'destroy'])->name('destroy');
+        });
+    });
 
     Route::prefix('laporan-lpj')->name('laporan-lpj.')->group(function () {
+
 
         Route::prefix('sekretariat')->name('sekretariat.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\SekretariatController::class, 'index'])->name('index');
