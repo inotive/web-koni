@@ -54,13 +54,12 @@
                         <td>
                             <div class="document-info">
                                 <div class="document-name-wrapper">
-                                    <i class="fas fa-file-alt me-2"></i>
                                     <span class="document-name-text" title="{{ $file->nama_dokumen }}">
                                         {{ $file->nama_dokumen }}
                                     </span>
                                 </div>
                                 <div class="document-date">
-                                    {{ optional($file->created_at)->format('d/m/Y H:i') ?? '-' }}
+                                    {{ optional($file->tanggal_dokumen)->format('d M Y') ?? '-' }}
                                 </div>
                             </div>
                         </td>
@@ -208,10 +207,9 @@
     .document-name-wrapper {
         font-weight: 600;
         color: #495057;
-        display: inline-flex;
-        align-items: center;
         cursor: default;
         user-select: text;
+        margin-bottom: 4px;
     }
 
     .document-name-wrapper i {
@@ -225,6 +223,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         max-width: 100%;
+        display: block;
     }
 
     /* Tanggal dokumen */
@@ -233,10 +232,11 @@
         color: #6c757d !important;
         font-weight: 400;
         margin-top: 2px;
-        padding-left: 24px;
+        padding-left: 0px;
         font-style: italic;
         user-select: none;
         cursor: default !important;
+        line-height: 1.2;
     }
 
     /* Sort styling */
@@ -387,7 +387,7 @@
 
         .document-date {
             font-size: 11px;
-            padding-left: 20px;
+            padding-left: 6px;
         }
 
         .d-flex.justify-content-between {
