@@ -835,10 +835,11 @@
                             ${data.foto_jurnal.map(f => `
                                 <div class="col-6 col-md-4">
                                     <div class="border rounded overflow-hidden" style="height: 120px;">
-                                        <img src="${f}"
-                                             class="w-100 h-100"
-                                             style="object-fit: cover; cursor: pointer;"
-                                             onclick="window.open('/storage/${f}', '_blank')">
+                                        <img src="/storage/${f}"
+                                            class="w-100 h-100"
+                                            style="object-fit: cover; cursor: pointer;"
+                                            onclick="window.open('/storage/${f}', '_blank')"
+                                            onerror="console.error('Failed to load image: /storage/${f}'); this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23f8f9fa%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%236c757d%22>Image not found</text></svg>';">
                                     </div>
                                 </div>
                             `).join('')}

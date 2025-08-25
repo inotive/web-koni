@@ -1,9 +1,46 @@
 @extends('layouts.app')
+@php
+    $subSection3Url = '';
 
-@section('pageTitle', 'Tambah Laporan LPJ')
+    if ($parent?->parent) {
+        if ($parent->parent->id == 9) {
+            $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-terukur', [
+                'parentId' => $parent->parent->id
+            ]);
+        }
+            elseif ($parent->parent->id == 10) {
+                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi', [
+                    'parentId' => $parent->parent->id
+                ]);
+        }
+            elseif ($parent->parent->id == 11) {
+                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-permainan', [
+                    'parentId' => $parent->parent->id
+                ]);
+        }
+            elseif ($parent->parent->id == 12) {
+                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri', [
+                    'parentId' => $parent->parent->id
+                ]);
+        }
+          else {
+            // fallback if needed
+            $subSection3Url = route('admin.laporan-lpj.bidang.dynamic.index');
+        }
+    }
+@endphp
+
+@section('pageTitle', 'Edit Laporan LPJ')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
+@section('subSection2', $parent?->parent?->parent?->nama_program ?? '')
+@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
+@section('subSection3', $parent?->parent?->nama_program ?? '')
+@section('subSection3Url', $subSection3Url)
+{{-- @section('subSection3Url', $parent?->parent ? route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $parent->parent->id]) : '') --}}
+@section('subSection4', $parent?->nama_program ?? '')
+@section('subSection4Url', $parent ? route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $parent->id]) : route('admin.laporan-lpj.bidang.dynamic.index'))
 @section('currentSection', 'Tambah Laporan')
 
 @section('content')
