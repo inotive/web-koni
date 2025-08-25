@@ -4,14 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\PembinaanHukum;
-use App\Models\HubunganLembaga;
-use App\Models\Kesehatan;
-use App\Models\Organisasi;
-use App\Models\PerencanaanProgram;
-use App\Models\SportScience;
-use App\Models\lpj;
-use App\Models\SumberDaya;
+use App\Models\Lpj;
 
 class BidangController extends Controller
 {
@@ -20,16 +13,87 @@ class BidangController extends Controller
      */
     public function index()
     {
-        // Get count for Mobilisasi Sumberdaya
-        $mobilisasiCount = SumberDaya::count();
-        $scienceCount = SportScience::count();
-        $hubunganLembagaCount = HubunganLembaga::count();
-        $kesehatanCount = Kesehatan::count();
-        $organisasiCount = Organisasi::count();
-        $pembinaanHukumCount = PembinaanHukum::count();
-        $perencanaanProgramCount = PerencanaanProgram::count();
+        // Define the parent IDs for each bidang based on your seeded data
+        // You can adjust these IDs based on your actual database structure
+        $bidangParentIds = [
+            'mobilisasi' => 1,           // Mobilisasi Sumberdaya
+            'hubungan_lembaga' => 2,     // Hubungan Antar Lembaga
+            'kesehatan' => 3,            // Kesehatan
+            'organisasi' => 4,           // Organisasi
+            'pembinaan_hukum' => 5,      // Pembinaan Hukum Olahraga
+            'prestasi' => 6,             // Pembinaan Prestasi
+            'science' => 7,              // Sport Science & Iptek
+            'perencanaan_program' => 8,  // Perencanaan Program dan Anggaran
+        ];
 
-        return view('admin.laporan-lpj.bidang.index', compact('mobilisasiCount', 'scienceCount', 'hubunganLembagaCount', 'kesehatanCount', 'organisasiCount', 'pembinaanHukumCount', 'perencanaanProgramCount'));
+        // Get counts for each bidang by counting their children
+        $mobilisasiCount = $this->getChildrenCount($bidangParentIds['mobilisasi']);
+        $hubunganLembagaCount = $this->getChildrenCount($bidangParentIds['hubungan_lembaga']);
+        $kesehatanCount = $this->getChildrenCount($bidangParentIds['kesehatan']);
+        $organisasiCount = $this->getChildrenCount($bidangParentIds['organisasi']);
+        $pembinaanHukumCount = $this->getChildrenCount($bidangParentIds['pembinaan_hukum']);
+        $prestasiCount = $this->getChildrenCount($bidangParentIds['prestasi']);
+        $scienceCount = $this->getChildrenCount($bidangParentIds['science']);
+        $perencanaanProgramCount = $this->getChildrenCount($bidangParentIds['perencanaan_program']);
+
+        return view('admin.laporan-lpj.bidang.index', compact(
+            'mobilisasiCount',
+            'hubunganLembagaCount',
+            'kesehatanCount',
+            'organisasiCount',
+            'pembinaanHukumCount',
+            'prestasiCount',
+            'scienceCount',
+            'perencanaanProgramCount'
+        ));
+    }
+
+    /**
+     * Get count of children for a specific parent ID
+     * This can count direct children or all descendants based on your needs
+     */
+    private function getChildrenCount($parentId)
+    {
+        // Count direct children only
+        $directCount = Lpj::where('parent_id', $parentId)->count();
+
+        // If you want to count all descendants (children + grandchildren + etc), use this instead:
+        // $allDescendantsCount = $this->countAllDescendants($parentId);
+
+        return $directCount;
+    }
+
+    /**
+     * Recursively count all descendants of a parent
+     * Use this if you want total count including sub-levels
+     */
+    private function countAllDescendants($parentId)
+    {
+        $count = 0;
+
+        $children = Lpj::where('parent_id', $parentId)->get();
+        $count += $children->count();
+
+        foreach ($children as $child) {
+            $count += $this->countAllDescendants($child->id);
+        }
+
+        return $count;
+    }
+
+    /**
+     * Get count of data entries only (not categories)
+     * Use this if you only want to count actual data entries, not parent categories
+     */
+    private function getDataEntriesCount($parentId)
+    {
+        return Lpj::where('parent_id', $parentId)
+                  ->where(function($query) {
+                      $query->whereNotNull('volume')
+                            ->orWhereNotNull('jumlah_harga_satuan')
+                            ->orWhereNotNull('jumlah_harga');
+                  })
+                  ->count();
     }
 
     /**
@@ -37,57 +101,23 @@ class BidangController extends Controller
      */
     public function prestasiIndex()
     {
-        return view('admin.laporan-lpj.bidang.prestasi.index');
+        // Get prestasi parent and its children for the prestasi index page
+        $prestasiParentId = 6; // Adjust based on your seeded data
+        $parent = Lpj::find($prestasiParentId);
+        $children = Lpj::where('parent_id', $prestasiParentId)
+                       ->withCount('children')
+                       ->orderBy('nama_program', 'asc')
+                       ->get();
+
+        return view('admin.laporan-lpj.bidang.prestasi.index', compact('children', 'parent'));
     }
 
     /**
-     * Display other bidang sections (placeholder methods)
+     * Cabor Akurasi - Updated to match your new structure
      */
-    public function mobilisasiSumberdayaIndex()
+    public function caborAkurasi(Request $request)
     {
-        // Placeholder for Mobilisasi Sumberdaya page
-        return view('admin.laporan-lpj.bidang.mobilisasi-sumberdaya.index');
-    }
-
-    public function hubunganAntarLembaga()
-    {
-        // Placeholder for Hubungan Antar Lembaga page
-        return view('admin.laporan-lpj.bidang.hubungan-antar-lembaga.index');
-    }
-
-    public function kesehatan()
-    {
-        // Placeholder for Kesehatan page
-        return view('admin.laporan-lpj.bidang.kesehatan.index');
-    }
-
-    public function organisasi()
-    {
-        // Placeholder for Organisasi page
-        return view('admin.laporan-lpj.bidang.organisasi.index');
-    }
-
-    public function pembinaanHukum()
-    {
-        // Placeholder for Pembinaan Hukum page
-        return view('admin.laporan-lpj.bidang.pembinaan-hukum.index');
-    }
-
-    public function sportScience()
-    {
-        // Placeholder for Sport Science & Iptek page
-        return view('admin.laporan-lpj.bidang.sport-science.index');
-    }
-
-    public function perencanaanProgram()
-    {
-        // Placeholder for Perencanaan Program page
-        return view('admin.laporan-lpj.bidang.perencanaan-program.index');
-    }
-
-    public function caborAkurasi(Request $request){
-
-        // The ID for 'Cabor Akurasi' is 10, based on the seeder.
+        // The ID for 'Cabor Akurasi' - adjust based on your seeded data
         $caborAkurasiParentId = 10;
 
         // Eager load children count for performance
@@ -104,20 +134,92 @@ class BidangController extends Controller
         return view('admin.laporan-lpj.bidang.prestasi.Akurasi.index', compact('children', 'parent'));
     }
 
-    public function caborBeladiri(){
-        return view ('admin.laporan-lpj.bidang.prestasi.Beladiri.index');
-    }
+    public function caborBeladiri(Request $request)
+    {
+        $caborBeladiriParentId = 11; // Adjust based on your seeded data
 
-    public function caborPermainan(Request $request){
+        $parent = Lpj::findOrFail($caborBeladiriParentId);
+        $children = Lpj::where('parent_id', $caborBeladiriParentId)
+                        ->withCount('children')
+                        ->orderBy('nama_program', 'asc')
+                        ->get();
 
         if ($request->ajax()) {
-            return view('admin.laporan-lpj-bidang.prestasi.Permainan._table');
+            return view('admin.laporan-lpj.bidang.prestasi.Beladiri._table', compact('children'))->render();
         }
 
-        return view ('admin.laporan-lpj.bidang.prestasi.Permainan.index');
+        return view('admin.laporan-lpj.bidang.prestasi.Beladiri.index', compact('children', 'parent'));
     }
 
-    public function caborTerukur(){
-        return view ('admin.laporan-lpj.bidang.prestasi.Terukur.index');
+    public function caborPermainan(Request $request)
+    {
+        $caborPermainanParentId = 12; // Adjust based on your seeded data
+
+        $parent = Lpj::findOrFail($caborPermainanParentId);
+        $children = Lpj::where('parent_id', $caborPermainanParentId)
+                        ->withCount('children')
+                        ->orderBy('nama_program', 'asc')
+                        ->get();
+
+        if ($request->ajax()) {
+            return view('admin.laporan-lpj.bidang.prestasi.Permainan._table', compact('children'))->render();
+        }
+
+        return view('admin.laporan-lpj.bidang.prestasi.Permainan.index', compact('children', 'parent'));
+    }
+
+    public function caborTerukur(Request $request)
+    {
+        $caborTerukurParentId = 13; // Adjust based on your seeded data
+
+        $parent = Lpj::findOrFail($caborTerukurParentId);
+        $children = Lpj::where('parent_id', $caborTerukurParentId)
+                        ->withCount('children')
+                        ->orderBy('nama_program', 'asc')
+                        ->get();
+
+        if ($request->ajax()) {
+            return view('admin.laporan-lpj.bidang.prestasi.Terukur._table', compact('children'))->render();
+        }
+
+        return view('admin.laporan-lpj.bidang.prestasi.Terukur.index', compact('children', 'parent'));
+    }
+
+    /**
+     * Legacy methods - you can remove these if you're not using separate models anymore
+     */
+    public function mobilisasiSumberdayaIndex()
+    {
+        return redirect()->route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 1]);
+    }
+
+    public function hubunganAntarLembaga()
+    {
+        return redirect()->route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2]);
+    }
+
+    public function kesehatan()
+    {
+        return redirect()->route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 3]);
+    }
+
+    public function organisasi()
+    {
+        return redirect()->route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 4]);
+    }
+
+    public function pembinaanHukum()
+    {
+        return redirect()->route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 5]);
+    }
+
+    public function sportScience()
+    {
+        return redirect()->route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 7]);
+    }
+
+    public function perencanaanProgram()
+    {
+        return redirect()->route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 8]);
     }
 }
