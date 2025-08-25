@@ -48,9 +48,12 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
+                @php
+                    $startNumber = ($files->currentPage() - 1) * $files->perPage() + 1;
+                @endphp
                 @foreach ($files as $index => $file)
                     <tr id="file-row-{{ $file->id }}">
-                        <td class="text-center">{{ $files->firstItem() + $index }}</td>
+                        <td class="text-center">{{ $startNumber + $index }}</td>
                         <td>
                             <div class="document-info">
                                 <div class="document-name-wrapper">
@@ -59,16 +62,26 @@
                                     </span>
                                 </div>
                                 <div class="document-date">
-                                    {{ optional($file->tanggal_dokumen)->format('d M Y') ?? '-' }}
+                                    {{ optional($file->created_at)->format('d/m/Y') ?? '-' }}
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <a href="{{ route('admin.file-kesekretariat.download', $file) }}" class="file-link"
-                                target="_blank">
-                                <i class="fas fa-download me-1"></i>
-                                {{ basename($file->dokumen_file) }}
-                            </a>
+                        <td class="text-center">
+                            @if ($file->dokumen_file)
+                                @php
+                                    $fileName = basename($file->dokumen_file);
+                                    $fileUrl = route('admin.file-kesekretariat.download', $file);
+                                    $fileExtension = strtolower(pathinfo($file->dokumen_file, PATHINFO_EXTENSION));
+                                @endphp
+                                <div class="document-link-container">
+                                    <a href="{{ $fileUrl }}" target="_blank" class="document-link" title="Klik untuk melihat {{ $fileName }}">
+                                        <i class="fas fa-file-{{ $fileExtension == 'pdf' ? 'pdf' : 'alt' }} me-2"></i>
+                                        {{ Str::limit($fileName, 25) }}
+                                    </a>
+                                </div>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
                         </td>
                         <td class="text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $file->id }}">
@@ -209,7 +222,6 @@
         color: #495057;
         cursor: default;
         user-select: text;
-        margin-bottom: 4px;
     }
 
     .document-name-wrapper i {
@@ -223,7 +235,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         max-width: 100%;
-        display: block;
     }
 
     /* Tanggal dokumen */
@@ -236,7 +247,46 @@
         font-style: italic;
         user-select: none;
         cursor: default !important;
-        line-height: 1.2;
+    }
+
+    /* Styling untuk document link yang baru (sama seperti di surat) */
+    .document-link-container {
+        display: inline-block;
+        max-width: 200px;
+    }
+
+    .document-link {
+        color: #0d6efd !important;
+        text-decoration: none !important;
+        font-weight: 500;
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        word-break: break-all;
+        line-height: 1.4;
+    }
+
+    .document-link:hover {
+        background-color: #e3f2fd;
+        color: #1976d2 !important;
+        text-decoration: underline !important;
+        transform: translateY(-1px);
+    }
+
+    .document-link i {
+        color: #dc3545;
+        flex-shrink: 0;
+    }
+
+    .document-link i.fa-file-pdf {
+        color: #dc3545;
+    }
+
+    .document-link i.fa-file-alt {
+        color: #28a745;
     }
 
     /* Sort styling */
@@ -262,37 +312,6 @@
 
     .sortable:hover .sort-icon i {
         color: #F8285A;
-    }
-
-    /* File link styling */
-    .file-link {
-        color: #495057;
-        text-decoration: none;
-        font-family: 'Courier New', monospace;
-        font-size: 0.875rem;
-        padding: 6px 12px;
-        border-radius: 6px;
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        max-width: 90%;
-    }
-
-    .file-link:hover {
-        color: #F8285A;
-        background: #fff5f7;
-        border-color: #F8285A;
-        text-decoration: none;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(248, 40, 90, 0.1);
-    }
-
-    .file-link i {
-        margin-right: 8px;
-        font-size: 16px;
     }
 
     /* Pagination styling */
@@ -355,58 +374,7 @@
         margin-bottom: 1.5rem;
     }
 
-    /* Responsive design */
-    @media (max-width: 768px) {
-
-        .table th:nth-child(1),
-        .table td:nth-child(1) {
-            width: 5% !important;
-            font-size: 0.8rem !important;
-        }
-
-        .table th:nth-child(2),
-        .table td:nth-child(2) {
-            width: 45% !important;
-        }
-
-        .table th:nth-child(3),
-        .table td:nth-child(3) {
-            width: 35% !important;
-        }
-
-        .table th:nth-child(4),
-        .table td:nth-child(4) {
-            width: 8% !important;
-            min-width: 60px !important;
-        }
-
-        .document-name-wrapper {
-            padding: 4px 6px;
-            font-size: 0.875rem;
-        }
-
-        .document-date {
-            font-size: 11px;
-            padding-left: 6px;
-        }
-
-        .d-flex.justify-content-between {
-            flex-direction: column;
-            gap: 1rem;
-            align-items: stretch;
-        }
-
-        .pagination {
-            justify-content: center;
-        }
-    }
-
-    /* Loading state */
-    .table-loading {
-        opacity: 0.6;
-        pointer-events: none;
-    }
-
+    /* Dropdown action styling */
     .dropdown-action {
         position: relative;
         display: inline-block;
@@ -470,12 +438,70 @@
         background-color: #fff9c4 !important;
     }
 
-    /* kuning soft */
     .dropdown-item.delete:hover {
         background-color: #ffebee !important;
     }
 
-    /* merah soft */
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            width: 5% !important;
+            font-size: 0.8rem !important;
+        }
+
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            width: 45% !important;
+        }
+
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            width: 35% !important;
+        }
+
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            width: 8% !important;
+            min-width: 60px !important;
+        }
+
+        .document-name-wrapper {
+            padding: 4px 6px;
+            font-size: 0.875rem;
+        }
+
+        .document-date {
+            font-size: 11px;
+            padding-left: 20px;
+        }
+
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: stretch;
+        }
+
+        .pagination {
+            justify-content: center;
+        }
+
+        /* Responsive design untuk document link */
+        .document-link-container {
+            max-width: 150px;
+        }
+
+        .document-link {
+            font-size: 0.8rem;
+            padding: 2px 6px;
+        }
+    }
+
+    /* Loading state */
+    .table-loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
 
     @keyframes fadeIn {
         from {
