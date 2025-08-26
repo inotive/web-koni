@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PelatihSeeder::class,
             PrestasiSeeder::class,
             ManajemenRKASeeder::class,
+            LpjSeeder::class,
             FileKesekretariatSeeder::class,
             SuratSeeder::class,
             SekretariatSeeder::class,

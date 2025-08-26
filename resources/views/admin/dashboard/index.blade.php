@@ -71,6 +71,10 @@
             display: block;
             max-width: 220px;
         }
+        
+        .text-bronze {
+            color: #CD7F32 !important;
+        }
     </style>
 @endpush
 
@@ -207,7 +211,7 @@
                         } else {
                             $persen = 100;
                         }
-                        
+
                         $barClass = 'bar-success';
                         if ($persen <= 30) {
                             $barClass = 'bar-danger';
@@ -262,48 +266,97 @@
 
 
         <!-- Prestasi Atlet Terbaru -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="card-title">Prestasi Atlet Terbaru</h5>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-6">
+                <div class="d-flex align-items-center justify-content-between mb-6">
+                    <h5 class="mb-0">Prestasi Atlet Terbaru</h5>
+                </div>
+
                 @if(isset($latest_prestasi) && $latest_prestasi->isNotEmpty())
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
+                        <table class="table table-borderless align-middle">
                             <thead>
-                                <tr>
-                                    <th>Nama Atlet</th>
-                                    <th>Cabang Olahraga</th>
-                                    <th>Prestasi</th>
-                                    <th>Kejuaraan</th>
-                                    <th>Medali</th>
-                                    <th>Tahun</th>
+                                <tr class="text-muted fw-bold fs-7 text-uppercase gs-0">
+                                    <th class="min-w-150px">Atlet & Cabor</th>
+                                    <th class="min-w-125px">Prestasi</th>
+                                    <th class="min-w-125px">Kejuaraan</th>
+                                    <th class="min-w-100px">Medali</th>
+                                    <th class="min-w-75px">Tahun</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($latest_prestasi as $prestasi)
-                                    <tr>
-                                        <td>{{ $prestasi->subject->nama ?? 'N/A' }}</td>
-                                        <td>{{ $prestasi->subject->cabangOlahraga->nama_cabor ?? 'N/A' }}</td>
-                                        <td>{{ $prestasi->nama_prestasi }}</td>
-                                        <td>{{ $prestasi->kejuaraan }}</td>
+                                    <tr class="border-bottom border-gray-200">
                                         <td>
-                                            @if($prestasi->medali == 'Emas')
-                                                <span class="badge bg-warning text-dark">{{ $prestasi->medali }}</span>
-                                            @elseif($prestasi->medali == 'Perak')
-                                                <span class="badge bg-secondary">{{ $prestasi->medali }}</span>
-                                            @elseif($prestasi->medali == 'Perunggu')
-                                                <span class="badge bg-info text-dark">{{ $prestasi->medali }}</span>
-                                            @else
-                                                <span class="badge bg-primary">{{ $prestasi->medali }}</span>
-                                            @endif
+                                            <div class="d-flex align-items-center">
+                                                <div class="symbol symbol-40px me-4">
+                                                    @if(!empty($prestasi->subject->foto))
+                                                        @php
+                                                            $fotoPath = '/storage/' . $prestasi->subject->foto;
+                                                        @endphp
+                                                        <img src="{{ $fotoPath }}" class="symbol-label rounded-circle" style="object-fit: cover; width: 40px; height: 40px;" alt="{{ $prestasi->subject->nama ?? 'Atlet' }}">
+                                                    @else
+                                                        <div class="symbol-label fs-2 fw-bold bg-light-primary text-primary rounded-circle">
+                                                            {{ substr($prestasi->subject->nama ?? 'N/A', 0, 1) }}
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div class="d-flex flex-column">
+                                                    <span class="text-gray-900 fw-bold fs-6">{{ $prestasi->subject->nama ?? 'N/A' }}</span>
+                                                    <span class="text-muted fs-7">
+                                                        {{ $prestasi->subject->cabangOlahraga->nama_cabor ?? 'N/A' }}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td>{{ $prestasi->tahun }}</td>
+                                        <td>
+                                            <span class="text-gray-800 fw-bold fs-6">{{ $prestasi->nama_prestasi }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-gray-600 fw-semibold fs-7">{{ $prestasi->kejuaraan }}</span>
+                                        </td>
+                                        <td>
+                                            @php
+                                                $iconColor = '';
+                                                switch ($prestasi->medali) {
+                                                    case 'Emas':
+                                                        $iconColor = 'text-warning';
+                                                        break;
+                                                    case 'Perak':
+                                                        $iconColor = 'text-dark';
+                                                        break;
+                                                    case 'Perunggu':
+                                                        $iconColor = 'text-bronze';
+                                                        break;
+                                                    default:
+                                                        $iconColor = 'text-primary';
+                                                        break;
+                                                }
+                                            @endphp
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-medal me-2 {{ $iconColor }}"></i>
+                                                <span>{{ $prestasi->medali }}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="text-gray-800 fw-bold fs-7">{{ $prestasi->tahun }}</span>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 @else
-                    <p class="text-muted">Belum ada data prestasi.</p>
+                    <div class="text-center py-10">
+                        <i class="ki-duotone ki-medal text-gray-400 fs-5x mb-5">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                            <span class="path3"></span>
+                            <span class="path4"></span>
+                        </i>
+                        <div class="text-gray-500 fs-6">Belum ada data prestasi</div>
+                        <div class="text-gray-400 fs-7">Prestasi atlet akan muncul di sini</div>
+                    </div>
                 @endif
             </div>
         </div>
