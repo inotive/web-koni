@@ -16,15 +16,15 @@ class DashboardController extends Controller
     {
         // Mengambil total RKA dari model LaporanRKA
         $total_rka = \App\Models\LaporanRKA::sum('total_anggaran');
-        
-        $total_pengurus = User::role('admin')->count();
+
+        $total_pengurus = User::count();
         $total_atlet = Atlet::count();
         $total_pelatih = Pelatih::count();
         $total_cabor = CabangOlahraga::count();
-        
+
         // Mengambil kegiatan dari LPJ
         $kegiatan = Lpj::whereNull('parent_id')->get();
-        
+
         // Mengambil 5 prestasi terbaru
         $latest_prestasi = Prestasi::with(['subject', 'subject.cabangOlahraga'])
             ->orderBy('created_at', 'desc')
