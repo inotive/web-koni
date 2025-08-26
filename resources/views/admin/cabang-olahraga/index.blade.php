@@ -11,7 +11,9 @@
                 $currentOrder = request('order');
 
                 if ($currentSort === $field) {
-                    return $currentOrder === 'asc' ? '<i class="fas fa-sort-up"></i>' : '<i class="fas fa-sort-down"></i>';
+                    return $currentOrder === 'asc'
+                        ? '<i class="fas fa-sort-up"></i>'
+                        : '<i class="fas fa-sort-down"></i>';
                 }
 
                 return '<i class="fas fa-sort text-muted"></i>';
@@ -41,10 +43,10 @@
             }
 
             .main-content {
-            background-color: #f5f5f5;
-            min-height: 100vh;
-            padding: 20px 0;
-        }
+                background-color: #f5f5f5;
+                min-height: 100vh;
+                padding: 20px 0;
+            }
 
             /* Card Styles - MATCHING PASTE 1 EXACTLY */
             .card {
@@ -494,10 +496,25 @@
                 min-width: 300px;
             }
 
-            .toast-success { background-color: #51a351; color: white; }
-            .toast-error { background-color: #bd362f; color: white; }
-            .toast-warning { background-color: #f89406; color: white; }
-            .toast-info { background-color: #2f96b4; color: white; }
+            .toast-success {
+                background-color: #51a351;
+                color: white;
+            }
+
+            .toast-error {
+                background-color: #bd362f;
+                color: white;
+            }
+
+            .toast-warning {
+                background-color: #f89406;
+                color: white;
+            }
+
+            .toast-info {
+                background-color: #2f96b4;
+                color: white;
+            }
 
             /* AJAX Loading Overlay */
             .loading-overlay {
@@ -539,6 +556,7 @@
 
             /* Responsive Styles - MATCHING PASTE 1 EXACTLY */
             @media (max-width: 768px) {
+
                 .table-header,
                 .table-footer {
                     padding: 15px;
@@ -602,6 +620,22 @@
                     font-size: 0.875rem;
                 }
             }
+
+            .btn-filter {
+                border: 1px solid #000;
+                /* garis tipis hitam */
+                border-radius: 6px;
+                /* sudut melengkung */
+                background-color: transparent;
+                color: #000;
+                padding: 0.375rem 0.75rem;
+                font-size: 0.875rem;
+                transition: all 0.2s ease-in-out;
+            }
+
+            .btn-filter:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
         </style>
 
         @if (session('success'))
@@ -642,10 +676,11 @@
                                             </div>
 
                                             <div class="dropdown">
-                                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                                <button class="btn btn-filter dropdown-toggle" type="button"
                                                     data-bs-toggle="dropdown">
                                                     <i class="fas fa-filter me-1"></i> Filter
-                                                    <span id="filter-count" class="badge badge-circle badge-danger ms-1 {{ request('status') ? '' : 'd-none' }}">
+                                                    <span id="filter-count"
+                                                        class="badge badge-circle badge-danger ms-1 {{ request('status') ? '' : 'd-none' }}">
                                                         {{ request('status') ? 1 : 0 }}
                                                     </span>
                                                 </button>
@@ -681,8 +716,11 @@
                                     @if (!(isset($cabors) && $cabors->isEmpty()))
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <div id="filter-info" class="text-muted">
-                                                Menampilkan <span id="showing-count">{{ isset($cabors) ? $cabors->count() : 0 }}</span>
-                                                dari <span id="total-count">{{ isset($cabors) ? $cabors->total() : 0 }}</span> cabang olahraga
+                                                Menampilkan <span
+                                                    id="showing-count">{{ isset($cabors) ? $cabors->count() : 0 }}</span>
+                                                dari <span
+                                                    id="total-count">{{ isset($cabors) ? $cabors->total() : 0 }}</span>
+                                                cabang olahraga
                                             </div>
                                         </div>
                                     @endif
@@ -696,7 +734,9 @@
                                         </div>
                                     @else
                                         <div class="table-responsive" id="tableContainer">
-                                            @include('admin.cabang-olahraga.partials.table', ['cabors' => $cabors])
+                                            @include('admin.cabang-olahraga.partials.table', [
+                                                'cabors' => $cabors,
+                                            ])
                                         </div>
 
                                         <!-- Pagination Section -->

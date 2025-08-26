@@ -19,10 +19,10 @@
         <table class="table table-bordered table-hover align-middle">
             <thead class="bg-light">
                 <tr>
-                    <th style="width: 3% !important;">No</th>
+                    <th style="width: 3% !important;">NO</th>
                     <th class="sortable sort-link" data-sort="nama_dokumen">
                         <div class="d-flex justify-content-center align-items-center">
-                            <span>Nama Dokumen</span>
+                            <span>NAMA DOKUMEN</span>
                             <span class="sort-icon ms-2">
                                 @if (request('sort_by') == 'nama_dokumen')
                                     <i class="fas fa-arrow-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
@@ -34,7 +34,7 @@
                     </th>
                     <th class="sortable sort-link" data-sort="dokumen_file" style="width: 25% !important;">
                         <div class="d-flex justify-content-center align-items-center">
-                            <span>File Dokumen</span>
+                            <span>FILE DOKUMEN</span>
                             <span class="sort-icon ms-2">
                                 @if (request('sort_by') == 'dokumen_file')
                                     <i class="fas fa-arrow-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
@@ -44,17 +44,13 @@
                             </span>
                         </div>
                     </th>
-                    <th style="width: 5% !important;">Aksi</th>
+                    <th style="width: 5% !important;">AKSI</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
-                @php
-                    $startNumber = ($files->currentPage() - 1) * $files->perPage() + 1;
-                @endphp
-                @foreach ($files as $index => $file)
-                    {{-- Main data row --}}
+                @foreach ($files as $file)
                     <tr id="file-row-{{ $file->id }}">
-                        <td class="text-center">{{ $startNumber + $index }}</td>
+                        <td class="text-center">{{ $files->firstItem() + $loop->index }}</td>
                         <td>
                             <div class="document-info">
                                 <div class="document-name-wrapper">
@@ -75,7 +71,8 @@
                                     $fileExtension = strtolower(pathinfo($file->dokumen_file, PATHINFO_EXTENSION));
                                 @endphp
                                 <div class="document-link-container">
-                                    <a href="{{ $fileUrl }}" target="_blank" class="document-link"
+                                    <a href="javascript:void(0)" class="document-link"
+                                        onclick="previewFile('{{ $fileUrl }}', '{{ $fileName }}', '{{ $fileExtension }}')"
                                         title="Klik untuk melihat {{ $fileName }}">
                                         <i class="fas fa-file-{{ $fileExtension == 'pdf' ? 'pdf' : 'alt' }} me-2"></i>
                                         {{ Str::limit($fileName, 25) }}
@@ -112,7 +109,7 @@
 
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li class="dropdown-item edit"
-                                        onclick="openEditModal({{ $file->id }}, '{{ $file->nama_dokumen }}', '{{ $file->tanggal_dokumen }}')">
+                                        onclick="openEditModal({{ $file->id }}, '{{ addslashes($file->nama_dokumen) }}', '{{ optional($file->tanggal_dokumen)->format('Y-m-d') }}')">
                                         <i class="ki-outline ki-pencil me-2"></i>Edit
                                     </li>
                                     <li class="dropdown-item delete"
@@ -134,82 +131,123 @@
 
     {{-- Pagination --}}
     @if ($files->total() > 0)
-        <div class="d-flex justify-content-between align-items-center mt-4">
-            <!-- Per Page Selector -->
-            <div class="d-flex align-items-center gap-2">
-                <span class="text-muted">Menampilkan</span>
-                <select name="per_page" class="form-select form-select-sm" style="width: auto;">
-                    @foreach ([10, 25, 50, 100] as $limit)
-                        <option value="{{ $limit }}" {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
-                            {{ $limit }}
-                        </option>
-                    @endforeach
-                </select>
-                <span class="text-muted">dari {{ $files->total() }} data</span>
+    
+        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+            <div class="mb-2 mb-md-0">
+                <div class="d-flex align-items-center">
+                    <span class="me-2">Show</span>
+                    <select name="per_page" class="form-select form-select-sm w-auto">
+                        @foreach ([10, 25, 50, 100] as $limit)
+                            <option value="{{ $limit }}" {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
+                                {{ $limit }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <span class="ms-2">per page</span>
+                </div>
             </div>
 
-            {{-- Pagination Navigation --}}
-            <nav aria-label="Page navigation">
-                <ul class="pagination pagination-sm mb-0">
-                    {{-- Previous Page Link --}}
-                    <li class="page-item {{ $files->onFirstPage() ? 'disabled' : '' }}">
-                        <a class="page-link pagination-link" href="{{ $files->previousPageUrl() }}"
-                            aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
+            @if ($files->hasPages())
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-muted small">
+                        {{ $files->firstItem() }}-{{ $files->lastItem() }} of {{ $files->total() }}
+                    </div>
 
-                    {{-- Page Numbers --}}
-                    @php
-                        $current = $files->currentPage();
-                        $total = $files->lastPage();
-                        $start = max(1, $current - 2);
-                        $end = min($total, $current + 2);
-
-                        if ($end - $start < 4) {
-                            $start = max(1, $end - 4);
-                            $end = min($total, $start + 4);
-                        }
-                    @endphp
-
-                    @if ($start > 1)
-                        <li class="page-item">
-                            <a class="page-link pagination-link" href="{{ $files->url(1) }}">1</a>
-                        </li>
-                        @if ($start > 2)
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                    <div class="d-flex align-items-center gap-2">
+                        @if ($files->onFirstPage())
+                            <span class="pagination-arrow disabled">←</span>
+                        @else
+                            <a href="{{ $files->appends(request()->query())->previousPageUrl() }}"
+                                class="pagination-arrow pagination-link" aria-label="Previous">←</a>
                         @endif
-                    @endif
 
-                    @for ($i = $start; $i <= $end; $i++)
-                        <li class="page-item {{ $i == $current ? 'active' : '' }}">
-                            <a class="page-link pagination-link" href="{{ $files->url($i) }}">{{ $i }}</a>
-                        </li>
-                    @endfor
+                        @php
+                            $current = $files->currentPage();
+                            $total = $files->lastPage();
+                            $start = max(1, $current - 2);
+                            $end = min($total, $current + 2);
+                            if ($end - $start < 4) {
+                                if ($start == 1) {
+                                    $end = min($total, $start + 4);
+                                } else {
+                                    $start = max(1, $end - 4);
+                                }
+                            }
+                        @endphp
 
-                    @if ($end < $total)
-                        @if ($end < $total - 1)
-                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        <div class="d-flex align-items-center">
+                            @for ($i = $start; $i <= $end; $i++)
+                                @if ($i == $current)
+                                    <span class="pagination-number active">{{ $i }}</span>
+                                @else
+                                    <a href="{{ $files->appends(request()->query())->url($i) }}"
+                                        class="pagination-number pagination-link">{{ $i }}</a>
+                                @endif
+                            @endfor
+                        </div>
+
+                        @if ($files->hasMorePages())
+                            <a href="{{ $files->appends(request()->query())->nextPageUrl() }}"
+                                class="pagination-arrow pagination-link" aria-label="Next">→</a>
+                        @else
+                            <span class="pagination-arrow disabled">→</span>
                         @endif
-                        <li class="page-item">
-                            <a class="page-link pagination-link"
-                                href="{{ $files->url($total) }}">{{ $total }}</a>
-                        </li>
-                    @endif
-
-                    {{-- Next Page Link --}}
-                    <li class="page-item {{ !$files->hasMorePages() ? 'disabled' : '' }}">
-                        <a class="page-link pagination-link" href="{{ $files->nextPageUrl() }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+                    </div>
+                </div>
+            @else
+                <div class="text-muted small">
+                    1-{{ $files->count() }} of {{ $files->total() }}
+                </div>
+            @endif
         </div>
-    @endif
+    </div>
+@endif
 @endif
 
 <style>
+
+    .pagination-arrow {
+    color: #6c757d;
+    text-decoration: none;
+    padding: 6px 8px;
+    transition: color 0.2s ease;
+    cursor: pointer;
+}
+
+.pagination-arrow:hover {
+    color: #0b0b0b;
+    text-decoration: none;
+}
+
+.pagination-arrow.disabled {
+    color: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.pagination-number {
+    color: #6c757d;
+    text-decoration: none;
+    padding: 6px 10px;
+    margin: 0 1px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    background-color: #f8f9fa;
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+}
+
+.pagination-number:hover {
+    color: #89add1;
+    background-color: #e9ecef;
+    text-decoration: none;
+}
+
+.pagination-number.active {
+    background-color: #e4e6e9;
+    color: rgb(4, 4, 4);
+    border-color: #e0e1e4;
+}
     /* Document info styling */
     .document-info {
         display: flex;

@@ -94,6 +94,7 @@
             border-radius: 8px;
             border: 1px solid #dee2e6;
         }
+        
     </style>
 
     <div class="container mt-4">
@@ -220,7 +221,7 @@
                     @endforeach
 
                     <div class="row mt-4">
-                        <div class="col-md-9 offset-md-3 d-flex justify-content-between">
+                        <div class="col-md-9 offset-md-3 d-flex gap-2">
                             <button type="submit" class="btn btn-danger px-4">Update Data</button>
                             <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}"
                                 class="btn btn-secondary px-4">Batal</a>

@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Illuminate\Support\Facades\Cache;
 
+
 class FileKesekretariatController extends Controller
 {
     /**
@@ -71,19 +72,25 @@ class FileKesekretariatController extends Controller
 
         // Execute query with pagination
         $files = $query->paginate($perPage)
-            ->withQueryString()
-            ->through(function ($file) {
-                $file->path = 'documents/' . $file->dokumen_file;
-                $file->file_exists = Storage::disk('public')->exists($file->path);
-                $file->file_size = $file->file_exists
-                    ? $this->formatFileSize(Storage::disk('public')->size($file->path))
-                    : '0 KB';
-                $file->file_extension = pathinfo($file->dokumen_file, PATHINFO_EXTENSION);
-                return $file;
-            });
+        ->withQueryString()
+        ->through(function ($file) {
+            $file->path = 'documents/' . $file->dokumen_file;
+            $file->file_exists = Storage::disk('public')->exists($file->path);
+            $file->file_size = $file->file_exists
+                ? $this->formatFileSize(Storage::disk('public')->size($file->path))
+                : '0 KB';
+            $file->file_extension = pathinfo($file->dokumen_file, PATHINFO_EXTENSION);
+            
+            // TAMBAHKAN: Format tanggal untuk konsistensi
+            if ($file->tanggal_dokumen) {
+                $file->tanggal_dokumen_formatted = $file->tanggal_dokumen->format('Y-m-d');
+            }
+            
+            return $file;
+        });
 
-        return view('admin.file-kesekretariat.index', compact('files'));
-    }
+    return view('admin.file-kesekretariat.index', compact('files'));
+}
     /**
      * Validate and return proper per_page value
      */
@@ -136,8 +143,8 @@ class FileKesekretariatController extends Controller
 
         try {
             $file = $request->file('dokumen_file');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-
+            $fileName = $file->getClientOriginalName(); // ✅ tanpa prefix
+            $path = $file->storeAs('documents', $fileName, 'public');
             $path = $file->storeAs('documents', $fileName, 'public');
 
             FileKesekretariat::create([
@@ -178,94 +185,104 @@ class FileKesekretariatController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(FileKesekretariat $fileKesekretariat): View
-    {
-        return view('admin.file-kesekretariat.edit', [
-            'file' => $fileKesekretariat, // Ini sudah benar
-            'fileKesekretariat' => $fileKesekretariat, // Tambahkan ini untuk konsistensi
-            'current_file_size' => $this->formatFileSize(
-                Storage::disk('public')->size('documents/' . $fileKesekretariat->dokumen_file)
-            ),
+    public function edit(FileKesekretariat $fileKesekretariat): JsonResponse
+{
+    try {
+        // Pastikan file exists di storage
+        $filePath = 'documents/' . $fileKesekretariat->dokumen_file;
+        $fileExists = Storage::disk('public')->exists($filePath);
+        
+        // Format tanggal dengan benar untuk input date HTML
+        $tanggalDokumen = null;
+        if ($fileKesekretariat->tanggal_dokumen) {
+            // Pastikan dalam format Y-m-d untuk input type="date"
+            if ($fileKesekretariat->tanggal_dokumen instanceof \Carbon\Carbon) {
+                $tanggalDokumen = $fileKesekretariat->tanggal_dokumen->format('Y-m-d');
+            } else {
+                // Jika string, parse dulu
+                $tanggalDokumen = date('Y-m-d', strtotime($fileKesekretariat->tanggal_dokumen));
+            }
+        }
+        
+        // Format data untuk response JSON
+        $data = [
+            'id' => $fileKesekretariat->id,
+            'nama_dokumen' => $fileKesekretariat->nama_dokumen,
+            'tanggal_dokumen' => $tanggalDokumen, // ✅ Format yang benar
+            'dokumen_file' => $fileKesekretariat->dokumen_file,
+            'file_exists' => $fileExists,
+            'current_file_size' => $fileExists ? 
+                $this->formatFileSize(Storage::disk('public')->size($filePath)) : 
+                '0 KB',
+            'file_extension' => pathinfo($fileKesekretariat->dokumen_file, PATHINFO_EXTENSION),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'message' => 'Data berhasil dimuat'
         ]);
+
+    } catch (\Exception $e) {
+        Log::error('Error in edit method: ' . $e->getMessage());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal memuat data file'
+        ], 500);
     }
+}
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, FileKesekretariat $fileKesekretariat): RedirectResponse
-    {
-        // Validasi
-        $validated = $request->validate([
-            'nama_dokumen' => 'required|string|max:255',
-            'dokumen_file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+    public function update(Request $request, FileKesekretariat $fileKesekretariat): JsonResponse
+{
+    // Validasi
+    $validated = $request->validate([
+        'nama_dokumen' => 'required|string|max:255',
+        'tanggal_dokumen' => 'nullable|date',
+        'dokumen_file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+    ]);
+
+    try {
+        $data = [
+            'nama_dokumen' => $validated['nama_dokumen'],
+            'tanggal_dokumen' => $validated['tanggal_dokumen'] ?? null,
+        ];
+
+        if ($request->hasFile('dokumen_file')) {
+            // Hapus file lama jika ada
+            if ($fileKesekretariat->dokumen_file) {
+                Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
+            }
+
+            // Simpan file baru
+            $file = $request->file('dokumen_file');
+            $fileName = $file->getClientOriginalName();
+            $file->storeAs('documents', $fileName, 'public');
+
+            $data['dokumen_file'] = $fileName;
+        }
+
+        $fileKesekretariat->update($data);
+
+        return response()->json([
+            'success' => true, 
+            'message' => 'File berhasil diupdate.',
+            'data' => $fileKesekretariat
         ]);
 
-        try {
-            $data = ['nama_dokumen' => $validated['nama_dokumen']];
-
-            if ($request->hasFile('dokumen_file')) {
-                // Hapus file lama jika ada
-                if ($fileKesekretariat->dokumen_file) {
-                    Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
-                }
-
-                // Simpan file baru
-                $file = $request->file('dokumen_file');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->storeAs('documents', $fileName, 'public');
-
-                $data['dokumen_file'] = $fileName;
-            }
-
-            $fileKesekretariat->update($data);
-
-            return redirect()
-                ->route('admin.file-kesekretariat.index')
-                ->with('success', 'File berhasil diupdate.');
-        } catch (\Exception $e) {
-            Log::error('Error updating file: ' . $e->getMessage());
-            return back()
-                ->withInput()
-                ->with('error', 'Gagal mengupdate file. Silakan coba lagi.');
-        }
+    } catch (\Exception $e) {
+        Log::error('Error updating file: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Gagal mengupdate file. Silakan coba lagi.'
+        ], 500);
     }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(FileKesekretariat $fileKesekretariat, Request $request)
-    {
-        try {
-            // Delete physical file
-            Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
+}
 
-            // Delete record
-            $fileKesekretariat->delete();
-
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Data berhasil dihapus.'
-                ]);
-            }
-
-            return redirect()
-                ->route('admin.file-kesekretariat.index')
-                ->with('success', 'Data berhasil dihapus.');
-        } catch (\Exception $e) {
-            Log::error('Error deleting file: ' . $e->getMessage()); // Diubah dari \Log ke Log
-
-            if ($request->expectsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gagal menghapus data. Silakan coba lagi.'
-                ], 500);
-            }
-
-            return redirect()
-                ->route('admin.file-kesekretariat.index')
-                ->with('error', 'Gagal menghapus data. Silakan coba lagi.');
-        }
-    }
 
 
     /**

@@ -53,6 +53,8 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     // Letakkan rute 'download' sebelum rute resource
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
+        Route::get('file-kesekretariat/{fileKesekretariat}/edit', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'edit'])
+          ->name('file-kesekretariat.edit');
 
 
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {
