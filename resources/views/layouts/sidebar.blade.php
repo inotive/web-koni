@@ -18,92 +18,101 @@
             <div class="menu-column menu-title-gray-800" id="kt_aside_menu" data-kt-menu="true">
 
                 <!-- Menu Utama Section -->
-                <div class="menu-item">
-                    <div class="menu-content">
-                        <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Menu Utama</span>
+                @if(auth()->user()->can('dashboard') || auth()->user()->can('manajemen-rka') || auth()->user()->can('laporan-lpj') || auth()->user()->can('database-bendahara') || auth()->user()->can('file-kesekretariatan') || auth()->user()->can('surat-masuk-keluar'))
+                    <div class="menu-item">
+                        <div class="menu-content">
+                            <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Menu Utama</span>
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Dashboard -->
-                <div class="menu-item">
-                    <a class="menu-link {{ request()->is('admin/dashboard') ? 'active bg-red' : '' }}"
-                        href="{{ route('admin.dashboard.index') }}">
-                        <span class="menu-icon">
-                            <i class="fs-1 ki-solid ki-category"></i>
-                        </span>
-                        <span class="menu-title">Dashboard</span>
-                    </a>
-                </div>
-
-                <!-- Manajemen RKA -->
-                <div class="menu-item">
-                    <a class="menu-link {{ request()->is('admin/manajemen-rka*') ? 'active bg-red' : '' }}"
-                        href="{{ route('admin.manajemen-rka.index') }}">
-                        <span class="menu-icon">
-                            <i class="fs-1 ki-solid ki-tablet-text-up"></i>
-                        </span>
-                        <span class="menu-title">Manajemen RKA</span>
-                    </a>
-                </div>
-
-                <!-- Laporan LPJ -->
-                @php
-                    $isLaporanLPJActive =
-                        request()->is('admin/laporan-lpj*') ||
-                        request()->is('admin/bidang*') ||
-                        (isset($mainSection) && $mainSection == 'Laporan LPJ');
-                @endphp
-                <div class="menu-item">
-                    <a class="menu-link d-flex justify-content-between {{ $isLaporanLPJActive ? 'active bg-orange' : '' }}"
-                        data-bs-toggle="collapse" href="#submenu-laporan" role="button"
-                        aria-expanded="{{ $isLaporanLPJActive ? 'true' : 'false' }}" aria-controls="submenu-laporan">
-                        <span class="d-flex align-items-center">
-                            <span class="menu-icon">
-                                <i
-                                    class="fa-solid fa-money-bill fs-2 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
-                            </span>
-                            <span class="menu-title {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-800' }}">Laporan
-                                LPJ</span>
-                        </span>
-                        <i
-                            class="fa-solid {{ $isLaporanLPJActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
-                    </a>
-                    <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
-                        <ul class="menu flex-column ms-5">
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/laporan-lpj/sekretariat*') ? 'active' : '' }}"
-                                    href="{{ route('admin.laporan-lpj.sekretariat.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Sekretariat</span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/laporan-lpj/bidang*') ? 'active' : '' }}"
-                                    href="{{ route('admin.laporan-lpj.bidang.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Bidang Bidang</span>
-                                </a>
-                            </li>
-                            <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan-lainnya*') ? 'active' : '' }}"
-                                    href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}">
-                                    <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                    <span class="menu-title">Kegiatan Lainnya</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                @can('dashboard')
                     <div class="menu-item">
-                        <a class="menu-link {{ request()->is('admin/bendahara*') ? 'active' : '' }}"
-                            href="{{ route('admin.bendahara.index') }}">
+                        <a class="menu-link {{ request()->is('admin/dashboard') ? 'active bg-red' : '' }}"
+                            href="{{ route('admin.dashboard.index') }}">
                             <span class="menu-icon">
-                                <i class="fa-solid fa-address-book fs-2"></i>
+                                <i class="fs-1 ki-solid ki-category"></i>
                             </span>
-                            <span class="menu-title">Database Bendahara</span>
+                            <span class="menu-title">Dashboard</span>
                         </a>
                     </div>
-                </div>
+                @endcan
 
+                <!-- Manajemen RKA -->
+                @can('manajemen-rka')
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/manajemen-rka*') ? 'active bg-red' : '' }}"
+                            href="{{ route('admin.manajemen-rka.index') }}">
+                            <span class="menu-icon">
+                                <i class="fs-1 ki-solid ki-tablet-text-up"></i>
+                            </span>
+                            <span class="menu-title">Manajemen RKA</span>
+                        </a>
+                    </div>
+                @endcan
+
+                <!-- Laporan LPJ -->
+                @can('laporan-lpj')
+                    @php
+                        $isLaporanLPJActive =
+                            request()->is('admin/laporan-lpj*') ||
+                            request()->is('admin/bidang*') ||
+                            (isset($mainSection) && $mainSection == 'Laporan LPJ');
+                    @endphp
+                    <div class="menu-item">
+                        <a class="menu-link d-flex justify-content-between {{ $isLaporanLPJActive ? 'active bg-orange' : '' }}"
+                            data-bs-toggle="collapse" href="#submenu-laporan" role="button"
+                            aria-expanded="{{ $isLaporanLPJActive ? 'true' : 'false' }}" aria-controls="submenu-laporan">
+                            <span class="d-flex align-items-center">
+                                <span class="menu-icon">
+                                    <i
+                                        class="fa-solid fa-money-bill fs-2 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
+                                </span>
+                                <span class="menu-title {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-800' }}">Laporan
+                                    LPJ</span>
+                            </span>
+                            <i
+                                class="fa-solid {{ $isLaporanLPJActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
+                        </a>
+                        <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
+                            <ul class="menu flex-column ms-5">
+                                <li class="menu-item">
+                                    <a class="menu-link {{ request()->is('admin/laporan-lpj/sekretariat*') ? 'active' : '' }}"
+                                        href="{{ route('admin.laporan-lpj.sekretariat.index') }}">
+                                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                        <span class="menu-title">Sekretariat</span>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a class="menu-link {{ request()->is('admin/laporan-lpj/bidang*') ? 'active' : '' }}"
+                                        href="{{ route('admin.laporan-lpj.bidang.index') }}">
+                                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                        <span class="menu-title">Bidang Bidang</span>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan-lainnya*') ? 'active' : '' }}"
+                                        href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}">
+                                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                        <span class="menu-title">Kegiatan Lainnya</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->is('admin/bendahara*') ? 'active' : '' }}"
+                                href="{{ route('admin.bendahara.index') }}">
+                                <span class="menu-icon">
+                                    <i class="fa-solid fa-address-book fs-2"></i>
+                                </span>
+                                <span class="menu-title">Database Bendahara</span>
+                            </a>
+                        </div>
+                    </div>
+                @endcan
+
+                @can('surat-masuk-keluar')
                 <div class="menu-item">
                     <a class="menu-link {{ request()->is('admin/surat*') ? 'active bg-red' : '' }}"
                         href=" {{ route('admin.surat.index') }}">
@@ -113,8 +122,10 @@
                         <span class="menu-title">Surat Masuk & Keluar</span>
                     </a>
                 </div>
+                @endcan
 
                 <!-- File Kesekretariat - MENU BARU -->
+                @can('file-kesekretariat')
                 @php
                     $isFileKesekretariatActive =
                         request()->routeIs('admin.file-kesekretariat*') ||
@@ -130,15 +141,19 @@
                         <span class="menu-title">File Kesekretariat</span>
                     </a>
                 </div>
+                @endcan
 
                 <!-- Konfigurasi Section -->
-                <div class="menu-item pt-10">
-                    <div class="menu-content">
-                        <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Konfigurasi</span>
+                @if(auth()->user()->can('atlet') || auth()->user()->can('pelatih') || auth()->user()->can('cabang-olahraga') || auth()->user()->can('kejuaraan'))
+                    <div class="menu-item pt-10">
+                        <div class="menu-content">
+                            <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Konfigurasi</span>
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Atlet -->
+                @can('atlet')
                 @php
                     $isAtletActive =
                         request()->routeIs('admin.konfigurasi.atlet*') ||
@@ -155,8 +170,10 @@
                         <span class="menu-title {{ $isAtletActive ? 'text-white' : 'text-gray-800' }}">Atlet</span>
                     </a>
                 </div>
+                @endcan
 
                 <!-- Pelatih -->
+                @can('pelatih')
                 @php
                     $isPelatihActive =
                         request()->routeIs('admin.konfigurasi.pelatih*') ||
@@ -174,8 +191,10 @@
                             class="menu-title {{ $isPelatihActive ? 'text-white' : 'text-gray-800' }}">Pelatih</span>
                     </a>
                 </div>
+                @endcan
 
                 <!-- Cabang Olahraga -->
+                @can('cabang-olahraga')
                 @php
                     $isCabangOlahragaActive =
                         request()->routeIs('admin.konfigurasi.cabang-olahraga*') ||
@@ -193,8 +212,10 @@
                             Olahraga</span>
                     </a>
                 </div>
+                @endcan
 
                 <!-- Kejuaraan/Prestasi -->
+                @can('kejuaraan')
                 @php
                     $isPrestasiActive =
                         request()->routeIs('admin.konfigurasi.prestasi*') ||
@@ -212,14 +233,18 @@
                             class="menu-title {{ $isPrestasiActive ? 'text-white' : 'text-gray-800' }}">Kejuaraan</span>
                     </a>
                 </div>
+                @endcan
 
                 <!-- Manajemen Pengguna Section -->
-                <div class="menu-item pt-10">
-                    <div class="menu-content">
-                        <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Manajemen Pengguna</span>
+                @if(auth()->user()->can('pengguna') || auth()->user()->can('jabatan'))
+                    <div class="menu-item pt-10">
+                        <div class="menu-content">
+                            <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Manajemen Pengguna</span>
+                        </div>
                     </div>
-                </div>
+                @endif
 
+                @can('pengguna')
                 @php
                     $isManajemenPenggunaActive =
                         request()->is('admin/manajemen-pengguna*') ||
@@ -237,6 +262,8 @@
                             class="menu-title {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'text-white' : 'text-gray-800' }}">Pengguna</span>
                     </a>
                 </div>
+                @endcan
+                @can('jabatan')
                 <div class="menu-item">
                     <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active' : '' }}"
                         href="{{ route('admin.manajemen-pengguna.role.index') }}"
@@ -249,6 +276,7 @@
                             class="menu-title {{ request()->is('admin/manajemen-pengguna/role*') ? 'text-white' : 'text-gray-800' }}">Jabatan</span>
                     </a>
                 </div>
+                @endcan
             </div>
             <!--end::Menu-->
         </div>
