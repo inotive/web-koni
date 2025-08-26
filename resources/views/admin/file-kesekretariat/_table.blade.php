@@ -52,6 +52,7 @@
                     $startNumber = ($files->currentPage() - 1) * $files->perPage() + 1;
                 @endphp
                 @foreach ($files as $index => $file)
+                    {{-- Main data row --}}
                     <tr id="file-row-{{ $file->id }}">
                         <td class="text-center">{{ $startNumber + $index }}</td>
                         <td>
@@ -74,7 +75,8 @@
                                     $fileExtension = strtolower(pathinfo($file->dokumen_file, PATHINFO_EXTENSION));
                                 @endphp
                                 <div class="document-link-container">
-                                    <a href="{{ $fileUrl }}" target="_blank" class="document-link" title="Klik untuk melihat {{ $fileName }}">
+                                    <a href="{{ $fileUrl }}" target="_blank" class="document-link"
+                                        title="Klik untuk melihat {{ $fileName }}">
                                         <i class="fas fa-file-{{ $fileExtension == 'pdf' ? 'pdf' : 'alt' }} me-2"></i>
                                         {{ Str::limit($fileName, 25) }}
                                     </a>
@@ -86,7 +88,6 @@
                         <td class="text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $file->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
-                                    <!-- SVG icon (copy-paste punya teman kamu) -->
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <rect width="32" height="32" rx="6" fill="#EFF6FF" />
@@ -111,7 +112,7 @@
 
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li class="dropdown-item edit"
-                                        onclick="window.location='{{ route('admin.file-kesekretariat.edit', $file) }}'">
+                                        onclick="openEditModal({{ $file->id }}, '{{ $file->nama_dokumen }}', '{{ $file->tanggal_dokumen }}')">
                                         <i class="ki-outline ki-pencil me-2"></i>Edit
                                     </li>
                                     <li class="dropdown-item delete"
@@ -444,6 +445,7 @@
 
     /* Responsive design */
     @media (max-width: 768px) {
+
         .table th:nth-child(1),
         .table td:nth-child(1) {
             width: 5% !important;

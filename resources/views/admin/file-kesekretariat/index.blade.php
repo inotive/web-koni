@@ -7,8 +7,8 @@
 @section('style')
     <style>
         /* =================================
-                                                                       BASIC LAYOUT & COLORS - UPDATED
-                                                                    ================================= */
+                                                                                           BASIC LAYOUT & COLORS - UPDATED
+                                                                                        ================================= */
         body {
             background-color: #ffffff;
             /* Changed from #f5f5f5 to white like file 1 */
@@ -30,8 +30,8 @@
         }
 
         /* =================================
-                                                                       FILTER & SEARCH CONTAINER
-                                                                    ================================= */
+                                                                                           FILTER & SEARCH CONTAINER
+                                                                                        ================================= */
         .filter-container {
             display: flex;
             align-items: center;
@@ -68,8 +68,8 @@
         }
 
         /* =================================
-                                                                       TABLE STYLING - UPDATED TO MATCH FILE 1
-                                                                    ================================= */
+                                                                                           TABLE STYLING - UPDATED TO MATCH FILE 1
+                                                                                        ================================= */
         .table-responsive {
             overflow: visible !important;
             background-color: #ffffff;
@@ -182,8 +182,8 @@
         }
 
         /* =================================
-                                                                       SORTING FUNCTIONALITY
-                                                                    ================================= */
+                                                                                           SORTING FUNCTIONALITY
+                                                                                        ================================= */
         .table th.sortable {
             cursor: pointer;
             position: relative;
@@ -217,8 +217,8 @@
         }
 
         /* =================================
-                                                                       DOCUMENT DISPLAY
-                                                                    ================================= */
+                                                                                           DOCUMENT DISPLAY
+                                                                                        ================================= */
         .document-info {
             display: flex;
             flex-direction: column;
@@ -272,8 +272,8 @@
         }
 
         /* =================================
-                                                                       FILE LINK STYLING
-                                                                    ================================= */
+                                                                                           FILE LINK STYLING
+                                                                                        ================================= */
         .file-link {
             color: #495057;
             text-decoration: none;
@@ -317,8 +317,8 @@
         }
 
         /* =================================
-                                                                       DROPDOWN ACTION MENU
-                                                                    ================================= */
+                                                                                           DROPDOWN ACTION MENU
+                                                                                        ================================= */
         .dropdown-action {
             position: relative;
             z-index: 1;
@@ -415,8 +415,8 @@
         }
 
         /* =================================
-                                                                       MAIN CONTAINER WHITE BACKGROUND
-                                                                    ================================= */
+                                                                                           MAIN CONTAINER WHITE BACKGROUND
+                                                                                        ================================= */
         .container {
             background-color: #ffffff;
             /* White background for main container */
@@ -430,8 +430,8 @@
         }
 
         /* =================================
-                                                                       BUTTONS & FORM CONTROLS
-                                                                    ================================= */
+                                                                                           BUTTONS & FORM CONTROLS
+                                                                                        ================================= */
         .custom-red-button,
         .btn-active-light-danger {
             background-color: #F8285A !important;
@@ -477,8 +477,8 @@
         }
 
         /* =================================
-                                                                       PAGINATION
-                                                                    ================================= */
+                                                                                           PAGINATION
+                                                                                        ================================= */
         .pagination-wrapper {
             margin-top: 1.5rem;
             display: flex;
@@ -561,8 +561,8 @@
         }
 
         /* =================================
-                                                                       DROPZONE STYLING
-                                                                    ================================= */
+                                                                                           DROPZONE STYLING
+                                                                                        ================================= */
         .dropzone {
             border: 2px dashed #dee2e6;
             border-radius: 8px;
@@ -596,8 +596,8 @@
         }
 
         /* =================================
-                                                                       MODALS & TOASTS
-                                                                    ================================= */
+                                                                                           MODALS & TOASTS
+                                                                                        ================================= */
         .modal-content {
             border-radius: 12px;
             border: none;
@@ -661,8 +661,8 @@
         }
 
         /* =================================
-                                                                       EMPTY STATE & LOADING
-                                                                    ================================= */
+                                                                                           EMPTY STATE & LOADING
+                                                                                        ================================= */
         .empty-state {
             padding: 4rem 2rem;
             text-align: center;
@@ -704,8 +704,8 @@
         }
 
         /* =================================
-                                                                       UTILITY CLASSES
-                                                                    ================================= */
+                                                                                           UTILITY CLASSES
+                                                                                        ================================= */
         .text-truncate-custom {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -717,8 +717,8 @@
         }
 
         /* =================================
-                                                                       PAGE BACKGROUND OVERRIDE
-                                                                    ================================= */
+                                                                                           PAGE BACKGROUND OVERRIDE
+                                                                                        ================================= */
         html,
         body,
         .app,
@@ -728,8 +728,8 @@
         }
 
         /* =================================
-                                                                       RESPONSIVE DESIGN
-                                                                    ================================= */
+                                                                                           RESPONSIVE DESIGN
+                                                                                        ================================= */
         @media (max-width: 768px) {
             .filter-container {
                 flex-direction: column;
@@ -835,6 +835,10 @@
                 background-color: #ffffff !important;
                 /* White background on mobile */
             }
+        }
+
+        [id^="edit-form-row-"] {
+            transition: all 0.3s ease-in-out;
         }
     </style>
 @endsection
@@ -945,67 +949,67 @@
             </div>
         </div>
 
-<!-- Edit File Modal -->
-<div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 gap-5 px-10 py-8">
-            <div class="d-flex justify-content-between align-items-center gap-2">
-                <div class="fs-2 fw-bold text-truncate leading-5" id="editModalTitle">Edit File Kesekretariat</div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <form id="editFileForm" method="POST" enctype="multipart/form-data" class="d-grid gap-4">
-                @csrf
-                @method('PUT')
-                
-                <!-- Hidden ID Field -->
-                <input type="hidden" name="file_id" id="edit_file_id">
-
-                <!-- Document Name Field -->
-                <div>
-                    <div class="fw-semibold required mb-3 text-gray-800">Nama Dokumen</div>
-                    <input type="text" name="nama_dokumen" id="edit_nama_dokumen" 
-                           placeholder="Masukkan nama dokumen" 
-                           class="form-control bg-light border border-gray-400" required>
-                    <div class="invalid-feedback" id="edit_nama_dokumen_error"></div>
-                </div>
-
-                <!-- Document Date Field -->
-                <div>
-                    <div class="fw-semibold required mb-3 text-gray-800">Tanggal Dokumen</div>
-                    <input type="date" name="tanggal_dokumen" id="edit_tanggal_dokumen"
-                           class="form-control bg-light border border-gray-400" required>
-                    <div class="invalid-feedback" id="edit_tanggal_dokumen_error"></div>
-                    <div class="form-text text-muted">
-                        <i class="fas fa-info-circle me-1"></i>
-                        Pilih tanggal pembuatan atau tanggal berlaku dokumen
+        <!-- Edit File Modal -->
+        <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                    <div class="d-flex justify-content-between align-items-center gap-2">
+                        <div class="fs-2 fw-bold text-truncate leading-5" id="editModalTitle">Edit File Kesekretariat</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </div>
 
-                <!-- Current File Display -->
-                <div id="currentFileDisplay">
-                    <div class="fw-semibold mb-3 text-gray-800">File Saat Ini</div>
-                    <div class="current-file-info p-3 bg-light rounded border">
-                        <div class="d-flex align-items-center">
-                            <i id="currentFileIcon" class="fas fa-file fa-2x me-3 text-secondary"></i>
-                            <div>
-                                <div class="fw-bold" id="currentFileName">-</div>
-                                <small class="text-muted">File yang sedang digunakan</small>
+                    <form id="editFileForm" method="POST" enctype="multipart/form-data" class="d-grid gap-4">
+                        @csrf
+                        @method('PUT')
+
+                        <!-- Hidden ID Field -->
+                        <input type="hidden" name="file_id" id="edit_file_id">
+
+                        <!-- Document Name Field -->
+                        <div>
+                            <div class="fw-semibold required mb-3 text-gray-800">Nama Dokumen</div>
+                            <input type="text" name="nama_dokumen" id="edit_nama_dokumen"
+                                placeholder="Masukkan nama dokumen" class="form-control bg-light border border-gray-400"
+                                required>
+                            <div class="invalid-feedback" id="edit_nama_dokumen_error"></div>
+                        </div>
+
+                        <!-- Document Date Field -->
+                        <div>
+                            <div class="fw-semibold required mb-3 text-gray-800">Tanggal Dokumen</div>
+                            <input type="date" name="tanggal_dokumen" id="edit_tanggal_dokumen"
+                                class="form-control bg-light border border-gray-400" required>
+                            <div class="invalid-feedback" id="edit_tanggal_dokumen_error"></div>
+                            <div class="form-text text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Pilih tanggal pembuatan atau tanggal berlaku dokumen
                             </div>
                         </div>
-                    </div>
+
+                        <!-- Current File Display -->
+                        <div id="currentFileDisplay">
+                            <div class="fw-semibold mb-3 text-gray-800">File Saat Ini</div>
+                            <div class="current-file-info p-3 bg-light rounded border">
+                                <div class="d-flex align-items-center">
+                                    <i id="currentFileIcon" class="fas fa-file fa-2x me-3 text-secondary"></i>
+                                    <div>
+                                        <div class="fw-bold" id="currentFileName">-</div>
+                                        <small class="text-muted">File yang sedang digunakan</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid py-4">
+                            <button type="button" onclick="submitEditForm()" id="editSubmitBtn"
+                                class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                                <i class="fas fa-save me-1"></i>Update File
+                            </button>
+                        </div>
                 </div>
-                
-            <!-- Submit Button -->
-            <div class="d-grid py-4">
-                <button type="button" onclick="submitEditForm()" id="editSubmitBtn"
-                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                    <i class="fas fa-save me-1"></i>Update File
-                </button>
             </div>
         </div>
-    </div>
-</div>
 
     @endsection
 
@@ -1221,6 +1225,7 @@
                     });
                 }
 
+
                 // Untuk dropdown baru (kalau pakai .dropdown-toggle-custom)
                 $(document).on('click', '.dropdown-toggle-custom', function(e) {
                     e.stopPropagation();
@@ -1423,6 +1428,8 @@
                 // Make removeSelectedFile globally available
                 window.removeSelectedFile = removeSelectedFile;
 
+                window.openEditModal = openEditModal;
+
                 // Initialize all event handlers (called after AJAX content update)
                 function initializeEventHandlers() {
                     // Remove existing handlers to prevent duplicates
@@ -1476,6 +1483,211 @@
                                     page: page
                                 }, true);
                             }
+                        }
+                    });
+                }
+
+                function showEditForm(id) {
+                    document.querySelectorAll('[id^="edit-form-row-"]').forEach(r => r.style.display = 'none');
+                    const row = document.getElementById(`edit-form-row-${id}`);
+                    if (row) row.style.display = 'table-row';
+                }
+
+                function hideEditForm(id) {
+                    const row = document.getElementById(`edit-form-row-${id}`);
+                    if (row) row.style.display = 'none';
+                }
+
+                function showEditForm(id) {
+                    // Sembunyikan semua form edit lainnya
+                    document.querySelectorAll('[id^="edit-form-row-"]').forEach(row => row.style.display = 'none');
+
+                    // Tampilkan form untuk file yang dipilih
+                    const row = document.getElementById(`edit-form-row-${id}`);
+                    if (row) {
+                        row.style.display = 'table-row';
+                    }
+                }
+
+                function hideEditForm(id) {
+                    const row = document.getElementById(`edit-form-row-${id}`);
+                    if (row) {
+                        row.style.display = 'none';
+                    }
+                }
+
+                function openEditModal(id, nama, tanggal) {
+                    // Isi data ke modal
+                    $('#edit_file_id').val(id);
+                    $('#edit_nama_dokumen').val(nama);
+                    $('#edit_tanggal_dokumen').val(tanggal);
+
+                    // Tampilkan modal
+                    $('#editFileModal').modal('show');
+                }
+
+                // Submit form edit via AJAX
+                $(document).on('submit', '.edit-inline-form', function(e) {
+                    e.preventDefault();
+                    const form = $(this);
+                    const id = form.data('id');
+                    const data = form.serialize();
+
+                    $.ajax({
+                        url: `/admin/file-kesekretariat/${id}`,
+                        type: 'PUT',
+                        data: data,
+                        success: function() {
+                            showNotification('File berhasil diperbarui', 'success');
+                            hideEditForm(id);
+                            performSearch(); // reload tabel
+                        },
+                        error: function(xhr) {
+                            showNotification('Gagal memperbarui file', 'error');
+                        }
+                    });
+                });
+
+                function openEditModal(id, nama, tanggal) {
+                    // Clear any previous errors
+                    $('.is-invalid').removeClass('is-invalid');
+                    $('.invalid-feedback').empty();
+
+                    // Set form data
+                    $('#edit_file_id').val(id);
+                    $('#edit_nama_dokumen').val(nama);
+                    $('#edit_tanggal_dokumen').val(tanggal);
+
+                    // Set form action URL
+                    $('#editFileForm').attr('action', `/admin/file-kesekretariat/${id}`);
+
+                    // Show modal
+                    $('#editFileModal').modal('show');
+                }
+
+                // Make sure the functions are globally available
+                window.submitEditForm = submitEditForm;
+                window.openEditModal = openEditModal;
+
+                // Updated document ready function - add these event handlers
+                $(document).ready(function() {
+                    // ... existing code ...
+
+                    // Handle edit form submission via button click
+                    $(document).on('click', '#editSubmitBtn', function(e) {
+                        e.preventDefault();
+                        submitEditForm();
+                    });
+
+                    // Handle edit form submission via form submit
+                    $('#editFileForm').on('submit', function(e) {
+                        e.preventDefault();
+                        submitEditForm();
+                    });
+
+                    // Clear validation errors on input
+                    $(document).on('input', '#edit_nama_dokumen', function() {
+                        if ($(this).val().trim()) {
+                            $(this).removeClass('is-invalid');
+                            $('#edit_nama_dokumen_error').empty();
+                        }
+                    });
+
+                    $(document).on('change', '#edit_tanggal_dokumen', function() {
+                        if ($(this).val()) {
+                            $(this).removeClass('is-invalid');
+                            $('#edit_tanggal_dokumen_error').empty();
+                        }
+                    });
+
+                    // Reset edit modal when closed
+                    $('#editFileModal').on('hidden.bs.modal', function() {
+                        $('#editFileForm')[0].reset();
+                        $('.is-invalid').removeClass('is-invalid');
+                        $('.invalid-feedback').empty();
+                    });
+                });
+
+                function submitEditForm() {
+                    const form = $('#editFileForm');
+                    const formData = new FormData(form[0]);
+                    const fileId = $('#edit_file_id').val();
+
+                    // Manual validation for edit form
+                    let isValid = true;
+
+                    // Clear previous errors
+                    $('.is-invalid').removeClass('is-invalid');
+                    $('.invalid-feedback').empty();
+
+                    // Validate nama dokumen
+                    const namaDokumen = $('#edit_nama_dokumen').val().trim();
+                    if (!namaDokumen) {
+                        $('#edit_nama_dokumen_error').text('Nama dokumen wajib diisi');
+                        $('#edit_nama_dokumen').addClass('is-invalid');
+                        isValid = false;
+                    }
+
+                    // Validate tanggal dokumen
+                    const tanggalDokumen = $('#edit_tanggal_dokumen').val();
+                    if (!tanggalDokumen) {
+                        $('#edit_tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
+                        $('#edit_tanggal_dokumen').addClass('is-invalid');
+                        isValid = false;
+                    }
+
+                    if (!isValid) {
+                        return false;
+                    }
+
+                    // Add CSRF token manually
+                    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+                    formData.append('_method', 'PUT');
+
+                    $.ajax({
+                        url: `/admin/file-kesekretariat/${fileId}`,
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        beforeSend: function() {
+                            $('#editSubmitBtn').prop('disabled', true)
+                                .html('<i class="fas fa-spinner fa-spin me-1"></i>Menyimpan...');
+                        },
+                        success: function(response) {
+                            $('#editFileModal').modal('hide');
+                            showNotification('File berhasil diperbarui', 'success');
+
+                            // Reset form
+                            $('#editFileForm')[0].reset();
+
+                            // Reload tabel
+                            performSearch();
+                        },
+                        error: function(xhr) {
+                            console.log('Error:', xhr); // Debug log
+
+                            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                                let errors = xhr.responseJSON.errors;
+                                $.each(errors, function(key, value) {
+                                    $(`#edit_${key}`).addClass('is-invalid');
+                                    $(`#edit_${key}_error`).text(value[0]);
+                                });
+                            } else {
+                                let errorMessage = 'Terjadi kesalahan saat memperbarui file';
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    errorMessage = xhr.responseJSON.message;
+                                }
+                                showNotification(errorMessage, 'error');
+                            }
+                        },
+                        complete: function() {
+                            $('#editSubmitBtn').prop('disabled', false)
+                                .html('<i class="fas fa-save me-1"></i>Update File');
                         }
                     });
                 }
