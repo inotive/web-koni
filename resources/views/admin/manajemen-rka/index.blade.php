@@ -57,7 +57,7 @@
 
                     <div class="d-grid py-4">
                         <button type="button" onclick="submitForm('formAdd')"
-                            class="bg-success fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                             Tambah Folder
                         </button>
                     </div>
@@ -99,6 +99,8 @@
                     } else {
                         $('.modal.show').modal('hide');
                         reloadTable();
+
+                        form.reset();
                     }
                 })
                 .catch(error => {
@@ -139,6 +141,23 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(context, args), delay);
             };
+        }
+
+        function confirmDelete(id, name = 'item ini') {
+            Swal.fire({
+                title: "Apakah Anda Yakin?",
+                html: `Hapus <strong>${name}</strong>?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-form-${id}`).submit();
+                }
+            });
         }
 
         $(document).ready(function() {

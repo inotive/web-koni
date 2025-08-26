@@ -18,6 +18,31 @@
             -webkit-appearance: none;
             margin: 0;
         }
+
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn-loading::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #fff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
     </style>
 @endsection
 
@@ -50,10 +75,6 @@
                     <input type="text" name="search" value="{{ request('search') }}" data-kt-docs-table-filter="search"
                         placeholder="Cari Laporan" class="form-control border border-gray-500 py-2 ps-12" />
                 </div>
-                {{-- <select name="sortBy" id="sortBy" class="form-select border border-gray-500 py-2" style="width: 85px">
-                    <option value="ASC">A - Z</option>
-                    <option value="DESC">Z - A</option>
-                </select> --}}
             </form>
         </div>
 
@@ -79,8 +100,7 @@
                             <div class="fw-semibold required mb-3 text-gray-800">Total Anggaran</div>
                             <div class="input-group">
                                 <span class="input-group-text border border-gray-400 pe-0">Rp.</span>
-                                <input type="text" name="total_anggaran"
-                                    placeholder="Masukkan total anggaran"
+                                <input type="text" name="total_anggaran" placeholder="Masukkan total anggaran"
                                     class="rupiah border-start-0 form-control bg-light border border-gray-400" />
                             </div>
                         </div>
@@ -108,7 +128,7 @@
                     </form>
 
                     <div class="d-grid py-4">
-                        <button type="button" onclick="submitForm('formAdd')"
+                        <button id="submitBtnAdd" type="button" onclick="submitForm('formAdd')"
                             class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                             Tambah Laporan
                         </button>
@@ -143,6 +163,8 @@
                 },
                 success: function(response) {
                     $('#table').html(response);
+
+                    initDropzones();
                 },
                 error: function(xhr) {
                     $('#table').html(
@@ -160,25 +182,41 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(context, args), delay);
             };
+        }      
+
+        function confirmDelete(id, name = 'item ini') {
+            Swal.fire({
+                title: "Apakah Anda Yakin?",
+                html: `Hapus <strong>${name}</strong>?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    document.getElementById(`delete-form-${id}`).submit();
+                }
+            });
         }
 
         Dropzone.autoDiscover = false;
 
-        const dropzones = {};
+        let dropzones = {};
 
-        $(document).ready(function() {
-            dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
-                url: "#",
-                autoProcessQueue: false,
-                paramName: 'file',
-                maxFiles: 1,
-                maxFilesize: 10, // MB
-                addRemoveLinks: true,
-                acceptedFiles: '.pdf',
-            });
+        function initDropzones() {
+            // Hapus semua Dropzone lama
+            for (let key in dropzones) {
+                if (dropzones[key]) {
+                    dropzones[key].destroy(); // Pastikan destroy instance
+                }
+            }
+            dropzones = {}; // Reset object
 
-            @foreach ($laporan as $item)
-                dropzones['form-{{ $item->id }}'] = new Dropzone(`#dropzone-form-{{ $item->id }}`, {
+            // Dropzone untuk form Add
+            if (document.querySelector("#dropzone-formAdd")) {
+                dropzones['formAdd'] = new Dropzone("#dropzone-formAdd", {
                     url: "#",
                     autoProcessQueue: false,
                     paramName: 'file',
@@ -187,7 +225,25 @@
                     addRemoveLinks: true,
                     acceptedFiles: '.pdf',
                 });
-            @endforeach
+            }
+
+            // Dropzone untuk setiap laporan di tabel
+            document.querySelectorAll('[id^="dropzone-form-"]').forEach(el => {
+                const formId = el.id.replace('dropzone-', '');
+                dropzones[formId] = new Dropzone(`#${el.id}`, {
+                    url: "#",
+                    autoProcessQueue: false,
+                    paramName: 'file',
+                    maxFiles: 1,
+                    maxFilesize: 10,
+                    addRemoveLinks: true,
+                    acceptedFiles: '.pdf',
+                });
+            });
+        }
+
+        $(document).ready(function() {
+            initDropzones();
 
             $(document).on('input', '#filter input[name="search"]', debounce(function() {
                 let keyword = $(this).val();
@@ -214,10 +270,22 @@
                 });
             }
 
+            const submitBtn = document.querySelector(
+                `#submitBtn${formId === 'formAdd' ? 'Add' : formId.replace('form-', '')}`);
+            if (submitBtn) {
+                submitBtn.classList.add('btn-loading');
+                submitBtn.disabled = true;
+            }
+
+            if (formId !== 'formAdd') {
+                formData.append('_method', 'PUT'); // untuk edit data
+            }
+
             fetch(form.action, {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
                     },
                     body: formData,
                 })
@@ -239,14 +307,27 @@
                         }
                     } else {
                         $('.modal.show').modal('hide');
+                        window.location.reload();
+
                         reloadTable();
+                        form.reset();
+
+                        if (dz) {
+                            dz.removeAllFiles(true);
+                        }
                     }
                 })
                 .catch(error => {
                     $('.modal.show').modal('hide');
                     console.error('Fetch error:', error);
                     toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
-                });
+                })
+                .finally(() => {
+                    if (submitBtn) {
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.disabled = false;
+                    }
+                })
         }
     </script>
 @endsection

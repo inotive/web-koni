@@ -22,19 +22,16 @@
                             onclick="event.preventDefault(); event.stopPropagation();">
                             Ganti Nama
                         </li>
-                        @if ($item->laporans->isEmpty())
-                            <li class="dropdown-item delete"
-                                onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('delete-form-{{ $item->id }}').submit();">
-                                Hapus
-                            </li>
-
-                            <form id="delete-form-{{ $item->id }}"
-                                action="{{ route('admin.manajemen-rka.destroy', $item->id) }}" method="POST"
-                                style="display: none;">
-                                @csrf
-                                @method('DELETE')
-                            </form>
-                        @endif
+                        <li class="dropdown-item delete"
+                            onclick="event.preventDefault(); event.stopPropagation(); confirmDelete('{{ $item->id }}', '{{ $item->name }}')">
+                            Hapus
+                        </li>
+                        <form id="delete-form-{{ $item->id }}"
+                            action="{{ route('admin.manajemen-rka.destroy', $item->id) }}" method="POST"
+                            style="display:none;">
+                            @csrf
+                            @method('DELETE')
+                        </form>
                     </ul>
                 </div>
                 <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>

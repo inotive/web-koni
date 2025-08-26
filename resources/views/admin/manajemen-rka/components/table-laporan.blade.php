@@ -2,6 +2,7 @@
     <table class="table-row-bordered gy-4 table align-middle">
         <thead>
             <tr class="fw-bold text-uppercase text-muted">
+                <th class="bg-light text-center">No.</th>
                 <th class="bg-light px-20">Nama File</th>
                 <th class="bg-light">Total Anggaran</th>
                 <th class="bg-light text-center">Ukuran File</th>
@@ -10,8 +11,12 @@
             </tr>
         </thead>
         <tbody class="border-bottom">
+            @php
+                $number = ($laporan->currentPage() - 1) * $laporan->perPage() + 1;
+            @endphp
             @forelse ($laporan as $item)
                 <tr>
+                    <td class="text-center">{{ $number++ }}.</td>
                     <td class="fw-bold px-6">
                         <a href="{{ Storage::url($item->file_path) }}" target="_blank">
                             {{ $item->name }}
@@ -56,10 +61,9 @@
                                     Edit Laporan
                                 </li>
                                 <li class="dropdown-item delete"
-                                    onclick="document.getElementById('delete-form-{{ $item->id }}').submit();">
+                                    onclick="event.preventDefault(); event.stopPropagation(); confirmDelete('{{ $item->id }}', '{{ $item->name }}')">
                                     Hapus
                                 </li>
-
                                 <form id="delete-form-{{ $item->id }}"
                                     action="{{ route('admin.laporan-rka.destroy', $item->id) }}" method="POST"
                                     style="display: none;">
@@ -164,9 +168,9 @@
     </div>
 </div>
 
-<script>
+{{-- <script>
     $('.rupiah').on('input change', function() {
         const raw = $(this).val().replace(/\D/g, '');
         $(this).val(formatRupiah(raw));
     });
-</script>
+</script> --}}
