@@ -25,13 +25,55 @@
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
 
-        .section-header {
-            color: #0b153a;
-            font-weight: 700;
-            font-size: 1.6rem;
-            margin-bottom: 1rem;
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
         }
 
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+        }
+
+        .currency-input {
+            position: relative;
+        }
+
+        .currency-input::before {
+            content: "Rp";
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 0.95rem;
+            z-index: 1;
+        }
+
+        .currency-input input {
+            padding-left: 35px;
+        }
+
+        /* Enhanced File Upload Styling */
         .file-upload-wrapper {
             display: flex;
             align-items: center;
@@ -84,40 +126,6 @@
             font-size: 0.8rem;
             color: #6c757d;
             margin-top: 4px;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 0.95rem;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
-        }
-
-        .invalid-feedback {
-            font-size: 0.85rem;
-            color: #e74c3c;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
-            border: none;
-            border-radius: 8px;
-            padding: 12px 24px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
         }
 
         .preview-container {
@@ -224,161 +232,193 @@
             <div class="row">
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
-                        <h3 class="fw-bold mb-4">Tambah Data</h3>
-                        <form action="{{ route('admin.laporan-lpj.sekretariat.store') }}" method="POST" enctype="multipart/form-data" id="sekretariatForm">
+                        <h3 class="fw-bold mb-4">Tambah Laporan Baru</h3>
+
+                        <form action="{{ route('admin.laporan-lpj.sekretariat.store') }}"
+                              method="POST"
+                              id="sekretariatForm"
+                              enctype="multipart/form-data">
                             @csrf
 
-                            @php
-                                $fields = [
-                                    'nama_program_kegiatan' => [
-                                        'label' => 'Nama Program & Kegiatan',
-                                        'type' => 'text',
-                                        'placeholder' => 'Masukkan nama program & kegiatan',
-                                        'required' => true,
-                                    ],
-                                    'jenis_kegiatan' => [
-                                        'label' => 'Jenis Kegiatan',
-                                        'type' => 'text',
-                                        'placeholder' => 'Masukkan jenis kegiatan',
-                                        'required' => true,
-                                    ],
-                                    'volume' => [
-                                        'label' => 'Volume',
-                                        'type' => 'text',
-                                        'placeholder' => 'Masukkan volume kegiatan (contoh: 20 unit, 1 kegiatan)',
-                                        'required' => true,
-                                    ],
-                                    'jumlah_harga_satuan' => [
-                                        'label' => 'Jumlah Harga Satuan',
-                                        'type' => 'number',
-                                        'placeholder' => 'Masukkan jumlah harga satuan',
-                                        'required' => true,
-                                    ],
-                                    'jumlah_harga' => [
-                                        'label' => 'Jumlah Harga',
-                                        'type' => 'number',
-                                        'placeholder' => 'Masukkan jumlah harga',
-                                        'required' => true,
-                                    ],
-                                    'keterangan_tambahan' => [
-                                        'label' => 'Keterangan Tambahan',
-                                        'type' => 'textarea',
-                                        'placeholder' => 'Masukkan keterangan tambahan (opsional)',
-                                        'required' => false,
-                                    ],
-                                ];
-                            @endphp
-
-                            @foreach ($fields as $key => $field)
-                                @if($key === 'keterangan_tambahan')
-                                    <div class="row align-items-start mb-4">
-                                        <div class="col-md-3">
-                                            <label class="form-label">Foto Jurnal</label>
-                                            <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <label for="foto_jurnal" class="file-upload-wrapper">
-                                                <input type="file" name="foto_jurnal[]" id="foto_jurnal"
-                                                    class="@error('foto_jurnal') is-invalid @enderror"
-                                                    accept="image/*" multiple>
-
-                                                <div class="d-flex align-items-center gap-12">
-                                                    <div class="file-upload-icon-wrapper">
-                                                        <i class="fas fa-upload file-upload-icon"></i>
-                                                    </div>
-                                                    <div>
-                                                        <p class="file-upload-text" id="foto-file-name-display">
-                                                            Seret dan lepas foto di sini, atau klik untuk mengunggah.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </label>
-
-                                            <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
-                                            <div id="fotoCounter" class="file-counter"></div>
-                                            <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
-                                                Maksimal 10 foto yang dapat diunggah.
-                                            </div>
-
-                                            @error('foto_jurnal')
-                                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-
-                                    <div class="row align-items-start mb-4">
-                                        <div class="col-md-3">
-                                            <label class="form-label">Dokumen Pendukung</label>
-                                            <p class="file-upload-hint">Maksimal 10 file PDF/Office, masing-masing hingga 10MB</p>
-                                        </div>
-                                        <div class="col-md-9">
-                                            <label for="dokumen_pendukung" class="file-upload-wrapper">
-                                                <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung"
-                                                    class="form-control @error('dokumen_pendukung') is-invalid @enderror"
-                                                    accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
-
-                                                <div class="d-flex align-items-center gap-12">
-                                                    <div class="file-upload-icon-wrapper">
-                                                        <i class="fas fa-upload file-upload-icon"></i>
-                                                    </div>
-                                                    <div>
-                                                        <p class="file-upload-text" id="dokumen-file-name-display">
-                                                            Seret dan lepas dokumen di sini, atau klik untuk mengunggah.
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </label>
-
-                                            <div id="dokumenPreviewContainer" class="preview-container" style="display: none;"></div>
-                                            <div id="dokumenCounter" class="file-counter"></div>
-                                            <div id="dokumenMaxWarning" class="max-files-warning" style="display: none;">
-                                                Maksimal 10 dokumen yang dapat diunggah.
-                                            </div>
-
-                                            @error('dokumen_pendukung')
-                                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                @endif
-
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-md-3">
-                                        <label for="{{ $key }}" class="form-label">
-                                            {{ $field['label'] }}
-                                            @if($field['required'])
-                                                <span class="text-danger">*</span>
-                                            @endif
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        @if ($field['type'] === 'textarea')
-                                            <textarea name="{{ $key }}" id="{{ $key }}"
-                                                class="form-control @error($key) is-invalid @enderror"
-                                                placeholder="{{ $field['placeholder'] ?? '' }}"
-                                                rows="3"
-                                                {{ $field['required'] ? 'required' : '' }}>{{ old($key) }}</textarea>
-                                        @else
-                                            <input type="{{ $field['type'] }}" name="{{ $key }}"
-                                                id="{{ $key }}"
-                                                class="form-control @error($key) is-invalid @enderror"
-                                                placeholder="{{ $field['placeholder'] ?? '' }}"
-                                                value="{{ old($key) }}"
-                                                {{ $field['required'] ? 'required' : '' }}
-                                                @if($field['type'] === 'number') min="0" step="0.01" @endif>
-                                        @endif
-
-                                        @error($key)
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="nama_program_kegiatan" class="form-label">
+                                        Nama Program & Kegiatan <span class="text-danger">*</span>
+                                    </label>
                                 </div>
-                            @endforeach
+                                <div class="col-md-9">
+                                    <input type="text" name="nama_program_kegiatan" id="nama_program_kegiatan"
+                                        class="form-control @error('nama_program_kegiatan') is-invalid @enderror"
+                                        placeholder="Masukkan nama program & kegiatan"
+                                        value="{{ old('nama_program_kegiatan') }}" required>
+                                    @error('nama_program_kegiatan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="jenis_kegiatan" class="form-label">
+                                        Jenis Kegiatan <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" name="jenis_kegiatan" id="jenis_kegiatan"
+                                        class="form-control @error('jenis_kegiatan') is-invalid @enderror"
+                                        placeholder="Masukkan nama kegiatan"
+                                        value="{{ old('jenis_kegiatan') }}" required>
+                                    @error('jenis_kegiatan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="volume" class="form-label">Volume</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" name="volume" id="volume"
+                                        class="form-control @error('volume') is-invalid @enderror"
+                                        placeholder="Masukkan volume (misal: 100 orang, 5 unit, dll)"
+                                        value="{{ old('volume') }}">
+                                    @error('volume')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="currency-input">
+                                        <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                            class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
+                                            placeholder="0"
+                                            value="{{ old('jumlah_harga_satuan') }}">
+                                    </div>
+                                    @error('jumlah_harga_satuan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="jumlah_harga" class="form-label">Total Harga</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="currency-input">
+                                        <input type="text" name="jumlah_harga" id="jumlah_harga"
+                                            class="form-control @error('jumlah_harga') is-invalid @enderror"
+                                            placeholder="0"
+                                            value="{{ old('jumlah_harga') }}">
+                                    </div>
+                                    @error('jumlah_harga')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            {{-- Enhanced Foto Jurnal Upload --}}
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Foto Jurnal</label>
+                                    <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
+                                </div>
+                                <div class="col-md-9">
+                                    <label for="foto_jurnal" class="file-upload-wrapper">
+                                        <input type="file" name="foto_jurnal[]" id="foto_jurnal"
+                                            class="@error('foto_jurnal.*') is-invalid @enderror"
+                                            accept="image/*" multiple>
+
+                                        <div class="d-flex align-items-center gap-12">
+                                            <div class="file-upload-icon-wrapper">
+                                                <i class="fas fa-upload file-upload-icon"></i>
+                                            </div>
+                                            <div>
+                                                <p class="file-upload-text" id="foto-file-name-display">
+                                                    Seret dan lepas foto di sini, atau klik untuk mengunggah.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
+                                    <div id="fotoCounter" class="file-counter"></div>
+                                    <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
+                                        Maksimal 10 foto yang dapat diunggah.
+                                    </div>
+
+                                    @error('foto_jurnal.*')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            {{-- Enhanced Dokumen Pendukung Upload --}}
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Dokumen Pendukung</label>
+                                    <p class="file-upload-hint">Maksimal 10 file PDF/Office, masing-masing hingga 10MB</p>
+                                </div>
+                                <div class="col-md-9">
+                                    <label for="dokumen_pendukung" class="file-upload-wrapper">
+                                        <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung"
+                                            class="@error('dokumen_pendukung.*') is-invalid @enderror"
+                                            accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+
+                                        <div class="d-flex align-items-center gap-12">
+                                            <div class="file-upload-icon-wrapper">
+                                                <i class="fas fa-upload file-upload-icon"></i>
+                                            </div>
+                                            <div>
+                                                <p class="file-upload-text" id="dokumen-file-name-display">
+                                                    Seret dan lepas dokumen di sini, atau klik untuk mengunggah.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <div id="dokumenPreviewContainer" class="preview-container" style="display: none;"></div>
+                                    <div id="dokumenCounter" class="file-counter"></div>
+                                    <div id="dokumenMaxWarning" class="max-files-warning" style="display: none;">
+                                        Maksimal 10 dokumen yang dapat diunggah.
+                                    </div>
+
+                                    @error('dokumen_pendukung.*')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label for="keterangan_tambahan" class="form-label">Keterangan Tambahan</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <textarea name="keterangan_tambahan" id="keterangan_tambahan"
+                                        class="form-control @error('keterangan_tambahan') is-invalid @enderror"
+                                        placeholder="Masukkan keterangan tambahan (opsional)"
+                                        rows="4">{{ old('keterangan_tambahan') }}</textarea>
+                                    @error('keterangan_tambahan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
 
                             <div class="row mt-4">
                                 <div class="col-md-9 offset-md-3 d-flex justify-content-between">
-                                    <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
-                                    <a href="{{ route('admin.laporan-lpj.sekretariat.index') }}" class="btn btn-secondary px-4">Kembali</a>
+                                    <button type="submit" class="btn btn-danger px-4">
+                                        <i class="fas fa-save me-2"></i>Simpan Laporan
+                                    </button>
+                                    <a href="{{ route('admin.laporan-lpj.sekretariat.index') }}"
+                                        class="btn btn-secondary px-4">
+                                        <i class="fas fa-arrow-left me-2"></i>Kembali
+                                    </a>
                                 </div>
                             </div>
                         </form>
@@ -393,26 +433,51 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const MAX_FILES = 10;
-            const MAX_FILE_SIZE = 10 * 1024 * 1024;
+            const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+            // File arrays to track selected files
             let selectedFotoFiles = [];
             let selectedDokumenFiles = [];
 
+            // Currency formatting
+            const currencyInputs = ['jumlah_harga_satuan', 'jumlah_harga'];
+
+            currencyInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('input', function(e) {
+                        let value = e.target.value.replace(/[^\d]/g, '');
+                        if (value) {
+                            e.target.value = parseInt(value).toLocaleString('id-ID');
+                        }
+                    });
+
+                    // Format initial value
+                    if (input.value) {
+                        let value = input.value.replace(/[^\d]/g, '');
+                        if (value) {
+                            input.value = parseInt(value).toLocaleString('id-ID');
+                        }
+                    }
+                }
+            });
+
+            // Enhanced File Upload Handlers
             const fotoInput = document.getElementById('foto_jurnal');
             const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
             const fotoFileNameDisplay = document.getElementById('foto-file-name-display');
             const fotoCounter = document.getElementById('fotoCounter');
             const fotoMaxWarning = document.getElementById('fotoMaxWarning');
 
-            fotoInput.addEventListener('change', function() {
-                handleFileSelection(this.files, 'foto');
-            });
-
             const dokumenInput = document.getElementById('dokumen_pendukung');
             const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
             const dokumenFileNameDisplay = document.getElementById('dokumen-file-name-display');
             const dokumenCounter = document.getElementById('dokumenCounter');
             const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
+
+            fotoInput.addEventListener('change', function() {
+                handleFileSelection(this.files, 'foto');
+            });
 
             dokumenInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'dokumen');
@@ -423,6 +488,7 @@
                 const currentFiles = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
                 const input = isPhoto ? fotoInput : dokumenInput;
 
+                // Convert FileList to Array and filter valid files
                 const newFiles = Array.from(files).filter(file => {
                     if (file.size > MAX_FILE_SIZE) {
                         alert(`File "${file.name}" terlalu besar. Maksimal 10MB per file.`);
@@ -437,11 +503,13 @@
                     return true;
                 });
 
+                // Check if adding new files would exceed the limit
                 if (currentFiles.length + newFiles.length > MAX_FILES) {
                     alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${currentFiles.length} file.`);
                     return;
                 }
 
+                // Add new files to the current files array
                 if (isPhoto) {
                     selectedFotoFiles = [...currentFiles, ...newFiles];
                 } else {
@@ -480,6 +548,7 @@
                     maxWarning.style.display = 'none';
                 }
 
+                // Generate preview HTML
                 let previewHTML = '';
                 files.forEach((file, index) => {
                     let fileSize = (file.size / 1024).toFixed(1) + ' KB';
@@ -531,6 +600,7 @@
                 const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
                 const input = isPhoto ? fotoInput : dokumenInput;
 
+                // Create new FileList using DataTransfer
                 const dt = new DataTransfer();
                 files.forEach(file => {
                     dt.items.add(file);
@@ -538,10 +608,12 @@
                 input.files = dt.files;
             }
 
+            // Global function to remove file
             window.removeFile = function(index, type) {
                 const isPhoto = type === 'foto';
 
                 if (isPhoto) {
+                    // Revoke object URL to prevent memory leaks for images
                     const file = selectedFotoFiles[index];
                     if (file) {
                         const imgElements = document.querySelectorAll('.preview-image');
@@ -586,6 +658,7 @@
                 return colors[extension] || 'text-muted';
             }
 
+            // Enhanced Drag and Drop functionality
             const fileUploadWrappers = document.querySelectorAll('.file-upload-wrapper');
 
             fileUploadWrappers.forEach(wrapper => {
@@ -610,25 +683,62 @@
                 });
             });
 
-            const volumeInput = document.getElementById('volume');
-            const hargaSatuanInput = document.getElementById('jumlah_harga_satuan');
-            const jumlahHargaInput = document.getElementById('jumlah_harga');
-
-            function calculateTotal() {
-                const volume = parseFloat(volumeInput.value) || 0;
-                const hargaSatuan = parseFloat(hargaSatuanInput.value) || 0;
-                const total = hargaSatuan * (volume || 1);
-                jumlahHargaInput.value = total;
-            }
-
-            hargaSatuanInput.addEventListener('input', calculateTotal);
-            volumeInput.addEventListener('input', function() {
-                const volumeValue = this.value;
-                const numericVolume = parseFloat(volumeValue.replace(/[^\d.]/g, ''));
-                if (!isNaN(numericVolume)) {
-                    calculateTotal();
-                }
+            // Form submission
+            document.getElementById('sekretariatForm').addEventListener('submit', function(e) {
+                // Convert currency values back to numbers
+                currencyInputs.forEach(inputId => {
+                    const input = document.getElementById(inputId);
+                    if (input && input.value) {
+                        input.value = input.value.replace(/[^\d]/g, '');
+                    }
+                });
             });
+        });
+
+        function calculateTotalPrice() {
+            const volumeInput = document.getElementById('volume');
+            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
+            const totalPriceInput = document.getElementById('jumlah_harga');
+
+            if (!volumeInput || !unitPriceInput || !totalPriceInput) return;
+
+            const volumeValue = volumeInput.value.trim();
+            const unitPriceValue = unitPriceInput.value.replace(/[^\d]/g, ''); // Remove formatting
+
+            // Extract numeric value from volume (handles cases like "100 orang", "5 unit", etc.)
+            const volumeMatch = volumeValue.match(/^\d+/);
+            const volumeNumber = volumeMatch ? parseInt(volumeMatch[0]) : 0;
+            const unitPriceNumber = unitPriceValue ? parseInt(unitPriceValue) : 0;
+
+            if (volumeNumber > 0 && unitPriceNumber > 0) {
+                const totalPrice = volumeNumber * unitPriceNumber;
+                totalPriceInput.value = totalPrice.toLocaleString('id-ID');
+
+                // Add visual feedback
+                totalPriceInput.style.backgroundColor = '#e8f5e8';
+                setTimeout(() => {
+                    totalPriceInput.style.backgroundColor = '';
+                }, 1000);
+            } else if (volumeNumber === 0 || unitPriceNumber === 0) {
+                totalPriceInput.value = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const volumeInput = document.getElementById('volume');
+            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
+
+            if (volumeInput && unitPriceInput) {
+                volumeInput.addEventListener('input', calculateTotalPrice);
+                unitPriceInput.addEventListener('input', function() {
+                    setTimeout(calculateTotalPrice, 10);
+                });
+
+                volumeInput.addEventListener('blur', calculateTotalPrice);
+                unitPriceInput.addEventListener('blur', calculateTotalPrice);
+
+                calculateTotalPrice();
+            }
         });
     </script>
 @endsection
