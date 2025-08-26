@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Rencana Kegiatan Anggaran')
-@section('mainSection', 'Manajemen RKA')
-@section('currentSection', 'Daftar RKA')
+@section('mainSection', 'Menu Utama')
+@section('currentSection', 'Manajemen RKA')
 @section('style')
     <style>
         .edit:hover {
@@ -85,7 +85,6 @@
 
                     if (!response.ok) {
 
-                        $('.modal.show').modal('hide');
                         console.log('Error response from controller:', data);
 
                         if (data.errors) {
@@ -96,15 +95,17 @@
                         } else {
                             toastr.error("Gagal menyimpan data", "Error!");
                         }
+
+                        return;
                     } else {
                         $('.modal.show').modal('hide');
+                        window.location.reload();
                         reloadTable();
 
                         form.reset();
                     }
                 })
                 .catch(error => {
-                    $('.modal.show').modal('hide');
                     console.error('Fetch error:', error);
                     toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
                 });
@@ -143,7 +144,7 @@
             };
         }
 
-        function confirmDelete(id, name = 'item ini') {
+        function confirmDelete(url, name = 'item ini') {
             Swal.fire({
                 title: "Apakah Anda Yakin?",
                 html: `Hapus <strong>${name}</strong>?`,
@@ -155,7 +156,26 @@
                 cancelButtonText: 'Batal'
             }).then(result => {
                 if (result.isConfirmed) {
-                    document.getElementById(`delete-form-${id}`).submit();
+                    fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("Berhasil!", data.message, "success");
+                                // Refresh tabel atau hapus baris
+                                setTimeout(() => location.reload(), 1500);
+                            } else {
+                                Swal.fire("Gagal!", data.message, "error");
+                            }
+                        })
+                        .catch(() => {
+                            Swal.fire("Error!", "Terjadi kesalahan pada server.", "error");
+                        });
                 }
             });
         }

@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Rencana Kegiatan Anggaran')
-@section('mainSection', 'Laporan RKA')
+@section('mainSection', 'Main Menu')
+@section('subSection', 'Manajemen RKA')
+@section('subSectionUrl', route('admin.manajemen-rka.index'))
 @section('currentSection', "{$data->name}")
 @section('style')
     <style>
@@ -182,9 +184,9 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(context, args), delay);
             };
-        }      
+        }
 
-        function confirmDelete(id, name = 'item ini') {
+        function confirmDelete(url, name = 'item ini') {
             Swal.fire({
                 title: "Apakah Anda Yakin?",
                 html: `Hapus <strong>${name}</strong>?`,
@@ -196,7 +198,25 @@
                 cancelButtonText: 'Batal'
             }).then(result => {
                 if (result.isConfirmed) {
-                    document.getElementById(`delete-form-${id}`).submit();
+                    fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("Berhasil!", data.message, "success");
+                                reloadTable();
+                            } else {
+                                Swal.fire("Gagal!", data.message, "error");
+                            }
+                        })
+                        .catch(() => {
+                            Swal.fire("Error!", "Terjadi kesalahan server.", "error");
+                        });
                 }
             });
         }
@@ -293,8 +313,6 @@
                     const data = await response.json();
 
                     if (!response.ok) {
-
-                        $('.modal.show').modal('hide');
                         console.log('Error response from controller:', data);
 
                         if (data.errors) {
@@ -305,6 +323,8 @@
                         } else {
                             toastr.error("Gagal menyimpan data", "Error!");
                         }
+
+                        return;
                     } else {
                         $('.modal.show').modal('hide');
                         window.location.reload();
@@ -318,7 +338,6 @@
                     }
                 })
                 .catch(error => {
-                    $('.modal.show').modal('hide');
                     console.error('Fetch error:', error);
                     toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
                 })

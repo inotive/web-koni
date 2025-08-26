@@ -125,6 +125,18 @@
                                         <!--end::Dropzone-->
                                     </div>
                                 </div>
+
+                                <div class="bg-light mt-2 rounded p-3">
+                                    <small class="text-muted">File saat ini: </small>
+                                    {{-- <a href="#"
+                                        onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')"
+                                        class="text-primary text-decoration-none fw-bold">
+                                        {{ basename($item->dokumen) }}
+                                    </a> --}}
+                                    <a href="{{ Storage::url($item->file_path) }}" target="_blank">
+                                        {{ $item->name }}
+                                    </a>
+                                </div>
                             </form>
 
                             <div class="d-grid py-4">
