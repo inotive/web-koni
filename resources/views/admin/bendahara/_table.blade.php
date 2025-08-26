@@ -78,7 +78,7 @@
                             <div class="d-flex flex-column">
                                 @if($item->dokumen)
                                     <a href="#" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ $extension }}')"
-                                       class="text-decoration-none cursor-pointer text-primary" style="font-size: large">
+                                       class="text-decoration-none cursor-pointer text-primary" style="font-size: 15px">
                                         @if(request('search'))
                                             {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
                                         @else

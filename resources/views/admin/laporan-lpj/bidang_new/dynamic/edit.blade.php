@@ -530,16 +530,14 @@
                             </div>
 
                             <div class="row mt-4">
-                                <div class="col-md-9 offset-md-3 d-flex justify-content-between">
+                                <div class="col-md-3 offset-md-3 d-flex justify-content-between">
                                     <button type="submit" class="btn btn-danger px-4">
-                                        <i class="fas fa-save me-2"></i>Simpan Perubahan
+                                        <i class="fas fa-save me-2"></i>Simpan Laporan
                                     </button>
-                                    <div class="d-flex gap-2">
-                                        <a href="{{ $lpj->parent_id ? route('admin.laporan-lpj.bidang.dynamic.child.index', $lpj->parent_id) : route('admin.laporan-lpj.bidang.dynamic.index') }}"
-                                            class="btn btn-secondary px-4">
-                                            <i class="fas fa-arrow-left me-2"></i>Kembali
-                                        </a>
-                                    </div>
+                                    <a href="{{ $lpj->parent_id ? route('admin.laporan-lpj.bidang.dynamic.child.index', $lpj->parent_id) : route('admin.laporan-lpj.bidang.dynamic.index') }}"
+                                        class="btn btn-secondary px-4">
+                                        <i class="fas fa-arrow-left me-2"></i>Kembali
+                                    </a>
                                 </div>
                             </div>
                         </form>

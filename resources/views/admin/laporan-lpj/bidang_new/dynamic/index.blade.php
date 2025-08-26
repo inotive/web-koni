@@ -362,6 +362,15 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .filter-btn-custom {
+            border: 1px solid #dee2e6 !important;
+            background-color: white;
+        }
+
+        .filter-btn-custom:hover {
+            background-color: #f8f9fa;
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -459,8 +468,8 @@
                     </div>
 
                     {{-- Filter Dropdown --}}
-                    <div class="dropdown" style="z-index: 1055">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom" type="button" data-bs-toggle="dropdown">
                             <i class="fas fa-filter me-1"></i> Filter
                             <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
                         </button>
@@ -511,9 +520,9 @@
     <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header" style="background: #F8285A; color: white;">
-                    <h5 class="modal-title text-white" id="previewModalLabel">Preview Files</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header" style="background: white; color: rgb(0, 0, 0);">
+                    <h5 class="modal-title text-black" id="previewModalLabel">Preview Files</h5>
+                    <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0" style="height: 70vh;">
                     <div class="preview-container h-100 position-relative d-flex align-items-center justify-content-center" style="background: #f8f9fa;">
@@ -547,8 +556,8 @@
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header" style="background: #F8285A; color: white;">
-                    <h5 class="modal-title" id="detailModalLabel" style="color: white">Detail Data</h5>
+                <div class="modal-header" style="background: #white; color: white;">
+                    <h5 class="modal-title" id="detailModalLabel" style="color: black">Detail Data</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="detailModalBody">

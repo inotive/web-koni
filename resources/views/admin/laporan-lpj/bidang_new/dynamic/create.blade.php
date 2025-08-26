@@ -456,7 +456,7 @@
                             </div>
 
                             <div class="row mt-4">
-                                <div class="col-md-9 offset-md-3 d-flex justify-content-between">
+                                <div class="col-md-3 offset-md-3 d-flex justify-content-between">
                                     <button type="submit" class="btn btn-danger px-4">
                                         <i class="fas fa-save me-2"></i>Simpan Laporan
                                     </button>

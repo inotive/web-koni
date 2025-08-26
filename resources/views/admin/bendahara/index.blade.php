@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Database Bendahara')
-@section('mainSection', 'Main Menu')
+@section('mainSection', 'Menu Utama')
 @section('currentSection', 'Database Bendahara')
 
 @section('style')

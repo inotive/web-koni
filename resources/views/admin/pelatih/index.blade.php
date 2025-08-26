@@ -26,6 +26,15 @@
             overflow: visible !important;
         }
 
+        .filter-btn-custom {
+            border: 1px solid #dee2e6 !important;
+            background-color: white;
+        }
+
+        .filter-btn-custom:hover {
+            background-color: #f8f9fa;
+        }
+
         .card-body {
             padding: 0;
             overflow: visible !important;
@@ -543,7 +552,7 @@
                                     </div>
 
                                     <div class="dropdown">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom" type="button"
                                             data-bs-toggle="dropdown">
                                             <i class="fas fa-filter me-1"></i> Filter
                                             <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
@@ -1130,4 +1139,3 @@
         </script>
     @endif
 @endsection
-
