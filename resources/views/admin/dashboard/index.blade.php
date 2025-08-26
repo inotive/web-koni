@@ -203,7 +203,7 @@
                     </div>
                 </div>
 
-                @foreach ($kegiatan as $i => $item)
+                @foreach ($kegiatan->take(8) as $i => $item)
                     @php
                         $persen = 0;
                         if ($item->jumlah_harga > 0) {

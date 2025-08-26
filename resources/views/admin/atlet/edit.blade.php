@@ -225,7 +225,7 @@
                             <button type="submit" class="btn btn-danger px-4">
                                 <i class="fas fa-save me-2"></i>Simpan Perubahan
                             </button>
-                            <a href="{{ route('admin.konfigurasi.pelatih.index') }}"
+                            <a href="{{ route('admin.konfigurasi.atlet.index') }}"
                                 class="btn btn-secondary px-4">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>
