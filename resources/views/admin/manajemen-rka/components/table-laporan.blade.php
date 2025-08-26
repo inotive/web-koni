@@ -2,12 +2,12 @@
     <table class="table-row-bordered gy-4 table align-middle">
         <thead>
             <tr class="fw-bold text-uppercase text-muted">
-                <th class="bg-light text-center">No.</th>
-                <th class="bg-light px-20">Nama File</th>
-                <th class="bg-light">Total Anggaran</th>
-                <th class="bg-light text-center">Ukuran File</th>
-                <th class="bg-light text-center">Terakhir diperbarui</th>
-                <th class="bg-light px-8 text-center">Aksi</th>
+                <th class="bg-light text-nowrap text-center">No.</th>
+                <th class="bg-light text-nowrap px-20">Nama File</th>
+                <th class="bg-light text-nowrap">Total Anggaran</th>
+                <th class="bg-light text-nowrap text-center">Ukuran File</th>
+                <th class="bg-light text-nowrap text-center">Terakhir diperbarui</th>
+                <th class="bg-light text-nowrap px-8 text-center">Aksi</th>
             </tr>
         </thead>
         <tbody class="border-bottom">
@@ -17,19 +17,20 @@
             @forelse ($laporan as $item)
                 <tr>
                     <td class="text-center">{{ $number++ }}.</td>
-                    <td class="fw-bold px-6">
-                        <a href="{{ Storage::url($item->file_path) }}" target="_blank">
+                    <td class="fw-bold px-6"
+                        style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <a href="{{ Storage::url($item->file_path) }}" target="_blank" title="{{ $item->name }}">
                             {{ $item->name }}
                         </a>
                     </td>
-                    <td>
+                    <td class="text-nowrap">
                         Rp. {{ number_format($item->total_anggaran, 0, ',', '.') }}
                     </td>
                     <td class="px-2 text-center">
                         {{ number_format($item->file_size / 1048576, 2) }} MB
                     </td>
                     <td class="px-2 text-center">
-                        {{ $item->updated_at->locale('id')->translatedFormat('d M Y H:i') }}
+                        {{ $item->updated_at->locale('id')->translatedFormat('d M Y') }}
                     </td>
                     <td class="px-2 text-center">
                         <div class="dropdown">
@@ -61,15 +62,9 @@
                                     Edit Laporan
                                 </li>
                                 <li class="dropdown-item delete"
-                                    onclick="event.preventDefault(); event.stopPropagation(); confirmDelete('{{ $item->id }}', '{{ $item->name }}')">
+                                    onclick="event.preventDefault(); event.stopPropagation(); confirmDelete('{{ route('admin.laporan-rka.destroy', $item->id) }}', '{{ $item->name }}')">
                                     Hapus
                                 </li>
-                                <form id="delete-form-{{ $item->id }}"
-                                    action="{{ route('admin.laporan-rka.destroy', $item->id) }}" method="POST"
-                                    style="display: none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
                             </ul>
                         </div>
                     </td>

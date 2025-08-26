@@ -159,11 +159,18 @@ class LaporanRKAController extends Controller
     {
         $data = LaporanRKA::find($id);
 
-        if ($data) {
-            $data->delete();
-            return redirect()->back()->with('OK', 'Laporan berhasil dihapus.');
-        } else {
-            return redirect()->back()->with('ERR', 'Laporan tidak ditemukan.');
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Laporan tidak ditemukan.'
+            ], 404);
         }
+
+        $data->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Laporan berhasil dihapus.'
+        ], 200);
     }
 }

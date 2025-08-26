@@ -168,7 +168,7 @@
                             if (data.success) {
                                 Swal.fire("Berhasil!", data.message, "success");
                                 // Refresh tabel atau hapus baris
-                                setTimeout(() => location.reload(), 1500);
+                                setTimeout(() => location.reload(), 2500);
                             } else {
                                 Swal.fire("Gagal!", data.message, "error");
                             }

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Rencana Kegiatan Anggaran')
-@section('mainSection', 'Main Menu')
+@section('mainSection', 'Menu Utama')
 @section('subSection', 'Manajemen RKA')
 @section('subSectionUrl', route('admin.manajemen-rka.index'))
 @section('currentSection', "{$data->name}")
@@ -155,6 +155,11 @@
             let formData = $('#filter').serialize();
             let target = url ?? "{{ route('admin.manajemen-rka.show', $data->id) }}";
 
+            let perPage = $('#per_page').val();
+            if (perPage) {
+                formData += '&per_page=' + perPage;
+            }
+
             $.ajax({
                 url: target,
                 data: formData,
@@ -209,13 +214,14 @@
                         .then(data => {
                             if (data.success) {
                                 Swal.fire("Berhasil!", data.message, "success");
-                                reloadTable();
+                                // Refresh tabel atau hapus baris
+                                setTimeout(() => location.reload(), 2500);
                             } else {
                                 Swal.fire("Gagal!", data.message, "error");
                             }
                         })
                         .catch(() => {
-                            Swal.fire("Error!", "Terjadi kesalahan server.", "error");
+                            Swal.fire("Error!", "Terjadi kesalahan pada server.", "error");
                         });
                 }
             });
@@ -273,6 +279,11 @@
             }, 300));
 
             $(document).on('change', '#sortBy', function() {
+                reloadTable();
+            });
+
+
+            $(document).on('change', '#per_page', function() {
                 reloadTable();
             });
         });
