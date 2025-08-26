@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Manajemen Sekretariat')
+@section('pageTitle', 'Manajemen Template Surat Masuk & Keluar')
 @section('mainSection', 'Menu Utama')
 @section('currentSection', 'Surat Masuk & Keluar')
 
@@ -230,8 +230,8 @@
     <div class="d-grid gap-5 border-0">
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
-                <h1>Surat Masuk & Keluar</h1>
-                <span>Manajemen Surat Masuk & Keluar Anda Sekarang</span>
+                <h1>Template Surat Masuk & Keluar</h1>
+                <span>Manajemen Template Surat Masuk & Keluar</span>
             </div>
 
             <form id="filter" class="d-flex gap-3 filter-container">
