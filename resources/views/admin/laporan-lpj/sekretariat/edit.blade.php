@@ -256,7 +256,7 @@
             <div class="row">
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
-                        <h3 class="fw-bold mb-4">Edit Laporan: {{ $sekretariat->nama_program_kegiatan }}</h3>
+                        <h3 class="fw-bold mb-4">Edit Laporan: {{ $sekretariat->nama_program }}</h3>
 
                         <form action="{{ route('admin.laporan-lpj.sekretariat.update', $sekretariat->id) }}"
                               method="POST"
@@ -275,7 +275,7 @@
                                     <input type="text" name="nama_program_kegiatan" id="nama_program_kegiatan"
                                         class="form-control @error('nama_program_kegiatan') is-invalid @enderror"
                                         placeholder="Masukkan nama program"
-                                        value="{{ old('nama_program_kegiatan', $sekretariat->nama_program_kegiatan) }}" required>
+                                        value="{{ old('nama_program_kegiatan', $sekretariat->nama_program) }}" required>
                                     @error('nama_program_kegiatan')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -292,7 +292,7 @@
                                     <input type="text" name="jenis_kegiatan" id="jenis_kegiatan"
                                         class="form-control @error('jenis_kegiatan') is-invalid @enderror"
                                         placeholder="Masukkan nama kegiatan"
-                                        value="{{ old('jenis_kegiatan', $sekretariat->jenis_kegiatan) }}" required>
+                                        value="{{ old('jenis_kegiatan', $sekretariat->nama_kegiatan) }}" required>
                                     @error('jenis_kegiatan')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -590,12 +590,12 @@
                 });
 
                 if (existingFilesCount + newFiles.length > MAX_FILES) {
-                    alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memilih ${existingFilesCount} file.`);
+                    alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${existingFilesCount} file.`);
                     // Clear the input to prevent adding the oversized/overcounted files
                     input.value = '';
                     return;
                 }
-                
+
                 if (isPhoto) {
                     selectedFotoFiles = newFiles;
                 } else {
@@ -728,11 +728,11 @@
                             existingDokumenFiles.splice(index, 1);
                         }
                     }
-                    
+
                     updateFileCounters();
                 }
             };
-            
+
             function updateFileCounters() {
                 const totalFotos = existingFotoFiles.length + selectedFotoFiles.length;
                 fotoCounter.textContent = totalFotos > 0 ? `${totalFotos}/${MAX_FILES} file` : '';

@@ -281,7 +281,7 @@
                                 <div class="col-md-9">
                                     <input type="text" name="volume" id="volume"
                                         class="form-control @error('volume') is-invalid @enderror"
-                                        placeholder="Masukkan volume (misal: 100 orang, 5 unit, dll)"
+                                        placeholder="Masukkan volume (misal: 5 unit,)"
                                         value="{{ old('volume') }}">
                                     @error('volume')
                                         <div class="invalid-feedback">{{ $message }}</div>
