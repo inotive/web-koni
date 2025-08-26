@@ -217,28 +217,36 @@ class SekretariatController extends Controller
     public function destroy($id)
     {
         if (!auth()->user()->hasRole('superadmin')) {
-            abort(403, 'Akses ditolak. Hanya superadmin yang dapat menghapus data.');
+            return response()->json(['message' => 'Akses ditolak. Hanya superadmin yang dapat menghapus data.'], 403);
         }
 
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                          ->findOrFail($id);
+        try {
+            $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                              ->findOrFail($id);
 
-        if ($sekretariat->foto_jurnal) {
-            foreach ($sekretariat->foto_jurnal as $foto) {
-                Storage::disk('public')->delete($foto);
+            // Hapus file terkait
+            if ($sekretariat->foto_jurnal) {
+                foreach ($sekretariat->foto_jurnal as $foto) {
+                    Storage::disk('public')->delete($foto);
+                }
             }
-        }
 
-        if ($sekretariat->dokumen_lpj) {
-            foreach ($sekretariat->dokumen_lpj as $dokumen) {
-                Storage::disk('public')->delete($dokumen);
+            if ($sekretariat->dokumen_lpj) {
+                foreach ($sekretariat->dokumen_lpj as $dokumen) {
+                    Storage::disk('public')->delete($dokumen);
+                }
             }
+
+            $sekretariat->delete();
+
+            return response()->json(['message' => 'Kegiatan berhasil dihapus.']);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Data tidak ditemukan.'], 404);
+        } catch (\Exception $e) {
+            // Tangani error lainnya
+            return response()->json(['message' => 'Terjadi kesalahan saat menghapus data.'], 500);
         }
-
-        $sekretariat->delete();
-
-        return redirect()->route('admin.laporan-lpj.sekretariat.index')
-                         ->with('OK', 'Kegiatan berhasil dihapus.');
     }
 
     public function removeFile(Request $request, $id)
