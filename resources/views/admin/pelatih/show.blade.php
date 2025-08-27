@@ -1379,7 +1379,7 @@ $(document).ready(function() {
             if (medaliType === 'emas') {
                 medalIcon = '<i class="fas fa-medal text-warning"></i>';
             } else if (medaliType === 'perak') {
-                medalIcon = '<i class="fas fa-medal text-secondary"></i>';
+                medalIcon = '<i class="fas fa-medal text-dark"></i>';
             } else if (medaliType === 'perunggu') {
                 medalIcon = '<i class="fas fa-medal text-bronze"></i>';
             }

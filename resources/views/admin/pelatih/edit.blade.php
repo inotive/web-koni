@@ -169,7 +169,7 @@
 
                     @php
                         $fields = [
-                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Alessandro Benaya Pinem'],
+                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Joko Widodo'],
                             'cabor_id' => ['label' => 'Cabang Olahraga', 'type' => 'select', 'options' => $cabors],
                             'email' => ['label' => 'Email', 'type' => 'email', 'placeholder' => 'emailpelatih@gmail.com'],
                             'no_telepon' => ['label' => 'No Telepon', 'type' => 'text', 'placeholder' => '0895 9271 8263'],

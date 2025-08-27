@@ -151,7 +151,7 @@
 
                     @php
                         $fields = [
-                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Alessandro Benaya Pinem'],
+                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Joko Widodo'],
                             'cabor_id' => [
                                 'label' => 'Cabang Olahraga',
                                 'type' => 'select',
