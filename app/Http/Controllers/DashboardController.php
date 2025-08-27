@@ -42,21 +42,40 @@ class DashboardController extends Controller
             // Menetapkan total budget untuk setiap kegiatan
             $item->total_budget = $rka_per_kegiatan;
             
+            // Untuk Pembinaan Prestasi (ID 6), kita perlu membagi anggarannya ke anak-anak
+            if ($item->id == 6 && $rka_per_kegiatan > 0) {
+                $anak_kegiatan = $item->children;
+                $jumlah_anak = $anak_kegiatan->count();
+                if ($jumlah_anak > 0) {
+                    $anggaran_per_anak = $rka_per_kegiatan / $jumlah_anak;
+                    // Menetapkan anggaran per anak
+                    $anak_kegiatan->each(function($anak) use ($anggaran_per_anak) {
+                        $anak->allocated_budget = $anggaran_per_anak;
+                    });
+                }
+            }
+            
             // Menghitung serapan untuk setiap kegiatan
-            // Hanya menghitung data yang benar-benar ditambahkan (bukan default 1)
-            $serapan_induk = $item->jumlah_harga > 1 ? $item->jumlah_harga : 0;
-            $serapan_anak = $item->children->sum(function($child) {
+            // Menghitung total serapan (induk + anak-anak)
+            $serapan_induk = $item->jumlah_harga;
+            $serapan_anak = $item->children->sum('jumlah_harga');
+            $serapan = $serapan_induk + $serapan_anak;
+            
+            // Untuk perhitungan dashboard, hanya nilai > 1 yang dihitung sebagai serapan aktif
+            $serapan_aktif_induk = $item->jumlah_harga > 1 ? $item->jumlah_harga : 0;
+            $serapan_aktif_anak = $item->children->sum(function($child) {
                 return $child->jumlah_harga > 1 ? $child->jumlah_harga : 0;
             });
+            $serapan_aktif = $serapan_aktif_induk + $serapan_aktif_anak;
             
-            $serapan = $serapan_induk + $serapan_anak;
-            $item->serapan = $serapan;
+            $item->serapan = $serapan_aktif;
+            $item->total_serapan = $serapan; // Total serapan termasuk default
             
             // Menambahkan ke total serapan
-            $total_serapan += $serapan;
+            $total_serapan += $serapan_aktif;
             
             // Menghitung kegiatan berjalan
-            if ($serapan > 0) {
+            if ($serapan_aktif > 0) {
                 $kegiatan_berjalan_count++;
             }
             

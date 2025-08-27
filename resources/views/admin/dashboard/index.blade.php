@@ -180,6 +180,20 @@
             color: rgb(4, 4, 4);
             border-color: #e0e1e4;
         }
+
+        /* Dropdown icon style */
+        .dropdown-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .dropdown-icon:hover {
+            background-color: #e9ecef;
+        }
     </style>
 @endpush
 
@@ -329,7 +343,15 @@
 
                     <div class="d-flex align-items-center mb-3 gap-3">
                         <div style="min-width: 220px; max-width: 220px;">
-                            <span class="title-kegiatan">{{ $i + 1 }}. {{ $item->nama_program }}</span>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="title-kegiatan">{{ $i + 1 }}. {{ $item->nama_program }}</span>
+                                {{-- Icon dropdown untuk Pembinaan Prestasi --}}
+                                @if($item->id == 6 && $item->children->count() > 0)
+                                    <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePembinaanPrestasi" aria-expanded="false" aria-controls="collapsePembinaanPrestasi">
+                                        <i class="fas fa-chevron-down text-primary"></i>
+                                    </button>
+                                @endif
+                            </div>
                         </div>
                         <div class="flex-grow-1 position-relative">
                             <div class="progress w-100" style="border-radius: 8px;">
@@ -346,6 +368,58 @@
 
                         </div>
                     </div>
+
+                    {{-- Collapse untuk Pembinaan Prestasi --}}
+                    @if($item->id == 6 && $item->children->count() > 0)
+                        <div class="collapse" id="collapsePembinaanPrestasi">
+                            <div class="card card-body mt-2 p-3">
+                                <h6 class="mb-3">Detail Anak Kegiatan Pembinaan Prestasi</h6>
+                                @foreach($item->children as $j => $child)
+                                    @php
+                                        $child_serapan = $child->jumlah_harga;
+                                        $child_budget = isset($child->allocated_budget) ? $child->allocated_budget : 0;
+                                        $child_persen = ($child_budget > 0) ? round(($child_serapan / $child_budget) * 100) : 0;
+                                        
+                                        $childBarClass = 'bar-success';
+                                        if ($child_persen <= 30) {
+                                            $childBarClass = 'bar-danger';
+                                        } elseif ($child_persen <= 60) {
+                                            $childBarClass = 'bar-warning';
+                                        }
+                                    @endphp
+                                    
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div style="min-width: 200px;">
+                                            <span class="text-muted small">{{ $j + 1 }}. {{ $child->nama_program }}</span>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar {{ $childBarClass }} d-flex justify-content-between align-items-center px-2"
+                                                    role="progressbar"
+                                                    style="width: {{ $child_persen }}%;"
+                                                    aria-valuenow="{{ $child_persen }}" aria-valuemin="0" aria-valuemax="100">
+                                                    <span class="text-white" style="font-size: 10px;">
+                                                        Rp {{ number_format($child_serapan, 0, ',', '.') }} / Rp {{ number_format($child_budget, 0, ',', '.') }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                                {{-- Total untuk Pembinaan Prestasi --}}
+                                <div class="d-flex align-items-center mt-3 pt-3 border-top">
+                                    <div style="min-width: 200px;">
+                                        <span class="fw-bold">Total Serapan:</span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <span class="fw-bold">
+                                            Rp {{ number_format($item->total_serapan, 0, ',', '.') }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
                 @endforeach
             </div>
         </div>
