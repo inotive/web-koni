@@ -452,41 +452,87 @@
             }
         });
 
-        // AJAX Pagination for Prestasi
-        $(document).on('click', '.prestasi-pagination-link', function(e) {
-            e.preventDefault();
+        $(document).ready(function() {
+            const prestasiContainer = $('#prestasi-table-container');
+            let searchTimeout;
 
-            const url = $(this).attr('href');
-            if (!url || url === '#') return;
+            function loadPrestasi(url) {
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    beforeSend: function() {
+                        prestasiContainer.html(
+                            '<div class="text-center py-10">' +
+                            '<div class="spinner-border text-primary" role="status">' +
+                            '<span class="visually-hidden">Loading...</span>' +
+                            '</div></div>'
+                        );
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            prestasiContainer.html(response.html);
+                            // Update URL
+                            if (window.history && window.history.pushState) {
+                                window.history.pushState({}, '', url);
+                            }
+                        } else {
+                            handleAjaxError();
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Error:', xhr.responseText);
+                        handleAjaxError();
+                    }
+                });
+            }
 
-            // Extract page number from URL
-            const urlParams = new URLSearchParams(url.split('?')[1]);
-            const page = urlParams.get('page') || 1;
+            function handleAjaxError() {
+                prestasiContainer.html(
+                    '<div class="text-center py-10">' +
+                    '<div class="text-danger">Terjadi kesalahan saat memuat data. Silakan coba lagi.</div>' +
+                    '</div>'
+                );
+            }
 
-            $.ajax({
-                url: '{{ route("admin.dashboard.prestasi-pagination") }}',
-                type: 'GET',
-                data: { page: page },
-                beforeSend: function() {
-                    $('#prestasi-table-container').html(
-                        '<div class="text-center py-10">' +
-                        '<div class="spinner-border text-primary" role="status">' +
-                        '<span class="visually-hidden">Loading...</span>' +
-                        '</div></div>'
-                    );
-                },
-                success: function(response) {
-                    $('#prestasi-table-container').html(response);
-                },
-                error: function(xhr) {
-                    console.error('Error:', xhr.responseText);
-                    $('#prestasi-table-container').html(
-                        '<div class="text-center py-10">' +
-                        '<div class="text-danger">Terjadi kesalahan saat memuat data.</div>' +
-                        '</div>'
-                    );
+            // Event delegation for search
+            prestasiContainer.on('input', '#search-prestasi', function() {
+                clearTimeout(searchTimeout);
+                const search = $(this).val();
+                
+                searchTimeout = setTimeout(() => {
+                    const url = new URL('{{ route("admin.dashboard.prestasi-pagination") }}');
+                    url.searchParams.set('page', 1);
+                    if (search) {
+                        url.searchParams.set('search', search);
+                    } else {
+                        url.searchParams.delete('search');
+                    }
+                    loadPrestasi(url.toString());
+                }, 300); // Debounce 300ms
+            });
+
+            // Event delegation for pagination
+            prestasiContainer.on('click', '.prestasi-pagination-link', function(e) {
+                e.preventDefault();
+                const url = $(this).attr('href');
+                if (url && url !== '#') {
+                    loadPrestasi(url);
                 }
             });
+
+            // Handle browser back/forward buttons
+            window.onpopstate = function(event) {
+                // Check if the state is related to our prestasi table
+                if (event.state) {
+                    loadPrestasi(location.href);
+                }
+            };
+        });
+
+        // Handle tab switching (this can stay outside the ready block)
+        $(document).on('click', '.nav-link[data-bs-toggle="tab"]', function(e) {
+            e.preventDefault();
+            $(this).tab('show');
         });
     </script>
 @endpush

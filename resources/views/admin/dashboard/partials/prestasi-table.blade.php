@@ -1,6 +1,23 @@
+<!-- Form Pencarian -->
+<div class="mb-6">
+    <div class="d-flex justify-content-end gap-2">
+        <div class="col-md-4">
+            <div class="position-relative bg-light">
+                <i class="ki-outline ki-magnifier fs-3 position-absolute top-50 translate-middle-y ms-3"></i>
+                <input type="text" 
+                       id="search-prestasi" 
+                       name="search" 
+                       value="{{ request('search') }}" 
+                       placeholder="Cari Atlet atau Pelatih..." 
+                       class="form-control border border-gray-500 px-10 py-2" />
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="tab-content">
     <!-- Prestasi Atlet -->
-    <div class="tab-pane fade show active" id="atlet-prestasi">
+    <div class="tab-pane fade show active" id="atlet-prestasi" role="tabpanel">
         @if(isset($latest_prestasi) && $latest_prestasi->isNotEmpty())
             @php
                 $atletPrestasi = $latest_prestasi->filter(function($prestasi) {
@@ -120,7 +137,7 @@
     </div>
 
     <!-- Prestasi Pelatih -->
-    <div class="tab-pane fade" id="pelatih-prestasi">
+    <div class="tab-pane fade" id="pelatih-prestasi" role="tabpanel">
         @if(isset($latest_prestasi) && $latest_prestasi->isNotEmpty())
             @php
                 $pelatihPrestasi = $latest_prestasi->filter(function($prestasi) {
@@ -240,71 +257,125 @@
     </div>
 </div>
 
-<!-- Pagination dengan style yang sama seperti di atlet/_table.blade.php -->
+<!-- Pagination -->
 @if(isset($latest_prestasi) && $latest_prestasi->hasPages())
 <div class="table-footer">
     <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
         <div class="text-muted small">
+            Menampilkan {{ $latest_prestasi->firstItem() }}-{{ $latest_prestasi->lastItem() }} dari {{ $latest_prestasi->total() }} hasil
         </div>
 
-        @if (isset($latest_prestasi) && method_exists($latest_prestasi, 'hasPages') && $latest_prestasi->hasPages())
-            <div class="d-flex align-items-center gap-2">
-                @if ($latest_prestasi->onFirstPage())
-                    <span class="pagination-arrow disabled">←</span>
-                @else
-                    <a href="{{ $latest_prestasi->previousPageUrl() }}"
-                       class="pagination-arrow prestasi-pagination-link"
-                       aria-label="Previous">←</a>
-                @endif
+        <div class="d-flex align-items-center gap-2">
+            @if ($latest_prestasi->onFirstPage())
+                <span class="pagination-arrow disabled">←</span>
+            @else
+                <a href="{{ $latest_prestasi->appends(request()->query())->previousPageUrl() }}"
+                   class="pagination-arrow prestasi-pagination-link"
+                   aria-label="Previous">←</a>
+            @endif
 
-                @php
-                    $current = $latest_prestasi->currentPage();
-                    $total = $latest_prestasi->lastPage();
-                    $start = max(1, $current - 2);
-                    $end = min($total, $current + 2);
+            @php
+                $current = $latest_prestasi->currentPage();
+                $total = $latest_prestasi->lastPage();
+                $start = max(1, $current - 2);
+                $end = min($total, $current + 2);
 
-                    if ($end - $start < 4) {
-                        if ($start == 1) {
-                            $end = min($total, $start + 4);
-                        } else {
-                            $start = max(1, $end - 4);
-                        }
+                if ($end - $start < 4) {
+                    if ($start == 1) {
+                        $end = min($total, $start + 4);
+                    } else {
+                        $start = max(1, $end - 4);
                     }
-                @endphp
+                }
+            @endphp
 
-                <div class="d-flex align-items-center">
-                    @for ($i = $start; $i <= $end; $i++)
-                        @if ($i == $current)
-                            <span class="pagination-number active">{{ $i }}</span>
-                        @else
-                            <a href="{{ $latest_prestasi->url($i) }}"
-                               class="pagination-number prestasi-pagination-link">{{ $i }}</a>
-                        @endif
-                    @endfor
-                </div>
+            <div class="d-flex align-items-center">
+                @for ($i = $start; $i <= $end; $i++)
+                    @if ($i == $current)
+                        <span class="pagination-number active">{{ $i }}</span>
+                    @else
+                        <a href="{{ $latest_prestasi->appends(request()->query())->url($i) }}"
+                           class="pagination-number prestasi-pagination-link">{{ $i }}</a>
+                    @endif
+                @endfor
+            </div>
 
-                @if ($latest_prestasi->hasMorePages())
-                    <a href="{{ $latest_prestasi->nextPageUrl() }}"
-                       class="pagination-arrow prestasi-pagination-link"
-                       aria-label="Next">→</a>
-                @else
-                    <span class="pagination-arrow disabled">→</span>
-                @endif
-            </div>
-        @elseif(isset($latest_prestasi) && method_exists($latest_prestasi, 'hasPages'))
-            <div class="text-muted small">
-                1-{{ $latest_prestasi->count() }} of {{ $latest_prestasi->total() }}
-            </div>
-        @endif
+            @if ($latest_prestasi->hasMorePages())
+                <a href="{{ $latest_prestasi->appends(request()->query())->nextPageUrl() }}"
+                   class="pagination-arrow prestasi-pagination-link"
+                   aria-label="Next">→</a>
+            @else
+                <span class="pagination-arrow disabled">→</span>
+            @endif
+        </div>
     </div>
 </div>
 @endif
 
+
 <script>
 // Re-initialize tab functionality after AJAX load
 $(document).ready(function() {
+    // Handle tab switching
     $('.nav-link[data-bs-toggle="tab"]').on('click', function(e) {
         e.preventDefault();
         $(this).tab('show');
     });
+    
+    // Re-initialize search functionality after AJAX load
+    initializeSearch();
 });
+
+function initializeSearch() {
+    let searchTimeout;
+    
+    // Clear any existing event handlers to prevent duplicates
+    $('#search-prestasi').off('input').on('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const search = $(this).val();
+            
+            $.ajax({
+                url: '{{ route("admin.dashboard.prestasi-pagination") }}',
+                type: 'GET',
+                data: { 
+                    page: 1,
+                    search: search
+                },
+                beforeSend: function() {
+                    $('#prestasi-table-container').html(
+                        '<div class="text-center py-10">' +
+                        '<div class="spinner-border text-primary" role="status">' +
+                        '<span class="visually-hidden">Loading...</span>' +
+                        '</div></div>'
+                    );
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#prestasi-table-container').html(response.html);
+                        // Re-initialize tabs and search after content update
+                        $('.nav-link[data-bs-toggle="tab"]').on('click', function(e) {
+                            e.preventDefault();
+                            $(this).tab('show');
+                        });
+                        initializeSearch(); // Re-initialize search
+                    } else {
+                        $('#prestasi-table-container').html(
+                            '<div class="text-center py-10">' +
+                            '<div class="text-danger">Terjadi kesalahan saat memuat data.</div>' +
+                            '</div>'
+                        );
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr.responseText);
+                    $('#prestasi-table-container').html(
+                        '<div class="text-center py-10">' +
+                        '<div class="text-danger">Terjadi kesalahan saat memuat data.</div>' +
+                        '</div>'
+                    );
+                }
+            });
+        }, 300); // Debounce 300ms
+    });
+}
