@@ -151,7 +151,7 @@
 
                     @php
                         $fields = [
-                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Alessandro Benaya Pinem'],
+                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Masukkan Nama Atlet'],
                             'cabor_id' => [
                                 'label' => 'Cabang Olahraga',
                                 'type' => 'select',
@@ -238,10 +238,14 @@
                     @endforeach
                     <input type="hidden" name="ketersediaan" value="Tersedia">
                     <div class="row mt-4">
-                        <div class="col-md-9 offset-md-3 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
+                        <div class="col-md-3 offset-md-3 d-flex justify-content-between">
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="fas fa-save me-2"></i>Simpan Laporan
+                            </button>
                             <a href="{{ route('admin.konfigurasi.atlet.index') }}"
-                                class="btn btn-secondary px-4">Kembali</a>
+                                class="btn btn-secondary px-4">
+                                <i class="fas fa-arrow-left me-2"></i>Kembali
+                            </a>
                         </div>
                     </div>
                 </form>
