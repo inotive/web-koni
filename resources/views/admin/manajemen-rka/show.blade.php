@@ -127,14 +127,14 @@
                                 <!--end::Dropzone-->
                             </div>
                         </div>
-                    </form>
 
-                    <div class="d-grid py-4">
-                        <button id="submitBtnAdd" type="button" onclick="submitForm('formAdd')"
-                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                            Tambah Laporan
-                        </button>
-                    </div>
+                        <div class="d-grid py-4">
+                            <button id="submitBtnAdd" type="submit" onclick="submitForm('formAdd')"
+                                class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                                Tambah Laporan
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -215,7 +215,7 @@
                             if (data.success) {
                                 Swal.fire("Berhasil!", data.message, "success");
                                 // Refresh tabel atau hapus baris
-                                setTimeout(() => location.reload(), 2500);
+                                setTimeout(() => location.reload(), 1500);
                             } else {
                                 Swal.fire("Gagal!", data.message, "error");
                             }
