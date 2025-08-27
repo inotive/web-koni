@@ -207,24 +207,23 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         });
 
         Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
-    Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
-    Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
-    Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
+            Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
+            Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
+            Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
 
-    // 🔒 Letakkan ini SEBELUM wildcard resource
-    Route::get('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
-    Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
-        ->name('detail-ajax')
-        ->where('id', '[0-9]+');
+            // Export route - generates: admin.laporan-lpj.kegiatan_lainnya.export
+            Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+            
+            Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
+                ->name('detail-ajax')
+                ->where('id', '[0-9]+');
 
-    // Baru wildcard
-    Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
-    Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
-    Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
-    Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
-    Route::post('/{kegiatan_lainnya}/approve', [KegiatanLainnyaController::class, 'approve'])->name('approve');
-
-});
+            Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
+            Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
+            Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
+            Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
+            Route::post('/{kegiatan_lainnya}/approve', [KegiatanLainnyaController::class, 'approve'])->name('approve');
+        });
     }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
         Route::get('/', [BendaharaController::class, 'index'])->name('index');

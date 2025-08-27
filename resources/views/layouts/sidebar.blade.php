@@ -85,7 +85,7 @@
                                 </a>
                             </li>
                             <li class="menu-item">
-                                <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan-lainnya*') ? 'active' : '' }}"
+                                <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan-lainnya*') ? 'active'  : '' }}"
                                     href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}">
                                     <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                     <span class="menu-title">Kegiatan Lainnya</span>
