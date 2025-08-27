@@ -9,6 +9,7 @@ use App\Models\ManajemenRKA;
 use App\Models\Pelatih;
 use App\Models\User;
 use App\Models\Prestasi;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -25,11 +26,10 @@ class DashboardController extends Controller
         // Mengambil kegiatan dari LPJ
         $kegiatan = Lpj::whereNull('parent_id')->get();
 
-        // Mengambil 5 prestasi terbaru
+        // Mengambil semua prestasi terbaru dengan pagination
         $latest_prestasi = Prestasi::with(['subject', 'subject.cabangOlahraga'])
             ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
+            ->paginate(10); // 10 items per page
 
         $cabor_chart_data = CabangOlahraga::withCount(['atlets', 'pelatihs'])->get();
 
@@ -44,5 +44,24 @@ class DashboardController extends Controller
             'latest_prestasi' => $latest_prestasi,
             'cabor_chart_data' => $cabor_chart_data,
         ]);
+    }
+
+    public function prestasiPagination(Request $request)
+    {
+        // Debugging
+        \Log::info('Prestasi pagination called with page: ' . ($request->page ?? 'none'));
+        
+        // Mengambil semua prestasi terbaru dengan pagination
+        $latest_prestasi = Prestasi::with(['subject', 'subject.cabangOlahraga'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'page', $request->page ?? 1); // 10 items per page
+
+        // Debugging
+        \Log::info('Total items: ' . $latest_prestasi->total() . ', Current page: ' . $latest_prestasi->currentPage());
+        
+        // Return hanya tabel dan pagination
+        return view('admin.dashboard.partials.prestasi-table', [
+            'latest_prestasi' => $latest_prestasi
+        ])->render();
     }
 }

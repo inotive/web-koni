@@ -42,6 +42,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/dashboard/prestasi', [DashboardController::class, 'prestasiPagination'])->name('dashboard.prestasi-pagination');
 
 
     Route::group(['as' => 'profile.', 'prefix' => 'profile'], function () {
