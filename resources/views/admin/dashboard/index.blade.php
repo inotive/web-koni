@@ -309,15 +309,17 @@
                         <h5 class="card-title mb-0 f-3">Informasi Kegiatan</h5>
 
                         <div class="d-flex gap-2">
-                            <button class="btn btn-light-primary">
+                            <a href="{{ route('admin.dashboard.export') }}" class="btn btn-light-primary" target="_blank">
                                 <i class="fa-solid fa-download me-1"></i> Export Data
-                            </button>
+                            </a>
 
-                            <select class="form-select form-select-sm w-auto">
-                                <option selected>Filter Berdasarkan: Tertinggi</option>
-                                <option value="tertinggi">Tertinggi</option>
-                                <option value="terendah">Terendah</option>
-                            </select>
+                            <form method="GET" id="filter-form">
+                                <select name="filter" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                                    <option value="" {{ request('filter') == '' ? 'selected' : '' }}>Filter Berdasarkan</option>
+                                    <option value="tertinggi" {{ request('filter') == 'tertinggi' ? 'selected' : '' }}>Tertinggi</option>
+                                    <option value="terendah" {{ request('filter') == 'terendah' ? 'selected' : '' }}>Terendah</option>
+                                </select>
+                            </form>
                         </div>
                     </div>
                 </div>

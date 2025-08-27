@@ -10,6 +10,8 @@ use App\Models\Pelatih;
 use App\Models\User;
 use App\Models\Prestasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\View;
 
 class DashboardController extends Controller
 {
@@ -81,6 +83,22 @@ class DashboardController extends Controller
             
             return $item;
         });
+        
+        // Filter kegiatan berdasarkan parameter request SETELAH menghitung serapan
+        if ($request->has('filter') && $request->filter != '') {
+            switch ($request->filter) {
+                case 'tertinggi':
+                    $kegiatan = $kegiatan->sortByDesc(function($item) {
+                        return $item->serapan;
+                    })->values();
+                    break;
+                case 'terendah':
+                    $kegiatan = $kegiatan->sortBy(function($item) {
+                        return $item->serapan;
+                    })->values();
+                    break;
+            }
+        }
 
         // Mengambil semua prestasi terbaru dengan pagination (tanpa pencarian di index)
         $latest_prestasi = Prestasi::with(['subject', 'subject.cabangOlahraga'])
@@ -108,7 +126,7 @@ class DashboardController extends Controller
     {
         // Debugging
         \Log::info('Prestasi pagination called with page: ' . ($request->page ?? 'none') . ' and search: ' . ($request->search ?? 'none'));
-        
+
         // Mengambil semua prestasi terbaru dengan pagination dan pencarian
         $query = Prestasi::with(['subject', 'subject.cabangOlahraga'])
             ->orderBy('created_at', 'desc');
@@ -128,7 +146,7 @@ class DashboardController extends Controller
 
         // Debugging
         \Log::info('Total items: ' . $latest_prestasi->total() . ', Current page: ' . $latest_prestasi->currentPage());
-        
+
         // Return hanya tabel dan pagination
         return response()->json([
             'success' => true,
@@ -137,4 +155,57 @@ class DashboardController extends Controller
             ])->render()
         ]);
     }
+
+    public function exportData(Request $request)
+    {
+        // Mengambil total RKA dari model LaporanRKA
+        $total_rka = \App\Models\LaporanRKA::sum('total_anggaran');
+
+        // Mengambil kegiatan dari LPJ hanya sampai ID 8 (Perencanaan Program dan Anggaran)
+        $kegiatan = Lpj::whereNull('parent_id')
+                      ->where('id', '<=', 8)
+                      ->get();
+
+        // Membagi total RKA secara merata ke setiap kegiatan yang sesuai
+        $jumlah_kegiatan = $kegiatan->count();
+        $rka_per_kegiatan = ($jumlah_kegiatan > 0 && $total_rka > 0) ? $total_rka / $jumlah_kegiatan : 0;
+
+        // Menyiapkan data untuk export
+        $exportData = [];
+        foreach ($kegiatan as $item) {
+            // Menetapkan total budget untuk setiap kegiatan
+            $item->total_budget = $rka_per_kegiatan;
+
+            // Menghitung serapan untuk setiap kegiatan
+            $serapan_induk = $item->jumlah_harga;
+            $serapan_anak = $item->children->sum('jumlah_harga');
+            $serapan = $serapan_induk + $serapan_anak;
+
+            // Untuk perhitungan dashboard, hanya nilai > 1 yang dihitung sebagai serapan aktif
+            $serapan_aktif_induk = $item->jumlah_harga > 1 ? $item->jumlah_harga : 0;
+            $serapan_aktif_anak = $item->children->sum(function($child) {
+                return $child->jumlah_harga > 1 ? $child->jumlah_harga : 0;
+            });
+            $serapan_aktif = $serapan_aktif_induk + $serapan_aktif_anak;
+
+            $persen = ($rka_per_kegiatan > 0) ? round(($serapan_aktif / $rka_per_kegiatan) * 100) : 0;
+
+            $exportData[] = [
+                'no' => count($exportData) + 1,
+                'nama_kegiatan' => $item->nama_program,
+                'serapan' => $serapan_aktif,
+                'anggaran' => $rka_per_kegiatan,
+                'persen' => $persen,
+                'jumlah_anak' => $item->children->count(),
+            ];
+        }
+
+        // Return view untuk export sebagai gambar
+        return view('admin.dashboard.export', [
+            'exportData' => $exportData,
+            'total_rka' => $total_rka,
+            'total_serapan' => array_sum(array_column($exportData, 'serapan')),
+        ]);
+    }
 }
+
