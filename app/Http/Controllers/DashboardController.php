@@ -23,8 +23,45 @@ class DashboardController extends Controller
         $total_pelatih = Pelatih::count();
         $total_cabor = CabangOlahraga::count();
 
-        // Mengambil kegiatan dari LPJ
-        $kegiatan = Lpj::whereNull('parent_id')->get();
+        // Mengambil kegiatan dari LPJ hanya sampai ID 8 (Perencanaan Program dan Anggaran)
+        // Mengecualikan Sekretariat (ID 59) dan kegiatan lain setelah ID 8
+        $kegiatan = Lpj::whereNull('parent_id')
+                      ->where('id', '<=', 8)
+                      ->get();
+        
+        // Membagi total RKA secara merata ke setiap kegiatan yang sesuai
+        $jumlah_kegiatan = $kegiatan->count();
+        $rka_per_kegiatan = ($jumlah_kegiatan > 0 && $total_rka > 0) ? $total_rka / $jumlah_kegiatan : 0;
+        
+        // Menghitung total serapan hanya dari kegiatan yang ditampilkan
+        // Hanya menghitung data yang benar-benar ditambahkan oleh user (bukan default)
+        $total_serapan = 0;
+        $kegiatan_berjalan_count = 0;
+        
+        $kegiatan = $kegiatan->map(function ($item) use ($rka_per_kegiatan, &$total_serapan, &$kegiatan_berjalan_count) {
+            // Menetapkan total budget untuk setiap kegiatan
+            $item->total_budget = $rka_per_kegiatan;
+            
+            // Menghitung serapan untuk setiap kegiatan
+            // Hanya menghitung data yang benar-benar ditambahkan (bukan default 1)
+            $serapan_induk = $item->jumlah_harga > 1 ? $item->jumlah_harga : 0;
+            $serapan_anak = $item->children->sum(function($child) {
+                return $child->jumlah_harga > 1 ? $child->jumlah_harga : 0;
+            });
+            
+            $serapan = $serapan_induk + $serapan_anak;
+            $item->serapan = $serapan;
+            
+            // Menambahkan ke total serapan
+            $total_serapan += $serapan;
+            
+            // Menghitung kegiatan berjalan
+            if ($serapan > 0) {
+                $kegiatan_berjalan_count++;
+            }
+            
+            return $item;
+        });
 
         // Mengambil semua prestasi terbaru dengan pagination (tanpa pencarian di index)
         $latest_prestasi = Prestasi::with(['subject', 'subject.cabangOlahraga'])
@@ -36,11 +73,13 @@ class DashboardController extends Controller
         return view('admin.dashboard.index', [
             'title' => 'Dashboard',
             'total_rka' => $total_rka,
+            'total_serapan' => $total_serapan,
             'total_pengurus' => $total_pengurus,
             'total_atlet' => $total_atlet,
             'total_pelatih' => $total_pelatih,
             'total_cabor' => $total_cabor,
             'kegiatan' => $kegiatan,
+            'kegiatan_berjalan_count' => $kegiatan_berjalan_count,
             'latest_prestasi' => $latest_prestasi,
             'cabor_chart_data' => $cabor_chart_data,
         ]);

@@ -219,9 +219,9 @@
                 <div class="info-card text-start position-relative">
                     {{-- Progress di kanan atas --}}
                     <div class="position-absolute top-0 end-0 mt-7 me-4 d-flex flex-column align-items-end">
-                        <span class="text-success fw-semibold small">0% Berjalan</span>
+                        <span class="text-success fw-semibold small">{{ $total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0 }}% Berjalan</span>
                         <div class="progress bg-light mt-1" style="width: 80px; height: 5px;">
-                            <div class="progress-bar bg-success" style="width: 0%;"></div>
+                            <div class="progress-bar bg-success" style="width: {{ $total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0 }}%;"></div>
                         </div>
                     </div>
 
@@ -229,11 +229,11 @@
                         <i class="fa-solid fa-bolt" style="color: white;"></i>
                     </div>
 
-                    <div class="info-value">Rp 0 / Rp {{ number_format($total_rka, 0, ',', '.') }}</div>
+                    <div class="info-value">Rp {{ number_format($total_rka > 0 ? $total_serapan : 0, 0, ',', '.') }} / Rp {{ number_format($total_rka, 0, ',', '.') }}</div>
 
                     <div class="info-label mt-1 d-flex align-items-center gap-2">
                         <span
-                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">0
+                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">{{ $kegiatan_berjalan_count }}
                             Kegiatan Berjalan</span>
                         <span>/</span>
                         <span
@@ -310,12 +310,14 @@
 
                 @foreach ($kegiatan->take(8) as $i => $item)
                     @php
-                        $persen = 0;
-                        if ($item->jumlah_harga > 0) {
-                            $persen = 0; // Assuming serapan is 0
-                        } else {
-                            $persen = 100;
-                        }
+                        // Menggunakan nilai serapan yang sudah dihitung di controller
+                        $serapan = $item->serapan;
+                        $total_budget = $item->total_budget;
+                        // Menangani kasus ketika tidak ada RKA
+                        $persen = ($total_budget > 0) ? round(($serapan / $total_budget) * 100) : 0;
+                        // Menampilkan 0 jika tidak ada RKA
+                        $display_serapan = ($total_rka > 0) ? $serapan : 0;
+                        $display_budget = $total_budget;
 
                         $barClass = 'bar-success';
                         if ($persen <= 30) {
@@ -336,7 +338,7 @@
                                     style="width: {{ $persen }}%; font-size: 12px; border-radius: 8px;"
                                     aria-valuenow="{{ $persen }}" aria-valuemin="0" aria-valuemax="100">
                                     <span>
-                                        Serapan : Rp 0 / Rp {{ number_format($item->jumlah_harga, 0, ',', '.') }} | 0/{{ $item->children->count() }}
+                                        Serapan : Rp {{ number_format($display_serapan, 0, ',', '.') }} / Rp {{ number_format($display_budget, 0, ',', '.') }} | {{ $item->children->where('jumlah_harga', '>', 0)->count() }}/{{ $item->children->count() }}
                                     </span>
                                     <span class="fw-bold">{{ $persen }}%</span>
                                 </div>
@@ -498,7 +500,7 @@
             prestasiContainer.on('input', '#search-prestasi', function() {
                 clearTimeout(searchTimeout);
                 const search = $(this).val();
-                
+
                 searchTimeout = setTimeout(() => {
                     const url = new URL('{{ route("admin.dashboard.prestasi-pagination") }}');
                     url.searchParams.set('page', 1);
