@@ -315,7 +315,7 @@
 
                             <form method="GET" id="filter-form">
                                 <select name="filter" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
-                                    <option value="" {{ request('filter') == '' ? 'selected' : '' }}>Filter Berdasarkan</option>
+                                    <option value="" {{ request('filter') == '' ? 'selected' : '' }}>Default</option>
                                     <option value="tertinggi" {{ request('filter') == 'tertinggi' ? 'selected' : '' }}>Tertinggi</option>
                                     <option value="terendah" {{ request('filter') == 'terendah' ? 'selected' : '' }}>Terendah</option>
                                 </select>
@@ -381,7 +381,7 @@
                                         $child_serapan = $child->jumlah_harga;
                                         $child_budget = isset($child->allocated_budget) ? $child->allocated_budget : 0;
                                         $child_persen = ($child_budget > 0) ? round(($child_serapan / $child_budget) * 100) : 0;
-                                        
+
                                         $childBarClass = 'bar-success';
                                         if ($child_persen <= 30) {
                                             $childBarClass = 'bar-danger';
@@ -389,7 +389,7 @@
                                             $childBarClass = 'bar-warning';
                                         }
                                     @endphp
-                                    
+
                                     <div class="d-flex align-items-center mb-2">
                                         <div style="min-width: 200px;">
                                             <span class="text-muted small">{{ $j + 1 }}. {{ $child->nama_program }}</span>
@@ -605,6 +605,21 @@
                     loadPrestasi(location.href);
                 }
             };
+            
+            // Handle per page change
+            prestasiContainer.on('change', '#per-page-select', function() {
+                const perPage = $(this).val();
+                const search = $('#search-prestasi').val();
+                
+                const url = new URL('{{ route("admin.dashboard.prestasi-pagination") }}');
+                url.searchParams.set('page', 1);
+                url.searchParams.set('per_page', perPage);
+                if (search) {
+                    url.searchParams.set('search', search);
+                }
+                
+                loadPrestasi(url.toString());
+            });
         });
 
         // Handle tab switching (this can stay outside the ready block)

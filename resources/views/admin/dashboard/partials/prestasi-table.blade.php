@@ -261,15 +261,30 @@
 @if(isset($latest_prestasi) && $latest_prestasi->hasPages())
 <div class="table-footer">
     <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-        <div class="text-muted small">
-            Menampilkan {{ $latest_prestasi->firstItem() }}-{{ $latest_prestasi->lastItem() }} dari {{ $latest_prestasi->total() }} hasil
+        <div class="mb-2 mb-md-0">
+            <div class="d-flex align-items-center">
+                <span class="me-2">Show</span>
+                <select name="per_page" class="form-select form-select-sm w-auto" id="per-page-select">
+                    @foreach ([10, 25, 50, 100] as $limit)
+                        <option value="{{ $limit }}"
+                            {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
+                            {{ $limit }}
+                        </option>
+                    @endforeach
+                </select>
+                <span class="ms-2">per page</span>
+            </div>
         </div>
 
         <div class="d-flex align-items-center gap-2">
+            <div class="text-muted small">
+                Menampilkan {{ $latest_prestasi->firstItem() }}-{{ $latest_prestasi->lastItem() }} dari {{ $latest_prestasi->total() }} hasil
+            </div>
+
             @if ($latest_prestasi->onFirstPage())
                 <span class="pagination-arrow disabled">←</span>
             @else
-                <a href="{{ $latest_prestasi->appends(request()->query())->previousPageUrl() }}"
+                <a href="{{ $latest_prestasi->appends(['per_page' => request('per_page', 10), 'search' => request('search')])->previousPageUrl() }}"
                    class="pagination-arrow prestasi-pagination-link"
                    aria-label="Previous">←</a>
             @endif
@@ -294,14 +309,14 @@
                     @if ($i == $current)
                         <span class="pagination-number active">{{ $i }}</span>
                     @else
-                        <a href="{{ $latest_prestasi->appends(request()->query())->url($i) }}"
+                        <a href="{{ $latest_prestasi->appends(['per_page' => request('per_page', 10), 'search' => request('search')])->url($i) }}"
                            class="pagination-number prestasi-pagination-link">{{ $i }}</a>
                     @endif
                 @endfor
             </div>
 
             @if ($latest_prestasi->hasMorePages())
-                <a href="{{ $latest_prestasi->appends(request()->query())->nextPageUrl() }}"
+                <a href="{{ $latest_prestasi->appends(['per_page' => request('per_page', 10), 'search' => request('search')])->nextPageUrl() }}"
                    class="pagination-arrow prestasi-pagination-link"
                    aria-label="Next">→</a>
             @else
@@ -311,7 +326,6 @@
     </div>
 </div>
 @endif
-
 
 <script>
 // Re-initialize tab functionality after AJAX load
@@ -324,7 +338,75 @@ $(document).ready(function() {
     
     // Re-initialize search functionality after AJAX load
     initializeSearch();
+    
+    // Handle per page change
+    $(document).on('change', '#per-page-select', function() {
+        const perPage = $(this).val();
+        const search = $('#search-prestasi').val();
+        
+        loadPrestasiData(1, search, perPage);
+    });
+    
+    // Handle pagination links
+    $(document).on('click', '.prestasi-pagination-link', function(e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+        if (url && url !== '#') {
+            // Extract parameters from URL
+            const urlObj = new URL(url);
+            const page = urlObj.searchParams.get('page') || 1;
+            const search = urlObj.searchParams.get('search') || $('#search-prestasi').val();
+            const perPage = urlObj.searchParams.get('per_page') || $('#per-page-select').val();
+            
+            loadPrestasiData(page, search, perPage);
+        }
+    });
 });
+
+function loadPrestasiData(page, search, perPage) {
+    $.ajax({
+        url: '{{ route("admin.dashboard.prestasi-pagination") }}',
+        type: 'GET',
+        data: { 
+            page: page,
+            search: search,
+            per_page: perPage
+        },
+        beforeSend: function() {
+            $('#prestasi-table-container').html(
+                '<div class="text-center py-10">' +
+                '<div class="spinner-border text-primary" role="status">' +
+                '<span class="visually-hidden">Loading...</span>' +
+                '</div></div>'
+            );
+        },
+        success: function(response) {
+            if (response.success) {
+                $('#prestasi-table-container').html(response.html);
+                // Re-initialize all functions after content update
+                $('.nav-link[data-bs-toggle="tab"]').on('click', function(e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+                initializeSearch(); // Re-initialize search
+            } else {
+                $('#prestasi-table-container').html(
+                    '<div class="text-center py-10">' +
+                    '<div class="text-danger">Terjadi kesalahan saat memuat data.</div>' +
+                    '</div>'
+                );
+            }
+        },
+        error: function(xhr) {
+            console.error('Error:', xhr.responseText);
+            $('#prestasi-table-container').html(
+                '<div class="text-center py-10">' +
+                '<div class="text-danger">Terjadi kesalahan saat memuat data.</div>' +
+                '</div>'
+            );
+        }
+    });
+}
 
 function initializeSearch() {
     let searchTimeout;
@@ -334,48 +416,10 @@ function initializeSearch() {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             const search = $(this).val();
+            const perPage = $('#per-page-select').val();
             
-            $.ajax({
-                url: '{{ route("admin.dashboard.prestasi-pagination") }}',
-                type: 'GET',
-                data: { 
-                    page: 1,
-                    search: search
-                },
-                beforeSend: function() {
-                    $('#prestasi-table-container').html(
-                        '<div class="text-center py-10">' +
-                        '<div class="spinner-border text-primary" role="status">' +
-                        '<span class="visually-hidden">Loading...</span>' +
-                        '</div></div>'
-                    );
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $('#prestasi-table-container').html(response.html);
-                        // Re-initialize tabs and search after content update
-                        $('.nav-link[data-bs-toggle="tab"]').on('click', function(e) {
-                            e.preventDefault();
-                            $(this).tab('show');
-                        });
-                        initializeSearch(); // Re-initialize search
-                    } else {
-                        $('#prestasi-table-container').html(
-                            '<div class="text-center py-10">' +
-                            '<div class="text-danger">Terjadi kesalahan saat memuat data.</div>' +
-                            '</div>'
-                        );
-                    }
-                },
-                error: function(xhr) {
-                    console.error('Error:', xhr.responseText);
-                    $('#prestasi-table-container').html(
-                        '<div class="text-center py-10">' +
-                        '<div class="text-danger">Terjadi kesalahan saat memuat data.</div>' +
-                        '</div>'
-                    );
-                }
-            });
+            loadPrestasiData(1, search, perPage);
         }, 300); // Debounce 300ms
     });
 }
+</script>

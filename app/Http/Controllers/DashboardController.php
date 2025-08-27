@@ -101,6 +101,7 @@ class DashboardController extends Controller
         }
 
         // Mengambil semua prestasi terbaru dengan pagination (tanpa pencarian di index)
+        // Gunakan per_page default 10 untuk halaman index
         $latest_prestasi = Prestasi::with(['subject', 'subject.cabangOlahraga'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -125,7 +126,13 @@ class DashboardController extends Controller
     public function prestasiPagination(Request $request)
     {
         // Debugging
-        \Log::info('Prestasi pagination called with page: ' . ($request->page ?? 'none') . ' and search: ' . ($request->search ?? 'none'));
+        \Log::info('Prestasi pagination called with page: ' . ($request->page ?? 'none') . ' and search: ' . ($request->search ?? 'none') . ' and per_page: ' . ($request->per_page ?? 'none'));
+        
+        // Tentukan jumlah item per halaman
+        $perPage = $request->get('per_page', 10);
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
 
         // Mengambil semua prestasi terbaru dengan pagination dan pencarian
         $query = Prestasi::with(['subject', 'subject.cabangOlahraga'])
@@ -139,14 +146,14 @@ class DashboardController extends Controller
             });
         }
 
-        $latest_prestasi = $query->paginate(10, ['*'], 'page', $request->page ?? 1);
+        $latest_prestasi = $query->paginate($perPage, ['*'], 'page', $request->page ?? 1);
 
-        // Tambahkan appends untuk mempertahankan parameter pencarian
-        $latest_prestasi = $latest_prestasi->appends($request->only('search'));
+        // Tambahkan appends untuk mempertahankan parameter pencarian dan per_page
+        $latest_prestasi = $latest_prestasi->appends($request->only(['search', 'per_page']));
 
         // Debugging
-        \Log::info('Total items: ' . $latest_prestasi->total() . ', Current page: ' . $latest_prestasi->currentPage());
-
+        \Log::info('Total items: ' . $latest_prestasi->total() . ', Current page: ' . $latest_prestasi->currentPage() . ', Per page: ' . $perPage);
+        
         // Return hanya tabel dan pagination
         return response()->json([
             'success' => true,
