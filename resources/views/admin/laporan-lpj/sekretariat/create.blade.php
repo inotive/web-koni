@@ -368,9 +368,9 @@
                                     <p class="file-upload-hint">Maksimal 10 file PDF/Office, masing-masing hingga 10MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    <label for="dokumen_pendukung" class="file-upload-wrapper">
-                                        <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung"
-                                            class="@error('dokumen_pendukung.*') is-invalid @enderror"
+                                    <label for="dokumen_lpj" class="file-upload-wrapper">
+                                        <input type="file" name="dokumen_lpj[]" id="dokumen_lpj"
+                                            class="@error('dokumen_lpj.*') is-invalid @enderror"
                                             accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
