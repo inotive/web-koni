@@ -175,8 +175,8 @@
         }
 
         .pagination-wrapper .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
             color: #fff;
         }
 
@@ -237,8 +237,8 @@
         }
 
         .btn-restricted:hover {
-            background-color: #F8285A !important;
-            border-color: #F8285A !important;
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
             color: white !important;
         }
 
@@ -308,9 +308,9 @@
         }
 
         .modal-header {
-            background-color: #F8285A !important;
-            color: white !important;
-            border-bottom: 1px solid #F8285A !important;
+            background-color: white !important;
+            color: #333 !important;
+            border-bottom: 1px solid #dee2e6 !important;
         }
 
         .restricted-action {
@@ -354,8 +354,8 @@
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     @if (auth()->user()->hasRole('superadmin'))
-                        <a href="{{ route('admin.laporan-lpj.sekretariat.create') }}" class="btn custom-red-button"
-                            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                        <a href="{{ route('admin.laporan-lpj.sekretariat.create') }}" class="btn btn-primary"
+                            style="background-color: #0d6efd !important; color: white !important; border-color: #0d6efd !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                         </a>
                     @else
@@ -365,10 +365,10 @@
                                 data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-custom-class="custom-tooltip"
                                 data-bs-html="true"
                                 title="<div class='tooltip-content'>
-                                              <strong>Informasi</strong><br>
-                                              Ajukan approval untuk<br>
-                                              modifikasi laporan
-                                           </div>">
+                                          <strong>Informasi</strong><br>
+                                          Ajukan approval untuk<br>
+                                          modifikasi laporan
+                                       </div>">
                                 <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                             </button>
                         </div>
@@ -418,9 +418,9 @@
     <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header" style="background: #F8285A; color: white;">
-                    <h5 class="modal-title text-white" id="previewModalLabel">Preview Files</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                <div class="modal-header" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
+                    <h5 class="modal-title" id="previewModalLabel" style="color: #333 !important;">Preview Files</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0" style="height: 70vh;">
@@ -460,9 +460,9 @@
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header" style="background: #F8285A; color: white;">
-                    <h5 class="modal-title" id="detailModalLabel" style="color: white">Detail Kegiatan</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                <div class="modal-header" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
+                    <h5 class="modal-title" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="detailModalBody">
                 </div>
@@ -865,8 +865,8 @@
             icon: "warning",
             showCancelButton: true,
             reverseButtons: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
             confirmButtonText: 'Hapus!',
             cancelButtonText: 'Batalkan!'
         }).then((result) => {
