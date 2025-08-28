@@ -261,7 +261,7 @@
                                             $iconColor = 'text-warning';
                                             break;
                                         case 'Perak':
-                                            $iconColor = 'text-secondary';
+                                            $iconColor = 'text-dark';
                                             break;
                                         case 'Perunggu':
                                             $iconColor = 'text-bronze';
@@ -269,7 +269,7 @@
                                         default:
                                             $iconColor = 'text-primary';
                                             break;
-                                    }
+                    }
                                 @endphp
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-medal me-2 {{ $iconColor }}"></i>

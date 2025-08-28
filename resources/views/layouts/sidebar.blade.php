@@ -18,7 +18,12 @@
             <div class="menu-column menu-title-gray-800" id="kt_aside_menu" data-kt-menu="true">
 
                 <!-- Menu Utama Section -->
-                @if(auth()->user()->can('dashboard') || auth()->user()->can('manajemen-rka') || auth()->user()->can('laporan-lpj') || auth()->user()->can('database-bendahara') || auth()->user()->can('file-kesekretariatan') || auth()->user()->can('surat-masuk-keluar'))
+                @if (auth()->user()->can('dashboard') ||
+                        auth()->user()->can('manajemen-rka') ||
+                        auth()->user()->can('laporan-lpj') ||
+                        auth()->user()->can('database-bendahara') ||
+                        auth()->user()->can('file-kesekretariatan') ||
+                        auth()->user()->can('surat-masuk-keluar'))
                     <div class="menu-item">
                         <div class="menu-content">
                             <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Menu Utama</span>
@@ -113,38 +118,41 @@
                 @endcan
 
                 @can('surat-masuk-keluar')
-                <div class="menu-item">
-                    <a class="menu-link {{ request()->is('admin/surat*') ? 'active bg-red' : '' }}"
-                        href=" {{ route('admin.surat.index') }}">
-                        <span class="menu-icon">
-                            <i class="fs-1 fa-solid fa-message"></i>
-                        </span>
-                        <span class="menu-title">Surat Masuk & Keluar</span>
-                    </a>
-                </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/surat*') ? 'active bg-red' : '' }}"
+                            href=" {{ route('admin.surat.index') }}">
+                            <span class="menu-icon">
+                                <i class="fs-1 fa-solid fa-message"></i>
+                            </span>
+                            <span class="menu-title">Surat Masuk & Keluar</span>
+                        </a>
+                    </div>
                 @endcan
 
                 <!-- File Kesekretariat - MENU BARU -->
                 @can('file-kesekretariatan')
-                @php
-                    $isFileKesekretariatActive =
-                        request()->routeIs('admin.file-kesekretariat*') ||
-                        request()->is('admin/file-kesekretariat*') ||
-                        (isset($mainSection) && $mainSection == 'File Kesekretariat');
-                @endphp
-                <div class="menu-item">
-                    <a class="menu-link {{ $isFileKesekretariatActive ? 'active bg-red' : '' }}"
-                        href="{{ route('admin.file-kesekretariat.index') }}">
-                        <span class="menu-icon">
-                            <i class="fa-solid fa-folder-open fs-2"></i>
-                        </span>
-                        <span class="menu-title">File Kesekretariat</span>
-                    </a>
-                </div>
+                    @php
+                        $isFileKesekretariatActive =
+                            request()->routeIs('admin.file-kesekretariat*') ||
+                            request()->is('admin/file-kesekretariat*') ||
+                            (isset($mainSection) && $mainSection == 'File Kesekretariat');
+                    @endphp
+                    <div class="menu-item">
+                        <a class="menu-link {{ $isFileKesekretariatActive ? 'active bg-red' : '' }}"
+                            href="{{ route('admin.file-kesekretariat.index') }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-folder-open fs-2"></i>
+                            </span>
+                            <span class="menu-title">File Kesekretariat</span>
+                        </a>
+                    </div>
                 @endcan
 
                 <!-- Konfigurasi Section -->
-                @if(auth()->user()->can('atlet') || auth()->user()->can('pelatih') || auth()->user()->can('cabang-olahraga') || auth()->user()->can('kejuaraan'))
+                @if (auth()->user()->can('atlet') ||
+                        auth()->user()->can('pelatih') ||
+                        auth()->user()->can('cabang-olahraga') ||
+                        auth()->user()->can('kejuaraan'))
                     <div class="menu-item pt-10">
                         <div class="menu-content">
                             <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Konfigurasi</span>
@@ -154,128 +162,129 @@
 
                 <!-- Atlet -->
                 @can('atlet')
-                @php
-                    $isAtletActive =
-                        request()->routeIs('admin.konfigurasi.atlet*') ||
-                        (isset($mainSection) && $mainSection == 'Atlet');
-                @endphp
-                <div class="menu-item">
-                    <a class="menu-link {{ $isAtletActive ? 'active' : '' }}"
-                        href="{{ route('admin.konfigurasi.atlet.index') }}"
-                        style="{{ $isAtletActive ? 'background-color: #D20A11;' : '' }}">
-                        <span class="menu-icon">
-                            <i class="fa-solid fa-running fs-2"
-                                style="color: {{ $isAtletActive ? '#ffffff' : '#6c757d' }}"></i>
-                        </span>
-                        <span class="menu-title {{ $isAtletActive ? 'text-white' : 'text-gray-800' }}">Atlet</span>
-                    </a>
-                </div>
+                    @php
+                        $isAtletActive =
+                            request()->routeIs('admin.konfigurasi.atlet*') ||
+                            (isset($mainSection) && $mainSection == 'Atlet');
+                    @endphp
+                    <div class="menu-item">
+                        <a class="menu-link {{ $isAtletActive ? 'active' : '' }}"
+                            href="{{ route('admin.konfigurasi.atlet.index') }}"
+                            style="{{ $isAtletActive ? 'background-color: #D20A11;' : '' }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-running fs-2"
+                                    style="color: {{ $isAtletActive ? '#ffffff' : '#6c757d' }}"></i>
+                            </span>
+                            <span class="menu-title {{ $isAtletActive ? 'text-white' : 'text-gray-800' }}">Atlet</span>
+                        </a>
+                    </div>
                 @endcan
 
                 <!-- Pelatih -->
                 @can('pelatih')
-                @php
-                    $isPelatihActive =
-                        request()->routeIs('admin.konfigurasi.pelatih*') ||
-                        (isset($mainSection) && $mainSection == 'Pelatih');
-                @endphp
-                <div class="menu-item">
-                    <a class="menu-link {{ $isPelatihActive ? 'active' : '' }}"
-                        href="{{ route('admin.konfigurasi.pelatih.index') }}"
-                        style="{{ $isPelatihActive ? 'background-color: #D20A11;' : '' }}">
-                        <span class="menu-icon">
-                            <i class="fa-solid fa-chalkboard-user fs-2"
-                                style="color: {{ $isPelatihActive ? '#ffffff' : '#6c757d' }}"></i>
-                        </span>
-                        <span
-                            class="menu-title {{ $isPelatihActive ? 'text-white' : 'text-gray-800' }}">Pelatih</span>
-                    </a>
-                </div>
+                    @php
+                        $isPelatihActive =
+                            request()->routeIs('admin.konfigurasi.pelatih*') ||
+                            (isset($mainSection) && $mainSection == 'Pelatih');
+                    @endphp
+                    <div class="menu-item">
+                        <a class="menu-link {{ $isPelatihActive ? 'active' : '' }}"
+                            href="{{ route('admin.konfigurasi.pelatih.index') }}"
+                            style="{{ $isPelatihActive ? 'background-color: #D20A11;' : '' }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-chalkboard-user fs-2"
+                                    style="color: {{ $isPelatihActive ? '#ffffff' : '#6c757d' }}"></i>
+                            </span>
+                            <span
+                                class="menu-title {{ $isPelatihActive ? 'text-white' : 'text-gray-800' }}">Pelatih</span>
+                        </a>
+                    </div>
                 @endcan
 
                 <!-- Cabang Olahraga -->
                 @can('cabang-olahraga')
-                @php
-                    $isCabangOlahragaActive =
-                        request()->routeIs('admin.konfigurasi.cabang-olahraga*') ||
-                        (isset($mainSection) && $mainSection == 'Cabang Olahraga');
-                @endphp
-                <div class="menu-item">
-                    <a class="menu-link {{ $isCabangOlahragaActive ? 'active' : '' }}"
-                        href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}"
-                        style="{{ $isCabangOlahragaActive ? 'background-color: #D20A11;' : '' }}">
-                        <span class="menu-icon">
-                            <i class="fa-solid fa-basketball fs-2"
-                                style="color: {{ $isCabangOlahragaActive ? '#ffffff' : '#6c757d' }}"></i>
-                        </span>
-                        <span class="menu-title {{ $isCabangOlahragaActive ? 'text-white' : 'text-gray-800' }}">Cabang
-                            Olahraga</span>
-                    </a>
-                </div>
+                    @php
+                        $isCabangOlahragaActive =
+                            request()->routeIs('admin.konfigurasi.cabang-olahraga*') ||
+                            (isset($mainSection) && $mainSection == 'Cabang Olahraga');
+                    @endphp
+                    <div class="menu-item">
+                        <a class="menu-link {{ $isCabangOlahragaActive ? 'active' : '' }}"
+                            href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}"
+                            style="{{ $isCabangOlahragaActive ? 'background-color: #D20A11;' : '' }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-basketball fs-2"
+                                    style="color: {{ $isCabangOlahragaActive ? '#ffffff' : '#6c757d' }}"></i>
+                            </span>
+                            <span class="menu-title {{ $isCabangOlahragaActive ? 'text-white' : 'text-gray-800' }}">Cabang
+                                Olahraga</span>
+                        </a>
+                    </div>
                 @endcan
 
                 <!-- Kejuaraan/Prestasi -->
                 @can('kejuaraan')
-                @php
-                    $isPrestasiActive =
-                        request()->routeIs('admin.konfigurasi.prestasi*') ||
-                        (isset($mainSection) && $mainSection == 'Kejuaraan');
-                @endphp
-                <div class="menu-item">
-                    <a class="menu-link {{ $isPrestasiActive ? 'active' : '' }}"
-                        href="{{ route('admin.konfigurasi.prestasi.index') }}"
-                        style="{{ $isPrestasiActive ? 'background-color: #D20A11;' : '' }}">
-                        <span class="menu-icon">
-                            <i class="fa-solid fa-trophy fs-2"
-                                style="color: {{ $isPrestasiActive ? '#ffffff' : '#6c757d' }}"></i>
-                        </span>
-                        <span
-                            class="menu-title {{ $isPrestasiActive ? 'text-white' : 'text-gray-800' }}">Kejuaraan</span>
-                    </a>
-                </div>
+                    @php
+                        $isPrestasiActive =
+                            request()->routeIs('admin.konfigurasi.prestasi*') ||
+                            (isset($mainSection) && $mainSection == 'Kejuaraan');
+                    @endphp
+                    <div class="menu-item">
+                        <a class="menu-link {{ $isPrestasiActive ? 'active' : '' }}"
+                            href="{{ route('admin.konfigurasi.prestasi.index') }}"
+                            style="{{ $isPrestasiActive ? 'background-color: #D20A11;' : '' }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-trophy fs-2"
+                                    style="color: {{ $isPrestasiActive ? '#ffffff' : '#6c757d' }}"></i>
+                            </span>
+                            <span
+                                class="menu-title {{ $isPrestasiActive ? 'text-white' : 'text-gray-800' }}">Kejuaraan</span>
+                        </a>
+                    </div>
                 @endcan
 
                 <!-- Manajemen Pengguna Section -->
-                @if(auth()->user()->can('pengguna') || auth()->user()->can('jabatan'))
+                @if (auth()->user()->can('pengguna') || auth()->user()->can('jabatan'))
                     <div class="menu-item pt-10">
                         <div class="menu-content">
-                            <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Manajemen Pengguna</span>
+                            <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Manajemen
+                                Pengguna</span>
                         </div>
                     </div>
                 @endif
 
                 @can('pengguna')
-                @php
-                    $isManajemenPenggunaActive =
-                        request()->is('admin/manajemen-pengguna*') ||
-                        (isset($mainSection) && $mainSection == 'Manajemen Pengguna');
-                @endphp
-                <div class="menu-item">
-                    <a class="menu-link {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'active' : '' }}"
-                        href="{{ route('admin.manajemen-pengguna.pengguna.index') }}"
-                        style="{{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'background-color: #D20A11;' : '' }}">
-                        <span class="menu-icon">
-                            <i class="fa-solid fa-users fs-2"
-                                style="color: {{ request()->is('admin/manajemen-pengguna/pengguna*') ? '#ffffff' : '#6c757d' }}"></i>
-                        </span>
-                        <span
-                            class="menu-title {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'text-white' : 'text-gray-800' }}">Pengguna</span>
-                    </a>
-                </div>
+                    @php
+                        $isManajemenPenggunaActive =
+                            request()->is('admin/manajemen-pengguna*') ||
+                            (isset($mainSection) && $mainSection == 'Manajemen Pengguna');
+                    @endphp
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'active' : '' }}"
+                            href="{{ route('admin.manajemen-pengguna.pengguna.index') }}"
+                            style="{{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'background-color: #D20A11;' : '' }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-users fs-2"
+                                    style="color: {{ request()->is('admin/manajemen-pengguna/pengguna*') ? '#ffffff' : '#6c757d' }}"></i>
+                            </span>
+                            <span
+                                class="menu-title {{ request()->is('admin/manajemen-pengguna/pengguna*') ? 'text-white' : 'text-gray-800' }}">Pengguna</span>
+                        </a>
+                    </div>
                 @endcan
                 @can('jabatan')
-                <div class="menu-item">
-                    <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active' : '' }}"
-                        href="{{ route('admin.manajemen-pengguna.role.index') }}"
-                        style="{{ request()->is('admin/manajemen-pengguna/role*') ? 'background-color: #D20A11;' : '' }}">
-                        <span class="menu-icon">
-                            <i class="fa-solid fa-diagram-project fs-2"
-                                style="color: {{ request()->is('admin/manajemen-pengguna/role*') ? '#ffffff' : '#6c757d' }}"></i>
-                        </span>
-                        <span
-                            class="menu-title {{ request()->is('admin/manajemen-pengguna/role*') ? 'text-white' : 'text-gray-800' }}">Jabatan</span>
-                    </a>
-                </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/manajemen-pengguna/role*') ? 'active' : '' }}"
+                            href="{{ route('admin.manajemen-pengguna.role.index') }}"
+                            style="{{ request()->is('admin/manajemen-pengguna/role*') ? 'background-color: #D20A11;' : '' }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-diagram-project fs-2"
+                                    style="color: {{ request()->is('admin/manajemen-pengguna/role*') ? '#ffffff' : '#6c757d' }}"></i>
+                            </span>
+                            <span
+                                class="menu-title {{ request()->is('admin/manajemen-pengguna/role*') ? 'text-white' : 'text-gray-800' }}">Jabatan</span>
+                        </a>
+                    </div>
                 @endcan
             </div>
             <!--end::Menu-->

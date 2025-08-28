@@ -276,7 +276,7 @@
                                             @if($medaliType === 'emas')
                                                 <i class="fas fa-medal text-warning"></i>
                                             @elseif($medaliType === 'perak')
-                                                <i class="fas fa-medal text-secondary"></i>
+                                                <i class="fas fa-medal text-dark"></i>
                                             @elseif($medaliType === 'perunggu')
                                                 <i class="fas fa-medal text-bronze"></i>
                                             @endif

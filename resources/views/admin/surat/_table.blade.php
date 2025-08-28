@@ -32,8 +32,8 @@
             <thead>
                 <tr class="fw-bold text-uppercase text-muted">
                     <th class="bg-light px-6 text-center" style="width: 60px;">No</th>
-                    <th class="bg-light px-20">
-                        <a href="#" class="text-decoration-none text-dark sort-link" data-sort="nama_kegiatan">
+                    <th class="bg-light px-6">
+                        <a href="#" class="text-decoration-none text-muted sort-link" data-sort="nama_kegiatan">
                             Nama Kegiatan
                             @if (request('sort_by') == 'nama_kegiatan')
                                 @if (request('order') == 'asc')
@@ -46,8 +46,8 @@
                             @endif
                         </a>
                     </th>
-                    <th class="bg-light text-center">
-                        <a href="#" class="text-decoration-none text-dark sort-link" data-sort="dokumen_surat">
+                    <th class="bg-light text-start px-6">
+                        <a href="#" class="text-decoration-none text-muted sort-link" data-sort="dokumen_surat">
                             Dokumen
                             @if (request('sort_by') == 'dokumen_surat')
                                 @if (request('order') == 'asc')
@@ -60,8 +60,8 @@
                             @endif
                         </a>
                     </th>
-                    <th class="bg-light text-center">
-                        <a href="#" class="text-decoration-none text-dark sort-link" data-sort="created_at">
+                    <th class="bg-light text-center px-6">
+                        <a href="#" class="text-decoration-none text-muted sort-link" data-sort="created_at">
                             Tanggal
                             @if (request('sort_by') == 'created_at')
                                 @if (request('order') == 'asc')
@@ -74,7 +74,7 @@
                             @endif
                         </a>
                     </th>
-                    <th class="bg-light px-8 text-center">Aksi</th>
+                    <th class="bg-light px-6 text-center">Aksi</th>
                 </tr>
             </thead>
             <tbody class="border-bottom">
@@ -95,7 +95,7 @@
                                 {{ $surat->no_surat }}
                             </small>
                         </td>
-                        <td class="px-2 text-center">
+                        <td class="px-6 text-start">
                             @if ($surat->dokumen_surat)
                                 @php
                                     $fileName = basename($surat->dokumen_surat);

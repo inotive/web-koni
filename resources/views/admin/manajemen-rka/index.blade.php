@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Rencana Kegiatan Anggaran')
-@section('mainSection', 'Manajemen RKA')
-@section('currentSection', 'Daftar RKA')
+@section('mainSection', 'Menu Utama')
+@section('currentSection', 'Manajemen RKA')
 @section('style')
     <style>
         .edit:hover {
@@ -57,7 +57,7 @@
 
                     <div class="d-grid py-4">
                         <button type="button" onclick="submitForm('formAdd')"
-                            class="bg-success fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                             Tambah Folder
                         </button>
                     </div>
@@ -85,7 +85,6 @@
 
                     if (!response.ok) {
 
-                        $('.modal.show').modal('hide');
                         console.log('Error response from controller:', data);
 
                         if (data.errors) {
@@ -96,13 +95,17 @@
                         } else {
                             toastr.error("Gagal menyimpan data", "Error!");
                         }
+
+                        return;
                     } else {
                         $('.modal.show').modal('hide');
+                        window.location.reload();
                         reloadTable();
+
+                        form.reset();
                     }
                 })
                 .catch(error => {
-                    $('.modal.show').modal('hide');
                     console.error('Fetch error:', error);
                     toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
                 });
@@ -139,6 +142,42 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(context, args), delay);
             };
+        }
+
+        function confirmDelete(url, name = 'item ini') {
+            Swal.fire({
+                title: "Apakah Anda Yakin?",
+                html: `Hapus <strong>${name}</strong>?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("Berhasil!", data.message, "success");
+                                // Refresh tabel atau hapus baris
+                                setTimeout(() => location.reload(), 1500);
+                            } else {
+                                Swal.fire("Gagal!", data.message, "error");
+                            }
+                        })
+                        .catch(() => {
+                            Swal.fire("Error!", "Terjadi kesalahan pada server.", "error");
+                        });
+                }
+            });
         }
 
         $(document).ready(function() {

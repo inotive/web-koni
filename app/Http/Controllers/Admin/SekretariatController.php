@@ -3,18 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Sekretariat;
+use App\Models\Lpj;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class SekretariatController extends Controller
 {
+    // Konstanta untuk mengidentifikasi jenis kegiatan Sekretariat
+    const PARENT_CATEGORY = 'Sekretariat';
+
     public function index(Request $request)
     {
-        $query = Sekretariat::query();
+        // Cari atau buat parent kategori Sekretariat
+        $parentCategory = $this->getOrCreateParentCategory();
+
+        $query = Lpj::where('parent_id', $parentCategory->id);
 
         if ($request->jenis_kegiatan_filter) {
-            $query->where('jenis_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
+            $query->where('nama_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
         }
         if ($request->start_date) {
             $query->whereDate('created_at', '>=', $request->start_date);
@@ -24,12 +30,12 @@ class SekretariatController extends Controller
         }
         if ($request->search) {
             $query->where(function($q) use ($request) {
-                $q->where('nama_program_kegiatan', 'like', "%{$request->search}%")
-                  ->orWhere('jenis_kegiatan', 'like', "%{$request->search}%");
+                $q->where('nama_program', 'like', "%{$request->search}%")
+                  ->orWhere('nama_kegiatan', 'like', "%{$request->search}%");
             });
         }
 
-        $allowedSorts = ['nama_program_kegiatan', 'jenis_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga', 'created_at'];
+        $allowedSorts = ['nama_program', 'nama_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga', 'created_at'];
         $sort = $request->get('sort', 'created_at');
         $direction = $request->get('direction', 'desc');
 
@@ -67,27 +73,32 @@ class SekretariatController extends Controller
             'jumlah_harga' => 'required|numeric|min:0',
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
-            'dokumen_pendukung' => 'nullable|array|max:10',
-            'dokumen_pendukung.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj' => 'nullable|array|max:10',
+            'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
         ], [
             'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
             'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
-            'dokumen_pendukung.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
-            'dokumen_pendukung.*.file' => 'File dokumen tidak valid.',
-            'dokumen_pendukung.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
-            'dokumen_pendukung.*.max' => 'Ukuran dokumen maksimal 10MB.',
+            'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
+            'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
 
-        $data = $request->only([
-            'nama_program_kegiatan',
-            'jenis_kegiatan',
-            'keterangan_tambahan',
-            'volume',
-            'jumlah_harga_satuan',
-            'jumlah_harga'
-        ]);
+        // Cari atau buat parent kategori
+        $parentCategory = $this->getOrCreateParentCategory();
+
+        $data = [
+            'parent_id' => $parentCategory->id,
+            'nama_program' => $request->nama_program_kegiatan,
+            'nama_kegiatan' => $request->jenis_kegiatan,
+            'volume' => $request->volume,
+            'jumlah_harga_satuan' => $request->jumlah_harga_satuan,
+            'jumlah_harga' => $request->jumlah_harga,
+            'keterangan_tambahan' => $request->keterangan_tambahan,
+            'icon' => 'fas fa-clipboard-list'
+        ];
 
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
@@ -97,39 +108,46 @@ class SekretariatController extends Controller
             $data['foto_jurnal'] = $fotoPaths;
         }
 
-        if ($request->hasFile('dokumen_pendukung')) {
+        if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
-            foreach ($request->file('dokumen_pendukung') as $file) {
-                $dokumenPaths[] = $file->store('sekretariat/dokumen_pendukung', 'public');
+            foreach ($request->file('dokumen_lpj') as $file) {
+                $dokumenPaths[] = $file->store('sekretariat/dokumen_lpj', 'public');
             }
-            $data['dokumen_pendukung'] = $dokumenPaths;
+            $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        Sekretariat::create($data);
+        Lpj::create($data);
 
         return redirect()->route('admin.laporan-lpj.sekretariat.index')
                          ->with('OK', 'Kegiatan berhasil ditambahkan.');
     }
 
-    public function show(Sekretariat $sekretariat)
+    public function show($id)
     {
+        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                          ->findOrFail($id);
         return view('admin.laporan-lpj.sekretariat.show', compact('sekretariat'));
     }
 
-    public function edit(Sekretariat $sekretariat)
+    public function edit($id)
     {
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
+        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                          ->findOrFail($id);
         return view('admin.laporan-lpj.sekretariat.edit', compact('sekretariat'));
     }
 
-    public function update(Request $request, Sekretariat $sekretariat)
+    public function update(Request $request, $id)
     {
         if (!auth()->user()->hasRole('superadmin')) {
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat memperbarui data.');
         }
+
+        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                          ->findOrFail($id);
 
         $request->validate([
             'nama_program_kegiatan' => 'required|string|max:255',
@@ -140,55 +158,75 @@ class SekretariatController extends Controller
             'jumlah_harga' => 'required|numeric|min:0',
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
-            'dokumen_pendukung' => 'nullable|array|max:10',
-            'dokumen_pendukung.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj' => 'nullable|array|max:10',
+            'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'existing_foto_jurnal' => 'nullable|array',
+            'existing_dokumen_lpj' => 'nullable|array',
+            'deleted_fotos' => 'nullable|array',
+            'deleted_dokumens' => 'nullable|array',
         ], [
             'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
             'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
-            'dokumen_pendukung.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
-            'dokumen_pendukung.*.file' => 'File dokumen tidak valid.',
-            'dokumen_pendukung.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
-            'dokumen_pendukung.*.max' => 'Ukuran dokumen maksimal 10MB.',
+            'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
+            'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
 
-        $data = $request->only([
-            'nama_program_kegiatan',
-            'jenis_kegiatan',
-            'keterangan_tambahan',
-            'volume',
-            'jumlah_harga_satuan',
-            'jumlah_harga'
-        ]);
+        $data = [
+            'nama_program' => $request->nama_program_kegiatan,
+            'nama_kegiatan' => $request->jenis_kegiatan,
+            'volume' => $request->volume,
+            'jumlah_harga_satuan' => $request->jumlah_harga_satuan,
+            'jumlah_harga' => $request->jumlah_harga,
+            'keterangan_tambahan' => $request->keterangan_tambahan
+        ];
 
+        // Handle foto_jurnal
+        $existingFotos = $request->existing_foto_jurnal ?? [];
+        $deletedFotos = $request->deleted_fotos ?? [];
+
+        // Delete files marked for deletion
+        if (!empty($deletedFotos)) {
+            foreach ($deletedFotos as $deletedFoto) {
+                Storage::disk('public')->delete($deletedFoto);
+            }
+        }
+
+        $newFotoPaths = [];
         if ($request->hasFile('foto_jurnal')) {
-            if ($sekretariat->foto_jurnal) {
-                foreach ($sekretariat->foto_jurnal as $oldFoto) {
-                    Storage::disk('public')->delete($oldFoto);
-                }
-            }
-
-            $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('sekretariat/foto_jurnal', 'public');
+                $newFotoPaths[] = $file->store('sekretariat/foto_jurnal', 'public');
             }
-            $data['foto_jurnal'] = $fotoPaths;
         }
 
-        if ($request->hasFile('dokumen_pendukung')) {
-            if ($sekretariat->dokumen_pendukung) {
-                foreach ($sekretariat->dokumen_pendukung as $oldDokumen) {
-                    Storage::disk('public')->delete($oldDokumen);
-                }
-            }
+        // Combine existing and new photos
+        $allFotos = array_merge($existingFotos, $newFotoPaths);
+        $data['foto_jurnal'] = !empty($allFotos) ? $allFotos : null;
 
-            $dokumenPaths = [];
-            foreach ($request->file('dokumen_pendukung') as $file) {
-                $dokumenPaths[] = $file->store('sekretariat/dokumen_pendukung', 'public');
+        // Handle dokumen_lpj
+        $existingDokumens = $request->existing_dokumen_lpj ?? [];
+        $deletedDokumens = $request->deleted_dokumens ?? [];
+
+        // Delete files marked for deletion
+        if (!empty($deletedDokumens)) {
+            foreach ($deletedDokumens as $deletedDokumen) {
+                Storage::disk('public')->delete($deletedDokumen);
             }
-            $data['dokumen_pendukung'] = $dokumenPaths;
         }
+
+        $newDokumenPaths = [];
+        if ($request->hasFile('dokumen_lpj')) {
+            foreach ($request->file('dokumen_lpj') as $file) {
+                $newDokumenPaths[] = $file->store('sekretariat/dokumen_lpj', 'public');
+            }
+        }
+
+        // Combine existing and new documents
+        $allDokumens = array_merge($existingDokumens, $newDokumenPaths);
+        $data['dokumen_lpj'] = !empty($allDokumens) ? $allDokumens : null;
 
         $sekretariat->update($data);
 
@@ -196,38 +234,51 @@ class SekretariatController extends Controller
                          ->with('OK', 'Kegiatan berhasil diperbarui.');
     }
 
-    public function destroy(Sekretariat $sekretariat)
+    public function destroy($id)
     {
         if (!auth()->user()->hasRole('superadmin')) {
-            abort(403, 'Akses ditolak. Hanya superadmin yang dapat menghapus data.');
+            return response()->json(['message' => 'Akses ditolak. Hanya superadmin yang dapat menghapus data.'], 403);
         }
 
-        if ($sekretariat->foto_jurnal) {
-            foreach ($sekretariat->foto_jurnal as $foto) {
-                Storage::disk('public')->delete($foto);
+        try {
+            $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                              ->findOrFail($id);
+
+            // Hapus file terkait
+            if ($sekretariat->foto_jurnal) {
+                foreach ($sekretariat->foto_jurnal as $foto) {
+                    Storage::disk('public')->delete($foto);
+                }
             }
-        }
 
-        if ($sekretariat->dokumen_pendukung) {
-            foreach ($sekretariat->dokumen_pendukung as $dokumen) {
-                Storage::disk('public')->delete($dokumen);
+            if ($sekretariat->dokumen_lpj) {
+                foreach ($sekretariat->dokumen_lpj as $dokumen) {
+                    Storage::disk('public')->delete($dokumen);
+                }
             }
+
+            $sekretariat->delete();
+
+            return response()->json(['message' => 'Kegiatan berhasil dihapus.']);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Data tidak ditemukan.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Terjadi kesalahan saat menghapus data.'], 500);
         }
-
-        $sekretariat->delete();
-
-        return redirect()->route('admin.laporan-lpj.sekretariat.index')
-                         ->with('OK', 'Kegiatan berhasil dihapus.');
     }
 
-    public function removeFile(Request $request, Sekretariat $sekretariat)
+    public function removeFile(Request $request, $id)
     {
         if (!auth()->user()->hasRole('superadmin')) {
             return response()->json(['error' => 'Akses ditolak'], 403);
         }
 
+        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                          ->findOrFail($id);
+
         $request->validate([
-            'file_type' => 'required|in:foto_jurnal,dokumen_pendukung',
+            'file_type' => 'required|in:foto_jurnal,dokumen_lpj',
             'file_index' => 'required|integer|min:0'
         ]);
 
@@ -252,5 +303,22 @@ class SekretariatController extends Controller
             'message' => 'File berhasil dihapus',
             'remaining_files' => count($files)
         ]);
+    }
+
+    /**
+     * Mendapatkan atau membuat parent kategori untuk Sekretariat
+     */
+    private function getOrCreateParentCategory()
+    {
+        return Lpj::firstOrCreate(
+            ['parent_id' => null, 'nama_program' => self::PARENT_CATEGORY],
+            [
+                'nama_kegiatan' => 'Kategori ' . self::PARENT_CATEGORY,
+                'volume' => '',
+                'jumlah_harga_satuan' => 0,
+                'jumlah_harga' => 0,
+                'icon' => 'fas fa-building'
+            ]
+        );
     }
 }

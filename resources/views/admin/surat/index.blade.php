@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Manajemen Sekretariat')
+@section('pageTitle', 'Manajemen Template Surat Masuk & Keluar')
 @section('mainSection', 'Menu Utama')
 @section('currentSection', 'Surat Masuk & Keluar')
 
@@ -230,8 +230,8 @@
     <div class="d-grid gap-5 border-0">
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
-                <h1>Surat Masuk & Keluar</h1>
-                <span>Manajemen Surat Masuk & Keluar Anda Sekarang</span>
+                <h1>Template Surat Masuk & Keluar</h1>
+                <span>Manajemen Template Surat Masuk & Keluar</span>
             </div>
 
             <form id="filter" class="d-flex gap-3 filter-container">
@@ -358,7 +358,7 @@
 @endsection
 
 @section('script')
-    <script>
+   <script>
         let currentFilter = '{{ request('jenis_surat', 'all') }}';
         let currentTab = 'masuk';
         let currentSort = '{{ request('sort_by', 'created_at') }}';
@@ -434,32 +434,24 @@
         }
 
         function initializeSortingEvents() {
-            // Remove existing handlers first to prevent duplicate bindings
             $(document).off('click', '.sort-link');
 
-            // Add new handler for sorting links
             $(document).on('click', '.sort-link', function(e) {
                 e.preventDefault();
 
                 const sortBy = $(this).data('sort');
                 let order = 'asc';
 
-                // If already sorted by this column, toggle order
                 if (currentSort === sortBy) {
                     order = currentOrder === 'asc' ? 'desc' : 'asc';
                 }
 
-                // Update current values
                 currentSort = sortBy;
                 currentOrder = order;
 
-                // Update hidden inputs
                 $('#sort_by_input').val(sortBy);
                 $('#order_input').val(order);
 
-                console.log('Sorting by:', sortBy, 'Order:', order); // Debug log
-
-                // Reload table with new sorting
                 reloadTable();
             });
         }
@@ -534,7 +526,6 @@
                 return;
             }
 
-            // Validasi manual untuk field kosong
             const requiredFields = formElement.querySelectorAll('[required]');
             let isValid = true;
             requiredFields.forEach(field => {
@@ -548,7 +539,7 @@
 
             if (!isValid) {
                 toastr.error("Harap lengkapi semua field yang wajib diisi.", "Validasi Gagal!");
-                return; // Jangan tutup modal
+                return;
             }
 
             const submitBtn = formElement.closest('.modal').querySelector('button[type="button"][onclick*="submitForm"]');
@@ -611,6 +602,14 @@
                         }
                     } else {
                         $('.modal.show').addClass('submit-success');
+
+                        if (formId === 'formAdd') {
+                            formElement.reset();
+                            if (dropzones['formAdd']) {
+                                dropzones['formAdd'].removeAllFiles();
+                            }
+                        }
+
                         $('.modal.show').modal('hide');
                         toastr.success(data.message || "Data berhasil disimpan", "Success!");
                         updateAddButtonText();
@@ -699,7 +698,7 @@
         $(document).ready(function() {
             initializeDropzones();
             initializeDropdownEvents();
-            initializeSortingEvents(); // Initialize sorting events on page load
+            initializeSortingEvents();
             updateAddButtonText();
             updateDateFilterButton();
 
@@ -781,7 +780,7 @@
                         $(`#table-${currentTab}`).html(response);
                         initializeDropzones();
                         initializeDropdownEvents();
-                        initializeSortingEvents(); // Re-initialize sorting after AJAX
+                        initializeSortingEvents();
                         updateURL(formData);
                     },
                     error: function(xhr) {
@@ -814,7 +813,7 @@
                             $(`#table-${currentTab}`).html(response);
                             initializeDropzones();
                             initializeDropdownEvents();
-                            initializeSortingEvents(); // Re-initialize sorting after pagination
+                            initializeSortingEvents();
                             updateURL(formData);
                         },
                         error: function(xhr) {
@@ -868,36 +867,36 @@
                 const modalId = $(this).attr('id');
                 const modal = $(this);
 
-                if (!modal.hasClass('submit-success')) {
-                    const originalData = modal.data('original-data');
-                    if (originalData) {
-                        const form = modal.find('form, [id^="form-"]').first();
-                        if (form.length) {
-                            form.find('input, select, textarea').each(function() {
-                                const input = $(this);
-                                const name = input.attr('name');
-                                if (input.attr('type') !== 'file' && originalData.hasOwnProperty(
-                                        name)) {
-                                    input.val(originalData[name]);
-                                }
-                            });
+                if (modalId === 'add') {
+                    const form = document.getElementById('formAdd');
+                    if (form) {
+                        form.reset();
+                    }
+                    if (dropzones['formAdd']) {
+                        dropzones['formAdd'].removeAllFiles();
+                    }
+                } else if (modalId.startsWith('edit-')) {
+                    const suratId = modalId.split('-')[1];
+                    const formId = `form-${suratId}`;
+
+                    if (!modal.hasClass('submit-success')) {
+                        const originalData = modal.data('original-data');
+                        if (originalData) {
+                            const form = modal.find('form, [id^="form-"]').first();
+                            if (form.length) {
+                                form.find('input, select, textarea').each(function() {
+                                    const input = $(this);
+                                    const name = input.attr('name');
+                                    if (input.attr('type') !== 'file' && originalData.hasOwnProperty(name)) {
+                                        input.val(originalData[name]);
+                                    }
+                                });
+                            }
                         }
                     }
 
-                    if (modalId.startsWith('edit-')) {
-                        const suratId = modalId.split('-')[1];
-                        const formId = `form-${suratId}`;
-                        if (dropzones[formId]) {
-                            dropzones[formId].removeAllFiles();
-                        }
-                    } else if (modalId === 'add') {
-                        const form = document.getElementById('formAdd');
-                        if (form) {
-                            form.reset();
-                        }
-                        if (dropzones['formAdd']) {
-                            dropzones['formAdd'].removeAllFiles();
-                        }
+                    if (dropzones[formId]) {
+                        dropzones[formId].removeAllFiles();
                     }
                 }
 

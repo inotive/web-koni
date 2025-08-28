@@ -42,6 +42,8 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::get('/dashboard/prestasi', [DashboardController::class, 'prestasiPagination'])->name('dashboard.prestasi-pagination');
+    Route::get('/dashboard/export', [DashboardController::class, 'exportData'])->name('dashboard.export');
 
 
     Route::group(['as' => 'profile.', 'prefix' => 'profile'], function () {
@@ -53,6 +55,8 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     // Letakkan rute 'download' sebelum rute resource
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
+    Route::get('file-kesekretariat/{fileKesekretariat}/edit', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'edit'])
+        ->name('file-kesekretariat.edit');
 
 
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {
@@ -75,7 +79,6 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::resource('laporan-rka', LaporanRKAController::class);
 
     Route::resource('surat', SuratController::class);
-
 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);
@@ -204,25 +207,23 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             });
         });
 
-        // FIXED: Kegiatan Lainnya Routes - Properly structured
         Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
             Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
             Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
             Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
 
-            // Route untuk AJAX detail - HARUS sebelum {kegiatan_lainnya}
+            // Export route - generates: admin.laporan-lpj.kegiatan_lainnya.export
+            Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+
             Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
                 ->name('detail-ajax')
                 ->where('id', '[0-9]+');
 
-            // Parameterized routes
             Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
             Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
             Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
             Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
-
-            // Export route
-            Route::get('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+            Route::post('/{kegiatan_lainnya}/approve', [KegiatanLainnyaController::class, 'approve'])->name('approve');
         });
     }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {

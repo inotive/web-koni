@@ -117,23 +117,28 @@
 
         .date-filter-container {
             position: relative;
-            width: auto; /* Changed from 200px to auto */
+            width: auto;
+            /* Changed from 200px to auto */
         }
 
         .date-filter-btn {
             background: white;
             border: 1px solid #dee2e6;
             border-radius: 8px;
-            padding: 8px 12px; /* Reduced padding */
+            padding: 8px 12px;
+            /* Reduced padding */
             font-size: 0.95rem;
             color: #495057;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            justify-content: center; /* Center the icon */
-            min-width: 38px; /* Minimum width for the button */
-            height: 38px; /* Fixed height */
+            justify-content: center;
+            /* Center the icon */
+            min-width: 38px;
+            /* Minimum width for the button */
+            height: 38px;
+            /* Fixed height */
         }
 
         .date-filter-btn:hover {
@@ -342,8 +347,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Enhanced table styling to match header */
@@ -440,9 +450,6 @@
         .date-filter-btn.date-filter-active .fas.fa-calendar-check {
             color: white !important;
         }
-
-
-
     </style>
 @endsection
 
@@ -454,7 +461,7 @@
                 <span>Kelola laporan bendahara dengan mudah</span>
             </div>
 
-            <form id="filter" class="d-flex gap-3 filter-container">
+            <form id="filter" class="d-flex filter-container gap-3">
                 <button type="button" id="tambahLaporanBtn"
                     class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
@@ -464,23 +471,24 @@
                 <div class="search-container">
                     <div class="position-relative bg-light">
                         <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            placeholder="Cari laporan..."
-                            class="form-control border border-gray-500 py-2 search-input" />
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari laporan..."
+                            class="form-control search-input border border-gray-500 py-2" />
                     </div>
                 </div>
 
                 <div class="date-filter-container">
-                    <div class="date-filter-btn {{ (request('date_from') || request('date_to')) ? 'date-filter-active' : '' }}" id="dateFilterBtn">
-                        @if(request('date_from') || request('date_to'))
+                    <div class="date-filter-btn {{ request('date_from') || request('date_to') ? 'date-filter-active' : '' }}"
+                        id="dateFilterBtn">
+                        @if (request('date_from') || request('date_to'))
                             <i class="fas fa-calendar-check"></i>
                         @else
                             <i class="fas fa-calendar"></i>
                         @endif
                         <span class="filter-text">
-                            @if(request('date_from') || request('date_to'))
-                                @if(request('date_from') && request('date_to'))
-                                    {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }} - {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
+                            @if (request('date_from') || request('date_to'))
+                                @if (request('date_from') && request('date_to'))
+                                    {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }} -
+                                    {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
                                 @elseif(request('date_from'))
                                     Dari {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }}
                                 @else
@@ -498,18 +506,21 @@
                                 <button type="button" class="date-preset-btn" data-preset="this-week">Minggu Ini</button>
                                 <button type="button" class="date-preset-btn" data-preset="this-month">Bulan Ini</button>
                                 <button type="button" class="date-preset-btn" data-preset="this-year">Tahun Ini</button>
-                                <button type="button" class="date-preset-btn" data-preset="last-30-days">30 Hari Terakhir</button>
+                                <button type="button" class="date-preset-btn" data-preset="last-30-days">30 Hari
+                                    Terakhir</button>
                             </div>
                         </div>
 
                         <div class="date-input-group">
                             <div class="date-input-wrapper">
                                 <label class="date-input-label">Dari Tanggal</label>
-                                <input type="date" name="date_from" value="{{ request('date_from') }}" class="date-input" id="dateFromInput">
+                                <input type="date" name="date_from" value="{{ request('date_from') }}" class="date-input"
+                                    id="dateFromInput">
                             </div>
                             <div class="date-input-wrapper">
                                 <label class="date-input-label">Sampai Tanggal</label>
-                                <input type="date" name="date_to" value="{{ request('date_to') }}" class="date-input" id="dateToInput">
+                                <input type="date" name="date_to" value="{{ request('date_to') }}" class="date-input"
+                                    id="dateToInput">
                             </div>
                         </div>
 
@@ -521,14 +532,21 @@
                 </div>
 
                 <div class="filter-dropdown">
-                    <div class="filter-btn {{ (request('filter_type') && request('filter_type') != 'all') ? 'filter-active' : '' }}" id="filterBtn">
+                    <div class="filter-btn {{ request('filter_type') && request('filter_type') != 'all' ? 'filter-active' : '' }}"
+                        id="filterBtn">
                         <span>
-                            @if(request('filter_type') == 'pdf')
-                                <i class="fas fa-file-pdf me-2" style="color: {{ (request('filter_type') && request('filter_type') != 'all') ? 'white' : '#dc3545' }};"></i>File PDF
+                            @if (request('filter_type') == 'pdf')
+                                <i class="fas fa-file-pdf me-2"
+                                    style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#dc3545' }};"></i>File
+                                PDF
                             @elseif(request('filter_type') == 'excel')
-                                <i class="fas fa-file-excel me-2" style="color: {{ (request('filter_type') && request('filter_type') != 'all') ? 'white' : '#198754' }};"></i>File Excel
+                                <i class="fas fa-file-excel me-2"
+                                    style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#198754' }};"></i>File
+                                Excel
                             @elseif(request('filter_type') == 'other')
-                                <i class="fas fa-file me-2" style="color: {{ (request('filter_type') && request('filter_type') != 'all') ? 'white' : '#6c757d' }};"></i>File Lain
+                                <i class="fas fa-file me-2"
+                                    style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#6c757d' }};"></i>File
+                                Lain
                             @else
                                 <i class="fas fa-filter me-2"></i>Filter Tipe File
                             @endif
@@ -537,28 +555,31 @@
                     </div>
 
                     <div class="filter-menu" id="filterMenu">
-                        <div class="filter-option {{ (request('filter_type', 'all') == 'all') ? 'active' : '' }}" data-filter="all">
+                        <div class="filter-option {{ request('filter_type', 'all') == 'all' ? 'active' : '' }}"
+                            data-filter="all">
                             <span>
                                 <i class="fas fa-list file-type-icon"></i>
                                 Semua File
                             </span>
                             <span class="filter-count">{{ $fileCounts['all'] ?? 0 }}</span>
                         </div>
-                        <div class="filter-option {{ (request('filter_type') == 'pdf') ? 'active' : '' }}" data-filter="pdf">
+                        <div class="filter-option {{ request('filter_type') == 'pdf' ? 'active' : '' }}" data-filter="pdf">
                             <span>
                                 <i class="fas fa-file-pdf file-type-icon" style="color: #dc3545;"></i>
                                 File PDF
                             </span>
                             <span class="filter-count">{{ $fileCounts['pdf'] ?? 0 }}</span>
                         </div>
-                        <div class="filter-option {{ (request('filter_type') == 'excel') ? 'active' : '' }}" data-filter="excel">
+                        <div class="filter-option {{ request('filter_type') == 'excel' ? 'active' : '' }}"
+                            data-filter="excel">
                             <span>
                                 <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
                                 File Excel
                             </span>
                             <span class="filter-count">{{ $fileCounts['excel'] ?? 0 }}</span>
                         </div>
-                        <div class="filter-option {{ (request('filter_type') == 'other') ? 'active' : '' }}" data-filter="other">
+                        <div class="filter-option {{ request('filter_type') == 'other' ? 'active' : '' }}"
+                            data-filter="other">
                             <span>
                                 <i class="fas fa-file file-type-icon" style="color: #6c757d;"></i>
                                 File Lain
@@ -568,7 +589,8 @@
                     </div>
                 </div>
 
-                <input type="hidden" name="filter_type" id="filter_type_input" value="{{ request('filter_type', 'all') }}">
+                <input type="hidden" name="filter_type" id="filter_type_input"
+                    value="{{ request('filter_type', 'all') }}">
                 <input type="hidden" name="date_from" id="date_from_input" value="{{ request('date_from') }}">
                 <input type="hidden" name="date_to" id="date_to_input" value="{{ request('date_to') }}">
                 <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
@@ -590,18 +612,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="formAdd" action="{{ route('admin.bendahara.store') }}" method="POST" enctype="multipart/form-data" class="d-grid gap-4">
+                <form id="formAdd" action="{{ route('admin.bendahara.store') }}" method="POST"
+                    enctype="multipart/form-data" class="d-grid gap-4">
                     @csrf
 
                     <div>
                         <div class="fw-semibold required mb-3 text-gray-800">Judul Laporan</div>
-                        <input type="text" name="judul" placeholder="Masukkan Judul Laporan" class="form-control bg-light border border-gray-400" required />
+                        <input type="text" name="judul" placeholder="Masukkan Judul Laporan"
+                            class="form-control bg-light border border-gray-400" required />
                         <div class="invalid-feedback"></div>
                     </div>
 
                     <div>
                         <div class="fw-semibold required mb-3 text-gray-800">Tanggal Laporan</div>
-                        <input type="date" name="tanggal" placeholder="Pilih Tanggal Laporan" class="form-control bg-light border border-gray-400" required />
+                        <input type="date" name="tanggal" placeholder="Pilih Tanggal Laporan"
+                            class="form-control bg-light border border-gray-400" required />
                         <div class="invalid-feedback"></div>
                     </div>
 
@@ -615,7 +640,8 @@
                                     </i>
                                     <div class="ms-4">
                                         <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
-                                        <span class="fs-7 fw-semibold text-gray-500">Format: PDF, XLS, XLSX. Max. 10 MB.</span>
+                                        <span class="fs-7 fw-semibold text-gray-500">Format: PDF, XLS, XLSX. Max. 10
+                                            MB.</span>
                                     </div>
                                 </div>
                             </div>
@@ -635,7 +661,8 @@
     </div>
 
     <!-- File Preview Modal -->
-    <div class="modal fade preview-modal" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel" aria-hidden="true">
+    <div class="modal fade preview-modal" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -680,15 +707,20 @@
             const ext = fileExtension.toLowerCase();
 
             if (ext === 'pdf') {
-                previewContainer.innerHTML = `<iframe src="${fileUrl}" style="width:100%;height:70vh;border:none;"></iframe>`;
+                previewContainer.innerHTML =
+                    `<iframe src="${fileUrl}" style="width:100%;height:70vh;border:none;"></iframe>`;
             } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) {
-                previewContainer.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="height:70vh;"><img src="${fileUrl}" class="img-fluid" style="max-height:100%;max-width:100%;" alt="${fileName}"></div>`;
+                previewContainer.innerHTML =
+                    `<div class="d-flex justify-content-center align-items-center" style="height:70vh;"><img src="${fileUrl}" class="img-fluid" style="max-height:100%;max-width:100%;" alt="${fileName}"></div>`;
             } else if (['xls', 'xlsx'].includes(ext)) {
-                previewContainer.innerHTML = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" style="width:100%;height:70vh;border:none;"></iframe>`;
+                previewContainer.innerHTML =
+                    `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" style="width:100%;height:70vh;border:none;"></iframe>`;
             } else if (['doc', 'docx'].includes(ext)) {
-                previewContainer.innerHTML = `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" style="width:100%;height:70vh;border:none;"></iframe>`;
+                previewContainer.innerHTML =
+                    `<iframe src="https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true" style="width:100%;height:70vh;border:none;"></iframe>`;
             } else {
-                previewContainer.innerHTML = `<div class="preview-error"><i class="fas fa-file"></i><h5>Preview tidak tersedia</h5><p>Jenis file ini tidak dapat dipreview.</p><small>Jenis file: ${ext.toUpperCase()}</small></div>`;
+                previewContainer.innerHTML =
+                    `<div class="preview-error"><i class="fas fa-file"></i><h5>Preview tidak tersedia</h5><p>Jenis file ini tidak dapat dipreview.</p><small>Jenis file: ${ext.toUpperCase()}</small></div>`;
             }
 
             modal.show();
@@ -738,7 +770,9 @@
                 data: formData,
                 beforeSend: function() {
                     $('#table').addClass('table-loading');
-                    $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                    $('#table').html(
+                        '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
+                    );
                 },
                 success: function(response) {
                     $('#table').removeClass('table-loading');
@@ -750,7 +784,9 @@
                 },
                 error: function(xhr) {
                     $('#table').removeClass('table-loading');
-                    $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                    $('#table').html(
+                        '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                    );
                 }
             });
         }
@@ -806,7 +842,8 @@
         function debounce(func, delay) {
             let timeout;
             return function() {
-                const context = this, args = arguments;
+                const context = this,
+                    args = arguments;
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(context, args), delay);
             };
@@ -881,62 +918,65 @@
             }
 
             // Add loading state to button
-            const submitBtn = document.querySelector(`#submitBtn${formId === 'formAdd' ? 'Add' : formId.replace('form-', '')}`);
+            const submitBtn = document.querySelector(
+                `#submitBtn${formId === 'formAdd' ? 'Add' : formId.replace('form-', '')}`);
             if (submitBtn) {
                 submitBtn.classList.add('btn-loading');
                 submitBtn.disabled = true;
             }
 
             fetch(actionUrl, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: formData,
-            })
-            .then(async response => {
-                const data = await response.json();
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                            '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData,
+                })
+                .then(async response => {
+                    const data = await response.json();
 
-                // Remove loading state
-                if (submitBtn) {
-                    submitBtn.classList.remove('btn-loading');
-                    submitBtn.disabled = false;
-                }
-
-                if (!response.ok) {
-                    if (data.errors) {
-                        Object.entries(data.errors).forEach(([field, msgs]) => {
-                            toastr.error(msgs.join(', '), "Error!");
-                        });
-                    } else {
-                        toastr.error(data.message || "Gagal menyimpan data", "Error!");
-                    }
-                } else {
-                    // Reset form immediately after successful submission
-                    if (formId === 'formAdd') {
-                        resetFormAdd();
-                    } else {
-                        resetEditForm(formId);
+                    // Remove loading state
+                    if (submitBtn) {
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.disabled = false;
                     }
 
-                    $('.modal.show').addClass('submit-success');
-                    $('.modal.show').modal('hide');
+                    if (!response.ok) {
+                        if (data.errors) {
+                            Object.entries(data.errors).forEach(([field, msgs]) => {
+                                toastr.error(msgs.join(', '), "Error!");
+                            });
+                        } else {
+                            toastr.error(data.message || "Gagal menyimpan data", "Error!");
+                        }
+                    } else {
+                        // Reset form immediately after successful submission
+                        if (formId === 'formAdd') {
+                            resetFormAdd();
+                        } else {
+                            resetEditForm(formId);
+                        }
+                        window.location.reload();
 
-                    toastr.success(data.message || "Data berhasil disimpan", "Success!");
-                    reloadTable();
-                }
-            })
-            .catch(error => {
-                // Remove loading state
-                if (submitBtn) {
-                    submitBtn.classList.remove('btn-loading');
-                    submitBtn.disabled = false;
-                }
+                        $('.modal.show').addClass('submit-success');
+                        $('.modal.show').modal('hide');
 
-                toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
-                console.error('Error:', error);
-            });
+                        toastr.success(data.message || "Data berhasil disimpan", "Success!");
+                        reloadTable();
+                    }
+                })
+                .catch(error => {
+                    // Remove loading state
+                    if (submitBtn) {
+                        submitBtn.classList.remove('btn-loading');
+                        submitBtn.disabled = false;
+                    }
+
+                    toastr.error("Terjadi kesalahan. Silakan coba lagi.", "Error!");
+                    console.error('Error:', error);
+                });
         }
 
         function resetFormAdd() {
@@ -1019,41 +1059,41 @@
                     });
 
                     fetch(route, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: new FormData(form)
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        Swal.close();
-                        if (data.success) {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: new FormData(form)
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            Swal.close();
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: data.message || 'Laporan berhasil dihapus',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                reloadTable();
+                            } else {
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: data.message || 'Terjadi kesalahan saat menghapus',
+                                    icon: 'error'
+                                });
+                            }
+                        })
+                        .catch(() => {
+                            Swal.close();
                             Swal.fire({
-                                title: 'Berhasil!',
-                                text: data.message || 'Laporan berhasil dihapus',
-                                icon: 'success',
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
-                            reloadTable();
-                        } else {
-                            Swal.fire({
-                                title: 'Gagal!',
-                                text: data.message || 'Terjadi kesalahan saat menghapus',
+                                title: 'Error!',
+                                text: 'Terjadi kesalahan jaringan.',
                                 icon: 'error'
                             });
-                        }
-                    })
-                    .catch(() => {
-                        Swal.close();
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan jaringan.',
-                            icon: 'error'
                         });
-                    });
                 } else {
                     Swal.fire({
                         title: "Aksi Dibatalkan :)",
@@ -1080,7 +1120,7 @@
             const now = new Date();
             let startDate, endDate;
 
-            switch(preset) {
+            switch (preset) {
                 case 'today':
                     startDate = endDate = now.toISOString().split('T')[0];
                     break;
@@ -1117,7 +1157,10 @@
                     return;
             }
 
-            console.log('Setting dates:', { startDate, endDate }); // Debug log
+            console.log('Setting dates:', {
+                startDate,
+                endDate
+            }); // Debug log
 
             // Update all the input fields
             const dateFromInput = document.getElementById('dateFromInput');
@@ -1204,7 +1247,7 @@
                 $('#dateFilterMenu').removeClass('show');
             });
 
-           $('#filterMenu, #dateFilterMenu').on('click', function(e) {
+            $('#filterMenu, #dateFilterMenu').on('click', function(e) {
                 if (!$(e.target).hasClass('date-preset-btn')) {
                     e.stopPropagation();
                 }
@@ -1230,7 +1273,7 @@
             });
 
             // Date preset buttons - SINGLE EVENT HANDLER
-           $(document).off('click', '.date-preset-btn').on('click', '.date-preset-btn', function(e) {
+            $(document).off('click', '.date-preset-btn').on('click', '.date-preset-btn', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -1263,16 +1306,17 @@
             });
 
             setTimeout(function() {
-                    console.log('=== DEBUGGING DATE PRESET ELEMENTS ===');
-                    console.log('Date preset buttons found:', document.querySelectorAll('.date-preset-btn').length);
+                console.log('=== DEBUGGING DATE PRESET ELEMENTS ===');
+                console.log('Date preset buttons found:', document.querySelectorAll('.date-preset-btn')
+                    .length);
 
-                    document.querySelectorAll('.date-preset-btn').forEach((btn, index) => {
-                        console.log(`Button ${index}:`, {
-                            text: btn.textContent,
-                            preset: btn.getAttribute('data-preset')
-                        });
+                document.querySelectorAll('.date-preset-btn').forEach((btn, index) => {
+                    console.log(`Button ${index}:`, {
+                        text: btn.textContent,
+                        preset: btn.getAttribute('data-preset')
                     });
-                }, 1000);
+                });
+            }, 1000);
 
             // Date filter actions
             $('#applyDateFilter').on('click', function() {
@@ -1321,7 +1365,9 @@
                     data: formData,
                     beforeSend: function() {
                         $('#table').addClass('table-loading');
-                        $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                        $('#table').html(
+                            '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
+                        );
                     },
                     success: function(response) {
                         $('#table').removeClass('table-loading');
@@ -1333,7 +1379,9 @@
                     },
                     error: function(xhr) {
                         $('#table').removeClass('table-loading');
-                        $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                        $('#table').html(
+                            '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                        );
                     }
                 });
             });
@@ -1351,7 +1399,9 @@
                         data: formData,
                         beforeSend: function() {
                             $('#table').addClass('table-loading');
-                            $('#table').html('<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>');
+                            $('#table').html(
+                                '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
+                            );
                         },
                         success: function(response) {
                             $('#table').removeClass('table-loading');
@@ -1363,14 +1413,16 @@
                         },
                         error: function(xhr) {
                             $('#table').removeClass('table-loading');
-                            $('#table').html('<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>');
+                            $('#table').html(
+                                '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                            );
                         }
                     });
                 }
             });
 
             // Modal event handlers
-           $(document).on('show.bs.modal', '.modal', function(e) {
+            $(document).on('show.bs.modal', '.modal', function(e) {
                 const modalId = $(this).attr('id');
                 const modal = $(this);
 
@@ -1406,7 +1458,8 @@
                             form.find('input, select, textarea').each(function() {
                                 const input = $(this);
                                 const name = input.attr('name');
-                                if (input.attr('type') !== 'file' && originalData.hasOwnProperty(name)) {
+                                if (input.attr('type') !== 'file' && originalData.hasOwnProperty(
+                                        name)) {
                                     input.val(originalData[name]);
                                 }
                             });

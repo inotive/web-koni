@@ -27,7 +27,7 @@ class ManajemenRKAController extends Controller
 
         $sortBy = $request->input('sortBy', 'ASC');
 
-        $data = $query->orderBy('name', $sortBy)->get();
+        $data = $query->orderBy('created_at', $sortBy)->get();
 
         if ($request->ajax()) {
             return view('admin.manajemen-rka.components.table-grid', compact('data'))->render();
@@ -166,15 +166,25 @@ class ManajemenRKAController extends Controller
     {
         $data = ManajemenRKA::find($id);
 
-        if ($data) {
-            if ($data->laporans->count() > 0) {
-                return redirect()->back()->with('ERR', 'Folder memiliki laporan!');
-            }
-
-            $data->delete();
-            return redirect()->back()->with('OK', 'Folder berhasil dihapus.');
-        } else {
-            return redirect()->back()->with('ERR', 'Folder tidak ditemukan.');
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Folder tidak ditemukan.'
+            ], 404);
         }
+
+        if ($data->laporans->count() > 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Folder memiliki laporan!'
+            ], 400);
+        }
+
+        $data->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Folder berhasil dihapus.'
+        ], 200);
     }
 }

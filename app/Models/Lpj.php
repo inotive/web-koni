@@ -47,7 +47,7 @@ class Lpj extends Model
     public function children(): HasMany
     {
         return $this->hasMany(Lpj::class, 'parent_id')
-                    ->orderBy('nama_program');
+            ->orderBy('nama_program');
     }
 
     /**
@@ -135,10 +135,10 @@ class Lpj extends Model
      */
     public function scopeDataEntries($query)
     {
-        return $query->where(function($q) {
+        return $query->where(function ($q) {
             $q->whereNotNull('volume')
-              ->orWhereNotNull('jumlah_harga_satuan')
-              ->orWhereNotNull('jumlah_harga');
+                ->orWhereNotNull('jumlah_harga_satuan')
+                ->orWhereNotNull('jumlah_harga');
         });
     }
 
@@ -148,11 +148,11 @@ class Lpj extends Model
     public function scopeCategories($query)
     {
         return $query->has('children')
-                    ->where(function($q) {
-                        $q->whereNull('volume')
-                          ->whereNull('jumlah_harga_satuan')
-                          ->whereNull('jumlah_harga');
-                    });
+            ->where(function ($q) {
+                $q->whereNull('volume')
+                    ->whereNull('jumlah_harga_satuan')
+                    ->whereNull('jumlah_harga');
+            });
     }
 
     /**
@@ -161,8 +161,8 @@ class Lpj extends Model
     public static function getByParent($parentId = null)
     {
         return static::where('parent_id', $parentId)
-                    ->orderBy('nama_program')
-                    ->get();
+            ->orderBy('nama_program')
+            ->get();
     }
 
     /**
@@ -171,17 +171,17 @@ class Lpj extends Model
     public static function buildTree($parentId = null)
     {
         return static::where('parent_id', $parentId)
-                    ->orderBy('nama_program')
-                    ->with(['children' => function ($query) {
-                        $query->orderBy('nama_program');
-                    }])
-                    ->get()
-                    ->map(function ($item) {
-                        if ($item->hasChildren()) {
-                            $item->children = static::buildTree($item->id);
-                        }
-                        return $item;
-                    });
+            ->orderBy('nama_program')
+            ->with(['children' => function ($query) {
+                $query->orderBy('nama_program');
+            }])
+            ->get()
+            ->map(function ($item) {
+                if ($item->hasChildren()) {
+                    $item->children = static::buildTree($item->id);
+                }
+                return $item;
+            });
     }
 
     /**

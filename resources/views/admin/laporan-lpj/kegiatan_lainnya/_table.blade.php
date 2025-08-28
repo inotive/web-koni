@@ -1,22 +1,23 @@
 @if ($kegiatanLainnya->isEmpty())
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
-        <h4>Tidak ada data kegiatan sekretariat.</h4>
+        <h4>Tidak ada data kegiatan lainnya.</h4>
     </div>
 @else
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning_kegiatan">
+        <table class="table table-bordered table-hover align-middle table-fixed" id="kt_datatable_dom_positioning_kegiatan">
             <thead class="bg-light">
                 <tr>
                     @php
                         $columns = [
                             ['key' => null, 'title' => 'No', 'sortable' => false],
-                            ['key' => 'nama_program_kegiatan', 'title' => 'Nama Program & Kegiatan'],
+                            ['key' => 'nama_program', 'title' => 'Nama Program & Kegiatan'],
                             ['key' => 'volume', 'title' => 'Volume'],
                             ['key' => 'jumlah_harga_satuan', 'title' => 'Jumlah Harga Satuan'],
                             ['key' => 'jumlah_harga', 'title' => 'Jumlah Harga'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
-                            ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
+                            ['key' => null, 'title' => 'Dokumen', 'sortable' => false],
+                            ['key' => 'created_at', 'title' => 'Ditambahkan'],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
                     @endphp
@@ -24,11 +25,22 @@
                     @foreach ($columns as $column)
                         <th class="text-start">
                             @if (($column['sortable'] ?? true) && $column['key'])
-                                <a href="{{ request()->fullUrlWithQuery(['sort' => $column['key'], 'direction' => request('sort') == $column['key'] && request('direction') == 'asc' ? 'desc' : 'asc']) }}"
+                                <a href="{{ request()->fullUrlWithQuery([
+                                    'sort_by' => $column['key'],
+                                    'sort_order' => request('sort_by') === $column['key'] && request('sort_order') === 'asc' ? 'desc' : 'asc',
+                                    'page' => 1,
+                                ]) }}"
                                     class="text-dark text-decoration-none sortable-header">
                                     {{ $column['title'] }}
-                                    <i
-                                        class="fas fa-sort{{ request('sort') == $column['key'] ? '-' . (request('direction') == 'asc' ? 'up' : 'down') : '' }}"></i>
+                                    @if (request('sort_by') === $column['key'])
+                                        @if (request('sort_order') === 'asc')
+                                            <i class="fas fa-sort-up text-primary ms-1"></i>
+                                        @else
+                                            <i class="fas fa-sort-down text-primary ms-1"></i>
+                                        @endif
+                                    @else
+                                        <i class="fas fa-sort text-muted ms-1"></i>
+                                    @endif
                                 </a>
                             @else
                                 {{ $column['title'] }}
@@ -40,24 +52,31 @@
 
             <tbody>
                 @forelse ($kegiatanLainnya as $index => $kegiatan)
-                    <tr>
-                        <td class="text-start">
+                    <tr data-jenis-kegiatan="{{ $kegiatan->nama_kegiatan ?? '' }}"
+                        data-tanggal="{{ \Carbon\Carbon::parse($kegiatan->tanggal_kegiatan ?? $kegiatan->created_at)->format('Y-m-d') }}">
+                        <td class="text-center">
                             {{ ($kegiatanLainnya->currentPage() - 1) * $kegiatanLainnya->perPage() + $index + 1 }}
                         </td>
-                        {{-- PERBAIKAN: Ubah dari nama_program_kegiatan ke nama_program dan jenis_kegiatan ke nama_kegiatan --}}
-                        <td class="text-start">
+                        
+                        <td>
                             <div class="d-flex flex-column">
-                                <strong class="text-truncate-custom">{{ $kegiatan->nama_program }}</strong>
+                                <strong class="text-truncate-custom" title="{{ $kegiatan->nama_program }}">
+                                    {{ $kegiatan->nama_program }}
+                                </strong>
                                 @if ($kegiatan->nama_kegiatan)
                                     <small class="text-muted">{{ $kegiatan->nama_kegiatan }}</small>
                                 @endif
                             </div>
                         </td>
+                        
                         <td class="text-start">{{ $kegiatan->volume }}</td>
+                        
                         <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga_satuan, 0, ',', '.') }}</td>
+                        
                         <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga, 0, ',', '.') }}</td>
+                        
                         <td class="text-start">
-                            @if ($kegiatan->foto_jurnal && count($kegiatan->foto_jurnal) > 0)
+                            @if (!empty($kegiatan->foto_jurnal) && is_array($kegiatan->foto_jurnal))
                                 <button type="button" class="btn btn-sm btn-light-info preview-btn"
                                     data-bs-toggle="modal" data-bs-target="#previewModal" data-type="image"
                                     data-files="{{ json_encode($kegiatan->foto_jurnal) }}"
@@ -68,21 +87,25 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        {{-- PERBAIKAN: Ubah dari dokumen_pendukung ke dokumen_lpj --}}
+                        
                         <td class="text-start">
-                            @if ($kegiatan->dokumen_lpj && count($kegiatan->dokumen_lpj) > 0)
+                            @if (!empty($kegiatan->dokumen_lpj) && is_array($kegiatan->dokumen_lpj))
                                 <button type="button" class="btn btn-sm btn-light-primary preview-btn"
                                     data-bs-toggle="modal" data-bs-target="#previewModal" data-type="document"
                                     data-files="{{ json_encode($kegiatan->dokumen_lpj) }}"
-                                    data-title="Dokumen Pendukung - {{ $kegiatan->nama_program }}">
-                                    <i class="fas fa-file-alt me-1"></i>{{ count($kegiatan->dokumen_lpj) }}
-                                    Dokumen
+                                    data-title="Dokumen LPJ - {{ $kegiatan->nama_program }}">
+                                    <i class="fas fa-file-alt me-1"></i>{{ count($kegiatan->dokumen_lpj) }} Dokumen
                                 </button>
                             @else
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
+                        
                         <td class="text-start">
+                            {{ \Carbon\Carbon::parse($kegiatan->created_at)->format('d M Y') }}
+                        </td>
+                        
+                        <td class="text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
@@ -115,7 +138,7 @@
                                     </li>
 
                                     @if (auth()->user()->hasRole('superadmin'))
-                                        <li><a href="{{ route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) }}"
+                                        <li><a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi</a></li>
                                     @else
@@ -130,7 +153,7 @@
                                     @if (auth()->user()->hasRole('superadmin'))
                                         <li><button type="button"
                                                 class="dropdown-item-custom delete border-0 bg-transparent w-100 text-start text-danger"
-                                                data-route="{{ route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id) }}"
+                                                data-route="{{ route('admin.laporan-lpj.kegiatan_lainnya.destroy', $kegiatan->id) }}"
                                                 onclick="destroyItem(this)">
                                                 <i class="fas fa-trash me-2"></i> Hapus</button></li>
                                     @else
@@ -147,7 +170,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                        <td colspan="9" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -159,7 +182,7 @@
             <div class="mb-2 mb-md-0">
                 <div class="d-flex align-items-center">
                     <span class="me-2">Show</span>
-                    <select name="per_page" class="form-select form-select-sm w-auto">
+                    <select name="per_page" class="form-select form-select-sm w-auto" id="per-page-select">
                         @foreach ([10, 25, 50, 100] as $limit)
                             <option value="{{ $limit }}"
                                 {{ request('per_page', 10) == $limit ? 'selected' : '' }}>{{ $limit }}</option>
@@ -224,6 +247,63 @@
     </div>
 
     <style>
+        /* Table fixed layout for consistent column alignment */
+        .table-fixed {
+            table-layout: fixed;
+        }
+
+        .table-fixed th:nth-child(1),
+        .table-fixed td:nth-child(1) {
+            width: 40px !important;
+        }
+
+        .table-fixed th:nth-child(2),
+        .table-fixed td:nth-child(2) {
+            width: 250px !important;
+        }
+
+        .table-fixed th:nth-child(3),
+        .table-fixed td:nth-child(3) {
+            width: 100px !important;
+        }
+
+        .table-fixed th:nth-child(4),
+        .table-fixed td:nth-child(4) {
+            width: 150px !important;
+        }
+
+        .table-fixed th:nth-child(5),
+        .table-fixed td:nth-child(5) {
+            width: 150px !important;
+        }
+
+        .table-fixed th:nth-child(6),
+        .table-fixed td:nth-child(6) {
+            width: 100px !important;
+        }
+
+        .table-fixed th:nth-child(7),
+        .table-fixed td:nth-child(7) {
+            width: 120px !important;
+        }
+
+        .table-fixed th:nth-child(8),
+        .table-fixed td:nth-child(8) {
+            width: 100px !important;
+        }
+
+        .table-fixed th:nth-child(9),
+        .table-fixed td:nth-child(9) {
+            width: 80px !important;
+        }
+
+        .text-truncate-custom {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         .dropdown-action {
             position: relative;
             display: inline-block;
@@ -300,65 +380,6 @@
             background-color: #ffcad7 !important;
         }
 
-        .pagination {
-            margin-bottom: 0;
-        }
-
-        .pagination .page-item {
-            margin: 0 1px;
-        }
-
-        .pagination-sm .page-link {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-            color: #6c757d;
-            margin: 0 2px;
-        }
-
-        .pagination-sm .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
-            color: white;
-        }
-
-        .pagination-sm .page-link:hover {
-            background-color: #f8f9fa;
-            border-color: #dee2e6;
-            color: #495057;
-        }
-
-        .pagination-sm .page-item.disabled .page-link {
-            color: #6c757d;
-            background-color: #fff;
-            border-color: #dee2e6;
-        }
-
-        .simple-pagination .page-link {
-            border: none !important;
-            margin: 0 2px;
-            border-radius: 4px !important;
-            padding: 6px 12px !important;
-            color: #6c757d !important;
-            background-color: #f8f9fa !important;
-            transition: all 0.2s ease;
-        }
-
-        .simple-pagination .page-link:hover {
-            background-color: #e9ecef !important;
-            color: #495057 !important;
-        }
-
-        .simple-pagination .page-item.active .page-link {
-            background-color: #007bff !important;
-            color: white !important;
-        }
-
-        .simple-pagination .page-link:focus {
-            box-shadow: none !important;
-        }
-
         .pagination-arrow {
             color: #6c757d;
             text-decoration: none;
@@ -402,53 +423,6 @@
             border-color: #e0e1e4;
         }
 
-        .loading-spinner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-        }
-
-        .table-loading {
-            position: relative;
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .spinner-border-sm {
-            width: 1rem;
-            height: 1rem;
-        }
-
-        .notification-toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            min-width: 300px;
-        }
-
-        .toast-success {
-            background-color: #51a351;
-            color: white;
-        }
-
-        .toast-error {
-            background-color: #bd362f;
-            color: white;
-        }
-
-        .toast-warning {
-            background-color: #f89406;
-            color: white;
-        }
-
-        .toast-info {
-            background-color: #2f96b4;
-            color: white;
-        }
-
         .custom-tooltip {
             --bs-tooltip-bg: #ffffff;
             --bs-tooltip-border-color: #e0e0e0;
@@ -489,7 +463,6 @@
         }
 
         @media (max-width: 768px) {
-
             .table-header,
             .table-footer {
                 padding: 15px;
@@ -515,86 +488,18 @@
                 font-size: 0.8rem;
             }
 
-            .table thead th .sort-link {
-                gap: 4px;
-                font-size: 0.8rem;
-            }
-
-            .d-flex.justify-content-between.align-items-center.flex-wrap {
-                flex-direction: column;
-                gap: 1rem;
-                align-items: center !important;
-            }
-
-            .pagination-sm .page-link {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.75rem;
-            }
-
-            .d-flex.align-items-center.gap-3 {
-                flex-direction: column;
-                gap: 0.5rem !important;
+            .dropdown-menu-custom {
+                position: absolute !important;
+                z-index: 9999 !important;
+                right: 0 !important;
+                left: auto !important;
+                min-width: 140px;
             }
 
             .pagination-arrow,
             .pagination-number {
                 padding: 4px 6px;
                 font-size: 0.75rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .pagination-sm .page-link {
-                padding: 0.2rem 0.4rem;
-                font-size: 0.7rem;
-            }
-
-            .preview-image {
-                max-width: 100%;
-                max-height: 80%;
-                object-fit: contain;
-                border-radius: 8px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                background: white;
-                padding: 10px;
-            }
-
-            .preview-document {
-                width: 100%;
-                height: 80%;
-                border: none;
-                border-radius: 8px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            }
-
-            .document-placeholder {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                height: 80%;
-                background: white;
-                border: 2px dashed #dee2e6;
-                border-radius: 8px;
-                text-align: center;
-                padding: 40px;
-            }
-
-            .document-placeholder i {
-                font-size: 4rem;
-                color: #6c757d;
-                margin-bottom: 1rem;
-            }
-
-            .document-placeholder h5 {
-                color: #495057;
-                margin-bottom: 0.5rem;
-            }
-
-            .document-placeholder p {
-                color: #6c757d;
-                margin-bottom: 1rem;
             }
         }
 

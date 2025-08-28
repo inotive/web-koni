@@ -22,19 +22,10 @@
                             onclick="event.preventDefault(); event.stopPropagation();">
                             Ganti Nama
                         </li>
-                        @if ($item->laporans->isEmpty())
-                            <li class="dropdown-item delete"
-                                onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('delete-form-{{ $item->id }}').submit();">
-                                Hapus
-                            </li>
-
-                            <form id="delete-form-{{ $item->id }}"
-                                action="{{ route('admin.manajemen-rka.destroy', $item->id) }}" method="POST"
-                                style="display: none;">
-                                @csrf
-                                @method('DELETE')
-                            </form>
-                        @endif
+                        <li class="dropdown-item delete"
+                            onclick="event.preventDefault(); event.stopPropagation(); confirmDelete('{{ route('admin.manajemen-rka.destroy', $item->id) }}', '{{ $item->name }}')">
+                            Hapus
+                        </li>
                     </ul>
                 </div>
                 <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
@@ -47,8 +38,8 @@
                 </div>
             </div>
         </a>
-        <div class="modal fade" id="edit-{{ $item->id }}" tabindex="-1" aria-labelledby="edit-{{ $item->id }}"
-            aria-hidden="true">
+        <div class="modal fade" id="edit-{{ $item->id }}" tabindex="-1"
+            aria-labelledby="edit-{{ $item->id }}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 gap-5 px-10 py-8">
                     <div class="d-flex justify-content-between align-items-center">
@@ -68,7 +59,7 @@
 
                     <div class="d-grid py-4">
                         <button type="button" onclick="submitForm('form-{{ $item->id }}')"
-                            class="bg-warning fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                             Edit Nama Folder
                         </button>
                     </div>
