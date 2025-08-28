@@ -355,7 +355,7 @@
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     @if (auth()->user()->hasRole('superadmin'))
                         <a href="{{ route('admin.laporan-lpj.sekretariat.create') }}" class="btn btn-primary"
-                            style="background-color: #0d6efd !important; color: white !important; border-color: #0d6efd !important;">
+                            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                         </a>
                     @else
