@@ -55,6 +55,8 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     // Letakkan rute 'download' sebelum rute resource
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
+    Route::get('file-kesekretariat/{fileKesekretariat}/edit', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'edit'])
+        ->name('file-kesekretariat.edit');
 
 
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {
@@ -210,13 +212,13 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
             Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
 
-            // 🔒 Letakkan ini SEBELUM wildcard resource
-            Route::get('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+            // Export route - generates: admin.laporan-lpj.kegiatan_lainnya.export
+            Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+
             Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
                 ->name('detail-ajax')
                 ->where('id', '[0-9]+');
 
-            // Baru wildcard
             Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
             Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
             Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
