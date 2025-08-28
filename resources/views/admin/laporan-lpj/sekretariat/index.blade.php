@@ -718,8 +718,8 @@
             'info': 'alert-info'
         }[type] || 'alert-info';
 
-        const notification = $(`
-            <div class="alert ${alertClass} alert-dismissible fade show notification-toast"
+        const notification = $(
+            `<div class="alert ${alertClass} alert-dismissible fade show notification-toast"
                  role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
                 ${message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -779,33 +779,35 @@
             const slide = document.createElement('div');
             slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
 
-            const fileName = file.split('/').pop();
-            const fileExtension = fileName.split('.').pop().toLowerCase();
+            const path = typeof file === 'object' && file.path ? file.path : file;
+            const originalName = typeof file === 'object' && file.original_name ? file.original_name : path.split('/').pop();
+
+            const fileExtension = originalName.split('.').pop().toLowerCase();
             const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
 
             if (currentType === 'image' || currentType === 'foto' ||
                 (currentType === 'auto' && imageExtensions.includes(fileExtension))) {
                 slide.innerHTML = `
-                    <img src="/storage/${file}"
+                    <img src="/storage/${path}"
                          alt="Preview"
                          class="preview-image"
-                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'document-placeholder\\'><i class=\\'fas fa-exclamation-triangle text-warning\\' style=\\'font-size: 3rem;\\'></i><h5>Gagal memuat gambar</h5></div>'">
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>">
                 `;
             } else {
                 if (fileExtension === 'pdf') {
                     slide.innerHTML = `
-                        <iframe src="/storage/${file}"
+                        <iframe src="/storage/${path}"
                                 class="preview-document"
-                                onerror="console.error('Failed to load PDF: /storage/${file}')"></iframe>
+                                onerror="console.error('Failed to load PDF: /storage/${path}')"></iframe>
                     `;
                 } else {
                     const iconClass = getFileIcon(fileExtension);
                     slide.innerHTML = `
                         <div class="document-placeholder">
                             <i class="${iconClass}"></i>
-                            <h5>${fileName}</h5>
+                            <h5>${originalName}</h5>
                             <p>Klik download untuk melihat file ${fileExtension.toUpperCase()}</p>
-                            <a href="/storage/${file}" class="btn btn-primary" target="_blank">
+                            <a href="/storage/${path}" class="btn btn-primary" target="_blank">
                                 <i class="fas fa-external-link-alt me-2"></i>Buka File
                             </a>
                         </div>
@@ -822,8 +824,11 @@
     function updatePreviewUI() {
         if (!currentFiles || currentFiles.length === 0) return;
 
-        const fileName = currentFiles[currentIndex].split('/').pop();
-        if (currentFileName) currentFileName.textContent = fileName;
+        const file = currentFiles[currentIndex];
+        const path = typeof file === 'object' && file.path ? file.path : file;
+        const originalName = typeof file === 'object' && file.original_name ? file.original_name : path.split('/').pop();
+
+        if (currentFileName) currentFileName.textContent = originalName;
         if (fileCounter) fileCounter.textContent = `${currentIndex + 1} dari ${currentFiles.length}`;
 
         if (currentFiles.length > 1) {
@@ -836,7 +841,7 @@
 
         if (downloadBtn) {
             downloadBtn.onclick = function() {
-                window.open('/storage/' + currentFiles[currentIndex], '_blank');
+                window.open('/storage/' + path, '_blank');
             };
         }
     }
@@ -953,17 +958,19 @@
         if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
             fotoJurnalHtml = `
                 <div class="row g-3">
-                    ${data.foto_jurnal.map(f => `
+                    ${data.foto_jurnal.map(f => {
+                        const path = typeof f === 'object' ? f.path : f;
+                        return `
                         <div class="col-6 col-md-4">
                             <div class="border rounded overflow-hidden" style="height: 120px;">
-                                <img src="/storage/${f}"
+                                <img src="/storage/${path}"
                                      class="w-100 h-100"
                                      style="object-fit: cover; cursor: pointer;"
-                                     onclick="window.open('/storage/${f}', '_blank')"
-                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
+                                     onclick="window.open('/storage/${path}', '_blank')"
+                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'d-flex align-items-center justify-content-center h-100 text-muted\'>Error loading image</div>'">
                             </div>
                         </div>
-                    `).join('')}
+                    `}).join('')}
                 </div>
             `;
         }
@@ -973,7 +980,8 @@
             dokumenHtml = `
                 <div class="d-flex flex-column gap-2">
                     ${data.dokumen_lpj.map(d => {
-                        const name = d.split('/').pop();
+                        const path = typeof d === 'object' ? d.path : d;
+                        const name = typeof d === 'object' ? d.original_name : path.split('/').pop();
                         const extension = name.split('.').pop().toLowerCase();
 
                         let iconClass = 'fas fa-file text-secondary';
@@ -989,7 +997,7 @@
                                     <div class="fw-medium text-dark">${name}</div>
                                     <small class="text-muted">${extension.toUpperCase()}</small>
                                 </div>
-                                <a href="/storage/${d}"
+                                <a href="/storage/${path}"
                                    target="_blank"
                                    class="btn btn-outline-primary btn-sm">
                                     <i class="fas fa-download me-1"></i>Unduh
