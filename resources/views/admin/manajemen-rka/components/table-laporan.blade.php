@@ -123,23 +123,18 @@
 
                                 <div class="bg-light mt-2 rounded p-3">
                                     <small class="text-muted">File saat ini: </small>
-                                    {{-- <a href="#"
-                                        onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')"
-                                        class="text-primary text-decoration-none fw-bold">
-                                        {{ basename($item->dokumen) }}
-                                    </a> --}}
                                     <a href="{{ Storage::url($item->file_path) }}" target="_blank">
                                         {{ $item->name }}
                                     </a>
                                 </div>
-                            </form>
 
-                            <div class="d-grid py-4">
-                                <button type="button" onclick="submitForm('form-{{ $item->id }}')"
-                                    class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                                    Edit Laporan
-                                </button>
-                            </div>
+                                <div class="d-grid py-4">
+                                    <button type="submit" onclick="submitForm('form-{{ $item->id }}')"
+                                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                                        Edit Laporan
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -174,10 +169,3 @@
         {{ $laporan->links('pagination::bootstrap-5') }}
     </div>
 </div>
-
-{{-- <script>
-    $('.rupiah').on('input change', function() {
-        const raw = $(this).val().replace(/\D/g, '');
-        $(this).val(formatRupiah(raw));
-    });
-</script> --}}
