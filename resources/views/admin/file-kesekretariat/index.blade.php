@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Manajemen File')
-@section('mainSection', 'File Kesekretariat')
+@section('mainSection', 'Menu Utama')
 @section('currentSection', 'File Kesekretariat')
 
 @section('style')
     <style>
         /* =================================
-                                                                                           BASIC LAYOUT & COLORS - UPDATED
-                                                                                        ================================= */
+                                                                                                                                                                               BASIC LAYOUT & COLORS - UPDATED
+                                                                                                                                                                            ================================= */
         body {
             background-color: #ffffff;
             /* Changed from #f5f5f5 to white like file 1 */
@@ -30,8 +30,8 @@
         }
 
         /* =================================
-                                                                                           FILTER & SEARCH CONTAINER
-                                                                                        ================================= */
+                                                                                                                                                                               FILTER & SEARCH CONTAINER
+                                                                                                                                                                            ================================= */
         .filter-container {
             display: flex;
             align-items: center;
@@ -68,122 +68,117 @@
         }
 
         /* =================================
-                                                                                           TABLE STYLING - UPDATED TO MATCH FILE 1
-                                                                                        ================================= */
+                                                                                                                                                                               TABLE STYLING - UPDATED TO MATCH FILE 1
+                                                                                                                                                                            ================================= */
         .table-responsive {
-            overflow: visible !important;
-            background-color: #ffffff;
-            /* White background */
-        }
+    overflow: visible !important;
+    background-color: #ffffff;
+}
 
         .table-loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
+    opacity: 0.6;
+    pointer-events: none;
+}
 
         /* Table Headers - Updated to match file 1 gray styling */
         .table thead th {
-            text-align: center !important;
-            vertical-align: middle !important;
-            background-color: #f8f9fa !important;
-            /* Gray background like file 1 */
-            border-bottom: 2px solid #e9ecef;
-            font-weight: 600;
-            color: #495057;
-            padding: 1rem 0.75rem;
-            /* Added consistent padding */
-        }
+    text-align: center !important;
+    vertical-align: middle !important;
+    background-color: #f8f9fa !important;
+    border: none !important; /* Remove all borders */
+    font-weight: 600;
+    color: #495057;
+    padding: 1rem 0.75rem;
+}
 
         .table thead th a {
-            justify-content: center;
-            color: inherit;
-            text-decoration: none;
-        }
+    justify-content: center;
+    color: inherit;
+    text-decoration: none;
+}
 
         /* Basic table cells */
         .table {
-            background-color: #ffffff;
-            /* White table background */
-        }
+    background-color: #ffffff;
+    border-collapse: separate !important; /* Change from collapse to separate */
+    border-spacing: 0 !important;
+    border: none !important; /* Remove table border */
+}
 
         .table td,
-        .table th {
-            vertical-align: middle;
-            word-wrap: break-word;
-            max-width: 200px;
-            background-color: #ffffff;
-            /* White cell background */
-        }
-
+.table th {
+    vertical-align: middle;
+    word-wrap: break-word;
+    max-width: 200px;
+    background-color: #ffffff;
+    border: none !important; /* Remove all cell borders */
+}
         /* Column Width Configuration - 4 Columns */
         .table th:nth-child(1),
-        .table td:nth-child(1) {
-            width: 3% !important;
-            white-space: nowrap;
-            text-align: center;
-            padding: 0.5rem 0.25rem !important;
-            font-size: 0.9rem !important;
-            font-weight: 700 !important;
-            line-height: 1.2;
-            min-width: 40px;
-            background-color: #ffffff;
-            /* White background */
-        }
+.table td:nth-child(1) {
+    width: 3% !important;
+    white-space: nowrap;
+    text-align: center;
+    padding: 0.5rem 0.25rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2;
+    min-width: 40px;
+    background-color: #ffffff;
+    border: none !important;
+}
 
         .table th:nth-child(2),
-        .table td:nth-child(2) {
-            width: 40% !important;
-            padding: 0.75rem !important;
-            max-width: 30% !important;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            background-color: #ffffff;
-            /* White background */
-        }
+.table td:nth-child(2) {
+    width: 40% !important;
+    padding: 0.75rem !important;
+    max-width: 30% !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: #ffffff;
+    border: none !important;
+}
 
         .table th:nth-child(3),
-        .table td:nth-child(3) {
-            width: 35% !important;
-            padding: 0.75rem !important;
-            background-color: #ffffff;
-            /* White background */
-        }
+.table td:nth-child(3) {
+    width: 35% !important;
+    padding: 0.75rem !important;
+    background-color: #ffffff;
+    border: none !important;
+    text-align: left !important;
+}
 
         .table th:nth-child(4),
-        .table td:nth-child(4) {
-            width: 5% !important;
-            min-width: 50px !important;
-            max-width: 6% !important;
-            text-align: center;
-            padding: 0.5rem 0.25rem !important;
-            background-color: #ffffff;
-            /* White background */
-        }
+.table td:nth-child(4) {
+    width: 5% !important;
+    min-width: 50px !important;
+    max-width: 6% !important;
+    text-align: center;
+    padding: 0.5rem 0.25rem !important;
+    background-color: #ffffff;
+    border: none !important;
+}
 
         /* Table Row Hover Effects */
         .table tbody {
-            position: relative;
-            z-index: 1;
-            background-color: #ffffff;
-            /* White background */
-        }
+    position: relative;
+    z-index: 1;
+    background-color: #ffffff;
+}
 
         .table tbody tr {
-            position: relative;
-            transition: all 0.2s ease;
-            background-color: #ffffff;
-            /* White background */
-        }
+    position: relative;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+    border: none !important; /* Remove row borders */
+}
 
         .table tbody tr:hover {
-            z-index: 10;
-            background-color: rgba(248, 40, 90, 0.03);
-        }
+    z-index: 10;
+    background-color: rgba(248, 40, 90, 0.03);
+}
 
-        /* =================================
-                                                                                           SORTING FUNCTIONALITY
-                                                                                        ================================= */
         .table th.sortable {
             cursor: pointer;
             position: relative;
@@ -217,8 +212,8 @@
         }
 
         /* =================================
-                                                                                           DOCUMENT DISPLAY
-                                                                                        ================================= */
+                                                                                                                                                                               DOCUMENT DISPLAY
+                                                                                                                                                                            ================================= */
         .document-info {
             display: flex;
             flex-direction: column;
@@ -272,8 +267,8 @@
         }
 
         /* =================================
-                                                                                           FILE LINK STYLING
-                                                                                        ================================= */
+                                                                                                                                                                               FILE LINK STYLING
+                                                                                                                                                                            ================================= */
         .file-link {
             color: #495057;
             text-decoration: none;
@@ -317,8 +312,8 @@
         }
 
         /* =================================
-                                                                                           DROPDOWN ACTION MENU
-                                                                                        ================================= */
+                                                                                                                                                                               DROPDOWN ACTION MENU
+                                                                                                                                                                            ================================= */
         .dropdown-action {
             position: relative;
             z-index: 1;
@@ -415,8 +410,8 @@
         }
 
         /* =================================
-                                                                                           MAIN CONTAINER WHITE BACKGROUND
-                                                                                        ================================= */
+                                                                                                                                                                               MAIN CONTAINER WHITE BACKGROUND
+                                                                                                                                                                            ================================= */
         .container {
             background-color: #ffffff;
             /* White background for main container */
@@ -430,8 +425,8 @@
         }
 
         /* =================================
-                                                                                           BUTTONS & FORM CONTROLS
-                                                                                        ================================= */
+                                                                                                                                                                               BUTTONS & FORM CONTROLS
+                                                                                                                                                                            ================================= */
         .custom-red-button,
         .btn-active-light-danger {
             background-color: #F8285A !important;
@@ -477,8 +472,8 @@
         }
 
         /* =================================
-                                                                                           PAGINATION
-                                                                                        ================================= */
+                                                                                                                                                                               PAGINATION
+                                                                                                                                                                            ================================= */
         .pagination-wrapper {
             margin-top: 1.5rem;
             display: flex;
@@ -561,8 +556,8 @@
         }
 
         /* =================================
-                                                                                           DROPZONE STYLING
-                                                                                        ================================= */
+                                                                                                                                                                               DROPZONE STYLING
+                                                                                                                                                                            ================================= */
         .dropzone {
             border: 2px dashed #dee2e6;
             border-radius: 8px;
@@ -596,8 +591,8 @@
         }
 
         /* =================================
-                                                                                           MODALS & TOASTS
-                                                                                        ================================= */
+                                                                                                                                                                               MODALS & TOASTS
+                                                                                                                                                                            ================================= */
         .modal-content {
             border-radius: 12px;
             border: none;
@@ -661,8 +656,8 @@
         }
 
         /* =================================
-                                                                                           EMPTY STATE & LOADING
-                                                                                        ================================= */
+                                                                                                                                                                               EMPTY STATE & LOADING
+                                                                                                                                                                            ================================= */
         .empty-state {
             padding: 4rem 2rem;
             text-align: center;
@@ -704,8 +699,8 @@
         }
 
         /* =================================
-                                                                                           UTILITY CLASSES
-                                                                                        ================================= */
+                                                                                                                                                                               UTILITY CLASSES
+                                                                                                                                                                            ================================= */
         .text-truncate-custom {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -717,8 +712,8 @@
         }
 
         /* =================================
-                                                                                           PAGE BACKGROUND OVERRIDE
-                                                                                        ================================= */
+                                                                                                                                                                               PAGE BACKGROUND OVERRIDE
+                                                                                                                                                                            ================================= */
         html,
         body,
         .app,
@@ -728,8 +723,8 @@
         }
 
         /* =================================
-                                                                                           RESPONSIVE DESIGN
-                                                                                        ================================= */
+                                                                                                                                                                               RESPONSIVE DESIGN
+                                                                                                                                                                            ================================= */
         @media (max-width: 768px) {
             .filter-container {
                 flex-direction: column;
@@ -840,6 +835,31 @@
         [id^="edit-form-row-"] {
             transition: all 0.3s ease-in-out;
         }
+
+        /* Dropzone biru muda */
+        .dropzone,
+        #dropzone-tambahFileForm,
+        #dropzone-editFileForm {
+            border: 2px dashed #0d6efd !important;
+            border-radius: 10px !important;
+            background-color: #e7f3ff !important;
+            /* biru muda */
+            color: #0d6efd !important;
+            transition: all 0.3s ease;
+        }
+
+        .dropzone:hover,
+        #dropzone-tambahFileForm:hover,
+        #dropzone-editFileForm:hover {
+            background-color: #cfe2ff !important;
+            border-color: #0a58ca !important;
+        }
+
+        /* Hanya kolom File Dokumen menjadi rata kiri */
+.table td:nth-child(3),
+.table th:nth-child(3) {
+    text-align: left !important;
+}
     </style>
 @endsection
 
@@ -849,7 +869,7 @@
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
                 <h1>File Kesekretariat</h1>
-                <span>Manajemen File Dokumen Kesekretariat Anda Sekarang</span>
+                <span>Kelola dokumen kesekretariat Anda</span>
             </div>
 
             <!-- Filter Form -->
@@ -876,7 +896,7 @@
 
         <!-- Main Content -->
         <div class="container">
-            <h3 class="fw-bold fs-4 mb-3">Daftar File Kesekretariat - 2025</h3>
+            <h3 class="fw-bold fs-4 mb-3">Daftar File Kesekretariat</h3>
             <div id="tableContainer">
                 @include('admin.file-kesekretariat._table', ['files' => $files])
             </div>
@@ -949,12 +969,89 @@
             </div>
         </div>
 
-        <!-- Edit File Modal -->
-        <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel" aria-hidden="true">
+        <!-- File Preview Modal -->
+        <div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="d-flex align-items-center gap-3">
+                            <i id="previewFileIcon" class="fas fa-file fa-2x text-primary"></i>
+                            <div>
+                                <h5 class="modal-title mb-0" id="previewFileName">Preview File</h5>
+                                <small class="text-muted" id="previewFileSize"></small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" id="downloadFromPreview" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-download me-1"></i>Download
+                            </button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <div class="modal-body p-0" style="height: 75vh; overflow: hidden;">
+                        <!-- Loading State -->
+                        <div id="previewLoading" class="d-flex justify-content-center align-items-center h-100">
+                            <div class="text-center">
+                                <div class="spinner-border text-primary mb-3" role="status"
+                                    style="width: 3rem; height: 3rem;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="text-muted">Memuat preview file...</p>
+                            </div>
+                        </div>
+
+                        <!-- PDF Viewer -->
+                        <div id="pdfViewer" class="h-100" style="display: none;">
+                            <iframe id="pdfFrame" class="w-100 h-100" frameborder="0"></iframe>
+                        </div>
+
+                        <!-- Word/Doc Viewer -->
+                        <div id="docViewer" class="h-100 p-4" style="display: none; overflow-y: auto;">
+                            <div id="docContent" class="bg-white p-4 border rounded shadow-sm">
+                                <!-- Word content will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Error State -->
+                        <div id="previewError" class="d-flex justify-content-center align-items-center h-100"
+                            style="display: none;">
+                            <div class="text-center">
+                                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                                <h5>Tidak dapat menampilkan preview</h5>
+                                <p class="text-muted mb-3">File ini tidak dapat di-preview. Silakan download untuk melihat
+                                    isi file.</p>
+                                <button type="button" id="downloadFromError" class="btn btn-primary">
+                                    <i class="fas fa-download me-1"></i>Download File
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Unsupported Format -->
+                        <div id="unsupportedFormat" class="d-flex justify-content-center align-items-center h-100"
+                            style="display: none;">
+                            <div class="text-center">
+                                <i class="fas fa-file fa-3x text-secondary mb-3"></i>
+                                <h5>Format file tidak didukung untuk preview</h5>
+                                <p class="text-muted mb-3">Preview hanya tersedia untuk file PDF dan Word (.doc/.docx)</p>
+                                <button type="button" id="downloadUnsupported" class="btn btn-primary">
+                                    <i class="fas fa-download me-1"></i>Download File
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit File Modal - IMPROVED VERSION -->
+        <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 gap-5 px-10 py-8">
                     <div class="d-flex justify-content-between align-items-center gap-2">
-                        <div class="fs-2 fw-bold text-truncate leading-5" id="editModalTitle">Edit File Kesekretariat</div>
+                        <div class="fs-2 fw-bold text-truncate leading-5" id="editModalTitle">Edit File Kesekretariat
+                        </div>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
@@ -986,27 +1083,42 @@
                             </div>
                         </div>
 
-                        <!-- Current File Display -->
-                        <div id="currentFileDisplay">
-                            <div class="fw-semibold mb-3 text-gray-800">File Saat Ini</div>
-                            <div class="current-file-info p-3 bg-light rounded border">
-                                <div class="d-flex align-items-center">
-                                    <i id="currentFileIcon" class="fas fa-file fa-2x me-3 text-secondary"></i>
-                                    <div>
-                                        <div class="fw-bold" id="currentFileName">-</div>
-                                        <small class="text-muted">File yang sedang digunakan</small>
+
+
+                        <!-- Optional New File Upload -->
+                        <!-- SAMAKAN: Dropzone seperti di tambah -->
+                        <div>
+                            <div class="fw-semibold mb-3 text-gray-800">
+                                Ganti File (Opsional)
+                                <small class="text-muted fw-normal">- Biarkan kosong jika tidak ingin mengganti
+                                    file</small>
+                            </div>
+                            <div class="dropzone" id="dropzone-editFileForm">
+                                <div class="dz-message needsclick">
+                                    <i class="ki-duotone ki-file-up fs-3x text-primary">
+                                        <span class="path1"></span><span class="path2"></span>
+                                    </i>
+                                    <div class="ms-4">
+                                        <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen baru.</h3>
+                                        <span class="fs-7 fw-semibold text-gray-500">
+                                            Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB.
+                                        </span>
                                     </div>
                                 </div>
                             </div>
+                            <input type="file" name="dokumen_file" id="edit_dokumen_file_input"
+                                style="display: none;" accept=".pdf,.doc,.docx,.xls,.xlsx">
+                            <div class="invalid-feedback" id="edit_dokumen_file_error"></div>
                         </div>
+                    </form>
 
-                        <!-- Submit Button -->
-                        <div class="d-grid py-4">
-                            <button type="button" onclick="submitEditForm()" id="editSubmitBtn"
-                                class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                                <i class="fas fa-save me-1"></i>Update File
-                            </button>
-                        </div>
+                    <!-- Submit Button -->
+                    <div class="d-grid py-4">
+                        <button type="button" onclick="submitEditForm()" id="editSubmitBtn"
+                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            <i class="fas fa-save me-1"></i>Update File
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1016,355 +1128,382 @@
     @section('script')
         <script>
             function deleteFile(fileId, fileName, deleteUrl) {
-                Swal.fire({
-                    title: "Apakah Anda Yakin?",
-                    html: `<p style='text-align:center'>Setelah <strong>${fileName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
-                    icon: "warning",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus!',
-                    cancelButtonText: 'Batalkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Show loading
+    Swal.fire({
+        title: "Apakah Anda Yakin?",
+        html: `<p style='text-align:center'>Setelah <strong>${fileName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
+        icon: "warning",
+        showCancelButton: true,
+        reverseButtons: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Hapus!',
+        cancelButtonText: 'Batalkan!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading
+            Swal.fire({
+                title: 'Menghapus...',
+                text: 'Mohon tunggu',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => Swal.showLoading()
+            });
+
+            // Perform delete request
+            $.ajax({
+                url: deleteUrl,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    Swal.close();
+                    if (response.success) {
                         Swal.fire({
-                            title: 'Menghapus...',
-                            text: 'Mohon tunggu',
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            willOpen: () => Swal.showLoading()
+                            title: 'Berhasil!',
+                            text: response.message || 'File berhasil dihapus',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
                         });
 
-                        // Perform delete request
-                        $.ajax({
-                            url: deleteUrl,
-                            type: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            success: function(response) {
-                                Swal.close();
-                                if (response.success) {
-                                    Swal.fire({
-                                        title: 'Berhasil!',
-                                        text: response.message || 'File berhasil dihapus',
-                                        icon: 'success',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
+                        // Remove the row from table
+                        $(`#file-row-${fileId}`).fadeOut(300, function() {
+                            $(this).remove();
 
-                                    // Remove the row from table
-                                    $(`#file-row-${fileId}`).fadeOut(300, function() {
-                                        $(this).remove();
+                            // Renumber all remaining rows
+                            renumberTableRows();
 
-                                        // Renumber all remaining rows
-                                        renumberTableRows();
-
-                                        // Check if table is empty after deletion
-                                        if ($('#tableBody tr:visible').length === 0) {
-                                            performSearch(); // Reload the page content
-                                        }
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        title: 'Gagal!',
-                                        text: response.message ||
-                                            'Terjadi kesalahan saat menghapus',
-                                        icon: 'error'
-                                    });
-                                }
-                            },
-                            error: function(xhr) {
-                                Swal.close();
-                                let errorMessage = 'Terjadi kesalahan saat menghapus file';
-                                if (xhr.responseJSON && xhr.responseJSON.message) {
-                                    errorMessage = xhr.responseJSON.message;
-                                }
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: errorMessage,
-                                    icon: 'error'
-                                });
+                            // Check if table is empty after deletion
+                            if ($('#tableBody tr:visible').length === 0) {
+                                performSearch(); // Reload the page content
                             }
                         });
                     } else {
                         Swal.fire({
-                            title: "Aksi Dibatalkan :)",
-                            icon: "info",
-                            timer: 1500,
-                            showConfirmButton: false
+                            title: 'Gagal!',
+                            text: response.message ||
+                                'Terjadi kesalahan saat menghapus',
+                            icon: 'error'
                         });
                     }
-                });
-            }
-
-            // Validasi real-time saat input berubah
-            $(document).on('input', '#tambahFileForm input[name="nama_dokumen"]', function() {
-                if ($(this).val().trim()) {
-                    $(this).removeClass('is-invalid');
-                    $('#nama_dokumen_error').empty();
+                },
+                error: function(xhr) {
+                    Swal.close();
+                    let errorMessage = 'Terjadi kesalahan saat menghapus file';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
+                    });
                 }
             });
-
-            $(document).on('change', '#tambahFileForm input[name="tanggal_dokumen"]', function() {
-                if ($(this).val()) {
-                    $(this).removeClass('is-invalid');
-                    $('#tanggal_dokumen_error').empty();
-                }
+        } else {
+            Swal.fire({
+                title: "Aksi Dibatalkan :)",
+                icon: "info",
+                timer: 1500,
+                showConfirmButton: false
             });
+        }
+    });
+}
 
-            // Fungsi untuk menambahkan notifikasi
-            function showNotification(message, type = 'success') {
-                const toastId = 'toast-' + Date.now();
-                const icon = type === 'success' ? 'check-circle' : 'exclamation-triangle';
-                const bgColor = type === 'success' ? 'success' : 'error';
+// Validasi real-time saat input berubah
+$(document).on('input', '#tambahFileForm input[name="nama_dokumen"]', function() {
+    if ($(this).val().trim()) {
+        $(this).removeClass('is-invalid');
+        $('#nama_dokumen_error').empty();
+    }
+});
 
-                const toastHtml = `
-                    <div class="toast ${bgColor}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
-            <div class="toast-header">
-                <i class="fas fa-${icon} me-2 ${type === 'success' ? 'text-success' : 'text-danger'}"></i>
-                <strong class="me-auto">${type === 'success' ? 'Berhasil' : 'Error'}</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                ${message}
-            </div>
-        </div>
-    `;
+$(document).on('input', '#edit_nama_dokumen', function() {
+    const value = $(this).val().trim();
+    console.log('Edit nama dokumen changed:', value); // Debug log
 
-                $('#toast-container').append(toastHtml);
+    if (value) {
+        $(this).removeClass('is-invalid');
+        $('#edit_nama_dokumen_error').empty();
+    }
+});
 
-                const toastElement = new bootstrap.Toast(document.getElementById(toastId));
-                toastElement.show();
+$(document).on('change', '#tambahFileForm input[name="tanggal_dokumen"]', function() {
+    if ($(this).val()) {
+        $(this).removeClass('is-invalid');
+        $('#tanggal_dokumen_error').empty();
+    }
+});
 
-                // Auto remove after hide
-                document.getElementById(toastId).addEventListener('hidden.bs.toast', function() {
-                    $(this).remove();
-                });
+$(document).on('change', '#edit_tanggal_dokumen', function() {
+    const value = $(this).val();
+    console.log('Edit tanggal dokumen changed:', value); // Debug log
+
+    if (value) {
+        $(this).removeClass('is-invalid');
+        $('#edit_tanggal_dokumen_error').empty();
+    }
+});
+
+function previewFile(fileUrl, fileName, fileExtension) {
+    const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
+    const previewFileName = document.getElementById('previewFileName');
+    const pdfFrame = document.getElementById('pdfFrame');
+    const docContent = document.getElementById('docContent');
+
+    // Reset semua viewer
+    document.getElementById('pdfViewer').style.display = 'none';
+    document.getElementById('docViewer').style.display = 'none';
+    document.getElementById('previewError').style.display = 'none';
+    document.getElementById('unsupportedFormat').style.display = 'none';
+
+    previewFileName.textContent = fileName;
+
+    if (fileExtension.toLowerCase() === 'pdf') {
+        // Gunakan Google Docs Viewer untuk PDF
+        const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+        document.getElementById('pdfViewer').style.display = 'block';
+        pdfFrame.src = googleViewerUrl;
+    } else if (['doc', 'docx', 'xls', 'xlsx'].includes(fileExtension.toLowerCase())) {
+        // Gunakan Google Docs Viewer untuk Word/Excel
+        const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+        document.getElementById('pdfViewer').style.display = 'block';
+        pdfFrame.src = googleViewerUrl;
+    } else {
+        document.getElementById('unsupportedFormat').style.display = 'block';
+    }
+
+    modal.show();
+}
+
+function getFileIcon(extension) {
+    const icons = {
+        'pdf': 'fas fa-file-pdf file-icon-pdf',
+        'doc': 'fas fa-file-word file-icon-doc',
+        'docx': 'fas fa-file-word file-icon-doc',
+        'xls': 'fas fa-file-excel file-icon-xls',
+        'xlsx': 'fas fa-file-excel file-icon-xls',
+        'default': 'fas fa-file file-icon-default'
+    };
+    return icons[extension.toLowerCase()] || icons['default'];
+}
+
+// Fungsi untuk menambahkan ikon file
+function addFileIcons() {
+    $('.file-link').each(function() {
+        if ($(this).find('i').length === 0) {
+            const fileName = $(this).text().trim();
+            const extension = fileName.split('.').pop();
+            const iconClass = getFileIcon(extension);
+
+            // Tambahkan ikon sebelum nama file
+            $(this).prepend(`<i class="${iconClass}"></i>`);
+        }
+    });
+}
+
+function debounce(func, delay) {
+    let timeout;
+    return function() {
+        const context = this,
+            args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+    };
+}
+
+// Fixed JavaScript code for file management
+$(document).ready(function() {
+    let isLoading = false;
+    let searchTimeout;
+
+    const baseUrl = "{{ route('admin.file-kesekretariat.index') }}";
+
+    // Show loading indicator
+    function showLoading() {
+        $('.search-loading').show();
+        isLoading = true;
+    }
+
+    // Hide loading indicator
+    function hideLoading() {
+        $('.search-loading').hide();
+        isLoading = false;
+    }
+
+    // Clear form validation errors
+    function clearFormErrors() {
+        $('.is-invalid').removeClass('is-invalid');
+        $('.invalid-feedback').empty();
+        $('#dropzone-tambahFileForm').removeClass('error');
+
+        // Reset error messages spesifik
+        $('#nama_dokumen_error').empty();
+        $('#tanggal_dokumen_error').empty();
+        $('#dokumen_file_error').empty();
+    }
+
+    // Show form validation errors
+    function showFormErrors(errors) {
+        clearFormErrors();
+        $.each(errors, function(field, messages) {
+            const input = $(`input[name="${field}"]`);
+            const errorDiv = $(`#${field}_error`);
+
+            input.addClass('is-invalid');
+            errorDiv.text(messages[0]);
+        });
+    }
+
+    // Untuk dropdown baru (kalau pakai .dropdown-toggle-custom)
+    $(document).on('click', '.dropdown-toggle-custom', function(e) {
+        e.stopPropagation();
+        const $menu = $(this).next('.dropdown-menu-custom');
+        $('.dropdown-menu-custom').not($menu).removeClass('show');
+        $menu.toggleClass('show');
+    });
+
+    $(document).on('click', function() {
+        $('.dropdown-menu-custom').removeClass('show');
+    });
+
+    function initializeCustomDropzone() {
+        const dropzoneElement = document.getElementById('dropzone-tambahFileForm');
+        if (!dropzoneElement) return;
+
+        // Hapus event listener sebelumnya untuk menghindari duplikasi
+        const newDropzoneElement = dropzoneElement.cloneNode(true);
+        dropzoneElement.parentNode.replaceChild(newDropzoneElement, dropzoneElement);
+
+        // Pastikan file input selalu ada
+        let fileInput = document.getElementById('dokumen_file_input');
+        if (!fileInput) {
+            fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.name = 'dokumen_file';
+            fileInput.id = 'dokumen_file_input';
+            fileInput.accept = '.pdf,.doc,.docx,.xls,.xlsx';
+            fileInput.style.display = 'none';
+            fileInput.required = true;
+
+            document.getElementById('tambahFileForm').appendChild(fileInput);
+        } else {
+            // Reset jika sudah ada
+            fileInput.value = '';
+        }
+
+        let dragCounter = 0;
+
+        // Click to select file - HANYA tambahkan event listener sekali
+        newDropzoneElement.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Tambahkan ini
+            fileInput.click();
+        }, {
+            once: false
+        }); // Pastikan tidak menggunakan once: true
+
+        // File selection handler
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileSelection(file, newDropzoneElement);
             }
+        });
 
-            function getFileIcon(extension) {
-                const icons = {
-                    'pdf': 'fas fa-file-pdf file-icon-pdf',
-                    'doc': 'fas fa-file-word file-icon-doc',
-                    'docx': 'fas fa-file-word file-icon-doc',
-                    'xls': 'fas fa-file-excel file-icon-xls',
-                    'xlsx': 'fas fa-file-excel file-icon-xls',
-                    'default': 'fas fa-file file-icon-default'
-                };
-                return icons[extension.toLowerCase()] || icons['default'];
+        // Drag and drop handlers
+        newDropzoneElement.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter++;
+            newDropzoneElement.classList.add('drag-over');
+        });
+
+        newDropzoneElement.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter--;
+            if (dragCounter === 0) {
+                newDropzoneElement.classList.remove('drag-over');
             }
+        });
 
-            // Fungsi untuk menambahkan ikon file
-            function addFileIcons() {
-                $('.file-link').each(function() {
-                    if ($(this).find('i').length === 0) {
-                        const fileName = $(this).text().trim();
-                        const extension = fileName.split('.').pop();
-                        const iconClass = getFileIcon(extension);
+        newDropzoneElement.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
 
-                        // Tambahkan ikon sebelum nama file
-                        $(this).prepend(`<i class="${iconClass}"></i>`);
-                    }
-                });
+        newDropzoneElement.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter = 0;
+            newDropzoneElement.classList.remove('drag-over');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                // Set file to input
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                fileInput.files = dt.files;
+
+                handleFileSelection(file, newDropzoneElement);
             }
+        });
+    }
 
-            function debounce(func, delay) {
-                let timeout;
-                return function() {
-                    const context = this,
-                        args = arguments;
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => func.apply(context, args), delay);
-                };
-            }
+    // Handle file selection and validation
+    function handleFileSelection(file, dropzoneElement) {
+        // File validation
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const allowedTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
 
-            // Fixed JavaScript code for file management
-            $(document).ready(function() {
-                let isLoading = false;
-                let searchTimeout;
+        // Clear previous errors
+        const errorDiv = document.getElementById('dokumen_file_error');
+        errorDiv.textContent = '';
+        dropzoneElement.classList.remove('error');
 
-                const baseUrl = "{{ route('admin.file-kesekretariat.index') }}";
+        // Validate file size
+        if (file.size > maxSize) {
+            errorDiv.textContent = 'Ukuran file tidak boleh lebih dari 10MB';
+            dropzoneElement.classList.add('error');
+            return false;
+        }
 
-                // Show loading indicator
-                function showLoading() {
-                    $('.search-loading').show();
-                    isLoading = true;
-                }
+        // Validate file type
+        if (!allowedTypes.includes(file.type)) {
+            errorDiv.textContent = 'Format file tidak didukung. Gunakan PDF, DOC, DOCX, XLS, atau XLSX';
+            dropzoneElement.classList.add('error');
+            return false;
+        }
 
-                // Hide loading indicator
-                function hideLoading() {
-                    $('.search-loading').hide();
-                    isLoading = false;
-                }
+        // Set file to hidden input
+        const fileInput = document.getElementById('dokumen_file_input');
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
 
-                // Clear form validation errors
-                function clearFormErrors() {
-                    $('.is-invalid').removeClass('is-invalid');
-                    $('.invalid-feedback').empty();
-                    $('#dropzone-tambahFileForm').removeClass('error');
+        // Show file preview
+        showFilePreview(file, dropzoneElement);
+        return true;
+    }
 
-                    // Reset error messages spesifik
-                    $('#nama_dokumen_error').empty();
-                    $('#tanggal_dokumen_error').empty();
-                    $('#dokumen_file_error').empty();
-                }
+    // Show file preview in dropzone
+    function showFilePreview(file, dropzoneElement) {
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        const fileIcon = getFileIconForPreview(fileExtension);
+        const fileSize = (file.size / (1024 * 1024)).toFixed(2);
 
-                // Show form validation errors
-                function showFormErrors(errors) {
-                    clearFormErrors();
-                    $.each(errors, function(field, messages) {
-                        const input = $(`input[name="${field}"]`);
-                        const errorDiv = $(`#${field}_error`);
-
-                        input.addClass('is-invalid');
-                        errorDiv.text(messages[0]);
-                    });
-                }
-
-
-                // Untuk dropdown baru (kalau pakai .dropdown-toggle-custom)
-                $(document).on('click', '.dropdown-toggle-custom', function(e) {
-                    e.stopPropagation();
-                    const $menu = $(this).next('.dropdown-menu-custom');
-                    $('.dropdown-menu-custom').not($menu).removeClass('show');
-                    $menu.toggleClass('show');
-                });
-
-                $(document).on('click', function() {
-                    $('.dropdown-menu-custom').removeClass('show');
-                });
-
-                function initializeCustomDropzone() {
-                    const dropzoneElement = document.getElementById('dropzone-tambahFileForm');
-                    if (!dropzoneElement) return;
-
-                    // Pastikan file input selalu ada
-                    let fileInput = document.getElementById('dokumen_file_input');
-                    if (!fileInput) {
-                        fileInput = document.createElement('input');
-                        fileInput.type = 'file';
-                        fileInput.name = 'dokumen_file';
-                        fileInput.id = 'dokumen_file_input';
-                        fileInput.accept = '.pdf,.doc,.docx,.xls,.xlsx';
-                        fileInput.style.display = 'none';
-                        fileInput.required = true;
-
-                        document.getElementById('tambahFileForm').appendChild(fileInput);
-                    } else {
-                        // Reset jika sudah ada
-                        fileInput.value = '';
-                    }
-
-                    let dragCounter = 0;
-
-                    // Click to select file
-                    dropzoneElement.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        fileInput.click();
-                    });
-
-                    // File selection handler
-                    fileInput.addEventListener('change', function(e) {
-                        const file = e.target.files[0];
-                        if (file) {
-                            handleFileSelection(file, dropzoneElement);
-                        }
-                    });
-
-                    // Drag and drop handlers
-                    dropzoneElement.addEventListener('dragenter', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        dragCounter++;
-                        dropzoneElement.classList.add('drag-over');
-                    });
-
-                    dropzoneElement.addEventListener('dragleave', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        dragCounter--;
-                        if (dragCounter === 0) {
-                            dropzoneElement.classList.remove('drag-over');
-                        }
-                    });
-
-                    dropzoneElement.addEventListener('dragover', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    });
-
-                    dropzoneElement.addEventListener('drop', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        dragCounter = 0;
-                        dropzoneElement.classList.remove('drag-over');
-
-                        const files = e.dataTransfer.files;
-                        if (files.length > 0) {
-                            const file = files[0];
-                            // Set file to input
-                            const dt = new DataTransfer();
-                            dt.items.add(file);
-                            fileInput.files = dt.files;
-
-                            handleFileSelection(file, dropzoneElement);
-                        }
-                    });
-                }
-
-                // Handle file selection and validation
-                function handleFileSelection(file, dropzoneElement) {
-                    // File validation
-                    const maxSize = 10 * 1024 * 1024; // 10MB
-                    const allowedTypes = [
-                        'application/pdf',
-                        'application/msword',
-                        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                        'application/vnd.ms-excel',
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                    ];
-
-                    // Clear previous errors
-                    const errorDiv = document.getElementById('dokumen_file_error');
-                    errorDiv.textContent = '';
-                    dropzoneElement.classList.remove('error');
-
-                    // Validate file size
-                    if (file.size > maxSize) {
-                        errorDiv.textContent = 'Ukuran file tidak boleh lebih dari 10MB';
-                        dropzoneElement.classList.add('error');
-                        return false;
-                    }
-
-                    // Validate file type
-                    if (!allowedTypes.includes(file.type)) {
-                        errorDiv.textContent = 'Format file tidak didukung. Gunakan PDF, DOC, DOCX, XLS, atau XLSX';
-                        dropzoneElement.classList.add('error');
-                        return false;
-                    }
-
-                    // Set file to hidden input
-                    const fileInput = document.getElementById('dokumen_file_input');
-                    const dt = new DataTransfer();
-                    dt.items.add(file);
-                    fileInput.files = dt.files;
-
-                    // Show file preview
-                    showFilePreview(file, dropzoneElement);
-                    return true;
-                }
-
-                // Show file preview in dropzone
-                function showFilePreview(file, dropzoneElement) {
-                    const fileExtension = file.name.split('.').pop().toLowerCase();
-                    const fileIcon = getFileIconForPreview(fileExtension);
-                    const fileSize = (file.size / (1024 * 1024)).toFixed(2);
-
-                    dropzoneElement.innerHTML = `
+        dropzoneElement.innerHTML = `
             <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded">
                 <div class="d-flex align-items-center">
                     <i class="${fileIcon} fa-2x me-3"></i>
@@ -1380,32 +1519,32 @@
                 </button>
             </div>
         `;
-                }
+    }
 
-                // Get file icon for preview
-                function getFileIconForPreview(extension) {
-                    const icons = {
-                        'pdf': 'fas fa-file-pdf text-danger',
-                        'doc': 'fas fa-file-word text-primary',
-                        'docx': 'fas fa-file-word text-primary',
-                        'xls': 'fas fa-file-excel text-success',
-                        'xlsx': 'fas fa-file-excel text-success'
-                    };
-                    return icons[extension] || 'fas fa-file text-secondary';
-                }
+    // Get file icon for preview
+    function getFileIconForPreview(extension) {
+        const icons = {
+            'pdf': 'fas fa-file-pdf text-danger',
+            'doc': 'fas fa-file-word text-primary',
+            'docx': 'fas fa-file-word text-primary',
+            'xls': 'fas fa-file-excel text-success',
+            'xlsx': 'fas fa-file-excel text-success'
+        };
+        return icons[extension] || 'fas fa-file text-secondary';
+    }
 
-                // Remove selected file
-                function removeSelectedFile() {
-                    const dropzoneElement = document.getElementById('dropzone-tambahFileForm');
-                    const fileInput = document.getElementById('dokumen_file_input');
+    // Remove selected file
+    function removeSelectedFile() {
+        const dropzoneElement = document.getElementById('dropzone-tambahFileForm');
+        const fileInput = document.getElementById('dokumen_file_input');
 
-                    // Clear file input
-                    if (fileInput) {
-                        fileInput.value = '';
-                    }
+        // Clear file input
+        if (fileInput) {
+            fileInput.value = '';
+        }
 
-                    // Reset dropzone to original state
-                    dropzoneElement.innerHTML = `
+        // Reset dropzone to original state
+        dropzoneElement.innerHTML = `
         <div class="dz-message needsclick">
             <i class="ki-duotone ki-file-up fs-3x text-primary">
                 <span class="path1"></span><span class="path2"></span>
@@ -1417,532 +1556,877 @@
         </div>
     `;
 
-                    // Clear any error messages
-                    const errorDiv = document.getElementById('dokumen_file_error');
-                    if (errorDiv) {
-                        errorDiv.textContent = '';
-                    }
-                    dropzoneElement.classList.remove('error');
-                }
-
-                // Make removeSelectedFile globally available
-                window.removeSelectedFile = removeSelectedFile;
-
-                window.openEditModal = openEditModal;
-
-                // Initialize all event handlers (called after AJAX content update)
-                function initializeEventHandlers() {
-                    // Remove existing handlers to prevent duplicates
-                    $(document).off('click.sorting', 'th.sortable');
-                    $(document).off('click.dropdown', '.dropdown-toggle-action');
-                    $(document).off('click.delete', '.delete-btn');
-                    $(document).off('click.pagination', '.page-link');
-
-                    // Sorting functionality - FIXED
-                    $(document).on('click.sorting', 'th.sortable', function(e) {
-                        e.preventDefault();
-
-                        const sortBy = $(this).data('sort');
-                        let currentOrder = $(this).data('order') || 'asc';
-                        const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-
-                        console.log('Sorting clicked:', sortBy, 'Current:', currentOrder, 'New:', newOrder);
-
-                        // Update the data-order attribute for next click
-                        $(this).data('order', newOrder);
-
-                        // Perform search with sorting
-                        performSearch({
-                            page: 1,
-                            sort_by: sortBy,
-                            order: newOrder
-                        }, true);
-                    });
-
-                    // Dropdown functionality
-                    $(document).on('click.dropdown', '.dropdown-toggle-action', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        // Close other dropdowns
-                        $('.dropdown-menu-action').removeClass('show');
-
-                        // Toggle current dropdown
-                        $(this).next('.dropdown-menu-action').toggleClass('show');
-                    });
-
-                    // Pagination functionality
-                    $(document).on('click.pagination', '.page-link', function(e) {
-                        e.preventDefault();
-                        const url = $(this).attr('href');
-                        if (url && url !== '#' && !$(this).parent().hasClass('disabled')) {
-                            const urlParams = new URLSearchParams(url.split('?')[1]);
-                            const page = urlParams.get('page');
-                            if (page) {
-                                performSearch({
-                                    page: page
-                                }, true);
-                            }
-                        }
-                    });
-                }
-
-                function showEditForm(id) {
-                    document.querySelectorAll('[id^="edit-form-row-"]').forEach(r => r.style.display = 'none');
-                    const row = document.getElementById(`edit-form-row-${id}`);
-                    if (row) row.style.display = 'table-row';
-                }
-
-                function hideEditForm(id) {
-                    const row = document.getElementById(`edit-form-row-${id}`);
-                    if (row) row.style.display = 'none';
-                }
-
-                function showEditForm(id) {
-                    // Sembunyikan semua form edit lainnya
-                    document.querySelectorAll('[id^="edit-form-row-"]').forEach(row => row.style.display = 'none');
-
-                    // Tampilkan form untuk file yang dipilih
-                    const row = document.getElementById(`edit-form-row-${id}`);
-                    if (row) {
-                        row.style.display = 'table-row';
-                    }
-                }
-
-                function hideEditForm(id) {
-                    const row = document.getElementById(`edit-form-row-${id}`);
-                    if (row) {
-                        row.style.display = 'none';
-                    }
-                }
-
-                function openEditModal(id, nama, tanggal) {
-                    // Isi data ke modal
-                    $('#edit_file_id').val(id);
-                    $('#edit_nama_dokumen').val(nama);
-                    $('#edit_tanggal_dokumen').val(tanggal);
-
-                    // Tampilkan modal
-                    $('#editFileModal').modal('show');
-                }
-
-                // Submit form edit via AJAX
-                $(document).on('submit', '.edit-inline-form', function(e) {
-                    e.preventDefault();
-                    const form = $(this);
-                    const id = form.data('id');
-                    const data = form.serialize();
-
-                    $.ajax({
-                        url: `/admin/file-kesekretariat/${id}`,
-                        type: 'PUT',
-                        data: data,
-                        success: function() {
-                            showNotification('File berhasil diperbarui', 'success');
-                            hideEditForm(id);
-                            performSearch(); // reload tabel
-                        },
-                        error: function(xhr) {
-                            showNotification('Gagal memperbarui file', 'error');
-                        }
-                    });
-                });
-
-                function openEditModal(id, nama, tanggal) {
-                    // Clear any previous errors
-                    $('.is-invalid').removeClass('is-invalid');
-                    $('.invalid-feedback').empty();
-
-                    // Set form data
-                    $('#edit_file_id').val(id);
-                    $('#edit_nama_dokumen').val(nama);
-                    $('#edit_tanggal_dokumen').val(tanggal);
-
-                    // Set form action URL
-                    $('#editFileForm').attr('action', `/admin/file-kesekretariat/${id}`);
-
-                    // Show modal
-                    $('#editFileModal').modal('show');
-                }
-
-                // Make sure the functions are globally available
-                window.submitEditForm = submitEditForm;
-                window.openEditModal = openEditModal;
-
-                // Updated document ready function - add these event handlers
-                $(document).ready(function() {
-                    // ... existing code ...
-
-                    // Handle edit form submission via button click
-                    $(document).on('click', '#editSubmitBtn', function(e) {
-                        e.preventDefault();
-                        submitEditForm();
-                    });
-
-                    // Handle edit form submission via form submit
-                    $('#editFileForm').on('submit', function(e) {
-                        e.preventDefault();
-                        submitEditForm();
-                    });
-
-                    // Clear validation errors on input
-                    $(document).on('input', '#edit_nama_dokumen', function() {
-                        if ($(this).val().trim()) {
-                            $(this).removeClass('is-invalid');
-                            $('#edit_nama_dokumen_error').empty();
-                        }
-                    });
-
-                    $(document).on('change', '#edit_tanggal_dokumen', function() {
-                        if ($(this).val()) {
-                            $(this).removeClass('is-invalid');
-                            $('#edit_tanggal_dokumen_error').empty();
-                        }
-                    });
-
-                    // Reset edit modal when closed
-                    $('#editFileModal').on('hidden.bs.modal', function() {
-                        $('#editFileForm')[0].reset();
-                        $('.is-invalid').removeClass('is-invalid');
-                        $('.invalid-feedback').empty();
-                    });
-                });
-
-                function submitEditForm() {
-                    const form = $('#editFileForm');
-                    const formData = new FormData(form[0]);
-                    const fileId = $('#edit_file_id').val();
-
-                    // Manual validation for edit form
-                    let isValid = true;
-
-                    // Clear previous errors
-                    $('.is-invalid').removeClass('is-invalid');
-                    $('.invalid-feedback').empty();
-
-                    // Validate nama dokumen
-                    const namaDokumen = $('#edit_nama_dokumen').val().trim();
-                    if (!namaDokumen) {
-                        $('#edit_nama_dokumen_error').text('Nama dokumen wajib diisi');
-                        $('#edit_nama_dokumen').addClass('is-invalid');
-                        isValid = false;
-                    }
-
-                    // Validate tanggal dokumen
-                    const tanggalDokumen = $('#edit_tanggal_dokumen').val();
-                    if (!tanggalDokumen) {
-                        $('#edit_tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
-                        $('#edit_tanggal_dokumen').addClass('is-invalid');
-                        isValid = false;
-                    }
-
-                    if (!isValid) {
-                        return false;
-                    }
-
-                    // Add CSRF token manually
-                    formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-                    formData.append('_method', 'PUT');
-
-                    $.ajax({
-                        url: `/admin/file-kesekretariat/${fileId}`,
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        beforeSend: function() {
-                            $('#editSubmitBtn').prop('disabled', true)
-                                .html('<i class="fas fa-spinner fa-spin me-1"></i>Menyimpan...');
-                        },
-                        success: function(response) {
-                            $('#editFileModal').modal('hide');
-                            showNotification('File berhasil diperbarui', 'success');
-
-                            // Reset form
-                            $('#editFileForm')[0].reset();
-
-                            // Reload tabel
-                            performSearch();
-                        },
-                        error: function(xhr) {
-                            console.log('Error:', xhr); // Debug log
-
-                            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                                let errors = xhr.responseJSON.errors;
-                                $.each(errors, function(key, value) {
-                                    $(`#edit_${key}`).addClass('is-invalid');
-                                    $(`#edit_${key}_error`).text(value[0]);
-                                });
-                            } else {
-                                let errorMessage = 'Terjadi kesalahan saat memperbarui file';
-                                if (xhr.responseJSON && xhr.responseJSON.message) {
-                                    errorMessage = xhr.responseJSON.message;
-                                }
-                                showNotification(errorMessage, 'error');
-                            }
-                        },
-                        complete: function() {
-                            $('#editSubmitBtn').prop('disabled', false)
-                                .html('<i class="fas fa-save me-1"></i>Update File');
-                        }
-                    });
-                }
-
-                // Perform AJAX search request
-                function performSearch(params = {}, showLoadingIndicator = true) {
-                    if (isLoading) return;
-
-                    if (showLoadingIndicator) showLoading();
-
-                    const searchParams = new URLSearchParams();
-
-                    // Get current form values
-                    const search = $('#filter input[name="search"]').val().trim();
-
-                    // Add parameters
-                    if (search) searchParams.set('search', search);
-                    if (params.page) searchParams.set('page', params.page);
-                    if (params.per_page) searchParams.set('per_page', params.per_page);
-                    if (params.sort_by) searchParams.set('sort_by', params.sort_by);
-                    if (params.order) searchParams.set('order', params.order);
-
-                    // Keep existing sort parameters if not being changed
-                    if (!params.sort_by && !params.order) {
-                        const currentUrl = new URLSearchParams(window.location.search);
-                        if (currentUrl.get('sort_by')) searchParams.set('sort_by', currentUrl.get('sort_by'));
-                        if (currentUrl.get('order')) searchParams.set('order', currentUrl.get('order'));
-                    }
-
-                    const url = `${baseUrl}?${searchParams.toString()}`;
-
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'text/html'
-                        },
-                        beforeSend: function() {
-                            $('#tableContainer').addClass('table-loading');
-                            $('#tableContainer').html(
-                                '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
-                            );
-                        },
-                        success: function(response) {
-                            $('#tableContainer').removeClass('table-loading');
-                            // Update the table container with new content
-                            const $response = $(response);
-                            const $newTableContainer = $response.find('#tableContainer');
-
-                            if ($newTableContainer.length) {
-                                $('#tableContainer').html($newTableContainer.html());
-
-                                // Re-initialize all event handlers after content update
-                                initializeEventHandlers();
-                                addFileIcons();
-
-                                // Ensure proper numbering after content update
-                                renumberTableRows();
-                            }
-
-                            // Update URL without page reload
-                            window.history.pushState({}, '', url);
-                        },
-                        error: function(xhr, status, error) {
-                            $('#tableContainer').removeClass('table-loading');
-                            $('#tableContainer').html(
-                                '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
-                            );
-                            console.error('Search error:', error);
-                            showNotification('Terjadi kesalahan saat mencari data', 'error');
-                        },
-                        complete: function() {
-                            hideLoading();
-                        }
-                    });
-                }
-
-                function renumberTableRows() {
-                    $('#tableBody tr:visible').each(function(index) {
-                        $(this).find('td:first-child').text(index + 1);
-                    });
-                }
-
-
-                // Fixed form submission function
-                // Fixed form submission function dengan validasi manual
-                function submitForm(formId) {
-                    const form = $('#' + formId);
-                    const formData = new FormData(form[0]);
-
-                    // Validasi manual
-                    let isValid = true;
-
-                    // Validasi nama dokumen
-                    const namaDokumen = form.find('input[name="nama_dokumen"]').val().trim();
-                    if (!namaDokumen) {
-                        $('#nama_dokumen_error').text('Nama dokumen wajib diisi');
-                        form.find('input[name="nama_dokumen"]').addClass('is-invalid');
-                        isValid = false;
-                    }
-
-                    // Validasi tanggal dokumen
-                    const tanggalDokumen = form.find('input[name="tanggal_dokumen"]').val();
-                    if (!tanggalDokumen) {
-                        $('#tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
-                        form.find('input[name="tanggal_dokumen"]').addClass('is-invalid');
-                        isValid = false;
-                    }
-
-                    // Validasi file dokumen
-                    const fileInput = document.getElementById('dokumen_file_input');
-                    if (!fileInput.files || fileInput.files.length === 0) {
-                        $('#dokumen_file_error').text('File dokumen wajib diunggah');
-                        $('#dropzone-tambahFileForm').addClass('error');
-                        isValid = false;
-                    }
-
-                    if (!isValid) {
-                        // Scroll ke field error pertama
-                        const firstError = $('.is-invalid, .error').first();
-                        if (firstError.length) {
-                            $('html, body').animate({
-                                scrollTop: firstError.offset().top - 100
-                            }, 500);
-                        }
-                        return false;
-                    }
-
-                    $.ajax({
-                        url: form.attr('action'),
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        beforeSend: function() {
-                            $('#submitBtn').prop('disabled', true)
-                                .html('<i class="fas fa-spinner fa-spin me-1"></i>Menyimpan...');
-                        },
-                        success: function(response) {
-                            $('#tambahFileModal').modal('hide');
-                            showNotification('File berhasil ditambahkan', 'success');
-                            form.trigger('reset');
-                            clearFormErrors();
-                            removeSelectedFile();
-
-                            // Reload data table with latest first (created_at desc) and go to page 1
-                            performSearch({
-                                page: 1,
-                                sort_by: 'created_at',
-                                order: 'desc'
-                            }, true);
-                        },
-                        error: function(xhr) {
-                            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                                // Validation errors
-                                showFormErrors(xhr.responseJSON.errors);
-
-                                // Scroll ke field error pertama
-                                const firstError = $('.is-invalid, .error').first();
-                                if (firstError.length) {
-                                    $('html, body').animate({
-                                        scrollTop: firstError.offset().top - 100
-                                    }, 500);
-                                }
-                            } else {
-                                let errorMessage = 'Terjadi kesalahan saat menyimpan file';
-                                if (xhr.responseJSON && xhr.responseJSON.message) {
-                                    errorMessage = xhr.responseJSON.message;
-                                }
-                                showNotification(errorMessage, 'error');
-                            }
-                        },
-                        complete: function() {
-                            $('#submitBtn').prop('disabled', false)
-                                .html('<i class="fas fa-save me-1"></i>Simpan File');
-                        }
-                    });
-                }
-
-                // Make functions globally available
-                window.submitForm = submitForm;
-                window.deleteFile = deleteFile;
-                window.showNotification = showNotification;
-                window.performSearch = performSearch;
-
-                // Initialize event handlers on page load
-                initializeEventHandlers();
-                addFileIcons();
-
-                // Button click handlers
-                $('#tambahFileBtn').on('click', function() {
-                    $('#tambahFileModal').modal('show');
-                });
-
-                // Handle form submission for adding new file
-                $('#tambahFileForm').on('submit', function(e) {
-                    e.preventDefault();
-                    submitForm('tambahFileForm');
-                });
-
-                // Auto search on input with debounce
-                $('#filter input[name="search"]').on('input', debounce(function() {
+        // Clear any error messages
+        const errorDiv = document.getElementById('dokumen_file_error');
+        if (errorDiv) {
+            errorDiv.textContent = '';
+        }
+        dropzoneElement.classList.remove('error');
+    }
+
+    // Make removeSelectedFile globally available
+    window.removeSelectedFile = removeSelectedFile;
+
+    window.openEditModal = openEditModal;
+    window.submitEditForm = submitEditForm;
+    window.getFileIconForCurrentFile = getFileIconForCurrentFile;
+
+    // Initialize all event handlers (called after AJAX content update)
+    function initializeEventHandlers() {
+        // Remove existing handlers to prevent duplicates
+        $(document).off('click.sorting', 'th.sortable');
+        $(document).off('click.dropdown', '.dropdown-toggle-action');
+        $(document).off('click.delete', '.delete-btn');
+        $(document).off('click.pagination', '.page-link');
+
+        // Sorting functionality - FIXED
+        $(document).on('click.sorting', 'th.sortable', function(e) {
+            e.preventDefault();
+
+            const sortBy = $(this).data('sort');
+            let currentOrder = $(this).data('order') || 'asc';
+            const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+
+            console.log('Sorting clicked:', sortBy, 'Current:', currentOrder, 'New:', newOrder);
+
+            // Update the data-order attribute for next click
+            $(this).data('order', newOrder);
+
+            // Perform search with sorting
+            performSearch({
+                page: 1,
+                sort_by: sortBy,
+                order: newOrder
+            }, true);
+        });
+
+        // Dropdown functionality
+        $(document).on('click.dropdown', '.dropdown-toggle-action', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Close other dropdowns
+            $('.dropdown-menu-action').removeClass('show');
+
+            // Toggle current dropdown
+            $(this).next('.dropdown-menu-action').toggleClass('show');
+        });
+
+        // Pagination functionality
+        $(document).on('click.pagination', '.page-link', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            if (url && url !== '#' && !$(this).parent().hasClass('disabled')) {
+                const urlParams = new URLSearchParams(url.split('?')[1]);
+                const page = urlParams.get('page');
+                if (page) {
                     performSearch({
-                        page: 1
-                    });
-                }, 300));
-
-                // Reset modal when closed
-                $('#tambahFileModal').on('hidden.bs.modal', function() {
-                    $('#tambahFileForm').trigger('reset');
-                    clearFormErrors();
-                    removeSelectedFile(); // Reset file selection
-                });
-
-                // Initialize dropzone when modal is shown
-                $('#tambahFileModal').on('shown.bs.modal', function() {
-                    initializeCustomDropzone();
-                });
-
-                // Close dropdowns when clicking outside
-                $(document).on('click', function() {
-                    $('.dropdown-menu-action').removeClass('show');
-                });
-
-                // Prevent dropdown close when clicking inside
-                $(document).on('click', '.dropdown-menu-action', function(e) {
-                    e.stopPropagation();
-                });
-
-                // Per page dropdown
-                $(document).on('change', 'select[name="per_page"]', function() {
-                    const perPage = $(this).val();
-                    performSearch({
-                        page: 1,
-                        per_page: perPage
+                        page: page
                     }, true);
+                }
+            }
+        });
+    }
+
+    function initializeEditDropzone() {
+        const dropzoneElement = document.getElementById('dropzone-editFileForm');
+        if (!dropzoneElement) return;
+
+        // Hapus event listener sebelumnya untuk menghindari duplikasi
+        const newDropzoneElement = dropzoneElement.cloneNode(true);
+        dropzoneElement.parentNode.replaceChild(newDropzoneElement, dropzoneElement);
+
+        // Pastikan file input selalu ada
+        let fileInput = document.getElementById('edit_dokumen_file_input');
+        if (!fileInput) {
+            fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.name = 'dokumen_file';
+            fileInput.id = 'edit_dokumen_file_input';
+            fileInput.accept = '.pdf,.doc,.docx,.xls,.xlsx';
+            fileInput.style.display = 'none';
+            document.getElementById('editFileForm').appendChild(fileInput);
+        }
+
+        let dragCounter = 0;
+
+        // Click to select file - HANYA tambahkan event listener sekali
+        newDropzoneElement.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Tambahkan ini
+            fileInput.click();
+        }, {
+            once: false
+        }); // Pastikan tidak menggunakan once: true
+
+        // File selection handler
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleEditFileSelection(file, newDropzoneElement);
+            }
+        });
+
+        // Drag and drop handlers
+        newDropzoneElement.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter++;
+            newDropzoneElement.classList.add('drag-over');
+        });
+
+        newDropzoneElement.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter--;
+            if (dragCounter === 0) {
+                newDropzoneElement.classList.remove('drag-over');
+            }
+        });
+
+        newDropzoneElement.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        newDropzoneElement.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dragCounter = 0;
+            newDropzoneElement.classList.remove('drag-over');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                // Set file to input
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                fileInput.files = dt.files;
+
+                handleEditFileSelection(file, newDropzoneElement);
+            }
+        });
+    }
+
+    function handleEditFileSelection(file, dropzoneElement) {
+        // File validation (sama seperti form tambah)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const allowedTypes = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+
+        // Clear previous errors
+        const errorDiv = document.getElementById('edit_dokumen_file_error');
+        if (errorDiv) errorDiv.textContent = '';
+        dropzoneElement.classList.remove('error');
+
+        // Validate file size
+        if (file.size > maxSize) {
+            if (errorDiv) errorDiv.textContent = 'Ukuran file tidak boleh lebih dari 10MB';
+            dropzoneElement.classList.add('error');
+            return false;
+        }
+
+        // Validate file type
+        if (!allowedTypes.includes(file.type)) {
+            if (errorDiv) errorDiv.textContent =
+                'Format file tidak didukung. Gunakan PDF, DOC, DOCX, XLS, atau XLSX';
+            dropzoneElement.classList.add('error');
+            return false;
+        }
+
+        // Set file to hidden input
+        const fileInput = document.getElementById('edit_dokumen_file_input');
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
+
+        // Show file preview
+        showEditFilePreview(file, dropzoneElement);
+        return true;
+    }
+
+    function showEditFilePreview(file, dropzoneElement) {
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        const fileIcon = getFileIconForPreview(fileExtension);
+        const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+
+        dropzoneElement.innerHTML = `
+        <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded">
+            <div class="d-flex align-items-center">
+                <i class="${fileIcon} fa-2x me-3"></i>
+                <div>
+                    <div class="fw-bold text-truncate" style="max-width: 200px;" title="${file.name}">
+                        ${file.name}
+                    </div>
+                    <small class="text-muted">${fileSize} MB</small>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeEditSelectedFile()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    }
+
+    function removeEditSelectedFile() {
+        const dropzoneElement = document.getElementById('dropzone-editFileForm');
+        const fileInput = document.getElementById('edit_dokumen_file_input');
+
+        // Clear file input
+        if (fileInput) {
+            fileInput.value = '';
+        }
+
+        // Reset dropzone to original state
+        dropzoneElement.innerHTML = `
+        <div class="dz-message needsclick">
+            <i class="ki-duotone ki-file-up fs-3x text-primary">
+                <span class="path1"></span><span class="path2"></span>
+            </i>
+            <div class="ms-4">
+                <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen baru.</h3>
+                <span class="fs-7 fw-semibold text-gray-500">Format: PDF, DOC, DOCX, XLS, XLSX. Max. 10 MB.</span>
+            </div>
+        </div>
+    `;
+
+        // Clear any error messages
+        const errorDiv = document.getElementById('edit_dokumen_file_error');
+        if (errorDiv) {
+            errorDiv.textContent = '';
+        }
+        dropzoneElement.classList.remove('error');
+    }
+
+    let editDropzoneInitialized = false;
+
+    $('#editFileModal').on('shown.bs.modal', function() {
+        if (!editDropzoneInitialized) {
+            initializeEditDropzone();
+            editDropzoneInitialized = true;
+        }
+    });
+
+    $('#editFileModal').on('hidden.bs.modal', function() {
+        // Reset dropzone ketika modal ditutup
+        removeEditSelectedFile();
+    });
+
+    function showEditForm(id) {
+    // 1. SEMBUNYIKAN semua form edit yang sedang terbuka
+    document.querySelectorAll('[id^="edit-form-row-"]').forEach(row => {
+        row.style.display = 'none';
+    });
+    
+    // 2. RESET semua form edit
+    document.querySelectorAll('form[id^="form-"]').forEach(form => {
+        form.reset();
+    });
+    
+    // 3. TAMPILKAN form edit untuk item yang dipilih
+    const row = document.getElementById(`edit-form-row-${id}`);
+    if (row) {
+        row.style.display = 'table-row';
+        
+        // Isi data ke form
+        const form = document.getElementById(`form-${id}`);
+        if (form) {
+            // Data sudah diisi oleh Laravel di blade template
+            // Tidak perlu isi manual lewat JavaScript
+        }
+    }
+}
+    function showEditForm(id) {
+        // Sembunyikan semua form edit lainnya
+        document.querySelectorAll('[id^="edit-form-row-"]').forEach(row => row.style.display = 'none');
+
+        // Tampilkan form untuk file yang dipilih
+        const row = document.getElementById(`edit-form-row-${id}`);
+        if (row) {
+            row.style.display = 'table-row';
+        }
+    }
+
+    function hideEditForm(id) {
+        const row = document.getElementById(`edit-form-row-${id}`);
+        if (row) {
+            row.style.display = 'none';
+        }
+    }
+
+    function openEditModal(id, nama, tanggal) {
+        // Isi data ke modal
+        $('#edit_file_id').val(id);
+        $('#edit_nama_dokumen').val(nama);
+        let formattedDate = '';
+if (tanggal) {
+    const date = new Date(tanggal);
+    if (!isNaN(date.getTime())) {
+        formattedDate = date.toISOString().split('T')[0]; // format YYYY-MM-DD
+    }
+}
+$('#edit_tanggal_dokumen').val(formattedDate);
+
+        // Tampilkan modal
+        $('#editFileModal').modal('show');
+    }
+
+    // Submit form edit via AJAX
+    $(document).on('submit', '.edit-inline-form', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        const id = form.data('id');
+        const data = form.serialize();
+
+        $.ajax({
+            url: `/admin/file-kesekretariat/${id}`,
+            type: 'PUT',
+            data: data,
+            success: function() {
+                toastr.success('File berhasil diperbarui', 'Berhasil!');
+                hideEditForm(id);
+                performSearch(); // reload tabel
+            },
+            error: function(xhr) {
+                toastr.error('Gagal memperbarui file', 'Error!');
+            }
+        });
+    });
+
+    function openEditModal(id) {
+    console.log('Opening edit modal for ID:', id);
+
+    // Clear any previous errors
+    $('.is-invalid').removeClass('is-invalid');
+    $('.invalid-feedback').empty();
+
+    // Show loading state
+    $('#edit_nama_dokumen').val('Loading...');
+    $('#edit_tanggal_dokumen').val('');
+    
+    // Fetch data from server
+    $.ajax({
+        url: `/admin/file-kesekretariat/${id}/edit`,
+        type: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(response) {
+            console.log('Edit data received:', response);
+            
+            if (response.success && response.data) {
+                const data = response.data;
+                
+                // Set form data
+                $('#edit_file_id').val(data.id);
+                $('#edit_nama_dokumen').val(data.nama_dokumen || '');
+                
+                // ✅ PERBAIKAN UTAMA: Format tanggal dengan benar
+                if (data.tanggal_dokumen) {
+                    // Data dari server sudah dalam format Y-m-d
+                    $('#edit_tanggal_dokumen').val(data.tanggal_dokumen);
+                    console.log('Tanggal diset:', data.tanggal_dokumen);
+                } else {
+                    $('#edit_tanggal_dokumen').val('');
+                }
+                
+                // Update current file display
+                if (data.dokumen_file) {
+                    const fileExtension = data.dokumen_file.split('.').pop().toLowerCase();
+                    const fileIcon = getFileIconForCurrentFile(fileExtension);
+                    
+                    $('#currentFileName').text(data.dokumen_file);
+                    $('#currentFileIcon').attr('class', `${fileIcon} fa-2x me-3`);
+                }
+                
+                // Set form action URL
+                $('#editFileForm').attr('action', `/admin/file-kesekretariat/${id}`);
+                
+                // Show modal
+                $('#editFileModal').modal('show');
+            } else {
+                toastr.error('Gagal memuat data file', 'Error!');
+            }
+        },
+        error: function(xhr) {
+            console.error('Error loading edit data:', xhr.responseText);
+            toastr.error('Gagal memuat data file', 'Error!');
+        }
+    });
+}
+
+    function debugDateFormat(dateString, source) {
+    console.log(`=== DEBUG DATE FORMAT (${source}) ===`);
+    console.log('Original:', dateString);
+    
+    if (dateString) {
+        const date = new Date(dateString);
+        console.log('Parsed Date Object:', date);
+        console.log('Is Valid:', !isNaN(date.getTime()));
+        
+        if (!isNaN(date.getTime())) {
+            const formatted = date.toISOString().split('T')[0];
+            console.log('Formatted for input:', formatted);
+            return formatted;
+        }
+    }
+    
+    console.log('=== END DEBUG ===');
+    return '';
+}
+
+    function openEditModal(id, nama, tanggal, fileName) {
+    console.log('Opening edit modal with:', {
+        id,
+        nama,
+        tanggal,
+        fileName
+    });
+
+    // Clear any previous errors
+    $('.is-invalid').removeClass('is-invalid');
+    $('.invalid-feedback').empty();
+
+    // Set form data
+    $('#edit_file_id').val(id);
+    $('#edit_nama_dokumen').val(nama || '');
+
+    // Format tanggal dengan benar - PERBAIKAN DI SINI
+    let formattedDate = '';
+    if (tanggal) {
+        // Handle berbagai format tanggal
+        const date = new Date(tanggal);
+        if (!isNaN(date.getTime())) {
+            // Format ke YYYY-MM-DD untuk input type="date"
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            formattedDate = `${year}-${month}-${day}`;
+        } else {
+            console.warn('Invalid date format:', tanggal);
+        }
+    }
+    $('#edit_tanggal_dokumen').val(formattedDate);
+
+    // Update current file display jika fileName tersedia
+    if (fileName) {
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+        const fileIcon = getFileIconForCurrentFile(fileExtension);
+
+        $('#currentFileName').text(fileName);
+        $('#currentFileIcon').attr('class', `${fileIcon} fa-2x me-3`);
+    }
+
+    // Set form action URL
+    $('#editFileForm').attr('action', `/admin/file-kesekretariat/${id}`);
+
+    // Show modal
+    $('#editFileModal').modal('show');
+}
+
+    // 2. FUNGSI HELPER UNTUK ICON FILE
+    function getFileIconForCurrentFile(extension) {
+        const icons = {
+            'pdf': 'fas fa-file-pdf text-danger',
+            'doc': 'fas fa-file-word text-primary',
+            'docx': 'fas fa-file-word text-primary',
+            'xls': 'fas fa-file-excel text-success',
+            'xlsx': 'fas fa-file-excel text-success'
+        };
+        return icons[extension] || 'fas fa-file text-secondary';
+    }
+
+    // Event listener untuk button edit
+$(document).on('click', '.btn-edit', function() {
+    console.log('=== DEBUG EDIT BUTTON ===');
+    console.log('ID:', $(this).data('id'));
+    console.log('Nama:', $(this).data('nama'));
+    console.log('Tanggal Raw:', $(this).data('tanggal'));
+    console.log('Filename:', $(this).data('filename'));
+    console.log('=== END DEBUG ===');
+    
+    // Cek juga semua data attributes
+    console.log('All data attributes:', $(this).data());
+});
+
+function testDateFormat(dateString) {
+    console.log('Testing date:', dateString);
+    
+    const date = new Date(dateString);
+    console.log('Parsed date:', date);
+    console.log('Is valid:', !isNaN(date.getTime()));
+    
+    if (!isNaN(date.getTime())) {
+        const formatted = date.toISOString().split('T')[0];
+        console.log('Formatted for input:', formatted);
+    }
+}
+
+    // 3. PERBAIKAN FUNGSI submitEditForm
+    function submitEditForm() {
+    const form = $('#editFileForm');
+    const formData = new FormData(form[0]);
+    const fileId = $('#edit_file_id').val();
+
+    // Debug: log semua form data
+    console.log('Submitting edit form with data:');
+    console.log('File ID:', fileId);
+    console.log('Nama Dokumen:', $('#edit_nama_dokumen').val());
+    console.log('Tanggal Dokumen:', $('#edit_tanggal_dokumen').val());
+
+    // Validasi manual
+    let isValid = true;
+    $('.is-invalid').removeClass('is-invalid');
+    $('.invalid-feedback').empty();
+
+    // Validate nama dokumen
+    const namaDokumen = $('#edit_nama_dokumen').val().trim();
+    if (!namaDokumen) {
+        $('#edit_nama_dokumen_error').text('Nama dokumen wajib diisi');
+        $('#edit_nama_dokumen').addClass('is-invalid');
+        isValid = false;
+    }
+
+    // Validate tanggal dokumen
+    const tanggalDokumen = $('#edit_tanggal_dokumen').val();
+    if (!tanggalDokumen) {
+        $('#edit_tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
+        $('#edit_tanggal_dokumen').addClass('is-invalid');
+        isValid = false;
+    }
+
+    if (!isValid) {
+        console.log('Form validation failed');
+        return false;
+    }
+
+    // Update submit button state
+    const submitBtn = $('#editSubmitBtn');
+    const originalText = submitBtn.html();
+
+    $.ajax({
+        url: `/admin/file-kesekretariat/${fileId}`,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        beforeSend: function() {
+            submitBtn.prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyimpan...');
+        },
+        success: function(response) {
+            console.log('Edit success response:', response);
+
+            $('#editFileModal').modal('hide');
+            toastr.success(response.message || 'File berhasil diperbarui', 'Berhasil!');
+
+            // Reload tabel
+            performSearch();
+        },
+        error: function(xhr) {
+            console.log('Edit error:', xhr.responseText);
+
+            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                let errors = xhr.responseJSON.errors;
+                $.each(errors, function(key, value) {
+                    $(`#edit_${key}`).addClass('is-invalid');
+                    $(`#edit_${key}_error`).text(value[0]);
                 });
-            });
-
-            function updatePerPage(perPage) {
-                const searchParams = new URLSearchParams(window.location.search);
-                searchParams.set('per_page', perPage);
-                searchParams.delete('page'); // Reset ke halaman pertama
-
-                const url = "{{ route('admin.file-kesekretariat.index') }}?" + searchParams.toString();
-                window.location.href = url;
+            } else {
+                let errorMessage = 'Terjadi kesalahan saat memperbarui file';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                toastr.error(errorMessage, 'Error!');
             }
+        },
+        complete: function() {
+            submitBtn.prop('disabled', false).html(originalText);
+        }
+    });
+}
 
-            function resetAllFilters() {
-                $('#filter input[name="search"]').val('');
-                $('#filter-file-type').val('');
+    $('#editFileModal').on('hidden.bs.modal', function() {
+        // Reset form completely
+        $('#editFileForm')[0].reset();
 
-                // Trigger search to reload content
-                $('#filter input[name="search"]').trigger('input');
+        // Clear validation errors
+        $('.is-invalid').removeClass('is-invalid');
+        $('.invalid-feedback').empty();
+
+        // Reset current file display
+        $('#currentFileName').text('-');
+        $('#currentFileIcon').attr('class', 'fas fa-file fa-2x me-3 text-secondary');
+
+        console.log('Edit modal reset completed');
+    });
+
+    
+
+    // Perform AJAX search request
+    function performSearch(params = {}, showLoadingIndicator = true) {
+        if (isLoading) return;
+
+        if (showLoadingIndicator) showLoading();
+
+        const searchParams = new URLSearchParams();
+
+        // Get current form values
+        const search = $('#filter input[name="search"]').val().trim();
+
+        // Add parameters
+        if (search) searchParams.set('search', search);
+        if (params.page) searchParams.set('page', params.page);
+        if (params.per_page) searchParams.set('per_page', params.per_page);
+        if (params.sort_by) searchParams.set('sort_by', params.sort_by);
+        if (params.order) searchParams.set('order', params.order);
+
+        // Keep existing sort parameters if not being changed
+        if (!params.sort_by && !params.order) {
+            const currentUrl = new URLSearchParams(window.location.search);
+            if (currentUrl.get('sort_by')) searchParams.set('sort_by', currentUrl.get('sort_by'));
+            if (currentUrl.get('order')) searchParams.set('order', currentUrl.get('order'));
+        }
+
+        const url = `${baseUrl}?${searchParams.toString()}`;
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            },
+            beforeSend: function() {
+                $('#tableContainer').addClass('table-loading');
+                $('#tableContainer').html(
+                    '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
+                );
+            },
+            success: function(response) {
+                $('#tableContainer').removeClass('table-loading');
+                // Update the table container with new content
+                const $response = $(response);
+                const $newTableContainer = $response.find('#tableContainer');
+
+                if ($newTableContainer.length) {
+                    $('#tableContainer').html($newTableContainer.html());
+
+                    // Re-initialize all event handlers after content update
+                    initializeEventHandlers();
+                    addFileIcons();
+
+                    // Ensure proper numbering after content update
+                    renumberTableRows();
+                }
+
+                // Update URL without page reload
+                window.history.pushState({}, '', url);
+            },
+            error: function(xhr, status, error) {
+                $('#tableContainer').removeClass('table-loading');
+                $('#tableContainer').html(
+                    '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+                );
+                console.error('Search error:', error);
+                toastr.error('Terjadi kesalahan saat mencari data', 'Error!');
+            },
+            complete: function() {
+                hideLoading();
             }
+        });
+    }
+
+    function renumberTableRows() {
+        $('#tableBody tr:visible').each(function(index) {
+            $(this).find('td:first-child').text(index + 1);
+        });
+    }
+
+    // Fixed form submission function dengan validasi manual
+    function submitForm(formId) {
+        const form = $('#' + formId);
+        const formData = new FormData(form[0]);
+
+        // Validasi manual
+        let isValid = true;
+
+        // Validasi nama dokumen
+        const namaDokumen = form.find('input[name="nama_dokumen"]').val().trim();
+        if (!namaDokumen) {
+            $('#nama_dokumen_error').text('Nama dokumen wajib diisi');
+            form.find('input[name="nama_dokumen"]').addClass('is-invalid');
+            isValid = false;
+        }
+
+        // Validasi tanggal dokumen
+        const tanggalDokumen = form.find('input[name="tanggal_dokumen"]').val();
+        if (!tanggalDokumen) {
+            $('#tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
+            form.find('input[name="tanggal_dokumen"]').addClass('is-invalid');
+            isValid = false;
+        }
+
+        // Validasi file dokumen
+        const fileInput = document.getElementById('dokumen_file_input');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            $('#dokumen_file_error').text('File dokumen wajib diunggah');
+            $('#dropzone-tambahFileForm').addClass('error');
+            isValid = false;
+        }
+
+        if (!isValid) {
+            // Scroll ke field error pertama
+            const firstError = $('.is-invalid, .error').first();
+            if (firstError.length) {
+                $('html, body').animate({
+                    scrollTop: firstError.offset().top - 100
+                }, 500);
+            }
+            return false;
+        }
+
+        // Update submit button state
+        const submitBtn = $('#submitBtn');
+        const originalText = submitBtn.html();
+
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                submitBtn.prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyimpan...');
+            },
+            success: function(response) {
+                $('#tambahFileModal').modal('hide');
+                toastr.success(response.message || 'File berhasil ditambahkan', 'Berhasil!');
+                form.trigger('reset');
+                clearFormErrors();
+                removeSelectedFile();
+
+                // Reload data table with latest first (created_at desc) and go to page 1
+                performSearch({
+                    page: 1,
+                    sort_by: 'created_at',
+                    order: 'desc'
+                }, true);
+            },
+            error: function(xhr) {
+                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                    // Validation errors
+                    showFormErrors(xhr.responseJSON.errors);
+
+                    // Scroll ke field error pertama
+                    const firstError = $('.is-invalid, .error').first();
+                    if (firstError.length) {
+                        $('html, body').animate({
+                            scrollTop: firstError.offset().top - 100
+                        }, 500);
+                    }
+                } else {
+                    let errorMessage = 'Terjadi kesalahan saat menyimpan file';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
+                    toastr.error(errorMessage, 'Error!');
+                }
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).html(originalText);
+            }
+        });
+    }
+
+    // Make functions globally available
+    window.submitForm = submitForm;
+    window.deleteFile = deleteFile;
+    window.performSearch = performSearch;
+
+    // Initialize event handlers on page load
+    initializeEventHandlers();
+    addFileIcons();
+
+    // Button click handlers
+    $('#tambahFileBtn').on('click', function() {
+        $('#tambahFileModal').modal('show');
+    });
+
+    // Handle form submission for adding new file
+    $('#tambahFileModal').on('shown.bs.modal', function() {
+        $('#tambahFileForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            submitForm('tambahFileForm');
+        });
+    });
+
+    // Auto search on input with debounce
+    $('#filter input[name="search"]').on('input', debounce(function() {
+        performSearch({
+            page: 1
+        });
+    }, 300));
+
+    // Reset modal when closed
+    $('#tambahFileModal').on('hidden.bs.modal', function() {
+        $('#tambahFileForm').trigger('reset');
+        clearFormErrors();
+        removeSelectedFile(); // Reset file selection
+    });
+
+    // Initialize dropzone when modal is shown
+    $('#tambahFileModal').on('shown.bs.modal', function() {
+        initializeCustomDropzone();
+    });
+
+    // Close dropdowns when clicking outside
+    $(document).on('click', function() {
+        $('.dropdown-menu-action').removeClass('show');
+    });
+
+    // Prevent dropdown close when clicking inside
+    $(document).on('click', '.dropdown-menu-action', function(e) {
+        e.stopPropagation();
+    });
+
+    // Per page dropdown
+    $(document).on('change', 'select[name="per_page"]', function() {
+        const perPage = $(this).val();
+        performSearch({
+            page: 1,
+            per_page: perPage
+        }, true);
+    });
+});
+
+
+
+function updatePerPage(perPage) {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('per_page', perPage);
+    searchParams.delete('page'); // Reset ke halaman pertama
+
+    const url = "{{ route('admin.file-kesekretariat.index') }}?" + searchParams.toString();
+    window.location.href = url;
+}
+
+function resetAllFilters() {
+    $('#filter input[name="search"]').val('');
+    $('#filter-file-type').val('');
+
+    // Trigger search to reload content
+    $('#filter input[name="search"]').trigger('input');
+}
         </script>
     @endsection
