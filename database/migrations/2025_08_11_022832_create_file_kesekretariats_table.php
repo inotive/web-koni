@@ -12,6 +12,7 @@ return new class extends Migration
         Schema::create('file_kesekretariats', function (Blueprint $table) {
             $table->id();
             $table->string('nama_dokumen');
+            $table->date('tanggal_dokumen'); // <- Pastikan kolom ini ada
             $table->string('dokumen_file');
             $table->timestamps();
         });

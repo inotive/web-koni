@@ -57,6 +57,8 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         ->name('file-kesekretariat.download');
     Route::get('file-kesekretariat/{fileKesekretariat}/edit', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'edit'])
         ->name('file-kesekretariat.edit');
+    Route::delete('file-kesekretariat/{fileKesekretariat}', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'destroy'])
+    ->name('file-kesekretariat.destroy');
 
 
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {

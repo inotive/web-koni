@@ -27,7 +27,7 @@ class FileKesekretariatController extends Controller
             $query->where('dokumen_file', 'like', '%.' . $fileType);
         }
 
-        $allowedSortColumns = ['nama_dokumen', 'created_at', 'updated_at'];
+        $allowedSortColumns = ['nama_dokumen', 'tanggal_dokumen', 'created_at', 'updated_at'];
         $sortBy = $request->get('sort_by', 'created_at');
         $order = $request->get('order', 'desc');
 
@@ -49,6 +49,11 @@ class FileKesekretariatController extends Controller
             }
             return $file;
         });
+
+        // Jika request AJAX, return partial view
+        if ($request->ajax() || $request->wantsJson()) {
+            return view('admin.file-kesekretariat._table', compact('files'));
+        }
 
         return view('admin.file-kesekretariat.index', compact('files'));
     }
@@ -72,31 +77,52 @@ class FileKesekretariatController extends Controller
         return view('admin.file-kesekretariat.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): JsonResponse
     {
+        // Validasi untuk form tunggal (bukan array)
         $validated = $request->validate([
             'nama_dokumen' => 'required|string|max:255',
-            'dokumen_file' => 'required|array|max:10',
-            'dokumen_file.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'tanggal_dokumen' => 'required|date',
+            'dokumen_file' => 'required|file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+        ], [
+            'nama_dokumen.required' => 'Nama dokumen wajib diisi',
+            'tanggal_dokumen.required' => 'Tanggal dokumen wajib diisi', 
+            'tanggal_dokumen.date' => 'Format tanggal tidak valid',
+            'dokumen_file.required' => 'File dokumen wajib diunggah',
+            'dokumen_file.mimes' => 'Format file harus PDF, DOC, DOCX, XLS, atau XLSX',
+            'dokumen_file.max' => 'Ukuran file maksimal 10MB',
         ]);
 
         try {
-            foreach ($request->file('dokumen_file') as $file) {
-                $fileName = $file->getClientOriginalName();
-                $file->storeAs('documents', $fileName, 'public');
+            // Handle single file upload
+            $file = $request->file('dokumen_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('documents', $fileName, 'public');
 
-                FileKesekretariat::create([
-                    'nama_dokumen' => $validated['nama_dokumen'],
-                    'dokumen_file' => $fileName,
-                ]);
-            }
+            $fileKesekretariat = FileKesekretariat::create([
+                'nama_dokumen' => $validated['nama_dokumen'],
+                'tanggal_dokumen' => $validated['tanggal_dokumen'],
+                'dokumen_file' => $fileName,
+            ]);
 
-            return redirect()
-                ->route('admin.file-kesekretariat.index')
-                ->with('success', 'File berhasil ditambahkan.');
+            return response()->json([
+                'success' => true,
+                'message' => 'File berhasil ditambahkan.',
+                'data' => $fileKesekretariat
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid',
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
             Log::error('Error storing file: ' . $e->getMessage());
-            return back()->withInput()->with('error', 'Gagal menyimpan file.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan file: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -146,23 +172,31 @@ class FileKesekretariatController extends Controller
     {
         $validated = $request->validate([
             'nama_dokumen' => 'required|string|max:255',
-            'tanggal_dokumen' => 'nullable|date',
+            'tanggal_dokumen' => 'required|date',
             'dokumen_file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+        ], [
+            'nama_dokumen.required' => 'Nama dokumen wajib diisi',
+            'tanggal_dokumen.required' => 'Tanggal dokumen wajib diisi',
+            'tanggal_dokumen.date' => 'Format tanggal tidak valid',
+            'dokumen_file.mimes' => 'Format file harus PDF, DOC, DOCX, XLS, atau XLSX',
+            'dokumen_file.max' => 'Ukuran file maksimal 10MB',
         ]);
 
         try {
             $data = [
                 'nama_dokumen' => $validated['nama_dokumen'],
-                'tanggal_dokumen' => $validated['tanggal_dokumen'] ?? null,
+                'tanggal_dokumen' => $validated['tanggal_dokumen'],
             ];
 
             if ($request->hasFile('dokumen_file')) {
+                // Hapus file lama jika ada
                 if ($fileKesekretariat->dokumen_file) {
                     Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
                 }
 
+                // Upload file baru
                 $file = $request->file('dokumen_file');
-                $fileName = $file->getClientOriginalName();
+                $fileName = time() . '_' . $file->getClientOriginalName();
                 $file->storeAs('documents', $fileName, 'public');
 
                 $data['dokumen_file'] = $fileName;
@@ -175,9 +209,42 @@ class FileKesekretariatController extends Controller
                 'message' => 'File berhasil diupdate.',
                 'data' => $fileKesekretariat
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid',
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
             Log::error('Error updating file: ' . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Gagal update file.'], 500);
+            return response()->json([
+                'success' => false, 
+                'message' => 'Gagal update file: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy(FileKesekretariat $fileKesekretariat): JsonResponse
+    {
+        try {
+            // Hapus file dari storage
+            if ($fileKesekretariat->dokumen_file) {
+                Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
+            }
+
+            // Hapus record dari database
+            $fileKesekretariat->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'File berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error deleting file: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus file.'
+            ], 500);
         }
     }
 
