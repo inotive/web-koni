@@ -19,15 +19,18 @@ class FileKesekretariatController extends Controller
         $query = FileKesekretariat::query();
 
         if ($request->filled('search')) {
-            $query->where('nama_dokumen', 'like', '%' . trim($request->input('search')) . '%');
+            $search = trim($request->input('search'));
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_dokumen', 'like', '%' . $search . '%')
+                  ->orWhere('dokumen_file', 'like', '%' . $search . '%');
+            });
         }
 
         if ($request->filled('file_type')) {
-            $fileType = $request->input('file_type');
-            $query->where('dokumen_file', 'like', '%.' . $fileType);
+            $query->where('file_extension', $request->input('file_type'));
         }
 
-        $allowedSortColumns = ['nama_dokumen', 'tanggal_dokumen', 'created_at', 'updated_at'];
+        $allowedSortColumns = ['nama_dokumen', 'tanggal_dokumen', 'created_at', 'updated_at', 'file_size'];
         $sortBy = $request->get('sort_by', 'created_at');
         $order = $request->get('order', 'desc');
 
@@ -37,25 +40,28 @@ class FileKesekretariatController extends Controller
         $query->orderBy($sortBy, $order)->orderBy('id', 'desc');
 
         $perPage = $this->getValidPerPage($request->input('per_page'));
-        $files = $query->paginate($perPage)->withQueryString()->through(function ($file) {
-            $file->path = 'documents/' . $file->dokumen_file;
-            $file->file_exists = Storage::disk('public')->exists($file->path);
-            $file->file_size = $file->file_exists
-                ? $this->formatFileSize(Storage::disk('public')->size($file->path))
-                : '0 KB';
-            $file->file_extension = pathinfo($file->dokumen_file, PATHINFO_EXTENSION);
+        
+        $files = $query->paginate($perPage)->withQueryString();
+
+        $files->through(function ($file) {
+            $file->file_size = $this->formatFileSize($file->file_size ?? 0);
+            $file->display_filename = $this->getOriginalFileName($file->dokumen_file);
             if ($file->tanggal_dokumen) {
                 $file->tanggal_dokumen_formatted = $file->tanggal_dokumen->format('Y-m-d');
             }
             return $file;
         });
 
-        // Jika request AJAX, return partial view
         if ($request->ajax() || $request->wantsJson()) {
             return view('admin.file-kesekretariat._table', compact('files'));
         }
 
         return view('admin.file-kesekretariat.index', compact('files'));
+    }
+
+    private function getOriginalFileName($fileName)
+    {
+        return preg_replace('/^\\d+_/', '', $fileName);
     }
 
     protected function getValidPerPage($inputPerPage): int
@@ -69,7 +75,7 @@ class FileKesekretariatController extends Controller
         if ($bytes >= 1073741824) return number_format($bytes / 1073741824, 2) . ' GB';
         if ($bytes >= 1048576) return number_format($bytes / 1048576, 2) . ' MB';
         if ($bytes >= 1024) return number_format($bytes / 1024, 2) . ' KB';
-        return $bytes > 1 ? $bytes . ' bytes' : '0 bytes';
+        return $bytes > 0 ? $bytes . ' bytes' : '0 KB';
     }
 
     public function create(): View
@@ -79,7 +85,6 @@ class FileKesekretariatController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        // Validasi untuk form tunggal (bukan array)
         $validated = $request->validate([
             'nama_dokumen' => 'required|string|max:255',
             'tanggal_dokumen' => 'required|date',
@@ -94,21 +99,39 @@ class FileKesekretariatController extends Controller
         ]);
 
         try {
-            // Handle single file upload
             $file = $request->file('dokumen_file');
             $fileName = time() . '_' . $file->getClientOriginalName();
+            
+            $fileSize = $file->getSize();
+            $fileExtension = $file->getClientOriginalExtension();
+
             $file->storeAs('documents', $fileName, 'public');
 
             $fileKesekretariat = FileKesekretariat::create([
                 'nama_dokumen' => $validated['nama_dokumen'],
                 'tanggal_dokumen' => $validated['tanggal_dokumen'],
                 'dokumen_file' => $fileName,
+                'file_extension' => $fileExtension,
+                'file_size' => $fileSize,
             ]);
+
+            $fileData = [
+                'id' => $fileKesekretariat->id,
+                'nama_dokumen' => $fileKesekretariat->nama_dokumen,
+                'tanggal_dokumen' => $fileKesekretariat->tanggal_dokumen->format('Y-m-d'),
+                'tanggal_dokumen_formatted' => $fileKesekretariat->tanggal_dokumen->format('d/m/Y'),
+                'dokumen_file' => $this->getOriginalFileName($fileName),
+                'actual_filename' => $fileName,
+                'file_url' => Storage::url('documents/' . $fileName),
+                'extension' => $fileKesekretariat->file_extension,
+                'file_size' => $this->formatFileSize($fileKesekretariat->file_size)
+            ];
 
             return response()->json([
                 'success' => true,
                 'message' => 'File berhasil ditambahkan.',
-                'data' => $fileKesekretariat
+                'file' => $fileData,
+                'total_records' => FileKesekretariat::count()
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -117,7 +140,7 @@ class FileKesekretariatController extends Controller
                 'message' => 'Data tidak valid',
                 'errors' => $e->errors()
             ], 422);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Error storing file: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -135,34 +158,27 @@ class FileKesekretariatController extends Controller
         return view('admin.file-kesekretariat.show', [
             'file' => $fileKesekretariat,
             'file_path' => $fileUrl,
-            'file_size' => $this->formatFileSize(
-                Storage::disk('public')->size('documents/' . $fileKesekretariat->dokumen_file)
-            ),
+            'file_size' => $this->formatFileSize($fileKesekretariat->file_size ?? 0),
         ]);
     }
 
     public function edit(FileKesekretariat $fileKesekretariat): JsonResponse
     {
         try {
-            $filePath = 'documents/' . $fileKesekretariat->dokumen_file;
-            $fileExists = Storage::disk('public')->exists($filePath);
-
             return response()->json([
                 'success' => true,
                 'data' => [
                     'id' => $fileKesekretariat->id,
                     'nama_dokumen' => $fileKesekretariat->nama_dokumen,
                     'tanggal_dokumen' => optional($fileKesekretariat->tanggal_dokumen)->format('Y-m-d'),
-                    'dokumen_file' => $fileKesekretariat->dokumen_file,
-                    'file_exists' => $fileExists,
-                    'current_file_size' => $fileExists
-                        ? $this->formatFileSize(Storage::disk('public')->size($filePath))
-                        : '0 KB',
-                    'file_extension' => pathinfo($fileKesekretariat->dokumen_file, PATHINFO_EXTENSION),
+                    'dokumen_file' => $this->getOriginalFileName($fileKesekretariat->dokumen_file),
+                    'actual_filename' => $fileKesekretariat->dokumen_file,
+                    'current_file_size' => $this->formatFileSize($fileKesekretariat->file_size ?? 0),
+                    'file_extension' => $fileKesekretariat->file_extension,
                 ],
                 'message' => 'Data berhasil dimuat'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Error in edit: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Gagal memuat data'], 500);
         }
@@ -174,12 +190,6 @@ class FileKesekretariatController extends Controller
             'nama_dokumen' => 'required|string|max:255',
             'tanggal_dokumen' => 'required|date',
             'dokumen_file' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
-        ], [
-            'nama_dokumen.required' => 'Nama dokumen wajib diisi',
-            'tanggal_dokumen.required' => 'Tanggal dokumen wajib diisi',
-            'tanggal_dokumen.date' => 'Format tanggal tidak valid',
-            'dokumen_file.mimes' => 'Format file harus PDF, DOC, DOCX, XLS, atau XLSX',
-            'dokumen_file.max' => 'Ukuran file maksimal 10MB',
         ]);
 
         try {
@@ -189,33 +199,40 @@ class FileKesekretariatController extends Controller
             ];
 
             if ($request->hasFile('dokumen_file')) {
-                // Hapus file lama jika ada
                 if ($fileKesekretariat->dokumen_file) {
                     Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
                 }
 
-                // Upload file baru
                 $file = $request->file('dokumen_file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
                 $file->storeAs('documents', $fileName, 'public');
-
+                
                 $data['dokumen_file'] = $fileName;
+                $data['file_extension'] = $file->getClientOriginalExtension();
+                $data['file_size'] = $file->getSize();
             }
 
             $fileKesekretariat->update($data);
 
+            $fileData = [
+                'id' => $fileKesekretariat->id,
+                'nama_dokumen' => $fileKesekretariat->nama_dokumen,
+                'tanggal_dokumen' => $fileKesekretariat->tanggal_dokumen->format('Y-m-d'),
+                'tanggal_dokumen_formatted' => $fileKesekretariat->tanggal_dokumen->format('d/m/Y'),
+                'dokumen_file' => $this->getOriginalFileName($fileKesekretariat->dokumen_file),
+                'actual_filename' => $fileKesekretariat->dokumen_file,
+                'file_url' => Storage::url('documents/' . $fileKesekretariat->dokumen_file),
+                'extension' => $fileKesekretariat->file_extension,
+                'file_size' => $this->formatFileSize($fileKesekretariat->file_size)
+            ];
+
             return response()->json([
                 'success' => true,
                 'message' => 'File berhasil diupdate.',
-                'data' => $fileKesekretariat
+                'file' => $fileData
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data tidak valid',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
+
+        } catch (\Throwable $e) {
             Log::error('Error updating file: ' . $e->getMessage());
             return response()->json([
                 'success' => false, 
@@ -227,19 +244,16 @@ class FileKesekretariatController extends Controller
     public function destroy(FileKesekretariat $fileKesekretariat): JsonResponse
     {
         try {
-            // Hapus file dari storage
             if ($fileKesekretariat->dokumen_file) {
                 Storage::disk('public')->delete('documents/' . $fileKesekretariat->dokumen_file);
             }
-
-            // Hapus record dari database
             $fileKesekretariat->delete();
 
             return response()->json([
                 'success' => true,
                 'message' => 'File berhasil dihapus.'
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Error deleting file: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -256,7 +270,7 @@ class FileKesekretariatController extends Controller
             return back()->with('error', 'File tidak ditemukan.');
         }
 
-        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+        $extension = $fileKesekretariat->file_extension ?? pathinfo($filePath, PATHINFO_EXTENSION);
         $downloadName = str_replace([' ', '.' . $extension], ['_', ''], $fileKesekretariat->nama_dokumen) . '.' . $extension;
 
         return response()->download($filePath, $downloadName);

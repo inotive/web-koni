@@ -112,7 +112,7 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        <td class="px-2 text-center">{{ \Carbon\Carbon::parse($surat->created_at)->format('d M Y') }}</td>
+                        <td class="px-2 text-center">{{ Carbon\Carbon::parse($surat->created_at)->format('d M Y') }}</td>
                         <td class="px-2 text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $surat->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">

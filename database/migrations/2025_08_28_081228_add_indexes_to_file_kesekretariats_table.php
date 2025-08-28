@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('file_kesekretariats', function (Blueprint $table) {
-            $table->string('file_extension', 20)->after('dokumen_file')->nullable()->comment('File extension, e.g., pdf, docx');
-            $table->unsignedBigInteger('file_size')->after('file_extension')->nullable()->comment('File size in bytes');
+            $table->index('nama_dokumen');
+            $table->index('dokumen_file');
         });
     }
 
@@ -23,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('file_kesekretariats', function (Blueprint $table) {
-            $table->dropColumn(['file_extension', 'file_size']);
+            $table->dropIndex(['nama_dokumen']);
+            $table->dropIndex(['dokumen_file']);
         });
     }
 };

@@ -686,7 +686,7 @@
                         });
                 } else {
                     Swal.fire({
-                        title: "Aksi Dibatalkan:)",
+                        title: "Aksi Dibatalkan",
                         icon: "info",
                         timer: 1500,
                         showConfirmButton: false
