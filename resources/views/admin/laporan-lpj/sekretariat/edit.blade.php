@@ -362,17 +362,21 @@
                                             <h6><i class="fas fa-images me-2"></i>Foto yang sudah ada:</h6>
                                             <div id="existing-foto-preview">
                                                 @foreach($foto_jurnals as $index => $foto)
-                                                    <div class="file-preview-item existing" data-file-path="{{ $foto }}">
-                                                        <img src="{{ asset('storage/' . $foto) }}" alt="Foto {{ $index + 1 }}" class="preview-image">
+                                                    @php
+                                                        $path = is_object($foto) ? $foto->path : $foto;
+                                                        $originalName = is_object($foto) ? $foto->original_name : basename($path);
+                                                    @endphp
+                                                    <div class="file-preview-item existing" data-file-path="{{ $path }}">
+                                                        <img src="{{ asset('storage/' . $path) }}" alt="Foto {{ $index + 1 }}" class="preview-image">
                                                         <div class="file-info">
-                                                            <div class="file-name">{{ basename($foto) }}</div>
+                                                            <div class="file-name">{{ $originalName }}</div>
                                                             <div class="file-size">File yang ada</div>
                                                         </div>
                                                         <button type="button" class="remove-file"
-                                                                onclick="removeExistingFile(this, 'foto', '{{ $foto }}')">
+                                                                onclick="removeExistingFile(this, 'foto', '{{ $path }}')">
                                                             <i class="fas fa-times"></i>
                                                         </button>
-                                                        <input type="hidden" name="existing_foto_jurnal[]" value="{{ $foto }}">
+                                                        <input type="hidden" name="existing_foto_jurnal[]" value="{{ $path }}">
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -423,7 +427,9 @@
                                             <div id="existing-dokumen-preview">
                                                 @foreach($dokumens as $index => $dokumen)
                                                     @php
-                                                        $extension = pathinfo($dokumen, PATHINFO_EXTENSION);
+                                                        $path = is_object($dokumen) ? $dokumen->path : $dokumen;
+                                                        $originalName = is_object($dokumen) ? $dokumen->original_name : basename($path);
+                                                        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
                                                         $icon = match(strtolower($extension)) {
                                                             'pdf' => 'fas fa-file-pdf text-danger',
                                                             'doc', 'docx' => 'fas fa-file-word text-primary',
@@ -431,19 +437,19 @@
                                                             default => 'fas fa-file text-secondary'
                                                         };
                                                     @endphp
-                                                    <div class="file-preview-item existing" data-file-path="{{ $dokumen }}">
+                                                    <div class="file-preview-item existing" data-file-path="{{ $path }}">
                                                         <div class="file-icon">
                                                             <i class="{{ $icon }} fs-4"></i>
                                                         </div>
                                                         <div class="file-info">
-                                                            <div class="file-name">{{ basename($dokumen) }}</div>
+                                                            <div class="file-name">{{ $originalName }}</div>
                                                             <div class="file-size">File yang ada</div>
                                                         </div>
                                                         <button type="button" class="remove-file"
-                                                                onclick="removeExistingFile(this, 'dokumen', '{{ $dokumen }}')">
+                                                                onclick="removeExistingFile(this, 'dokumen', '{{ $path }}')">
                                                             <i class="fas fa-times"></i>
                                                         </button>
-                                                        <input type="hidden" name="existing_dokumen_lpj[]" value="{{ $dokumen }}">
+                                                        <input type="hidden" name="existing_dokumen_lpj[]" value="{{ $path }}">
                                                     </div>
                                                 @endforeach
                                             </div>

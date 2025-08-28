@@ -295,7 +295,8 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="currency-input">
-                                        <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                        <input type="tel" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                            inputmode="numeric"
                                             class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
                                             placeholder="0"
                                             value="{{ old('jumlah_harga_satuan') }}">
@@ -312,7 +313,8 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="currency-input">
-                                        <input type="text" name="jumlah_harga" id="jumlah_harga"
+                                        <input type="tel" name="jumlah_harga" id="jumlah_harga"
+                                            inputmode="numeric"
                                             class="form-control @error('jumlah_harga') is-invalid @enderror"
                                             placeholder="0"
                                             value="{{ old('jumlah_harga') }}">
@@ -366,9 +368,9 @@
                                     <p class="file-upload-hint">Maksimal 10 file PDF/Office, masing-masing hingga 10MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    <label for="dokumen_pendukung" class="file-upload-wrapper">
-                                        <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung"
-                                            class="@error('dokumen_pendukung.*') is-invalid @enderror"
+                                    <label for="dokumen_lpj" class="file-upload-wrapper">
+                                        <input type="file" name="dokumen_lpj[]" id="dokumen_lpj"
+                                            class="@error('dokumen_lpj.*') is-invalid @enderror"
                                             accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
@@ -445,19 +447,18 @@
             currencyInputs.forEach(inputId => {
                 const input = document.getElementById(inputId);
                 if (input) {
+                    const formatValue = (value) => {
+                        const numericValue = value.replace(/[^\d]/g, '');
+                        return numericValue ? parseInt(numericValue).toLocaleString('id-ID') : '';
+                    };
+
                     input.addEventListener('input', function(e) {
-                        let value = e.target.value.replace(/[^\d]/g, '');
-                        if (value) {
-                            e.target.value = parseInt(value).toLocaleString('id-ID');
-                        }
+                        e.target.value = formatValue(e.target.value);
                     });
 
-                    // Format initial value
+                    // Format initial value on page load
                     if (input.value) {
-                        let value = input.value.replace(/[^\d]/g, '');
-                        if (value) {
-                            input.value = parseInt(value).toLocaleString('id-ID');
-                        }
+                        input.value = formatValue(input.value);
                     }
                 }
             });

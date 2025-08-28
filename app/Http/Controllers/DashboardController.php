@@ -103,8 +103,9 @@ class DashboardController extends Controller
         // Mengambil semua prestasi terbaru dengan pagination (tanpa pencarian di index)
         // Gunakan per_page default 10 untuk halaman index
         $latest_prestasi = Prestasi::with(['subject', 'subject.cabangOlahraga'])
+            ->where('subject_type', Atlet::class)
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(5);
 
         $cabor_chart_data = CabangOlahraga::withCount(['atlets', 'pelatihs'])->get();
 
@@ -125,42 +126,55 @@ class DashboardController extends Controller
 
     public function prestasiPagination(Request $request)
     {
-        // Debugging
-        \Log::info('Prestasi pagination called with page: ' . ($request->page ?? 'none') . ' and search: ' . ($request->search ?? 'none') . ' and per_page: ' . ($request->per_page ?? 'none'));
-        
-        // Tentukan jumlah item per halaman
-        $perPage = $request->get('per_page', 10);
-        if (!in_array($perPage, [10, 25, 50, 100])) {
-            $perPage = 10;
+        try {
+            $perPage = $request->get('per_page', 5);
+            if (!in_array($perPage, [5, 10, 25, 50, 100])) {
+                $perPage = 5;
+            }
+
+            $query = Prestasi::with(['subject', 'subject.cabangOlahraga'])
+                ->orderBy('created_at', 'desc');
+
+            // Determine the type of subject to query
+            $type = $request->get('type', 'atlet');
+            if ($type === 'atlet') {
+                $query->where('subject_type', Atlet::class);
+            } elseif ($type === 'pelatih') {
+                $query->where('subject_type', Pelatih::class);
+            }
+
+            // Apply search filter
+            if ($request->has('search') && !empty($request->search)) {
+                $search = $request->search;
+                $query->whereHas('subject', function ($q) use ($search) {
+                    $q->where('nama', 'LIKE', "%{$search}%");
+                });
+            }
+
+            $latest_prestasi = $query->paginate($perPage)
+                ->appends($request->only(['search', 'per_page', 'type']));
+
+            // Determine which partial view to render based on the type
+            $partialView = 'admin.dashboard.partials._prestasi-atlet-table';
+            if ($type === 'pelatih') {
+                $partialView = 'admin.dashboard.partials._prestasi-pelatih-table';
+            }
+
+            return response()->json([
+                'success' => true,
+                'html' => view($partialView, [
+                    'prestasi_list' => $latest_prestasi,
+                    'type' => $type
+                ])->render()
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error in prestasiPagination: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memuat data. Silakan coba lagi.'
+            ], 500);
         }
-
-        // Mengambil semua prestasi terbaru dengan pagination dan pencarian
-        $query = Prestasi::with(['subject', 'subject.cabangOlahraga'])
-            ->orderBy('created_at', 'desc');
-
-        // Tambahkan pencarian jika ada parameter search
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->whereHas('subject', function ($q) use ($search) {
-                $q->where('nama', 'LIKE', "%{$search}%");
-            });
-        }
-
-        $latest_prestasi = $query->paginate($perPage, ['*'], 'page', $request->page ?? 1);
-
-        // Tambahkan appends untuk mempertahankan parameter pencarian dan per_page
-        $latest_prestasi = $latest_prestasi->appends($request->only(['search', 'per_page']));
-
-        // Debugging
-        \Log::info('Total items: ' . $latest_prestasi->total() . ', Current page: ' . $latest_prestasi->currentPage() . ', Per page: ' . $perPage);
-        
-        // Return hanya tabel dan pagination
-        return response()->json([
-            'success' => true,
-            'html' => view('admin.dashboard.partials.prestasi-table', [
-                'latest_prestasi' => $latest_prestasi
-            ])->render()
-        ]);
     }
 
     public function exportData(Request $request)
