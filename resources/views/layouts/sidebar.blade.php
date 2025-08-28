@@ -130,7 +130,7 @@
                 @endcan
 
                 <!-- File Kesekretariat - MENU BARU -->
-                @can('file-kesekretariat')
+                @can('file-kesekretariatan')
                     @php
                         $isFileKesekretariatActive =
                             request()->routeIs('admin.file-kesekretariat*') ||
