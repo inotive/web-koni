@@ -407,7 +407,7 @@
             {{-- Card Header --}}
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
                 <h3 class="card-title fw-bold fs-4 mb-0">
-                    Daftar {{ $currentParent ? $currentParent->nama_program : 'Root Level' }} - 2025
+                    Daftar {{ $currentParent ? $currentParent->nama_program : 'Root Level' }}
                 </h3>
 
                 {{-- Action Buttons --}}
@@ -468,7 +468,7 @@
                     </div>
 
                     {{-- Filter Dropdown --}}
-                    <div class="dropdown">
+                    {{-- <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom" type="button" data-bs-toggle="dropdown">
                             <i class="fas fa-filter me-1"></i> Filter
                             <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
@@ -485,10 +485,10 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
                             {{-- Filter Action Buttons --}}
-                            <div class="d-flex gap-2">
+                            {{-- <div class="d-flex gap-2">
                                 <button type="button" id="apply-filters" class="btn btn-primary btn-sm flex-fill">
                                     <i class="ki-duotone ki-check fs-3"></i>Terapkan
                                 </button>
@@ -497,7 +497,7 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 
@@ -758,11 +758,21 @@
             });
 
             // Pagination handling
-            $(document).on('click', '.pagination a', function(e) {
+            $(document).on('click', '.pagination-link', function(e) {
                 e.preventDefault();
                 const url = new URL($(this).attr('href'));
                 const page = url.searchParams.get('page');
-                updateTable({ 'page': page });
+                updateTable({
+                    'page': page
+                });
+            });
+
+            $(document).on('change', 'select[name="per_page"]', function() {
+                const perPage = $(this).val();
+                updateTable({
+                    'per_page': perPage,
+                    'page': 1
+                });
             });
 
             initializeTooltips();

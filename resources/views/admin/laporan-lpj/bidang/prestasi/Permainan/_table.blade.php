@@ -1,157 +1,23 @@
 <div class="row g-10">
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 34]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="Posisi - Dayung">
-                    PSSI - Sepak Bola
-                </h5>
-                <p>10 Dokumen</p>
+    @forelse($children as $child)
+        <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $child->id]) }}" class="col-12 col-sm-6 col-md-3">
+            <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
+                onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
+                <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
+                <div class="text-center">
+                    <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="{{ $child->nama_program }}">
+                        {{ $child->nama_program }}
+                    </h5>
+                    <p>{{ $child->children_count }} Dokumen</p>
+                </div>
+            </div>
+        </a>
+    @empty
+        <div class="col-12">
+            <div class="text-center text-muted py-10">
+                <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
+                <h4>Tidak ada data.</h4>
             </div>
         </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 35]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="IMI - Balap Motor">
-                    PERBASI - Basket
-                </h5>
-                <p>8 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 36]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="Akuatik - Renang">
-                    PELTI - Tenis Lapangan
-                </h5>
-                <p>10 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 37]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="FPTI - Panijat Tebing">
-                    PSTI - Sepak Takraw
-                </h5>
-                <p>5 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 38]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="PASI - Atletik">
-                    PTMSI - Tenis Meja
-                </h5>
-                <p>10 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 39]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="PABERSI - Angkat Berat">
-                    PBVSI - Pasir & Indoor
-                </h5>
-                <p>11 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 40]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="PARSI - Angkat Besi">
-                    PBSI - Bulutangkis
-                </h5>
-                <p>10 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 41]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="ISSI - Balap Sepeda">
-                    PERCASI - Catur
-                </h5>
-                <p>15 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 42]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="FAJI - Arung Jeram">
-                    GABSI - Bridge
-                </h5>
-                <p>10 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 43]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="PORSEROSI - Sepatu Roda">
-                    PDBI - Drumband
-                </h5>
-                <p>15 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-    <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 44]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="PORSEROSI - Sepatu Roda">
-                    ABTI - Bola Tangan
-                </h5>
-                <p>10 Dokumen</p>
-            </div>
-        </div>
-    </a>
-
-     <a href={{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 45]) }} class="col-12 col-sm-6 col-md-3">
-        <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 160px; transition: background-color 0.3s;"
-            onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
-            <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>
-            <div class="text-center">
-                <h5 class="d-inline-block text-truncate w-100 mb-0" style="max-width: 200px;" title="PORSEROSI - Sepatu Roda">
-                    AFKAB - Futsal
-                </h5>
-                <p>10 Dokumen</p>
-            </div>
-        </div>
-    </a>
+    @endforelse
 </div>

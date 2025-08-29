@@ -136,7 +136,7 @@ class BidangController extends Controller
 
     public function caborBeladiri(Request $request)
     {
-        $caborBeladiriParentId = 11; // Adjust based on your seeded data
+        $caborBeladiriParentId = 12; // Adjust based on your seeded data
 
         $parent = Lpj::findOrFail($caborBeladiriParentId);
         $children = Lpj::where('parent_id', $caborBeladiriParentId)
@@ -153,7 +153,7 @@ class BidangController extends Controller
 
     public function caborPermainan(Request $request)
     {
-        $caborPermainanParentId = 12; // Adjust based on your seeded data
+        $caborPermainanParentId = 11; // Adjust based on your seeded data
 
         $parent = Lpj::findOrFail($caborPermainanParentId);
         $children = Lpj::where('parent_id', $caborPermainanParentId)
@@ -170,7 +170,7 @@ class BidangController extends Controller
 
     public function caborTerukur(Request $request)
     {
-        $caborTerukurParentId = 13; // Adjust based on your seeded data
+        $caborTerukurParentId = 9; // Adjust based on your seeded data
 
         $parent = Lpj::findOrFail($caborTerukurParentId);
         $children = Lpj::where('parent_id', $caborTerukurParentId)

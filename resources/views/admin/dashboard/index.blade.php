@@ -453,6 +453,17 @@
             <div class="card-body p-6">
                 <div class="d-flex align-items-center justify-content-between mb-6">
                     <h5 class="mb-0">Prestasi Terbaru</h5>
+                    <div class="col-md-4">
+                        <div class="position-relative bg-light">
+                            <i class="ki-outline ki-magnifier fs-3 position-absolute top-50 translate-middle-y ms-3"></i>
+                            <input type="text" 
+                                   id="search-prestasi" 
+                                   name="search" 
+                                   value="" 
+                                   placeholder="Cari Atlet atau Pelatih..." 
+                                   class="form-control border border-gray-500 px-10 py-2" />
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Tab Navigation -->
@@ -531,15 +542,22 @@
         });
 
         $(document).ready(function() {
-            const prestasiContainer = $('#prestasi-table-container');
             let searchTimeout;
 
-            function loadPrestasi(url) {
+            function loadPrestasiData(type, page, search, perPage) {
+                const containerId = `#${type}-prestasi`;
+
                 $.ajax({
-                    url: url,
+                    url: '{{ route("admin.dashboard.prestasi-pagination") }}',
                     type: 'GET',
+                    data: { 
+                        type: type,
+                        page: page,
+                        search: search,
+                        per_page: perPage
+                    },
                     beforeSend: function() {
-                        prestasiContainer.html(
+                        $(containerId).html(
                             '<div class="text-center py-10">' +
                             '<div class="spinner-border text-primary" role="status">' +
                             '<span class="visually-hidden">Loading...</span>' +
@@ -548,84 +566,74 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            prestasiContainer.html(response.html);
-                            // Update URL
-                            if (window.history && window.history.pushState) {
-                                window.history.pushState({}, '', url);
-                            }
+                            $(containerId).html(response.html);
                         } else {
-                            handleAjaxError();
+                            $(containerId).html(
+                                '<div class="text-center py-10">' +
+                                '<div class="text-danger">' + (response.message || 'Terjadi kesalahan saat memuat data.') + '</div>' +
+                                '</div>'
+                            );
                         }
                     },
                     error: function(xhr) {
                         console.error('Error:', xhr.responseText);
-                        handleAjaxError();
+                        $(containerId).html(
+                            '<div class="text-center py-10">' +
+                            '<div class="text-danger">Terjadi kesalahan fatal. Silakan cek konsol.</div>' +
+                            '</div>'
+                        );
                     }
                 });
             }
 
-            function handleAjaxError() {
-                prestasiContainer.html(
-                    '<div class="text-center py-10">' +
-                    '<div class="text-danger">Terjadi kesalahan saat memuat data. Silakan coba lagi.</div>' +
-                    '</div>'
-                );
-            }
+            // Handle tab switching
+            $('a[data-bs-toggle="tab"][href="#atlet-prestasi"], a[data-bs-toggle="tab"][href="#pelatih-prestasi"]').on('shown.bs.tab', function(e) {
+                const target = $(e.target).attr("href");
+                const type = target === '#pelatih-prestasi' ? 'pelatih' : 'atlet';
+                const search = $('#search-prestasi').val();
+                const perPage = $(`#prestasi-tab-content #per-page-select-${type}`).val() || 5;
 
-            // Event delegation for search
-            prestasiContainer.on('input', '#search-prestasi', function() {
+                // Hanya load data untuk pelatih jika tabnya kosong
+                if (type === 'pelatih' && $(target).children().length <= 1) {
+                    loadPrestasiData(type, 1, search, perPage);
+                }
+            });
+
+            // Handle search input
+            $('#search-prestasi').on('input', function() {
                 clearTimeout(searchTimeout);
-                const search = $(this).val();
-
                 searchTimeout = setTimeout(() => {
-                    const url = new URL('{{ route("admin.dashboard.prestasi-pagination") }}');
-                    url.searchParams.set('page', 1);
-                    if (search) {
-                        url.searchParams.set('search', search);
-                    } else {
-                        url.searchParams.delete('search');
-                    }
-                    loadPrestasi(url.toString());
+                    const search = $(this).val();
+                    const activeTab = $('#prestasi-tab-content .tab-pane.active').attr('id');
+                    const type = activeTab === 'pelatih-prestasi' ? 'pelatih' : 'atlet';
+                    const perPage = $(`#prestasi-tab-content #per-page-select-${type}`).val() || 5;
+                    
+                    loadPrestasiData(type, 1, search, perPage);
                 }, 300); // Debounce 300ms
             });
 
-            // Event delegation for pagination
-            prestasiContainer.on('click', '.prestasi-pagination-link', function(e) {
+            // Handle per page change and pagination links using event delegation
+            $('#prestasi-tab-content').on('change', '[id^="per-page-select-"]', function() {
+                const perPage = $(this).val();
+                const type = $(this).attr('id').replace('per-page-select-', '');
+                const search = $('#search-prestasi').val();
+                
+                loadPrestasiData(type, 1, search, perPage);
+            });
+
+            $('#prestasi-tab-content').on('click', '.prestasi-pagination-link', function(e) {
                 e.preventDefault();
                 const url = $(this).attr('href');
                 if (url && url !== '#') {
-                    loadPrestasi(url);
+                    const urlObj = new URL(url);
+                    const page = urlObj.searchParams.get('page') || 1;
+                    const type = $(this).data('type');
+                    const search = $('#search-prestasi').val();
+                    const perPage = $(`#prestasi-tab-content #per-page-select-${type}`).val() || 5;
+                    
+                    loadPrestasiData(type, page, search, perPage);
                 }
             });
-
-            // Handle browser back/forward buttons
-            window.onpopstate = function(event) {
-                // Check if the state is related to our prestasi table
-                if (event.state) {
-                    loadPrestasi(location.href);
-                }
-            };
-            
-            // Handle per page change
-            prestasiContainer.on('change', '#per-page-select', function() {
-                const perPage = $(this).val();
-                const search = $('#search-prestasi').val();
-                
-                const url = new URL('{{ route("admin.dashboard.prestasi-pagination") }}');
-                url.searchParams.set('page', 1);
-                url.searchParams.set('per_page', perPage);
-                if (search) {
-                    url.searchParams.set('search', search);
-                }
-                
-                loadPrestasi(url.toString());
-            });
-        });
-
-        // Handle tab switching (this can stay outside the ready block)
-        $(document).on('click', '.nav-link[data-bs-toggle="tab"]', function(e) {
-            e.preventDefault();
-            $(this).tab('show');
         });
     </script>
 @endpush

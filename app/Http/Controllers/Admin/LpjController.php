@@ -41,10 +41,11 @@ class LpjController extends Controller
         }
 
         // Apply sorting
-        $sortField = $request->get('sort', 'nama_program');
-        $sortDirection = $request->get('direction', 'asc');
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortField = $request->get('sort', 'created_at');
+        $sortDirection = $request->get('direction', 'desc');
 
-        $allowedSorts = ['nama_program', 'nama_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga'];
+        $allowedSorts = ['nama_program', 'nama_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga', 'created_at'];
         if (in_array($sortField, $allowedSorts)) {
             $query->orderBy($sortField, $sortDirection);
         }
@@ -98,9 +99,9 @@ class LpjController extends Controller
         $validated = $request->validate([
             'nama_program' => 'required|string|max:255',
             'nama_kegiatan' => 'required|string|max:255',
-            'volume' => 'nullable|string|max:255',
-            'jumlah_harga_satuan' => 'nullable|numeric|min:0',
-            'jumlah_harga' => 'nullable|numeric|min:0',
+            'volume' => 'required|string|max:255',
+            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
             'foto_jurnal.*' => 'nullable|image|max:10240', // 10MB
             'dokumen_lpj.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240'
@@ -166,9 +167,9 @@ class LpjController extends Controller
         $validated = $request->validate([
             'nama_program' => 'required|string|max:255',
             'nama_kegiatan' => 'required|string|max:255',
-            'volume' => 'nullable|string|max:255',
-            'jumlah_harga_satuan' => 'nullable|numeric|min:0',
-            'jumlah_harga' => 'nullable|numeric|min:0',
+            'volume' => 'required|string|max:255',
+            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
             'foto_jurnal.*' => 'nullable|image|max:10240',
             'dokumen_lpj.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
@@ -326,7 +327,7 @@ class LpjController extends Controller
 
         if ($request->hasFile($fieldName)) {
             foreach ($request->file($fieldName) as $file) {
-                $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                $filename = $file->getClientOriginalName();
                 $filePath = $file->storeAs($path, $filename, 'public');
                 $uploadedFiles[] = $filePath;
             }
