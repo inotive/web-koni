@@ -841,7 +841,12 @@
 
         if (downloadBtn) {
             downloadBtn.onclick = function() {
-                window.open('/storage/' + path, '_blank');
+                const link = document.createElement('a');
+                link.href = '/storage/' + path;
+                link.setAttribute('download', originalName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             };
         }
     }
