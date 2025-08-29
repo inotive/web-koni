@@ -1,88 +1,114 @@
 @if ($files->isEmpty())
-    <div class="empty-state" id="emptyState">
-        @if (request('search'))
-            <i class="fas fa-search"></i>
-            <h4>Data tidak ditemukan</h4>
-            <p>
-                Tidak ada file yang sesuai dengan pencarian
-                <strong>"{{ request('search') }}"</strong>
-            </p>
-        @else
-            <i class="fas fa-folder-open"></i>
-            <h4>Belum ada file yang ditambahkan</h4>
-            <p>Klik tombol "Tambah File" untuk menambahkan file baru</p>
-        @endif
+    <div class="text-center text-muted py-10">
+        <div class="d-flex flex-column align-items-center gap-3">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#F8F9FA" />
+                <path
+                    d="M32 20C25.3726 20 20 25.3726 20 32C20 38.6274 25.3726 44 32 44C38.6274 44 44 38.6274 44 32C44 25.3726 38.6274 20 32 20ZM32 22C37.5467 22 42 26.4533 42 32C42 37.5467 37.5467 42 32 42C26.4533 42 22 37.5467 22 32C22 26.4533 26.4533 22 32 22Z"
+                    fill="#6C7B7F" />
+                <path d="M30 28V36H34V28H30ZM30 24V27H34V24H30Z" fill="#6C7B7F" />
+            </svg>
+            <div class="text-center">
+                <div class="fw-bold text-gray-800 mb-1">
+                    @if (request('search'))
+                        Tidak ada file yang sesuai dengan pencarian/filter
+                    @else
+                        Belum ada file
+                    @endif
+                </div>
+                <div class="text-muted">
+                    @if (request('search'))
+                        Coba ubah kata kunci pencarian atau filter yang Anda gunakan
+                    @else
+                        Klik tombol "Tambah File" untuk menambah file baru
+                    @endif
+                </div>
+            </div>
+        </div>
     </div>
 @else
-    {{-- Data Table --}}
-    <div class="table-responsive" id="dataTable">
-        <table class="table table-bordered table-hover align-middle">
-            <thead class="bg-light">
-                <tr>
-                    <th style="width: 3% !important;">NO</th>
-                    <th class="sortable sort-link" data-sort="nama_dokumen">
-                        <div class="d-flex justify-content-center align-items-center">
-                            <span>NAMA DOKUMEN</span>
-                            <span class="sort-icon ms-2">
-                                @if (request('sort_by') == 'nama_dokumen')
-                                    <i class="fas fa-arrow-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                @else
-                                    <i class="fas fa-sort text-muted"></i>
-                                @endif
-                            </span>
-                        </div>
-                    </th>
-                    <th class="sortable sort-link" data-sort="dokumen_file" style="width: 25% !important;">
-                        <div class="d-flex justify-content-center align-items-center">
-                            <span>FILE DOKUMEN</span>
-                            <span class="sort-icon ms-2">
-                                @if (request('sort_by') == 'dokumen_file')
-                                    <i class="fas fa-arrow-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
-                                @else
-                                    <i class="fas fa-sort text-muted"></i>
-                                @endif
-                            </span>
-                        </div>
-                    </th>
-                    <th style="width: 5% !important;">AKSI</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                @foreach ($files as $file)
-                    <tr id="file-row-{{ $file->id }}">
-                        <td class="text-center">{{ $files->firstItem() + $loop->index }}</td>
-                        <td>
-                            <div class="document-info">
-                                <div class="document-name-wrapper">
-                                    <span class="document-name-text" title="{{ $file->nama_dokumen }}">
-                                        {{ $file->nama_dokumen }}
-                                    </span>
-                                </div>
-                                <div class="document-date">
-                                    {{ optional($file->created_at)->format('d/m/Y') ?? '-' }}
-                                </div>
+    <div style="overflow-x:auto;">
+        <table class="table-row-bordered gy-4 table align-middle">
+            <thead>
+    <tr class="fw-bold text-uppercase text-muted">
+        <th class="bg-light px-6 text-center" style="width: 60px;">No</th>
+        <th class="bg-light px-6 sortable" data-sort="nama_dokumen" style="cursor: pointer;">
+            <div class="d-flex align-items-center justify-content-center gap-2">
+                <span>Nama Dokumen</span>
+                <div class="sort-icon">
+                    @if (request('sort_by') == 'nama_dokumen')
+                        @if (request('order') == 'asc')
+                            <i class="fas fa-sort-up text-primary"></i>
+                        @else
+                            <i class="fas fa-sort-down text-primary"></i>
+                        @endif
+                    @else
+                        <i class="fas fa-sort text-muted"></i>
+                    @endif
+                </div>
+            </div>
+        </th>
+        <th class="bg-light text-start px-6 sortable" data-sort="dokumen_file" style="cursor: pointer;">
+            <div class="d-flex align-items-center justify-content-start gap-2">
+                <span>File Dokumen</span>
+                <div class="sort-icon">
+                    @if (request('sort_by') == 'dokumen_file')
+                        @if (request('order') == 'asc')
+                            <i class="fas fa-sort-up text-primary"></i>
+                        @else
+                            <i class="fas fa-sort-down text-primary"></i>
+                        @endif
+                    @else
+                        <i class="fas fa-sort text-muted"></i>
+                    @endif
+                </div>
+            </div>
+        </th>
+        <th class="bg-light px-6 text-center">Aksi</th>
+    </tr>
+</thead>
+            <tbody class="border-bottom">
+                @forelse ($files as $index => $file)
+                    @php
+                        // Calculate row number correctly for pagination
+                        $rowNumber = method_exists($files, 'firstItem') 
+                            ? $files->firstItem() + $index 
+                            : $index + 1;
+                    @endphp
+                    <tr data-id="{{ $file->id }}" style="position: relative;">
+                        <td class="text-center fw-bold px-2">{{ $rowNumber }}</td>
+                        <td class="fw-bold px-6">
+                            <div class="d-flex flex-column">
+                                <div>{{ $file->nama_dokumen }}</div>
+                                <small class="text-muted">
+                                    {{ optional($file->created_at)->format('d M Y') }}
+                                </small>
                             </div>
                         </td>
-                        <td class="text-center">
+                        <td class="px-6 text-start">
                             @if ($file->dokumen_file)
                                 @php
                                     $fileName = basename($file->dokumen_file);
                                     $fileUrl = route('admin.file-kesekretariat.download', $file);
                                     $fileExtension = strtolower(pathinfo($file->dokumen_file, PATHINFO_EXTENSION));
+
+                                    // Memisahkan timestamp dari nama file
+                                    $parts = explode('_', $fileName, 2);
+                                    $displayName = count($parts) > 1 ? $parts[1] : $fileName;
                                 @endphp
                                 <div class="document-link-container">
-                                    <a href="javascript:void(0)" class="document-link"
-                                        onclick="previewFile('{{ $fileUrl }}', '{{ $fileName }}', '{{ $fileExtension }}')"
-                                        title="Klik untuk melihat {{ $fileName }}">
+                                    <a href="javascript:void(0)" class="document-link" 
+                                       onclick="previewFile('{{ $fileUrl }}', '{{ $fileName }}', '{{ $fileExtension }}')"
+                                       title="Klik untuk melihat {{ $fileName }}">
                                         <i class="fas fa-file-{{ $fileExtension == 'pdf' ? 'pdf' : 'alt' }} me-2"></i>
-                                        {{ Str::limit($fileName, 25) }}
+                                        {{ Str::limit($displayName, 25) }}
                                     </a>
                                 </div>
                             @else
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        <td class="text-center">
+                        <td class="px-2 text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $file->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
@@ -106,11 +132,10 @@
                                         </defs>
                                     </svg>
                                 </button>
-
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li class="dropdown-item edit"
                                         onclick="openEditModal({{ $file->id }}, '{{ addslashes($file->nama_dokumen) }}', '{{ optional($file->tanggal_dokumen)->format('Y-m-d') }}')">
-                                        <i class="ki-outline ki-pencil me-2"></i>Edit
+                                        <i class="ki-outline ki-pencil me-2"></i>Edit File
                                     </li>
                                     <li class="dropdown-item delete"
                                         onclick="deleteFile('{{ $file->id }}', '{{ $file->nama_dokumen }}', '{{ route('admin.file-kesekretariat.destroy', $file) }}')">
@@ -124,21 +149,50 @@
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td class="fw-bold p-6 text-center" colspan="4">
+                            <div class="d-flex flex-column align-items-center gap-3">
+                                <svg width="64" height="64" viewBox="0 0 64 64" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="32" cy="32" r="32" fill="#F8F9FA" />
+                                    <path
+                                        d="M32 20C25.3726 20 20 25.3726 20 32C20 38.6274 25.3726 44 32 44C38.6274 44 44 38.6274 44 32C44 25.3726 38.6274 20 32 20ZM32 22C37.5467 22 42 26.4533 42 32C42 37.5467 37.5467 42 32 42C26.4533 42 22 37.5467 22 32C22 26.4533 26.4533 22 32 22Z"
+                                        fill="#6C7B7F" />
+                                    <path d="M30 28V36H34V28H30ZM30 24V27H34V24H30Z" fill="#6C7B7F" />
+                                </svg>
+                                <div class="text-center">
+                                    <div class="fw-bold text-gray-800 mb-1">
+                                        @if (request('search'))
+                                            Tidak ada file yang sesuai dengan pencarian/filter
+                                        @else
+                                            Belum ada file
+                                        @endif
+                                    </div>
+                                    <div class="text-muted">
+                                        @if (request('search'))
+                                            Coba ubah kata kunci pencarian atau filter yang Anda gunakan
+                                        @else
+                                            Klik tombol "Tambah File" untuk menambah file baru
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
 
-    {{-- Pagination --}}
-    @if ($files->total() > 0)
-    
         <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
             <div class="mb-2 mb-md-0">
                 <div class="d-flex align-items-center">
                     <span class="me-2">Show</span>
                     <select name="per_page" class="form-select form-select-sm w-auto">
                         @foreach ([10, 25, 50, 100] as $limit)
-                            <option value="{{ $limit }}" {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
+                            <option value="{{ $limit }}"
+                                {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
                                 {{ $limit }}
                             </option>
                         @endforeach
@@ -147,7 +201,7 @@
                 </div>
             </div>
 
-            @if ($files->hasPages())
+            @if (isset($files) && method_exists($files, 'hasPages') && $files->hasPages())
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
                         {{ $files->firstItem() }}-{{ $files->lastItem() }} of {{ $files->total() }}
@@ -194,14 +248,13 @@
                         @endif
                     </div>
                 </div>
-            @else
+            @elseif(isset($files) && method_exists($files, 'hasPages'))
                 <div class="text-muted small">
                     1-{{ $files->count() }} of {{ $files->total() }}
                 </div>
             @endif
         </div>
     </div>
-@endif
 @endif
 
 <style>

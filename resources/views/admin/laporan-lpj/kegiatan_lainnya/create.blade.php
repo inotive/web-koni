@@ -415,11 +415,10 @@
                                 </div>
 
                                 <div class="row mt-4">
-                                    <div class="col-md-9 offset-md-3 d-flex justify-content-between">
-                                        <button type="submit" class="btn btn-danger px-4" id="submit-button">Simpan
-                                            Data</button>
-                                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}"
-                                            class="btn btn-secondary px-4">Kembali</a>
+                                <div class="col-md-9 offset-md-3">
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-danger px-4" id="submit-button">Simpan Data</button>
+                                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}" class="btn btn-secondary px-4">Kembali</a>
                                     </div>
                                 </div>
                             </form>

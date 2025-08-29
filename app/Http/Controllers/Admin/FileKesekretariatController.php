@@ -14,47 +14,62 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FileKesekretariatController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request)
     {
         $query = FileKesekretariat::query();
 
+        // Expanded allowed sorts to include all sortable columns
+        $allowedSorts = ['nama_dokumen', 'dokumen_file', 'created_at', 'updated_at', 'file_size'];
+        $sortBy = $request->get('sort_by', 'created_at');
+        $order = strtolower($request->get('order', 'desc'));
+
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'created_at';
+        }
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'desc';
+        }
+
+        // Search functionality
         if ($request->filled('search')) {
-            $search = trim($request->input('search'));
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_dokumen', 'like', '%' . $search . '%')
-                  ->orWhere('dokumen_file', 'like', '%' . $search . '%');
+            $search = $request->get('search');
+            $query->where(function($q) use ($search) {
+                $q->where('nama_dokumen', 'LIKE', "%{$search}%")
+                  ->orWhere('dokumen_file', 'LIKE', "%{$search}%");
             });
         }
 
-        if ($request->filled('file_type')) {
-            $query->where('file_extension', $request->input('file_type'));
+        $perPage = $request->get('per_page', 10);
+
+        // Apply sorting with special handling for different columns
+        if ($sortBy === 'dokumen_file') {
+            // For dokumen_file, we'll sort by whether the document exists or not, then by filename
+            $query->orderByRaw("CASE WHEN dokumen_file IS NULL OR dokumen_file = '' THEN 1 ELSE 0 END")
+                  ->orderBy('dokumen_file', $order);
+        } else {
+            $query->orderBy($sortBy, $order);
         }
 
-        $allowedSortColumns = ['nama_dokumen', 'tanggal_dokumen', 'created_at', 'updated_at', 'file_size'];
-        $sortBy = $request->get('sort_by', 'created_at');
-        $order = $request->get('order', 'desc');
-
-        if (!in_array($sortBy, $allowedSortColumns)) $sortBy = 'created_at';
-        if (!in_array($order, ['asc', 'desc'])) $order = 'desc';
-
-        $query->orderBy($sortBy, $order)->orderBy('id', 'desc');
-
-        $perPage = $this->getValidPerPage($request->input('per_page'));
-        
-        $files = $query->paginate($perPage)->withQueryString();
-
-        $files->through(function ($file) {
-            $file->file_size = $this->formatFileSize($file->file_size ?? 0);
-            $file->display_filename = $this->getOriginalFileName($file->dokumen_file);
-            if ($file->tanggal_dokumen) {
-                $file->tanggal_dokumen_formatted = $file->tanggal_dokumen->format('Y-m-d');
-            }
-            return $file;
-        });
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return view('admin.file-kesekretariat._table', compact('files'));
+        // Add secondary sorting to ensure consistent results
+        if ($sortBy !== 'created_at') {
+            $query->orderBy('created_at', 'desc');
         }
+        $query->orderBy('id', 'desc');
+
+        // Handle AJAX requests for dynamic table loading
+        if ($request->ajax()) {
+            $files = $query->paginate($perPage);
+            $files->appends($request->query());
+
+            return view('admin.file-kesekretariat._table', [
+                'files' => $files
+            ]);
+        }
+
+        // For non-AJAX requests
+        $files = $query->paginate($perPage);
+        $files->appends($request->query());
 
         return view('admin.file-kesekretariat.index', compact('files'));
     }
@@ -249,6 +264,7 @@ class FileKesekretariatController extends Controller
             }
             $fileKesekretariat->delete();
 
+            // Return success response
             return response()->json([
                 'success' => true,
                 'message' => 'File berhasil dihapus.'

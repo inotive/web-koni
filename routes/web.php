@@ -51,14 +51,25 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::put('profile/{profile}/update-profile', [ProfileController::class, 'updateProfile'])->name('profile-update');
     });
 
-    Route::resource('file-kesekretariat', \App\Http\Controllers\Admin\FileKesekretariatController::class);
-    // Letakkan rute 'download' sebelum rute resource
-    Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
-        ->name('file-kesekretariat.download');
+    // File Kesekretariat routes
+    Route::get('file-kesekretariat', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'index'])
+        ->name('file-kesekretariat.index');
+    Route::get('file-kesekretariat/create', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'create'])
+        ->name('file-kesekretariat.create');
+    Route::post('file-kesekretariat', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'store'])
+        ->name('file-kesekretariat.store');
+    Route::get('file-kesekretariat/{fileKesekretariat}', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'show'])
+        ->name('file-kesekretariat.show');
     Route::get('file-kesekretariat/{fileKesekretariat}/edit', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'edit'])
         ->name('file-kesekretariat.edit');
+    Route::put('file-kesekretariat/{fileKesekretariat}', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'update'])
+        ->name('file-kesekretariat.update');
     Route::delete('file-kesekretariat/{fileKesekretariat}', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'destroy'])
-    ->name('file-kesekretariat.destroy');
+        ->name('file-kesekretariat.destroy');
+    
+    // File download route
+    Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
+        ->name('file-kesekretariat.download');
 
 
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {

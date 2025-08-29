@@ -1,8 +1,27 @@
 @if ($kegiatanLainnya->isEmpty())
-    <div class="text-center text-muted py-10">
-        <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
-        <h4>Tidak ada data kegiatan lainnya.</h4>
-    </div>
+    @if (request('search'))
+        {{-- Empty State untuk Search Tidak Ditemukan --}}
+        <div class="text-center text-muted py-10">
+            <i class="fas fa-search fs-1 mb-3 text-muted"></i>
+            <h4>Data tidak ditemukan untuk pencarian "{{ request('search') }}"</h4>
+        </div>
+    @elseif(request('jenis_kegiatan_filter'))
+        {{-- Empty State untuk Filter Tidak Ditemukan --}}
+        <div class="text-center text-muted py-10">
+            <i class="fas fa-filter fs-1 mb-3 text-muted"></i>
+            <h4>Data tidak ditemukan untuk jenis kegiatan "{{ request('jenis_kegiatan_filter') }}"</h4>
+            <button class="btn btn-light-primary mt-3"
+                onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
+                Reset Filter
+            </button>
+        </div>
+    @else
+        {{-- Empty State untuk Data Kosong --}}
+        <div class="text-center text-muted py-10">
+            <i class="fas fa-info-circle fs-1 mb-3 text-muted"></i>
+            <h4>Data tidak tersedia</h4>
+        </div>
+    @endif
 @else
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle table-fixed" id="kt_datatable_dom_positioning_kegiatan">
@@ -250,6 +269,7 @@
         /* Table fixed layout for consistent column alignment */
         .table-fixed {
             table-layout: fixed;
+             min-width: 1200px;
         }
 
         .table-fixed th:nth-child(1),
@@ -464,9 +484,14 @@
 
         @media (max-width: 768px) {
             .table-header,
-            .table-footer {
-                padding: 15px;
-            }
+.table-footer {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 15px 0;
+    border-top: 1px solid #dee2e6;
+    z-index: 10;
+}
 
             .d-flex.justify-content-between.align-items-center.flex-wrap {
                 flex-direction: column;

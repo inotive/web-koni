@@ -20,15 +20,20 @@ class KegiatanLainnyaController extends Controller
 
         $query = Lpj::where('parent_id', $parentCategory->id);
 
+        // Filter berdasarkan jenis kegiatan
         if ($request->jenis_kegiatan_filter) {
             $query->where('nama_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
         }
+        
+        // Filter berdasarkan tanggal
         if ($request->start_date) {
             $query->whereDate('created_at', '>=', $request->start_date);
         }
         if ($request->end_date) {
             $query->whereDate('created_at', '<=', $request->end_date);
         }
+        
+        // Filter berdasarkan pencarian
         if ($request->search) {
             $query->where(function($q) use ($request) {
                 $q->where('nama_program', 'like', "%{$request->search}%")
@@ -36,9 +41,10 @@ class KegiatanLainnyaController extends Controller
             });
         }
 
+        // Sorting
         $allowedSorts = ['nama_program', 'nama_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga', 'created_at'];
-        $sort = $request->get('sort', 'created_at');
-        $direction = $request->get('direction', 'desc');
+        $sort = $request->get('sort_by', 'created_at');
+        $direction = $request->get('sort_order', 'desc');
 
         if (!in_array($sort, $allowedSorts)) {
             $sort = 'created_at';
@@ -49,7 +55,8 @@ class KegiatanLainnyaController extends Controller
 
         $kegiatanLainnya = $query
             ->orderBy($sort, $direction)
-            ->paginate($request->get('per_page', 10));
+            ->paginate($request->get('per_page', 10))
+            ->appends($request->except('page'));
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.kegiatan_lainnya._table', compact('kegiatanLainnya'))->render();

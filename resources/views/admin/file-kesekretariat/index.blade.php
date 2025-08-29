@@ -1129,89 +1129,101 @@
 
 @section('script')
     <script>
+        
         function deleteFile(fileId, fileName, deleteUrl) {
+    Swal.fire({
+        title: "Apakah Anda Yakin?",
+        html: `<p style='text-align:center'>Setelah <strong>${fileName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
+        icon: "warning",
+        showCancelButton: true,
+        reverseButtons: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Hapus!',
+        cancelButtonText: 'Batalkan!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Show loading
             Swal.fire({
-                title: "Apakah Anda Yakin?",
-                html: `<p style='text-align:center'>Setelah <strong>${fileName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
-                icon: "warning",
-                showCancelButton: true,
-                reverseButtons: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Hapus!',
-                cancelButtonText: 'Batalkan!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Show loading
-                    Swal.fire({
-                        title: 'Menghapus...',
-                        text: 'Mohon tunggu',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        willOpen: () => Swal.showLoading()
-                    });
+                title: 'Menghapus...',
+                text: 'Mohon tunggu',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => Swal.showLoading()
+            });
 
-                    // Perform delete request
-                    $.ajax({
-                        url: deleteUrl,
-                        type: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        success: function(response) {
-                            Swal.close();
-                            if (response.success) {
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: response.message || 'File berhasil dihapus',
-                                    icon: 'success',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
+            // Setup CSRF token
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-                                // Remove row with animation
-                                $(`#file-row-${fileId}`).fadeOut(300, function() {
-                                    $(this).remove();
-                                    renumberTableRows();
-                                    
-                                    // Check if table is empty
-                                    if ($('#tableBody tr').length === 0) {
-                                        showEmptyState();
-                                    }
-                                });
+            $.ajax({
+                url: deleteUrl,
+                type: 'DELETE',
+                success: function(response) {
+                    Swal.close();
+                    if (response.success) {
+                        // Show success message
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: response.message || 'File berhasil dihapus',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        // Remove the row from DOM immediately
+                        $(`#file-row-${fileId}`).fadeOut(300, function() {
+                            $(this).remove();
+                            
+                            // Check if table is now empty
+                            const remainingRows = $('#tableBody tr:visible').length;
+                            if (remainingRows === 0) {
+                                showEmptyState();
                             } else {
-                                Swal.fire({
-                                    title: 'Gagal!',
-                                    text: response.message || 'Terjadi kesalahan saat menghapus',
-                                    icon: 'error'
-                                });
+                                // Renumber remaining rows
+                                renumberTableRows();
                             }
-                        },
-                        error: function(xhr) {
-                            Swal.close();
-                            let errorMessage = 'Terjadi kesalahan saat menghapus file';
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                            }
-                            Swal.fire({
-                                title: 'Error!',
-                                text: errorMessage,
-                                icon: 'error'
-                            });
-                        }
-                    });
-                } else {
+                        });
+
+                        // Also refresh the table data to ensure consistency
+                        setTimeout(() => {
+                            performSearch({}, false); // false = don't show loading indicator
+                        }, 500);
+
+                    } else {
+                        Swal.fire({
+                            title: 'Gagal!',
+                            text: response.message || 'Terjadi kesalahan saat menghapus',
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    Swal.close();
+                    let errorMessage = 'Terjadi kesalahan saat menghapus file';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    }
                     Swal.fire({
-                        title: "Aksi Dibatalkan",
-                        icon: "info",
-                        timer: 1500,
-                        showConfirmButton: false
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error'
                     });
                 }
             });
+        } else {
+            Swal.fire({
+                title: "Aksi Dibatalkan",
+                icon: "info",
+                timer: 1500,
+                showConfirmButton: false
+            });
         }
-
+    });
+}
         // Show empty state when no files
         function showEmptyState() {
             $('#tableBody').html(`
@@ -1312,6 +1324,14 @@
             }, 300);
 
             $(document).on('input', 'input[name="search"]', debouncedSearch);
+            
+            // Also trigger search on Enter key
+            $(document).on('keypress', 'input[name="search"]', function(e) {
+                if (e.which === 13) { // Enter key
+                    e.preventDefault();
+                    performSearch({ page: 1 }, true);
+                }
+            });
             let isLoading = false;
             let searchTimeout;
             let editDropzoneInitialized = false;
@@ -1747,188 +1767,251 @@
 
             // Submit edit form
             function submitEditForm() {
-                const form = $('#editFileForm');
-                const formData = new FormData(form[0]);
-                const fileId = $('#edit_file_id').val();
+    const form = $('#editFileForm');
+    const formData = new FormData(form[0]);
+    const fileId = $('#edit_file_id').val();
 
-                // Manual validation
-                let isValid = true;
-                $('.is-invalid').removeClass('is-invalid');
-                $('.invalid-feedback').empty();
+    // Manual validation
+    let isValid = true;
+    $('.is-invalid').removeClass('is-invalid');
+    $('.invalid-feedback').empty();
 
-                const namaDokumen = $('#edit_nama_dokumen').val().trim();
-                if (!namaDokumen) {
-                    $('#edit_nama_dokumen_error').text('Nama dokumen wajib diisi');
-                    $('#edit_nama_dokumen').addClass('is-invalid');
-                    isValid = false;
+    const namaDokumen = $('#edit_nama_dokumen').val().trim();
+    if (!namaDokumen) {
+        $('#edit_nama_dokumen_error').text('Nama dokumen wajib diisi');
+        $('#edit_nama_dokumen').addClass('is-invalid');
+        isValid = false;
+    }
+
+    const tanggalDokumen = $('#edit_tanggal_dokumen').val();
+    if (!tanggalDokumen) {
+        $('#edit_tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
+        $('#edit_tanggal_dokumen').addClass('is-invalid');
+        isValid = false;
+    }
+
+    if (!isValid) {
+        return false;
+    }
+
+    const submitBtn = $('#editSubmitBtn');
+    const originalText = submitBtn.html();
+
+    $.ajax({
+        url: `/admin/file-kesekretariat/${fileId}`,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        beforeSend: function() {
+            submitBtn.prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyimpan...');
+        },
+        success: function(response) {
+            $('#editFileModal').modal('hide');
+            toastr.success(response.message || 'File berhasil diperbarui', 'Berhasil!');
+            
+            // PERBAIKAN: Force refresh table dengan parameter saat ini
+            setTimeout(function() {
+                const currentSearch = $('input[name="search"]').val();
+                const currentUrl = new URLSearchParams(window.location.search);
+                const currentPage = currentUrl.get('page') || 1;
+                const currentSortBy = currentUrl.get('sort_by') || 'created_at';
+                const currentOrder = currentUrl.get('order') || 'desc';
+                
+                const searchParams = {
+                    page: currentPage,
+                    sort_by: currentSortBy,
+                    order: currentOrder
+                };
+                
+                if (currentSearch && currentSearch.trim()) {
+                    searchParams.search = currentSearch;
                 }
-
-                const tanggalDokumen = $('#edit_tanggal_dokumen').val();
-                if (!tanggalDokumen) {
-                    $('#edit_tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
-                    $('#edit_tanggal_dokumen').addClass('is-invalid');
-                    isValid = false;
-                }
-
-                if (!isValid) {
-                    return false;
-                }
-
-                const submitBtn = $('#editSubmitBtn');
-                const originalText = submitBtn.html();
-
-                $.ajax({
-                    url: `/admin/file-kesekretariat/${fileId}`,
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    beforeSend: function() {
-                        submitBtn.prop('disabled', true)
-                            .html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyimpan...');
-                    },
-                    success: function(response) {
-                        $('#editFileModal').modal('hide');
-                        toastr.success(response.message || 'File berhasil diperbarui', 'Berhasil!');
-                        
-                        if(response.file) {
-                            updateExistingRow(response.file);
-                        } else {
-                            performSearch();
-                        }
-                    },
-                    error: function(xhr) {
-                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                            let errors = xhr.responseJSON.errors;
-                            $.each(errors, function(key, value) {
-                                $(`#edit_${key}`).addClass('is-invalid');
-                                $(`#edit_${key}_error`).text(value[0]);
-                            });
-                        } else {
-                            let errorMessage = 'Terjadi kesalahan saat memperbarui file';
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                            }
-                            toastr.error(errorMessage, 'Error!');
-                        }
-                    },
-                    complete: function() {
-                        submitBtn.prop('disabled', false).html(originalText);
-                    }
+                
+                performSearch(searchParams, true);
+            }, 300);
+        },
+        error: function(xhr) {
+            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                let errors = xhr.responseJSON.errors;
+                $.each(errors, function(key, value) {
+                    $(`#edit_${key}`).addClass('is-invalid');
+                    $(`#edit_${key}_error`).text(value[0]);
                 });
+            } else {
+                let errorMessage = 'Terjadi kesalahan saat memperbarui file';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                toastr.error(errorMessage, 'Error!');
             }
+        },
+        complete: function() {
+            submitBtn.prop('disabled', false).html(originalText);
+        }
+    });
+}
+
 
             // Initialize event handlers
             function initializeEventHandlers() {
-                // Remove existing handlers
-                $(document).off('click.sorting', 'th.sortable');
-                $(document).off('click.dropdown', '.dropdown-toggle-action');
-                $(document).off('click.delete', '.delete-btn');
-                $(document).off('click.pagination', '.page-link');
+    // Remove existing handlers
+    $(document).off('click.sorting', 'th.sortable');
+    $(document).off('click.dropdown', '.dropdown-toggle-action');
+    $(document).off('click.delete', '.delete-btn');
+    $(document).off('click.pagination', '.pagination-link'); // Ubah selector ini
 
-                // Sorting functionality
-                $(document).on('click.sorting', 'th.sortable', function(e) {
-                    e.preventDefault();
-                    const sortBy = $(this).data('sort');
-                    let currentOrder = $(this).data('order') || 'asc';
-                    const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-                    $(this).data('order', newOrder);
-                    performSearch({
-                        page: 1,
-                        sort_by: sortBy,
-                        order: newOrder
-                    }, true);
-                });
+    // Sorting functionality
+    $(document).on('click.sorting', 'th.sortable', function(e) {
+        e.preventDefault();
+        const sortBy = $(this).data('sort');
+        let currentOrder = $(this).data('order') || 'asc';
+        const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+        $(this).data('order', newOrder);
+        performSearch({
+            page: 1,
+            sort_by: sortBy,
+            order: newOrder
+        }, true);
+    });
 
                 // Dropdown functionality
-                $(document).on('click.dropdown', '.dropdown-toggle-action', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $('.dropdown-menu-action').removeClass('show');
-                    $(this).next('.dropdown-menu-action').toggleClass('show');
-                });
+                $(document).on('click.dropdown', '.dropdown-toggle-action, .dropdown-toggle-custom', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('.dropdown-menu-action, .dropdown-menu-custom').removeClass('show');
+        $(this).next('.dropdown-menu-action, .dropdown-menu-custom').toggleClass('show');
+    });
+
 
                 // Pagination functionality
-                $(document).on('click.pagination', '.page-link', function(e) {
-                    e.preventDefault();
-                    const url = $(this).attr('href');
-                    if (url && url !== '#' && !$(this).parent().hasClass('disabled')) {
-                        const urlParams = new URLSearchParams(url.split('?')[1]);
-                        const page = urlParams.get('page');
-                        if (page) {
-                            performSearch({
-                                page: page
-                            }, true);
-                        }
-                    }
-                });
+               $(document).on('click.pagination', '.pagination-link', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const url = $(this).attr('href');
+        console.log('Pagination clicked:', url); // Debug log
+        
+        if (url && url !== '#' && !$(this).hasClass('disabled')) {
+            const urlParams = new URLSearchParams(url.split('?')[1]);
+            const page = urlParams.get('page');
+            
+            if (page) {
+                console.log('Going to page:', page); // Debug log
+                
+                // Get current search and sort parameters
+                const currentSearch = $('input[name="search"]').val();
+                const currentSortBy = getUrlParameter('sort_by') || 'created_at';
+                const currentOrder = getUrlParameter('order') || 'desc';
+                const currentPerPage = getUrlParameter('per_page') || '10';
+                
+                const searchParams = {
+                    page: page,
+                    sort_by: currentSortBy,
+                    order: currentOrder,
+                    per_page: currentPerPage
+                };
+                
+                if (currentSearch && currentSearch.trim()) {
+                    searchParams.search = currentSearch;
+                }
+                
+                performSearch(searchParams, true);
             }
-
+        }
+    });
+}
             // Perform AJAX search
             function performSearch(params = {}, showLoadingIndicator = true) {
-                if (isLoading) return;
+    if (isLoading) return;
 
-                if (showLoadingIndicator) showLoading();
+    if (showLoadingIndicator) showLoading();
 
-                const searchParams = new URLSearchParams();
-                const search = $('#filter input[name="search"]').val().trim();
+    const searchParams = new URLSearchParams();
+    const search = $('#filter input[name="search"]').val().trim();
+    
+    // Get current URL parameters to maintain state
+    const currentUrl = new URLSearchParams(window.location.search);
 
-                if (search) searchParams.set('search', search);
-                if (params.page) searchParams.set('page', params.page);
-                if (params.per_page) searchParams.set('per_page', params.per_page);
-                if (params.sort_by) searchParams.set('sort_by', params.sort_by);
-                if (params.order) searchParams.set('order', params.order);
+    if (search) searchParams.set('search', search);
+    if (params.page) searchParams.set('page', params.page);
+    if (params.per_page) searchParams.set('per_page', params.per_page);
+    if (params.sort_by) searchParams.set('sort_by', params.sort_by);
+    if (params.order) searchParams.set('order', params.order);
 
-                // Keep existing sort parameters if not being changed
-                if (!params.sort_by && !params.order) {
-                    const currentUrl = new URLSearchParams(window.location.search);
-                    if (currentUrl.get('sort_by')) searchParams.set('sort_by', currentUrl.get('sort_by'));
-                    if (currentUrl.get('order')) searchParams.set('order', currentUrl.get('order'));
-                }
+    // Keep existing parameters if not being changed
+    if (!params.sort_by && !params.order) {
+        const sortBy = currentUrl.get('sort_by') || 'created_at';
+        const order = currentUrl.get('order') || 'desc';
+        searchParams.set('sort_by', sortBy);
+        searchParams.set('order', order);
+    }
+    
+    // Keep per_page if not specified
+    if (!params.per_page) {
+        const perPage = currentUrl.get('per_page') || '10';
+        searchParams.set('per_page', perPage);
+    }
 
-                const url = `${baseUrl}?${searchParams.toString()}`;
+    const baseUrl = "{{ route('admin.file-kesekretariat.index') }}";
+    const url = `${baseUrl}?${searchParams.toString()}`;
 
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'text/html'
-                    },
-                    beforeSend: function() {
-                        $('#tableContainer').addClass('table-loading');
-                        $('#tableContainer').html(
-                            '<div class="py-20 text-center"><span class="spinner-border text-danger"></span></div>'
-                        );
-                    },
-                    success: function(response) {
-                        $('#tableContainer').removeClass('table-loading');
-                        // This is the important change for performance
-                        $('#tableContainer').html(response); 
-                        
-                        initializeEventHandlers();
-                        addFileIcons();
-                        renumberTableRows();
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'text/html'
+        },
+        beforeSend: function() {
+            $('#tableContainer').addClass('table-loading');
+        },
+        success: function(response) {
+            $('#tableContainer').removeClass('table-loading');
+            $('#tableContainer').html(response);
+            
+            initializeEventHandlers();
+            addFileIcons();
 
-                        window.history.pushState({}, '', url);
-                    },
-                    error: function(xhr, status, error) {
-                        $('#tableContainer').removeClass('table-loading');
-                        $('#tableContainer').html(
-                            '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
-                        );
-                        console.error('Search error:', error);
-                        toastr.error('Terjadi kesalahan saat mencari data', 'Error!');
-                    },
-                    complete: function() {
-                        hideLoading();
-                    }
-                });
+            // Update URL without refreshing page
+            window.history.pushState({}, '', url);
+            
+            // Scroll to top of table if it's a new search
+            if (params.page === 1 || params.search !== undefined) {
+                $('html, body').animate({
+                    scrollTop: $('#tableContainer').offset().top - 100
+                }, 300);
             }
+        },
+        error: function(xhr, status, error) {
+            $('#tableContainer').removeClass('table-loading');
+            $('#tableContainer').html(
+                '<div class="py-20 text-center text-danger fw-bold">Terjadi kesalahan saat memuat data.</div>'
+            );
+            console.error('Search error:', error);
+            toastr.error('Terjadi kesalahan saat mencari data', 'Error!');
+        },
+        complete: function() {
+            hideLoading();
+        }
+    });
+}
+
+// Additional helper function to show/hide loading
+function showLoading() {
+    isLoading = true;
+    $('.search-loading').show();
+}
+
+function hideLoading() {
+    isLoading = false;
+    $('.search-loading').hide();
+}
 
             // Renumber table rows
             function renumberTableRows() {
@@ -1939,92 +2022,109 @@
 
             // Submit form for adding new file
             function submitForm(formId) {
-                const form = $('#' + formId);
-                const formData = new FormData(form[0]);
+    const form = $('#' + formId);
+    const formData = new FormData(form[0]);
 
-                // Manual validation
-                let isValid = true;
+    // Manual validation
+    let isValid = true;
 
-                const namaDokumen = form.find('input[name="nama_dokumen"]').val().trim();
-                if (!namaDokumen) {
-                    $('#nama_dokumen_error').text('Nama dokumen wajib diisi');
-                    form.find('input[name="nama_dokumen"]').addClass('is-invalid');
-                    isValid = false;
+    const namaDokumen = form.find('input[name="nama_dokumen"]').val().trim();
+    if (!namaDokumen) {
+        $('#nama_dokumen_error').text('Nama dokumen wajib diisi');
+        form.find('input[name="nama_dokumen"]').addClass('is-invalid');
+        isValid = false;
+    }
+
+    const tanggalDokumen = form.find('input[name="tanggal_dokumen"]').val();
+    if (!tanggalDokumen) {
+        $('#tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
+        form.find('input[name="tanggal_dokumen"]').addClass('is-invalid');
+        isValid = false;
+    }
+
+    const fileInput = document.getElementById('dokumen_file_input');
+    if (!fileInput.files || fileInput.files.length === 0) {
+        $('#dokumen_file_error').text('File dokumen wajib diunggah');
+        $('#dropzone-tambahFileForm').addClass('error');
+        isValid = false;
+    }
+
+    if (!isValid) {
+        const firstError = $('.is-invalid, .error').first();
+        if (firstError.length) {
+            $('html, body').animate({
+                scrollTop: firstError.offset().top - 100
+            }, 500);
+        }
+        return false;
+    }
+
+    const submitBtn = $('#submitBtn');
+    const originalText = submitBtn.html();
+
+    $.ajax({
+        url: form.attr('action'),
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+            submitBtn.prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyimpan...');
+        },
+        success: function(response) {
+            $('#tambahFileModal').modal('hide');
+            toastr.success(response.message || 'File berhasil ditambahkan', 'Berhasil!');
+            
+            form.trigger('reset');
+            clearFormErrors();
+            removeSelectedFile();
+            
+            // PERBAIKAN: Force refresh table dengan sorting yang tepat
+            setTimeout(function() {
+                // Get current search parameters
+                const currentSearch = $('input[name="search"]').val();
+                const searchParams = {
+                    page: 1,
+                    sort_by: 'created_at',
+                    order: 'desc'
+                };
+                
+                // Add search if exists
+                if (currentSearch && currentSearch.trim()) {
+                    searchParams.search = currentSearch;
                 }
-
-                const tanggalDokumen = form.find('input[name="tanggal_dokumen"]').val();
-                if (!tanggalDokumen) {
-                    $('#tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
-                    form.find('input[name="tanggal_dokumen"]').addClass('is-invalid');
-                    isValid = false;
+                
+                // Force refresh the entire table
+                performSearch(searchParams, true);
+                
+                // Remove empty state if exists
+                $('#emptyStateMessage').remove();
+            }, 300);
+        },
+        error: function(xhr) {
+            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                showFormErrors(xhr.responseJSON.errors);
+                const firstError = $('.is-invalid, .error').first();
+                if (firstError.length) {
+                    $('html, body').animate({
+                        scrollTop: firstError.offset().top - 100
+                    }, 500);
                 }
-
-                const fileInput = document.getElementById('dokumen_file_input');
-                if (!fileInput.files || fileInput.files.length === 0) {
-                    $('#dokumen_file_error').text('File dokumen wajib diunggah');
-                    $('#dropzone-tambahFileForm').addClass('error');
-                    isValid = false;
+            } else {
+                let errorMessage = 'Terjadi kesalahan saat menyimpan file';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
                 }
-
-                if (!isValid) {
-                    const firstError = $('.is-invalid, .error').first();
-                    if (firstError.length) {
-                        $('html, body').animate({
-                            scrollTop: firstError.offset().top - 100
-                        }, 500);
-                    }
-                    return false;
-                }
-
-                const submitBtn = $('#submitBtn');
-                const originalText = submitBtn.html();
-
-                $.ajax({
-                    url: form.attr('action'),
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    beforeSend: function() {
-                        submitBtn.prop('disabled', true)                            .html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyimpan...');
-                    },
-                    success: function(response) {
-                        $('#tambahFileModal').modal('hide');
-                        toastr.success(response.message || 'File berhasil ditambahkan', 'Berhasil!');
-                        
-                        form.trigger('reset');
-                        clearFormErrors();
-                        removeSelectedFile();
-                        
-                        if(response.file) {
-                            appendNewRowToTable(response.file);
-                            $('#emptyStateMessage').remove();
-                        } else {
-                            performSearch({page: 1, sort_by: 'created_at', order: 'desc'}, true);
-                        }
-                    },
-                    error: function(xhr) {
-                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                            showFormErrors(xhr.responseJSON.errors);
-                            const firstError = $('.is-invalid, .error').first();
-                            if (firstError.length) {
-                                $('html, body').animate({
-                                    scrollTop: firstError.offset().top - 100
-                                }, 500);
-                            }
-                        } else {
-                            let errorMessage = 'Terjadi kesalahan saat menyimpan file';
-                            if (xhr.responseJSON && xhr.responseJSON.message) {
-                                errorMessage = xhr.responseJSON.message;
-                            }
-                            toastr.error(errorMessage, 'Error!');
-                        }
-                    },
-                    complete: function() {
-                        submitBtn.prop('disabled', false).html(originalText);
-                    }
-                });
+                toastr.error(errorMessage, 'Error!');
             }
+        },
+        complete: function() {
+            submitBtn.prop('disabled', false).html(originalText);
+        }
+    });
+}
+
 
             // Append new row to table
             function appendNewRowToTable(fileData) {
