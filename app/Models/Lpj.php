@@ -15,6 +15,8 @@ class Lpj extends Model
 
     protected $fillable = [
         'parent_id',
+        'user_id',
+        'status',
         'icon',
         'nama_program',
         'nama_kegiatan',

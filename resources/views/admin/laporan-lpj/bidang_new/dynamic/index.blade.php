@@ -445,6 +445,15 @@
                         </div>
                     @endif
 
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                            <i class="fas fa-file-export me-1" style="color: white !important;"></i>Export
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" id="export-excel-btn" href="#" style="font-weight: bold; background-color: #2e7d32; color: white;"> <i class="fa-solid fa-file-excel" style="color: white"></i> Export to Excel</a></li>
+                        </ul>
+                    </div>
+
                     {{-- Search Input --}}
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
@@ -1226,6 +1235,26 @@
                         };
                     }
                 }
+            });
+        // Export functionality
+            $('#export-excel-btn').on('click', function(e) {
+                e.preventDefault();
+
+                let exportUrl;
+                if (parentId) {
+                    exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.child.export-csv', ':parentId') }}".replace(':parentId', parentId);
+                } else {
+                    exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.export-csv') }}";
+                }
+
+                const search = $('#search').val();
+
+                const url = new URL(exportUrl, window.location.origin);
+                if (search) {
+                    url.searchParams.set('search', search);
+                }
+
+                window.location.href = url.toString();
             });
         });
     </script>

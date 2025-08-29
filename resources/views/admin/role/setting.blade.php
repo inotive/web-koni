@@ -43,6 +43,8 @@
                                 @elseif ($permission->name === 'laporan-lpj')
                                     <p class="mb-3 desc">Memegang kontrol penuh atas data Laporan Pertanggungjawaban untuk
                                         keperluan teknis dan administratif.</p>
+                                @elseif ($permission->name === 'pengajuan-modifikasi-laporan')
+                                    <p class="mb-3 desc">Mengelola pengajuan modifikasi atas data Laporan Pertanggungjawaban untuk keperluan teknis dan administratif.</p>
                                 @elseif ($permission->name === 'database-bendahara')
                                     <p class="mb-3 desc">Mengelola seluruh data master yang berkaitan dengan keuangan dan
                                         perbendaharaan KONI.</p>
