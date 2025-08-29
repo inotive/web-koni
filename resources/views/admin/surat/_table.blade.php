@@ -88,12 +88,11 @@
                         <td class="text-center fw-bold px-2">{{ $rowNumber }}</td>
                         <td class="fw-bold px-6">
                             <div class="d-flex flex-column">
-                                {{ $surat->nama_kegiatan }}
+                                <div>{{ $surat->nama_kegiatan }}</div>
+                                <small class="text-muted">
+                                    {{ $surat->no_surat }}
+                                </small>
                             </div>
-                            <br>
-                            <small class="text-muted">
-                                {{ $surat->no_surat }}
-                            </small>
                         </td>
                         <td class="px-6 text-start">
                             @if ($surat->dokumen_surat)
@@ -101,11 +100,15 @@
                                     $fileName = basename($surat->dokumen_surat);
                                     $fileUrl = asset('storage/' . $surat->dokumen_surat);
                                     $fileExtension = pathinfo($surat->dokumen_surat, PATHINFO_EXTENSION);
+
+                                    // Memisahkan timestamp dari nama file
+                                    $parts = explode('_', $fileName, 2);
+                                    $displayName = count($parts) > 1 ? $parts[1] : $fileName;
                                 @endphp
                                 <div class="document-link-container">
                                     <a href="{{ $fileUrl }}" target="_blank" class="document-link" title="Klik untuk melihat {{ $fileName }}">
                                         <i class="fas fa-file-{{ $fileExtension == 'pdf' ? 'pdf' : 'alt' }} me-2"></i>
-                                        {{ Str::limit($fileName, 25) }}
+                                        {{ Str::limit($displayName, 25) }}
                                     </a>
                                 </div>
                             @else

@@ -103,7 +103,11 @@ class SekretariatController extends Controller
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('sekretariat/foto_jurnal', 'public');
+                $path = $file->store('sekretariat/foto_jurnal', 'public');
+                $fotoPaths[] = [
+                    'path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                ];
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -111,7 +115,11 @@ class SekretariatController extends Controller
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $dokumenPaths[] = $file->store('sekretariat/dokumen_lpj', 'public');
+                $path = $file->store('sekretariat/dokumen_lpj', 'public');
+                $dokumenPaths[] = [
+                    'path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                ];
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
@@ -185,48 +193,42 @@ class SekretariatController extends Controller
         ];
 
         // Handle foto_jurnal
-        $existingFotos = $request->existing_foto_jurnal ?? [];
-        $deletedFotos = $request->deleted_fotos ?? [];
-
-        // Delete files marked for deletion
-        if (!empty($deletedFotos)) {
-            foreach ($deletedFotos as $deletedFoto) {
-                Storage::disk('public')->delete($deletedFoto);
+        $existingFotos = [];
+        if ($request->existing_foto_jurnal) {
+            foreach ($request->existing_foto_jurnal as $fotoJson) {
+                $existingFotos[] = json_decode($fotoJson, true) ?? ['path' => $fotoJson, 'original_name' => basename($fotoJson)];
             }
         }
 
-        $newFotoPaths = [];
         if ($request->hasFile('foto_jurnal')) {
             foreach ($request->file('foto_jurnal') as $file) {
-                $newFotoPaths[] = $file->store('sekretariat/foto_jurnal', 'public');
+                $path = $file->store('sekretariat/foto_jurnal', 'public');
+                $existingFotos[] = [
+                    'path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                ];
             }
         }
-
-        // Combine existing and new photos
-        $allFotos = array_merge($existingFotos, $newFotoPaths);
-        $data['foto_jurnal'] = !empty($allFotos) ? $allFotos : null;
+        $data['foto_jurnal'] = !empty($existingFotos) ? $existingFotos : null;
 
         // Handle dokumen_lpj
-        $existingDokumens = $request->existing_dokumen_lpj ?? [];
-        $deletedDokumens = $request->deleted_dokumens ?? [];
-
-        // Delete files marked for deletion
-        if (!empty($deletedDokumens)) {
-            foreach ($deletedDokumens as $deletedDokumen) {
-                Storage::disk('public')->delete($deletedDokumen);
+        $existingDokumens = [];
+        if ($request->existing_dokumen_lpj) {
+            foreach ($request->existing_dokumen_lpj as $dokumenJson) {
+                $existingDokumens[] = json_decode($dokumenJson, true) ?? ['path' => $dokumenJson, 'original_name' => basename($dokumenJson)];
             }
         }
 
-        $newDokumenPaths = [];
         if ($request->hasFile('dokumen_lpj')) {
             foreach ($request->file('dokumen_lpj') as $file) {
-                $newDokumenPaths[] = $file->store('sekretariat/dokumen_lpj', 'public');
+                $path = $file->store('sekretariat/dokumen_lpj', 'public');
+                $existingDokumens[] = [
+                    'path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                ];
             }
         }
-
-        // Combine existing and new documents
-        $allDokumens = array_merge($existingDokumens, $newDokumenPaths);
-        $data['dokumen_lpj'] = !empty($allDokumens) ? $allDokumens : null;
+        $data['dokumen_lpj'] = !empty($existingDokumens) ? $existingDokumens : null;
 
         $sekretariat->update($data);
 

@@ -297,7 +297,7 @@
         }
 
         .dropdown-item-custom.delete:hover {
-            background-color: #ffcad7 !important;
+            background-color: #f8d7da !important;
         }
 
         .pagination {
@@ -318,8 +318,8 @@
         }
 
         .pagination-sm .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
             color: white;
         }
 
@@ -351,7 +351,7 @@
         }
 
         .simple-pagination .page-item.active .page-link {
-            background-color: #007bff !important;
+            background-color: #0d6efd !important;
             color: white !important;
         }
 
