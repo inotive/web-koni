@@ -841,7 +841,12 @@
 
         if (downloadBtn) {
             downloadBtn.onclick = function() {
-                window.open('/storage/' + path, '_blank');
+                const link = document.createElement('a');
+                link.href = '/storage/' + path;
+                link.setAttribute('download', originalName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             };
         }
     }
@@ -960,6 +965,7 @@
                 <div class="row g-3">
                     ${data.foto_jurnal.map(f => {
                         const path = typeof f === 'object' ? f.path : f;
+                        const name = typeof f === 'object' ? (f.original_name || path.split('/').pop()) : path.split('/').pop();
                         return `
                         <div class="col-6 col-md-4">
                             <div class="border rounded overflow-hidden" style="height: 120px;">
@@ -968,6 +974,7 @@
                                      style="object-fit: cover; cursor: pointer;"
                                      onclick="window.open('/storage/${path}', '_blank')"
                                      onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'d-flex align-items-center justify-content-center h-100 text-muted\'>Error loading image</div>'">
+                                <div class="text-center small bg-light p-1">${name}</div>
                             </div>
                         </div>
                     `}).join('')}
@@ -981,7 +988,7 @@
                 <div class="d-flex flex-column gap-2">
                     ${data.dokumen_lpj.map(d => {
                         const path = typeof d === 'object' ? d.path : d;
-                        const name = typeof d === 'object' ? d.original_name : path.split('/').pop();
+                        const name = typeof d === 'object' ? (d.original_name || path.split('/').pop()) : path.split('/').pop();
                         const extension = name.split('.').pop().toLowerCase();
 
                         let iconClass = 'fas fa-file text-secondary';

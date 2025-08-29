@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Lpj;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SekretariatController extends Controller
 {
@@ -100,25 +101,31 @@ class SekretariatController extends Controller
             'icon' => 'fas fa-clipboard-list'
         ];
 
+        // Handle foto_jurnal dengan nama asli
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $path = $file->store('sekretariat/foto_jurnal', 'public');
+                // Gunakan nama asli file
+                $originalName = $file->getClientOriginalName();
+                $path = $file->storeAs('sekretariat/foto_jurnal', $originalName, 'public');
                 $fotoPaths[] = [
                     'path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
+                    'original_name' => $originalName,
                 ];
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
 
+        // Handle dokumen_lpj dengan nama asli
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $path = $file->store('sekretariat/dokumen_lpj', 'public');
+                // Gunakan nama asli file
+                $originalName = $file->getClientOriginalName();
+                $path = $file->storeAs('sekretariat/dokumen_lpj', $originalName, 'public');
                 $dokumenPaths[] = [
                     'path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
+                    'original_name' => $originalName,
                 ];
             }
             $data['dokumen_lpj'] = $dokumenPaths;
@@ -195,17 +202,43 @@ class SekretariatController extends Controller
         // Handle foto_jurnal
         $existingFotos = [];
         if ($request->existing_foto_jurnal) {
-            foreach ($request->existing_foto_jurnal as $fotoJson) {
-                $existingFotos[] = json_decode($fotoJson, true) ?? ['path' => $fotoJson, 'original_name' => basename($fotoJson)];
+            foreach ($request->existing_foto_jurnal as $foto) {
+                // Jika $foto adalah string (path langsung)
+                if (is_string($foto)) {
+                    $existingFotos[] = [
+                        'path' => $foto,
+                        'original_name' => basename($foto)
+                    ];
+                }
+                // Jika $foto adalah array dengan struktur yang benar
+                elseif (is_array($foto)) {
+                    // Pastikan array memiliki key yang diperlukan
+                    if (isset($foto['path'])) {
+                        $existingFotos[] = [
+                            'path' => $foto['path'],
+                            'original_name' => $foto['original_name'] ?? basename($foto['path'])
+                        ];
+                    }
+                }
             }
         }
 
         if ($request->hasFile('foto_jurnal')) {
             foreach ($request->file('foto_jurnal') as $file) {
-                $path = $file->store('sekretariat/foto_jurnal', 'public');
+                // Gunakan nama asli file
+                $originalName = $file->getClientOriginalName();
+                // Cek jika file dengan nama yang sama sudah ada, tambahkan timestamp jika perlu
+                $path = 'sekretariat/foto_jurnal/' . $originalName;
+                if (Storage::disk('public')->exists($path)) {
+                    $filename = pathinfo($originalName, PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $timestamp = time();
+                    $originalName = $filename . '_' . $timestamp . '.' . $extension;
+                }
+                $path = $file->storeAs('sekretariat/foto_jurnal', $originalName, 'public');
                 $existingFotos[] = [
                     'path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
+                    'original_name' => $originalName,
                 ];
             }
         }
@@ -214,17 +247,43 @@ class SekretariatController extends Controller
         // Handle dokumen_lpj
         $existingDokumens = [];
         if ($request->existing_dokumen_lpj) {
-            foreach ($request->existing_dokumen_lpj as $dokumenJson) {
-                $existingDokumens[] = json_decode($dokumenJson, true) ?? ['path' => $dokumenJson, 'original_name' => basename($dokumenJson)];
+            foreach ($request->existing_dokumen_lpj as $dokumen) {
+                // Jika $dokumen adalah string (path langsung)
+                if (is_string($dokumen)) {
+                    $existingDokumens[] = [
+                        'path' => $dokumen,
+                        'original_name' => basename($dokumen)
+                    ];
+                }
+                // Jika $dokumen adalah array dengan struktur yang benar
+                elseif (is_array($dokumen)) {
+                    // Pastikan array memiliki key yang diperlukan
+                    if (isset($dokumen['path'])) {
+                        $existingDokumens[] = [
+                            'path' => $dokumen['path'],
+                            'original_name' => $dokumen['original_name'] ?? basename($dokumen['path'])
+                        ];
+                    }
+                }
             }
         }
 
         if ($request->hasFile('dokumen_lpj')) {
             foreach ($request->file('dokumen_lpj') as $file) {
-                $path = $file->store('sekretariat/dokumen_lpj', 'public');
+                // Gunakan nama asli file
+                $originalName = $file->getClientOriginalName();
+                // Cek jika file dengan nama yang sama sudah ada, tambahkan timestamp jika perlu
+                $path = 'sekretariat/dokumen_lpj/' . $originalName;
+                if (Storage::disk('public')->exists($path)) {
+                    $filename = pathinfo($originalName, PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $timestamp = time();
+                    $originalName = $filename . '_' . $timestamp . '.' . $extension;
+                }
+                $path = $file->storeAs('sekretariat/dokumen_lpj', $originalName, 'public');
                 $existingDokumens[] = [
                     'path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
+                    'original_name' => $originalName,
                 ];
             }
         }
@@ -249,13 +308,27 @@ class SekretariatController extends Controller
             // Hapus file terkait
             if ($sekretariat->foto_jurnal) {
                 foreach ($sekretariat->foto_jurnal as $foto) {
-                    Storage::disk('public')->delete($foto);
+                    // Jika $foto adalah array dengan key 'path'
+                    if (is_array($foto) && isset($foto['path'])) {
+                        Storage::disk('public')->delete($foto['path']);
+                    } 
+                    // Jika $foto adalah string path
+                    else if (is_string($foto)) {
+                        Storage::disk('public')->delete($foto);
+                    }
                 }
             }
 
             if ($sekretariat->dokumen_lpj) {
                 foreach ($sekretariat->dokumen_lpj as $dokumen) {
-                    Storage::disk('public')->delete($dokumen);
+                    // Jika $dokumen adalah array dengan key 'path'
+                    if (is_array($dokumen) && isset($dokumen['path'])) {
+                        Storage::disk('public')->delete($dokumen['path']);
+                    } 
+                    // Jika $dokumen adalah string path
+                    else if (is_string($dokumen)) {
+                        Storage::disk('public')->delete($dokumen);
+                    }
                 }
             }
 
@@ -293,7 +366,14 @@ class SekretariatController extends Controller
         }
 
         $filePath = $files[$fileIndex];
-        Storage::disk('public')->delete($filePath);
+        // Jika $filePath adalah array dengan key 'path'
+        if (is_array($filePath) && isset($filePath['path'])) {
+            Storage::disk('public')->delete($filePath['path']);
+        } 
+        // Jika $filePath adalah string path
+        else if (is_string($filePath)) {
+            Storage::disk('public')->delete($filePath);
+        }
 
         unset($files[$fileIndex]);
         $files = array_values($files);

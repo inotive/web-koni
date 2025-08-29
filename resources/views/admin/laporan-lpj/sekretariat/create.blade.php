@@ -325,8 +325,7 @@
                                 </div>
                             </div>
 
-                            {{-- Enhanced Foto Jurnal Upload --}}
-                            <div class="row align-items-start mb-4">
+                                                            <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Foto Jurnal</label>
                                     <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
@@ -391,7 +390,7 @@
                                         Maksimal 10 dokumen yang dapat diunggah.
                                     </div>
 
-                                    @error('dokumen_pendukung.*')
+                                    @error('dokumen_lpj.*')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -470,7 +469,7 @@
             const fotoCounter = document.getElementById('fotoCounter');
             const fotoMaxWarning = document.getElementById('fotoMaxWarning');
 
-            const dokumenInput = document.getElementById('dokumen_pendukung');
+            const dokumenInput = document.getElementById('dokumen_lpj');
             const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
             const dokumenFileNameDisplay = document.getElementById('dokumen-file-name-display');
             const dokumenCounter = document.getElementById('dokumenCounter');
