@@ -6,11 +6,6 @@
 
     <!-- Prestasi Pelatih -->
     <div class="tab-pane fade" id="pelatih-prestasi" role="tabpanel">
-        {{-- Konten akan dimuat via AJAX --}}
-        <div class="text-center py-10">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
+        @include('admin.dashboard.partials._prestasi-pelatih-table', ['prestasi_list' => $latest_prestasi_pelatih ?? collect(), 'type' => 'pelatih'])
     </div>
 </div>

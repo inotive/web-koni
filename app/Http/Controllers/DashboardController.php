@@ -102,10 +102,17 @@ class DashboardController extends Controller
 
         // Mengambil semua prestasi terbaru dengan pagination (tanpa pencarian di index)
         // Gunakan per_page default 10 untuk halaman index
-        $latest_prestasi = Prestasi::with(['subject', 'subject.cabangOlahraga'])
+        $latest_prestasi_atlet = Prestasi::with(['subject', 'subject.cabangOlahraga'])
             ->where('subject_type', Atlet::class)
             ->orderBy('created_at', 'desc')
-            ->paginate(5);
+            ->limit(5)
+            ->get();
+            
+        $latest_prestasi_pelatih = Prestasi::with(['subject', 'subject.cabangOlahraga'])
+            ->where('subject_type', Pelatih::class)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
 
         $cabor_chart_data = CabangOlahraga::withCount(['atlets', 'pelatihs'])->get();
 
@@ -119,7 +126,8 @@ class DashboardController extends Controller
             'total_cabor' => $total_cabor,
             'kegiatan' => $kegiatan,
             'kegiatan_berjalan_count' => $kegiatan_berjalan_count,
-            'latest_prestasi' => $latest_prestasi,
+            'latest_prestasi' => $latest_prestasi_atlet,
+            'latest_prestasi_pelatih' => $latest_prestasi_pelatih,
             'cabor_chart_data' => $cabor_chart_data,
         ]);
     }

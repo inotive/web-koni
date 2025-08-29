@@ -453,17 +453,6 @@
             <div class="card-body p-6">
                 <div class="d-flex align-items-center justify-content-between mb-6">
                     <h5 class="mb-0">Prestasi Terbaru</h5>
-                    <div class="col-md-4">
-                        <div class="position-relative bg-light">
-                            <i class="ki-outline ki-magnifier fs-3 position-absolute top-50 translate-middle-y ms-3"></i>
-                            <input type="text" 
-                                   id="search-prestasi" 
-                                   name="search" 
-                                   value="" 
-                                   placeholder="Cari Atlet atau Pelatih..." 
-                                   class="form-control border border-gray-500 px-10 py-2" />
-                        </div>
-                    </div>
                 </div>
 
                 <!-- Tab Navigation -->
@@ -476,9 +465,23 @@
                     </li>
                 </ul>
 
-                <!-- Tab Content dengan Pagination -->
-                <div id="prestasi-table-container">
-                    @include('admin.dashboard.partials.prestasi-table')
+                <!-- Tab Content -->
+                <div class="tab-content" id="prestasi-tab-content">
+                    <!-- Prestasi Atlet -->
+                    <div class="tab-pane fade show active" id="atlet-prestasi" role="tabpanel">
+                        @include('admin.dashboard.partials._prestasi-atlet-table', ['prestasi_list' => $latest_prestasi, 'type' => 'atlet'])
+                    </div>
+
+                    <!-- Prestasi Pelatih -->
+                    <div class="tab-pane fade" id="pelatih-prestasi" role="tabpanel">
+                        @include('admin.dashboard.partials._prestasi-pelatih-table', ['prestasi_list' => $latest_prestasi_pelatih, 'type' => 'pelatih'])
+                    </div>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <a href="{{ route('admin.konfigurasi.prestasi.index') }}" class="btn btn-primary">
+                        Lihat Selengkapnya
+                    </a>
                 </div>
             </div>
         </div>
@@ -539,101 +542,6 @@
                     }
                 }
             }
-        });
-
-        $(document).ready(function() {
-            let searchTimeout;
-
-            function loadPrestasiData(type, page, search, perPage) {
-                const containerId = `#${type}-prestasi`;
-
-                $.ajax({
-                    url: '{{ route("admin.dashboard.prestasi-pagination") }}',
-                    type: 'GET',
-                    data: { 
-                        type: type,
-                        page: page,
-                        search: search,
-                        per_page: perPage
-                    },
-                    beforeSend: function() {
-                        $(containerId).html(
-                            '<div class="text-center py-10">' +
-                            '<div class="spinner-border text-primary" role="status">' +
-                            '<span class="visually-hidden">Loading...</span>' +
-                            '</div></div>'
-                        );
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            $(containerId).html(response.html);
-                        } else {
-                            $(containerId).html(
-                                '<div class="text-center py-10">' +
-                                '<div class="text-danger">' + (response.message || 'Terjadi kesalahan saat memuat data.') + '</div>' +
-                                '</div>'
-                            );
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('Error:', xhr.responseText);
-                        $(containerId).html(
-                            '<div class="text-center py-10">' +
-                            '<div class="text-danger">Terjadi kesalahan fatal. Silakan cek konsol.</div>' +
-                            '</div>'
-                        );
-                    }
-                });
-            }
-
-            // Handle tab switching
-            $('a[data-bs-toggle="tab"][href="#atlet-prestasi"], a[data-bs-toggle="tab"][href="#pelatih-prestasi"]').on('shown.bs.tab', function(e) {
-                const target = $(e.target).attr("href");
-                const type = target === '#pelatih-prestasi' ? 'pelatih' : 'atlet';
-                const search = $('#search-prestasi').val();
-                const perPage = $(`#prestasi-tab-content #per-page-select-${type}`).val() || 5;
-
-                // Hanya load data untuk pelatih jika tabnya kosong
-                if (type === 'pelatih' && $(target).children().length <= 1) {
-                    loadPrestasiData(type, 1, search, perPage);
-                }
-            });
-
-            // Handle search input
-            $('#search-prestasi').on('input', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    const search = $(this).val();
-                    const activeTab = $('#prestasi-tab-content .tab-pane.active').attr('id');
-                    const type = activeTab === 'pelatih-prestasi' ? 'pelatih' : 'atlet';
-                    const perPage = $(`#prestasi-tab-content #per-page-select-${type}`).val() || 5;
-                    
-                    loadPrestasiData(type, 1, search, perPage);
-                }, 300); // Debounce 300ms
-            });
-
-            // Handle per page change and pagination links using event delegation
-            $('#prestasi-tab-content').on('change', '[id^="per-page-select-"]', function() {
-                const perPage = $(this).val();
-                const type = $(this).attr('id').replace('per-page-select-', '');
-                const search = $('#search-prestasi').val();
-                
-                loadPrestasiData(type, 1, search, perPage);
-            });
-
-            $('#prestasi-tab-content').on('click', '.prestasi-pagination-link', function(e) {
-                e.preventDefault();
-                const url = $(this).attr('href');
-                if (url && url !== '#') {
-                    const urlObj = new URL(url);
-                    const page = urlObj.searchParams.get('page') || 1;
-                    const type = $(this).data('type');
-                    const search = $('#search-prestasi').val();
-                    const perPage = $(`#prestasi-tab-content #per-page-select-${type}`).val() || 5;
-                    
-                    loadPrestasiData(type, page, search, perPage);
-                }
-            });
         });
     </script>
 @endpush
