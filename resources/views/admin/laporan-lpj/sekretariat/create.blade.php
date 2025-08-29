@@ -391,7 +391,7 @@
                                         Maksimal 10 dokumen yang dapat diunggah.
                                     </div>
 
-                                    @error('dokumen_pendukung.*')
+                                    @error('dokumen_lpj.*')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -470,7 +470,7 @@
             const fotoCounter = document.getElementById('fotoCounter');
             const fotoMaxWarning = document.getElementById('fotoMaxWarning');
 
-            const dokumenInput = document.getElementById('dokumen_pendukung');
+            const dokumenInput = document.getElementById('dokumen_lpj');
             const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
             const dokumenFileNameDisplay = document.getElementById('dokumen-file-name-display');
             const dokumenCounter = document.getElementById('dokumenCounter');
