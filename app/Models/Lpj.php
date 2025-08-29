@@ -29,9 +29,17 @@ class Lpj extends Model
     protected $casts = [
         'dokumen_lpj' => 'array',
         'foto_jurnal' => 'array',
-        'jumlah_harga_satuan' => 'integer',
-        'jumlah_harga' => 'integer',
     ];
+
+    public function setJumlahHargaSatuanAttribute($value)
+    {
+        $this->attributes['jumlah_harga_satuan'] = preg_replace('/[^\d]/', '', $value);
+    }
+
+    public function setJumlahHargaAttribute($value)
+    {
+        $this->attributes['jumlah_harga'] = preg_replace('/[^\d]/', '', $value);
+    }
 
     /**
      * Get the parent LPJ
