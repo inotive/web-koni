@@ -363,8 +363,25 @@
                                             <div id="existing-foto-preview">
                                                 @foreach($foto_jurnals as $index => $foto)
                                                     @php
-                                                        $path = is_object($foto) ? $foto->path : $foto;
-                                                        $originalName = is_object($foto) ? $foto->original_name : basename($path);
+                                                        // Handle berbagai tipe data untuk foto
+                                                        $path = '';
+                                                        $originalName = '';
+                                                        
+                                                        if (is_object($foto)) {
+                                                            $path = $foto->path;
+                                                            $originalName = $foto->original_name;
+                                                        } elseif (is_array($foto)) {
+                                                            $path = isset($foto['path']) ? $foto['path'] : '';
+                                                            $originalName = isset($foto['original_name']) ? $foto['original_name'] : (is_string($path) ? basename($path) : '');
+                                                        } elseif (is_string($foto)) {
+                                                            $path = $foto;
+                                                            $originalName = basename($path);
+                                                        }
+                                                        
+                                                        // Pastikan kita punya nama file
+                                                        if (empty($originalName) && is_string($path)) {
+                                                            $originalName = basename($path);
+                                                        }
                                                     @endphp
                                                     <div class="file-preview-item existing" data-file-path="{{ $path }}">
                                                         <img src="{{ asset('storage/' . $path) }}" alt="Foto {{ $index + 1 }}" class="preview-image">
@@ -427,15 +444,40 @@
                                             <div id="existing-dokumen-preview">
                                                 @foreach($dokumens as $index => $dokumen)
                                                     @php
-                                                        $path = is_object($dokumen) ? $dokumen->path : $dokumen;
-                                                        $originalName = is_object($dokumen) ? $dokumen->original_name : basename($path);
-                                                        $extension = pathinfo($originalName, PATHINFO_EXTENSION);
-                                                        $icon = match(strtolower($extension)) {
-                                                            'pdf' => 'fas fa-file-pdf text-danger',
-                                                            'doc', 'docx' => 'fas fa-file-word text-primary',
-                                                            'xls', 'xlsx' => 'fas fa-file-excel text-success',
-                                                            default => 'fas fa-file text-secondary'
-                                                        };
+                                                        // Handle berbagai tipe data untuk dokumen
+                                                        $path = '';
+                                                        $originalName = '';
+                                                        
+                                                        if (is_object($dokumen)) {
+                                                            $path = $dokumen->path;
+                                                            $originalName = $dokumen->original_name;
+                                                        } elseif (is_array($dokumen)) {
+                                                            $path = isset($dokumen['path']) ? $dokumen['path'] : '';
+                                                            $originalName = isset($dokumen['original_name']) ? $dokumen['original_name'] : (is_string($path) ? basename($path) : '');
+                                                        } elseif (is_string($dokumen)) {
+                                                            $path = $dokumen;
+                                                            $originalName = basename($path);
+                                                        }
+                                                        
+                                                        // Pastikan kita punya nama file
+                                                        if (empty($originalName) && is_string($path)) {
+                                                            $originalName = basename($path);
+                                                        }
+                                                        
+                                                        $extension = '';
+                                                        if (!empty($originalName)) {
+                                                            $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+                                                        }
+                                                        
+                                                        $icon = 'fas fa-file text-secondary';
+                                                        if (!empty($extension)) {
+                                                            $icon = match(strtolower($extension)) {
+                                                                'pdf' => 'fas fa-file-pdf text-danger',
+                                                                'doc', 'docx' => 'fas fa-file-word text-primary',
+                                                                'xls', 'xlsx' => 'fas fa-file-excel text-success',
+                                                                default => 'fas fa-file text-secondary'
+                                                            };
+                                                        }
                                                     @endphp
                                                     <div class="file-preview-item existing" data-file-path="{{ $path }}">
                                                         <div class="file-icon">
@@ -526,8 +568,19 @@
             let selectedFotoFiles = [];
             let selectedDokumenFiles = [];
 
-            let existingFotoFiles = @json($sekretariat->foto_jurnal ? (is_array($sekretariat->foto_jurnal) ? $sekretariat->foto_jurnal : [$sekretariat->foto_jurnal]) : []);
-            let existingDokumenFiles = @json($sekretariat->dokumen_lpj ? (is_array($sekretariat->dokumen_lpj) ? $sekretariat->dokumen_lpj : [$sekretariat->dokumen_lpj]) : []);
+            // Initialize existing files from PHP
+            let existingFotoFiles = [];
+            let existingDokumenFiles = [];
+            
+            // Safely parse existing files
+            try {
+                existingFotoFiles = @json($sekretariat->foto_jurnal ? (is_array($sekretariat->foto_jurnal) ? $sekretariat->foto_jurnal : [$sekretariat->foto_jurnal]) : []);
+                existingDokumenFiles = @json($sekretariat->dokumen_lpj ? (is_array($sekretariat->dokumen_lpj) ? $sekretariat->dokumen_lpj : [$sekretariat->dokumen_lpj]) : []);
+            } catch (e) {
+                console.error('Error parsing existing files:', e);
+                existingFotoFiles = [];
+                existingDokumenFiles = [];
+            }
 
             // Currency formatting
             const currencyInputs = ['jumlah_harga_satuan', 'jumlah_harga'];
@@ -719,17 +772,29 @@
             window.removeExistingFile = function(button, type, filePath) {
                 if (confirm('Apakah Anda yakin ingin menghapus file ini? File akan dihapus permanen setelah disimpan.')) {
                     const item = button.closest('.file-preview-item');
-                    item.querySelector('input[type=hidden]').name = `deleted_${type}s[]`;
+                    // Change input name to mark for deletion
+                    const hiddenInput = item.querySelector('input[type=hidden]');
+                    if (hiddenInput) {
+                        hiddenInput.name = `deleted_${type}s[]`;
+                    }
                     item.style.display = 'none';
 
                     const isPhoto = type === 'foto';
                     if (isPhoto) {
-                        const index = existingFotoFiles.indexOf(filePath);
+                        const index = existingFotoFiles.findIndex(f => {
+                            if (typeof f === 'string') return f === filePath;
+                            if (typeof f === 'object' && f !== null) return f.path === filePath;
+                            return false;
+                        });
                         if (index > -1) {
                             existingFotoFiles.splice(index, 1);
                         }
                     } else {
-                        const index = existingDokumenFiles.indexOf(filePath);
+                        const index = existingDokumenFiles.findIndex(d => {
+                            if (typeof d === 'string') return d === filePath;
+                            if (typeof d === 'object' && d !== null) return d.path === filePath;
+                            return false;
+                        });
                         if (index > -1) {
                             existingDokumenFiles.splice(index, 1);
                         }
