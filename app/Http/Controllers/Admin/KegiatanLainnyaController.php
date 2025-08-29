@@ -10,12 +10,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class KegiatanLainnyaController extends Controller
 {
-    // Konstanta untuk mengidentifikasi jenis kegiatan Sekretariat
-    const PARENT_CATEGORY = 'Sekretariat';
+    // Konstanta untuk mengidentifikasi jenis kegiatan kegiatan_lainnya
+    const PARENT_CATEGORY = 'kegiatan_lainnya';
 
     public function index(Request $request)
     {
-        // Cari atau buat parent kategori Sekretariat
+        // Cari atau buat parent kategori kegiatan_lainnya
         $parentCategory = $this->getOrCreateParentCategory();
 
         $query = Lpj::where('parent_id', $parentCategory->id);
@@ -105,13 +105,13 @@ class KegiatanLainnyaController extends Controller
             'jumlah_harga_satuan' => $request->jumlah_harga_satuan,
             'jumlah_harga' => $request->jumlah_harga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
-            'icon' => 'fas fa-clipboard-list' // Default icon untuk Sekretariat
+            'icon' => 'fas fa-clipboard-list' // Default icon untuk kegiatan_lainnya
         ];
 
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('sekretariat/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('kegiatan_lainnya/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -119,7 +119,7 @@ class KegiatanLainnyaController extends Controller
         if ($request->hasFile('dokumen_pendukung')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_pendukung') as $file) {
-                $dokumenPaths[] = $file->store('sekretariat/dokumen_pendukung', 'public');
+                $dokumenPaths[] = $file->store('kegiatan_lainnya/dokumen_pendukung', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths; // Map ke dokumen_lpj
         }
@@ -132,9 +132,9 @@ class KegiatanLainnyaController extends Controller
 
     public function show($id)
     {
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
-        return view('admin.laporan-lpj.kegiatan_lainnya.show', compact('sekretariat'));
+        return view('admin.laporan-lpj.kegiatan_lainnya.show', compact('kegiatan_lainnya'));
     }
 
     public function edit($id)
@@ -143,9 +143,9 @@ class KegiatanLainnyaController extends Controller
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
-        return view('admin.laporan-lpj.kegiatan_lainnya.edit', compact('sekretariat'));
+        return view('admin.laporan-lpj.kegiatan_lainnya.edit', compact('kegiatan_lainnya'));
     }
 
     public function update(Request $request, $id)
@@ -154,7 +154,7 @@ class KegiatanLainnyaController extends Controller
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat memperbarui data.');
         }
 
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
 
         $request->validate([
@@ -189,65 +189,87 @@ class KegiatanLainnyaController extends Controller
         ];
 
         if ($request->hasFile('foto_jurnal')) {
-            if ($sekretariat->foto_jurnal) {
-                foreach ($sekretariat->foto_jurnal as $oldFoto) {
+            if ($kegiatan_lainnya->foto_jurnal) {
+                foreach ($kegiatan_lainnya->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('sekretariat/foto_jurnal', 'public');
+                $fotoPaths[] = $file->store('kegiatan_lainnya/foto_jurnal', 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
 
         if ($request->hasFile('dokumen_pendukung')) {
-            if ($sekretariat->dokumen_lpj) {
-                foreach ($sekretariat->dokumen_lpj as $oldDokumen) {
+            if ($kegiatan_lainnya->dokumen_lpj) {
+                foreach ($kegiatan_lainnya->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_pendukung') as $file) {
-                $dokumenPaths[] = $file->store('sekretariat/dokumen_pendukung', 'public');
+                $dokumenPaths[] = $file->store('kegiatan_lainnya/dokumen_pendukung', 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $sekretariat->update($data);
+        $kegiatan_lainnya->update($data);
 
         return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
                          ->with('OK', 'Kegiatan berhasil diperbarui.');
     }
 
     public function destroy($id)
-    {
-        if (!auth()->user()->hasRole('superadmin')) {
-            abort(403, 'Akses ditolak. Hanya superadmin yang dapat menghapus data.');
-        }
+{
+    if (!auth()->user()->hasRole('superadmin')) {
+        return response()->json(['error' => 'Akses ditolak'], 403);
+    }
 
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+    try {
+        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
 
-        if ($sekretariat->foto_jurnal) {
-            foreach ($sekretariat->foto_jurnal as $foto) {
+        // Hapus file foto_jurnal
+        if ($kegiatan_lainnya->foto_jurnal) {
+            foreach ($kegiatan_lainnya->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
-        if ($sekretariat->dokumen_lpj) {
-            foreach ($sekretariat->dokumen_lpj as $dokumen) {
+        // Hapus file dokumen_lpj
+        if ($kegiatan_lainnya->dokumen_lpj) {
+            foreach ($kegiatan_lainnya->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $sekretariat->delete();
+        $kegiatan_lainnya->delete();
+
+        // Return JSON response untuk AJAX
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kegiatan berhasil dihapus.'
+            ]);
+        }
 
         return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
                          ->with('OK', 'Kegiatan berhasil dihapus.');
+                         
+    } catch (\Exception $e) {
+        if (request()->ajax()) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Gagal menghapus kegiatan: ' . $e->getMessage()
+            ], 500);
+        }
+
+        return back()->with('error', 'Gagal menghapus kegiatan.');
     }
+}
 
     public function removeFile(Request $request, $id)
     {
@@ -255,7 +277,7 @@ class KegiatanLainnyaController extends Controller
             return response()->json(['error' => 'Akses ditolak'], 403);
         }
 
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
 
         $request->validate([
@@ -265,7 +287,7 @@ class KegiatanLainnyaController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $sekretariat->$fileType ?? [];
+        $files = $kegiatan_lainnya->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -277,7 +299,7 @@ class KegiatanLainnyaController extends Controller
         unset($files[$fileIndex]);
         $files = array_values($files);
 
-        $sekretariat->update([$fileType => $files]);
+        $kegiatan_lainnya->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,
@@ -287,7 +309,7 @@ class KegiatanLainnyaController extends Controller
     }
 
     /**
-     * Mendapatkan atau membuat parent kategori untuk Sekretariat
+     * Mendapatkan atau membuat parent kategori untuk kegiatan_lainnya
      */
     private function getOrCreateParentCategory()
     {
