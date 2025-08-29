@@ -108,7 +108,7 @@ class SuratController extends Controller
 
             if ($request->hasFile('dokumen_surat')) {
                 $file = $request->file('dokumen_surat');
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = $file->getClientOriginalName();
                 $path = $file->storeAs('surat', $filename, 'public');
                 $surat->dokumen_surat = $path;
             }
@@ -175,7 +175,7 @@ class SuratController extends Controller
                 }
 
                 $file = $request->file('dokumen_surat');
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $filename = $file->getClientOriginalName();
                 $path = $file->storeAs('surat', $filename, 'public');
                 $surat->dokumen_surat = $path;
             }
