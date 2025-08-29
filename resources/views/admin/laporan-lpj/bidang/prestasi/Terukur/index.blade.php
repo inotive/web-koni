@@ -21,10 +21,10 @@
                     <input type="text" name="search" value="{{ request('search') }}" data-kt-docs-table-filter="search"
                         placeholder="Cari Teams" class="form-control border border-gray-500 py-2 ps-12" />
                 </div>
-                <select name="sortBy" id="sortBy" class="form-select border border-gray-500 py-2" style="width: 85px">
+                {{-- <select name="sortBy" id="sortBy" class="form-select border border-gray-500 py-2" style="width: 85px">
                     <option value="ASC">A - Z</option>
                     <option value="DESC">Z - A</option>
-                </select>
+                </select> --}}
             </form>
         </div>
 

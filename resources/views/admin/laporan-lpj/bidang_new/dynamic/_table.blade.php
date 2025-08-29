@@ -77,7 +77,7 @@
                             <div class="d-flex flex-column">
                                 <strong class="text-truncate-custom">{{ $data->nama_program }}</strong>
                                 @if ($data->nama_kegiatan)
-                                    <small class="text-muted">{{ $data->nama_kegiatan }}</small>
+                                    <small class="text-muted" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $data->nama_kegiatan }}</small>
                                 @endif
                             </div>
                         </td>

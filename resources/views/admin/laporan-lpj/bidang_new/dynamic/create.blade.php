@@ -728,6 +728,29 @@
 
             // Form submission
             document.getElementById('lpjForm').addEventListener('submit', function(e) {
+                const requiredFields = this.querySelectorAll('[required]');
+                let isValid = true;
+
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    toastr.error('Mohon lengkapi semua field yang wajib diisi!', 'Error!');
+                    const firstInvalidField = this.querySelector('.is-invalid');
+                    if (firstInvalidField) {
+                        firstInvalidField.focus();
+                        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return;
+                }
+
                 // Convert currency values back to numbers
                 currencyInputs.forEach(inputId => {
                     const input = document.getElementById(inputId);
@@ -737,6 +760,24 @@
                 });
             });
         });
+
+        function parseVolumeQuantity(volumeText) {
+            if (!volumeText || typeof volumeText !== 'string') {
+                return 0;
+            }
+
+            // Extract all numbers from the text using regex
+            const numbers = volumeText.match(/\d+/g);
+
+            if (!numbers || numbers.length === 0) {
+                return 0;
+            }
+
+            // Convert to integers and sum them up
+            const total = numbers.reduce((sum, num) => sum + parseInt(num, 10), 0);
+
+            return total;
+        }
 
         function calculateTotalPrice() {
             const volumeInput = document.getElementById('volume');
@@ -748,14 +789,73 @@
             const volumeValue = volumeInput.value.trim();
             const unitPriceValue = unitPriceInput.value.replace(/[^\d]/g, ''); // Remove formatting
 
-            // Extract numeric value from volume (handles cases like "100 orang", "5 unit", etc.)
-            const volumeMatch = volumeValue.match(/^\d+/);
-            const volumeNumber = volumeMatch ? parseInt(volumeMatch[0]) : 0;
+            // Parse volume using the enhanced function
+            const volumeNumber = parseVolumeQuantity(volumeValue);
             const unitPriceNumber = unitPriceValue ? parseInt(unitPriceValue) : 0;
+
+            console.log('Volume text:', volumeValue);
+            console.log('Parsed volume quantity:', volumeNumber);
+            console.log('Unit price:', unitPriceNumber);
 
             if (volumeNumber > 0 && unitPriceNumber > 0) {
                 const totalPrice = volumeNumber * unitPriceNumber;
                 totalPriceInput.value = totalPrice.toLocaleString('id-ID');
+
+                // Add visual feedback
+                totalPriceInput.style.backgroundColor = '#e8f5e8';
+                setTimeout(() => {
+                    totalPriceInput.style.backgroundColor = '';
+                }, 1000);
+
+                // Show breakdown in console for debugging
+                console.log('Total calculation:', volumeNumber, 'x', unitPriceNumber, '=', totalPrice);
+            } else if (volumeNumber === 0 || unitPriceNumber === 0) {
+                totalPriceInput.value = '';
+            }
+        }
+
+    // Enhanced version with visual feedback showing the breakdown
+        function calculateTotalPriceWithBreakdown() {
+            const volumeInput = document.getElementById('volume');
+            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
+            const totalPriceInput = document.getElementById('jumlah_harga');
+
+            if (!volumeInput || !unitPriceInput || !totalPriceInput) return;
+
+            const volumeValue = volumeInput.value.trim();
+            const unitPriceValue = unitPriceInput.value.replace(/[^\d]/g, '');
+
+            // Parse volume and show breakdown
+            const numbers = volumeValue.match(/\d+/g);
+            const volumeNumber = parseVolumeQuantity(volumeValue);
+            const unitPriceNumber = unitPriceValue ? parseInt(unitPriceValue) : 0;
+
+            // Remove any existing breakdown display
+            const existingBreakdown = document.getElementById('volume-breakdown');
+            if (existingBreakdown) {
+                existingBreakdown.remove();
+            }
+
+            if (volumeNumber > 0 && unitPriceNumber > 0) {
+                const totalPrice = volumeNumber * unitPriceNumber;
+                totalPriceInput.value = totalPrice.toLocaleString('id-ID');
+
+                // Show breakdown if multiple numbers were found
+                if (numbers && numbers.length > 1) {
+                    const breakdown = document.createElement('small');
+                    breakdown.id = 'volume-breakdown';
+                    breakdown.className = 'text-info mt-1 d-block';
+                    // breakdown.innerHTML = `<i class="fas fa-calculator me-1"></i>Perhitungan: ${numbers.join(' + ')} = ${volumeNumber} × ${unitPriceNumber.toLocaleString('id-ID')} = ${totalPrice.toLocaleString('id-ID')}`;
+
+                    volumeInput.parentNode.appendChild(breakdown);
+
+                    // Auto-hide breakdown after 5 seconds
+                    setTimeout(() => {
+                        if (breakdown.parentNode) {
+                            breakdown.remove();
+                        }
+                    }, 5000);
+                }
 
                 // Add visual feedback
                 totalPriceInput.style.backgroundColor = '#e8f5e8';
@@ -767,21 +867,53 @@
             }
         }
 
+        // Test function to verify the parsing works correctly
+        function testVolumeParser() {
+            const testCases = [
+                "12 orang",
+                "12 orang kantor 14 orang kampung",
+                "5 unit kantor 3 unit gudang 2 unit lapangan",
+                "100 peserta workshop 50 peserta seminar",
+                "25 kg beras 15 kg gula 10 kg minyak",
+                "no numbers here",
+                "",
+                "50",
+                "10 item pertama 20 item kedua 30 item ketiga"
+            ];
+
+            console.log("Testing Volume Parser:");
+            testCases.forEach(testCase => {
+                const result = parseVolumeQuantity(testCase);
+                console.log(`"${testCase}" → ${result}`);
+            });
+        }
+
+        // Integration with your existing form
         document.addEventListener('DOMContentLoaded', function() {
             const volumeInput = document.getElementById('volume');
             const unitPriceInput = document.getElementById('jumlah_harga_satuan');
 
             if (volumeInput && unitPriceInput) {
-                volumeInput.addEventListener('input', calculateTotalPrice);
+                // Use the enhanced version with breakdown display
+                volumeInput.addEventListener('input', calculateTotalPriceWithBreakdown);
                 unitPriceInput.addEventListener('input', function() {
-                    setTimeout(calculateTotalPrice, 10);
+                    setTimeout(calculateTotalPriceWithBreakdown, 10);
                 });
 
-                volumeInput.addEventListener('blur', calculateTotalPrice);
-                unitPriceInput.addEventListener('blur', calculateTotalPrice);
+                volumeInput.addEventListener('blur', calculateTotalPriceWithBreakdown);
+                unitPriceInput.addEventListener('blur', calculateTotalPriceWithBreakdown);
 
-                calculateTotalPrice();
+                // Initial calculation
+                calculateTotalPriceWithBreakdown();
+
+                // Add placeholder text to help users understand the format
+                if (volumeInput.placeholder.includes('misal: 100 orang')) {
+                    volumeInput.placeholder = "Masukkan volume (100 orang, 5 unit)";
+                }
             }
+
+            // Uncomment to run tests
+            // testVolumeParser();
         });
     </script>
 @endsection

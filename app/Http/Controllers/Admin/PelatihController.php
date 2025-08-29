@@ -161,7 +161,9 @@ class PelatihController extends Controller
 
         try {
             if ($request->hasFile('foto')) {
-                $data['foto'] = $request->file('foto')->store('pelatih', 'public');
+                $file = $request->file('foto');
+                $filename = $file->getClientOriginalName();
+                $data['foto'] = $file->storeAs('pelatih', $filename, 'public');
             }
 
             $pelatih = Pelatih::create($data);
