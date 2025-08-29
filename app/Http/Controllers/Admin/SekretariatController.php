@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Lpj;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SekretariatController extends Controller
 {
@@ -100,25 +101,31 @@ class SekretariatController extends Controller
             'icon' => 'fas fa-clipboard-list'
         ];
 
+        // Handle foto_jurnal dengan nama asli
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $path = $file->store('sekretariat/foto_jurnal', 'public');
+                // Gunakan nama asli file
+                $originalName = $file->getClientOriginalName();
+                $path = $file->storeAs('sekretariat/foto_jurnal', $originalName, 'public');
                 $fotoPaths[] = [
                     'path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
+                    'original_name' => $originalName,
                 ];
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
 
+        // Handle dokumen_lpj dengan nama asli
         if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_lpj') as $file) {
-                $path = $file->store('sekretariat/dokumen_lpj', 'public');
+                // Gunakan nama asli file
+                $originalName = $file->getClientOriginalName();
+                $path = $file->storeAs('sekretariat/dokumen_lpj', $originalName, 'public');
                 $dokumenPaths[] = [
                     'path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
+                    'original_name' => $originalName,
                 ];
             }
             $data['dokumen_lpj'] = $dokumenPaths;
@@ -218,10 +225,20 @@ class SekretariatController extends Controller
 
         if ($request->hasFile('foto_jurnal')) {
             foreach ($request->file('foto_jurnal') as $file) {
-                $path = $file->store('sekretariat/foto_jurnal', 'public');
+                // Gunakan nama asli file
+                $originalName = $file->getClientOriginalName();
+                // Cek jika file dengan nama yang sama sudah ada, tambahkan timestamp jika perlu
+                $path = 'sekretariat/foto_jurnal/' . $originalName;
+                if (Storage::disk('public')->exists($path)) {
+                    $filename = pathinfo($originalName, PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $timestamp = time();
+                    $originalName = $filename . '_' . $timestamp . '.' . $extension;
+                }
+                $path = $file->storeAs('sekretariat/foto_jurnal', $originalName, 'public');
                 $existingFotos[] = [
                     'path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
+                    'original_name' => $originalName,
                 ];
             }
         }
@@ -253,10 +270,20 @@ class SekretariatController extends Controller
 
         if ($request->hasFile('dokumen_lpj')) {
             foreach ($request->file('dokumen_lpj') as $file) {
-                $path = $file->store('sekretariat/dokumen_lpj', 'public');
+                // Gunakan nama asli file
+                $originalName = $file->getClientOriginalName();
+                // Cek jika file dengan nama yang sama sudah ada, tambahkan timestamp jika perlu
+                $path = 'sekretariat/dokumen_lpj/' . $originalName;
+                if (Storage::disk('public')->exists($path)) {
+                    $filename = pathinfo($originalName, PATHINFO_FILENAME);
+                    $extension = $file->getClientOriginalExtension();
+                    $timestamp = time();
+                    $originalName = $filename . '_' . $timestamp . '.' . $extension;
+                }
+                $path = $file->storeAs('sekretariat/dokumen_lpj', $originalName, 'public');
                 $existingDokumens[] = [
                     'path' => $path,
-                    'original_name' => $file->getClientOriginalName(),
+                    'original_name' => $originalName,
                 ];
             }
         }

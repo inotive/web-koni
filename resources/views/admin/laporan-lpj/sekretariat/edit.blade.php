@@ -369,7 +369,7 @@
                                                         
                                                         if (is_object($foto)) {
                                                             $path = $foto->path;
-                                                            $originalName = $foto->original_name;
+                                                            $originalName = $foto->original_name ?? basename($path);
                                                         } elseif (is_array($foto)) {
                                                             $path = isset($foto['path']) ? $foto['path'] : '';
                                                             $originalName = isset($foto['original_name']) ? $foto['original_name'] : (is_string($path) ? basename($path) : '');
@@ -384,7 +384,7 @@
                                                         }
                                                     @endphp
                                                     <div class="file-preview-item existing" data-file-path="{{ $path }}">
-                                                        <img src="{{ asset('storage/' . $path) }}" alt="Foto {{ $index + 1 }}" class="preview-image">
+                                                        <img src="{{ asset('storage/' . $path) }}" alt="Foto {{ $originalName }}" class="preview-image">
                                                         <div class="file-info">
                                                             <div class="file-name">{{ $originalName }}</div>
                                                             <div class="file-size">File yang ada</div>

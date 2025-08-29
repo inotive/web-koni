@@ -325,8 +325,7 @@
                                 </div>
                             </div>
 
-                            {{-- Enhanced Foto Jurnal Upload --}}
-                            <div class="row align-items-start mb-4">
+                                                            <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Foto Jurnal</label>
                                     <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
