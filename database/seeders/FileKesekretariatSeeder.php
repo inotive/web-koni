@@ -22,14 +22,17 @@ class FileKesekretariatSeeder extends Seeder
         $dummyFiles = [
             [
                 'nama_dokumen' => 'Surat Tugas Rapat',
+                'tanggal_dokumen' => '2025-01-15',
                 'dokumen_file' => 'surat_tugas_rapat.pdf',
             ],
             [
                 'nama_dokumen' => 'Notulensi Rapat Bulanan',
+                'tanggal_dokumen' => '2025-02-20',
                 'dokumen_file' => 'notulensi_bulanan.docx',
             ],
             [
                 'nama_dokumen' => 'Daftar Hadir Kegiatan',
+                'tanggal_dokumen' => '2025-03-10',
                 'dokumen_file' => 'daftar_hadir.xlsx',
             ],
         ];
@@ -44,6 +47,7 @@ class FileKesekretariatSeeder extends Seeder
             // Insert ke database
             FileKesekretariat::create([
                 'nama_dokumen' => $file['nama_dokumen'],
+                'tanggal_dokumen' => $file['tanggal_dokumen'],
                 'dokumen_file' => $file['dokumen_file'],
             ]);
         }
