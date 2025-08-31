@@ -211,6 +211,12 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             });
         });
 
+        Route::prefix('pengajuan')->name('pengajuan.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\PengajuanController::class, 'index'])->name('index');
+            Route::post('/', [App\Http\Controllers\Admin\PengajuanController::class, 'store'])->name('store');
+            Route::patch('/{pengajuan}/status', [App\Http\Controllers\Admin\PengajuanController::class, 'updateStatus'])->name('updateStatus');
+        });
+
         Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
             Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
             Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
