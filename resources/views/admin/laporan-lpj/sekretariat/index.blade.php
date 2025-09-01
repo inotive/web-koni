@@ -355,6 +355,18 @@
             transition: all 0.2s ease;
             box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
         }
+
+        #ajukanPerubahanBtn:hover {
+            background-color: #43a047; /* Slightly darker on hover */
+            box-shadow: 0 3px 8px rgba(76, 175, 80, 0.4);
+            transform: translateY(-1px);
+        }
+
+        #ajukanPerubahanBtn:active {
+            background-color: #388e3c;
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -976,198 +988,198 @@
     };
 
     window.showDetailModal = function(data) {
-        const modalBody = document.getElementById('detailModalBody');
+    const modalBody = document.getElementById('detailModalBody');
 
-        if (!modalBody) {
-            console.error('Modal body not found');
-            return;
-        }
+    if (!modalBody) {
+        console.error('Modal body not found');
+        return;
+    }
 
-        // Simpan ID LPJ dalam data modal
-        $('#detailModal').data('lpj-id', data.id);
+    // Simpan ID LPJ dalam data modal
+    $('#detailModal').data('lpj-id', data.id);
 
-        const formatRupiah = (num) => {
-            if (!num) return 'Rp 0';
-            return 'Rp ' + parseInt(num).toLocaleString('id-ID');
-        };
+    const formatRupiah = (num) => {
+        if (!num) return 'Rp 0';
+        return 'Rp ' + parseInt(num).toLocaleString('id-ID');
+    };
 
-        let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-        if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
-            fotoJurnalHtml = `
-                <div class="row g-3">
-                    ${data.foto_jurnal.map(f => {
-                        const path = typeof f === 'object' ? f.path : f;
-                        const name = typeof f === 'object' ? (f.original_name || path.split('/').pop()) : path.split('/').pop();
-                        return `
-                        <div class="col-6 col-md-4">
-                            <div class="border rounded overflow-hidden" style="height: 120px;">
-                                <img src="/storage/${path}"
-                                     class="w-100 h-100"
-                                     style="object-fit: cover; cursor: pointer;"
-                                     onclick="window.open('/storage/${path}', '_blank')"
-                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
-                                <div class="text-center small bg-light p-1">${name}</div>
-                            </div>
-                        </div>
-                    `}).join('')}
-                </div>
-            `;
-        }
-
-        let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-        if (data.dokumen_lpj && Array.isArray(data.dokumen_lpj) && data.dokumen_lpj.length > 0) {
-            dokumenHtml = `
-                <div class="d-flex flex-column gap-2">
-                    ${data.dokumen_lpj.map(d => {
-                        const path = typeof d === 'object' ? d.path : d;
-                        const name = typeof d === 'object' ? (d.original_name || path.split('/').pop()) : path.split('/').pop();
-                        const extension = name.split('.').pop().toLowerCase();
-
-                        let iconClass = 'fas fa-file text-secondary';
-                        if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
-                        else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
-                        else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
-                        else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
-
-                        return `
-                            <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
-                                <div class="flex-grow-1">
-                                    <div class="fw-medium text-dark">${name}</div>
-                                    <small class="text-muted">${extension.toUpperCase()}</small>
-                                </div>
-                                <a href="/storage/${path}"
-                                   target="_blank"
-                                   class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-download me-1"></i>Unduh
-                                </a>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            `;
-        }
-
-        modalBody.innerHTML = `
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Informasi Kegiatan
-                        </h6>
-                        <div class="bg-light p-3 rounded">
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Nama Program:</label>
-                                <p class="mb-0 text-dark">${data.nama_program || 'N/A'}</p>
-                            </div>
-                            ${data.nama_kegiatan ? `
-                                <div class="mb-2">
-                                    <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
-                                    <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
-                                </div>
-                            ` : ''}
-                            ${data.volume ? `
-                                <div class="mb-2">
-                                    <label class="fw-semibold text-dark mb-1">Volume:</label>
-                                    <p class="mb-0 text-dark">${data.volume}</p>
-                                </div>
-                            ` : ''}
-                            ${data.tempat_kegiatan ? `
-                                <div class="mb-2">
-                                    <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                    <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
-                                </div>
-                            ` : ''}
-                            ${data.tanggal_kegiatan ? `
-                                <div>
-                                    <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                    <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
-                                </div>
-                            ` : ''}
+    let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+    if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
+        fotoJurnalHtml = `
+            <div class="row g-3">
+                ${data.foto_jurnal.map(f => {
+                    const path = typeof f === 'object' ? f.path : f;
+                    const name = typeof f === 'object' ? (f.original_name || path.split('/').pop()) : path.split('/').pop();
+                    return `
+                    <div class="col-6 col-md-4">
+                        <div class="border rounded overflow-hidden" style="height: 120px;">
+                            <img src="/storage/${path}"
+                                 class="w-100 h-100"
+                                 style="object-fit: cover; cursor: pointer;"
+                                 onclick="window.open('/storage/${path}', '_blank')"
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
+                            <div class="text-center small bg-light p-1">${name}</div>
                         </div>
                     </div>
-
-                    ${data.jumlah_harga_satuan || data.jumlah_harga ? `
-                        <div class="mb-4">
-                            <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
-                                <i class="fas fa-calculator me-2"></i>
-                                Rincian Anggaran
-                            </h6>
-                            <div class="bg-light p-3 rounded">
-                                <div class="row g-3">
-                                    ${data.jumlah_harga_satuan ? `
-                                        <div class="col-md-6">
-                                            <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
-                                            <p class="mb-0 text-success fs-6 fw-bold">${formatRupiah(data.jumlah_harga_satuan)}</p>
-                                        </div>
-                                    ` : ''}
-                                    ${data.jumlah_harga ? `
-                                        <div class="col-md-6">
-                                            <label class="fw-semibold text-dark mb-1">Total Harga:</label>
-                                            <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${data.sumber_dana ? `
-                        <div class="mb-4">
-                            <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
-                                <i class="fas fa-money-bill me-2"></i>
-                                Sumber Dana
-                            </h6>
-                            <div class="bg-light p-3 rounded">
-                                <p class="mb-0 text-dark">${data.sumber_dana}</p>
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
-                            <i class="fas fa-paperclip me-2"></i>
-                            Lampiran
-                        </h6>
-
-                        <div class="mb-3">
-                            <label class="fw-semibold text-dark mb-2 d-block">
-                                <i class="fas fa-camera me-1"></i>Foto Jurnal:
-                            </label>
-                            <div class="bg-light p-3 rounded">
-                                ${fotoJurnalHtml}
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="fw-semibold text-dark mb-2 d-block">
-                                <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
-                            </label>
-                            <div class="bg-light p-3 rounded">
-                                ${dokumenHtml}
-                            </div>
-                        </div>
-                    </div>
-
-                    ${data.keterangan ? `
-                        <div class="mb-2">
-                            <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center">
-                                <i class="fas fa-sticky-note me-2"></i>
-                                Keterangan
-                            </h6>
-                            <div class="bg-light p-3 rounded">
-                                <p class="mb-0 text-dark">${data.keterangan}</p>
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
+                `}).join('')}
             </div>
         `;
+    }
 
-        const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-        modal.show();
-    };
+    let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+    if (data.dokumen_lpj && Array.isArray(data.dokumen_lpj) && data.dokumen_lpj.length > 0) {
+        dokumenHtml = `
+            <div class="d-flex flex-column gap-2">
+                ${data.dokumen_lpj.map(d => {
+                    const path = typeof d === 'object' ? d.path : d;
+                    const name = typeof d === 'object' ? (d.original_name || path.split('/').pop()) : path.split('/').pop();
+                    const extension = name.split('.').pop().toLowerCase();
+
+                    let iconClass = 'fas fa-file text-secondary';
+                    if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
+                    else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
+                    else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
+                    else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
+
+                    return `
+                        <div class="d-flex align-items-center p-2 border rounded bg-light">
+                            <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                            <div class="flex-grow-1">
+                                <div class="fw-medium text-dark">${name}</div>
+                                <small class="text-muted">${extension.toUpperCase()}</small>
+                            </div>
+                            <a href="/storage/${path}"
+                               target="_blank"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-download me-1"></i>Unduh
+                            </a>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    }
+
+    modalBody.innerHTML = `
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Informasi Kegiatan
+                    </h6>
+                    <div class="bg-light p-3 rounded">
+                        <div class="mb-2">
+                            <label class="fw-semibold text-dark mb-1">Nama Program:</label>
+                            <p class="mb-0 text-dark">${data.nama_program || 'N/A'}</p>
+                        </div>
+                        ${data.nama_kegiatan ? `
+                            <div class="mb-2">
+                                <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
+                                <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
+                            </div>
+                        ` : ''}
+                        ${data.volume ? `
+                            <div class="mb-2">
+                                <label class="fw-semibold text-dark mb-1">Volume:</label>
+                                <p class="mb-0 text-dark">${data.volume}</p>
+                            </div>
+                        ` : ''}
+                        ${data.tempat_kegiatan ? `
+                            <div class="mb-2">
+                                <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
+                                <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
+                            </div>
+                        ` : ''}
+                        ${data.tanggal_kegiatan ? `
+                            <div>
+                                <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
+                                <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                ${data.jumlah_harga_satuan || data.jumlah_harga ? `
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
+                            <i class="fas fa-calculator me-2"></i>
+                            Rincian Anggaran
+                        </h6>
+                        <div class="bg-light p-3 rounded">
+                            <div class="row g-3">
+                                ${data.jumlah_harga_satuan ? `
+                                    <div class="col-md-6">
+                                        <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
+                                        <p class="mb-0 text-success fs-6 fw-bold">${formatRupiah(data.jumlah_harga_satuan)}</p>
+                                    </div>
+                                ` : ''}
+                                ${data.jumlah_harga ? `
+                                    <div class="col-md-6">
+                                        <label class="fw-semibold text-dark mb-1">Total Harga:</label>
+                                        <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${data.sumber_dana ? `
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
+                            <i class="fas fa-money-bill me-2"></i>
+                            Sumber Dana
+                        </h6>
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="mb-4">
+                    <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
+                        <i class="fas fa-paperclip me-2"></i>
+                        Lampiran
+                    </h6>
+
+                    <div class="mb-3">
+                        <label class="fw-semibold text-dark mb-2 d-block">
+                            <i class="fas fa-camera me-1"></i>Foto Jurnal:
+                        </label>
+                        <div class="bg-light p-3 rounded">
+                            ${fotoJurnalHtml}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="fw-semibold text-dark mb-2 d-block">
+                            <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
+                        </label>
+                        <div class="bg-light p-3 rounded">
+                            ${dokumenHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        ${data.keterangan_tambahan ? `
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                            <i class="fas fa-sticky-note me-2"></i>
+                            Keterangan Tambahan
+                        </h6>
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
+                        </div>
+                    </div>
+                ` : ''}
+    `;
+
+    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+    modal.show();
+};
 
     window.showPreviewModal = function(files, type, title) {
         if (!files || !Array.isArray(files) || files.length === 0) {
@@ -1348,54 +1360,52 @@
         }
     });
 
-    // Handle Ajukan Perubahan button
-    $('#ajukanPerubahanBtn').on('click', function() {
-        const lpjId = $('#detailModal').data('lpj-id');
-        $('#pengajuan_lpj_id').val(lpjId);
-        $('#detailModal').modal('hide');
-        new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
-    });
+$('#ajukanPerubahanBtn').on('click', function() {
+                const lpjId = $('#detailModal').data('lpj-id');
+                $('#pengajuan_lpj_id').val(lpjId);
+                $('#detailModal').modal('hide');
+                new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
+            });
 
-    // Handle submit pengajuan
-    $('#submitPengajuanBtn').on('click', function() {
-        const lpjId = $('#pengajuan_lpj_id').val();
-        const alasan = $('#alasan').val();
+            $('#submitPengajuanBtn').on('click', function() {
+                const lpjId = $('#pengajuan_lpj_id').val();
+                const alasan = $('#alasan').val();
 
-        if (!alasan.trim()) {
-            showNotification('Alasan harus diisi.', 'error');
-            return;
-        }
-
-        $.ajax({
-            url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                lpj_id: lpjId,
-                alasan: alasan,
-                user_id: {{ auth()->id() }}
-            },
-            success: function(response) {
-                if(response.success) {
-                    $('#alasan').val('');
-                    $('#pengajuan_lpj_id').val('');
-                    $('#pengajuanModal').modal('hide');
-                    showNotification('Pengajuan berhasil dikirim.', 'success');
-                } else {
-                    showNotification(response.message || 'Gagal mengirim pengajuan.', 'error');
+                if (!alasan.trim()) {
+                    alert('Alasan harus diisi.');
+                    return;
                 }
-            },
-            error: function() {
-                showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
-            }
-        });
-    });
 
-    // Reset form when modal is hidden
-    $('#pengajuanModal').on('hidden.bs.modal', function () {
-        $('#alasan').val('');
-        $('#pengajuan_lpj_id').val('');
-    });
-});
+                $.ajax({
+                    url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        lpj_id: lpjId,
+                        alasan: alasan,
+                        user_id: {{ auth()->id() }}
+                    },
+                    success: function(response) {
+                        if(response.success) {
+                            $('#alasan').val('');
+                            $('#pengajuan_lpj_id').val('');
+                            $('#pengajuanModal').modal('hide');
+                            showNotification('Pengajuan berhasil dikirim.', 'success');
+                        } else {
+                            showNotification(response.message || 'Gagal mengirim pengajuan.', 'error');
+                        }
+                    },
+                    error: function() {
+                        showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                    }
+                });
+            });
+
+            $('#pengajuanModal').on('hidden.bs.modal', function () {
+                $('#alasan').val('');
+                $('#pengajuan_lpj_id').val('');
+            });
+
+        });
     </script>
 @endsection
