@@ -69,7 +69,8 @@
             width: 80px !important;
         }
 
-        table td, table th {
+        table td,
+        table th {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -428,10 +429,12 @@
             padding: 8px !important;
         }
 
-.dropdown-action {
-    position: relative;
-    z-index: 1060; /* Higher than Bootstrap modal backdrop (1050) */
-}
+        .dropdown-action {
+            position: relative;
+            z-index: 1055;
+            /* Lebih tinggi dari modal */
+        }
+
         .dropdown-menu-custom {
             z-index: 1060 !important;
         }
@@ -519,20 +522,21 @@
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     {{-- Add Button with role-based restrictions --}}
                     @if (auth()->user()->hasRole('superadmin'))
-                        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.create') }}" class="btn custom-red-button"
+                        <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn custom-red-button"
                             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                         </a>
 
-<form action="{{ route('admin.laporan-lpj.kegiatan_lainnya.export') }}" method="POST" class="d-inline">
-    @csrf
-    <input type="hidden" name="data" value="{{ json_encode([]) }}">
-    <input type="hidden" name="title" value="LPJ_Kegiatan_Lainnya_{{ date('Ymd') }}">
-    <button type="submit" class="btn custom-red-button"
-            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-        <i class="fas fa-file-export me-1" style="color: white !important;"></i>Export
-    </button>
-</form>
+                        <form action="{{ route('admin.laporan-lpj.kegiatan-lainnya.export') }}" method="POST"
+                            class="d-inline">
+                            @csrf
+                            <input type="hidden" name="data" value="{{ json_encode([]) }}">
+                            <input type="hidden" name="title" value="LPJ_Kegiatan_Lainnya_{{ date('Ymd') }}">
+                            <button type="submit" class="btn custom-red-button"
+                                style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                                <i class="fas fa-file-export me-1" style="color: white !important;"></i>Export
+                            </button>
+                        </form>
                     @else
                         <div class="position-relative">
                             <button class="btn custom-red-button btn-restricted"
@@ -991,7 +995,7 @@
                     'error': 'alert-danger',
                     'warning': 'alert-warning',
                     'info': 'alert-info'
-                }[type] || 'alert-info';
+                } [type] || 'alert-info';
 
                 const notification = $(`
                     <div class="alert ${alertClass} alert-dismissible fade show notification-toast"
@@ -1158,16 +1162,16 @@
                     fotoJurnalHtml = `
                         <div class="row g-3">
                             ${data.foto_jurnal.map(f => `
-                                <div class="col-6 col-md-4">
-                                    <div class="border rounded overflow-hidden" style="height: 120px;">
-                                        <img src="/storage/${f}"
-                                             class="w-100 h-100"
-                                             style="object-fit: cover; cursor: pointer;"
-                                             onclick="window.open('/storage/${f}', '_blank')"
-                                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
+                                    <div class="col-6 col-md-4">
+                                        <div class="border rounded overflow-hidden" style="height: 120px;">
+                                            <img src="/storage/${f}"
+                                                 class="w-100 h-100"
+                                                 style="object-fit: cover; cursor: pointer;"
+                                                 onclick="window.open('/storage/${f}', '_blank')"
+                                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
+                                        </div>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `).join('')}
                         </div>
                     `;
                 }
@@ -1187,19 +1191,19 @@
                                 else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
 
                                 return `
-                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                        <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
-                                        <div class="flex-grow-1">
-                                            <div class="fw-medium text-dark">${name}</div>
-                                            <small class="text-muted">${extension.toUpperCase()}</small>
+                                        <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                            <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-medium text-dark">${name}</div>
+                                                <small class="text-muted">${extension.toUpperCase()}</small>
+                                            </div>
+                                            <a href="/storage/${d}"
+                                               target="_blank"
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-download me-1"></i>Unduh
+                                            </a>
                                         </div>
-                                        <a href="/storage/${d}"
-                                           target="_blank"
-                                           class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-download me-1"></i>Unduh
-                                        </a>
-                                    </div>
-                                `;
+                                    `;
                             }).join('')}
                         </div>
                     `;
@@ -1219,68 +1223,68 @@
                                         <p class="mb-0 text-dark">${data.nama_program || 'N/A'}</p>
                                     </div>
                                     ${data.nama_kegiatan ? `
-                                        <div class="mb-2">
-                                            <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
-                                            <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
-                                        </div>
-                                    ` : ''}
+                                            <div class="mb-2">
+                                                <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
+                                                <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
+                                            </div>
+                                        ` : ''}
                                     ${data.volume ? `
-                                        <div class="mb-2">
-                                            <label class="fw-semibold text-dark mb-1">Volume:</label>
-                                            <p class="mb-0 text-dark">${data.volume}</p>
-                                        </div>
-                                    ` : ''}
+                                            <div class="mb-2">
+                                                <label class="fw-semibold text-dark mb-1">Volume:</label>
+                                                <p class="mb-0 text-dark">${data.volume}</p>
+                                            </div>
+                                        ` : ''}
                                     ${data.tempat_kegiatan ? `
-                                        <div class="mb-2">
-                                            <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                            <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
-                                        </div>
-                                    ` : ''}
+                                            <div class="mb-2">
+                                                <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
+                                                <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
+                                            </div>
+                                        ` : ''}
                                     ${data.tanggal_kegiatan ? `
-                                        <div>
-                                            <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                            <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
-                                        </div>
-                                    ` : ''}
+                                            <div>
+                                                <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
+                                                <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                            </div>
+                                        ` : ''}
                                 </div>
                             </div>
 
                             ${data.jumlah_harga_satuan || data.jumlah_harga ? `
-                                <div class="mb-4">
-                                    <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
-                                        <i class="fas fa-calculator me-2"></i>
-                                        Rincian Anggaran
-                                    </h6>
-                                    <div class="bg-light p-3 rounded">
-                                        <div class="row g-3">
-                                            ${data.jumlah_harga_satuan ? `
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
+                                            <i class="fas fa-calculator me-2"></i>
+                                            Rincian Anggaran
+                                        </h6>
+                                        <div class="bg-light p-3 rounded">
+                                            <div class="row g-3">
+                                                ${data.jumlah_harga_satuan ? `
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
                                                     <p class="mb-0 text-success fs-6 fw-bold">${formatRupiah(data.jumlah_harga_satuan)}</p>
                                                 </div>
                                             ` : ''}
-                                            ${data.jumlah_harga ? `
+                                                ${data.jumlah_harga ? `
                                                 <div class="col-md-6">
                                                     <label class="fw-semibold text-dark mb-1">Total Harga:</label>
                                                     <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                                 </div>
                                             ` : ''}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ` : ''}
+                                ` : ''}
 
                             ${data.sumber_dana ? `
-                                <div class="mb-4">
-                                    <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
-                                        <i class="fas fa-money-bill me-2"></i>
-                                        Sumber Dana
-                                    </h6>
-                                    <div class="bg-light p-3 rounded">
-                                        <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
+                                            <i class="fas fa-money-bill me-2"></i>
+                                            Sumber Dana
+                                        </h6>
+                                        <div class="bg-light p-3 rounded">
+                                            <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            ` : ''}
+                                ` : ''}
 
                             <div class="mb-4">
                                 <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
@@ -1308,16 +1312,16 @@
                             </div>
 
                             ${data.keterangan ? `
-                                <div class="mb-2">
-                                    <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center">
-                                        <i class="fas fa-sticky-note me-2"></i>
-                                        Keterangan
-                                    </h6>
-                                    <div class="bg-light p-3 rounded">
-                                        <p class="mb-0 text-dark">${data.keterangan}</p>
+                                    <div class="mb-2">
+                                        <h6 class="fw-bold text-secondary mb-3 d-flex align-items-center">
+                                            <i class="fas fa-sticky-note me-2"></i>
+                                            Keterangan
+                                        </h6>
+                                        <div class="bg-light p-3 rounded">
+                                            <p class="mb-0 text-dark">${data.keterangan}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            ` : ''}
+                                ` : ''}
                         </div>
                     </div>
                 `;
@@ -1467,7 +1471,7 @@
                 // Create form dynamically
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '{{ route('admin.laporan-lpj.kegiatan_lainnya.export') }}';
+                form.action = '{{ route('admin.laporan-lpj.kegiatan-lainnya.export') }}';
                 form.target = '_blank';
 
                 // Add CSRF token
@@ -1652,7 +1656,7 @@
             });
 
             // Close preview modal reset
-            $('#previewModal').on('hidden.bs.modal', function () {
+            $('#previewModal').on('hidden.bs.modal', function() {
                 currentFiles = [];
                 currentIndex = 0;
                 currentType = '';

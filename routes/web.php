@@ -66,7 +66,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         ->name('file-kesekretariat.update');
     Route::delete('file-kesekretariat/{fileKesekretariat}', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'destroy'])
         ->name('file-kesekretariat.destroy');
-    
+
     // File download route
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
@@ -111,17 +111,17 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/', [CabangOlahragaController::class, 'index'])->name('index');
             Route::get('/create', [CabangOlahragaController::class, 'create'])->name('create');
             Route::post('/', [CabangOlahragaController::class, 'store'])->name('store');
-            Route::get('/{cabang_olahraga}', [CabangOlahragaController::class, 'show'])->name('show');
-            Route::get('/{cabang_olahraga}/edit', [CabangOlahragaController::class, 'edit'])->name('edit');
-            Route::put('/{cabang_olahraga}', [CabangOlahragaController::class, 'update'])->name('update');
-            Route::delete('/{cabang_olahraga}', [CabangOlahragaController::class, 'destroy'])->name('destroy');
+            Route::get('/{cabang-olahraga}', [CabangOlahragaController::class, 'show'])->name('show');
+            Route::get('/{cabang-olahraga}/edit', [CabangOlahragaController::class, 'edit'])->name('edit');
+            Route::put('/{cabang-olahraga}', [CabangOlahragaController::class, 'update'])->name('update');
+            Route::delete('/{cabang-olahraga}', [CabangOlahragaController::class, 'destroy'])->name('destroy');
 
             // TAMBAHAN: Rute untuk fitur khusus CabangOlahraga
             Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
             Route::get('/export', [CabangOlahragaController::class, 'export'])->name('export');
-            Route::patch('/{cabang_olahraga}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
-            Route::get('/{cabang_olahraga}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('check-dependencies');
-            Route::delete('/{cabang_olahraga}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('force-destroy');
+            Route::patch('/{cabang-olahraga}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
+            Route::get('/{cabang-olahraga}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('check-dependencies');
+            Route::delete('/{cabang-olahraga}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('force-destroy');
         });
 
         // Rute Prestasi - Diperbaiki struktur
@@ -230,30 +230,24 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::patch('/{pengajuan}/status', [App\Http\Controllers\Admin\PengajuanController::class, 'updateStatus'])->name('updateStatus');
         });
 
-        Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {
-    Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
-    Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
-    Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
+        Route::prefix('kegiatan-lainnya')->name('kegiatan-lainnya.')->group(function () {
+            Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
+            Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
+            Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
 
-    // Export route - generates: admin.laporan-lpj.kegiatan_lainnya.export
-    Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
+            // Export route - generates: admin.laporan-lpj.kegiatan-lainnya.export
+            Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
 
     Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
         ->name('detail-ajax')
         ->where('id', '[0-9]+');
 
-    Route::get('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
-    Route::get('/{kegiatan_lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
-    Route::put('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
-    
-    // PERBAIKAN: Tambahkan route DELETE yang benar
-    Route::delete('/{kegiatan_lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
-    
-    Route::post('/{kegiatan_lainnya}/approve', [KegiatanLainnyaController::class, 'approve'])->name('approve');
-    
-    // TAMBAHAN: Route untuk remove file individual
-    Route::delete('/{id}/remove-file', [KegiatanLainnyaController::class, 'removeFile'])->name('remove-file');
-});
+            Route::get('/{kegiatan-lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
+            Route::get('/{kegiatan-lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
+            Route::put('/{kegiatan-lainnya}', [KegiatanLainnyaController::class, 'update'])->name('update');
+            Route::delete('/{kegiatan-lainnya}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
+            Route::post('/{kegiatan-lainnya}/approve', [KegiatanLainnyaController::class, 'approve'])->name('approve');
+        });
     }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
         Route::get('/', [BendaharaController::class, 'index'])->name('index');

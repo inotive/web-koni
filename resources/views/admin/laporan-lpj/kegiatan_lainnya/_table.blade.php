@@ -11,7 +11,7 @@
             <i class="fas fa-filter fs-1 mb-3 text-muted"></i>
             <h4>Data tidak ditemukan untuk jenis kegiatan "{{ request('jenis_kegiatan_filter') }}"</h4>
             <button class="btn btn-light-primary mt-3"
-                onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
+                onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}'">
                 Reset Filter
             </button>
         </div>
@@ -24,7 +24,8 @@
     @endif
 @else
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle table-fixed" id="kt_datatable_dom_positioning_kegiatan">
+        <table class="table table-bordered table-hover align-middle table-fixed"
+            id="kt_datatable_dom_positioning_kegiatan">
             <thead class="bg-light">
                 <tr>
                     @php
@@ -76,7 +77,7 @@
                         <td class="text-center">
                             {{ ($kegiatanLainnya->currentPage() - 1) * $kegiatanLainnya->perPage() + $index + 1 }}
                         </td>
-                        
+
                         <td>
                             <div class="d-flex flex-column">
                                 <strong class="text-truncate-custom" title="{{ $kegiatan->nama_program }}">
@@ -87,13 +88,13 @@
                                 @endif
                             </div>
                         </td>
-                        
+
                         <td class="text-start">{{ $kegiatan->volume }}</td>
-                        
+
                         <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga_satuan, 0, ',', '.') }}</td>
-                        
+
                         <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga, 0, ',', '.') }}</td>
-                        
+
                         <td class="text-start">
                             @if (!empty($kegiatan->foto_jurnal) && is_array($kegiatan->foto_jurnal))
                                 <button type="button" class="btn btn-sm btn-light-info preview-btn"
@@ -106,7 +107,7 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        
+
                         <td class="text-start">
                             @if (!empty($kegiatan->dokumen_lpj) && is_array($kegiatan->dokumen_lpj))
                                 <button type="button" class="btn btn-sm btn-light-primary preview-btn"
@@ -119,11 +120,11 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        
+
                         <td class="text-start">
                             {{ \Carbon\Carbon::parse($kegiatan->created_at)->format('d M Y') }}
                         </td>
-                        
+
                         <td class="text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
@@ -149,15 +150,15 @@
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
-                                   <li>
+                                    <li>
                                         <a href="javascript:void(0)" class="dropdown-item-custom"
-                                           onclick="showDetailModal({{ json_encode($kegiatan) }})">
+                                            onclick="showDetailModal({{ json_encode($kegiatan) }})">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail
                                         </a>
                                     </li>
 
                                     @if (auth()->user()->hasRole('superadmin'))
-                                        <li><a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
+                                        <li><a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.edit', $kegiatan->id) }}"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi</a></li>
                                     @else
@@ -172,7 +173,7 @@
                                     @if (auth()->user()->hasRole('superadmin'))
                                         <li><button type="button"
                                                 class="dropdown-item-custom delete border-0 bg-transparent w-100 text-start text-danger"
-                                                data-route="{{ route('admin.laporan-lpj.kegiatan_lainnya.destroy', $kegiatan->id) }}"
+                                                data-route="{{ route('admin.laporan-lpj.kegiatan-lainnya.destroy', $kegiatan->id) }}"
                                                 onclick="destroyItem(this)">
                                                 <i class="fas fa-trash me-2"></i> Hapus</button></li>
                                     @else
@@ -269,7 +270,7 @@
         /* Table fixed layout for consistent column alignment */
         .table-fixed {
             table-layout: fixed;
-             min-width: 1200px;
+            min-width: 1200px;
         }
 
         .table-fixed th:nth-child(1),
@@ -483,15 +484,16 @@
         }
 
         @media (max-width: 768px) {
+
             .table-header,
-.table-footer {
-    position: sticky;
-    bottom: 0;
-    background: white;
-    padding: 15px 0;
-    border-top: 1px solid #dee2e6;
-    z-index: 10;
-}
+            .table-footer {
+                position: sticky;
+                bottom: 0;
+                background: white;
+                padding: 15px 0;
+                border-top: 1px solid #dee2e6;
+                z-index: 10;
+            }
 
             .d-flex.justify-content-between.align-items-center.flex-wrap {
                 flex-direction: column;

@@ -114,32 +114,62 @@
                                         </a>
                                     </li>
 
-                                    @if (auth()->user()->hasRole('superadmin'))
-                                        <li><a href="{{ route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) }}"
+                                    {{-- Check if user is superadmin or has modification permission for Edit button --}}
+                                    @if(auth()->user()->hasRole('superadmin') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
+                                        <li>
+                                            <a href="{{ route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) }}"
                                                 class="dropdown-item-custom edit">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi</a></li>
+                                                <i class="fas fa-edit me-2"></i> Modifikasi
+                                            </a>
+                                        </li>
                                     @else
-                                        <li><span class="dropdown-item-custom restricted-action"
-                                                data-bs-toggle="tooltip" data-bs-placement="left"
-                                                data-bs-custom-class="custom-tooltip" data-bs-html="true"
-                                                title="<div class='tooltip-content'><strong>Informasi</strong><br>Ajukan approval untuk<br>modifikasi laporan</div>"
-                                                style="cursor: not-allowed; opacity: 0.6;">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi</span></li>
+                                        <li>
+                                            <span class="dropdown-item-custom restricted-action"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="left"
+                                                data-bs-custom-class="custom-tooltip"
+                                                data-bs-html="true"
+                                                data-bs-delay='{"show":0,"hide":300}'
+                                                title="<div class='tooltip-content'>
+                                                            <strong>Informasi</strong><br>
+                                                            Ajukan approval untuk<br>
+                                                            modifikasi laporan<br>
+                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                        </div>"
+                                                style="cursor: not-allowed; opacity: 0.6;"
+                                                onmouseover="keepTooltipVisible(this)"
+                                                onmouseout="hideTooltipWithDelay(this)">
+                                                <i class="fas fa-edit me-2"></i> Modifikasi
+                                            </span>
+                                        </li>
                                     @endif
 
-                                    @if (auth()->user()->hasRole('superadmin'))
-                                        <li><button type="button"
-                                                class="dropdown-item-custom delete border-0 bg-transparent w-100 text-start text-danger"
-                                                data-route="{{ route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id) }}"
-                                                onclick="destroyItem(this)">
-                                                <i class="fas fa-trash me-2"></i> Hapus</button></li>
+                                    {{-- Check if user is superadmin or has modification permission for Delete button --}}
+                                    @if(auth()->user()->hasRole('superadmin') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
+                                        <li class="dropdown-item-custom delete"
+                                            onclick="destroyItem(this)"
+                                            data-route="{{ route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id) }}">
+                                            <i class="fas fa-trash me-2"></i> Hapus
+                                        </li>
                                     @else
-                                        <li><span class="dropdown-item-custom restricted-action"
-                                                data-bs-toggle="tooltip" data-bs-placement="left"
-                                                data-bs-custom-class="custom-tooltip" data-bs-html="true"
-                                                title="<div class='tooltip-content'><strong>Informasi</strong><br>Ajukan approval untuk<br>modifikasi laporan</div>"
-                                                style="cursor: not-allowed; opacity: 0.6;">
-                                                <i class="fas fa-trash me-2"></i> Hapus</span></li>
+                                        <li>
+                                            <span class="dropdown-item-custom restricted-action"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="left"
+                                                data-bs-custom-class="custom-tooltip"
+                                                data-bs-html="true"
+                                                data-bs-delay='{"show":0,"hide":300}'
+                                                title="<div class='tooltip-content'>
+                                                            <strong>Informasi</strong><br>
+                                                            Ajukan approval untuk<br>
+                                                            modifikasi laporan
+                                                        </div>"
+                                                style="cursor: not-allowed; opacity: 0.6;"
+                                                onmouseover="keepTooltipVisible(this)"
+                                                onmouseout="hideTooltipWithDelay(this)">
+                                                <i class="fas fa-trash me-2"></i> Hapus
+                                            </span>
+                                        </li>
                                     @endif
                                 </ul>
                             </div>
@@ -486,6 +516,27 @@
 
         .restricted-action:hover {
             background-color: transparent !important;
+        }
+
+        /* CSS untuk tautan dalam tooltip */
+        .tooltip-content a {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background-color: rgba(27, 132, 255, 0.1);
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .tooltip-content a:hover {
+            background-color: rgba(27, 132, 255, 0.2);
+            text-decoration: none;
+        }
+
+        .tooltip-content a:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(27, 132, 255, 0.25);
         }
 
         @media (max-width: 768px) {

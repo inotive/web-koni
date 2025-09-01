@@ -257,13 +257,17 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-4">
-                                <div class="col-md-9 offset-md-3 d-flex justify-content-between">
-                                    <button type="submit" class="btn btn-danger px-4">Simpan Perubahan</button>
-                                    <a href="{{ route('admin.konfigurasi.prestasi.index') }}"
-                                        class="btn btn-secondary px-4">Kembali</a>
-                                </div>
-                            </div>
+                            <div class="row">
+                        <div class="col-md-9 offset-md-3 d-flex gap-3">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-save me-2"></i>Simpan
+                            </button>
+                            <a href="{{ route('admin.konfigurasi.prestasi.index') }}"
+                               class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Kembali
+                            </a>
+                        </div>
+                    </div>
                         </form>
                     </div>
                 </div>

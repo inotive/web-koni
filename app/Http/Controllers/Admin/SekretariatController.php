@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lpj;
+use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -146,23 +147,32 @@ class SekretariatController extends Controller
 
     public function edit($id)
     {
-        if (!auth()->user()->hasRole('superadmin')) {
-            abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
-        }
-
         $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
+
+        // Cek apakah user adalah superadmin atau memiliki izin modifikasi
+        if (!auth()->user()->hasRole('superadmin') && 
+            (!isset($sekretariat->modifiable_by_user_id) || 
+             auth()->user()->id != $sekretariat->modifiable_by_user_id)) {
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk mengedit data ini.');
+        }
+
         return view('admin.laporan-lpj.sekretariat.edit', compact('sekretariat'));
     }
 
     public function update(Request $request, $id)
     {
-        if (!auth()->user()->hasRole('superadmin')) {
-            abort(403, 'Akses ditolak. Hanya superadmin yang dapat memperbarui data.');
-        }
-
         $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
+
+        // Cek apakah user adalah superadmin atau memiliki izin modifikasi
+        if (!auth()->user()->hasRole('superadmin') && 
+            (!isset($sekretariat->modifiable_by_user_id) || 
+             auth()->user()->id != $sekretariat->modifiable_by_user_id)) {
+            return response()->json([
+                'message' => 'Akses ditolak. Anda tidak memiliki izin untuk memperbarui data ini.'
+            ], 403);
+        }
 
         $request->validate([
             'nama_program_kegiatan' => 'required|string|max:255',
@@ -297,14 +307,19 @@ class SekretariatController extends Controller
 
     public function destroy($id)
     {
-        if (!auth()->user()->hasRole('superadmin')) {
-            return response()->json(['message' => 'Akses ditolak. Hanya superadmin yang dapat menghapus data.'], 403);
+        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                          ->findOrFail($id);
+
+        // Cek apakah user adalah superadmin atau memiliki izin modifikasi
+        if (!auth()->user()->hasRole('superadmin') && 
+            (!isset($sekretariat->modifiable_by_user_id) || 
+             auth()->user()->id != $sekretariat->modifiable_by_user_id)) {
+            return response()->json([
+                'message' => 'Akses ditolak. Anda tidak memiliki izin untuk menghapus data ini.'
+            ], 403);
         }
 
         try {
-            $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                              ->findOrFail($id);
-
             // Hapus file terkait
             if ($sekretariat->foto_jurnal) {
                 foreach ($sekretariat->foto_jurnal as $foto) {
@@ -345,12 +360,15 @@ class SekretariatController extends Controller
 
     public function removeFile(Request $request, $id)
     {
-        if (!auth()->user()->hasRole('superadmin')) {
-            return response()->json(['error' => 'Akses ditolak'], 403);
-        }
-
         $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
+
+        // Cek apakah user adalah superadmin atau memiliki izin modifikasi
+        if (!auth()->user()->hasRole('superadmin') && 
+            (!isset($sekretariat->modifiable_by_user_id) || 
+             auth()->user()->id != $sekretariat->modifiable_by_user_id)) {
+            return response()->json(['error' => 'Akses ditolak'], 403);
+        }
 
         $request->validate([
             'file_type' => 'required|in:foto_jurnal,dokumen_lpj',
