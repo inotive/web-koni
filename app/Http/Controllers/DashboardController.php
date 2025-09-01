@@ -31,7 +31,7 @@ class DashboardController extends Controller
                       ->where('id', '<=', 8)
                       ->get();
         
-        // Membagi total RKA secara merata ke setiap kegiatan yang sesuai
+        // Membagi total RKA secara merata ke setiap kegiatan yang sesuai untuk perhitungan persentase
         $jumlah_kegiatan = $kegiatan->count();
         $rka_per_kegiatan = ($jumlah_kegiatan > 0 && $total_rka > 0) ? $total_rka / $jumlah_kegiatan : 0;
         
@@ -40,9 +40,11 @@ class DashboardController extends Controller
         $total_serapan = 0;
         $kegiatan_berjalan_count = 0;
         
-        $kegiatan = $kegiatan->map(function ($item) use ($rka_per_kegiatan, &$total_serapan, &$kegiatan_berjalan_count) {
-            // Menetapkan total budget untuk setiap kegiatan
+        $kegiatan = $kegiatan->map(function ($item) use ($rka_per_kegiatan, $total_rka, &$total_serapan, &$kegiatan_berjalan_count) {
+            // Menetapkan total budget untuk setiap kegiatan (untuk perhitungan persentase per kegiatan)
             $item->total_budget = $rka_per_kegiatan;
+            // Menetapkan total RKA keseluruhan (untuk ditampilkan di dashboard)
+            $item->total_rka_keseluruhan = $total_rka;
             
             // Untuk Pembinaan Prestasi (ID 6), kita perlu membagi anggarannya ke anak-anak
             if ($item->id == 6 && $rka_per_kegiatan > 0) {
@@ -64,9 +66,10 @@ class DashboardController extends Controller
             $serapan = $serapan_induk + $serapan_anak;
             
             // Untuk perhitungan dashboard, hanya nilai > 1 yang dihitung sebagai serapan aktif
-            $serapan_aktif_induk = $item->jumlah_harga > 1 ? $item->jumlah_harga : 0;
+            // Kecualikan nilai 2 yang merupakan data default/test
+            $serapan_aktif_induk = ($item->jumlah_harga > 1 && $item->jumlah_harga != 2) ? $item->jumlah_harga : 0;
             $serapan_aktif_anak = $item->children->sum(function($child) {
-                return $child->jumlah_harga > 1 ? $child->jumlah_harga : 0;
+                return ($child->jumlah_harga > 1 && $child->jumlah_harga != 2) ? $child->jumlah_harga : 0;
             });
             $serapan_aktif = $serapan_aktif_induk + $serapan_aktif_anak;
             
@@ -211,9 +214,10 @@ class DashboardController extends Controller
             $serapan = $serapan_induk + $serapan_anak;
 
             // Untuk perhitungan dashboard, hanya nilai > 1 yang dihitung sebagai serapan aktif
-            $serapan_aktif_induk = $item->jumlah_harga > 1 ? $item->jumlah_harga : 0;
+            // Kecualikan nilai 2 yang merupakan data default/test
+            $serapan_aktif_induk = ($item->jumlah_harga > 1 && $item->jumlah_harga != 2) ? $item->jumlah_harga : 0;
             $serapan_aktif_anak = $item->children->sum(function($child) {
-                return $child->jumlah_harga > 1 ? $child->jumlah_harga : 0;
+                return ($child->jumlah_harga > 1 && $child->jumlah_harga != 2) ? $child->jumlah_harga : 0;
             });
             $serapan_aktif = $serapan_aktif_induk + $serapan_aktif_anak;
 

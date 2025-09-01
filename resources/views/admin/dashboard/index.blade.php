@@ -243,7 +243,7 @@
                         <i class="fa-solid fa-bolt" style="color: white;"></i>
                     </div>
 
-                    <div class="info-value">Rp {{ number_format($total_rka > 0 ? $total_serapan : 0, 0, ',', '.') }} / Rp {{ number_format($total_rka, 0, ',', '.') }}</div>
+                    <div class="info-value">Rp {{ number_format($total_serapan, 0, ',', '.') }} / Rp {{ number_format($total_rka, 0, ',', '.') }}</div>
 
                     <div class="info-label mt-1 d-flex align-items-center gap-2">
                         <span
@@ -332,8 +332,8 @@
                         // Menangani kasus ketika tidak ada RKA
                         $persen = ($total_budget > 0) ? round(($serapan / $total_budget) * 100) : 0;
                         // Menampilkan 0 jika tidak ada RKA
-                        $display_serapan = ($total_rka > 0) ? $serapan : 0;
-                        $display_budget = $total_budget;
+                        $display_serapan = $serapan;
+                        $display_budget = $total_rka; // Menampilkan total RKA keseluruhan
 
                         $barClass = 'bar-success';
                         if ($persen <= 30) {
