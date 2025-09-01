@@ -98,7 +98,7 @@
                                 </li>
                                 <li class="menu-item">
                                     <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan-lainnya*') ? 'active' : '' }}"
-                                        href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}">
+                                        href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">Kegiatan Lainnya</span>
                                     </a>
@@ -113,19 +113,18 @@
                             </ul>
                         </div>
                     </div>
-                    @endcan
-                    @can('database-bendahara')
-                        <div class="menu-item">
-                            <a class="menu-link {{ request()->is('admin/bendahara*') ? 'active' : '' }}"
-                                href="{{ route('admin.bendahara.index') }}">
-                                <span class="menu-icon">
-                                    <i class="fa-solid fa-address-book fs-2"></i>
-                                </span>
-                                <span class="menu-title">Database Bendahara</span>
-                            </a>
-                        </div>
-
-                    @endcan
+                @endcan
+                @can('database-bendahara')
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/bendahara*') ? 'active' : '' }}"
+                            href="{{ route('admin.bendahara.index') }}">
+                            <span class="menu-icon">
+                                <i class="fa-solid fa-address-book fs-2"></i>
+                            </span>
+                            <span class="menu-title">Database Bendahara</span>
+                        </a>
+                    </div>
+                @endcan
 
                 @can('surat-masuk-keluar')
                     <div class="menu-item">
