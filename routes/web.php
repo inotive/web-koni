@@ -164,6 +164,9 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/create-category', [App\Http\Controllers\Admin\LpjController::class, 'createCategory'])->name('create-category');
             Route::post('/store-category', [App\Http\Controllers\Admin\LpjController::class, 'storeCategory'])->name('store-category');
 
+            // Export routes
+            Route::get('/export-csv', [App\Http\Controllers\Admin\LpjController::class, 'exportCsv'])->name('export-csv');
+
             // Child level routes (with parent)
             Route::prefix('{parentId}')->group(function () {
                 Route::get('/', [App\Http\Controllers\Admin\LpjController::class, 'index'])->name('child.index');
@@ -172,6 +175,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
                 Route::get('/create-category', [App\Http\Controllers\Admin\LpjController::class, 'createCategory'])->name('child.create-category');
                 Route::post('/store-category', [App\Http\Controllers\Admin\LpjController::class, 'storeCategory'])->name('child.store-category');
                 Route::get('/navigate', [App\Http\Controllers\Admin\LpjController::class, 'navigate'])->name('navigate');
+                Route::get('/export-csv', [App\Http\Controllers\Admin\LpjController::class, 'exportCsv'])->name('child.export-csv');
 
                 // Nested child routes (for deeper hierarchies)
                 Route::prefix('{childId}')->group(function () {
@@ -218,6 +222,12 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
                 Route::get('/cabor-beladiri', [App\Http\Controllers\Admin\BidangController::class, 'caborBeladiri'])->name('cabor-beladiri');
                 Route::get('/cabor-akurasi', [App\Http\Controllers\Admin\BidangController::class, 'caborAkurasi'])->name('cabor-akurasi');
             });
+        });
+
+        Route::prefix('pengajuan')->name('pengajuan.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\PengajuanController::class, 'index'])->name('index');
+            Route::post('/', [App\Http\Controllers\Admin\PengajuanController::class, 'store'])->name('store');
+            Route::patch('/{pengajuan}/status', [App\Http\Controllers\Admin\PengajuanController::class, 'updateStatus'])->name('updateStatus');
         });
 
         Route::prefix('kegiatan_lainnya')->name('kegiatan_lainnya.')->group(function () {

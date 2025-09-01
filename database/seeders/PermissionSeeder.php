@@ -23,6 +23,7 @@ class PermissionSeeder extends Seeder
                 ['name' => 'database-bendahara', 'group' => 'Keuangan', 'display_name' => 'Database Bendahara'],
                 ['name' => 'file-kesekretariatan', 'group' => 'Kesekretariatan', 'display_name' => 'File Kesekretariatan'],
                 ['name' => 'surat-masuk-keluar', 'group' => 'Kesekretariatan', 'display_name' => 'Surat Masuk & Keluar'],
+                ['name' => 'pengajuan-modifikasi-laporan', 'group' => 'Sistem', 'display_name' => 'Pengajuan Modifikasi Laporan'],
 
                 // Konfigurasi
                 ['name' => 'pelatih', 'group' => 'Konfigurasi', 'display_name' => 'Pelatih'],
