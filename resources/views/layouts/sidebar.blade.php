@@ -103,8 +103,18 @@
                                         <span class="menu-title">Kegiatan Lainnya</span>
                                     </a>
                                 </li>
+                                <li class="menu-item">
+                                    <a class="menu-link {{ request()->is('admin/laporan-lpj/pengajuan*') ? 'active' : '' }}"
+                                        href="{{ route('admin.laporan-lpj.pengajuan.index') }}">
+                                        <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                        <span class="menu-title">Pengajuan LPJ</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
+                    </div>
+                    @endcan
+                    @can('database-bendahara')
                         <div class="menu-item">
                             <a class="menu-link {{ request()->is('admin/bendahara*') ? 'active' : '' }}"
                                 href="{{ route('admin.bendahara.index') }}">
@@ -114,8 +124,8 @@
                                 <span class="menu-title">Database Bendahara</span>
                             </a>
                         </div>
-                    </div>
-                @endcan
+
+                    @endcan
 
                 @can('surat-masuk-keluar')
                     <div class="menu-item">
