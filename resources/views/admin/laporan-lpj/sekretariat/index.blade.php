@@ -566,9 +566,46 @@
     function initializeTooltips() {
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl, {
-                trigger: 'hover focus'
+            var tooltip = new bootstrap.Tooltip(tooltipTriggerEl, {
+                trigger: 'hover',
+                html: true,
+                delay: { show: 0, hide: 300 },
+                fallbackPlacements: ['left', 'top', 'bottom']
             });
+
+            // Variabel untuk menyimpan timeout
+            var hideTimeout;
+
+            // Menangani event saat kursor masuk ke elemen trigger
+            tooltipTriggerEl.addEventListener('mouseenter', function () {
+                clearTimeout(hideTimeout);
+            });
+
+            // Menangani event saat kursor keluar dari elemen trigger
+            tooltipTriggerEl.addEventListener('mouseleave', function () {
+                hideTimeout = setTimeout(function() {
+                    tooltip.hide();
+                }, 300);
+            });
+
+            // Menangani event saat tooltip ditampilkan
+            tooltipTriggerEl.addEventListener('shown.bs.tooltip', function () {
+                var tooltipEl = document.querySelector('.tooltip');
+                if (tooltipEl) {
+                    // Menambahkan event listener untuk mencegah tooltip menghilang saat kursor di atasnya
+                    tooltipEl.addEventListener('mouseenter', function() {
+                        clearTimeout(hideTimeout);
+                    });
+                    
+                    tooltipEl.addEventListener('mouseleave', function() {
+                        hideTimeout = setTimeout(function() {
+                            tooltip.hide();
+                        }, 300);
+                    });
+                }
+            });
+
+            return tooltip;
         });
     }
 
@@ -1325,6 +1362,67 @@
             }
         } catch (error) {
             console.error('Error parsing preview data:', error);
+        }
+    });
+
+    // Fungsi untuk menjaga tooltip tetap terlihat
+    window.keepTooltipVisible = function(element) {
+        const tooltip = bootstrap.Tooltip.getInstance(element);
+        if (tooltip) {
+            clearTimeout(element.tooltipHideTimeout);
+        }
+    };
+
+    // Fungsi untuk menyembunyikan tooltip dengan delay
+    window.hideTooltipWithDelay = function(element) {
+        const tooltip = bootstrap.Tooltip.getInstance(element);
+        if (tooltip) {
+            element.tooltipHideTimeout = setTimeout(() => {
+                tooltip.hide();
+            }, 300); // 300ms delay
+        }
+    };
+
+    // Menangani interaksi dengan tooltip
+    $(document).on('mouseenter', '.tooltip', function() {
+        // Saat kursor masuk ke tooltip, batalkan penutupan
+        const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+        if (triggeringElement.length > 0) {
+            clearTimeout(triggeringElement[0].tooltipHideTimeout);
+        }
+    });
+
+    $(document).on('mouseleave', '.tooltip', function() {
+        // Saat kursor keluar dari tooltip, sembunyikan tooltip dengan delay
+        const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+        if (triggeringElement.length > 0) {
+            const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
+            if (tooltip) {
+                triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
+                    tooltip.hide();
+                }, 300);
+            }
+        }
+    });
+
+    $(document).on('mouseenter', '.tooltip-content a', function() {
+        // Saat kursor masuk ke tautan dalam tooltip, batalkan penutupan
+        const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+        if (triggeringElement.length > 0) {
+            clearTimeout(triggeringElement[0].tooltipHideTimeout);
+        }
+    });
+
+    $(document).on('mouseleave', '.tooltip-content a', function() {
+        // Saat kursor keluar dari tautan dalam tooltip, sembunyikan tooltip dengan delay
+        const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+        if (triggeringElement.length > 0) {
+            const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
+            if (tooltip) {
+                triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
+                    tooltip.hide();
+                }, 300);
+            }
         }
     });
 

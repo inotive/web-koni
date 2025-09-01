@@ -129,13 +129,16 @@
                                                 data-bs-placement="left"
                                                 data-bs-custom-class="custom-tooltip"
                                                 data-bs-html="true"
+                                                data-bs-delay='{"show":0,"hide":300}'
                                                 title="<div class='tooltip-content'>
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
                                                             modifikasi laporan<br>
-                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block'>Lihat Detail</a>
+                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
                                                         </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;">
+                                                style="cursor: not-allowed; opacity: 0.6;"
+                                                onmouseover="keepTooltipVisible(this)"
+                                                onmouseout="hideTooltipWithDelay(this)">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </span>
                                         </li>
@@ -155,12 +158,15 @@
                                                 data-bs-placement="left"
                                                 data-bs-custom-class="custom-tooltip"
                                                 data-bs-html="true"
+                                                data-bs-delay='{"show":0,"hide":300}'
                                                 title="<div class='tooltip-content'>
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
                                                             modifikasi laporan
                                                         </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;">
+                                                style="cursor: not-allowed; opacity: 0.6;"
+                                                onmouseover="keepTooltipVisible(this)"
+                                                onmouseout="hideTooltipWithDelay(this)">
                                                 <i class="fas fa-trash me-2"></i> Hapus
                                             </span>
                                         </li>
@@ -510,6 +516,27 @@
 
         .restricted-action:hover {
             background-color: transparent !important;
+        }
+
+        /* CSS untuk tautan dalam tooltip */
+        .tooltip-content a {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background-color: rgba(27, 132, 255, 0.1);
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .tooltip-content a:hover {
+            background-color: rgba(27, 132, 255, 0.2);
+            text-decoration: none;
+        }
+
+        .tooltip-content a:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(27, 132, 255, 0.25);
         }
 
         @media (max-width: 768px) {
