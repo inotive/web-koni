@@ -97,12 +97,23 @@
                                     $displayName = count($parts) > 1 ? $parts[1] : $fileName;
                                 @endphp
                                 <div class="document-link-container">
-                                    <a href="javascript:void(0)" class="document-link" 
-                                       onclick="previewFile('{{ $fileUrl }}', '{{ $fileName }}', '{{ $fileExtension }}')"
-                                       title="Klik untuk melihat {{ $fileName }}">
-                                        <i class="fas fa-file-{{ $fileExtension == 'pdf' ? 'pdf' : 'alt' }} me-2"></i>
-                                        {{ Str::limit($displayName, 25) }}
-                                    </a>
+                                    @if ($fileExtension === 'pdf')
+                                        @php
+                                            // Gunakan Google Docs Viewer untuk PDF
+                                            $viewerUrl = 'https://docs.google.com/viewer?url=' . urlencode($fileUrl) . '&embedded=true';
+                                        @endphp
+                                        <a href="{{ $viewerUrl }}" target="_blank" class="document-link" 
+                                           title="Klik untuk melihat {{ $fileName }}">
+                                            <i class="fas fa-file-pdf me-2"></i>
+                                            <span class="document-link-text">{{ $displayName }}</span>
+                                        </a>
+                                    @else
+                                        <a href="{{ $fileUrl }}" target="_blank" class="document-link" 
+                                           title="Klik untuk melihat {{ $fileName }}">
+                                            <i class="fas fa-file-{{ $fileExtension == 'pdf' ? 'pdf' : 'alt' }} me-2"></i>
+                                            <span class="document-link-text">{{ $displayName }}</span>
+                                        </a>
+                                    @endif
                                 </div>
                             @else
                                 <span class="text-muted">-</span>
@@ -134,7 +145,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li class="dropdown-item edit"
-                                        onclick="openEditModal({{ $file->id }}, '{{ addslashes($file->nama_dokumen) }}', '{{ optional($file->tanggal_dokumen)->format('Y-m-d') }}')">
+                                        onclick="openEditModal({{ $file->id }}, '{{ addslashes($file->nama_dokumen) }}', '{{ optional($file->tanggal_dokumen)->format('Y-m-d') }}', '{{ basename($file->dokumen_file) ?? '' }}')">
                                         <i class="ki-outline ki-pencil me-2"></i>Edit File
                                     </li>
                                     <li class="dropdown-item delete"
@@ -344,7 +355,7 @@
     /* Styling untuk document link yang baru (sama seperti di surat) */
     .document-link-container {
         display: inline-block;
-        max-width: 200px;
+        max-width: 100%;
     }
 
     .document-link {
@@ -352,13 +363,20 @@
         text-decoration: none !important;
         font-weight: 500;
         font-size: 0.875rem;
-        display: inline-flex;
+        display: flex;
         align-items: center;
         padding: 4px 8px;
         border-radius: 4px;
         transition: all 0.2s ease;
-        word-break: break-all;
         line-height: 1.4;
+        width: 100%;
+    }
+
+    .document-link-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
     }
 
     .document-link:hover {
@@ -581,7 +599,7 @@
 
         /* Responsive design untuk document link */
         .document-link-container {
-            max-width: 150px;
+            max-width: 100%;
         }
 
         .document-link {

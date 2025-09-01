@@ -311,6 +311,14 @@
             color: #6c757d;
         }
 
+        /* File Link Text */
+        .file-link-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
         /* =================================
                                                                                                                                                                                DROPDOWN ACTION MENU
                                                                                                                                                                             ================================= */
@@ -971,80 +979,7 @@
             </div>
         </div>
 
-        <!-- File Preview Modal -->
-        <div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div class="d-flex align-items-center gap-3">
-                            <i id="previewFileIcon" class="fas fa-file fa-2x text-primary"></i>
-                            <div>
-                                <h5 class="modal-title mb-0" id="previewFileName">Preview File</h5>
-                                <small class="text-muted" id="previewFileSize"></small>
-                            </div>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="button" id="downloadFromPreview" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-download me-1"></i>Download
-                            </button>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                    <div class="modal-body p-0" style="height: 75vh; overflow: hidden;">
-                        <!-- Loading State -->
-                        <div id="previewLoading" class="d-flex justify-content-center align-items-center h-100">
-                            <div class="text-center">
-                                <div class="spinner-border text-primary mb-3" role="status"
-                                    style="width: 3rem; height: 3rem;">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                                <p class="text-muted">Memuat preview file...</p>
-                            </div>
-                        </div>
-
-                        <!-- PDF Viewer -->
-                        <div id="pdfViewer" class="h-100" style="display: none;">
-                            <iframe id="pdfFrame" class="w-100 h-100" frameborder="0"></iframe>
-                        </div>
-
-                        <!-- Word/Doc Viewer -->
-                        <div id="docViewer" class="h-100 p-4" style="display: none; overflow-y: auto;">
-                            <div id="docContent" class="bg-white p-4 border rounded shadow-sm">
-                                <!-- Word content will be loaded here -->
-                            </div>
-                        </div>
-
-                        <!-- Error State -->
-                        <div id="previewError" class="d-flex justify-content-center align-items-center h-100"
-                            style="display: none;">
-                            <div class="text-center">
-                                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                                <h5>Tidak dapat menampilkan preview</h5>
-                                <p class="text-muted mb-3">File ini tidak dapat di-preview. Silakan download untuk melihat
-                                    isi file.</p>
-                                <button type="button" id="downloadFromError" class="btn btn-primary">
-                                    <i class="fas fa-download me-1"></i>Download File
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Unsupported Format -->
-                        <div id="unsupportedFormat" class="d-flex justify-content-center align-items-center h-100"
-                            style="display: none;">
-                            <div class="text-center">
-                                <i class="fas fa-file fa-3x text-secondary mb-3"></i>
-                                <h5>Format file tidak didukung untuk preview</h5>
-                                <p class="text-muted mb-3">Preview hanya tersedia untuk file PDF dan Word (.doc/.docx)</p>
-                                <button type="button" id="downloadUnsupported" class="btn btn-primary">
-                                    <i class="fas fa-download me-1"></i>Download File
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
 
         <!-- Edit File Modal - IMPROVED VERSION -->
         <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel"
@@ -1086,6 +1021,18 @@
                         </div>
 
 
+
+                        <!-- Current File Information -->
+                        <div class="mb-4 p-3 bg-light rounded">
+                            <div class="fw-semibold mb-2 text-gray-800">File Saat Ini</div>
+                            <div class="d-flex align-items-center">
+                                <i id="currentFileIcon" class="fas fa-file fa-2x me-3 text-secondary"></i>
+                                <div>
+                                    <div id="currentFileName" class="fw-medium">-</div>
+                                    <div class="text-muted small">File ini akan diganti jika Anda mengunggah file baru</div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Optional New File Upload -->
                         <!-- SAMAKAN: Dropzone seperti di tambah -->
@@ -1239,30 +1186,7 @@
             `);
         }
 
-        // File preview function
-        function previewFile(fileUrl, fileName, fileExtension) {
-            const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
-            const previewFileName = document.getElementById('previewFileName');
-            const pdfFrame = document.getElementById('pdfFrame');
-
-            // Reset all viewers
-            document.getElementById('pdfViewer').style.display = 'none';
-            document.getElementById('docViewer').style.display = 'none';
-            document.getElementById('previewError').style.display = 'none';
-            document.getElementById('unsupportedFormat').style.display = 'none';
-
-            previewFileName.textContent = fileName;
-
-            if (['pdf', 'doc', 'docx', 'xls', 'xlsx'].includes(fileExtension.toLowerCase())) {
-                const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
-                document.getElementById('pdfViewer').style.display = 'block';
-                pdfFrame.src = googleViewerUrl;
-            } else {
-                document.getElementById('unsupportedFormat').style.display = 'block';
-            }
-
-            modal.show();
-        }
+        
 
         // Get file icon based on extension
         function getFileIcon(extension) {
@@ -1759,6 +1683,9 @@
                     const fileIcon = getFileIconForCurrentFile(fileExtension);
                     $('#currentFileName').text(fileName);
                     $('#currentFileIcon').attr('class', `${fileIcon} fa-2x me-3`);
+                } else {
+                    $('#currentFileName').text('-');
+                    $('#currentFileIcon').attr('class', 'fas fa-file fa-2x me-3 text-secondary');
                 }
 
                 $('#editFileForm').attr('action', `/admin/file-kesekretariat/${id}`);
@@ -1870,9 +1797,18 @@
     $(document).on('click.sorting', 'th.sortable', function(e) {
         e.preventDefault();
         const sortBy = $(this).data('sort');
-        let currentOrder = $(this).data('order') || 'asc';
-        const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-        $(this).data('order', newOrder);
+        
+        // Get current order from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentSortBy = urlParams.get('sort_by');
+        const currentOrder = urlParams.get('order') || 'desc';
+        
+        // If clicking on the same column, toggle order; otherwise start with asc
+        let newOrder = 'asc';
+        if (currentSortBy === sortBy) {
+            newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+        }
+        
         performSearch({
             page: 1,
             sort_by: sortBy,
@@ -2135,7 +2071,7 @@ function hideLoading() {
                         <td>
                             <div class="document-info">
                                 <div class="document-name-display">
-                                    <a href="#" class="document-name" onclick="previewFile('${fileData.file_url}', '${fileData.nama_dokumen}', '${fileData.extension}')">
+                                    <a href="${fileData.file_url}" class="document-name" target="_blank">
     ${fileData.nama_dokumen}
 </a>
                                 </div>
@@ -2143,10 +2079,15 @@ function hideLoading() {
                             </div>
                         </td>
                         <td>
-    <a href="${fileData.file_url}" class="file-link" target="_blank">
+    ${fileData.extension === 'pdf' ? 
+    `<a href="https://docs.google.com/viewer?url=${encodeURIComponent(fileData.file_url)}&embedded=true" class="file-link" target="_blank">
+        <i class="fas fa-file-pdf me-2"></i>
+        <span class="file-link-text">${fileData.dokumen_file}</span>
+    </a>` : 
+    `<a href="${fileData.file_url}" class="file-link" target="_blank">
         <i class="fas fa-download"></i>
-        ${fileData.dokumen_file}
-    </a>
+        <span class="file-link-text">${fileData.dokumen_file}</span>
+    </a>`}
 </td>
                         <td class="text-center">
                             <div class="dropdown-action">
@@ -2188,7 +2129,7 @@ function hideLoading() {
                         <td>
                             <div class="document-info">
                                 <div class="document-name-display">
-                                    <a href="#" class="document-name" onclick="previewFile('${fileData.file_url}', '${fileData.nama_dokumen}', '${fileData.extension}')">
+                                    <a href="${fileData.file_url}" class="document-name" target="_blank">
                                         <i class="${getFileIcon(fileData.extension)}"></i>
                                         ${fileData.nama_dokumen}
                                     </a>
@@ -2197,10 +2138,15 @@ function hideLoading() {
                             </div>
                         </td>
                         <td>
-                            <a href="${fileData.file_url}" class="file-link" target="_blank">
+                            ${fileData.extension === 'pdf' ? 
+                            `<a href="https://docs.google.com/viewer?url=${encodeURIComponent(fileData.file_url)}&embedded=true" class="file-link" target="_blank">
+                                <i class="fas fa-file-pdf me-2"></i>
+                                <span class="file-link-text">${fileData.dokumen_file}</span>
+                            </a>` : 
+                            `<a href="${fileData.file_url}" class="file-link" target="_blank">
                                 <i class="fas fa-download"></i>
-                                ${fileData.dokumen_file}
-                            </a>
+                                <span class="file-link-text">${fileData.dokumen_file}</span>
+                            </a>`}
                         </td>
                         <td class="text-center">
                             <div class="dropdown-action">
