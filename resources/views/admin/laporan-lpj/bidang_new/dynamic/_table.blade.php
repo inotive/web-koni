@@ -141,8 +141,8 @@
                                         </a>
                                     </li>
 
-                                    {{-- Check if user is superadmin for Edit button --}}
-                                    @if(auth()->user()->hasRole('superadmin'))
+                                    {{-- Check if user is superadmin or has modification permission for Edit button --}}
+                                    @if(auth()->user()->hasRole('superadmin') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id))
                                         <li>
                                             <a href="{{ route('admin.laporan-lpj.bidang.dynamic.edit', $data->id) }}"
                                                 class="dropdown-item-custom edit">
@@ -167,8 +167,8 @@
                                         </li>
                                     @endif
 
-                                    {{-- Check if user is superadmin for Delete button --}}
-                                    @if(auth()->user()->hasRole('superadmin'))
+                                    {{-- Check if user is superadmin or has modification permission for Delete button --}}
+                                    @if(auth()->user()->hasRole('superadmin') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id))
                                         <li class="dropdown-item-custom delete"
                                             onclick="deleteItemWithSwal({{ $data->id }}, '{{ addslashes($data->nama_program ?? $data->nama_kegiatan ?? 'laporan ini') }}')">
                                             <i class="ki-outline ki-trash me-2"></i>Hapus Laporan

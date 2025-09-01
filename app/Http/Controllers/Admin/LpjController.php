@@ -7,6 +7,7 @@ use App\Models\Lpj;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LpjController extends Controller
 {
@@ -416,5 +417,64 @@ class LpjController extends Controller
         }
 
         return response()->json($tree);
+    }
+
+    public function exportCsv(Request $request, $parentId = null)
+    {
+        $query = Lpj::query();
+
+        // Filter by parent ID
+        if ($parentId) {
+            $query->where('parent_id', $parentId);
+        } else {
+            $query->whereNull('parent_id');
+        }
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $searchTerm = $request->get('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama_program', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('nama_kegiatan', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('keterangan_tambahan', 'LIKE', "%{$searchTerm}%");
+            });
+        }
+
+        // Apply kegiatan filter
+        if ($request->filled('jenis_kegiatan_filter')) {
+            $query->where('nama_kegiatan', $request->get('jenis_kegiatan_filter'));
+        }
+
+        $lpjData = $query->get();
+
+        $response = new StreamedResponse(function() use ($lpjData) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, [
+                'Nama Program',
+                'Nama Kegiatan',
+                'Volume',
+                'Harga Satuan',
+                'Jumlah',
+                'Keterangan'
+            ]);
+
+            foreach ($lpjData as $lpj) {
+                fputcsv($handle, [
+                    $lpj->nama_program,
+                    $lpj->nama_kegiatan,
+                    $lpj->volume,
+                    $lpj->jumlah_harga_satuan,
+                    $lpj->jumlah_harga,
+                    $lpj->keterangan_tambahan
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="lpj_export.csv"');
+
+        return $response;
     }
 }
