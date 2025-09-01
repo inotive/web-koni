@@ -132,7 +132,8 @@
                                                 title="<div class='tooltip-content'>
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
-                                                            modifikasi laporan
+                                                            modifikasi laporan<br>
+                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block'>Lihat Detail</a>
                                                         </div>"
                                                 style="cursor: not-allowed; opacity: 0.6;">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
