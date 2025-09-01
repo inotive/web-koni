@@ -456,18 +456,48 @@
             </div>
         </div>
     </div>
-    <!-- Modal Detail Card -->
+        <!-- Modal Detail Card -->
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
+                <div class="modal-header d-flex align-items-center" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
                     <h5 class="modal-title" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <button type="button" id="ajukanPerubahanBtn" class="btn btn-success">
+                            <i class="fas fa-paper-plane me-1"></i> <strong>Ajukan Perubahan</strong>
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
                 </div>
                 <div class="modal-body" id="detailModalBody">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Pengajuan Modal --}}
+    <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pengajuanModalLabel">Ajukan Perubahan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="pengajuanForm">
+                        <input type="hidden" id="pengajuan_lpj_id" name="lpj_id">
+                        <div class="mb-3">
+                            <label for="alasan" class="form-label">Alasan Perubahan</label>
+                            <textarea class="form-control" id="alasan" name="alasan" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="submitPengajuanBtn">Kirim Pengajuan</button>
                 </div>
             </div>
         </div>
@@ -954,6 +984,9 @@
             return;
         }
 
+        // Simpan ID LPJ dalam data modal
+        $('#detailModal').data('lpj-id', data.id);
+
         const formatRupiah = (num) => {
             if (!num) return 'Rp 0';
             return 'Rp ' + parseInt(num).toLocaleString('id-ID');
@@ -973,7 +1006,7 @@
                                      class="w-100 h-100"
                                      style="object-fit: cover; cursor: pointer;"
                                      onclick="window.open('/storage/${path}', '_blank')"
-                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'d-flex align-items-center justify-content-center h-100 text-muted\'>Error loading image</div>'">
+                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
                                 <div class="text-center small bg-light p-1">${name}</div>
                             </div>
                         </div>
@@ -1314,6 +1347,55 @@
         if (currentFiles && currentFiles.length > 0) {
             showSlide(0);
         }
+    });
+
+    // Handle Ajukan Perubahan button
+    $('#ajukanPerubahanBtn').on('click', function() {
+        const lpjId = $('#detailModal').data('lpj-id');
+        $('#pengajuan_lpj_id').val(lpjId);
+        $('#detailModal').modal('hide');
+        new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
+    });
+
+    // Handle submit pengajuan
+    $('#submitPengajuanBtn').on('click', function() {
+        const lpjId = $('#pengajuan_lpj_id').val();
+        const alasan = $('#alasan').val();
+
+        if (!alasan.trim()) {
+            showNotification('Alasan harus diisi.', 'error');
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                lpj_id: lpjId,
+                alasan: alasan,
+                user_id: {{ auth()->id() }}
+            },
+            success: function(response) {
+                if(response.success) {
+                    $('#alasan').val('');
+                    $('#pengajuan_lpj_id').val('');
+                    $('#pengajuanModal').modal('hide');
+                    showNotification('Pengajuan berhasil dikirim.', 'success');
+                } else {
+                    showNotification(response.message || 'Gagal mengirim pengajuan.', 'error');
+                }
+            },
+            error: function() {
+                showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+            }
+        });
+    });
+
+    // Reset form when modal is hidden
+    $('#pengajuanModal').on('hidden.bs.modal', function () {
+        $('#alasan').val('');
+        $('#pengajuan_lpj_id').val('');
     });
 });
     </script>
