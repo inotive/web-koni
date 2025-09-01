@@ -366,7 +366,7 @@
                                                         // Handle berbagai tipe data untuk foto
                                                         $path = '';
                                                         $originalName = '';
-                                                        
+
                                                         if (is_object($foto)) {
                                                             $path = $foto->path;
                                                             $originalName = $foto->original_name ?? basename($path);
@@ -377,7 +377,7 @@
                                                             $path = $foto;
                                                             $originalName = basename($path);
                                                         }
-                                                        
+
                                                         // Pastikan kita punya nama file
                                                         if (empty($originalName) && is_string($path)) {
                                                             $originalName = basename($path);
@@ -447,7 +447,7 @@
                                                         // Handle berbagai tipe data untuk dokumen
                                                         $path = '';
                                                         $originalName = '';
-                                                        
+
                                                         if (is_object($dokumen)) {
                                                             $path = $dokumen->path;
                                                             $originalName = $dokumen->original_name;
@@ -458,17 +458,17 @@
                                                             $path = $dokumen;
                                                             $originalName = basename($path);
                                                         }
-                                                        
+
                                                         // Pastikan kita punya nama file
                                                         if (empty($originalName) && is_string($path)) {
                                                             $originalName = basename($path);
                                                         }
-                                                        
+
                                                         $extension = '';
                                                         if (!empty($originalName)) {
                                                             $extension = pathinfo($originalName, PATHINFO_EXTENSION);
                                                         }
-                                                        
+
                                                         $icon = 'fas fa-file text-secondary';
                                                         if (!empty($extension)) {
                                                             $icon = match(strtolower($extension)) {
@@ -542,13 +542,13 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-4">
-                        <div class="col-md-3 offset-md-3 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-danger px-4">
-                                <i class="fas fa-save me-2"></i>Update Laporan
+                             <div class="row">
+                        <div class="col-md-9 offset-md-3 d-flex gap-3">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-save me-2"></i>Simpan
                             </button>
                             <a href="{{ route('admin.laporan-lpj.sekretariat.index') }}"
-                                class="btn btn-secondary px-4">
+                               class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>
                         </div>
@@ -571,7 +571,7 @@
             // Initialize existing files from PHP
             let existingFotoFiles = [];
             let existingDokumenFiles = [];
-            
+
             // Safely parse existing files
             try {
                 existingFotoFiles = @json($sekretariat->foto_jurnal ? (is_array($sekretariat->foto_jurnal) ? $sekretariat->foto_jurnal : [$sekretariat->foto_jurnal]) : []);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lpj;
+use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -359,12 +360,15 @@ class SekretariatController extends Controller
 
     public function removeFile(Request $request, $id)
     {
-        if (!auth()->user()->hasRole('superadmin')) {
-            return response()->json(['error' => 'Akses ditolak'], 403);
-        }
-
         $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
+
+        // Cek apakah user adalah superadmin atau memiliki izin modifikasi
+        if (!auth()->user()->hasRole('superadmin') && 
+            (!isset($sekretariat->modifiable_by_user_id) || 
+             auth()->user()->id != $sekretariat->modifiable_by_user_id)) {
+            return response()->json(['error' => 'Akses ditolak'], 403);
+        }
 
         $request->validate([
             'file_type' => 'required|in:foto_jurnal,dokumen_lpj',

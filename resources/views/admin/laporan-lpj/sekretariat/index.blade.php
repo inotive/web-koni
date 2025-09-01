@@ -340,6 +340,21 @@
             -webkit-appearance: none;
             appearance: none;
         }
+
+        #ajukanPerubahanBtn {
+            background-color: #4CAF50; /* Soft green like screenshot */
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px; /* Rounded corners */
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* for icon if added */
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -353,26 +368,10 @@
                 <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Sekretariat - 2025</h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    @if (auth()->user()->hasRole('superadmin'))
-                        <a href="{{ route('admin.laporan-lpj.sekretariat.create') }}" class="btn btn-primary"
-                            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-                            <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-                        </a>
-                    @else
-                        <div class="position-relative">
-                            <button class="btn custom-red-button btn-restricted"
-                                style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;"
-                                data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-custom-class="custom-tooltip"
-                                data-bs-html="true"
-                                title="<div class='tooltip-content'>
-                                          <strong>Informasi</strong><br>
-                                          Ajukan approval untuk<br>
-                                          modifikasi laporan
-                                       </div>">
-                                <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-                            </button>
-                        </div>
-                    @endif
+                    <a href="{{ route('admin.laporan-lpj.sekretariat.create') }}" class="btn btn-primary"
+    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+</a>
 
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
@@ -463,8 +462,8 @@
                 <div class="modal-header d-flex align-items-center" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
                     <h5 class="modal-title" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
                     <div class="ms-auto d-flex align-items-center gap-2">
-                        <button type="button" id="ajukanPerubahanBtn" class="btn btn-success">
-                            <i class="fas fa-paper-plane me-1"></i> <strong>Ajukan Perubahan</strong>
+                       <button type="button" id="ajukanPerubahanBtn">
+                            <i class="bi bi-arrow-repeat" style="color: white"></i> <strong>Ajukan Perubahan</strong>
                         </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
@@ -483,7 +482,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="pengajuanModalLabel">Ajukan Perubahan</h5>
+                                       <h5 class="modal-title" id="pengajuanModalLabel">Ajukan Perubahan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
