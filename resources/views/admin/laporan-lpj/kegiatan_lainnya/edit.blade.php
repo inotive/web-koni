@@ -3,7 +3,7 @@
 @section('pageTitle', 'Edit Kegiatan Lainnya')
 @section('mainSection', 'Laporan Pertanggungjawaban')
 @section('subSection', 'Kegiatan Lainnya')
-@section('subSectionUrl', route('admin.laporan-lpj.kegiatan_lainnya.index'))
+@section('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index'))
 @section('currentSection', 'Edit Kegiatan Lainnya')
 
 @section('content')
@@ -206,8 +206,8 @@
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Edit Data</h3>
-                        <form action="{{ route('admin.laporan-lpj.kegiatan_lainnya.update', $sekretariat->id) }}" method="POST"
-                            enctype="multipart/form-data">
+                        <form action="{{ route('admin.laporan-lpj.kegiatan-lainnya.update', $sekretariat->id) }}"
+                            method="POST" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
 
@@ -416,7 +416,7 @@
                             <div class="row mt-4">
                                 <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                                     <button type="submit" class="btn btn-danger px-4">Update Data</button>
-                                    <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}"
+                                    <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}"
                                         class="btn btn-secondary px-4">Kembali</a>
                                 </div>
                             </div>
