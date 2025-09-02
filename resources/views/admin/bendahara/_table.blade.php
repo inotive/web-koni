@@ -78,7 +78,7 @@
                             <div class="d-flex flex-column">
                                 @if($item->dokumen)
                                     <a href="#" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ $extension }}')"
-                                       class="text-decoration-none cursor-pointer text-primary" style="font-size: 15px">
+                                       class="text-decoration-none cursor-pointer text-primary text-truncate d-block" style="font-size: 15px; max-width: 200px;" title="{{ $item->judul }}">
                                         @if(request('search'))
                                             {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
                                         @else
@@ -86,11 +86,13 @@
                                         @endif
                                     </a>
                                 @else
-                                    @if(request('search'))
-                                        {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
-                                    @else
-                                        {{ $item->judul }}
-                                    @endif
+                                    <span class="text-truncate d-block" style="max-width: 250px;" title="{{ $item->judul }}">
+                                        @if(request('search'))
+                                            {!! preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $item->judul) !!}
+                                        @else
+                                            {{ $item->judul }}
+                                        @endif
+                                    </span>
                                 @endif
                             </div>
                             <span class="text-muted">{{ \Carbon\Carbon::parse($item->tanggal)->format('d M Y') }}</span>
@@ -160,8 +162,8 @@
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content rounded-4 gap-5 px-10 py-8">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
-                                    <div class="fs-2 fw-bold text-truncate leading-5">
-                                        Edit Laporan: {{ Str::limit($item->judul, 20) }}
+                                    <div class="fs-2 fw-bold text-truncate leading-5" title="{{ $item->judul }}">
+                                        Edit Laporan: {{ $item->judul }}
                                     </div>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
@@ -205,9 +207,19 @@
                                         @if($item->dokumen)
                                             <div class="mt-2 p-3 bg-light rounded">
                                                 <small class="text-muted">File saat ini: </small>
-                                                <a href="#" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')" class="text-primary text-decoration-none fw-bold">
+                                                <a href="#"
+                                                    onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')"
+                                                    class="text-primary text-decoration-none fw-bold d-block filename-truncate"
+                                                    title="{{ basename($item->dokumen) }}"
+                                                    style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                                     {{ basename($item->dokumen) }}
                                                 </a>
+                                                <div class="mt-1">
+                                                    <small class="text-muted">
+                                                        Klik untuk preview •
+                                                        {{ number_format(Storage::disk('public')->size($item->dokumen) / 1048576, 2) }} MB
+                                                    </small>
+                                                </div>
                                             </div>
                                         @endif
                                     </div>
@@ -325,6 +337,12 @@
 @endif
 
 <style>
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     .search-highlight {
         background-color: #fff3cd;
         padding: 1px 3px;
@@ -574,6 +592,63 @@
 
         .dropdown-item:hover {
             transform: none;
+        }
+
+        .file-name-truncate {
+            display: inline-block;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+        }
+
+        .file-name-wrap {
+            word-break: break-all;
+            white-space: normal;
+        }
+
+        .mt-2.p-3.bg-light.rounded {
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .mt-2.p-3.bg-light.rounded .file-name-truncate {
+            display: block;
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.4;
+        }
+
+        /* Alternative approach - allow wrapping but limit height */
+        .file-name-wrap {
+            word-break: break-all;
+            white-space: normal;
+            max-height: 3em; /* Roughly 2-3 lines */
+            overflow: hidden;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        /* For mobile devices */
+        @media (max-width: 768px) {
+            .file-name-truncate {
+                display: inline-block;
+                max-width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                vertical-align: middle;
+            }
+
+            .file-name-wrap {
+                word-break: break-all;
+                white-space: normal;
+            }
         }
     }
 </style>
