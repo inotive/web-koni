@@ -474,7 +474,12 @@
                 <div class="modal-header d-flex align-items-center" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
                     <h5 class="modal-title" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
                     <div class="ms-auto d-flex align-items-center gap-2">
-                       <button type="button" id="ajukanPerubahanBtn">
+                        <!-- Status Icon -->
+                        <div id="statusIconContainer" class="d-flex align-items-center me-2">
+                            <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
+                        </div>
+                        
+                        <button type="button" id="ajukanPerubahanBtn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i> <strong>Ajukan Perubahan</strong>
                         </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -1026,10 +1031,29 @@
 
     window.showDetailModal = function(data) {
     const modalBody = document.getElementById('detailModalBody');
+    const statusIcon = document.getElementById('statusIcon');
 
     if (!modalBody) {
         console.error('Modal body not found');
         return;
+    }
+
+    // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id
+    if (statusIcon) {
+        // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
+        // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin atau memiliki akses modifikasi
+        const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
+        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
+        
+        // Jika modifiable_by_user_id tidak ada, berarti belum ada yang mengajukan perubahan atau belum disetujui
+        // Dalam kasus ini, hanya superadmin yang bisa mengakses
+        if (isSuperAdmin || isModifiableByCurrentUser) {
+            statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
+            statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
+        } else {
+            statusIcon.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
+            statusIcon.className = 'badge bg-danger fs-7 d-flex align-items-center';
+        }
     }
 
     // Simpan ID LPJ dalam data modal
