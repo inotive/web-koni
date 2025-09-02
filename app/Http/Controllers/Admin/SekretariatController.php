@@ -49,6 +49,7 @@ class SekretariatController extends Controller
         }
 
         $kegiatanLainnya = $query
+            ->select(['*', 'modifiable_by_user_id']) // Pastikan field modifiable_by_user_id selalu diambil
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
