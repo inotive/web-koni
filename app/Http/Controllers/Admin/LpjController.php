@@ -62,6 +62,7 @@ class LpjController extends Controller
 
         // Get unique kegiatan for filter
         $uniqueKegiatan = Lpj::where('parent_id', $parentId)
+                            ->select(['*', 'modifiable_by_user_id'])
                             ->whereNotNull('nama_kegiatan')
                             ->pluck('nama_kegiatan')
                             ->unique()

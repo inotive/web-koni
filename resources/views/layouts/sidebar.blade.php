@@ -1,3 +1,8 @@
+@php
+    use App\Models\Pengajuan;
+    $pengajuanCount = Pengajuan::where('status', 'menunggu persetujuan')->count();
+@endphp
+
 <div id="kt_aside" class="aside" data-kt-drawer="true" data-kt-drawer-name="aside"
     data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true"
     data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start"
@@ -71,14 +76,19 @@
                             aria-expanded="{{ $isLaporanLPJActive ? 'true' : 'false' }}" aria-controls="submenu-laporan">
                             <span class="d-flex align-items-center">
                                 <span class="menu-icon">
-                                    <i
-                                        class="fa-solid fa-money-bill fs-2 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
+                                    <i class="fa-solid fa-money-bill fs-2 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
                                 </span>
-                                <span class="menu-title {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-800' }}">Laporan
-                                    LPJ</span>
+                                <span class="menu-title {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-800' }}">
+                                    Laporan LPJ
+                                </span>
+                                @if($pengajuanCount > 0)
+                                    <span class="badge bg-danger text-white ms-2"
+                                        style="font-size: 0.7rem; border-radius: 50%; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+                                        {{ $pengajuanCount }}
+                                    </span>
+                                @endif
                             </span>
-                            <i
-                                class="fa-solid {{ $isLaporanLPJActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
+                            <i class="fa-solid {{ $isLaporanLPJActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
                         </a>
                         <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
                             <ul class="menu flex-column ms-5">
@@ -107,7 +117,14 @@
                                     <a class="menu-link {{ request()->is('admin/laporan-lpj/pengajuan*') ? 'active' : '' }}"
                                         href="{{ route('admin.laporan-lpj.pengajuan.index') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
-                                        <span class="menu-title">Pengajuan LPJ</span>
+                                        <span class="menu-title">
+                                            Pengajuan LPJ
+                                            @if($pengajuanCount > 0)
+                                                <span class="badge bg-danger text-white ms-2" style="font-size: 0.7rem; border-radius: 50%;">
+                                                    {{ $pengajuanCount }}
+                                                </span>
+                                            @endif
+                                        </span>
                                     </a>
                                 </li>
                             </ul>

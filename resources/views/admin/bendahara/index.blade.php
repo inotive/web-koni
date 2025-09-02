@@ -325,6 +325,60 @@
             color: #dc3545;
         }
 
+        .modal-content * {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Specific fix for the current file section */
+        .mt-2.p-3.bg-light.rounded {
+            max-width: 100%;
+            overflow: hidden;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* Force filename to break and wrap */
+        .mt-2.p-3.bg-light.rounded a {
+            display: block;
+            word-break: break-all !important;
+            overflow-wrap: break-word !important;
+            white-space: normal !important;
+            line-height: 1.3;
+            max-width: 100%;
+            hyphens: auto;
+        }
+
+        /* Alternative: Truncate with ellipsis if you prefer single line */
+        .filename-truncate {
+            display: block;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 400px; /* Adjust as needed */
+        }
+
+        /* Form elements should also respect modal width */
+        .modal .form-control,
+        .modal .dropzone {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 576px) {
+            .modal-dialog {
+                max-width: 95vw !important;
+                margin: 10px auto;
+            }
+
+            .modal-content {
+                margin: 0;
+                border-radius: 8px;
+            }
+        }
+
         .btn-loading {
             position: relative;
             pointer-events: none;
@@ -666,7 +720,7 @@
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="filePreviewModalLabel">Preview Dokumen</h5>
+                    <h5 class="modal-title text-truncate" id="filePreviewModalLabel">Preview Dokumen</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0">

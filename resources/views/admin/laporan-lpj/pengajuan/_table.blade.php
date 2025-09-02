@@ -141,28 +141,42 @@
                         </td>
                         <td>
                             @if($pengajuan->status === 'disetujui' && $pengajuan->approved_at)
-                                <small class="text-muted">
-                                    {{ $pengajuan->approved_at->format('d M Y H:i') }}
-                                </small>
+                                <div class="d-flex flex-column cursor-pointer"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    data-bs-html="true"
+                                    title="
+                                        <strong>Disetujui oleh:</strong><br>
+                                        <i class='fas fa-user me-2 text-muted'></i>
+                                        {{ $pengajuan->approved_by ? \App\Models\User::find($pengajuan->approved_by)->username ?? 'User tidak ditemukan' : 'User tidak ditemukan' }}<br>
+                                    ">
+                                    <span class="fw-medium text-success">{{ $pengajuan->approved_at->format('d M Y') }}</span>
+                                    <small class="text-muted">{{ $pengajuan->approved_at->format('H:i') }}</small>
+                                </div>
+
+                            @elseif($pengajuan->status === 'ditolak' && $pengajuan->approved_at)
+                                <div class="d-flex flex-column cursor-pointer"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    data-bs-html="true"
+                                    title="
+                                        <strong>Ditolak oleh:</strong><br>
+                                        <i class='fas fa-user me-2 text-muted'></i>
+                                        {{ $pengajuan->approved_by ? \App\Models\User::find($pengajuan->approved_by)->username ?? 'User tidak ditemukan' : 'User tidak ditemukan' }}<br>
+                                    ">
+                                    <span class="fw-medium text-danger">{{ $pengajuan->approved_at->format('d M Y') }}</span>
+                                    <small class="text-muted text-danger">{{ $pengajuan->approved_at->format('H:i') }}</small>
+                                </div>
+
                             @else
                                 <small class="text-muted">-</small>
                             @endif
+
                         </td>
                         <td class="text-center">
                             <button class="btn btn-sm btn-primary" onclick='showDetailModal(@json($pengajuan))'>
                                 <i class="fas fa-eye me-1"></i>Detail
                             </button>
-
-                            {{-- @can('pengajuan-modifikasi-laporan')
-                                @if($pengajuan->status === 'menunggu persetujuan')
-                                    <button class="btn btn-sm btn-success ms-1" onclick="handlePengajuanAction({{ $pengajuan->id }}, 'disetujui')">
-                                        <i class="fas fa-check me-1"></i>Setujui
-                                    </button>
-                                    <button class="btn btn-sm btn-danger ms-1" onclick="handlePengajuanAction({{ $pengajuan->id }}, 'ditolak')">
-                                        <i class="fas fa-times me-1"></i>Tolak
-                                    </button>
-                                @endif
-                            @endcan --}}
                         </td>
                     </tr>
                 @empty
