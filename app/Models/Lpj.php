@@ -91,6 +91,11 @@ class Lpj extends Model
         return $this->ancestors()->pluck('nama_program')->push($this->nama_program)->implode(' > ');
     }
 
+    public function pengajuan()
+    {
+        return $this->hasOne(Pengajuan::class);
+    }
+
     /**
      * Check if LPJ is a root entry (no parent)
      */

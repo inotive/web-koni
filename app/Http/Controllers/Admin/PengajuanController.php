@@ -129,16 +129,17 @@ class PengajuanController extends Controller
         } else {
             $pengajuan->approved_at = null;
         }
-        
-        $pengajuan->save();
 
         if ($request->status === 'disetujui') {
+            $pengajuan->token = 1;
             $lpj = Lpj::find($pengajuan->lpj_id);
             if ($lpj) {
                 $lpj->modifiable_by_user_id = $pengajuan->user_id;
                 $lpj->save();
             }
         }
+        
+        $pengajuan->save();
 
         return response()->json(['success' => true, 'message' => 'Status pengajuan berhasil diperbarui.']);
     }

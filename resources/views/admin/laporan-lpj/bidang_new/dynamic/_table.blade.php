@@ -141,41 +141,15 @@
                                         </a>
                                     </li>
 
-                                    {{-- Check if user is superadmin or has modification permission for Edit button --}}
-                                    @if(auth()->user()->hasRole('superadmin') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id))
-                                        <li>
-                                            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.edit', $data->id) }}"
-                                                class="dropdown-item-custom edit">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi
-                                            </a>
-                                        </li>
-                                    @else
-                                        <li>
-                                            <span class="dropdown-item-custom restricted-action"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="left"
-                                                data-bs-custom-class="custom-tooltip"
-                                                data-bs-html="true"
-                                                title="<div class='tooltip-content'>
-                                                            <strong>Informasi</strong><br>
-                                                            Ajukan approval untuk<br>
-                                                            modifikasi laporan
-                                                        </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi
-                                            </span>
-                                        </li>
-                                    @endif
+                                    @php
+                                        $pengajuan = $data->pengajuan()->where('status', 'disetujui')->orderBy('approved_at', 'desc')->first();
+                                        $canEdit = auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id && $pengajuan && $pengajuan->token > 0);
+                                    @endphp
 
-                                    {{-- Check if user is superadmin or has modification permission for Delete button --}}
-                                    @if(auth()->user()->hasRole('superadmin') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id))
-                                        <li class="dropdown-item-custom delete"
-                                            onclick="deleteItemWithSwal({{ $data->id }}, '{{ addslashes($data->nama_program ?? $data->nama_kegiatan ?? 'laporan ini') }}')">
-                                            <i class="ki-outline ki-trash me-2"></i>Hapus Laporan
-                                        </li>
-                                    @else
-                                        <li>
-                                            <span class="dropdown-item-custom restricted-action"
+                                    <li>
+                                        <a href="{{ $canEdit ? route('admin.laporan-lpj.bidang.dynamic.edit', $data->id) : 'javascript:void(0)' }}"
+                                            class="dropdown-item-custom edit {{ !$canEdit ? 'restricted-action' : '' }}"
+                                            @if(!$canEdit)
                                                 data-bs-toggle="tooltip"
                                                 data-bs-placement="left"
                                                 data-bs-custom-class="custom-tooltip"
@@ -183,13 +157,35 @@
                                                 title="<div class='tooltip-content'>
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
-                                                            modifikasi laporan
+                                                            modifikasi laporan ini
+                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($data) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
                                                         </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;">
-                                                <i class="fas fa-trash me-2"></i> Hapus
-                                            </span>
-                                        </li>
-                                    @endif
+                                            @endif
+                                            style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
+                                            <i class="fas fa-edit me-2"></i> Modifikasi
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="javascript:void(0)" class="dropdown-item-custom delete {{ !$canEdit ? 'restricted-action' : '' }}"
+                                            @if($canEdit)
+                                                onclick="deleteItemWithSwal({{ $data->id }}, '{{ addslashes($data->nama_program ?? $data->nama_kegiatan ?? 'laporan ini') }}')"
+                                            @else
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="left"
+                                                data-bs-custom-class="custom-tooltip"
+                                                data-bs-html="true"
+                                                title="<div class='tooltip-content'>
+                                                            <strong>Informasi</strong><br>
+                                                            Ajukan approval untuk<br>
+                                                            menghapus laporan ini
+                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($data) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                        </div>"
+                                            @endif
+                                            style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
+                                            <i class="ki-outline ki-trash me-2"></i>Hapus Laporan
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </td>
@@ -661,6 +657,26 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        .tooltip-content a {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 8px;
+            background-color: rgba(27, 132, 255, 0.1);
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .tooltip-content a:hover {
+            background-color: rgba(27, 132, 255, 0.2);
+            text-decoration: none;
+        }
+
+        .tooltip-content a:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(27, 132, 255, 0.25);
         }
     </style>
 @endif

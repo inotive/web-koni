@@ -789,7 +789,16 @@
                             },
                             success: function(response) {
                                 Swal.close();
-                                if (response.success !== false) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: response.message || 'Data berhasil dihapus.',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                    updateTable();
+                                } else {
                                     Swal.fire({
                                         title: 'Gagal!',
                                         text: response.message || 'Terjadi kesalahan saat menghapus',
@@ -810,7 +819,6 @@
                 });
             };
 
-            // Enhanced Detail modal function with status indicator
             window.showDetailModal = function (data) {
                 const modalBody = document.getElementById('detailModalBody');
                 const statusIcon  = document.getElementById('statusIcon');
@@ -821,8 +829,10 @@
                 if (statusIcon) {
                     const canPengajuanModifikasi = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
                     const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
+                    const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
+                    const hasToken = pengajuan && pengajuan.token > 0;
 
-                    if (canPengajuanModifikasi || isModifiable) {
+                    if (canPengajuanModifikasi || (isModifiable && hasToken)) {
                         statusIcon.innerHTML = 'Terbuka';
                         statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
                     } else {
@@ -832,7 +842,7 @@
 
                     const ajukanBtn = document.getElementById('ajukanPerubahanBtn'); // ✅ target the button
                         if (ajukanBtn) {
-                            if (canPengajuanModifikasi || isModifiable) {
+                            if (canPengajuanModifikasi || (isModifiable && hasToken)) {
                                 ajukanBtn.style.display = 'none'; // hide button if user already owns modifiable
                             } else {
                                 ajukanBtn.style.display = ''; // show otherwise
