@@ -88,8 +88,8 @@
                         <td class="text-center fw-bold px-2">{{ $rowNumber }}</td>
                         <td class="fw-bold px-6">
                             <div class="d-flex flex-column">
-                                <div>{{ $surat->nama_kegiatan }}</div>
-                                <small class="text-muted">
+                                <div class="text-truncate" style="max-width: 250px;" title="{{ $surat->nama_kegiatan }}">{{ $surat->nama_kegiatan }}</div>
+                                <small class="text-muted text-truncate" style="max-width: 250px;" title="{{ $surat->no_surat }}">
                                     {{ $surat->no_surat }}
                                 </small>
                             </div>
@@ -162,7 +162,7 @@
                             <div class="modal-content rounded-4 gap-5 px-10 py-8">
                                 <div class="d-flex justify-content-between align-items-center gap-2">
                                     <div class="fs-2 fw-bold text-truncate leading-5"
-                                        id="editModalTitle-{{ $surat->id }}">
+                                        id="editModalTitle-{{ $surat->id }}" style="max-width: 90%;">
                                         Edit {{ $surat->jenis_surat == 'masuk' ? 'Surat Masuk' : 'Surat Keluar' }}:
                                         {{ Str::limit($surat->nama_kegiatan, 20) }}
                                     </div>
@@ -217,7 +217,7 @@
                                             <div class="mt-2 p-3 bg-light rounded">
                                                 <small class="text-muted">File saat ini: </small>
                                                 <a href="{{ asset('storage/' . $surat->dokumen_surat) }}"
-                                                    target="_blank" class="text-primary text-decoration-none fw-bold">
+                                                    target="_blank" class="text-primary text-decoration-none fw-bold text-break">
                                                     {{ basename($surat->dokumen_surat) }}
                                                 </a>
                                             </div>
