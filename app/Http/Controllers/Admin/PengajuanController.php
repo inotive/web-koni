@@ -124,6 +124,8 @@ class PengajuanController extends Controller
         // Only set approved_at when "disetujui"
         if ($request->status === 'disetujui') {
             $pengajuan->approved_at = now();
+        } elseif ($request->status === 'ditolak') {
+            $pengajuan->approved_at = now();
         } else {
             $pengajuan->approved_at = null;
         }

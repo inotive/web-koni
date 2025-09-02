@@ -501,6 +501,44 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .tooltip-approved {
+            --bs-tooltip-bg: #ffffff;
+            --bs-tooltip-border-color: #e0e0e0;
+            --bs-tooltip-color: #333333;
+            --bs-tooltip-padding-x: 12px;
+            --bs-tooltip-padding-y: 10px;
+            --bs-tooltip-border-radius: 8px;
+            --bs-tooltip-font-size: 13px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--bs-tooltip-border-color);
+        }
+
+        .tooltip-approved .tooltip-inner {
+            background-color: var(--bs-tooltip-bg);
+            color: var(--bs-tooltip-color);
+            border-radius: var(--bs-tooltip-border-radius);
+            padding: var(--bs-tooltip-padding-y) var(--bs-tooltip-padding-x);
+            text-align: left;
+            max-width: 250px;
+            line-height: 1.4;
+        }
+
+        .tooltip-approved .tooltip-arrow::before {
+            border-top-color: var(--bs-tooltip-bg);
+            border-bottom-color: var(--bs-tooltip-bg);
+        }
+
+        /* Hover effect for approved date cells */
+        .approved-date-cell:hover {
+            background-color: rgba(248, 249, 250, 0.5);
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
         }
     </style>
 
