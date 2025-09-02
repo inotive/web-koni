@@ -1041,13 +1041,13 @@
     // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id
     if (statusIcon) {
         // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
-        // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin atau memiliki akses modifikasi
+        // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
         const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
+        const hasApprovalPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
         const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
         
-        // Jika modifiable_by_user_id tidak ada, berarti belum ada yang mengajukan perubahan atau belum disetujui
-        // Dalam kasus ini, hanya superadmin yang bisa mengakses
-        if (isSuperAdmin || isModifiableByCurrentUser) {
+        // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
+        if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
             statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
             statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
         } else {
