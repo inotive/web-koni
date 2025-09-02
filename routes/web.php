@@ -71,6 +71,10 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
 
+    // File preview route
+    Route::get('file-kesekretariat/{fileKesekretariat}/preview', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'preview'])
+        ->name('file-kesekretariat.preview');
+
 
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {
         Route::resource('permission', PermissionController::class)->except('show', 'create', 'edit');
