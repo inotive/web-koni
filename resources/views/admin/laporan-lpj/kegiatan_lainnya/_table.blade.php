@@ -11,7 +11,7 @@
             <i class="fas fa-filter fs-1 mb-3 text-muted"></i>
             <h4>Data tidak ditemukan untuk jenis kegiatan "{{ request('jenis_kegiatan_filter') }}"</h4>
             <button class="btn btn-light-primary mt-3"
-                onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}'">
+                onclick="window.location.href='{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}'">
                 Reset Filter
             </button>
         </div>
@@ -24,7 +24,8 @@
     @endif
 @else
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle table-fixed" id="kt_datatable_dom_positioning_kegiatan">
+        <table class="table table-bordered table-hover align-middle table-fixed"
+            id="kt_datatable_dom_positioning_kegiatan">
             <thead class="bg-light">
                 <tr>
                     @php
@@ -76,7 +77,7 @@
                         <td class="text-center">
                             {{ ($kegiatanLainnya->currentPage() - 1) * $kegiatanLainnya->perPage() + $index + 1 }}
                         </td>
-                        
+
                         <td>
                             <div class="d-flex flex-column">
                                 <strong class="text-truncate-custom" title="{{ $kegiatan->nama_program }}">
@@ -87,13 +88,13 @@
                                 @endif
                             </div>
                         </td>
-                        
+
                         <td class="text-start">{{ $kegiatan->volume }}</td>
-                        
+
                         <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga_satuan, 0, ',', '.') }}</td>
-                        
+
                         <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga, 0, ',', '.') }}</td>
-                        
+
                         <td class="text-start">
                             @if (!empty($kegiatan->foto_jurnal) && is_array($kegiatan->foto_jurnal))
                                 <button type="button" class="btn btn-sm btn-light-info preview-btn"
@@ -106,7 +107,7 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        
+
                         <td class="text-start">
                             @if (!empty($kegiatan->dokumen_lpj) && is_array($kegiatan->dokumen_lpj))
                                 <button type="button" class="btn btn-sm btn-light-primary preview-btn"
@@ -119,11 +120,11 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        
+
                         <td class="text-start">
                             {{ \Carbon\Carbon::parse($kegiatan->created_at)->format('d M Y') }}
                         </td>
-                        
+
                         <td class="text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
@@ -149,39 +150,61 @@
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
-                                   <li>
+                                    <li>
                                         <a href="javascript:void(0)" class="dropdown-item-custom"
-                                           onclick="showDetailModal({{ json_encode($kegiatan) }})">
+                                            onclick="showDetailModal({{ json_encode($kegiatan) }})">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail
                                         </a>
                                     </li>
 
-                                    @if (auth()->user()->hasRole('superadmin'))
-                                        <li><a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}"
+                                    {{-- Check if user is superadmin or has modification permission for Edit button --}}
+                                    @if (auth()->user()->hasRole('superadmin') ||
+                                            (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
+                                        <li>
+                                            <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.edit', $kegiatan->id) }}"
                                                 class="dropdown-item-custom edit">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi</a></li>
+                                                <i class="fas fa-edit me-2"></i> Modifikasi
+                                            </a>
+                                        </li>
                                     @else
-                                        <li><span class="dropdown-item-custom restricted-action"
+                                        <li>
+                                            <span class="dropdown-item-custom restricted-action"
                                                 data-bs-toggle="tooltip" data-bs-placement="left"
                                                 data-bs-custom-class="custom-tooltip" data-bs-html="true"
-                                                title="<div class='tooltip-content'><strong>Informasi</strong><br>Ajukan approval untuk<br>modifikasi laporan</div>"
+                                                data-bs-delay='{"show":0,"hide":300}'
+                                                title="<div class='tooltip-content'>
+                                                            <strong>Informasi</strong><br>
+                                                            Ajukan approval untuk<br>
+                                                            modifikasi laporan
+                                                        </div>"
                                                 style="cursor: not-allowed; opacity: 0.6;">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi</span></li>
+                                                <i class="fas fa-edit me-2"></i> Modifikasi
+                                            </span>
+                                        </li>
                                     @endif
 
-                                    @if (auth()->user()->hasRole('superadmin'))
-                                        <li><button type="button"
-                                                class="dropdown-item-custom delete border-0 bg-transparent w-100 text-start text-danger"
-                                                data-route="{{ route('admin.laporan-lpj.kegiatan_lainnya.destroy', $kegiatan->id) }}"
-                                                onclick="destroyItem(this)">
-                                                <i class="fas fa-trash me-2"></i> Hapus</button></li>
+                                    {{-- Check if user is superadmin or has modification permission for Delete button --}}
+                                    @if (auth()->user()->hasRole('superadmin') ||
+                                            (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
+                                        <li class="dropdown-item-custom delete" onclick="destroyItem(this)"
+                                            data-route="{{ route('admin.laporan-lpj.kegiatan-lainnya.destroy', $kegiatan->id) }}">
+                                            <i class="fas fa-trash me-2"></i> Hapus
+                                        </li>
                                     @else
-                                        <li><span class="dropdown-item-custom restricted-action"
+                                        <li>
+                                            <span class="dropdown-item-custom restricted-action"
                                                 data-bs-toggle="tooltip" data-bs-placement="left"
                                                 data-bs-custom-class="custom-tooltip" data-bs-html="true"
-                                                title="<div class='tooltip-content'><strong>Informasi</strong><br>Ajukan approval untuk<br>modifikasi laporan</div>"
+                                                data-bs-delay='{"show":0,"hide":300}'
+                                                title="<div class='tooltip-content'>
+                                                            <strong>Informasi</strong><br>
+                                                            Ajukan approval untuk<br>
+                                                            modifikasi laporan
+                                                        </div>"
                                                 style="cursor: not-allowed; opacity: 0.6;">
-                                                <i class="fas fa-trash me-2"></i> Hapus</span></li>
+                                                <i class="fas fa-trash me-2"></i> Hapus
+                                            </span>
+                                        </li>
                                     @endif
                                 </ul>
                             </div>
@@ -269,7 +292,7 @@
         /* Table fixed layout for consistent column alignment */
         .table-fixed {
             table-layout: fixed;
-             min-width: 1200px;
+            min-width: 1200px;
         }
 
         .table-fixed th:nth-child(1),
@@ -345,16 +368,22 @@
         .dropdown-menu-custom {
             position: absolute;
             right: 0;
-            background: white;
+            background: #ffffff !important; /* force solid background */
             border: 1px solid #dee2e6;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            z-index: 9999; /* ensure above table and responsive wrappers */
             min-width: 180px;
             padding: 8px 0;
             margin-top: 5px;
             display: none;
             list-style: none;
+            opacity: 1 !important;           /* prevent any inherited opacity */
+            backdrop-filter: none !important; /* avoid translucency blur */
+            -webkit-backdrop-filter: none !important;
+            filter: none !important;
+            mix-blend-mode: normal !important;
+            isolation: isolate;              /* create new stacking context */
         }
 
         .dropdown-menu-custom.show {
@@ -482,16 +511,48 @@
             background-color: transparent !important;
         }
 
+        /* Ensure dropdown is not clipped by responsive container */
+        .table-responsive {
+            position: relative;
+            overflow: visible !important;
+        }
+
+        /* Ensure card wrappers do not clip dropdown */
+        .card,
+        .card-body {
+            overflow: visible !important;
+        }
+
+        /* Safety: prevent clipping on the button wrapper */
+        .dropdown-action {
+            overflow: visible;
+            position: relative;
+            z-index: 10000;
+        }
+
+        /* Prevent clipping in table wrappers/cells */
+        .table {
+            overflow: visible !important;
+        }
+
+        .table tbody,
+        .table tr,
+        .table td,
+        .table th {
+            overflow: visible !important;
+        }
+
         @media (max-width: 768px) {
+
             .table-header,
-.table-footer {
-    position: sticky;
-    bottom: 0;
-    background: white;
-    padding: 15px 0;
-    border-top: 1px solid #dee2e6;
-    z-index: 10;
-}
+            .table-footer {
+                position: sticky;
+                bottom: 0;
+                background: white;
+                padding: 15px 0;
+                border-top: 1px solid #dee2e6;
+                z-index: 10;
+            }
 
             .d-flex.justify-content-between.align-items-center.flex-wrap {
                 flex-direction: column;
