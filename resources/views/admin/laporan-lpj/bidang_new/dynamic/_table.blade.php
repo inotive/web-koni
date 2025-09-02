@@ -2,7 +2,7 @@
     {{-- Empty State --}}
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
-        <h4>Tidak ada data pada level ini.</h4>
+        <h4>Tidak ada data pada laporan ini.</h4>
         @if($currentParent)
             <p>Belum ada data untuk {{ $currentParent->nama_program }}</p>
         @else

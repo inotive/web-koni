@@ -1,18 +1,32 @@
 @extends('layouts.app')
 @php
     $subSection3Url = '';
-    if ($parent?->parent) {
-        $parentId = $parent->parent->id;
-        $routes = [
-            9 => 'admin.laporan-lpj.bidang.prestasi.cabor-terukur',
-            10 => 'admin.laporan-lpj.bidang.prestasi.cabor-akurasi',
-            11 => 'admin.laporan-lpj.bidang.prestasi.cabor-permainan',
-            12 => 'admin.laporan-lpj.bidang.prestasi.cabor-beladiri',
-        ];
 
-        $subSection3Url = isset($routes[$parentId])
-            ? route($routes[$parentId], ['parentId' => $parentId])
-            : route('admin.laporan-lpj.bidang.dynamic.index');
+    if ($parent?->parent) {
+        if ($parent->parent->id == 9) {
+            $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-terukur', [
+                'parentId' => $parent->parent->id
+            ]);
+        }
+            elseif ($parent->parent->id == 10) {
+                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi', [
+                    'parentId' => $parent->parent->id
+                ]);
+        }
+            elseif ($parent->parent->id == 11) {
+                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-permainan', [
+                    'parentId' => $parent->parent->id
+                ]);
+        }
+            elseif ($parent->parent->id == 12) {
+                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri', [
+                    'parentId' => $parent->parent->id
+                ]);
+        }
+          else {
+            // fallback if needed
+            $subSection3Url = route('admin.laporan-lpj.bidang.dynamic.index');
+        }
     }
 @endphp
 

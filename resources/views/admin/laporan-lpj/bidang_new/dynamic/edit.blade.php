@@ -2,14 +2,32 @@
 
 @php
     $subSection3Url = '';
+
     if ($lpj->parent?->parent) {
-        $subSection3Url = match($lpj->parent->parent->id) {
-            9 => route('admin.laporan-lpj.bidang.prestasi.cabor-terukur', ['parentId' => 9]),
-            10 => route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi', ['parentId' => 10]),
-            11 => route('admin.laporan-lpj.bidang.prestasi.cabor-permainan', ['parentId' => 11]),
-            12 => route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri', ['parentId' => 12]),
-            default => route('admin.laporan-lpj.bidang.dynamic.index')
-        };
+        if ($lpj->parent->parent->id == 9) {
+            $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-terukur', [
+                'parentId' => $lpj->parent->parent->id
+            ]);
+        }
+            elseif ($lpj->parent->parent->id == 10) {
+                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi', [
+                    'parentId' => $lpj->parent->parent->id
+                ]);
+        }
+            elseif ($lpj->parent->parent->id == 11) {
+                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-permainan', [
+                    'parentId' => $lpj->parent->parent->id
+                ]);
+        }
+            elseif ($lpj->parent->parent->id == 12) {
+                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri', [
+                    'parentId' => $lpj->parent->parent->id
+                ]);
+        }
+          else {
+            // fallback if needed
+            $subSection3Url = route('admin.laporan-lpj.bidang.dynamic.index');
+        }
     }
 @endphp
 

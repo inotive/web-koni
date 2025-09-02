@@ -145,7 +145,7 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid #dc3545;
+            /* border-left: 4px solid #dc3545; */
             overflow: hidden;
         }
 
@@ -282,18 +282,12 @@
         }
 
         .alasan-box {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 0.75rem;
-            border-left: 3px solid #dc3545;
-            word-wrap: break-word;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            max-height: 150px;
+            padding: 0.4rem 0.5rem; /* smaller top/bottom padding for compact look */
+            line-height: 1.4;
+            max-height: 120px; /* optional: limit height if text gets very long */
             overflow-y: auto;
-            white-space: pre-wrap;
-            scrollbar-width: thin;
-            scrollbar-color: #dc3545 #f8f9fa;
+            background: #f5f5f5; /* optional: subtle background for clarity */
+            border-radius: 4px;  /* optional: make it look neat */
         }
 
         .alasan-box::-webkit-scrollbar {
@@ -826,19 +820,6 @@
                             <div class="detail-label">Kegiatan</div>
                             <p class="detail-value">${lpj.nama_kegiatan || 'Tidak tersedia'}</p>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Tanggal Kegiatan</div>
-                            <p class="detail-value">${lpj.tanggal_kegiatan ? new Date(lpj.tanggal_kegiatan).toLocaleDateString('id-ID', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                            }) : 'Tidak tersedia'}</p>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Tempat Kegiatan</div>
-                            <p class="detail-value">${lpj.tempat_kegiatan || 'Tidak tersedia'}</p>
-                        </div>
                     </div>
 
                     <div class="detail-section">
@@ -875,7 +856,7 @@
                         <div class="detail-item">
                             <div class="detail-label">Alasan Pengajuan</div>
                             <div class="alasan-box">
-                                <p class="detail-value mb-0">${data.alasan || 'Tidak ada alasan yang diberikan'}</p>
+                                <p class="detail-value mb-0 text-dark">${data.alasan || 'Tidak ada alasan yang diberikan'}</p>
                             </div>
                         </div>
                     </div>

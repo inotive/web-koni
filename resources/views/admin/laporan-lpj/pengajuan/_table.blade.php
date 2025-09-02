@@ -141,9 +141,10 @@
                         </td>
                         <td>
                             @if($pengajuan->status === 'disetujui' && $pengajuan->approved_at)
-                                <small class="text-muted">
-                                    {{ $pengajuan->approved_at->format('d M Y H:i') }}
-                                </small>
+                                <div class="d-flex flex-column">
+                                    <span class="fw-medium">{{ $pengajuan->approved_at->format('d M Y') }}</span>
+                                    <small class="text-muted">{{ $pengajuan->approved_at->format('H:i') }}</small>
+                                </div>
                             @else
                                 <small class="text-muted">-</small>
                             @endif
@@ -152,17 +153,6 @@
                             <button class="btn btn-sm btn-primary" onclick='showDetailModal(@json($pengajuan))'>
                                 <i class="fas fa-eye me-1"></i>Detail
                             </button>
-
-                            {{-- @can('pengajuan-modifikasi-laporan')
-                                @if($pengajuan->status === 'menunggu persetujuan')
-                                    <button class="btn btn-sm btn-success ms-1" onclick="handlePengajuanAction({{ $pengajuan->id }}, 'disetujui')">
-                                        <i class="fas fa-check me-1"></i>Setujui
-                                    </button>
-                                    <button class="btn btn-sm btn-danger ms-1" onclick="handlePengajuanAction({{ $pengajuan->id }}, 'ditolak')">
-                                        <i class="fas fa-times me-1"></i>Tolak
-                                    </button>
-                                @endif
-                            @endcan --}}
                         </td>
                     </tr>
                 @empty
