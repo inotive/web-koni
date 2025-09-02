@@ -10,12 +10,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class KegiatanLainnyaController extends Controller
 {
-    // Konstanta untuk mengidentifikasi jenis kegiatan kegiatan_lainnya
-    const PARENT_CATEGORY = 'kegiatan_lainnya';
+    // Konstanta untuk mengidentifikasi jenis kegiatan kegiatan-lainnya
+    const PARENT_CATEGORY = 'kegiatan-lainnya';
 
     public function index(Request $request)
     {
-        // Cari atau buat parent kategori kegiatan_lainnya
+        // Cari atau buat parent kategori kegiatan-lainnya
         $parentCategory = $this->getOrCreateParentCategory();
 
         $query = Lpj::where('parent_id', $parentCategory->id);
@@ -59,31 +59,34 @@ class KegiatanLainnyaController extends Controller
             ->appends($request->except('page'));
 
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.kegiatan_lainnya._table', compact('kegiatanLainnya'))->render();
+            return view('admin.laporan-lpj.kegiatan-lainnya._table', compact('kegiatanLainnya'))->render();
         }
 
-        return view('admin.laporan-lpj.kegiatan_lainnya.index', compact('kegiatanLainnya'));
+        return view('admin.laporan-lpj.kegiatan-lainnya.index', compact('kegiatanLainnya'));
     }
 
     public function create()
     {
-        return view('admin.laporan-lpj.kegiatan_lainnya.create');
+        return view('admin.laporan-lpj.kegiatan-lainnya.create');
     }
 
     public function store(Request $request)
     {
+        // Custom validation for numeric fields
         $request->validate([
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
             'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric|min:0',
-            'jumlah_harga' => 'required|numeric|min:0',
-            'foto_jurnal' => 'nullable|array|max:10',
+            'jumlah_harga_satuan' => 'required|string',
+            'jumlah_harga' => 'required|string',
+            'foto_jurnal' => 'required|array|min:1|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_pendukung' => 'nullable|array|max:10',
             'dokumen_pendukung.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
         ], [
+            'foto_jurnal.required' => 'Foto jurnal wajib diisi.',
+            'foto_jurnal.min' => 'Minimal 1 foto jurnal harus diunggah.',
             'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
             'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
@@ -93,6 +96,19 @@ class KegiatanLainnyaController extends Controller
             'dokumen_pendukung.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
             'dokumen_pendukung.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
+        
+        // Parse numeric values
+        $jumlahHargaSatuan = $this->parseNumber($request->jumlah_harga_satuan);
+        $jumlahHarga = $this->parseNumber($request->jumlah_harga);
+
+        // Validate numeric values
+        if ($jumlahHargaSatuan < 0) {
+            return back()->withErrors(['jumlah_harga_satuan' => 'Jumlah harga satuan tidak boleh negatif.'])->withInput();
+        }
+        
+        if ($jumlahHarga < 0) {
+            return back()->withErrors(['jumlah_harga' => 'Jumlah harga tidak boleh negatif.'])->withInput();
+        }
 
         // Cari atau buat parent kategori
         $parentCategory = $this->getOrCreateParentCategory();
@@ -102,16 +118,18 @@ class KegiatanLainnyaController extends Controller
             'nama_program' => $request->nama_program_kegiatan, // Map ke nama_program
             'nama_kegiatan' => $request->jenis_kegiatan, // Map ke nama_kegiatan
             'volume' => $request->volume,
-            'jumlah_harga_satuan' => $request->jumlah_harga_satuan,
-            'jumlah_harga' => $request->jumlah_harga,
+            'jumlah_harga_satuan' => $jumlahHargaSatuan,
+            'jumlah_harga' => $jumlahHarga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
-            'icon' => 'fas fa-clipboard-list' // Default icon untuk kegiatan_lainnya
+            'icon' => 'fas fa-clipboard-list' // Default icon untuk kegiatan-lainnya
         ];
 
         if ($request->hasFile('foto_jurnal')) {
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('kegiatan_lainnya/foto_jurnal', 'public');
+                // Simpan dengan nama file asli
+                $originalName = $file->getClientOriginalName();
+                $fotoPaths[] = $file->storeAs('kegiatan-lainnya/foto_jurnal', $originalName, 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
@@ -119,22 +137,24 @@ class KegiatanLainnyaController extends Controller
         if ($request->hasFile('dokumen_pendukung')) {
             $dokumenPaths = [];
             foreach ($request->file('dokumen_pendukung') as $file) {
-                $dokumenPaths[] = $file->store('kegiatan_lainnya/dokumen_pendukung', 'public');
+                // Simpan dengan nama file asli
+                $originalName = $file->getClientOriginalName();
+                $dokumenPaths[] = $file->storeAs('kegiatan-lainnya/dokumen_pendukung', $originalName, 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths; // Map ke dokumen_lpj
         }
 
         Lpj::create($data);
 
-        return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
+        return redirect()->route('admin.laporan-lpj.kegiatan-lainnya.index')
                          ->with('OK', 'Kegiatan berhasil ditambahkan.');
     }
 
     public function show($id)
     {
-        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
-        return view('admin.laporan-lpj.kegiatan_lainnya.show', compact('kegiatan_lainnya'));
+        return view('admin.laporan-lpj.kegiatan-lainnya.show', compact('kegiatanLainnya'));
     }
 
     public function edit($id)
@@ -143,9 +163,9 @@ class KegiatanLainnyaController extends Controller
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
         }
 
-        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
-        return view('admin.laporan-lpj.kegiatan_lainnya.edit', compact('kegiatan_lainnya'));
+        return view('admin.laporan-lpj.kegiatan-lainnya.edit', compact('kegiatanLainnya'));
     }
 
     public function update(Request $request, $id)
@@ -154,16 +174,17 @@ class KegiatanLainnyaController extends Controller
             abort(403, 'Akses ditolak. Hanya superadmin yang dapat memperbarui data.');
         }
 
-        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
 
+        // Custom validation for numeric fields
         $request->validate([
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
             'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric|min:0',
-            'jumlah_harga' => 'required|numeric|min:0',
+            'jumlah_harga_satuan' => 'required|string',
+            'jumlah_harga' => 'required|string',
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_pendukung' => 'nullable|array|max:10',
@@ -178,47 +199,69 @@ class KegiatanLainnyaController extends Controller
             'dokumen_pendukung.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
             'dokumen_pendukung.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
+        
+        // Validasi tambahan: jika tidak ada foto lama dan tidak ada foto baru diunggah
+        if (!$kegiatanLainnya->foto_jurnal && (!$request->hasFile('foto_jurnal') || $request->file('foto_jurnal') == null)) {
+            return back()->withErrors(['foto_jurnal' => 'Foto jurnal wajib diisi.'])->withInput();
+        }
+        
+        // Parse numeric values
+        $jumlahHargaSatuan = $this->parseNumber($request->jumlah_harga_satuan);
+        $jumlahHarga = $this->parseNumber($request->jumlah_harga);
+
+        // Validate numeric values
+        if ($jumlahHargaSatuan < 0) {
+            return back()->withErrors(['jumlah_harga_satuan' => 'Jumlah harga satuan tidak boleh negatif.'])->withInput();
+        }
+        
+        if ($jumlahHarga < 0) {
+            return back()->withErrors(['jumlah_harga' => 'Jumlah harga tidak boleh negatif.'])->withInput();
+        }
 
         $data = [
             'nama_program' => $request->nama_program_kegiatan,
             'nama_kegiatan' => $request->jenis_kegiatan,
             'volume' => $request->volume,
-            'jumlah_harga_satuan' => $request->jumlah_harga_satuan,
-            'jumlah_harga' => $request->jumlah_harga,
+            'jumlah_harga_satuan' => $jumlahHargaSatuan,
+            'jumlah_harga' => $jumlahHarga,
             'keterangan_tambahan' => $request->keterangan_tambahan
         ];
 
         if ($request->hasFile('foto_jurnal')) {
-            if ($kegiatan_lainnya->foto_jurnal) {
-                foreach ($kegiatan_lainnya->foto_jurnal as $oldFoto) {
+            if ($kegiatanLainnya->foto_jurnal) {
+                foreach ($kegiatanLainnya->foto_jurnal as $oldFoto) {
                     Storage::disk('public')->delete($oldFoto);
                 }
             }
 
             $fotoPaths = [];
             foreach ($request->file('foto_jurnal') as $file) {
-                $fotoPaths[] = $file->store('kegiatan_lainnya/foto_jurnal', 'public');
+                // Simpan dengan nama file asli
+                $originalName = $file->getClientOriginalName();
+                $fotoPaths[] = $file->storeAs('kegiatan-lainnya/foto_jurnal', $originalName, 'public');
             }
             $data['foto_jurnal'] = $fotoPaths;
         }
 
         if ($request->hasFile('dokumen_pendukung')) {
-            if ($kegiatan_lainnya->dokumen_lpj) {
-                foreach ($kegiatan_lainnya->dokumen_lpj as $oldDokumen) {
+            if ($kegiatanLainnya->dokumen_lpj) {
+                foreach ($kegiatanLainnya->dokumen_lpj as $oldDokumen) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
 
             $dokumenPaths = [];
             foreach ($request->file('dokumen_pendukung') as $file) {
-                $dokumenPaths[] = $file->store('kegiatan_lainnya/dokumen_pendukung', 'public');
+                // Simpan dengan nama file asli
+                $originalName = $file->getClientOriginalName();
+                $dokumenPaths[] = $file->storeAs('kegiatan-lainnya/dokumen_pendukung', $originalName, 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths;
         }
 
-        $kegiatan_lainnya->update($data);
+        $kegiatanLainnya->update($data);
 
-        return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
+        return redirect()->route('admin.laporan-lpj.kegiatan-lainnya.index')
                          ->with('OK', 'Kegiatan berhasil diperbarui.');
     }
 
@@ -229,24 +272,24 @@ class KegiatanLainnyaController extends Controller
     }
 
     try {
-        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
 
         // Hapus file foto_jurnal
-        if ($kegiatan_lainnya->foto_jurnal) {
-            foreach ($kegiatan_lainnya->foto_jurnal as $foto) {
+        if ($kegiatanLainnya->foto_jurnal) {
+            foreach ($kegiatanLainnya->foto_jurnal as $foto) {
                 Storage::disk('public')->delete($foto);
             }
         }
 
         // Hapus file dokumen_lpj
-        if ($kegiatan_lainnya->dokumen_lpj) {
-            foreach ($kegiatan_lainnya->dokumen_lpj as $dokumen) {
+        if ($kegiatanLainnya->dokumen_lpj) {
+            foreach ($kegiatanLainnya->dokumen_lpj as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
 
-        $kegiatan_lainnya->delete();
+        $kegiatanLainnya->delete();
 
         // Return JSON response untuk AJAX
         if (request()->ajax()) {
@@ -256,7 +299,7 @@ class KegiatanLainnyaController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.laporan-lpj.kegiatan_lainnya.index')
+        return redirect()->route('admin.laporan-lpj.kegiatan-lainnya.index')
                          ->with('OK', 'Kegiatan berhasil dihapus.');
                          
     } catch (\Exception $e) {
@@ -277,7 +320,7 @@ class KegiatanLainnyaController extends Controller
             return response()->json(['error' => 'Akses ditolak'], 403);
         }
 
-        $kegiatan_lainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
 
         $request->validate([
@@ -287,7 +330,7 @@ class KegiatanLainnyaController extends Controller
 
         $fileType = $request->file_type;
         $fileIndex = $request->file_index;
-        $files = $kegiatan_lainnya->$fileType ?? [];
+        $files = $kegiatanLainnya->$fileType ?? [];
 
         if (!isset($files[$fileIndex])) {
             return response()->json(['error' => 'File tidak ditemukan'], 404);
@@ -299,7 +342,7 @@ class KegiatanLainnyaController extends Controller
         unset($files[$fileIndex]);
         $files = array_values($files);
 
-        $kegiatan_lainnya->update([$fileType => $files]);
+        $kegiatanLainnya->update([$fileType => $files]);
 
         return response()->json([
             'success' => true,
@@ -309,7 +352,23 @@ class KegiatanLainnyaController extends Controller
     }
 
     /**
-     * Mendapatkan atau membuat parent kategori untuk kegiatan_lainnya
+     * Parse number from formatted string
+     */
+    private function parseNumber($value)
+    {
+        if (is_null($value)) {
+            return 0;
+        }
+        
+        // Remove non-numeric characters except decimal point
+        $numericValue = preg_replace('/[^\d.]/', '', $value);
+        
+        // Convert to float
+        return floatval($numericValue);
+    }
+
+    /**
+     * Mendapatkan atau membuat parent kategori untuk kegiatan-lainnya
      */
     private function getOrCreateParentCategory()
     {
@@ -325,12 +384,42 @@ class KegiatanLainnyaController extends Controller
         );
     }
 
-    public function export(Request $request)
+    public function approve(Request $request, $id)
+{
+    if (!auth()->user()->hasRole('superadmin')) {
+        return response()->json(['error' => 'Akses ditolak. Hanya superadmin yang dapat menyetujui data.'], 403);
+    }
+
+    try {
+        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                          ->findOrFail($id);
+
+        // Update status approval
+        $kegiatanLainnya->update([
+            'is_approved' => true,
+            'approved_by' => auth()->id(),
+            'approved_at' => now(),
+            'catatan_approval' => $request->catatan_approval ?? null
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kegiatan berhasil disetujui.'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => true,
+            'message' => 'Gagal menyetujui kegiatan: ' . $e->getMessage()
+        ], 500);
+    }
+}
+
+public function export(Request $request)
 {
     $data = json_decode($request->data, true);
     $title = $request->title ?? 'LPJ_Export_' . date('Ymd_His');
     
-    $pdf = PDF::loadView('admin.laporan-lpj.kegiatan_lainnya.export', [
+    $pdf = PDF::loadView('admin.laporan-lpj.kegiatan-lainnya.export', [
         'data' => [$data], // Wrap in array for consistency
         'title' => $title
     ]);

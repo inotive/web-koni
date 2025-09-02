@@ -37,7 +37,7 @@
                             ['key' => 'jumlah_harga', 'title' => 'Jumlah Harga'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen', 'sortable' => false],
-                            ['key' => 'created_at', 'title' => 'Ditambahkan'],
+                            ['key' => null, 'title' => 'Status', 'sortable' => false],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
                     @endphp
@@ -91,16 +91,17 @@
 
                         <td class="text-start">{{ $kegiatan->volume }}</td>
 
-                        <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga_satuan, 0, ',', '.') }}</td>
+                        <td class="text-start">{{ $kegiatan->formatted_jumlah_harga_satuan }}</td>
 
-                        <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga, 0, ',', '.') }}</td>
+                        <td class="text-start">{{ $kegiatan->formatted_jumlah_harga }}</td>
 
                         <td class="text-start">
                             @if (!empty($kegiatan->foto_jurnal) && is_array($kegiatan->foto_jurnal))
                                 <button type="button" class="btn btn-sm btn-light-info preview-btn"
                                     data-bs-toggle="modal" data-bs-target="#previewModal" data-type="image"
                                     data-files="{{ json_encode($kegiatan->foto_jurnal) }}"
-                                    data-title="Foto Jurnal - {{ $kegiatan->nama_program }}">
+                                    data-title="Foto Jurnal - {{ $kegiatan->nama_program }}"
+                                    data-filenames="{{ json_encode(array_map('basename', $kegiatan->foto_jurnal)) }}">
                                     <i class="fas fa-images me-1"></i>{{ count($kegiatan->foto_jurnal) }} Foto
                                 </button>
                             @else
@@ -113,7 +114,8 @@
                                 <button type="button" class="btn btn-sm btn-light-primary preview-btn"
                                     data-bs-toggle="modal" data-bs-target="#previewModal" data-type="document"
                                     data-files="{{ json_encode($kegiatan->dokumen_lpj) }}"
-                                    data-title="Dokumen LPJ - {{ $kegiatan->nama_program }}">
+                                    data-title="Dokumen LPJ - {{ $kegiatan->nama_program }}"
+                                    data-filenames="{{ json_encode(array_map('basename', $kegiatan->dokumen_lpj)) }}">
                                     <i class="fas fa-file-alt me-1"></i>{{ count($kegiatan->dokumen_lpj) }} Dokumen
                                 </button>
                             @else
@@ -122,7 +124,19 @@
                         </td>
 
                         <td class="text-start">
-                            {{ \Carbon\Carbon::parse($kegiatan->created_at)->format('d M Y') }}
+                            @if (isset($kegiatan->is_approved) && $kegiatan->is_approved)
+                                <span class="badge badge-success">Disetujui</span>
+                            @else
+                                <span class="badge badge-warning">Terkunci</span>
+                                @if (!auth()->user()->hasRole('superadmin') && 
+                                    (!isset($kegiatan->modifiable_by_user_id) || auth()->user()->id != $kegiatan->modifiable_by_user_id))
+                                    <button type="button" class="btn btn-sm btn-primary mt-2 ajukan-perubahan-btn"
+                                        data-kegiatan-id="{{ $kegiatan->id }}"
+                                        data-kegiatan-name="{{ $kegiatan->nama_program }}">
+                                        Ajukan Perubahan
+                                    </button>
+                                @endif
+                            @endif
                         </td>
 
                         <td class="text-center">
@@ -212,7 +226,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                        <td colspan="8" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -292,7 +306,7 @@
         /* Table fixed layout for consistent column alignment */
         .table-fixed {
             table-layout: fixed;
-            min-width: 1200px;
+            min-width: 1200px; /* Increased from 1100px */
         }
 
         .table-fixed th:nth-child(1),
@@ -302,42 +316,42 @@
 
         .table-fixed th:nth-child(2),
         .table-fixed td:nth-child(2) {
-            width: 250px !important;
+            width: 280px !important; /* Increased from 250px */
         }
 
         .table-fixed th:nth-child(3),
         .table-fixed td:nth-child(3) {
-            width: 100px !important;
+            width: 120px !important; /* Increased from 100px */
         }
 
         .table-fixed th:nth-child(4),
         .table-fixed td:nth-child(4) {
-            width: 150px !important;
+            width: 170px !important; /* Increased from 150px */
         }
 
         .table-fixed th:nth-child(5),
         .table-fixed td:nth-child(5) {
-            width: 150px !important;
+            width: 170px !important; /* Increased from 150px */
         }
 
         .table-fixed th:nth-child(6),
         .table-fixed td:nth-child(6) {
-            width: 100px !important;
+            width: 120px !important; /* Increased from 100px */
         }
 
         .table-fixed th:nth-child(7),
         .table-fixed td:nth-child(7) {
-            width: 120px !important;
+            width: 120px !important; /* Same as before */
         }
 
         .table-fixed th:nth-child(8),
         .table-fixed td:nth-child(8) {
-            width: 100px !important;
+            width: 120px !important; /* Status column */
         }
 
         .table-fixed th:nth-child(9),
         .table-fixed td:nth-child(9) {
-            width: 80px !important;
+            width: 80px !important; /* This is now the Action column */
         }
 
         .text-truncate-custom {

@@ -278,7 +278,7 @@
                                     <div class="col-md-9">
                                         <input type="text" name="volume" id="volume"
                                             class="form-control @error('volume') is-invalid @enderror"
-                                            placeholder="Masukkan volume kegiatan (contoh: 20 unit, 1 kegiatan)"
+                                            placeholder="Contoh: 5 unit, 1 kegiatan"
                                             value="{{ old('volume') }}" required>
                                         @error('volume')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -295,10 +295,10 @@
                                         </label>
                                     </div>
                                     <div class="col-md-9">
-                                        <input type="number" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                        <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
                                             class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
-                                            placeholder="Masukkan jumlah harga satuan"
-                                            value="{{ old('jumlah_harga_satuan') }}" required min="0" step="0.01">
+                                            placeholder="Rp 0"
+                                            value="{{ old('jumlah_harga_satuan') }}" required inputmode="numeric" lang="id-ID">
                                         @error('jumlah_harga_satuan')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -314,10 +314,10 @@
                                         </label>
                                     </div>
                                     <div class="col-md-9">
-                                        <input type="number" name="jumlah_harga" id="jumlah_harga"
+                                        <input type="text" name="jumlah_harga" id="jumlah_harga"
                                             class="form-control @error('jumlah_harga') is-invalid @enderror"
-                                            placeholder="Masukkan jumlah harga" value="{{ old('jumlah_harga') }}" required
-                                            min="0" step="0.01">
+                                            placeholder="Rp 0" value="{{ old('jumlah_harga') }}" required
+                                            inputmode="numeric" lang="id-ID" readonly>
                                         @error('jumlah_harga')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -355,6 +355,12 @@
                                         </div>
 
                                         @error('foto_jurnal')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                        @if ($errors->has('foto_jurnal') && !$errors->has('foto_jurnal.*'))
+                                            <div class="invalid-feedback d-block">Foto jurnal wajib diisi.</div>
+                                        @endif
+                                        @error('foto_jurnal.*')
                                             <div class="invalid-feedback d-block">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -669,21 +675,51 @@
                 const hargaSatuanInput = document.getElementById('jumlah_harga_satuan');
                 const jumlahHargaInput = document.getElementById('jumlah_harga');
 
-                function calculateTotal() {
-                    const volume = parseFloat(volumeInput.value) || 0;
-                    const hargaSatuan = parseFloat(hargaSatuanInput.value) || 0;
-                    const total = hargaSatuan * (volume || 1);
-                    jumlahHargaInput.value = total;
+                // Format number with thousand separator
+                function formatNumber(num) {
+                    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                 }
 
-                hargaSatuanInput.addEventListener('input', calculateTotal);
-                volumeInput.addEventListener('input', function() {
-                    const volumeValue = this.value;
-                    const numericVolume = parseFloat(volumeValue.replace(/[^\d.]/g, ''));
-                    if (!isNaN(numericVolume)) {
-                        calculateTotal();
+                // Parse formatted number
+                function parseNumber(value) {
+                    return parseFloat(value.replace(/\./g, '')) || 0;
+                }
+
+                // Format input as user types
+                function formatInput(input) {
+                    let value = input.value.replace(/\D/g, ''); // Remove non-digit characters
+                    if (value === '') {
+                        input.value = '';
+                        return;
                     }
+                    
+                    // Add thousand separators
+                    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                    input.value = value;
+                }
+
+                function calculateTotal() {
+                    const volume = parseFloat(volumeInput.value) || 0;
+                    const hargaSatuan = parseNumber(hargaSatuanInput.value);
+                    const total = hargaSatuan * (volume || 1);
+                    jumlahHargaInput.value = 'Rp ' + formatNumber(total);
+                }
+
+                hargaSatuanInput.addEventListener('input', function() {
+                    formatInput(this);
+                    calculateTotal();
                 });
+
+                volumeInput.addEventListener('input', function() {
+                    calculateTotal();
+                });
+
+                // Format initial values on page load
+                if (hargaSatuanInput.value) {
+                    const initialValue = parseNumber(hargaSatuanInput.value);
+                    hargaSatuanInput.value = formatNumber(initialValue);
+                    calculateTotal();
+                }
 
                 // Form validation
                 const form = document.getElementById('kegiatan-form');
@@ -693,6 +729,35 @@
                     if (!validateForm()) {
                         e.preventDefault();
                     } else {
+                        // Prepare data for submission
+                        const hargaSatuanValue = parseNumber(hargaSatuanInput.value);
+                        const jumlahHargaValue = parseNumber(jumlahHargaInput.value.replace('Rp ', ''));
+                        
+                        // Update hidden inputs with numeric values
+                        let hiddenHargaSatuan = document.querySelector('input[name="jumlah_harga_satuan"][type="hidden"]');
+                        let hiddenJumlahHarga = document.querySelector('input[name="jumlah_harga"][type="hidden"]');
+                        
+                        if (!hiddenHargaSatuan) {
+                            hiddenHargaSatuan = document.createElement('input');
+                            hiddenHargaSatuan.type = 'hidden';
+                            hiddenHargaSatuan.name = 'jumlah_harga_satuan';
+                            form.appendChild(hiddenHargaSatuan);
+                        }
+                        
+                        if (!hiddenJumlahHarga) {
+                            hiddenJumlahHarga = document.createElement('input');
+                            hiddenJumlahHarga.type = 'hidden';
+                            hiddenJumlahHarga.name = 'jumlah_harga';
+                            form.appendChild(hiddenJumlahHarga);
+                        }
+                        
+                        hiddenHargaSatuan.value = hargaSatuanValue;
+                        hiddenJumlahHarga.value = jumlahHargaValue;
+                        
+                        // Disable original inputs to prevent submission
+                        hargaSatuanInput.disabled = true;
+                        jumlahHargaInput.disabled = true;
+                        
                         submitButton.disabled = true;
                         submitButton.innerHTML = `
                             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -708,12 +773,30 @@
                     requiredFields.forEach(field => {
                         if (field.name === 'foto_jurnal' && selectedFotoFiles.length === 0) {
                             field.classList.add('is-invalid');
+                            // Tampilkan pesan error khusus untuk foto jurnal
+                            let errorDiv = field.parentNode.querySelector('.invalid-feedback.d-block');
+                            if (!errorDiv) {
+                                errorDiv = document.createElement('div');
+                                errorDiv.className = 'invalid-feedback d-block';
+                                field.parentNode.appendChild(errorDiv);
+                            }
+                            errorDiv.textContent = 'Foto jurnal wajib diisi.';
                             isValid = false;
-                        } else if (field.type !== 'file' && !field.value.trim()) {
+                        } else if (field.name === 'jumlah_harga_satuan' && parseNumber(field.value) <= 0) {
+                            field.classList.add('is-invalid');
+                            isValid = false;
+                        } else if (field.type !== 'file' && field.type !== 'hidden' && !field.value.trim()) {
                             field.classList.add('is-invalid');
                             isValid = false;
                         } else {
                             field.classList.remove('is-invalid');
+                            // Hapus pesan error khusus untuk foto jurnal jika ada
+                            if (field.name === 'foto_jurnal') {
+                                const errorDiv = field.parentNode.querySelector('.invalid-feedback.d-block');
+                                if (errorDiv && errorDiv.textContent === 'Foto jurnal wajib diisi.') {
+                                    errorDiv.remove();
+                                }
+                            }
                         }
                     });
 

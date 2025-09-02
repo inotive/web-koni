@@ -206,8 +206,8 @@
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Edit Data</h3>
-                        <form action="{{ route('admin.laporan-lpj.kegiatan-lainnya.update', $sekretariat->id) }}"
-                            method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('admin.laporan-lpj.kegiatan-lainnya.update', $kegiatanLainnya->id) }}"
+                            method="POST" enctype="multipart/form-data" id="kegiatan-form">
                             @csrf
                             @method('PUT')
 
@@ -218,12 +218,12 @@
                                     <p class="file-upload-hint">Maksimal 10 foto, masing-masing hingga 10 MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    @if ($sekretariat->foto_jurnal)
+                                    @if ($kegiatanLainnya->foto_jurnal)
                                         <div class="current-files-container" id="currentFotoContainer">
                                             <div class="current-files-title">Foto Saat Ini:</div>
                                             <div class="d-flex flex-wrap gap-2">
-                                                @if (is_array($sekretariat->foto_jurnal))
-                                                    @foreach ($sekretariat->foto_jurnal as $index => $foto)
+                                                @if (is_array($kegiatanLainnya->foto_jurnal))
+                                                    @foreach ($kegiatanLainnya->foto_jurnal as $index => $foto)
                                                         <div class="current-file-item">
                                                             <img src="{{ asset('storage/' . $foto) }}"
                                                                 class="preview-image me-2"
@@ -240,11 +240,11 @@
                                                     @endforeach
                                                 @else
                                                     <div class="current-file-item">
-                                                        <img src="{{ asset('storage/' . $sekretariat->foto_jurnal) }}"
+                                                        <img src="{{ asset('storage/' . $kegiatanLainnya->foto_jurnal) }}"
                                                             class="preview-image me-2" alt="Current Image">
                                                         <div>
                                                             <small class="text-muted d-block">Foto saat ini</small>
-                                                            <a href="{{ asset('storage/' . $sekretariat->foto_jurnal) }}"
+                                                            <a href="{{ asset('storage/' . $kegiatanLainnya->foto_jurnal) }}"
                                                                 target="_blank" class="text-decoration-none small">
                                                                 Lihat foto
                                                             </a>
@@ -258,7 +258,8 @@
                                     <label for="foto_jurnal" class="file-upload-wrapper">
                                         <input type="file" name="foto_jurnal[]" id="foto_jurnal"
                                             class="@error('foto_jurnal') is-invalid @enderror"
-                                            accept="image/jpeg,image/jpg,image/png,image/gif" multiple>
+                                            accept="image/jpeg,image/jpg,image/png,image/gif" multiple
+                                            {{ !$kegiatanLainnya->foto_jurnal ? 'required' : '' }}>
 
                                         <div class="d-flex align-items-center gap-12 w-100">
                                             <div class="file-upload-icon-wrapper">
@@ -266,7 +267,7 @@
                                             </div>
                                             <div class="flex-grow-1">
                                                 <p class="file-upload-text" id="foto-file-name-display">
-                                                    {{ $sekretariat->foto_jurnal ? 'Klik untuk mengganti foto' : 'Seret dan lepas foto di sini, atau klik untuk mengunggah' }}
+                                                    {{ $kegiatanLainnya->foto_jurnal ? 'Klik untuk mengganti foto' : 'Seret dan lepas foto di sini, atau klik untuk mengunggah' }}
                                                 </p>
                                                 <div id="fotoPreviewContainer" class="file-preview"></div>
                                             </div>
@@ -279,6 +280,12 @@
                                     @error('foto_jurnal.*')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
+                                    @if (!$kegiatanLainnya->foto_jurnal && $errors->has('foto_jurnal') && !$errors->has('foto_jurnal.*'))
+                                        <div class="invalid-feedback d-block">Foto jurnal wajib diisi.</div>
+                                    @endif
+                                    @if ($errors->has('foto_jurnal') && !$errors->has('foto_jurnal.*') && $kegiatanLainnya->foto_jurnal)
+                                        <div class="invalid-feedback d-block">{{ $errors->first('foto_jurnal') }}</div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -289,12 +296,12 @@
                                     <p class="file-upload-hint">Maksimal 10 dokumen, masing-masing hingga 10MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    @if ($sekretariat->dokumen_lpj)
+                                    @if ($kegiatanLainnya->dokumen_lpj)
                                         <div class="current-files-container" id="currentDokumenContainer">
                                             <div class="current-files-title">Dokumen Saat Ini:</div>
                                             <div class="d-flex flex-wrap gap-2">
-                                                @if (is_array($sekretariat->dokumen_lpj))
-                                                    @foreach ($sekretariat->dokumen_lpj as $index => $dokumen)
+                                                @if (is_array($kegiatanLainnya->dokumen_lpj))
+                                                    @foreach ($kegiatanLainnya->dokumen_lpj as $index => $dokumen)
                                                         <div class="current-file-item">
                                                             <i class="fas fa-file-alt me-2 text-primary"
                                                                 style="font-size: 1.5rem;"></i>
@@ -314,9 +321,9 @@
                                                             style="font-size: 1.5rem;"></i>
                                                         <div>
                                                             <small class="text-muted d-block">File saat ini:</small>
-                                                            <a href="{{ asset('storage/' . $sekretariat->dokumen_lpj) }}"
+                                                            <a href="{{ asset('storage/' . $kegiatanLainnya->dokumen_lpj) }}"
                                                                 target="_blank" class="text-decoration-none small">
-                                                                {{ basename($sekretariat->dokumen_lpj) }}
+                                                                {{ basename($kegiatanLainnya->dokumen_lpj) }}
                                                             </a>
                                                         </div>
                                                     </div>
@@ -336,7 +343,7 @@
                                             </div>
                                             <div class="flex-grow-1">
                                                 <p class="file-upload-text" id="dokumen-file-name-display">
-                                                    {{ $sekretariat->dokumen_pendukung ? 'Klik untuk mengganti dokumen' : 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah' }}
+                                                    {{ $kegiatanLainnya->dokumen_lpj ? 'Klik untuk mengganti dokumen' : 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah' }}
                                                 </p>
                                                 <div id="dokumenPreviewContainer" class="file-preview"></div>
                                             </div>
@@ -369,19 +376,19 @@
                                     'volume' => [
                                         'label' => 'Volume',
                                         'type' => 'text',
-                                        'placeholder' => 'Masukkan volume kegiatan (contoh: 20 unit, 1 kegiatan)',
+                                        'placeholder' => 'Contoh: 5 unit, 1 kegiatan',
                                         'db_field' => 'volume',
                                     ],
                                     'jumlah_harga_satuan' => [
                                         'label' => 'Jumlah Harga Satuan',
-                                        'type' => 'number',
-                                        'placeholder' => 'Masukkan jumlah harga satuan',
+                                        'type' => 'text',
+                                        'placeholder' => 'Rp 0',
                                         'db_field' => 'jumlah_harga_satuan',
                                     ],
                                     'jumlah_harga' => [
                                         'label' => 'Jumlah Harga',
-                                        'type' => 'number',
-                                        'placeholder' => 'Masukkan jumlah harga',
+                                        'type' => 'text',
+                                        'placeholder' => 'Rp 0',
                                         'db_field' => 'jumlah_harga',
                                     ],
                                     'keterangan_tambahan' => [
@@ -403,7 +410,7 @@
                                             id="{{ $key }}"
                                             class="form-control @error($key) is-invalid @enderror"
                                             placeholder="{{ $field['placeholder'] ?? '' }}"
-                                            value="{{ old($key, $sekretariat->{$field['db_field']}) }}"
+                                            'value="{{ old($key, $kegiatanLainnya->{$field['db_field']}) }}"'
                                             {{ in_array($key, ['nama_program_kegiatan', 'jenis_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga']) ? 'required' : '' }}>
 
                                         @error($key)
@@ -485,7 +492,7 @@
                         currentFotoContainer.style.display = 'block';
                     }
                     fotoFileNameDisplay.textContent =
-                        '{{ $sekretariat->foto_jurnal ? 'Klik untuk mengganti foto' : 'Seret dan lepas foto di sini, atau klik untuk mengunggah' }}';
+                        '{{ $kegiatanLainnya->foto_jurnal ? 'Klik untuk mengganti foto' : 'Seret dan lepas foto di sini, atau klik untuk mengunggah' }}';
                     fotoPreviewContainer.innerHTML = '';
                 }
             });
@@ -563,7 +570,7 @@
                         currentDokumenContainer.style.display = 'block';
                     }
                     dokumenFileNameDisplay.textContent =
-                        '{{ $sekretariat->dokumen_pendukung ? 'Klik untuk mengganti dokumen' : 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah' }}';
+                        '{{ $kegiatanLainnya->dokumen_lpj ? 'Klik untuk mengganti dokumen' : 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah' }}';
                     dokumenPreviewContainer.innerHTML = '';
                 }
             });
@@ -604,6 +611,131 @@
 
             setupDragAndDrop('label[for="foto_jurnal"]', fotoUploadInput);
             setupDragAndDrop('label[for="dokumen_pendukung"]', dokumenUploadInput);
+            
+            // Format number fields
+            const hargaSatuanInput = document.querySelector('input[name="jumlah_harga_satuan"]');
+            const jumlahHargaInput = document.querySelector('input[name="jumlah_harga"]');
+            const volumeInput = document.querySelector('input[name="volume"]');
+            
+            // Format number with thousand separator
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+            
+            // Parse formatted number
+            function parseNumber(value) {
+                return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+            
+            // Format input as user types
+            function formatInput(input) {
+                let value = input.value.replace(/\D/g, ''); // Remove non-digit characters
+                if (value === '') {
+                    input.value = '';
+                    return;
+                }
+                
+                // Add thousand separators
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                input.value = value;
+            }
+            
+            // Calculate total
+            function calculateTotal() {
+                if (!hargaSatuanInput || !jumlahHargaInput || !volumeInput) return;
+                
+                const volume = parseFloat(volumeInput.value) || 0;
+                const hargaSatuan = parseNumber(hargaSatuanInput.value);
+                const total = hargaSatuan * (volume || 1);
+                jumlahHargaInput.value = 'Rp ' + formatNumber(total);
+            }
+            
+            // Initialize formatting for number fields
+            if (hargaSatuanInput) {
+                // Format initial value
+                if (hargaSatuanInput.value) {
+                    const initialValue = parseNumber(hargaSatuanInput.value);
+                    hargaSatuanInput.value = formatNumber(initialValue);
+                }
+                
+                // Add input event listener
+                hargaSatuanInput.addEventListener('input', function() {
+                    formatInput(this);
+                    calculateTotal();
+                });
+            }
+            
+            // Make jumlah_harga readonly
+            if (jumlahHargaInput) {
+                jumlahHargaInput.readOnly = true;
+            }
+            
+            // Add event listener for volume input
+            if (volumeInput) {
+                volumeInput.addEventListener('input', calculateTotal);
+            }
+            
+            // Calculate initial total
+            calculateTotal();
+            
+            // Handle form submission
+            const form = document.getElementById('kegiatan-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Validasi foto jurnal jika tidak ada foto sebelumnya
+                    const fotoInput = document.getElementById('foto_jurnal');
+                    const currentFotoContainer = document.getElementById('currentFotoContainer');
+                    
+                    // Jika tidak ada foto sebelumnya dan tidak ada foto baru yang dipilih
+                    if (!currentFotoContainer && fotoInput.files.length === 0) {
+                        // Tampilkan pesan error
+                        let errorDiv = fotoInput.parentNode.querySelector('.invalid-feedback.d-block');
+                        if (!errorDiv) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.className = 'invalid-feedback d-block';
+                            fotoInput.parentNode.appendChild(errorDiv);
+                        }
+                        errorDiv.textContent = 'Foto jurnal wajib diisi.';
+                        fotoInput.classList.add('is-invalid');
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    // Prepare data for submission
+                    const hargaSatuanInput = document.querySelector('input[name="jumlah_harga_satuan"]');
+                    if (hargaSatuanInput) {
+                        const hargaSatuanValue = parseNumber(hargaSatuanInput.value);
+                        
+                        // Create hidden input with numeric value
+                        let hiddenHargaSatuan = document.querySelector('input[name="jumlah_harga_satuan"][type="hidden"]');
+                        if (!hiddenHargaSatuan) {
+                            hiddenHargaSatuan = document.createElement('input');
+                            hiddenHargaSatuan.type = 'hidden';
+                            hiddenHargaSatuan.name = 'jumlah_harga_satuan';
+                            form.appendChild(hiddenHargaSatuan);
+                        }
+                        hiddenHargaSatuan.value = hargaSatuanValue;
+                        
+                        // Disable original input to prevent submission
+                        hargaSatuanInput.disabled = true;
+                    }
+                });
+                
+                // Tampilkan pesan error jika ada error dari server
+                const fotoInput = document.getElementById('foto_jurnal');
+                const currentFotoContainer = document.getElementById('currentFotoContainer');
+                if (fotoInput && !currentFotoContainer) {
+                    // Cek apakah ada error dari server
+                    const errorElements = form.querySelectorAll('.invalid-feedback.d-block');
+                    let hasServerError = false;
+                    errorElements.forEach(element => {
+                        if (element.textContent.includes('Foto jurnal')) {
+                            hasServerError = true;
+                            fotoInput.classList.add('is-invalid');
+                        }
+                    });
+                }
+            }
         });
     </script>
 
