@@ -7,6 +7,7 @@ use App\Models\Lpj;
 use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PengajuanController extends Controller
 {
@@ -118,18 +119,17 @@ class PengajuanController extends Controller
             return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin.'], 403);
         }
 
-        $pengajuan->status       = $request->status;
-        $pengajuan->approved_by  = Auth::id();
+        $pengajuan->status      = $request->status;
+        $pengajuan->approved_by = Auth::id();
 
-        // Only set approved_at when "disetujui"
-        if ($request->status === 'disetujui') {
-            $pengajuan->approved_at = now();
-        } elseif ($request->status === 'ditolak') {
-            $pengajuan->approved_at = now();
+        $nowGmt8 = Carbon::now('Asia/Singapore'); // GMT+8
+
+        if (in_array($request->status, ['disetujui', 'ditolak'])) {
+            $pengajuan->approved_at = $nowGmt8;
         } else {
             $pengajuan->approved_at = null;
         }
-
+        
         $pengajuan->save();
 
         if ($request->status === 'disetujui') {
