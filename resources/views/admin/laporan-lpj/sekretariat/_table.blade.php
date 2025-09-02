@@ -114,8 +114,8 @@
                                         </a>
                                     </li>
 
-                                    {{-- Check if user is superadmin or has modification permission for Edit button --}}
-                                    @if(auth()->user()->hasRole('superadmin') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
+                                    {{-- Check if user is superadmin, has pengajuan-modifikasi-laporan permission, or has modification permission for Edit button --}}
+                                    @if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
                                         <li>
                                             <a href="{{ route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) }}"
                                                 class="dropdown-item-custom edit">
@@ -144,8 +144,8 @@
                                         </li>
                                     @endif
 
-                                    {{-- Check if user is superadmin or has modification permission for Delete button --}}
-                                    @if(auth()->user()->hasRole('superadmin') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
+                                    {{-- Check if user is superadmin, has pengajuan-modifikasi-laporan permission, or has modification permission for Delete button --}}
+                                    @if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
                                         <li class="dropdown-item-custom delete"
                                             onclick="destroyItem(this)"
                                             data-route="{{ route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id) }}">
