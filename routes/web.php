@@ -71,6 +71,10 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::get('file-kesekretariat/{fileKesekretariat}/download', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'download'])
         ->name('file-kesekretariat.download');
 
+    // File preview route
+    Route::get('file-kesekretariat/{fileKesekretariat}/preview', [\App\Http\Controllers\Admin\FileKesekretariatController::class, 'preview'])
+        ->name('file-kesekretariat.preview');
+
 
     Route::group(['as' => 'hak-akses.', 'prefix' => 'hak-akses'], function () {
         Route::resource('permission', PermissionController::class)->except('show', 'create', 'edit');
@@ -238,9 +242,9 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             // Export route - generates: admin.laporan-lpj.kegiatan-lainnya.export
             Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
 
-            Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
-                ->name('detail-ajax')
-                ->where('id', '[0-9]+');
+    Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
+        ->name('detail-ajax')
+        ->where('id', '[0-9]+');
 
             Route::get('/{kegiatan-lainnya}', [KegiatanLainnyaController::class, 'show'])->name('show');
             Route::get('/{kegiatan-lainnya}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');

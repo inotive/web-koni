@@ -137,7 +137,7 @@ class FileKesekretariatController extends Controller
                 'tanggal_dokumen_formatted' => $fileKesekretariat->tanggal_dokumen->format('d/m/Y'),
                 'dokumen_file' => $this->getOriginalFileName($fileName),
                 'actual_filename' => $fileName,
-                'file_url' => Storage::url('documents/' . $fileName),
+                'file_url' => asset('storage/documents/' . $fileName),
                 'extension' => $fileKesekretariat->file_extension,
                 'file_size' => $this->formatFileSize($fileKesekretariat->file_size)
             ];
@@ -167,7 +167,7 @@ class FileKesekretariatController extends Controller
     public function show(FileKesekretariat $fileKesekretariat): View
     {
         $fileUrl = Storage::disk('public')->exists('documents/' . $fileKesekretariat->dokumen_file)
-            ? Storage::url('documents/' . $fileKesekretariat->dokumen_file)
+            ? asset('storage/documents/' . $fileKesekretariat->dokumen_file)
             : null;
 
         return view('admin.file-kesekretariat.show', [
@@ -180,14 +180,18 @@ class FileKesekretariatController extends Controller
     public function edit(FileKesekretariat $fileKesekretariat): JsonResponse
     {
         try {
+            // Get the original filename without timestamp
+            $originalFileName = $this->getOriginalFileName($fileKesekretariat->dokumen_file);
+            
             return response()->json([
                 'success' => true,
                 'data' => [
                     'id' => $fileKesekretariat->id,
                     'nama_dokumen' => $fileKesekretariat->nama_dokumen,
                     'tanggal_dokumen' => optional($fileKesekretariat->tanggal_dokumen)->format('Y-m-d'),
-                    'dokumen_file' => $this->getOriginalFileName($fileKesekretariat->dokumen_file),
+                    'dokumen_file' => $originalFileName,
                     'actual_filename' => $fileKesekretariat->dokumen_file,
+                    'file_url' => asset('storage/documents/' . $fileKesekretariat->dokumen_file),
                     'current_file_size' => $this->formatFileSize($fileKesekretariat->file_size ?? 0),
                     'file_extension' => $fileKesekretariat->file_extension,
                 ],
@@ -236,7 +240,7 @@ class FileKesekretariatController extends Controller
                 'tanggal_dokumen_formatted' => $fileKesekretariat->tanggal_dokumen->format('d/m/Y'),
                 'dokumen_file' => $this->getOriginalFileName($fileKesekretariat->dokumen_file),
                 'actual_filename' => $fileKesekretariat->dokumen_file,
-                'file_url' => Storage::url('documents/' . $fileKesekretariat->dokumen_file),
+                'file_url' => asset('storage/documents/' . $fileKesekretariat->dokumen_file),
                 'extension' => $fileKesekretariat->file_extension,
                 'file_size' => $this->formatFileSize($fileKesekretariat->file_size)
             ];
@@ -278,17 +282,60 @@ class FileKesekretariatController extends Controller
         }
     }
 
-    public function download(FileKesekretariat $fileKesekretariat): BinaryFileResponse|RedirectResponse
+    public function download(FileKesekretariat $fileKesekretariat)
     {
-        $filePath = storage_path('app/public/documents/' . $fileKesekretariat->dokumen_file);
-
-        if (!file_exists($filePath)) {
+        if (!$fileKesekretariat->dokumen_file || !Storage::disk('public')->exists('documents/' . $fileKesekretariat->dokumen_file)) {
             return back()->with('error', 'File tidak ditemukan.');
         }
 
-        $extension = $fileKesekretariat->file_extension ?? pathinfo($filePath, PATHINFO_EXTENSION);
+        $extension = $fileKesekretariat->file_extension ?? pathinfo($fileKesekretariat->dokumen_file, PATHINFO_EXTENSION);
         $downloadName = str_replace([' ', '.' . $extension], ['_', ''], $fileKesekretariat->nama_dokumen) . '.' . $extension;
+        return Storage::disk('public')->download('documents/' . $fileKesekretariat->dokumen_file, $downloadName);
+    }
 
-        return response()->download($filePath, $downloadName);
+    public function preview(FileKesekretariat $fileKesekretariat)
+    {
+        // Pastikan file ada di storage public
+        if (!$fileKesekretariat->dokumen_file || !Storage::disk('public')->exists('documents/' . $fileKesekretariat->dokumen_file)) {
+            return back()->with('error', 'File tidak ditemukan.');
+        }
+
+        $filePath = storage_path('app/public/documents/' . $fileKesekretariat->dokumen_file);
+        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+        
+        // Tipe file yang bisa dipreview inline
+        $previewableTypes = [
+            'pdf' => 'application/pdf',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'txt' => 'text/plain',
+            'csv' => 'text/csv'
+        ];
+        
+        \Log::info('Preview file request', [
+            'file_id' => $fileKesekretariat->id,
+            'file_path' => $filePath,
+            'extension' => $extension,
+            'file_exists' => file_exists($filePath)
+        ]);
+        
+        // Jika file bisa dipreview, tampilkan inline
+        if (array_key_exists($extension, $previewableTypes)) {
+            // Gunakan Storage::response() yang merupakan cara paling benar di Laravel
+            return Storage::disk('public')->response(
+                'documents/' . $fileKesekretariat->dokumen_file,
+                basename($fileKesekretariat->dokumen_file),
+                [
+                    'Content-Type' => $previewableTypes[$extension],
+                    'Content-Disposition' => 'inline; filename="' . basename($fileKesekretariat->dokumen_file) . '"'
+                ]
+            );
+        }
+
+        // Untuk file lain, tetap download
+        $downloadName = str_replace([' ', '.' . $extension], ['_', ''], $fileKesekretariat->nama_dokumen) . '.' . $extension;
+        return Storage::disk('public')->download('documents/' . $fileKesekretariat->dokumen_file, $downloadName);
     }
 }

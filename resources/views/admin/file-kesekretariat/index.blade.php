@@ -311,6 +311,71 @@
             color: #6c757d;
         }
 
+        /* File Link Text */
+        .file-link-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        /* File Link Styling */
+        .file-link {
+            color: #495057;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            line-height: 1.4;
+            width: 100%;
+        }
+
+        .file-link:hover {
+            background-color: #f8f9fa;
+            color: #F8285A;
+        }
+
+        /* Document Link Styling (sama seperti di tabel) */
+        .document-link-container {
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        .document-link {
+            color: #0d6efd !important;
+            text-decoration: none !important;
+            font-weight: 500;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            line-height: 1.4;
+            width: 100%;
+        }
+
+        .document-link:hover {
+            background-color: #e3f2fd;
+            color: #1976d2 !important;
+            text-decoration: underline !important;
+            transform: translateY(-1px);
+        }
+
+        .document-link-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            text-align: left;
+        }
+
+        
+
         /* =================================
                                                                                                                                                                                DROPDOWN ACTION MENU
                                                                                                                                                                             ================================= */
@@ -471,6 +536,10 @@
             margin-top: 4px;
         }
 
+        .invalid-feedback.d-block {
+            display: block !important;
+        }
+
         /* =================================
                                                                                                                                                                                PAGINATION
                                                                                                                                                                             ================================= */
@@ -577,6 +646,10 @@
             background-color: #f8d7da !important;
         }
 
+        .dropzone.error + .invalid-feedback {
+            display: block !important;
+        }
+
 
         .dz-message {
             padding: 2rem;
@@ -599,6 +672,8 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             background-color: #ffffff;
             /* White background */
+            max-width: 100%;
+            overflow: hidden;
         }
 
         .modal-header {
@@ -612,6 +687,8 @@
             padding: 24px;
             background-color: #ffffff;
             /* White background */
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         .modal-footer {
@@ -836,6 +913,117 @@
             transition: all 0.3s ease-in-out;
         }
 
+        /* Modal responsive fixes */
+        @media (max-width: 768px) {
+            .modal-dialog {
+                margin: 10px;
+                max-width: calc(100% - 20px);
+            }
+            
+            .modal-content {
+                padding: 15px !important;
+            }
+            
+            .modal-content .d-flex {
+                flex-wrap: wrap;
+            }
+            
+            .document-link-container {
+                max-width: 200px;
+            }
+            
+            .document-link-text {
+                max-width: 180px;
+            }
+            
+            .dz-message .ms-4 {
+                margin-left: 0 !important;
+                margin-top: 1rem;
+                text-align: center;
+            }
+            
+            .dz-message h3 {
+                font-size: 1rem;
+            }
+            
+            .dz-message span {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Ensure form elements don't overflow */
+        .form-control {
+            max-width: 100%;
+        }
+
+        /* Modal edit specific fixes */
+        #editFileModal .modal-dialog {
+            max-width: 600px;
+            margin: 1rem auto;
+        }
+
+        #editFileModal .modal-content {
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        /* Ensure all form elements in modal don't cause overflow */
+        #editFileModal .form-control,
+        #editFileModal input,
+        #editFileModal textarea,
+        #editFileModal select {
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Ensure file link container has fixed max width */
+        #editFileModal .document-link-container {
+            max-width: calc(100% - 50px);
+            width: calc(100% - 50px);
+            overflow: hidden;
+        }
+
+        #editFileModal .document-link-text {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* CSS khusus untuk elipsis di bagian File Saat Ini */
+        #editFileModal #currentFileName {
+            display: block;
+            width: 100%;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            direction: ltr;
+            unicode-bidi: bidi-override;
+        }
+
+        /* Kontainer file saat ini dengan lebar tetap */
+        #editFileModal .document-link-container {
+            width: calc(100% - 50px);
+            max-width: calc(100% - 50px);
+            overflow: hidden;
+        }
+
+        /* Custom tooltip styles */
+        .custom-tooltip {
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 10000;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            pointer-events: none;
+        }
+
         /* Dropzone biru muda */
         .dropzone,
         #dropzone-tambahFileForm,
@@ -846,6 +1034,9 @@
             /* biru muda */
             color: #0d6efd !important;
             transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+            max-width: 100%;
         }
 
         .dropzone:hover,
@@ -860,6 +1051,7 @@
 .table th:nth-child(3) {
     text-align: left !important;
 }
+
     </style>
 @endsection
 
@@ -912,9 +1104,9 @@
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 gap-5 px-10 py-8">
-                    <div class="d-flex justify-content-between align-items-center gap-2">
-                        <div class="fs-2 fw-bold text-truncate leading-5" id="modalTitle">Tambah File Kesekretariat</div>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="d-flex justify-content-between align-items-center gap-2" style="flex-wrap: wrap;">
+                        <div class="fs-2 fw-bold text-truncate leading-5" id="modalTitle" style="flex: 1; min-width: 0;">Tambah File Kesekretariat</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="flex-shrink: 0;"></button>
                     </div>
 
                     <form id="tambahFileForm" method="POST" action="{{ route('admin.file-kesekretariat.store') }}"
@@ -944,7 +1136,7 @@
                         <!-- File Upload Field -->
                         <div>
                             <div class="fw-semibold required mb-3 text-gray-800">File Dokumen</div>
-                            <div class="dropzone" id="dropzone-tambahFileForm">
+                            <div class="dropzone" id="dropzone-tambahFileForm" style="width: 100%; max-width: 100%; box-sizing: border-box;">
                                 <div class="dz-message needsclick">
                                     <i class="ki-duotone ki-file-up fs-3x text-primary">
                                         <span class="path1"></span><span class="path2"></span>
@@ -971,93 +1163,21 @@
             </div>
         </div>
 
-        <!-- File Preview Modal -->
-        <div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div class="d-flex align-items-center gap-3">
-                            <i id="previewFileIcon" class="fas fa-file fa-2x text-primary"></i>
-                            <div>
-                                <h5 class="modal-title mb-0" id="previewFileName">Preview File</h5>
-                                <small class="text-muted" id="previewFileSize"></small>
-                            </div>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="button" id="downloadFromPreview" class="btn btn-sm btn-outline-primary">
-                                <i class="fas fa-download me-1"></i>Download
-                            </button>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                    </div>
-                    <div class="modal-body p-0" style="height: 75vh; overflow: hidden;">
-                        <!-- Loading State -->
-                        <div id="previewLoading" class="d-flex justify-content-center align-items-center h-100">
-                            <div class="text-center">
-                                <div class="spinner-border text-primary mb-3" role="status"
-                                    style="width: 3rem; height: 3rem;">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                                <p class="text-muted">Memuat preview file...</p>
-                            </div>
-                        </div>
+        
 
-                        <!-- PDF Viewer -->
-                        <div id="pdfViewer" class="h-100" style="display: none;">
-                            <iframe id="pdfFrame" class="w-100 h-100" frameborder="0"></iframe>
-                        </div>
-
-                        <!-- Word/Doc Viewer -->
-                        <div id="docViewer" class="h-100 p-4" style="display: none; overflow-y: auto;">
-                            <div id="docContent" class="bg-white p-4 border rounded shadow-sm">
-                                <!-- Word content will be loaded here -->
-                            </div>
-                        </div>
-
-                        <!-- Error State -->
-                        <div id="previewError" class="d-flex justify-content-center align-items-center h-100"
-                            style="display: none;">
-                            <div class="text-center">
-                                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                                <h5>Tidak dapat menampilkan preview</h5>
-                                <p class="text-muted mb-3">File ini tidak dapat di-preview. Silakan download untuk melihat
-                                    isi file.</p>
-                                <button type="button" id="downloadFromError" class="btn btn-primary">
-                                    <i class="fas fa-download me-1"></i>Download File
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Unsupported Format -->
-                        <div id="unsupportedFormat" class="d-flex justify-content-center align-items-center h-100"
-                            style="display: none;">
-                            <div class="text-center">
-                                <i class="fas fa-file fa-3x text-secondary mb-3"></i>
-                                <h5>Format file tidak didukung untuk preview</h5>
-                                <p class="text-muted mb-3">Preview hanya tersedia untuk file PDF dan Word (.doc/.docx)</p>
-                                <button type="button" id="downloadUnsupported" class="btn btn-primary">
-                                    <i class="fas fa-download me-1"></i>Download File
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
 
         <!-- Edit File Modal - IMPROVED VERSION -->
         <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 gap-5 px-10 py-8">
-                    <div class="d-flex justify-content-between align-items-center gap-2">
-                        <div class="fs-2 fw-bold text-truncate leading-5" id="editModalTitle">Edit File Kesekretariat
-                        </div>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="d-flex justify-content-between align-items-center gap-2" style="flex-wrap: wrap;">
+                        <div class="fs-2 fw-bold text-truncate leading-5" id="editModalTitle" style="flex: 1; min-width: 0;">Edit File Kesekretariat</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="flex-shrink: 0;"></button>
                     </div>
 
-                    <form id="editFileForm" method="POST" enctype="multipart/form-data" class="d-grid gap-4">
+                    <form id="editFileForm" method="POST" enctype="multipart/form-data" class="d-grid gap-4" style="width: 100%; max-width: 100%;">
                         @csrf
                         @method('PUT')
 
@@ -1085,7 +1205,19 @@
                             </div>
                         </div>
 
-
+                        <!-- Current File Information -->
+                        <div class="mb-4 p-3 bg-light rounded">
+                            <div class="fw-semibold mb-2 text-gray-800">File Saat Ini</div>
+                            <div class="d-flex align-items-start" style="max-width: 100%;">
+                                <i id="currentFileIcon" class="fas fa-file fa-2x me-3 text-secondary mt-1 flex-shrink-0"></i>
+                                <div class="document-link-container" style="width: calc(100% - 50px); max-width: calc(100% - 50px); overflow: hidden;">
+                                    <a href="#" id="currentFileLink" target="_blank" class="document-link" style="display: block; width: 100%;">
+                                        <span id="currentFileName" class="document-link-text" style="display: block; width: 100%; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="">-</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="text-muted small mt-2">File ini akan diganti jika Anda mengunggah file baru</div>
+                        </div>
 
                         <!-- Optional New File Upload -->
                         <!-- SAMAKAN: Dropzone seperti di tambah -->
@@ -1095,7 +1227,7 @@
                                 <small class="text-muted fw-normal">- Biarkan kosong jika tidak ingin mengganti
                                     file</small>
                             </div>
-                            <div class="dropzone" id="dropzone-editFileForm">
+                            <div class="dropzone" id="dropzone-editFileForm" style="width: 100%; max-width: 100%; box-sizing: border-box;">
                                 <div class="dz-message needsclick">
                                     <i class="ki-duotone ki-file-up fs-3x text-primary">
                                         <span class="path1"></span><span class="path2"></span>
@@ -1239,30 +1371,7 @@
             `);
         }
 
-        // File preview function
-        function previewFile(fileUrl, fileName, fileExtension) {
-            const modal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
-            const previewFileName = document.getElementById('previewFileName');
-            const pdfFrame = document.getElementById('pdfFrame');
-
-            // Reset all viewers
-            document.getElementById('pdfViewer').style.display = 'none';
-            document.getElementById('docViewer').style.display = 'none';
-            document.getElementById('previewError').style.display = 'none';
-            document.getElementById('unsupportedFormat').style.display = 'none';
-
-            previewFileName.textContent = fileName;
-
-            if (['pdf', 'doc', 'docx', 'xls', 'xlsx'].includes(fileExtension.toLowerCase())) {
-                const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
-                document.getElementById('pdfViewer').style.display = 'block';
-                pdfFrame.src = googleViewerUrl;
-            } else {
-                document.getElementById('unsupportedFormat').style.display = 'block';
-            }
-
-            modal.show();
-        }
+        
 
         // Get file icon based on extension
         function getFileIcon(extension) {
@@ -1316,6 +1425,67 @@
             };
         }
 
+        // Tooltip initialization function
+        function initializeTooltips() {
+            // Fungsi tooltip custom sederhana
+            $('[title]').each(function() {
+                const $this = $(this);
+                const title = $this.attr('title');
+                
+                // Hapus title default dan tambahkan atribut data untuk tooltip custom
+                if (title && title.length > 0) {
+                    $this.removeAttr('title');
+                    $this.attr('data-tooltip', title);
+                    
+                    // Tambahkan event hover untuk menampilkan tooltip
+                    $this.hover(
+                        function() {
+                            // Mouse enter
+                            const tooltipText = $(this).attr('data-tooltip');
+                            if (tooltipText && tooltipText.length > 0) {
+                                // Buat elemen tooltip
+                                const tooltipId = 'custom-tooltip-' + Math.random().toString(36).substr(2, 9);
+                                const tooltip = $(`<div id="${tooltipId}" class="custom-tooltip" style="
+                                    position: absolute;
+                                    background-color: #333;
+                                    color: #fff;
+                                    padding: 5px 10px;
+                                    border-radius: 4px;
+                                    font-size: 12px;
+                                    z-index: 10000;
+                                    white-space: nowrap;
+                                    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                                ">${tooltipText}</div>`);
+                                
+                                $('body').append(tooltip);
+                                
+                                // Posisikan tooltip
+                                const offset = $(this).offset();
+                                const tooltipWidth = tooltip.outerWidth();
+                                const elementWidth = $(this).outerWidth();
+                                
+                                tooltip.css({
+                                    top: offset.top - tooltip.outerHeight() - 8,
+                                    left: offset.left + (elementWidth / 2) - (tooltipWidth / 2)
+                                });
+                                
+                                // Simpan referensi tooltip
+                                $(this).data('tooltip-id', tooltipId);
+                            }
+                        },
+                        function() {
+                            // Mouse leave
+                            const tooltipId = $(this).data('tooltip-id');
+                            if (tooltipId) {
+                                $('#' + tooltipId).remove();
+                                $(this).removeData('tooltip-id');
+                            }
+                        }
+                    );
+                }
+            });
+        }
+
         // Main document ready function
         $(document).ready(function() {
             // Debounced search for live filtering
@@ -1332,6 +1502,47 @@
                     performSearch({ page: 1 }, true);
                 }
             });
+            
+            // Tangani resize window untuk memastikan modal tidak melebar
+            $(window).on('resize', function() {
+                if ($('#editFileModal').hasClass('show')) {
+                    // Terapkan kembali styling lebar tetap
+                    $('#editFileModal .modal-dialog').css({
+                        'max-width': '600px',
+                        'margin': '1rem auto'
+                    });
+                    
+                    $('#editFileModal .document-link-container').css({
+                        'width': 'calc(100% - 50px)',
+                        'max-width': 'calc(100% - 50px)'
+                    });
+                }
+            });
+            
+            // Tambahkan event listener untuk memastikan styling tetap diterapkan
+            $('#editFileModal').on('shown.bs.modal', function() {
+                // Terapkan styling khusus saat modal ditampilkan
+                $('#editFileModal .modal-dialog').css({
+                    'max-width': '600px',
+                    'margin': '1rem auto'
+                });
+                
+                $('#editFileModal .document-link-container').css({
+                    'width': 'calc(100% - 50px)',
+                    'max-width': 'calc(100% - 50px)',
+                    'overflow': 'hidden'
+                });
+                
+                $('#currentFileName').css({
+                    'display': 'block',
+                    'width': '100%',
+                    'text-align': 'left',
+                    'overflow': 'hidden',
+                    'text-overflow': 'ellipsis',
+                    'white-space': 'nowrap'
+                });
+            });
+            
             let isLoading = false;
             let searchTimeout;
             let editDropzoneInitialized = false;
@@ -1341,28 +1552,51 @@
             // Form validation helpers
             function clearFormErrors() {
                 $('.is-invalid').removeClass('is-invalid');
-                $('.invalid-feedback').empty();
+                $('.invalid-feedback').empty().removeClass('d-block');
                 $('#dropzone-tambahFileForm').removeClass('error');
+                $('#dropzone-editFileForm').removeClass('error');
                 $('#nama_dokumen_error').empty();
                 $('#tanggal_dokumen_error').empty();
-                $('#dokumen_file_error').empty();
+                $('#dokumen_file_error').empty().removeClass('d-block');
+                $('#edit_nama_dokumen_error').empty();
+                $('#edit_tanggal_dokumen_error').empty();
+                $('#edit_dokumen_file_error').empty().removeClass('d-block');
             }
 
             function showFormErrors(errors) {
                 clearFormErrors();
                 $.each(errors, function(field, messages) {
-                    const input = $(`input[name="${field}"]`);
-                    const errorDiv = $(`#${field}_error`);
-                    input.addClass('is-invalid');
-                    errorDiv.text(messages[0]);
+                    if (field === 'dokumen_file') {
+                        // Tangani error untuk field file khusus
+                        const errorDiv = $('#dokumen_file_error');
+                        const dropzone = $('#dropzone-tambahFileForm');
+                        errorDiv.text(messages[0]).addClass('d-block');
+                        dropzone.addClass('error');
+                    } else {
+                        const input = $(`input[name="${field}"]`);
+                        const errorDiv = $(`#${field}_error`);
+                        input.addClass('is-invalid');
+                        errorDiv.text(messages[0]);
+                    }
                 });
             }
+
+            function createEllipsisText(text, maxLength = 30) {
+    if (!text || text.length <= maxLength) {
+        return text;
+    }
+    return text.substring(0, maxLength) + '...';
+}
 
             // Real-time validation
             $(document).on('input', '#tambahFileForm input[name="nama_dokumen"]', function() {
                 if ($(this).val().trim()) {
                     $(this).removeClass('is-invalid');
                     $('#nama_dokumen_error').empty();
+                } else {
+                    // Tampilkan kembali pesan error jika field kosong
+                    $(this).addClass('is-invalid');
+                    $('#nama_dokumen_error').text('Nama dokumen wajib diisi');
                 }
             });
 
@@ -1371,6 +1605,10 @@
                 if (value) {
                     $(this).removeClass('is-invalid');
                     $('#edit_nama_dokumen_error').empty();
+                } else {
+                    // Tampilkan kembali pesan error jika field kosong
+                    $(this).addClass('is-invalid');
+                    $('#edit_nama_dokumen_error').text('Nama dokumen wajib diisi');
                 }
             });
 
@@ -1378,6 +1616,10 @@
                 if ($(this).val()) {
                     $(this).removeClass('is-invalid');
                     $('#tanggal_dokumen_error').empty();
+                } else {
+                    // Tampilkan kembali pesan error jika field kosong
+                    $(this).addClass('is-invalid');
+                    $('#tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
                 }
             });
 
@@ -1386,6 +1628,10 @@
                 if (value) {
                     $(this).removeClass('is-invalid');
                     $('#edit_tanggal_dokumen_error').empty();
+                } else {
+                    // Tampilkan kembali pesan error jika field kosong
+                    $(this).addClass('is-invalid');
+                    $('#edit_tanggal_dokumen_error').text('Tanggal dokumen wajib diisi');
                 }
             });
 
@@ -1428,6 +1674,7 @@
                     document.getElementById('tambahFileForm').appendChild(fileInput);
                 } else {
                     fileInput.value = '';
+                    fileInput.required = true;
                 }
 
                 let dragCounter = 0;
@@ -1444,6 +1691,9 @@
                     const file = e.target.files[0];
                     if (file) {
                         handleFileSelection(file, newDropzoneElement);
+                        // Hapus error ketika file dipilih
+                        $('#dokumen_file_error').empty().removeClass('d-block');
+                        $('#dropzone-tambahFileForm').removeClass('error');
                     }
                 });
 
@@ -1482,6 +1732,9 @@
                         dt.items.add(file);
                         fileInput.files = dt.files;
                         handleFileSelection(file, newDropzoneElement);
+                        // Hapus error ketika file dipilih
+                        $('#dokumen_file_error').empty().removeClass('d-block');
+                        $('#dropzone-tambahFileForm').removeClass('error');
                     }
                 });
             }
@@ -1499,16 +1752,26 @@
 
                 const errorDiv = document.getElementById('dokumen_file_error');
                 errorDiv.textContent = '';
+                errorDiv.classList.remove('d-block');
                 dropzoneElement.classList.remove('error');
+
+                if (!file) {
+                    errorDiv.textContent = 'File dokumen wajib diunggah';
+                    errorDiv.classList.add('d-block');
+                    dropzoneElement.classList.add('error');
+                    return false;
+                }
 
                 if (file.size > maxSize) {
                     errorDiv.textContent = 'Ukuran file tidak boleh lebih dari 10MB';
+                    errorDiv.classList.add('d-block');
                     dropzoneElement.classList.add('error');
                     return false;
                 }
 
                 if (!allowedTypes.includes(file.type)) {
                     errorDiv.textContent = 'Format file tidak didukung. Gunakan PDF, DOC, DOCX, XLS, atau XLSX';
+                    errorDiv.classList.add('d-block');
                     dropzoneElement.classList.add('error');
                     return false;
                 }
@@ -1529,17 +1792,17 @@
                 const fileSize = (file.size / (1024 * 1024)).toFixed(2);
 
                 dropzoneElement.innerHTML = `
-                    <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded">
-                        <div class="d-flex align-items-center">
-                            <i class="${fileIcon} fa-2x me-3"></i>
-                            <div>
-                                <div class="fw-bold text-truncate" style="max-width: 200px;" title="${file.name}">
+                    <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded" style="width: 100%; max-width: 100%; box-sizing: border-box;">
+                        <div class="d-flex align-items-center" style="flex: 1; min-width: 0; max-width: calc(100% - 40px);">
+                            <i class="${fileIcon} fa-2x me-3 flex-shrink-0"></i>
+                            <div style="flex: 1; min-width: 0; overflow: hidden;">
+                                <div class="fw-bold text-truncate" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.name}">
                                     ${file.name}
                                 </div>
                                 <small class="text-muted">${fileSize} MB</small>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeSelectedFile()">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeSelectedFile()" style="flex-shrink: 0; margin-left: 10px;">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -1567,11 +1830,17 @@
                     </div>
                 `;
 
+                // Hanya mengosongkan error jika tidak ada error validasi lain
                 const errorDiv = document.getElementById('dokumen_file_error');
-                if (errorDiv) {
+                if (errorDiv && !errorDiv.textContent.includes('wajib diunggah')) {
                     errorDiv.textContent = '';
+                    errorDiv.classList.remove('d-block');
                 }
-                dropzoneElement.classList.remove('error');
+                
+                // Hanya menghapus kelas error jika tidak ada error validasi lain
+                if (!errorDiv || !errorDiv.textContent) {
+                    dropzoneElement.classList.remove('error');
+                }
             }
 
             // Initialize edit file dropzone
@@ -1590,7 +1859,12 @@
                     fileInput.id = 'edit_dokumen_file_input';
                     fileInput.accept = '.pdf,.doc,.docx,.xls,.xlsx';
                     fileInput.style.display = 'none';
+                    // Untuk edit form, file tidak wajib diisi
+                    fileInput.required = false;
                     document.getElementById('editFileForm').appendChild(fileInput);
+                } else {
+                    fileInput.value = '';
+                    fileInput.required = false;
                 }
 
                 let dragCounter = 0;
@@ -1605,6 +1879,9 @@
                     const file = e.target.files[0];
                     if (file) {
                         handleEditFileSelection(file, newDropzoneElement);
+                        // Hapus error ketika file dipilih
+                        $('#edit_dokumen_file_error').empty().removeClass('d-block');
+                        $('#dropzone-editFileForm').removeClass('error');
                     }
                 });
 
@@ -1643,6 +1920,9 @@
                         dt.items.add(file);
                         fileInput.files = dt.files;
                         handleEditFileSelection(file, newDropzoneElement);
+                        // Hapus error ketika file dipilih
+                        $('#edit_dokumen_file_error').empty().removeClass('d-block');
+                        $('#dropzone-editFileForm').removeClass('error');
                     }
                 });
             }
@@ -1658,17 +1938,31 @@
                 ];
 
                 const errorDiv = document.getElementById('edit_dokumen_file_error');
-                if (errorDiv) errorDiv.textContent = '';
+                if (errorDiv) {
+                    errorDiv.textContent = '';
+                    errorDiv.classList.remove('d-block');
+                }
                 dropzoneElement.classList.remove('error');
 
+                if (!file) {
+                    // Untuk edit form, file tidak wajib diisi
+                    return false;
+                }
+
                 if (file.size > maxSize) {
-                    if (errorDiv) errorDiv.textContent = 'Ukuran file tidak boleh lebih dari 10MB';
+                    if (errorDiv) {
+                        errorDiv.textContent = 'Ukuran file tidak boleh lebih dari 10MB';
+                        errorDiv.classList.add('d-block');
+                    }
                     dropzoneElement.classList.add('error');
                     return false;
                 }
 
                 if (!allowedTypes.includes(file.type)) {
-                    if (errorDiv) errorDiv.textContent = 'Format file tidak didukung. Gunakan PDF, DOC, DOCX, XLS, atau XLSX';
+                    if (errorDiv) {
+                        errorDiv.textContent = 'Format file tidak didukung. Gunakan PDF, DOC, DOCX, XLS, atau XLSX';
+                        errorDiv.classList.add('d-block');
+                    }
                     dropzoneElement.classList.add('error');
                     return false;
                 }
@@ -1679,6 +1973,10 @@
                 fileInput.files = dt.files;
 
                 showEditFilePreview(file, dropzoneElement);
+                
+                // Inisialisasi tooltip untuk file yang baru dipilih
+                setTimeout(initializeTooltips, 100);
+                
                 return true;
             }
 
@@ -1688,17 +1986,17 @@
                 const fileSize = (file.size / (1024 * 1024)).toFixed(2);
 
                 dropzoneElement.innerHTML = `
-                    <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded">
-                        <div class="d-flex align-items-center">
-                            <i class="${fileIcon} fa-2x me-3"></i>
-                            <div>
-                                <div class="fw-bold text-truncate" style="max-width: 200px;" title="${file.name}">
+                    <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded" style="width: 100%; max-width: 100%; box-sizing: border-box;">
+                        <div class="d-flex align-items-center" style="flex: 1; min-width: 0; max-width: calc(100% - 40px);">
+                            <i class="${fileIcon} fa-2x me-3 flex-shrink-0"></i>
+                            <div style="flex: 1; min-width: 0; overflow: hidden;">
+                                <div class="fw-bold text-truncate" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.name}">
                                     ${file.name}
                                 </div>
                                 <small class="text-muted">${fileSize} MB</small>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeEditSelectedFile()">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeEditSelectedFile()" style="flex-shrink: 0; margin-left: 10px;">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -1725,25 +2023,39 @@
                     </div>
                 `;
 
+                // Hapus error hanya jika ada
                 const errorDiv = document.getElementById('edit_dokumen_file_error');
                 if (errorDiv) {
                     errorDiv.textContent = '';
+                    errorDiv.classList.remove('d-block');
                 }
                 dropzoneElement.classList.remove('error');
             }
 
             // Edit modal functions
             function openEditModal(id, nama, tanggal, fileName) {
-                $('.is-invalid').removeClass('is-invalid');
-                $('.invalid-feedback').empty();
+    $('.is-invalid').removeClass('is-invalid');
+    $('.invalid-feedback').empty();
 
-                $('#edit_file_id').val(id);
-                $('#edit_nama_dokumen').val(nama || '');
-
+    // Fetch file data from server
+    $.ajax({
+        url: `/admin/file-kesekretariat/${id}/edit`,
+        type: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(response) {
+            if (response.success) {
+                const data = response.data;
+                
+                $('#edit_file_id').val(data.id);
+                $('#edit_nama_dokumen').val(data.nama_dokumen || '');
+                
                 // Format date for input
                 let formattedDate = '';
-                if (tanggal) {
-                    const date = new Date(tanggal);
+                if (data.tanggal_dokumen) {
+                    const date = new Date(data.tanggal_dokumen);
                     if (!isNaN(date.getTime())) {
                         const year = date.getFullYear();
                         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -1752,18 +2064,73 @@
                     }
                 }
                 $('#edit_tanggal_dokumen').val(formattedDate);
-
-                // Update current file display
-                if (fileName) {
-                    const fileExtension = fileName.split('.').pop().toLowerCase();
+                
+                // Update current file display dengan elipsis yang konsisten
+                if (data.dokumen_file) {
+                    const fileExtension = data.dokumen_file.split('.').pop().toLowerCase();
                     const fileIcon = getFileIconForCurrentFile(fileExtension);
-                    $('#currentFileName').text(fileName);
+                    
+                    // Buat nama file dengan elipsis untuk tampilan
+                    const displayFileName = createEllipsisText(data.dokumen_file, 35);
+                    
+                    // Atur text yang terlihat dengan elipsis dan title untuk tooltip dengan nama lengkap
+                    $('#currentFileName').text(displayFileName).attr('title', data.dokumen_file);
                     $('#currentFileIcon').attr('class', `${fileIcon} fa-2x me-3`);
+                    $('#currentFileLink').attr('href', data.file_url);
+                } else {
+                    $('#currentFileName').text('-').attr('title', '');
+                    $('#currentFileIcon').attr('class', 'fas fa-file fa-2x me-3 text-secondary');
+                    $('#currentFileLink').attr('href', '#');
                 }
-
+                
                 $('#editFileForm').attr('action', `/admin/file-kesekretariat/${id}`);
                 $('#editFileModal').modal('show');
+                
+                // Terapkan styling khusus setelah modal ditampilkan
+                setTimeout(function() {
+                    // Pastikan modal dialog memiliki lebar maksimum tetap
+                    $('#editFileModal .modal-dialog').css({
+                        'max-width': '600px',
+                        'margin': '1rem auto'
+                    });
+                    
+                    // Pastikan konten modal tidak melebihi lebar container
+                    $('#editFileModal .modal-content').css({
+                        'max-width': '100%',
+                        'overflow': 'hidden'
+                    });
+                    
+                    // Pastikan kontainer file saat ini memiliki lebar tetap
+                    $('#editFileModal .document-link-container').css({
+                        'width': 'calc(100% - 50px)',
+                        'max-width': 'calc(100% - 50px)',
+                        'overflow': 'hidden'
+                    });
+                    
+                    // Pastikan text nama file menggunakan elipsis
+                    $('#currentFileName').css({
+                        'display': 'block',
+                        'width': '100%',
+                        'text-align': 'left',
+                        'overflow': 'hidden',
+                        'text-overflow': 'ellipsis',
+                        'white-space': 'nowrap',
+                        'max-width': '100%'
+                    });
+                }, 100);
+            } else {
+                toastr.error(response.message || 'Gagal memuat data file', 'Error!');
             }
+        },
+        error: function(xhr) {
+            let errorMessage = 'Terjadi kesalahan saat memuat data file';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+            toastr.error(errorMessage, 'Error!');
+        }
+    });
+}
 
             // Submit edit form
             function submitEditForm() {
@@ -1773,8 +2140,11 @@
 
     // Manual validation
     let isValid = true;
+    
+    // Clear previous errors
     $('.is-invalid').removeClass('is-invalid');
     $('.invalid-feedback').empty();
+    $('#dropzone-editFileForm').removeClass('error');
 
     const namaDokumen = $('#edit_nama_dokumen').val().trim();
     if (!namaDokumen) {
@@ -1838,10 +2208,18 @@
         },
         error: function(xhr) {
             if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                let errors = xhr.responseJSON.errors;
-                $.each(errors, function(key, value) {
-                    $(`#edit_${key}`).addClass('is-invalid');
-                    $(`#edit_${key}_error`).text(value[0]);
+                // Tangani error untuk form edit
+                $.each(xhr.responseJSON.errors, function(key, value) {
+                    if (key === 'dokumen_file') {
+                        // Tangani error untuk field file khusus
+                        const errorDiv = $('#edit_dokumen_file_error');
+                        const dropzone = $('#dropzone-editFileForm');
+                        errorDiv.text(value[0]).addClass('d-block');
+                        dropzone.addClass('error');
+                    } else {
+                        $(`#edit_${key}`).addClass('is-invalid');
+                        $(`#edit_${key}_error`).text(value[0]);
+                    }
                 });
             } else {
                 let errorMessage = 'Terjadi kesalahan saat memperbarui file';
@@ -1870,9 +2248,18 @@
     $(document).on('click.sorting', 'th.sortable', function(e) {
         e.preventDefault();
         const sortBy = $(this).data('sort');
-        let currentOrder = $(this).data('order') || 'asc';
-        const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
-        $(this).data('order', newOrder);
+        
+        // Get current order from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentSortBy = urlParams.get('sort_by');
+        const currentOrder = urlParams.get('order') || 'desc';
+        
+        // If clicking on the same column, toggle order; otherwise start with asc
+        let newOrder = 'asc';
+        if (currentSortBy === sortBy) {
+            newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+        }
+        
         performSearch({
             page: 1,
             sort_by: sortBy,
@@ -1918,7 +2305,7 @@
                 };
                 
                 if (currentSearch && currentSearch.trim()) {
-                    searchParams.search = currentSearch;
+                    searchParams.search = currentSearch;    
                 }
                 
                 performSearch(searchParams, true);
@@ -2028,6 +2415,11 @@ function hideLoading() {
     // Manual validation
     let isValid = true;
 
+    // Clear previous errors
+    $('.is-invalid').removeClass('is-invalid');
+    $('.invalid-feedback').empty();
+    $('#dropzone-tambahFileForm').removeClass('error');
+
     const namaDokumen = form.find('input[name="nama_dokumen"]').val().trim();
     if (!namaDokumen) {
         $('#nama_dokumen_error').text('Nama dokumen wajib diisi');
@@ -2044,7 +2436,7 @@ function hideLoading() {
 
     const fileInput = document.getElementById('dokumen_file_input');
     if (!fileInput.files || fileInput.files.length === 0) {
-        $('#dokumen_file_error').text('File dokumen wajib diunggah');
+        $('#dokumen_file_error').text('File dokumen wajib diunggah').addClass('d-block');
         $('#dropzone-tambahFileForm').addClass('error');
         isValid = false;
     }
@@ -2135,7 +2527,7 @@ function hideLoading() {
                         <td>
                             <div class="document-info">
                                 <div class="document-name-display">
-                                    <a href="#" class="document-name" onclick="previewFile('${fileData.file_url}', '${fileData.nama_dokumen}', '${fileData.extension}')">
+                                    <a href="${fileData.file_url}" class="document-name" target="_blank">
     ${fileData.nama_dokumen}
 </a>
                                 </div>
@@ -2144,30 +2536,42 @@ function hideLoading() {
                         </td>
                         <td>
     <a href="${fileData.file_url}" class="file-link" target="_blank">
-        <i class="fas fa-download"></i>
-        ${fileData.dokumen_file}
+        <i class="${getFileIcon(fileData.extension)} me-2"></i>
+        <span class="file-link-text">${fileData.dokumen_file}</span>
     </a>
 </td>
                         <td class="text-center">
-                            <div class="dropdown-action">
-                                <button class="dropdown-toggle-action" type="button">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                            <div class="dropdown dropdown-action">
+                                <button class="btn btn-icon btn-sm btn-preview" 
+                                        onclick="previewFile('${fileData.file_url}', '${fileData.dokumen_file}', '${fileData.extension}')"
+                                        title="Preview ${fileData.dokumen_file}">
+                                    <i class="fas fa-eye text-primary"></i>
+                                </button>
+                                <button class="btn btn-icon btn-sm ms-2 dropdown-toggle-action" type="button">
+                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="32" height="32" rx="6" fill="#EFF6FF"/>
+                                        <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" stroke="#1B84FF" stroke-opacity="0.2"/>
+                                        <g clip-path="url(#clip0_2223_4269)">
+                                            <path opacity="0.3" d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z" fill="#1B84FF"/>
+                                            <path d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z" fill="#1B84FF"/>
+                                        </g>
+                                        <defs>
+                                            <clipPath id="clip0_2223_4269">
+                                                <rect width="18" height="18" fill="white" transform="translate(7 7)"/>
+                                            </clipPath>
+                                        </defs>
                                     </svg>
                                 </button>
-                                <div class="dropdown-menu-action">
-                                    <button class="dropdown-item-action btn-edit" 
-                                            data-id="${fileData.id}"
-                                            data-nama="${fileData.nama_dokumen}"
-                                            data-tanggal="${fileData.tanggal_dokumen}"
-                                            data-filename="${fileData.dokumen_file}">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button class="dropdown-item-action text-danger" 
-                                            onclick="deleteFile(${fileData.id}, '${fileData.nama_dokumen}', '/admin/file-kesekretariat/${fileData.id}')">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </div>
+                                <ul class="dropdown-menu dropdown-menu-action">
+                                    <li class="dropdown-item edit" 
+                                        onclick="openEditModal(${fileData.id}, '${fileData.nama_dokumen}', '${fileData.tanggal_dokumen}', '${fileData.dokumen_file}')">
+                                        <i class="ki-outline ki-pencil me-2"></i>Edit File
+                                    </li>
+                                    <li class="dropdown-item delete" 
+                                        onclick="deleteFile(${fileData.id}, '${fileData.nama_dokumen}', '/admin/file-kesekretariat/${fileData.id}')">
+                                        <i class="ki-outline ki-trash me-2"></i>Hapus
+                                    </li>
+                                </ul>
                             </div>
                         </td>
                     </tr>
@@ -2188,7 +2592,7 @@ function hideLoading() {
                         <td>
                             <div class="document-info">
                                 <div class="document-name-display">
-                                    <a href="#" class="document-name" onclick="previewFile('${fileData.file_url}', '${fileData.nama_dokumen}', '${fileData.extension}')">
+                                    <a href="${fileData.file_url}" class="document-name" target="_blank">
                                         <i class="${getFileIcon(fileData.extension)}"></i>
                                         ${fileData.nama_dokumen}
                                     </a>
@@ -2197,11 +2601,11 @@ function hideLoading() {
                             </div>
                         </td>
                         <td>
-                            <a href="${fileData.file_url}" class="file-link" target="_blank">
-                                <i class="fas fa-download"></i>
-                                ${fileData.dokumen_file}
-                            </a>
-                        </td>
+    <a href="${fileData.file_url}" class="file-link" target="_blank">
+        <i class="${getFileIcon(fileData.extension)} me-2"></i>
+        <span class="file-link-text">${fileData.dokumen_file}</span>
+    </a>
+</td>
                         <td class="text-center">
                             <div class="dropdown-action">
                                 <button class="dropdown-toggle-action" type="button">
@@ -2334,3 +2738,5 @@ function hideLoading() {
         }
     </script>
 @endsection
+
+ 

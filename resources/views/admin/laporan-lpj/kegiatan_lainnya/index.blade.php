@@ -106,24 +106,24 @@
         }
 
         .dropdown-menu-custom {
-            position: absolute;
-            right: 0;
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            z-index: 1050;
-            min-width: 180px;
-            padding: 8px 0;
-            margin-top: 5px;
-            display: none;
-            list-style: none;
-        }
+    position: absolute !important;
+    right: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1065 !important; /* Higher than dropdown-action */
+    min-width: 180px;
+    padding: 8px 0;
+    margin-top: 5px;
+    display: none;
+    list-style: none;
+}
 
         .dropdown-menu-custom.show {
-            display: block;
-            animation: fadeIn 0.2s ease;
-        }
+    display: block !important;
+    animation: fadeIn 0.2s ease;
+}
 
         .dropup .dropdown-menu-custom {
             bottom: 100%;
@@ -162,10 +162,10 @@
             background-color: #ffcad7 !important;
         }
 
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+.table-responsive {
+    overflow: visible !important; /* Allow dropdown to overflow table container */
+}
+
 
         .pagination-arrow {
             color: #6c757d;
@@ -438,6 +438,71 @@
         .dropdown-menu-custom {
             z-index: 1060 !important;
         }
+
+        .card-body {
+    overflow: visible !important;
+}
+
+.table-container,
+#table-container {
+    overflow: visible !important;
+    position: relative;
+    z-index: 1;
+}
+
+/* For mobile responsiveness */
+@media (max-width: 768px) {
+    .table-responsive {
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+    }
+    
+    .dropdown-action {
+        z-index: 1070 !important;
+    }
+    
+    .dropdown-menu-custom {
+        z-index: 1075 !important;
+        position: fixed !important; /* Use fixed positioning on mobile */
+        right: 10px !important;
+        min-width: 140px;
+    }
+}
+
+/* Additional fix for table scrolling */
+.table-fixed {
+    table-layout: fixed;
+    min-width: 1200px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure last column (action column) has proper overflow */
+.table-fixed th:nth-child(9),
+.table-fixed td:nth-child(9) {
+    width: 80px !important;
+    overflow: visible !important; /* Allow dropdown to overflow */
+}
+
+/* Fix for when table is inside a card */
+.card {
+    overflow: visible !important;
+}
+
+/* Alternative solution: Make dropdown appear to the left if near right edge */
+.dropdown-action.near-edge .dropdown-menu-custom {
+    right: auto;
+    left: 0;
+}
+
+.dropdown-menu-custom {
+    z-index: 9999 !important;
+}
+
+.dropdown-action.near-edge .dropdown-menu-custom {
+    right: auto;
+    left: 0;
+}
     </style>
 
     <!-- Updated Page Header to match Sekretariat -->
@@ -1283,94 +1348,112 @@
 
             // Global functions for window object
             window.destroyItem = function(button) {
-                const route = button.dataset.route;
+    const route = button.dataset.route;
+    
+    if (!route) {
+        console.error('Route not found in button data');
+        return;
+    }
 
-                Swal.fire({
-                    title: "Apakah Anda Yakin?",
-                    html: "<p style='text-align:center'>Setelah data kegiatan dihapus, Anda tidak bisa mengembalikannya!</p>",
-                    icon: "warning",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus!',
-                    cancelButtonText: 'Batalkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Menghapus...',
-                            text: 'Mohon tunggu',
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            willOpen: () => {
-                                Swal.showLoading();
-                            }
-                        });
+    Swal.fire({
+        title: "Apakah Anda Yakin?",
+        html: "<p style='text-align:center'>Setelah data kegiatan dihapus, Anda tidak bisa mengembalikannya!</p>",
+        icon: "warning",
+        showCancelButton: true,
+        reverseButtons: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Hapus!',
+        cancelButtonText: 'Batalkan!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Menghapus...',
+                text: 'Mohon tunggu',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
+            });
 
-                        $.ajax({
-                            url: route,
-                            type: 'DELETE',
-                            data: {
-                                _token: $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: response.message ||
-                                        'Data kegiatan berhasil dihapus',
-                                    icon: 'success',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
+            $.ajax({
+                url: route,
+                type: 'POST', // Gunakan POST sebagai transport
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    _method: 'DELETE' // Method spoofing untuk Laravel
+                },
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Berhasil!',
+                        text: response.message || 'Data kegiatan berhasil dihapus',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
 
-                                // Reload page to reflect changes
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 2000);
-                            },
-                            error: function(xhr) {
-                                Swal.close();
-
-                                try {
-                                    const response = JSON.parse(xhr.responseText);
-
-                                    if (response.reason === 'has_dependencies') {
-                                        Swal.fire({
-                                            title: 'Tidak Dapat Menghapus Data',
-                                            html: `Data kegiatan <strong>${response.item_name}</strong> tidak dapat dihapus karena masih memiliki data terkait.<br><br>
-                                                <p class="text-muted">
-                                                    Silakan hapus atau ubah data yang terkait terlebih dahulu.
-                                                </p>`,
-                                            icon: "warning",
-                                            confirmButtonText: 'Mengerti'
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            title: 'Error!',
-                                            text: response.message ||
-                                                'Gagal menghapus data kegiatan',
-                                            icon: 'error'
-                                        });
-                                    }
-                                } catch (e) {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Gagal menghapus data kegiatan',
-                                        icon: 'error'
-                                    });
-                                }
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Aksi Dibatalkan :)",
-                            icon: "info",
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
+                    // Reload halaman untuk menampilkan perubahan
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                },
+                error: function(xhr) {
+                    Swal.close();
+                    
+                    let errorMessage = 'Gagal menghapus data kegiatan';
+                    
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        
+                        if (response.reason === 'has_dependencies') {
+                            Swal.fire({
+                                title: 'Tidak Dapat Menghapus Data',
+                                html: `Data kegiatan <strong>${response.item_name}</strong> tidak dapat dihapus karena masih memiliki data terkait.<br><br>
+                                    <p class="text-muted">
+                                        Silakan hapus atau ubah data yang terkait terlebih dahulu.
+                                    </p>`,
+                                icon: "warning",
+                                confirmButtonText: 'Mengerti'
+                            });
+                            return;
+                        } else if (response.message) {
+                            errorMessage = response.message;
+                        }
+                    } catch (e) {
+                        console.error('Error parsing response:', e);
+                        
+                        // Handle specific HTTP errors
+                        if (xhr.status === 405) {
+                            errorMessage = 'Method tidak didukung. Periksa konfigurasi route.';
+                        } else if (xhr.status === 404) {
+                            errorMessage = 'Data tidak ditemukan.';
+                        } else if (xhr.status === 403) {
+                            errorMessage = 'Akses ditolak.';
+                        }
                     }
-                });
-            };
+                    
+                    Swal.fire({
+                        title: 'Error!',
+                        text: errorMessage,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                title: "Aksi Dibatalkan",
+                icon: "info",
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    });
+};
 
             // Export to PDF function
             window.exportToPDF = function(data) {
