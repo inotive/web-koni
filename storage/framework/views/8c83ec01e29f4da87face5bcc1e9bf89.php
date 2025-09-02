@@ -1,125 +1,151 @@
-<?php if($kegiatanLainnya->isEmpty()): ?>
+<?php if($lpjData->isEmpty()): ?>
+    
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
-        <h4>Tidak ada data kegiatan lainnya.</h4>
+        <h4>Tidak ada data pada laporan ini.</h4>
+        <?php if($currentParent): ?>
+            <p>Belum ada data untuk <?php echo e($currentParent->nama_program); ?></p>
+        <?php else: ?>
+            <p>Belum ada data pada root level.</p>
+        <?php endif; ?>
     </div>
 <?php else: ?>
+    
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning_kegiatan">
+        <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning_sumberdaya">
+            
             <thead class="bg-light">
                 <tr>
-                    <?php
-                        $columns = [
-                            ['key' => null, 'title' => 'No', 'sortable' => false],
-                            ['key' => 'nama_program', 'title' => 'Nama Program & Kegiatan'],
-                            ['key' => 'volume', 'title' => 'Volume'],
-                            ['key' => 'jumlah_harga_satuan', 'title' => 'Jumlah Harga Satuan'],
-                            ['key' => 'jumlah_harga', 'title' => 'Jumlah Harga'],
-                            ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
-                            ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
-                            ['key' => null, 'title' => 'Aksi', 'sortable' => false],
-                        ];
-                    ?>
-
-                    <?php $__currentLoopData = $columns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $column): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <th class="text-start">
-                            <?php if(($column['sortable'] ?? true) && $column['key']): ?>
-                                <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => $column['key'], 'direction' => request('sort') == $column['key'] && request('direction') == 'asc' ? 'desc' : 'asc'])); ?>"
-                                    class="text-dark text-decoration-none sortable-header">
-                                    <?php echo e($column['title']); ?>
-
-                                    <i
-                                        class="fas fa-sort<?php echo e(request('sort') == $column['key'] ? '-' . (request('direction') == 'asc' ? 'up' : 'down') : ''); ?>"></i>
-                                </a>
+                    <th style="text-align: left">No</th>
+                    <th>
+                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'nama_program', 'direction' => (request()->get('sort') == 'nama_program' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
+                            class="text-dark text-decoration-none sortable-header">
+                            Nama Program & Kegiatan
+                            <?php if(request()->get('sort') == 'nama_program'): ?>
+                                <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
                             <?php else: ?>
-                                <?php echo e($column['title']); ?>
-
+                                <i class="fas fa-sort"></i>
                             <?php endif; ?>
-                        </th>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'volume', 'direction' => (request()->get('sort') == 'volume' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
+                            class="text-dark text-decoration-none sortable-header">
+                            Volume
+                            <?php if(request()->get('sort') == 'volume'): ?>
+                                <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                            <?php else: ?>
+                                <i class="fas fa-sort"></i>
+                            <?php endif; ?>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'jumlah_harga_satuan', 'direction' => (request()->get('sort') == 'jumlah_harga_satuan' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
+                            class="text-dark text-decoration-none sortable-header">
+                            Jumlah Harga Satuan
+                            <?php if(request()->get('sort') == 'jumlah_harga_satuan'): ?>
+                                <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                            <?php else: ?>
+                                <i class="fas fa-sort"></i>
+                            <?php endif; ?>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'jumlah_harga', 'direction' => (request()->get('sort') == 'jumlah_harga' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
+                            class="text-dark text-decoration-none sortable-header">
+                            Jumlah Harga
+                            <?php if(request()->get('sort') == 'jumlah_harga'): ?>
+                                <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                            <?php else: ?>
+                                <i class="fas fa-sort"></i>
+                            <?php endif; ?>
+                        </a>
+                    </th>
+                    <th>Foto Jurnal</th>
+                    <th>Dokumen LPJ</th>
+                    <th style="text-align: center">Aksi</th>
                 </tr>
             </thead>
 
             <tbody>
-                <?php $__empty_1 = true; $__currentLoopData = $kegiatanLainnya; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $kegiatan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <?php $__empty_1 = true; $__currentLoopData = $lpjData; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <tr>
-                        <td class="text-start">
-                            <?php echo e(($kegiatanLainnya->currentPage() - 1) * $kegiatanLainnya->perPage() + $index + 1); ?>
+                        <td class="text-center">
+                            <?php echo e(($lpjData->currentPage() - 1) * $lpjData->perPage() + $index + 1); ?>
 
                         </td>
-                        <td class="text-start">
+                        <td>
                             <div class="d-flex flex-column">
-                                <strong class="text-truncate-custom"><?php echo e($kegiatan->nama_program); ?></strong>
-                                <?php if($kegiatan->nama_kegiatan): ?>
-                                    <small class="text-muted"><?php echo e($kegiatan->nama_kegiatan); ?></small>
+                                <strong class="text-truncate-custom"><?php echo e($data->nama_program); ?></strong>
+                                <?php if($data->nama_kegiatan): ?>
+                                    <small class="text-muted" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo e($data->nama_kegiatan); ?></small>
                                 <?php endif; ?>
                             </div>
                         </td>
-                        <td class="text-start"><?php echo e($kegiatan->volume); ?></td>
-                        <td class="text-start">Rp <?php echo e(number_format($kegiatan->jumlah_harga_satuan, 0, ',', '.')); ?></td>
-                        <td class="text-start">Rp <?php echo e(number_format($kegiatan->jumlah_harga, 0, ',', '.')); ?></td>
-                        <td class="text-start">
-                            <?php if($kegiatan->foto_jurnal && count($kegiatan->foto_jurnal) > 0): ?>
-                                <button type="button" class="btn btn-sm btn-light-info preview-btn"
-                                    data-bs-toggle="modal" data-bs-target="#previewModal" data-type="image"
-                                    data-files="<?php echo e(json_encode($kegiatan->foto_jurnal)); ?>"
-                                    data-title="Foto Jurnal - <?php echo e($kegiatan->nama_program); ?>">
-                                    <i class="fas fa-images me-1"></i><?php echo e(count($kegiatan->foto_jurnal)); ?> Foto
+                        <td><?php echo e($data->volume); ?></td>
+                        <td>Rp <?php echo e(number_format($data->jumlah_harga_satuan, 0, ',', '.')); ?></td>
+                        <td>Rp <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?></td>
+                        <td>
+                            <?php if($data->foto_jurnal && count($data->foto_jurnal) > 0): ?>
+                                <button type="button"
+                                        class="btn btn-sm btn-light-info preview-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#previewModal"
+                                        data-type="image"
+                                        data-files="<?php echo e(json_encode(array_map(fn($file) => ($file), $data->foto_jurnal))); ?>"
+                                        data-title="Foto Jurnal - <?php echo e($data->nama_program); ?>">
+                                    <i class="fas fa-images me-1"></i>
+                                    <?php echo e(count($data->foto_jurnal)); ?> Foto
                                 </button>
                             <?php else: ?>
                                 <span class="text-muted">-</span>
                             <?php endif; ?>
                         </td>
-                        <td class="text-start">
-                            <?php if($kegiatan->dokumen_lpj && count($kegiatan->dokumen_lpj) > 0): ?>
-                                <button type="button" class="btn btn-sm btn-light-primary preview-btn"
-                                    data-bs-toggle="modal" data-bs-target="#previewModal" data-type="document"
-                                    data-files="<?php echo e(json_encode($kegiatan->dokumen_lpj)); ?>"
-                                    data-title="Dokumen Pendukung - <?php echo e($kegiatan->nama_program); ?>">
-                                    <i class="fas fa-file-alt me-1"></i><?php echo e(count($kegiatan->dokumen_lpj)); ?>
-
-                                    Dokumen
+                        <td>
+                            <?php if($data->dokumen_lpj && count($data->dokumen_lpj) > 0): ?>
+                                <button type="button"
+                                        class="btn btn-sm btn-light-primary preview-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#previewModal"
+                                        data-type="document"
+                                        data-files="<?php echo e(json_encode(array_map(fn($file) => ($file), $data->dokumen_lpj))); ?>"
+                                        data-title="Dokumen LPJ - <?php echo e($data->nama_program); ?>">
+                                    <i class="fas fa-file-alt me-1"></i>
+                                    <?php echo e(count($data->dokumen_lpj)); ?> Dokumen
                                 </button>
                             <?php else: ?>
                                 <span class="text-muted">-</span>
                             <?php endif; ?>
                         </td>
-                        <td class="text-start">
-                            <div class="dropdown dropdown-action" data-row-id="<?php echo e($kegiatan->id); ?>">
+                        <td class="text-center">
+                            <div class="dropdown dropdown-action" data-row-id="<?php echo e($data->id); ?>">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
-                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
+                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <rect width="32" height="32" rx="6" fill="#EFF6FF" />
-                                        <rect x="0.5" y="0.5" width="31" height="31" rx="5.5"
-                                            stroke="#1B84FF" stroke-opacity="0.2" />
+                                        <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" stroke="#1B84FF" stroke-opacity="0.2" />
                                         <g clip-path="url(#clip0_2223_4269)">
-                                            <path opacity="0.3"
-                                                d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
-                                                fill="#1B84FF" />
-                                            <path
-                                                d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
-                                                fill="#1B84FF" />
+                                            <path opacity="0.3" d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z" fill="#1B84FF" />
+                                            <path d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z" fill="#1B84FF" />
                                         </g>
                                         <defs>
                                             <clipPath id="clip0_2223_4269">
-                                                <rect width="18" height="18" fill="white"
-                                                    transform="translate(7 7)" />
+                                                <rect width="18" height="18" fill="white" transform="translate(7 7)" />
                                             </clipPath>
                                         </defs>
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
-                                   <li>
+                                    <li>
                                         <a href="javascript:void(0)" class="dropdown-item-custom"
-                                           onclick="showDetailModal(<?php echo e(json_encode($kegiatan)); ?>)">
+                                           onclick="showDetailModal(<?php echo e(json_encode($data)); ?>)">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail
                                         </a>
                                     </li>
 
                                     
-                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
+                                    <?php if(auth()->user()->hasRole('superadmin') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id)): ?>
                                         <li>
-                                            <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.edit', $kegiatan->id)); ?>"
+                                            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.edit', $data->id)); ?>"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
@@ -131,27 +157,22 @@
                                                 data-bs-placement="left"
                                                 data-bs-custom-class="custom-tooltip"
                                                 data-bs-html="true"
-                                                data-bs-delay='{"show":0,"hide":300}'
                                                 title="<div class='tooltip-content'>
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
-                                                            modifikasi laporan<br>
-                                                            <a href='javascript:void(0)' onclick='showDetailModal(<?php echo e(json_encode($kegiatan)); ?>)' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                            modifikasi laporan
                                                         </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;"
-                                                onmouseover="keepTooltipVisible(this)"
-                                                onmouseout="hideTooltipWithDelay(this)">
+                                                style="cursor: not-allowed; opacity: 0.6;">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </span>
                                         </li>
                                     <?php endif; ?>
 
                                     
-                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
+                                    <?php if(auth()->user()->hasRole('superadmin') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id)): ?>
                                         <li class="dropdown-item-custom delete"
-                                            onclick="destroyItem(this)"
-                                            data-route="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.destroy', $kegiatan->id)); ?>">
-                                            <i class="fas fa-trash me-2"></i> Hapus
+                                            onclick="deleteItemWithSwal(<?php echo e($data->id); ?>, '<?php echo e(addslashes($data->nama_program ?? $data->nama_kegiatan ?? 'laporan ini')); ?>')">
+                                            <i class="ki-outline ki-trash me-2"></i>Hapus Laporan
                                         </li>
                                     <?php else: ?>
                                         <li>
@@ -160,15 +181,12 @@
                                                 data-bs-placement="left"
                                                 data-bs-custom-class="custom-tooltip"
                                                 data-bs-html="true"
-                                                data-bs-delay='{"show":0,"hide":300}'
                                                 title="<div class='tooltip-content'>
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
                                                             modifikasi laporan
                                                         </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;"
-                                                onmouseover="keepTooltipVisible(this)"
-                                                onmouseout="hideTooltipWithDelay(this)">
+                                                style="cursor: not-allowed; opacity: 0.6;">
                                                 <i class="fas fa-trash me-2"></i> Hapus
                                             </span>
                                         </li>
@@ -186,6 +204,7 @@
         </table>
     </div>
 
+    
     <div class="table-footer">
         <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
             <div class="mb-2 mb-md-0">
@@ -194,32 +213,39 @@
                     <select name="per_page" class="form-select form-select-sm w-auto">
                         <?php $__currentLoopData = [10, 25, 50, 100]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $limit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <option value="<?php echo e($limit); ?>"
-                                <?php echo e(request('per_page', 10) == $limit ? 'selected' : ''); ?>><?php echo e($limit); ?></option>
+                                <?php echo e(request('per_page', 10) == $limit ? 'selected' : ''); ?>>
+                                <?php echo e($limit); ?>
+
+                            </option>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                     <span class="ms-2">per page</span>
                 </div>
             </div>
 
-            <?php if(isset($kegiatanLainnya) && method_exists($kegiatanLainnya, 'hasPages') && $kegiatanLainnya->hasPages()): ?>
+            <?php if(isset($lpjData) && method_exists($lpjData, 'hasPages') && $lpjData->hasPages()): ?>
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        <?php echo e($kegiatanLainnya->firstItem()); ?>-<?php echo e($kegiatanLainnya->lastItem()); ?> of
-                        <?php echo e($kegiatanLainnya->total()); ?></div>
+                        <?php echo e($lpjData->firstItem()); ?>-<?php echo e($lpjData->lastItem()); ?> of
+                        <?php echo e($lpjData->total()); ?>
+
+                    </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        <?php if($kegiatanLainnya->onFirstPage()): ?>
+                        <?php if($lpjData->onFirstPage()): ?>
                             <span class="pagination-arrow disabled">←</span>
                         <?php else: ?>
-                            <a href="<?php echo e($kegiatanLainnya->appends(request()->query())->previousPageUrl()); ?>"
-                                class="pagination-arrow pagination-link" aria-label="Previous">←</a>
+                            <a href="<?php echo e($lpjData->appends(request()->query())->previousPageUrl()); ?>"
+                               class="pagination-arrow pagination-link"
+                               aria-label="Previous">←</a>
                         <?php endif; ?>
 
                         <?php
-                            $current = $kegiatanLainnya->currentPage();
-                            $total = $kegiatanLainnya->lastPage();
+                            $current = $lpjData->currentPage();
+                            $total = $lpjData->lastPage();
                             $start = max(1, $current - 2);
                             $end = min($total, $current + 2);
+
                             if ($end - $start < 4) {
                                 if ($start == 1) {
                                     $end = min($total, $start + 4);
@@ -234,29 +260,39 @@
                                 <?php if($i == $current): ?>
                                     <span class="pagination-number active"><?php echo e($i); ?></span>
                                 <?php else: ?>
-                                    <a href="<?php echo e($kegiatanLainnya->appends(request()->query())->url($i)); ?>"
-                                        class="pagination-number pagination-link"><?php echo e($i); ?></a>
+                                    <a href="<?php echo e($lpjData->appends(request()->query())->url($i)); ?>"
+                                       class="pagination-number pagination-link"><?php echo e($i); ?></a>
                                 <?php endif; ?>
                             <?php endfor; ?>
                         </div>
 
-                        <?php if($kegiatanLainnya->hasMorePages()): ?>
-                            <a href="<?php echo e($kegiatanLainnya->appends(request()->query())->nextPageUrl()); ?>"
-                                class="pagination-arrow pagination-link" aria-label="Next">→</a>
+                        <?php if($lpjData->hasMorePages()): ?>
+                            <a href="<?php echo e($lpjData->appends(request()->query())->nextPageUrl()); ?>"
+                               class="pagination-arrow pagination-link"
+                               aria-label="Next">→</a>
                         <?php else: ?>
                             <span class="pagination-arrow disabled">→</span>
                         <?php endif; ?>
                     </div>
                 </div>
-            <?php elseif(isset($kegiatanLainnya) && method_exists($kegiatanLainnya, 'hasPages')): ?>
-                <div class="text-muted small">1-<?php echo e($kegiatanLainnya->count()); ?> of <?php echo e($kegiatanLainnya->total()); ?>
+            <?php elseif(isset($lpjData) && method_exists($lpjData, 'hasPages')): ?>
+                <div class="text-muted small">
+                    1-<?php echo e($lpjData->count()); ?> of <?php echo e($lpjData->total()); ?>
 
                 </div>
             <?php endif; ?>
         </div>
     </div>
 
+    
     <style>
+        .search-highlight {
+            background-color: #fff3cd;
+            padding: 1px 3px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
         .dropdown-action {
             position: relative;
             display: inline-block;
@@ -330,7 +366,7 @@
         }
 
         .dropdown-item-custom.delete:hover {
-            background-color: #f8d7da !important;
+            background-color: #ffcad7 !important;
         }
 
         .pagination {
@@ -351,8 +387,8 @@
         }
 
         .pagination-sm .page-item.active .page-link {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
+            background-color: #F8285A;
+            border-color: #F8285A;
             color: white;
         }
 
@@ -368,6 +404,7 @@
             border-color: #dee2e6;
         }
 
+        /* Simple Pagination Styles */
         .simple-pagination .page-link {
             border: none !important;
             margin: 0 2px;
@@ -384,7 +421,7 @@
         }
 
         .simple-pagination .page-item.active .page-link {
-            background-color: #0d6efd !important;
+            background-color: #007bff !important;
             color: white !important;
         }
 
@@ -392,6 +429,7 @@
             box-shadow: none !important;
         }
 
+        /* Pagination Arrows and Numbers */
         .pagination-arrow {
             color: #6c757d;
             text-decoration: none;
@@ -435,6 +473,7 @@
             border-color: #e0e1e4;
         }
 
+        /* Loading States */
         .loading-spinner {
             position: absolute;
             top: 50%;
@@ -454,6 +493,7 @@
             height: 1rem;
         }
 
+        /* Toast Notifications */
         .notification-toast {
             position: fixed;
             top: 20px;
@@ -462,24 +502,57 @@
             min-width: 300px;
         }
 
-        .toast-success {
-            background-color: #51a351;
-            color: white;
+        .toast-success { background-color: #51a351; color: white; }
+        .toast-error { background-color: #bd362f; color: white; }
+        .toast-warning { background-color: #f89406; color: white; }
+        .toast-info { background-color: #2f96b4; color: white; }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 80%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: white;
+            padding: 10px;
         }
 
-        .toast-error {
-            background-color: #bd362f;
-            color: white;
+        .preview-document {
+            width: 100%;
+            height: 80%;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .toast-warning {
-            background-color: #f89406;
-            color: white;
+        .document-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 80%;
+            background: white;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            text-align: center;
+            padding: 40px;
         }
 
-        .toast-info {
-            background-color: #2f96b4;
-            color: white;
+        .document-placeholder i {
+            font-size: 4rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .document-placeholder h5 {
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .document-placeholder p {
+            color: #6c757d;
+            margin-bottom: 1rem;
         }
 
         .custom-tooltip {
@@ -521,29 +594,8 @@
             background-color: transparent !important;
         }
 
-        /* CSS untuk tautan dalam tooltip */
-        .tooltip-content a {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 4px 8px;
-            background-color: rgba(27, 132, 255, 0.1);
-            border-radius: 4px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .tooltip-content a:hover {
-            background-color: rgba(27, 132, 255, 0.2);
-            text-decoration: none;
-        }
-
-        .tooltip-content a:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(27, 132, 255, 0.25);
-        }
-
+        /* Responsive Styles */
         @media (max-width: 768px) {
-
             .table-header,
             .table-footer {
                 padding: 15px;
@@ -602,54 +654,6 @@
                 padding: 0.2rem 0.4rem;
                 font-size: 0.7rem;
             }
-
-            .preview-image {
-                max-width: 100%;
-                max-height: 80%;
-                object-fit: contain;
-                border-radius: 8px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-                background: white;
-                padding: 10px;
-            }
-
-            .preview-document {
-                width: 100%;
-                height: 80%;
-                border: none;
-                border-radius: 8px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            }
-
-            .document-placeholder {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                height: 80%;
-                background: white;
-                border: 2px dashed #dee2e6;
-                border-radius: 8px;
-                text-align: center;
-                padding: 40px;
-            }
-
-            .document-placeholder i {
-                font-size: 4rem;
-                color: #6c757d;
-                margin-bottom: 1rem;
-            }
-
-            .document-placeholder h5 {
-                color: #495057;
-                margin-bottom: 0.5rem;
-            }
-
-            .document-placeholder p {
-                color: #6c757d;
-                margin-bottom: 1rem;
-            }
         }
 
         @keyframes fadeIn {
@@ -657,11 +661,11 @@
                 opacity: 0;
                 transform: translateY(-10px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
     </style>
-<?php endif; ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/kegiatan-lainnya/_table.blade.php ENDPATH**/ ?>
+<?php endif; ?>
+<?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang_new/dynamic/_table.blade.php ENDPATH**/ ?>

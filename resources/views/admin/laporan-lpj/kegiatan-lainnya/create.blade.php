@@ -1,606 +1,620 @@
-    @extends('layouts.app')
+@extends('layouts.app')
 
-    @section('pageTitle', 'Tambah Kegiatan Lainnya')
-    @section('mainSection', 'Laporan Pertanggungjawaban')
-    @section('subSection', 'Kegiatan Lainnya')
-    @section('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index'))
-    @section('currentSection', 'Tambah Kegiatan Lainnya')
+@section('pageTitle', 'Tambah Laporan Kegiatan Lainnya')
+@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('subSection', 'Kegiatan Lainnya')
+@section('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index'))
+@section('currentSection', 'Tambah Laporan')
 
-    @section('content')
-        <style>
-            body {
-                background-color: #f5f5f5 !important;
-            }
+@section('content')
+    <style>
+        body {
+            background-color: #f5f5f5 !important;
+        }
 
-            .main-content {
-                background-color: #f5f5f5;
-                min-height: 100vh;
-                padding: 20px 10px 40px;
-            }
+        .main-content {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px 10px 40px;
+        }
 
-            .card-form {
-                background-color: white;
-                border-radius: 12px;
-                border: 1px solid #e9ecef;
-                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            }
+        .card-form {
+            background-color: white;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
 
-            .section-header {
-                color: #0b153a;
-                font-weight: 700;
-                font-size: 1.6rem;
-                margin-bottom: 1rem;
-            }
+        .form-control,
+        .form-select {
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+        }
 
-            .file-upload-wrapper {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                border: 1px solid #cfe2ff;
-                background-color: #edf5ff;
-                border-radius: 10px;
-                padding: 16px 20px;
-                cursor: pointer;
-                transition: all 0.2s ease-in-out;
-            }
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+        }
 
-            .file-upload-wrapper:hover {
-                border-color: #0d6efd;
-                background-color: #e6f0ff;
-            }
+        .btn-danger {
+            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+        }
 
-            .file-upload-wrapper.dragover {
-                border-color: #0d6efd;
-                background-color: #e6f0ff;
-                transform: scale(1.02);
-            }
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+        }
 
-            .file-upload-wrapper input[type="file"] {
-                display: none;
-            }
+        .currency-input {
+            position: relative;
+        }
 
-            .file-upload-icon-wrapper {
-                background-color: #d0e7ff;
-                padding: 8px;
-                border-radius: 8px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
+        .currency-input::before {
+            content: "Rp";
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 0.95rem;
+            z-index: 1;
+        }
 
-            .file-upload-icon {
-                font-size: 1.5rem;
-                color: #0d6efd;
-            }
+        .currency-input input {
+            padding-left: 35px;
+        }
 
-            .file-upload-text {
-                margin: 0;
-                font-size: 0.95rem;
-                font-weight: 500;
-                color: #0b153a;
-            }
+        /* Enhanced File Upload Styling */
+        .file-upload-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #cfe2ff;
+            background-color: #edf5ff;
+            border-radius: 10px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
 
-            .file-upload-hint {
-                font-size: 0.8rem;
-                color: #6c757d;
-                margin-top: 4px;
-            }
+        .file-upload-wrapper:hover {
+            border-color: #0d6efd;
+            background-color: #e6f0ff;
+        }
 
-            .form-control,
-            .form-select {
-                border-radius: 8px;
-                padding: 10px 14px;
-                font-size: 0.95rem;
-            }
+        .file-upload-wrapper.dragover {
+            border-color: #0d6efd;
+            background-color: #e6f0ff;
+            transform: scale(1.02);
+        }
 
-            .form-control:focus,
-            .form-select:focus {
-                border-color: #0d6efd;
-                box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
-            }
+        .file-upload-wrapper input[type="file"] {
+            display: none;
+        }
 
-            .invalid-feedback {
-                font-size: 0.85rem;
-                color: #e74c3c;
-            }
+        .file-upload-icon-wrapper {
+            background-color: #d0e7ff;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-            .btn-danger {
-                background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
-                border: none;
-                border-radius: 8px;
-                padding: 12px 24px;
-                font-weight: 600;
-                font-size: 0.95rem;
-                transition: all 0.3s ease;
-                box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
-            }
+        .file-upload-icon {
+            font-size: 1.5rem;
+            color: #0d6efd;
+        }
 
-            .btn-danger:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
-            }
+        .file-upload-text {
+            margin: 0;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #0b153a;
+        }
 
-            .preview-container {
-                max-height: 300px;
-                overflow-y: auto;
-                margin-top: 15px;
-                border: 1px solid #e9ecef;
-                border-radius: 8px;
-                padding: 15px;
-                background-color: #f8f9fa;
-            }
+        .file-upload-hint {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 4px;
+        }
 
-            .file-preview-item {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                padding: 10px;
-                border: 1px solid #e9ecef;
-                border-radius: 8px;
-                background-color: white;
-                margin-bottom: 8px;
-                transition: all 0.2s ease;
-            }
+        .preview-container {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
 
-            .file-preview-item:hover {
-                border-color: #0d6efd;
-                box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
-            }
+        .file-preview-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background-color: white;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
 
-            .file-preview-item:last-child {
-                margin-bottom: 0;
-            }
+        .file-preview-item:hover {
+            border-color: #0d6efd;
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+        }
 
-            .preview-image {
-                width: 50px;
-                height: 50px;
-                object-fit: cover;
-                border-radius: 6px;
-                border: 1px solid #e9ecef;
-            }
+        .file-preview-item:last-child {
+            margin-bottom: 0;
+        }
 
-            .file-icon {
-                width: 50px;
-                height: 50px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: #f8f9fa;
-                border-radius: 6px;
-                border: 1px solid #e9ecef;
-            }
+        .preview-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
 
-            .file-info {
-                flex: 1;
-            }
+        .file-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
 
-            .file-name {
-                font-weight: 500;
-                color: #212529;
-                margin-bottom: 4px;
-                word-break: break-all;
-            }
+        .file-info {
+            flex: 1;
+        }
 
-            .file-size {
-                font-size: 0.8rem;
-                color: #6c757d;
-            }
+        .file-name {
+            font-weight: 500;
+            color: #212529;
+            margin-bottom: 4px;
+            word-break: break-all;
+        }
 
-            .remove-file {
-                background: none;
-                border: none;
-                color: #dc3545;
-                font-size: 1.2rem;
-                cursor: pointer;
-                padding: 5px;
-                border-radius: 4px;
-                transition: all 0.2s ease;
-            }
+        .file-size {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
 
-            .remove-file:hover {
-                background-color: #dc3545;
-                color: white;
-            }
+        .remove-file {
+            background: none;
+            border: none;
+            color: #dc3545;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
 
-            .file-counter {
-                font-size: 0.85rem;
-                color: #6c757d;
-                margin-top: 8px;
-            }
+        .remove-file:hover {
+            background-color: #dc3545;
+            color: white;
+        }
 
-            .max-files-warning {
-                color: #e74c3c;
-                font-size: 0.85rem;
-                margin-top: 8px;
-            }
-        </style>
+        .file-counter {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 8px;
+        }
 
-        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-            <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Kegiatan Lainnya</h3>
-        </div>
+        .max-files-warning {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+    </style>
 
-        <div class="main-content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="card card-form">
-                        <div class="card-body p-4 p-md-5">
-                            <h3 class="fw-bold mb-4">Tambah Data</h3>
-                            <form action="{{ route('admin.laporan-lpj.kegiatan-lainnya.store') }}" method="POST"
-                                enctype="multipart/form-data" id="kegiatan-form">
-                                @csrf
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Laporan Kegiatan Lainnya</h3>
+    </div>
 
-                                <!-- 1. Nama Program & Kegiatan -->
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-md-3">
-                                        <label for="nama_program_kegiatan" class="form-label">
-                                            Nama Program & Kegiatan
-                                            <span class="text-danger">*</span>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" name="nama_program_kegiatan" id="nama_program_kegiatan"
-                                            class="form-control @error('nama_program_kegiatan') is-invalid @enderror"
-                                            placeholder="Masukkan nama program dan kegiatan"
-                                            value="{{ old('nama_program_kegiatan') }}" required>
-                                        @error('nama_program_kegiatan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="card card-form">
+                    <div class="card-body p-4 p-md-5">
+                        <h3 class="fw-bold mb-4">Tambah Laporan Baru</h3>
+
+                        <form action="{{ route('admin.laporan-lpj.kegiatan-lainnya.store') }}"
+                              method="POST"
+                              id="kegiatanLainnyaForm"
+                              enctype="multipart/form-data">
+                            @csrf
+
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="nama_program_kegiatan" class="form-label">
+                                        Nama Program & Kegiatan <span class="text-danger">*</span>
+                                    </label>
                                 </div>
-
-                                <!-- 2. Jenis Kegiatan -->
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-md-3">
-                                        <label for="jenis_kegiatan" class="form-label">
-                                            Jenis Kegiatan
-                                            <span class="text-danger">*</span>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" name="jenis_kegiatan" id="jenis_kegiatan"
-                                            class="form-control @error('jenis_kegiatan') is-invalid @enderror"
-                                            placeholder="Contoh: Rapat, Pelatihan, Pembelian"
-                                            value="{{ old('jenis_kegiatan') }}" required>
-                                        @error('jenis_kegiatan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                                <div class="col-md-9">
+                                    <input type="text" name="nama_program_kegiatan" id="nama_program_kegiatan"
+                                        class="form-control @error('nama_program_kegiatan') is-invalid @enderror"
+                                        placeholder="Masukkan nama program & kegiatan"
+                                        value="{{ old('nama_program_kegiatan') }}" required>
+                                    @error('nama_program_kegiatan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
+                            </div>
 
-                                <!-- 3. Volume -->
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-md-3">
-                                        <label for="volume" class="form-label">
-                                            Volume
-                                            <span class="text-danger">*</span>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" name="volume" id="volume"
-                                            class="form-control @error('volume') is-invalid @enderror"
-                                            placeholder="Contoh: 5 unit, 1 kegiatan"
-                                            value="{{ old('volume') }}" required>
-                                        @error('volume')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="jenis_kegiatan" class="form-label">
+                                        Jenis Kegiatan <span class="text-danger">*</span>
+                                    </label>
                                 </div>
+                                <div class="col-md-9">
+                                    <input type="text" name="jenis_kegiatan" id="jenis_kegiatan"
+                                        class="form-control @error('jenis_kegiatan') is-invalid @enderror"
+                                        placeholder="Masukkan nama kegiatan"
+                                        value="{{ old('jenis_kegiatan') }}" required>
+                                    @error('jenis_kegiatan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
 
-                                <!-- 4. Jumlah Harga Satuan -->
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-md-3">
-                                        <label for="jumlah_harga_satuan" class="form-label">
-                                            Jumlah Harga Satuan
-                                            <span class="text-danger">*</span>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="volume" class="form-label">Volume</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="text" name="volume" id="volume"
+                                        class="form-control @error('volume') is-invalid @enderror"
+                                        placeholder="Masukkan volume (misal: 5 unit,)"
+                                        value="{{ old('volume') }}">
+                                    @error('volume')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="currency-input">
+                                        <input type="tel" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                            inputmode="numeric"
                                             class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
-                                            placeholder="Rp 0"
-                                            value="{{ old('jumlah_harga_satuan') }}" required inputmode="numeric" lang="id-ID">
-                                        @error('jumlah_harga_satuan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                            placeholder="0"
+                                            value="{{ old('jumlah_harga_satuan') }}">
                                     </div>
+                                    @error('jumlah_harga_satuan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
+                            </div>
 
-                                <!-- 5. Jumlah Harga -->
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-md-3">
-                                        <label for="jumlah_harga" class="form-label">
-                                            Jumlah Harga
-                                            <span class="text-danger">*</span>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" name="jumlah_harga" id="jumlah_harga"
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="jumlah_harga" class="form-label">Total Harga</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="currency-input">
+                                        <input type="tel" name="jumlah_harga" id="jumlah_harga"
+                                            inputmode="numeric"
                                             class="form-control @error('jumlah_harga') is-invalid @enderror"
-                                            placeholder="Rp 0" value="{{ old('jumlah_harga') }}" required
-                                            inputmode="numeric" lang="id-ID" readonly>
-                                        @error('jumlah_harga')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                            placeholder="0"
+                                            value="{{ old('jumlah_harga') }}">
                                     </div>
+                                    @error('jumlah_harga')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
+                            </div>
 
-                                <!-- 6. Foto Jurnal Upload -->
-                                <div class="row align-items-start mb-4">
-                                    <div class="col-md-3">
-                                        <label class="form-label">Foto Jurnal <span class="text-danger">*</span></label>
-                                        <p class="file-upload-hint">Format: JPG, PNG, GIF (Maks. 10MB)</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <label for="foto_jurnal" class="file-upload-wrapper">
-                                            <input type="file" name="foto_jurnal[]" id="foto_jurnal"
-                                                accept="image/jpeg,image/jpg,image/png,image/gif" multiple required>
+                                                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Foto Jurnal</label>
+                                    <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
+                                </div>
+                                <div class="col-md-9">
+                                    <label for="foto_jurnal" class="file-upload-wrapper">
+                                        <input type="file" name="foto_jurnal[]" id="foto_jurnal"
+                                            class="@error('foto_jurnal.*') is-invalid @enderror"
+                                            accept="image/*" multiple>
 
-                                            <div class="d-flex align-items-center gap-12">
-                                                <div class="file-upload-icon-wrapper">
-                                                    <i class="fas fa-upload file-upload-icon"></i>
-                                                </div>
-                                                <div>
-                                                    <p class="file-upload-text" id="foto-file-name-display">
-                                                        Seret dan lepas foto di sini, atau klik untuk mengunggah.
-                                                    </p>
-                                                </div>
+                                        <div class="d-flex align-items-center gap-12">
+                                            <div class="file-upload-icon-wrapper">
+                                                <i class="fas fa-upload file-upload-icon"></i>
                                             </div>
-                                        </label>
-
-                                        <div id="fotoPreviewContainer" class="preview-container" style="display: none;">
-                                        </div>
-                                        <div id="fotoCounter" class="file-counter"></div>
-                                        <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
-                                            Foto jurnal wajib diisi.
-                                        </div>
-
-                                        @error('foto_jurnal')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                        @if ($errors->has('foto_jurnal') && !$errors->has('foto_jurnal.*'))
-                                            <div class="invalid-feedback d-block">Foto jurnal wajib diisi.</div>
-                                        @endif
-                                        @error('foto_jurnal.*')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <!-- 7. Dokumen Pendukung Upload -->
-                                <div class="row align-items-start mb-4">
-                                    <div class="col-md-3">
-                                        <label class="form-label">Dokumen Pendukung</label>
-                                        <p class="file-upload-hint">Format: PDF, DOC, XLS (Maks. 10MB)</p>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <label for="dokumen_pendukung" class="file-upload-wrapper">
-                                            <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung"
-                                                accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
-
-                                            <div class="d-flex align-items-center gap-12">
-                                                <div class="file-upload-icon-wrapper">
-                                                    <i class="fas fa-upload file-upload-icon"></i>
-                                                </div>
-                                                <div>
-                                                    <p class="file-upload-text" id="dokumen-file-name-display">
-                                                        Seret dan lepas dokumen di sini, atau klik untuk mengunggah.
-                                                    </p>
-                                                </div>
+                                            <div>
+                                                <p class="file-upload-text" id="foto-file-name-display">
+                                                    Seret dan lepas foto di sini, atau klik untuk mengunggah.
+                                                </p>
                                             </div>
-                                        </label>
-
-                                        <div id="dokumenPreviewContainer" class="preview-container"
-                                            style="display: none;">
                                         </div>
-                                        <div id="dokumenCounter" class="file-counter"></div>
-                                        <div id="dokumenMaxWarning" class="max-files-warning" style="display: none;">
-                                            Dokumen tidak wajib diisi.
-                                        </div>
+                                    </label>
 
-                                        @error('dokumen_pendukung')
-                                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                                        @enderror
+                                    <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
+                                    <div id="fotoCounter" class="file-counter"></div>
+                                    <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
+                                        Maksimal 10 foto yang dapat diunggah.
                                     </div>
+
+                                    @error('foto_jurnal.*')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
                                 </div>
+                            </div>
 
-                                <!-- 8. Keterangan Tambahan -->
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-md-3">
-                                        <label for="keterangan_tambahan" class="form-label">
-                                            Keterangan Tambahan
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <textarea name="keterangan_tambahan" id="keterangan_tambahan"
-                                            class="form-control @error('keterangan_tambahan') is-invalid @enderror"
-                                            placeholder="Masukkan keterangan tambahan (opsional)" rows="3">{{ old('keterangan_tambahan') }}</textarea>
-                                        @error('keterangan_tambahan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                            {{-- Enhanced Dokumen Pendukung Upload --}}
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Dokumen Pendukung</label>
+                                    <p class="file-upload-hint">Maksimal 10 file PDF/Office, masing-masing hingga 10MB</p>
                                 </div>
+                                <div class="col-md-9">
+                                    <label for="dokumen_lpj" class="file-upload-wrapper">
+                                        <input type="file" name="dokumen_lpj[]" id="dokumen_lpj"
+                                            class="@error('dokumen_lpj.*') is-invalid @enderror"
+                                            accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
 
-                                <div class="row mt-4">
-                                    <div class="col-md-9 offset-md-3">
-                                        <div class="d-flex gap-2">
-                                            <button type="submit" class="btn btn-danger px-4" id="submit-button">Simpan
-                                                Data</button>
-                                            <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}"
-                                                class="btn btn-secondary px-4">Kembali</a>
+                                        <div class="d-flex align-items-center gap-12">
+                                            <div class="file-upload-icon-wrapper">
+                                                <i class="fas fa-upload file-upload-icon"></i>
+                                            </div>
+                                            <div>
+                                                <p class="file-upload-text" id="dokumen-file-name-display">
+                                                    Seret dan lepas dokumen di sini, atau klik untuk mengunggah.
+                                                </p>
+                                            </div>
                                         </div>
+                                    </label>
+
+                                    <div id="dokumenPreviewContainer" class="preview-container" style="display: none;"></div>
+                                    <div id="dokumenCounter" class="file-counter"></div>
+                                    <div id="dokumenMaxWarning" class="max-files-warning" style="display: none;">
+                                        Maksimal 10 dokumen yang dapat diunggah.
                                     </div>
-                            </form>
+
+                                    @error('dokumen_lpj.*')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label for="keterangan_tambahan" class="form-label">Keterangan Tambahan</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <textarea name="keterangan_tambahan" id="keterangan_tambahan"
+                                        class="form-control @error('keterangan_tambahan') is-invalid @enderror"
+                                        placeholder="Masukkan keterangan tambahan (opsional)"
+                                        rows="4">{{ old('keterangan_tambahan') }}</textarea>
+                                    @error('keterangan_tambahan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                     <div class="row">
+                        <div class="col-md-9 offset-md-3 d-flex gap-3">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-save me-2"></i>Simpan
+                            </button>
+                            <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}"
+                               class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Kembali
+                            </a>
                         </div>
+                    </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    @endsection
+    </div>
+@endsection
 
-    @section('script')
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const MAX_FILES = 10; // Single file for kegiatan lainnya
-                const MAX_FILE_SIZE = 10 * 1024 * 1024;
+@section('script')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const MAX_FILES = 10;
+            const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-                let selectedFotoFiles = [];
-                let selectedDokumenFiles = [];
+            // File arrays to track selected files
+            let selectedFotoFiles = [];
+            let selectedDokumenFiles = [];
 
-                const fotoInput = document.getElementById('foto_jurnal');
-                const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
-                const fotoFileNameDisplay = document.getElementById('foto-file-name-display');
-                const fotoCounter = document.getElementById('fotoCounter');
-                const fotoMaxWarning = document.getElementById('fotoMaxWarning');
+            // Currency formatting
+            const currencyInputs = ['jumlah_harga_satuan', 'jumlah_harga'];
 
-                fotoInput.addEventListener('change', function() {
-                    handleFileSelection(this.files, 'foto');
-                });
+            currencyInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    const formatValue = (value) => {
+                        const numericValue = value.replace(/[^\d]/g, '');
+                        return numericValue ? parseInt(numericValue).toLocaleString('id-ID') : '';
+                    };
 
-                const dokumenInput = document.getElementById('dokumen_pendukung');
-                const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
-                const dokumenFileNameDisplay = document.getElementById('dokumen-file-name-display');
-                const dokumenCounter = document.getElementById('dokumenCounter');
-                const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
-
-                dokumenInput.addEventListener('change', function() {
-                    handleFileSelection(this.files, 'dokumen');
-                });
-
-                function handleFileSelection(files, type) {
-                    const isPhoto = type === 'foto';
-                    const input = isPhoto ? fotoInput : dokumenInput;
-
-                    const newFiles = Array.from(files).filter(file => {
-                        if (file.size > MAX_FILE_SIZE) {
-                            alert(`File "${file.name}" terlalu besar. Maksimal 10MB per file.`);
-                            return false;
-                        }
-
-                        if (isPhoto && !file.type.match('image.*')) {
-                            alert(`File "${file.name}" bukan file gambar yang valid.`);
-                            return false;
-                        }
-
-                        if (!isPhoto) {
-                            const validExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
-                            const extension = file.name.split('.').pop().toLowerCase();
-                            if (!validExtensions.includes(extension)) {
-                                alert(`File "${file.name}" format tidak didukung.`);
-                                return false;
-                            }
-                        }
-
-                        return true;
+                    input.addEventListener('input', function(e) {
+                        e.target.value = formatValue(e.target.value);
                     });
 
-                    if (newFiles.length === 0) return;
+                    // Format initial value on page load
+                    if (input.value) {
+                        input.value = formatValue(input.value);
+                    }
+                }
+            });
 
-                    // For single file upload, replace existing file
-                    // Tambahkan file baru (maksimal 10)
-                    const currentFiles = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                    const totalFiles = currentFiles.length + newFiles.length;
+            // Enhanced File Upload Handlers
+            const fotoInput = document.getElementById('foto_jurnal');
+            const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
+            const fotoFileNameDisplay = document.getElementById('foto-file-name-display');
+            const fotoCounter = document.getElementById('fotoCounter');
+            const fotoMaxWarning = document.getElementById('fotoMaxWarning');
 
-                    if (totalFiles > MAX_FILES) {
-                        alert(`Maksimal ${MAX_FILES} file yang diizinkan.`);
-                        return;
+            const dokumenInput = document.getElementById('dokumen_lpj');
+            const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
+            const dokumenFileNameDisplay = document.getElementById('dokumen-file-name-display');
+            const dokumenCounter = document.getElementById('dokumenCounter');
+            const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
+
+            fotoInput.addEventListener('change', function() {
+                handleFileSelection(this.files, 'foto');
+            });
+
+            dokumenInput.addEventListener('change', function() {
+                handleFileSelection(this.files, 'dokumen');
+            });
+
+            function handleFileSelection(files, type) {
+                const isPhoto = type === 'foto';
+                const currentFiles = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+                const input = isPhoto ? fotoInput : dokumenInput;
+
+                // Convert FileList to Array and filter valid files
+                const newFiles = Array.from(files).filter(file => {
+                    if (file.size > MAX_FILE_SIZE) {
+                        alert(`File "${file.name}" terlalu besar. Maksimal 10MB per file.`);
+                        return false;
+                    }
+
+                    if (isPhoto && !file.type.match('image.*')) {
+                        alert(`File "${file.name}" bukan file gambar yang valid.`);
+                        return false;
+                    }
+
+                    return true;
+                });
+
+                // Check if adding new files would exceed the limit
+                if (currentFiles.length + newFiles.length > MAX_FILES) {
+                    alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${currentFiles.length} file.`);
+                    return;
+                }
+
+                // Add new files to the current files array
+                if (isPhoto) {
+                    selectedFotoFiles = [...currentFiles, ...newFiles];
+                } else {
+                    selectedDokumenFiles = [...currentFiles, ...newFiles];
+                }
+
+                updateFilePreview(type);
+                updateFileInput(type);
+            }
+
+            function updateFilePreview(type) {
+                const isPhoto = type === 'foto';
+                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+                const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
+                const counter = isPhoto ? fotoCounter : dokumenCounter;
+                const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
+                const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
+
+                if (files.length === 0) {
+                    container.style.display = 'none';
+                    counter.textContent = '';
+                    maxWarning.style.display = 'none';
+                    nameDisplay.textContent = isPhoto ?
+                        'Seret dan lepas foto di sini, atau klik untuk mengunggah.' :
+                        'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.';
+                    return;
+                }
+
+                container.style.display = 'block';
+                nameDisplay.textContent = `${files.length} file dipilih`;
+                counter.textContent = `${files.length}/${MAX_FILES} file`;
+
+                if (files.length >= MAX_FILES) {
+                    maxWarning.style.display = 'block';
+                } else {
+                    maxWarning.style.display = 'none';
+                }
+
+                // Generate preview HTML
+                let previewHTML = '';
+                files.forEach((file, index) => {
+                    let fileSize = (file.size / 1024).toFixed(1) + ' KB';
+                    if (file.size > 1024 * 1024) {
+                        fileSize = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
                     }
 
                     if (isPhoto) {
-                        selectedFotoFiles.push(...newFiles);
+                        const imageUrl = URL.createObjectURL(file);
+                        previewHTML += `
+                            <div class="file-preview-item" data-index="${index}">
+                                <img src="${imageUrl}" alt="Preview" class="preview-image">
+                                <div class="file-info">
+                                    <div class="file-name">${file.name}</div>
+                                    <div class="file-size">${fileSize}</div>
+                                </div>
+                                <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
                     } else {
-                        selectedDokumenFiles.push(...newFiles);
+                        const extension = file.name.split('.').pop().toLowerCase();
+                        const iconClass = getFileIcon(extension);
+                        const colorClass = getFileColor(extension);
+
+                        previewHTML += `
+                            <div class="file-preview-item" data-index="${index}">
+                                <div class="file-icon">
+                                    <i class="${iconClass} ${colorClass} fs-4"></i>
+                                </div>
+                                <div class="file-info">
+                                    <div class="file-name">${file.name}</div>
+                                    <div class="file-size">${fileSize}</div>
+                                </div>
+                                <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
                     }
+                });
 
-                    updateFilePreview(type);
-                    updateFileInput(type);
-                }
+                container.innerHTML = previewHTML;
+            }
 
-                function updateFilePreview(type) {
-                    const isPhoto = type === 'foto';
-                    const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                    const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
-                    const counter = isPhoto ? fotoCounter : dokumenCounter;
-                    const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
-                    const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
+            function updateFileInput(type) {
+                const isPhoto = type === 'foto';
+                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+                const input = isPhoto ? fotoInput : dokumenInput;
 
-                    if (files.length === 0) {
-                        container.style.display = 'none';
-                        counter.textContent = '';
-                        maxWarning.style.display = 'none';
-                        nameDisplay.textContent = isPhoto ?
-                            'Seret dan lepas foto di sini, atau klik untuk mengunggah.' :
-                            'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.';
-                        return;
-                    }
+                // Create new FileList using DataTransfer
+                const dt = new DataTransfer();
+                files.forEach(file => {
+                    dt.items.add(file);
+                });
+                input.files = dt.files;
+            }
 
-                    container.style.display = 'block';
-                    nameDisplay.textContent = `${files.length} file dipilih`;
-                    counter.textContent = `${files.length} file dipilih`;
+            // Global function to remove file
+            window.removeFile = function(index, type) {
+                const isPhoto = type === 'foto';
 
-                    let previewHTML = '';
-                    files.forEach((file, index) => {
-                        let fileSize = (file.size / 1024).toFixed(1) + ' KB';
-                        if (file.size > 1024 * 1024) {
-                            fileSize = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
-                        }
-
-                        if (isPhoto) {
-                            const imageUrl = URL.createObjectURL(file);
-                            previewHTML += `
-                <div class="file-preview-item" data-index="${index}">
-                    <img src="${imageUrl}" alt="Preview" class="preview-image">
-                    <div class="file-info">
-                        <div class="file-name">${file.name}</div>
-                        <div class="file-size">${fileSize}</div>
-                    </div>
-                    <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-                        } else {
-                            const extension = file.name.split('.').pop().toLowerCase();
-                            const iconClass = getFileIcon(extension);
-                            const colorClass = getFileColor(extension);
-
-                            previewHTML += `
-                <div class="file-preview-item" data-index="${index}">
-                    <div class="file-icon">
-                        <i class="${iconClass} ${colorClass} fs-4"></i>
-                    </div>
-                    <div class="file-info">
-                        <div class="file-name">${file.name}</div>
-                        <div class="file-size">${fileSize}</div>
-                    </div>
-                    <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            `;
-                        }
-                    });
-
-                    container.innerHTML = previewHTML;
-                }
-
-                function updateFileInput(type) {
-                    const isPhoto = type === 'foto';
-                    const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                    const input = isPhoto ? fotoInput : dokumenInput;
-
-                    const dt = new DataTransfer();
-                    files.forEach(file => {
-                        dt.items.add(file);
-                    });
-                    input.files = dt.files;
-                }
-
-                window.removeFile = function(index, type) {
-                    const isPhoto = type === 'foto';
-                    const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                    const file = files[index];
-
-                    if (isPhoto && file) {
+                if (isPhoto) {
+                    // Revoke object URL to prevent memory leaks for images
+                    const file = selectedFotoFiles[index];
+                    if (file) {
                         const imgElements = document.querySelectorAll('.preview-image');
                         imgElements.forEach(img => {
                             if (img.src && img.src.startsWith('blob:')) {
@@ -608,200 +622,122 @@
                             }
                         });
                     }
+                    selectedFotoFiles.splice(index, 1);
+                } else {
+                    selectedDokumenFiles.splice(index, 1);
+                }
 
-                    if (isPhoto) {
-                        selectedFotoFiles.splice(index, 1);
-                    } else {
-                        selectedDokumenFiles.splice(index, 1);
-                    }
+                updateFilePreview(type);
+                updateFileInput(type);
+            };
 
-                    updateFilePreview(type);
-                    updateFileInput(type);
+            function getFileIcon(extension) {
+                const icons = {
+                    'pdf': 'fas fa-file-pdf',
+                    'doc': 'fas fa-file-word',
+                    'docx': 'fas fa-file-word',
+                    'xls': 'fas fa-file-excel',
+                    'xlsx': 'fas fa-file-excel',
+                    'ppt': 'fas fa-file-powerpoint',
+                    'pptx': 'fas fa-file-powerpoint'
                 };
+                return icons[extension] || 'fas fa-file';
+            }
 
-                function getFileIcon(extension) {
-                    const icons = {
-                        'pdf': 'fas fa-file-pdf',
-                        'doc': 'fas fa-file-word',
-                        'docx': 'fas fa-file-word',
-                        'xls': 'fas fa-file-excel',
-                        'xlsx': 'fas fa-file-excel',
-                        'ppt': 'fas fa-file-powerpoint',
-                        'pptx': 'fas fa-file-powerpoint'
-                    };
-                    return icons[extension] || 'fas fa-file';
-                }
+            function getFileColor(extension) {
+                const colors = {
+                    'pdf': 'text-danger',
+                    'doc': 'text-primary',
+                    'docx': 'text-primary',
+                    'xls': 'text-success',
+                    'xlsx': 'text-success',
+                    'ppt': 'text-warning',
+                    'pptx': 'text-warning'
+                };
+                return colors[extension] || 'text-muted';
+            }
 
-                function getFileColor(extension) {
-                    const colors = {
-                        'pdf': 'text-danger',
-                        'doc': 'text-primary',
-                        'docx': 'text-primary',
-                        'xls': 'text-success',
-                        'xlsx': 'text-success',
-                        'ppt': 'text-warning',
-                        'pptx': 'text-warning'
-                    };
-                    return colors[extension] || 'text-muted';
-                }
+            // Enhanced Drag and Drop functionality
+            const fileUploadWrappers = document.querySelectorAll('.file-upload-wrapper');
 
-                // Drag and drop functionality
-                const fileUploadWrappers = document.querySelectorAll('.file-upload-wrapper');
-
-                fileUploadWrappers.forEach(wrapper => {
-                    wrapper.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        wrapper.classList.add('dragover');
-                    });
-
-                    wrapper.addEventListener('dragleave', () => {
-                        wrapper.classList.remove('dragover');
-                    });
-
-                    wrapper.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        wrapper.classList.remove('dragover');
-
-                        const input = wrapper.querySelector('input[type="file"]');
-                        if (e.dataTransfer.files.length && input) {
-                            const type = input.id === 'foto_jurnal' ? 'foto' : 'dokumen';
-                            handleFileSelection(e.dataTransfer.files, type);
-                        }
-                    });
+            fileUploadWrappers.forEach(wrapper => {
+                wrapper.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    wrapper.classList.add('dragover');
                 });
 
-                // Auto calculate for numeric fields
-                const volumeInput = document.getElementById('volume');
-                const hargaSatuanInput = document.getElementById('jumlah_harga_satuan');
-                const jumlahHargaInput = document.getElementById('jumlah_harga');
-
-                // Format number with thousand separator
-                function formatNumber(num) {
-                    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                }
-
-                // Parse formatted number
-                function parseNumber(value) {
-                    return parseFloat(value.replace(/\./g, '')) || 0;
-                }
-
-                // Format input as user types
-                function formatInput(input) {
-                    let value = input.value.replace(/\D/g, ''); // Remove non-digit characters
-                    if (value === '') {
-                        input.value = '';
-                        return;
-                    }
-                    
-                    // Add thousand separators
-                    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                    input.value = value;
-                }
-
-                function calculateTotal() {
-                    const volume = parseFloat(volumeInput.value) || 0;
-                    const hargaSatuan = parseNumber(hargaSatuanInput.value);
-                    const total = hargaSatuan * (volume || 1);
-                    jumlahHargaInput.value = 'Rp ' + formatNumber(total);
-                }
-
-                hargaSatuanInput.addEventListener('input', function() {
-                    formatInput(this);
-                    calculateTotal();
+                wrapper.addEventListener('dragleave', () => {
+                    wrapper.classList.remove('dragover');
                 });
 
-                volumeInput.addEventListener('input', function() {
-                    calculateTotal();
-                });
+                wrapper.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    wrapper.classList.remove('dragover');
 
-                // Format initial values on page load
-                if (hargaSatuanInput.value) {
-                    const initialValue = parseNumber(hargaSatuanInput.value);
-                    hargaSatuanInput.value = formatNumber(initialValue);
-                    calculateTotal();
-                }
-
-                // Form validation
-                const form = document.getElementById('kegiatan-form');
-                const submitButton = document.getElementById('submit-button');
-
-                form.addEventListener('submit', function(e) {
-                    if (!validateForm()) {
-                        e.preventDefault();
-                    } else {
-                        // Prepare data for submission
-                        const hargaSatuanValue = parseNumber(hargaSatuanInput.value);
-                        const jumlahHargaValue = parseNumber(jumlahHargaInput.value.replace('Rp ', ''));
-                        
-                        // Update hidden inputs with numeric values
-                        let hiddenHargaSatuan = document.querySelector('input[name="jumlah_harga_satuan"][type="hidden"]');
-                        let hiddenJumlahHarga = document.querySelector('input[name="jumlah_harga"][type="hidden"]');
-                        
-                        if (!hiddenHargaSatuan) {
-                            hiddenHargaSatuan = document.createElement('input');
-                            hiddenHargaSatuan.type = 'hidden';
-                            hiddenHargaSatuan.name = 'jumlah_harga_satuan';
-                            form.appendChild(hiddenHargaSatuan);
-                        }
-                        
-                        if (!hiddenJumlahHarga) {
-                            hiddenJumlahHarga = document.createElement('input');
-                            hiddenJumlahHarga.type = 'hidden';
-                            hiddenJumlahHarga.name = 'jumlah_harga';
-                            form.appendChild(hiddenJumlahHarga);
-                        }
-                        
-                        hiddenHargaSatuan.value = hargaSatuanValue;
-                        hiddenJumlahHarga.value = jumlahHargaValue;
-                        
-                        // Disable original inputs to prevent submission
-                        hargaSatuanInput.disabled = true;
-                        jumlahHargaInput.disabled = true;
-                        
-                        submitButton.disabled = true;
-                        submitButton.innerHTML = `
-                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                            Menyimpan...
-                        `;
+                    const input = wrapper.querySelector('input[type="file"]');
+                    if (e.dataTransfer.files.length && input) {
+                        const type = input.id === 'foto_jurnal' ? 'foto' : 'dokumen';
+                        handleFileSelection(e.dataTransfer.files, type);
                     }
                 });
-
-                function validateForm() {
-                    let isValid = true;
-
-                    const requiredFields = form.querySelectorAll('[required]');
-                    requiredFields.forEach(field => {
-                        if (field.name === 'foto_jurnal' && selectedFotoFiles.length === 0) {
-                            field.classList.add('is-invalid');
-                            // Tampilkan pesan error khusus untuk foto jurnal
-                            let errorDiv = field.parentNode.querySelector('.invalid-feedback.d-block');
-                            if (!errorDiv) {
-                                errorDiv = document.createElement('div');
-                                errorDiv.className = 'invalid-feedback d-block';
-                                field.parentNode.appendChild(errorDiv);
-                            }
-                            errorDiv.textContent = 'Foto jurnal wajib diisi.';
-                            isValid = false;
-                        } else if (field.name === 'jumlah_harga_satuan' && parseNumber(field.value) <= 0) {
-                            field.classList.add('is-invalid');
-                            isValid = false;
-                        } else if (field.type !== 'file' && field.type !== 'hidden' && !field.value.trim()) {
-                            field.classList.add('is-invalid');
-                            isValid = false;
-                        } else {
-                            field.classList.remove('is-invalid');
-                            // Hapus pesan error khusus untuk foto jurnal jika ada
-                            if (field.name === 'foto_jurnal') {
-                                const errorDiv = field.parentNode.querySelector('.invalid-feedback.d-block');
-                                if (errorDiv && errorDiv.textContent === 'Foto jurnal wajib diisi.') {
-                                    errorDiv.remove();
-                                }
-                            }
-                        }
-                    });
-
-                    return isValid;
-                }
             });
-        </script>
-    @endsection
+
+            // Form submission
+            document.getElementById('kegiatanLainnyaForm').addEventListener('submit', function(e) {
+                // Convert currency values back to numbers
+                currencyInputs.forEach(inputId => {
+                    const input = document.getElementById(inputId);
+                    if (input && input.value) {
+                        input.value = input.value.replace(/[^\d]/g, '');
+                    }
+                });
+            });
+        });
+
+        function calculateTotalPrice() {
+            const volumeInput = document.getElementById('volume');
+            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
+            const totalPriceInput = document.getElementById('jumlah_harga');
+
+            if (!volumeInput || !unitPriceInput || !totalPriceInput) return;
+
+            const volumeValue = volumeInput.value.trim();
+            const unitPriceValue = unitPriceInput.value.replace(/[^\d]/g, ''); // Remove formatting
+
+            // Extract numeric value from volume (handles cases like "100 orang", "5 unit", etc.)
+            const volumeMatch = volumeValue.match(/^\d+/);
+            const volumeNumber = volumeMatch ? parseInt(volumeMatch[0]) : 0;
+            const unitPriceNumber = unitPriceValue ? parseInt(unitPriceValue) : 0;
+
+            if (volumeNumber > 0 && unitPriceNumber > 0) {
+                const totalPrice = volumeNumber * unitPriceNumber;
+                totalPriceInput.value = totalPrice.toLocaleString('id-ID');
+
+                // Add visual feedback
+                totalPriceInput.style.backgroundColor = '#e8f5e8';
+                setTimeout(() => {
+                    totalPriceInput.style.backgroundColor = '';
+                }, 1000);
+            } else if (volumeNumber === 0 || unitPriceNumber === 0) {
+                totalPriceInput.value = '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const volumeInput = document.getElementById('volume');
+            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
+
+            if (volumeInput && unitPriceInput) {
+                volumeInput.addEventListener('input', calculateTotalPrice);
+                unitPriceInput.addEventListener('input', function() {
+                    setTimeout(calculateTotalPrice, 10);
+                });
+
+                volumeInput.addEventListener('blur', calculateTotalPrice);
+                unitPriceInput.addEventListener('blur', calculateTotalPrice);
+
+                calculateTotalPrice();
+            }
+        });
+    </script>
+@endsection
