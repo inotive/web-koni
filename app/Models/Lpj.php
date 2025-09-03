@@ -24,22 +24,50 @@ class Lpj extends Model
         'jumlah_harga',
         'dokumen_lpj',
         'foto_jurnal',
-        'keterangan_tambahan'
+        'keterangan_tambahan',
+        'is_approved',
+        'approved_by',
+        'approved_at',
+        'catatan_approval'
     ];
 
     protected $casts = [
         'dokumen_lpj' => 'array',
         'foto_jurnal' => 'array',
+        'is_approved' => 'boolean',
+        'approved_at' => 'datetime',
     ];
 
     public function setJumlahHargaSatuanAttribute($value)
     {
-        $this->attributes['jumlah_harga_satuan'] = preg_replace('/[^\d]/', '', $value);
+        // Handle both numeric and formatted string inputs
+        if (is_string($value)) {
+            $this->attributes['jumlah_harga_satuan'] = preg_replace('/[^\d.]/', '', $value);
+        } else {
+            $this->attributes['jumlah_harga_satuan'] = $value;
+        }
     }
 
     public function setJumlahHargaAttribute($value)
     {
-        $this->attributes['jumlah_harga'] = preg_replace('/[^\d]/', '', $value);
+        // Handle both numeric and formatted string inputs
+        if (is_string($value)) {
+            $this->attributes['jumlah_harga'] = preg_replace('/[^\d.]/', '', $value);
+        } else {
+            $this->attributes['jumlah_harga'] = $value;
+        }
+    }
+
+    // Accessor untuk mendapatkan harga satuan dalam format Rupiah
+    public function getFormattedJumlahHargaSatuanAttribute()
+    {
+        return 'Rp ' . number_format($this->jumlah_harga_satuan, 0, ',', '.');
+    }
+
+    // Accessor untuk mendapatkan jumlah harga dalam format Rupiah
+    public function getFormattedJumlahHargaAttribute()
+    {
+        return 'Rp ' . number_format($this->jumlah_harga, 0, ',', '.');
     }
 
     /**
@@ -89,6 +117,11 @@ class Lpj extends Model
     public function getBreadcrumbAttribute()
     {
         return $this->ancestors()->pluck('nama_program')->push($this->nama_program)->implode(' > ');
+    }
+
+    public function pengajuan()
+    {
+        return $this->hasOne(Pengajuan::class);
     }
 
     /**

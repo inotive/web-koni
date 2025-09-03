@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lpj;
+use App\Models\Pengajuan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -62,6 +64,7 @@ class LpjController extends Controller
 
         // Get unique kegiatan for filter
         $uniqueKegiatan = Lpj::where('parent_id', $parentId)
+                            ->select(['*', 'modifiable_by_user_id'])
                             ->whereNotNull('nama_kegiatan')
                             ->pluck('nama_kegiatan')
                             ->unique()
@@ -165,6 +168,20 @@ class LpjController extends Controller
     {
         $lpj = Lpj::findOrFail($id);
 
+        if ($lpj->modifiable_by_user_id === Auth::id()) {
+            $pengajuan = Pengajuan::where('lpj_id', $lpj->id)
+                                    ->where('user_id', Auth::id())
+                                    ->where('status', 'disetujui')
+                                    ->orderBy('approved_at', 'desc')
+                                    ->first();
+
+            if (!$pengajuan || $pengajuan->token <= 0) {
+                return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin untuk mengedit laporan ini lagi.'], 403);
+            }
+        } elseif (!Auth::user()->can('pengajuan-modifikasi-laporan')) {
+            return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin untuk mengedit laporan ini.'], 403);
+        }
+
         $validated = $request->validate([
             'nama_program' => 'required|string|max:255',
             'nama_kegiatan' => 'required|string|max:255',
@@ -218,6 +235,11 @@ class LpjController extends Controller
             'dokumen_lpj' => $allDokumenLpj,
         ]);
 
+        if ($lpj->modifiable_by_user_id === Auth::id()) {
+            $pengajuan->token -= 1;
+            $pengajuan->save();
+        }
+
         $message = 'Data berhasil diperbarui';
 
         if ($request->ajax()) {
@@ -237,6 +259,21 @@ class LpjController extends Controller
     {
         try {
             $lpj = Lpj::findOrFail($id);
+
+            if ($lpj->modifiable_by_user_id === Auth::id()) {
+                $pengajuan = Pengajuan::where('lpj_id', $lpj->id)
+                                        ->where('user_id', Auth::id())
+                                        ->where('status', 'disetujui')
+                                        ->orderBy('approved_at', 'desc')
+                                        ->first();
+
+                if (!$pengajuan || $pengajuan->token <= 0) {
+                    return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin untuk menghapus laporan ini lagi.'], 403);
+                }
+            } elseif (!Auth::user()->can('pengajuan-modifikasi-laporan')) {
+                return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin untuk menghapus laporan ini.'], 403);
+            }
+
             $parentId = $lpj->parent_id;
 
             // Delete associated files
@@ -253,6 +290,11 @@ class LpjController extends Controller
             }
 
             $lpj->delete();
+
+            if ($lpj->modifiable_by_user_id === Auth::id()) {
+                $pengajuan->token -= 1;
+                $pengajuan->save();
+            }
 
             return response()->json([
                 'success' => true,

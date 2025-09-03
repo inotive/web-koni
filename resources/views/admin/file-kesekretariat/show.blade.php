@@ -10,7 +10,7 @@
     <div class="card-header">
         <h3 class="card-title">Detail Kegiatan</h3>
         <div class="card-toolbar">
-            <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.index') }}" 
+            <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}" 
                class="btn btn-sm btn-light-primary">
                 <i class="fas fa-arrow-left me-2"></i> Kembali
             </a>
@@ -30,7 +30,7 @@
     
     <!-- Footer dengan tombol aksi -->
     <div class="card-footer">
-        <a href="{{ route('admin.laporan-lpj.kegiatan_lainnya.edit', $kegiatan->id) }}" 
+        <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.edit', $kegiatan->id) }}" 
            class="btn btn-warning">
             <i class="fas fa-edit me-2"></i> Edit
         </a>

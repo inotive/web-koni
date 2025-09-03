@@ -89,19 +89,26 @@
                             @if ($file->dokumen_file)
                                 @php
                                     $fileName = basename($file->dokumen_file);
-                                    $fileUrl = route('admin.file-kesekretariat.download', $file);
                                     $fileExtension = strtolower(pathinfo($file->dokumen_file, PATHINFO_EXTENSION));
 
                                     // Memisahkan timestamp dari nama file
                                     $parts = explode('_', $fileName, 2);
                                     $displayName = count($parts) > 1 ? $parts[1] : $fileName;
+                                    
+                                    // Gunakan path yang sudah dikonfirmasi bekerja
+                                    $filePath = 'documents/' . $file->dokumen_file;
+                                    $fileUrl = asset('storage/' . $filePath);
                                 @endphp
                                 <div class="document-link-container">
-                                    <a href="javascript:void(0)" class="document-link" 
-                                       onclick="previewFile('{{ $fileUrl }}', '{{ $fileName }}', '{{ $fileExtension }}')"
-                                       title="Klik untuk melihat {{ $fileName }}">
-                                        <i class="fas fa-file-{{ $fileExtension == 'pdf' ? 'pdf' : 'alt' }} me-2"></i>
-                                        {{ Str::limit($displayName, 25) }}
+                                    <a href="{{ $fileUrl }}" target="_blank" class="document-link" title="Klik untuk melihat {{ $fileName }}">
+                                        @if ($fileExtension === 'pdf')
+                                            <i class="fas fa-file-pdf me-2"></i>
+                                        @elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                                            <i class="fas fa-file-image me-2"></i>
+                                        @else
+                                            <i class="fas fa-file-alt me-2"></i>
+                                        @endif
+                                        <span class="document-link-text">{{ $displayName }}</span>
                                     </a>
                                 </div>
                             @else
@@ -134,16 +141,12 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li class="dropdown-item edit"
-                                        onclick="openEditModal({{ $file->id }}, '{{ addslashes($file->nama_dokumen) }}', '{{ optional($file->tanggal_dokumen)->format('Y-m-d') }}')">
+                                        onclick="openEditModal({{ $file->id }}, '{{ addslashes($file->nama_dokumen) }}', '{{ optional($file->tanggal_dokumen)->format('Y-m-d') }}', '{{ basename($file->dokumen_file) ?? '' }}')">
                                         <i class="ki-outline ki-pencil me-2"></i>Edit File
                                     </li>
                                     <li class="dropdown-item delete"
                                         onclick="deleteFile('{{ $file->id }}', '{{ $file->nama_dokumen }}', '{{ route('admin.file-kesekretariat.destroy', $file) }}')">
                                         <i class="ki-outline ki-trash me-2"></i>Hapus
-                                    </li>
-                                    <li class="dropdown-item"
-                                        onclick="window.location='{{ route('admin.file-kesekretariat.download', $file) }}'">
-                                        <i class="ki-outline ki-download me-2"></i>Download
                                     </li>
                                 </ul>
                             </div>
@@ -357,8 +360,8 @@
         padding: 4px 8px;
         border-radius: 4px;
         transition: all 0.2s ease;
-        word-break: break-all;
         line-height: 1.4;
+        width: 100%;
     }
 
     .document-link:hover {
@@ -368,6 +371,13 @@
         transform: translateY(-1px);
     }
 
+    .document-link-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+    }
+
     .document-link i {
         color: #dc3545;
         flex-shrink: 0;
@@ -375,6 +385,10 @@
 
     .document-link i.fa-file-pdf {
         color: #dc3545;
+    }
+
+    .document-link i.fa-file-image {
+        color: #28a745;
     }
 
     .document-link i.fa-file-alt {

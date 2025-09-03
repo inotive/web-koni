@@ -18,6 +18,7 @@ class Pengajuan extends Model
         'status',
         'approved_by',
         'approved_at',
+        'token',
     ];
 
     protected $casts = [

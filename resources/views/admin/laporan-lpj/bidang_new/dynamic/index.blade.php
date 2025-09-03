@@ -515,18 +515,24 @@
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header d-flex align-items-center">
-                    <h5 class="modal-title" id="detailModalLabel">Detail Data</h5>
+                <div class="modal-header d-flex align-items-center"
+                    style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
+                    <h5 class="modal-title me-1" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
+                    <span id="statusIcon"class="ms-2 fs-6 gap-3"></span>
+
                     <div class="ms-auto d-flex align-items-center gap-2">
-                        <button type="button" id="ajukanPerubahanBtn">
-                            <i class="bi bi-arrow-repeat" style="color: white"></i> <strong>Ajukan Perubahan</strong>
+                        <button type="button" id="ajukanPerubahanBtn" class="btn">
+                            <i class="bi bi-arrow-repeat" style="color: white"></i>
+                            <strong>Ajukan Perubahan</strong>
                         </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                 </div>
+
                 <div class="modal-body" id="detailModalBody">
-                    <!-- Content will be populated by JavaScript -->
+                    {{-- Populated by JS --}}
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                 </div>
@@ -730,12 +736,21 @@
                 }, 300);
             });
 
+           // Pagination handling
             $(document).on('click', '.pagination-link', function(e) {
                 e.preventDefault();
                 const url = new URL($(this).attr('href'));
                 const page = url.searchParams.get('page');
                 updateTable({
                     'page': page
+                });
+            });
+
+            $(document).on('change', 'select[name="per_page"]', function() {
+                const perPage = $(this).val();
+                updateTable({
+                    'per_page': perPage,
+                    'page': 1
                 });
             });
 
@@ -774,10 +789,10 @@
                             },
                             success: function(response) {
                                 Swal.close();
-                                if (response.success !== false) {
+                                if (response.success) {
                                     Swal.fire({
                                         title: 'Berhasil!',
-                                        text: response.message || 'Data berhasil dihapus',
+                                        text: response.message || 'Data berhasil dihapus.',
                                         icon: 'success',
                                         timer: 2000,
                                         showConfirmButton: false
@@ -804,56 +819,88 @@
                 });
             };
 
-            window.showDetailModal = function(data) {
+            window.showDetailModal = function (data) {
                 const modalBody = document.getElementById('detailModalBody');
-                const formatRupiah = (num) => 'Rp ' + (parseInt(num, 10) || 0).toLocaleString('id-ID');
+                const statusIcon  = document.getElementById('statusIcon');
+
+                if (!modalBody) return;
+
+                /* ---------- status indicator ---------- */
+                if (statusIcon) {
+                    const canPengajuanModifikasi = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
+                    const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
+                    const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
+                    const hasToken = pengajuan && pengajuan.token > 0;
+
+                    if (canPengajuanModifikasi || (isModifiable && hasToken)) {
+                        statusIcon.innerHTML = 'Terbuka';
+                        statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
+                    } else {
+                        statusIcon.innerHTML = 'Terkunci';
+                        statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+                    }
+
+                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn'); // ✅ target the button
+                        if (ajukanBtn) {
+                            if (canPengajuanModifikasi || (isModifiable && hasToken)) {
+                                ajukanBtn.style.display = 'none'; // hide button if user already owns modifiable
+                            } else {
+                                ajukanBtn.style.display = ''; // show otherwise
+                            }
+                        }
+                }
+
+                /* ---------- store id for “Ajukan Perubahan” ---------- */
                 $('#detailModal').data('lpj-id', data.id);
 
+                /* ---------- populate body ---------- */
+                const formatRupiah = (num) => 'Rp ' + (parseInt(num, 10) || 0).toLocaleString('id-ID');
+
                 let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-                if (data.foto_jurnal && data.foto_jurnal.length > 0) {
+                if (data.foto_jurnal && data.foto_jurnal.length) {
                     fotoJurnalHtml = `
                         <div class="row g-3">
                             ${data.foto_jurnal.map(f => `
                                 <div class="col-6 col-md-4">
-                                    <div class="border rounded overflow-hidden" style="height: 120px;">
-                                        <img src="/storage/${f}"
-                                            class="w-100 h-100"
-                                            style="object-fit: cover; cursor: pointer;"
-                                            onclick="window.open('/storage/${f}', '_blank')"
-                                            onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23f8f9fa%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%236c757d%22>Not found</text></svg>';">
+                                    <div class="border rounded overflow-hidden" style="height:120px">
+                                        <img src="/storage/${f}" class="w-100 h-100"
+                                            style="object-fit:cover;cursor:pointer"
+                                            onclick="window.open('/storage/${f}','_blank')">
                                     </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
+                                </div>`).join('')}
+                        </div>`;
                 }
 
                 let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-                if (data.dokumen_lpj && data.dokumen_lpj.length > 0) {
+                if (data.dokumen_lpj && data.dokumen_lpj.length) {
                     dokumenHtml = `
                         <div class="d-flex flex-column gap-2">
                             ${data.dokumen_lpj.map(d => {
                                 const name = d.split('/').pop();
-                                const extension = name.split('.').pop().toLowerCase();
-                                let iconClass = 'fas fa-file text-secondary';
-                                if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
-                                else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
-                                else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
-                                else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
-
+                                const ext  = name.split('.').pop().toLowerCase();
+                                const icon = {
+                                    pdf:'fas fa-file-pdf text-danger',
+                                    doc:'fas fa-file-word text-primary',
+                                    docx:'fas fa-file-word text-primary',
+                                    xls:'fas fa-file-excel text-success',
+                                    xlsx:'fas fa-file-excel text-success',
+                                    jpg:'fas fa-file-image text-info',
+                                    jpeg:'fas fa-file-image text-info',
+                                    png:'fas fa-file-image text-info'
+                                }[ext] || 'fas fa-file text-secondary';
                                 return `
                                     <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                        <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                                        <i class="${icon} me-3" style="font-size:1.2em"></i>
                                         <div class="flex-grow-1">
-                                            <div class="fw-medium text-dark">${name}</div>
-                                            <small class="text-muted">${extension.toUpperCase()}</small>
+                                            <div class="fw-medium">${name}</div>
+                                            <small class="text-muted">${ext.toUpperCase()}</small>
                                         </div>
-                                        <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm"><i class="fas fa-download me-1"></i>Unduh</a>
-                                    </div>
-                                `;
+                                        <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i>Unduh
+                                        </a>
+                                    </div>`;
                             }).join('')}
-                        </div>
-                    `;
+                        </div>`;
                 }
 
                 modalBody.innerHTML = `
@@ -862,58 +909,64 @@
                             <div class="mb-4">
                                 <h6 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Informasi Kegiatan</h6>
                                 <div class="bg-light p-3 rounded">
-                                    <p><strong>Nama Program:</strong> <br>
-                                        ${data.nama_program || 'N/A'}</p>
-                                    <p><strong>Nama Kegiatan:</strong> <br>
-                                        ${data.nama_kegiatan || 'N/A'}</p>
+                                    <div class="mb-2">
+                                        <label class="fw-semibold mb-1">Nama Kegiatan & Program:</label>
+                                        <p class="mb-0">${data.nama_program || data.nama_kegiatan || 'N/A'}</p>
+                                        ${data.nama_kegiatan && data.nama_program ? `<small class="text-muted">${data.nama_kegiatan}</small>` : ''}
+                                    </div>
+                                    ${data.tempat_kegiatan ? `
+                                        <div class="mb-2">
+                                            <label class="fw-semibold mb-1">Tempat Kegiatan:</label>
+                                            <p class="mb-0">${data.tempat_kegiatan}</p>
+                                        </div>` : ''}
+                                    ${data.tanggal_kegiatan ? `
+                                        <div>
+                                            <label class="fw-semibold mb-1">Tanggal Kegiatan:</label>
+                                            <p class="mb-0">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                        </div>` : ''}
                                 </div>
                             </div>
 
                             ${data.jumlah_anggaran || data.jumlah_realisasi ? `
-                            <div class="mb-4">
-                                <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
-                                <div class="bg-light p-3 rounded">
-                                    <div class="row g-3">
-                                        ${data.jumlah_anggaran ? `<div class="col-md-6"><label class="fw-semibold">Total Anggaran:</label><p class="fs-5 fw-bold">${formatRupiah(data.jumlah_anggaran)}</p></div>` : ''}
-                                        ${data.jumlah_realisasi ? `<div class="col-md-6"><label class="fw-semibold">Realisasi:</label><p class="fs-5 fw-bold">${formatRupiah(data.jumlah_realisasi)}</p></div>` : ''}
+                                <div class="mb-4">
+                                    <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
+                                    <div class="bg-light p-3 rounded">
+                                        <div class="row g-3">
+                                            ${data.jumlah_anggaran ? `
+                                                <div class="col-md-6">
+                                                    <label class="fw-semibold mb-1">Total Anggaran:</label>
+                                                    <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_anggaran)}</p>
+                                                </div>` : ''}
+                                            ${data.jumlah_realisasi ? `
+                                                <div class="col-md-6">
+                                                    <label class="fw-semibold mb-1">Realisasi:</label>
+                                                    <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(data.jumlah_realisasi)}</p>
+                                                </div>` : ''}
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            ` : ''}
-
-                            ${data.jumlah_harga_satuan || data.volume || data.jumlah_harga ? `
-                            <div class="mb-4">
-                                <h6 class="fw-bold text-info mb-3"><i class="fas fa-box me-2"></i>Detail Item</h6>
-                                <div class="bg-light p-3 rounded">
-                                    <div class="row g-3">
-                                        ${data.jumlah_harga_satuan ? `<div class="col-md-4"><label class="fw-semibold">Harga Satuan:</label><p>${formatRupiah(data.jumlah_harga_satuan)}</p></div>` : ''}
-                                        ${data.volume ? `<div class="col-md-4"><label class="fw-semibold">Volume:</label><p>${data.volume}</p></div>` : ''}
-                                        ${data.jumlah_harga ? `<div class="col-md-4"><label class="fw-semibold">Total Harga:</label><p class="fw-bold">${formatRupiah(data.jumlah_harga)}</p></div>` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                            ` : ''}
+                                </div>` : ''}
 
                             <div class="mb-4">
                                 <h6 class="fw-bold text-warning mb-3"><i class="fas fa-paperclip me-2"></i>Lampiran</h6>
-                                <label class="fw-semibold mb-2">Foto Kegiatan:</label>
-                                <div class="bg-light p-3 rounded mb-3">${fotoJurnalHtml}</div>
-                                <label class="fw-semibold mb-2">Dokumen Pendukung:</label>
-                                <div class="bg-light p-3 rounded">${dokumenHtml}</div>
+                                <div class="mb-3">
+                                    <label class="fw-semibold mb-2 d-block"><i class="fas fa-camera me-1"></i>Foto Kegiatan:</label>
+                                    <div class="bg-light p-3 rounded">${fotoJurnalHtml}</div>
+                                </div>
+                                <div>
+                                    <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
+                                    <div class="bg-light p-3 rounded">${dokumenHtml}</div>
+                                </div>
                             </div>
 
                             ${data.keterangan ? `
-                            <div>
-                                <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
-                                <div class="bg-light p-3 rounded"><p>${data.keterangan}</p></div>
-                            </div>
-                            ` : ''}
+                                <div class="mb-2">
+                                    <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
+                                    <div class="bg-light p-3 rounded"><p class="mb-0">${data.keterangan}</p></div>
+                                </div>` : ''}
                         </div>
-                    </div>
-                `;
+                    </div>`;
 
-                const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-                modal.show();
+                new bootstrap.Modal(document.getElementById('detailModal')).show();
             };
 
             $('#ajukanPerubahanBtn').on('click', function() {
@@ -960,6 +1013,245 @@
             $('#pengajuanModal').on('hidden.bs.modal', function () {
                 $('#alasan').val('');
                 $('#pengajuan_lpj_id').val('');
+            });
+
+            // Export functionality
+            $('#export-excel-btn').on('click', function(e) {
+                e.preventDefault();
+
+                let exportUrl;
+                if (parentId) {
+                    exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.child.export-csv', ':parentId') }}".replace(':parentId', parentId);
+                } else {
+                    exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.export-csv') }}";
+                }
+
+                const search = $('#search').val();
+
+                const url = new URL(exportUrl, window.location.origin);
+                if (search) {
+                    url.searchParams.set('search', search);
+                }
+
+                window.location.href = url.toString();
+            });
+
+            // Enhanced Preview Modal functionality
+            let currentFiles = [];
+            let currentIndex = 0;
+            let currentType = '';
+
+            const previewModal = document.getElementById('previewModal');
+            const previewSlides = document.getElementById('previewSlides');
+            const currentFileName = document.getElementById('currentFileName');
+            const fileCounter = document.getElementById('fileCounter');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const modalTitle = document.getElementById('previewModalLabel');
+
+            // Global preview function
+            window.showPreviewModal = function(files, type, title) {
+                currentFiles = files;
+                currentType = type;
+                currentIndex = 0;
+                modalTitle.textContent = title || 'Preview Files';
+
+                console.log('Preview modal data:', { files, type, title }); // Debug log
+
+                loadPreview();
+                $('#previewModal').modal('show');
+            };
+
+            $(document).on('click', '.preview-btn', function(e) {
+                e.preventDefault();
+                const btn = $(this);
+                try {
+                    const filesData = btn.attr('data-files');
+                    const type = btn.attr('data-type') || 'image';
+                    const title = btn.attr('data-title') || 'Preview Files';
+
+                    console.log('Button clicked:', { filesData, type, title }); // Debug log
+
+                    if (filesData) {
+                        const files = JSON.parse(filesData);
+                        showPreviewModal(files, type, title);
+                    } else {
+                        console.error('No files data found');
+                    }
+                } catch (error) {
+                    console.error('Error parsing preview data:', error);
+                }
+            });
+
+            function loadPreview() {
+                if (!previewSlides || !currentFiles || currentFiles.length === 0) {
+                    console.error('No preview slides container or files');
+                    return;
+                }
+
+                previewSlides.innerHTML = '';
+
+                currentFiles.forEach((file, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
+
+                    console.log(`Loading file ${index}: ${file}, type: ${currentType}`); // Debug log
+
+                    if (currentType === 'image' || currentType === 'foto') {
+                        slide.innerHTML = `
+                            <img src="/storage/${file}"
+                                 alt="Preview"
+                                 class="preview-image"
+                                 onerror="console.error('Failed to load image: /storage/${file}')">
+                        `;
+                    } else if (currentType === 'document' || currentType === 'dokumen') {
+                        const fileName = file.split('/').pop();
+                        const fileExtension = fileName.split('.').pop().toLowerCase();
+
+                        if (fileExtension === 'pdf') {
+                            slide.innerHTML = `
+                                <iframe src="/storage/${file}"
+                                        class="preview-document"
+                                        onerror="console.error('Failed to load PDF: /storage/${file}')"></iframe>
+                            `;
+                        } else {
+                            const iconClass = getFileIcon(fileExtension);
+                            slide.innerHTML = `
+                                <div class="document-placeholder">
+                                    <i class="${iconClass}"></i>
+                                    <h5>${fileName}</h5>
+                                    <p>Click download to view this ${fileExtension.toUpperCase()} file</p>
+                                    <a href="/storage/${file}" class="btn btn-primary" target="_blank">
+                                        <i class="fas fa-external-link-alt me-2"></i>Open File
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        // Auto-detect based on file extension
+                        const fileName = file.split('/').pop();
+                        const fileExtension = fileName.split('.').pop().toLowerCase();
+                        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+
+                        if (imageExtensions.includes(fileExtension)) {
+                            slide.innerHTML = `
+                                <img src="/storage/${file}"
+                                     alt="Preview"
+                                     class="preview-image"
+                                     onerror="console.error('Failed to load image: /storage/${file}')">
+                            `;
+                        } else {
+                            const iconClass = getFileIcon(fileExtension);
+                            slide.innerHTML = `
+                                <div class="document-placeholder">
+                                    <i class="${iconClass}"></i>
+                                    <h5>${fileName}</h5>
+                                    <p>Click download to view this ${fileExtension.toUpperCase()} file</p>
+                                    <a href="/storage/${file}" class="btn btn-primary" target="_blank">
+                                        <i class="fas fa-external-link-alt me-2"></i>Open File
+                                    </a>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    previewSlides.appendChild(slide);
+                });
+
+                updatePreviewUI();
+            }
+
+            function updatePreviewUI() {
+                if (!currentFiles || currentFiles.length === 0) return;
+
+                const fileName = currentFiles[currentIndex].split('/').pop();
+                if (currentFileName) currentFileName.textContent = fileName;
+                if (fileCounter) fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
+
+                if (currentFiles.length > 1) {
+                    if (prevBtn) prevBtn.style.display = 'block';
+                    if (nextBtn) nextBtn.style.display = 'block';
+                } else {
+                    if (prevBtn) prevBtn.style.display = 'none';
+                    if (nextBtn) nextBtn.style.display = 'none';
+                }
+
+                if (downloadBtn) {
+                    downloadBtn.onclick = function() {
+                        window.open('/storage/' + currentFiles[currentIndex], '_blank');
+                    };
+                }
+            }
+
+            function showSlide(index) {
+                if (!previewSlides) return;
+
+                document.querySelectorAll('.preview-slide').forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+                currentIndex = index;
+                updatePreviewUI();
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
+                    showSlide(newIndex);
+                });
+            }
+
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
+                    showSlide(newIndex);
+                });
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (previewModal && previewModal.classList.contains('show')) {
+                    if (e.key === 'ArrowLeft' && prevBtn) {
+                        prevBtn.click();
+                    } else if (e.key === 'ArrowRight' && nextBtn) {
+                        nextBtn.click();
+                    }
+                }
+            });
+
+            function getFileIcon(extension) {
+                const icons = {
+                    'pdf': 'fas fa-file-pdf text-danger',
+                    'doc': 'fas fa-file-word text-primary',
+                    'docx': 'fas fa-file-word text-primary',
+                    'xls': 'fas fa-file-excel text-success',
+                    'xlsx': 'fas fa-file-excel text-success',
+                    'ppt': 'fas fa-file-powerpoint text-warning',
+                    'pptx': 'fas fa-file-powerpoint text-warning',
+                    'jpg': 'fas fa-file-image text-info',
+                    'jpeg': 'fas fa-file-image text-info',
+                    'png': 'fas fa-file-image text-info',
+                    'gif': 'fas fa-file-image text-info'
+                };
+                return icons[extension] || 'fas fa-file text-muted';
+            }
+
+            $('#previewModal').on('show.bs.modal', function() {
+                if (currentFiles && currentFiles.length > 0) {
+                    showSlide(0);
+                }
+            });
+
+            $('#previewModal').on('shown.bs.modal', function() {
+                // Ensure images are properly loaded after modal is fully shown
+                const activeSlide = document.querySelector('.preview-slide.active');
+                if (activeSlide) {
+                    const img = activeSlide.querySelector('img');
+                    if (img && !img.complete) {
+                        img.onload = function() {
+                            console.log('Image loaded successfully');
+                        };
+                    }
+                }
             });
 
         });

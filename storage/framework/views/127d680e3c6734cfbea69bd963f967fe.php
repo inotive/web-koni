@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Edit Kegiatan Lainnya'); ?>
+<?php $__env->startSection('mainSection', 'Laporan Pertanggungjawaban'); ?>
+<?php $__env->startSection('subSection', 'Kegiatan Lainnya'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index')); ?>
+<?php $__env->startSection('currentSection', 'Edit Kegiatan Lainnya'); ?>
 
-@section('pageTitle', 'Edit Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
-@section('subSection', 'Kegiatan Lainnya')
-@section('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index'))
-@section('currentSection', 'Edit Kegiatan Lainnya')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <!-- style yang sudah sama persis dengan sekretariat -->
     <style>
@@ -206,10 +204,10 @@
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Edit Data</h3>
-                        <form action="{{ route('admin.laporan-lpj.kegiatan-lainnya.update', $sekretariat->id) }}"
-                            method="POST" enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT')
+                        <form action="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.update', $kegiatanLainnya->id)); ?>"
+                            method="POST" enctype="multipart/form-data" id="kegiatan-form">
+                            <?php echo csrf_field(); ?>
+                            <?php echo method_field('PUT'); ?>
 
                             <!-- Foto Jurnal Upload -->
                             <div class="row align-items-start mb-4">
@@ -218,47 +216,55 @@
                                     <p class="file-upload-hint">Maksimal 10 foto, masing-masing hingga 10 MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    @if ($sekretariat->foto_jurnal)
+                                    <?php if($kegiatanLainnya->foto_jurnal): ?>
                                         <div class="current-files-container" id="currentFotoContainer">
                                             <div class="current-files-title">Foto Saat Ini:</div>
                                             <div class="d-flex flex-wrap gap-2">
-                                                @if (is_array($sekretariat->foto_jurnal))
-                                                    @foreach ($sekretariat->foto_jurnal as $index => $foto)
+                                                <?php if(is_array($kegiatanLainnya->foto_jurnal)): ?>
+                                                    <?php $__currentLoopData = $kegiatanLainnya->foto_jurnal; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <div class="current-file-item">
-                                                            <img src="{{ asset('storage/' . $foto) }}"
+                                                            <img src="<?php echo e(asset('storage/' . $foto)); ?>"
                                                                 class="preview-image me-2"
-                                                                alt="Current Image {{ $index + 1 }}">
+                                                                alt="Current Image <?php echo e($index + 1); ?>">
                                                             <div>
                                                                 <small class="text-muted d-block">Foto
-                                                                    {{ $index + 1 }}</small>
-                                                                <a href="{{ asset('storage/' . $foto) }}" target="_blank"
+                                                                    <?php echo e($index + 1); ?></small>
+                                                                <a href="<?php echo e(asset('storage/' . $foto)); ?>" target="_blank"
                                                                     class="text-decoration-none small">
                                                                     Lihat foto
                                                                 </a>
                                                             </div>
                                                         </div>
-                                                    @endforeach
-                                                @else
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php else: ?>
                                                     <div class="current-file-item">
-                                                        <img src="{{ asset('storage/' . $sekretariat->foto_jurnal) }}"
+                                                        <img src="<?php echo e(asset('storage/' . $kegiatanLainnya->foto_jurnal)); ?>"
                                                             class="preview-image me-2" alt="Current Image">
                                                         <div>
                                                             <small class="text-muted d-block">Foto saat ini</small>
-                                                            <a href="{{ asset('storage/' . $sekretariat->foto_jurnal) }}"
+                                                            <a href="<?php echo e(asset('storage/' . $kegiatanLainnya->foto_jurnal)); ?>"
                                                                 target="_blank" class="text-decoration-none small">
                                                                 Lihat foto
                                                             </a>
                                                         </div>
                                                     </div>
-                                                @endif
+                                                <?php endif; ?>
                                             </div>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
 
                                     <label for="foto_jurnal" class="file-upload-wrapper">
                                         <input type="file" name="foto_jurnal[]" id="foto_jurnal"
-                                            class="@error('foto_jurnal') is-invalid @enderror"
-                                            accept="image/jpeg,image/jpg,image/png,image/gif" multiple>
+                                            class="<?php $__errorArgs = ['foto_jurnal'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                            accept="image/jpeg,image/jpg,image/png,image/gif" multiple
+                                            <?php echo e(!$kegiatanLainnya->foto_jurnal ? 'required' : ''); ?>>
 
                                         <div class="d-flex align-items-center gap-12 w-100">
                                             <div class="file-upload-icon-wrapper">
@@ -266,19 +272,40 @@
                                             </div>
                                             <div class="flex-grow-1">
                                                 <p class="file-upload-text" id="foto-file-name-display">
-                                                    {{ $sekretariat->foto_jurnal ? 'Klik untuk mengganti foto' : 'Seret dan lepas foto di sini, atau klik untuk mengunggah' }}
+                                                    <?php echo e($kegiatanLainnya->foto_jurnal ? 'Klik untuk mengganti foto' : 'Seret dan lepas foto di sini, atau klik untuk mengunggah'); ?>
+
                                                 </p>
                                                 <div id="fotoPreviewContainer" class="file-preview"></div>
                                             </div>
                                         </div>
                                     </label>
 
-                                    @error('foto_jurnal')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
-                                    @error('foto_jurnal.*')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['foto_jurnal'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback d-block"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    <?php $__errorArgs = ['foto_jurnal.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback d-block"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    <?php if(!$kegiatanLainnya->foto_jurnal && $errors->has('foto_jurnal') && !$errors->has('foto_jurnal.*')): ?>
+                                        <div class="invalid-feedback d-block">Foto jurnal wajib diisi.</div>
+                                    <?php endif; ?>
+                                    <?php if($errors->has('foto_jurnal') && !$errors->has('foto_jurnal.*') && $kegiatanLainnya->foto_jurnal): ?>
+                                        <div class="invalid-feedback d-block"><?php echo e($errors->first('foto_jurnal')); ?></div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
 
@@ -289,45 +316,54 @@
                                     <p class="file-upload-hint">Maksimal 10 dokumen, masing-masing hingga 10MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    @if ($sekretariat->dokumen_lpj)
+                                    <?php if($kegiatanLainnya->dokumen_lpj): ?>
                                         <div class="current-files-container" id="currentDokumenContainer">
                                             <div class="current-files-title">Dokumen Saat Ini:</div>
                                             <div class="d-flex flex-wrap gap-2">
-                                                @if (is_array($sekretariat->dokumen_lpj))
-                                                    @foreach ($sekretariat->dokumen_lpj as $index => $dokumen)
+                                                <?php if(is_array($kegiatanLainnya->dokumen_lpj)): ?>
+                                                    <?php $__currentLoopData = $kegiatanLainnya->dokumen_lpj; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $dokumen): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <div class="current-file-item">
                                                             <i class="fas fa-file-alt me-2 text-primary"
                                                                 style="font-size: 1.5rem;"></i>
                                                             <div>
                                                                 <small class="text-muted d-block">Dokumen
-                                                                    {{ $index + 1 }}</small>
-                                                                <a href="{{ asset('storage/' . $dokumen) }}"
+                                                                    <?php echo e($index + 1); ?></small>
+                                                                <a href="<?php echo e(asset('storage/' . $dokumen)); ?>"
                                                                     target="_blank" class="text-decoration-none small">
-                                                                    {{ basename($dokumen) }}
+                                                                    <?php echo e(basename($dokumen)); ?>
+
                                                                 </a>
                                                             </div>
                                                         </div>
-                                                    @endforeach
-                                                @else
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <?php else: ?>
                                                     <div class="current-file-item">
                                                         <i class="fas fa-file-alt me-2 text-primary"
                                                             style="font-size: 1.5rem;"></i>
                                                         <div>
                                                             <small class="text-muted d-block">File saat ini:</small>
-                                                            <a href="{{ asset('storage/' . $sekretariat->dokumen_lpj) }}"
+                                                            <a href="<?php echo e(asset('storage/' . $kegiatanLainnya->dokumen_lpj)); ?>"
                                                                 target="_blank" class="text-decoration-none small">
-                                                                {{ basename($sekretariat->dokumen_lpj) }}
+                                                                <?php echo e(basename($kegiatanLainnya->dokumen_lpj)); ?>
+
                                                             </a>
                                                         </div>
                                                     </div>
-                                                @endif
+                                                <?php endif; ?>
                                             </div>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
 
                                     <label for="dokumen_pendukung" class="file-upload-wrapper">
                                         <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung"
-                                            class="form-control @error('dokumen_pendukung') is-invalid @enderror"
+                                            class="form-control <?php $__errorArgs = ['dokumen_pendukung'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
 
                                         <div class="d-flex align-items-center gap-12 w-100">
@@ -336,23 +372,38 @@
                                             </div>
                                             <div class="flex-grow-1">
                                                 <p class="file-upload-text" id="dokumen-file-name-display">
-                                                    {{ $sekretariat->dokumen_pendukung ? 'Klik untuk mengganti dokumen' : 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah' }}
+                                                    <?php echo e($kegiatanLainnya->dokumen_lpj ? 'Klik untuk mengganti dokumen' : 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah'); ?>
+
                                                 </p>
                                                 <div id="dokumenPreviewContainer" class="file-preview"></div>
                                             </div>
                                         </div>
                                     </label>
 
-                                    @error('dokumen_pendukung')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
-                                    @error('dokumen_pendukung.*')
-                                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['dokumen_pendukung'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback d-block"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    <?php $__errorArgs = ['dokumen_pendukung.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback d-block"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                            @php
+                            <?php
                                 $fields = [
                                     'nama_program_kegiatan' => [
                                         'label' => 'Nama Program',
@@ -369,19 +420,19 @@
                                     'volume' => [
                                         'label' => 'Volume',
                                         'type' => 'text',
-                                        'placeholder' => 'Masukkan volume kegiatan (contoh: 20 unit, 1 kegiatan)',
+                                        'placeholder' => 'Contoh: 5 unit, 1 kegiatan',
                                         'db_field' => 'volume',
                                     ],
                                     'jumlah_harga_satuan' => [
                                         'label' => 'Jumlah Harga Satuan',
-                                        'type' => 'number',
-                                        'placeholder' => 'Masukkan jumlah harga satuan',
+                                        'type' => 'text',
+                                        'placeholder' => 'Rp 0',
                                         'db_field' => 'jumlah_harga_satuan',
                                     ],
                                     'jumlah_harga' => [
                                         'label' => 'Jumlah Harga',
-                                        'type' => 'number',
-                                        'placeholder' => 'Masukkan jumlah harga',
+                                        'type' => 'text',
+                                        'placeholder' => 'Rp 0',
                                         'db_field' => 'jumlah_harga',
                                     ],
                                     'keterangan_tambahan' => [
@@ -391,32 +442,46 @@
                                         'db_field' => 'keterangan_tambahan',
                                     ],
                                 ];
-                            @endphp
+                            ?>
 
-                            @foreach ($fields as $key => $field)
+                            <?php $__currentLoopData = $fields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $field): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="row align-items-center mb-3">
                                     <div class="col-md-3">
-                                        <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
+                                        <label for="<?php echo e($key); ?>" class="form-label"><?php echo e($field['label']); ?></label>
                                     </div>
                                     <div class="col-md-9">
-                                        <input type="{{ $field['type'] }}" name="{{ $key }}"
-                                            id="{{ $key }}"
-                                            class="form-control @error($key) is-invalid @enderror"
-                                            placeholder="{{ $field['placeholder'] ?? '' }}"
-                                            value="{{ old($key, $sekretariat->{$field['db_field']}) }}"
-                                            {{ in_array($key, ['nama_program_kegiatan', 'jenis_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga']) ? 'required' : '' }}>
+                                        <input type="<?php echo e($field['type']); ?>" name="<?php echo e($key); ?>"
+                                            id="<?php echo e($key); ?>"
+                                            class="form-control <?php $__errorArgs = [$key];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                            placeholder="<?php echo e($field['placeholder'] ?? ''); ?>"
+                                            'value="<?php echo e(old($key, $kegiatanLainnya->{$field['db_field']})); ?>"'
+                                            <?php echo e(in_array($key, ['nama_program_kegiatan', 'jenis_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga']) ? 'required' : ''); ?>>
 
-                                        @error($key)
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <?php $__errorArgs = [$key];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                             <div class="row mt-4">
                                 <div class="col-md-9 offset-md-3 d-flex justify-content-between">
                                     <button type="submit" class="btn btn-danger px-4">Update Data</button>
-                                    <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}"
+                                    <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.index')); ?>"
                                         class="btn btn-secondary px-4">Kembali</a>
                                 </div>
                             </div>
@@ -485,7 +550,7 @@
                         currentFotoContainer.style.display = 'block';
                     }
                     fotoFileNameDisplay.textContent =
-                        '{{ $sekretariat->foto_jurnal ? 'Klik untuk mengganti foto' : 'Seret dan lepas foto di sini, atau klik untuk mengunggah' }}';
+                        '<?php echo e($kegiatanLainnya->foto_jurnal ? 'Klik untuk mengganti foto' : 'Seret dan lepas foto di sini, atau klik untuk mengunggah'); ?>';
                     fotoPreviewContainer.innerHTML = '';
                 }
             });
@@ -563,7 +628,7 @@
                         currentDokumenContainer.style.display = 'block';
                     }
                     dokumenFileNameDisplay.textContent =
-                        '{{ $sekretariat->dokumen_pendukung ? 'Klik untuk mengganti dokumen' : 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah' }}';
+                        '<?php echo e($kegiatanLainnya->dokumen_lpj ? 'Klik untuk mengganti dokumen' : 'Seret dan lepas dokumen di sini, atau klik untuk mengunggah'); ?>';
                     dokumenPreviewContainer.innerHTML = '';
                 }
             });
@@ -604,7 +669,134 @@
 
             setupDragAndDrop('label[for="foto_jurnal"]', fotoUploadInput);
             setupDragAndDrop('label[for="dokumen_pendukung"]', dokumenUploadInput);
+            
+            // Format number fields
+            const hargaSatuanInput = document.querySelector('input[name="jumlah_harga_satuan"]');
+            const jumlahHargaInput = document.querySelector('input[name="jumlah_harga"]');
+            const volumeInput = document.querySelector('input[name="volume"]');
+            
+            // Format number with thousand separator
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            }
+            
+            // Parse formatted number
+            function parseNumber(value) {
+                return parseFloat(value.replace(/\./g, '')) || 0;
+            }
+            
+            // Format input as user types
+            function formatInput(input) {
+                let value = input.value.replace(/\D/g, ''); // Remove non-digit characters
+                if (value === '') {
+                    input.value = '';
+                    return;
+                }
+                
+                // Add thousand separators
+                value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                input.value = value;
+            }
+            
+            // Calculate total
+            function calculateTotal() {
+                if (!hargaSatuanInput || !jumlahHargaInput || !volumeInput) return;
+                
+                const volume = parseFloat(volumeInput.value) || 0;
+                const hargaSatuan = parseNumber(hargaSatuanInput.value);
+                const total = hargaSatuan * (volume || 1);
+                jumlahHargaInput.value = 'Rp ' + formatNumber(total);
+            }
+            
+            // Initialize formatting for number fields
+            if (hargaSatuanInput) {
+                // Format initial value
+                if (hargaSatuanInput.value) {
+                    const initialValue = parseNumber(hargaSatuanInput.value);
+                    hargaSatuanInput.value = formatNumber(initialValue);
+                }
+                
+                // Add input event listener
+                hargaSatuanInput.addEventListener('input', function() {
+                    formatInput(this);
+                    calculateTotal();
+                });
+            }
+            
+            // Make jumlah_harga readonly
+            if (jumlahHargaInput) {
+                jumlahHargaInput.readOnly = true;
+            }
+            
+            // Add event listener for volume input
+            if (volumeInput) {
+                volumeInput.addEventListener('input', calculateTotal);
+            }
+            
+            // Calculate initial total
+            calculateTotal();
+            
+            // Handle form submission
+            const form = document.getElementById('kegiatan-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Validasi foto jurnal jika tidak ada foto sebelumnya
+                    const fotoInput = document.getElementById('foto_jurnal');
+                    const currentFotoContainer = document.getElementById('currentFotoContainer');
+                    
+                    // Jika tidak ada foto sebelumnya dan tidak ada foto baru yang dipilih
+                    if (!currentFotoContainer && fotoInput.files.length === 0) {
+                        // Tampilkan pesan error
+                        let errorDiv = fotoInput.parentNode.querySelector('.invalid-feedback.d-block');
+                        if (!errorDiv) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.className = 'invalid-feedback d-block';
+                            fotoInput.parentNode.appendChild(errorDiv);
+                        }
+                        errorDiv.textContent = 'Foto jurnal wajib diisi.';
+                        fotoInput.classList.add('is-invalid');
+                        e.preventDefault();
+                        return;
+                    }
+                    
+                    // Prepare data for submission
+                    const hargaSatuanInput = document.querySelector('input[name="jumlah_harga_satuan"]');
+                    if (hargaSatuanInput) {
+                        const hargaSatuanValue = parseNumber(hargaSatuanInput.value);
+                        
+                        // Create hidden input with numeric value
+                        let hiddenHargaSatuan = document.querySelector('input[name="jumlah_harga_satuan"][type="hidden"]');
+                        if (!hiddenHargaSatuan) {
+                            hiddenHargaSatuan = document.createElement('input');
+                            hiddenHargaSatuan.type = 'hidden';
+                            hiddenHargaSatuan.name = 'jumlah_harga_satuan';
+                            form.appendChild(hiddenHargaSatuan);
+                        }
+                        hiddenHargaSatuan.value = hargaSatuanValue;
+                        
+                        // Disable original input to prevent submission
+                        hargaSatuanInput.disabled = true;
+                    }
+                });
+                
+                // Tampilkan pesan error jika ada error dari server
+                const fotoInput = document.getElementById('foto_jurnal');
+                const currentFotoContainer = document.getElementById('currentFotoContainer');
+                if (fotoInput && !currentFotoContainer) {
+                    // Cek apakah ada error dari server
+                    const errorElements = form.querySelectorAll('.invalid-feedback.d-block');
+                    let hasServerError = false;
+                    errorElements.forEach(element => {
+                        if (element.textContent.includes('Foto jurnal')) {
+                            hasServerError = true;
+                            fotoInput.classList.add('is-invalid');
+                        }
+                    });
+                }
+            }
         });
     </script>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/kegiatan-lainnya/edit.blade.php ENDPATH**/ ?>
