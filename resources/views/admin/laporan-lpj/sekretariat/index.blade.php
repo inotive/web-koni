@@ -472,15 +472,15 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header d-flex align-items-center" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
-                    <h5 class="modal-title" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
-                    <div class="ms-auto d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <h5 class="modal-title mb-0" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
                         <!-- Status Icon -->
-                        <div id="statusIconContainer" class="d-flex align-items-center me-2">
-                            <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
-                        </div>
-                        
-                        <button type="button" id="ajukanPerubahanBtn">
-                            <i class="bi bi-arrow-repeat" style="color: white"></i> <strong>Ajukan Perubahan</strong>
+                        <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
+                    </div>
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <button type="button" id="ajukanPerubahanBtn" class="btn">
+                            <i class="bi bi-arrow-repeat" style="color: white"></i>
+                            <strong>Ajukan Perubahan</strong>
                         </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
@@ -874,7 +874,7 @@
                     <img src="/storage/${path}"
                          alt="Preview"
                          class="preview-image"
-                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>">
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>'">
                 `;
             } else {
                 if (fileExtension === 'pdf') {
@@ -1048,11 +1048,11 @@
         
         // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
         if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
-            statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
-            statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
+            statusIcon.innerHTML = 'Terbuka';
+            statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
         } else {
-            statusIcon.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
-            statusIcon.className = 'badge bg-danger fs-7 d-flex align-items-center';
+            statusIcon.innerHTML = 'Terkunci';
+            statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
         }
     }
 
