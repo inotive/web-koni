@@ -598,7 +598,7 @@ body {
                                         </div>
 
 
-                                         <a href="{{ route('admin.konfigurasi.prestasi.export') }}" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
+                                         <a href="{{ url('/admin/konfigurasi/prestasi/export') }}" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
                                         <i class="fas fa-file-csv me-1"></i> Export
                                     </a>
                                         <div class="dropdown">
@@ -862,6 +862,70 @@ $(document).ready(function() {
                 e.preventDefault();
                 destroyItem(this);
             });
+            
+        // Export CSV button
+        $(document).on('click', '#export-csv', function(e) {
+            e.preventDefault();
+            
+            // Get the base export URL
+            const baseUrl = $(this).attr('href');
+            const url = new URL(baseUrl, window.location.origin);
+            
+            // Get all current parameters from the window URL
+            const currentParams = new URLSearchParams(window.location.search);
+            
+            // Append all current filter and search params to the export URL
+            currentParams.forEach((value, key) => {
+                if (key !== 'page') { // Don't include pagination in export
+                    url.searchParams.append(key, value);
+                }
+            });
+            
+            // Also get values directly from form elements in case they haven't been applied yet
+            const search = $('#search').val();
+            const filterTahun = $('#filter-tahun').val();
+            const filterMedali = $('#filter-medali').val();
+            const filterTingkat = $('#filter-tingkat').val();
+            
+            // Add form values to URL if they exist and aren't already in currentParams
+            if (search && !currentParams.has('search')) {
+                url.searchParams.set('search', search);
+            }
+            if (filterTahun && !currentParams.has('tahun')) {
+                url.searchParams.set('tahun', filterTahun);
+            }
+            if (filterMedali && !currentParams.has('medali')) {
+                url.searchParams.set('medali', filterMedali);
+            }
+            if (filterTingkat && !currentParams.has('tingkat')) {
+                url.searchParams.set('tingkat', filterTingkat);
+            }
+            
+            // Add current sorting parameters
+            const sortBy = new URLSearchParams(window.location.search).get('sort_by');
+            const order = new URLSearchParams(window.location.search).get('order');
+            
+            if (sortBy) {
+                url.searchParams.set('sort_by', sortBy);
+            }
+            if (order) {
+                url.searchParams.set('order', order);
+            }
+            
+            // Show a brief loading indication
+            const originalText = $(this).html();
+            $(this).html('<i class="fas fa-spinner fa-spin me-1"></i> Exporting...');
+            $(this).prop('disabled', true);
+            
+            // Navigate to the export URL
+            window.location.href = url.toString();
+            
+            // Reset button after a short delay (since page might redirect)
+            setTimeout(() => {
+                $(this).html(originalText);
+                $(this).prop('disabled', false);
+            }, 2000);
+        });
 
         updateFilterBadge();
     }
