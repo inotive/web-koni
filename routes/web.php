@@ -134,13 +134,13 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::prefix('prestasi')->name('prestasi.')->group(function () {
             // Rute utama prestasi
             Route::get('/', [PrestasiController::class, 'index'])->name('index');
+            Route::get('/export', [PrestasiController::class, 'exportCsv'])->name('export');
             Route::get('/create', [PrestasiController::class, 'create'])->name('create');
             Route::post('/', [PrestasiController::class, 'store'])->name('store');
             Route::get('/{prestasi}', [PrestasiController::class, 'show'])->name('show');
             Route::get('/{prestasi}/edit', [PrestasiController::class, 'edit'])->name('edit');
             Route::put('/{prestasi}', [PrestasiController::class, 'update'])->name('update');
             Route::delete('/{prestasi}', [PrestasiController::class, 'destroy'])->name('destroy');
-            Route::get('/export', [PrestasiController::class, 'exportCsv'])->name('prestasi.export');
 
             // Prestasi untuk Atlet
             Route::prefix('atlet')->name('atlet.')->group(function () {

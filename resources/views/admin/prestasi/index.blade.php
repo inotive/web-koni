@@ -598,7 +598,7 @@ body {
                                         </div>
 
 
-                                         <a href="{{ url('/admin/konfigurasi/prestasi/export') }}" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
+                                         <a href="{{ route('admin.konfigurasi.prestasi.export') }}" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
                                         <i class="fas fa-file-csv me-1"></i> Export
                                     </a>
                                         <div class="dropdown">

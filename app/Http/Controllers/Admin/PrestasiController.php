@@ -52,43 +52,43 @@ class PrestasiController extends Controller
 
         switch ($sortBy) {
             case 'nama':
-                $query->join(DB::raw('(
-                    SELECT id, nama, "App\Models\Atlet" as type FROM atlets
+                $query->join(DB::raw("(
+                    SELECT id, nama, 'App\Models\Atlet' as type FROM atlets
                     UNION ALL
-                    SELECT id, nama, "App\Models\Pelatih" as type FROM pelatih
-                ) as subjects'), function($join) {
+                    SELECT id, nama, 'App\Models\Pelatih' as type FROM pelatih
+                ) as subjects"), function($join) {
                     $join->on('prestasis.subject_id', '=', 'subjects.id')
                          ->on('prestasis.subject_type', '=', 'subjects.type');
                 })->orderBy('subjects.nama', $order);
                 break;
 
             case 'jenis_kelamin':
-                $query->join(DB::raw('(
+                $query->join(DB::raw("(
                     SELECT id,
-                           CASE WHEN jenis_kelamin = "L" OR jenis_kelamin = "Laki-laki" THEN "Laki-laki"
-                                WHEN jenis_kelamin = "P" OR jenis_kelamin = "Perempuan" THEN "Perempuan"
+                           CASE WHEN jenis_kelamin = 'L' OR jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
+                                WHEN jenis_kelamin = 'P' OR jenis_kelamin = 'Perempuan' THEN 'Perempuan'
                                 ELSE jenis_kelamin END as gender,
-                           "App\Models\Atlet" as type
+                           'App\Models\Atlet' as type
                     FROM atlets
                     UNION ALL
                     SELECT id,
-                           CASE WHEN kelamin = "L" OR kelamin = "Laki-laki" THEN "Laki-laki"
-                                WHEN kelamin = "P" OR kelamin = "Perempuan" THEN "Perempuan"
+                           CASE WHEN kelamin = 'L' OR kelamin = 'Laki-laki' THEN 'Laki-laki'
+                                WHEN kelamin = 'P' OR kelamin = 'Perempuan' THEN 'Perempuan'
                                 ELSE kelamin END as gender,
-                           "App\Models\Pelatih" as type
+                           'App\Models\Pelatih' as type
                     FROM pelatih
-                ) as subjects'), function($join) {
+                ) as subjects"), function($join) {
                     $join->on('prestasis.subject_id', '=', 'subjects.id')
                          ->on('prestasis.subject_type', '=', 'subjects.type');
                 })->orderBy('subjects.gender', $order);
                 break;
 
             case 'cabor':
-                $query->join(DB::raw('(
-                    SELECT id, cabor_id, "App\Models\Atlet" as type FROM atlets
+                $query->join(DB::raw("(
+                    SELECT id, cabor_id, 'App\Models\Atlet' as type FROM atlets
                     UNION ALL
-                    SELECT id, cabor_id, "App\Models\Pelatih" as type FROM pelatih
-                ) as subjects'), function($join) {
+                    SELECT id, cabor_id, 'App\Models\Pelatih' as type FROM pelatih
+                ) as subjects"), function($join) {
                     $join->on('prestasis.subject_id', '=', 'subjects.id')
                          ->on('prestasis.subject_type', '=', 'subjects.type');
                 })
@@ -324,8 +324,19 @@ class PrestasiController extends Controller
         \Log::info('Export CSV method called', [
             'url' => $request->fullUrl(),
             'method' => $request->method(),
-            'route' => $request->route() ? $request->route()->getName() : 'unknown'
+            'route' => $request->route() ? $request->route()->getName() : 'unknown',
+            'user_id' => auth()->id(),
+            'user_authenticated' => auth()->check()
         ]);
+        
+        // Log all request parameters
+        \Log::info('Request parameters', ['params' => $request->all()]);
+        
+        // Redirect to login if user is not authenticated
+        if (!auth()->check()) {
+            \Log::warning('Unauthenticated access to export route');
+            return redirect()->route('login');
+        }
         
         try {
             \Log::info('Export CSV called', ['request' => $request->all()]);
@@ -351,43 +362,43 @@ class PrestasiController extends Controller
 
             switch ($sortBy) {
                 case 'nama':
-                    $query->join(DB::raw('(
-                        SELECT id, nama, "App\Models\Atlet" as type FROM atlets
+                    $query->join(DB::raw("(
+                        SELECT id, nama, 'App\Models\Atlet' as type FROM atlets
                         UNION ALL
-                        SELECT id, nama, "App\Models\Pelatih" as type FROM pelatih
-                    ) as subjects'), function($join) {
+                        SELECT id, nama, 'App\Models\Pelatih' as type FROM pelatih
+                    ) as subjects"), function($join) {
                         $join->on('prestasis.subject_id', '=', 'subjects.id')
                              ->on('prestasis.subject_type', '=', 'subjects.type');
                     })->orderBy('subjects.nama', $order);
                     break;
 
                 case 'jenis_kelamin':
-                    $query->join(DB::raw('(
+                    $query->join(DB::raw("(
                         SELECT id,
-                               CASE WHEN jenis_kelamin = "L" OR jenis_kelamin = "Laki-laki" THEN "Laki-laki"
-                                    WHEN jenis_kelamin = "P" OR jenis_kelamin = "Perempuan" THEN "Perempuan"
+                               CASE WHEN jenis_kelamin = 'L' OR jenis_kelamin = 'Laki-laki' THEN 'Laki-laki'
+                                    WHEN jenis_kelamin = 'P' OR jenis_kelamin = 'Perempuan' THEN 'Perempuan'
                                     ELSE jenis_kelamin END as gender,
-                               "App\Models\Atlet" as type
+                               'App\Models\Atlet' as type
                         FROM atlets
                         UNION ALL
                         SELECT id,
-                               CASE WHEN kelamin = "L" OR kelamin = "Laki-laki" THEN "Laki-laki"
-                                    WHEN kelamin = "P" OR kelamin = "Perempuan" THEN "Perempuan"
+                               CASE WHEN kelamin = 'L' OR kelamin = 'Laki-laki' THEN 'Laki-laki'
+                                    WHEN kelamin = 'P' OR kelamin = 'Perempuan' THEN 'Perempuan'
                                     ELSE kelamin END as gender,
-                               "App\Models\Pelatih" as type
+                               'App\Models\Pelatih' as type
                         FROM pelatih
-                    ) as subjects'), function($join) {
+                    ) as subjects"), function($join) {
                         $join->on('prestasis.subject_id', '=', 'subjects.id')
                              ->on('prestasis.subject_type', '=', 'subjects.type');
                     })->orderBy('subjects.gender', $order);
                     break;
 
                 case 'cabor':
-                    $query->join(DB::raw('(
-                        SELECT id, cabor_id, "App\Models\Atlet" as type FROM atlets
+                    $query->join(DB::raw("(
+                        SELECT id, cabor_id, 'App\Models\Atlet' as type FROM atlets
                         UNION ALL
-                        SELECT id, cabor_id, "App\Models\Pelatih" as type FROM pelatih
-                    ) as subjects'), function($join) {
+                        SELECT id, cabor_id, 'App\Models\Pelatih' as type FROM pelatih
+                    ) as subjects"), function($join) {
                         $join->on('prestasis.subject_id', '=', 'subjects.id')
                              ->on('prestasis.subject_type', '=', 'subjects.type');
                     })
@@ -561,12 +572,20 @@ class PrestasiController extends Controller
                 'exception' => $e,
                 'trace' => $e->getTraceAsString()
             ]);
+            // Return a proper response even in error cases
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['error' => 'Terjadi kesalahan saat export data: ' . $e->getMessage()], 500);
+            }
             return redirect()->back()->with('error', 'Terjadi kesalahan saat export data: ' . $e->getMessage());
         } catch (\Throwable $e) {
             \Log::error('Export CSV Throwable: ' . $e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString()
             ]);
+            // Return a proper response even in error cases
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['error' => 'Terjadi kesalahan tak terduga saat export data.'], 500);
+            }
             return redirect()->back()->with('error', 'Terjadi kesalahan tak terduga saat export data.');
         }
     }
