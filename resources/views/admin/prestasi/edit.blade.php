@@ -117,11 +117,11 @@
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label class="form-label">Pemilik Prestasi</label>
+                                    <label class="form-label">Nama Atlet</label>
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" class="form-control"
-                                        value="{{ $prestasi->subject->nama }} ({{ class_basename($prestasi->subject_type) }})"
+                                        value="{{ $prestasi->subject->nama }} (Atlet)"
                                         readonly>
                                 </div>
                             </div>

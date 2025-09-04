@@ -194,7 +194,7 @@ class PrestasiController extends Controller
         $prestasi->save();
 
         return redirect()->route('admin.konfigurasi.prestasi.index')
-            ->with('success', 'Prestasi berhasil ditambahkan!')
+            ->with('OK', 'Prestasi berhasil ditambahkan!')
             ->with('action', 'store');
     }
 
@@ -242,14 +242,14 @@ class PrestasiController extends Controller
         ]));
 
         return redirect()->route('admin.konfigurasi.prestasi.index')
-            ->with('success', 'Prestasi berhasil diperbarui!')
+            ->with('OK', 'Prestasi berhasil diperbarui!')
             ->with('action', 'update');
     }
 
     public function destroy(Prestasi $prestasi)
     {
         $prestasi->delete();
-        return back()->with('success', 'Prestasi berhasil dihapus!')
+        return back()->with('OK', 'Prestasi berhasil dihapus!')
             ->with('action', 'destroy');
     }
 
@@ -279,7 +279,7 @@ class PrestasiController extends Controller
         $prestasi->save();
 
         return redirect()->route('admin.konfigurasi.atlet.show', $atlet)
-            ->with('success', 'Prestasi atlet berhasil ditambahkan!');
+            ->with('OK', 'Prestasi atlet berhasil ditambahkan!');
     }
 
     public function createForPelatih(Pelatih $pelatih)
@@ -308,6 +308,6 @@ class PrestasiController extends Controller
         $prestasi->save();
 
         return redirect()->route('admin.konfigurasi.pelatih.show', $pelatih)
-            ->with('success', 'Prestasi pelatih berhasil ditambahkan!');
+            ->with('OK', 'Prestasi pelatih berhasil ditambahkan!');
     }
 }

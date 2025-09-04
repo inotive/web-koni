@@ -45,7 +45,7 @@
         }
 
         /* Buttons */
-        .btn-add-pelatih {
+        .btn-add-atlet {
             background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
             border: none;
             border-radius: 8px;
@@ -56,7 +56,7 @@
             box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
         }
 
-        .btn-add-pelatih:hover {
+        .btn-add-atlet:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
         }
@@ -515,8 +515,7 @@
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Atlet</h2>
-        <a href="{{ route('admin.konfigurasi.atlet.create') }}" class="btn"
-            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
+        <a href="{{ route('admin.konfigurasi.atlet.create') }}" class="btn btn-add-atlet">
             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Atlet
         </a>
     </div>
@@ -543,7 +542,7 @@
                                     </div>
 
                                     <div class="dropdown">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" style="border: #c7cdd3 1px solid; border-radius: 8px;"
                                             data-bs-toggle="dropdown">
                                             <i class="fas fa-filter me-1"></i> Filter
                                             <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
