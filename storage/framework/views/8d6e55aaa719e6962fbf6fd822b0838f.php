@@ -601,12 +601,11 @@ body {
                                         <i class="fas fa-file-csv me-1"></i> Export
                                     </a>
                                         <div class="dropdown">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" style="border: #c7cdd3 1px solid; border-radius: 8px;"
-                                                data-bs-toggle="dropdown" style="background-color: transparent !important; border: 1px solid #ced4da !important; box-shadow: none !important;">
-                                                <i class="fas fa-filter me-1"></i> Filter
-                                                <span id="filter-count"
-                                                    class="badge badge-circle badge-danger ms-1 d-none">0</span>
-                                            </button>
+                                        <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom" type="button"
+                                            data-bs-toggle="dropdown">
+                                            <i class="fas fa-filter me-1"></i> Filter
+                                            <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                        </button>
                                             <div class="dropdown-menu p-3 shadow" style="min-width: 280px; border: 1px solid #ced4da;">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold">
