@@ -98,6 +98,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::resource('surat', SuratController::class);
 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
+        Route::get('atlet/export', [AtletController::class, 'exportCsv'])->name('atlet.export');
         Route::resource('atlet', AtletController::class);
         Route::get('pelatih/export', [PelatihController::class, 'exportCsv'])->name('pelatih.export');
         Route::resource('pelatih', PelatihController::class);
@@ -139,6 +140,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/{prestasi}/edit', [PrestasiController::class, 'edit'])->name('edit');
             Route::put('/{prestasi}', [PrestasiController::class, 'update'])->name('update');
             Route::delete('/{prestasi}', [PrestasiController::class, 'destroy'])->name('destroy');
+            Route::get('/export', [PrestasiController::class, 'exportCsv'])->name('export');
 
             // Prestasi untuk Atlet
             Route::prefix('atlet')->name('atlet.')->group(function () {

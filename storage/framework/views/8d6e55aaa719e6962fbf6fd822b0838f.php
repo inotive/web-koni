@@ -447,6 +447,16 @@ body {
 
 
 
+/* Filter Button Custom */
+.filter-btn-custom {
+    border: 1px solid #dee2e6 !important;
+    background-color: white;
+}
+
+.filter-btn-custom:hover {
+    background-color: #f8f9fa;
+}
+
 /* Toast Notifications */
 .notification-toast {
     position: fixed;
@@ -586,6 +596,10 @@ body {
                                             </button>
                                         </div>
 
+
+                                         <a href="<?php echo e(route('admin.konfigurasi.prestasi.export')); ?>" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
+                                        <i class="fas fa-file-csv me-1"></i> Export
+                                    </a>
                                         <div class="dropdown">
                                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" style="border: #c7cdd3 1px solid; border-radius: 8px;"
                                                 data-bs-toggle="dropdown" style="background-color: transparent !important; border: 1px solid #ced4da !important; box-shadow: none !important;">

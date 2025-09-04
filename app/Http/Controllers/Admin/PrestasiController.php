@@ -9,6 +9,7 @@ use App\Models\Prestasi;
 use App\Models\CabangOlahraga;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PrestasiController extends Controller
 {
@@ -52,9 +53,9 @@ class PrestasiController extends Controller
         switch ($sortBy) {
             case 'nama':
                 $query->join(DB::raw('(
-                    SELECT id, nama, "App\\\\Models\\\\Atlet" as type FROM atlets
+                    SELECT id, nama, "App\Models\Atlet" as type FROM atlets
                     UNION ALL
-                    SELECT id, nama, "App\\\\Models\\\\Pelatih" as type FROM pelatih
+                    SELECT id, nama, "App\Models\Pelatih" as type FROM pelatih
                 ) as subjects'), function($join) {
                     $join->on('prestasis.subject_id', '=', 'subjects.id')
                          ->on('prestasis.subject_type', '=', 'subjects.type');
@@ -67,14 +68,14 @@ class PrestasiController extends Controller
                            CASE WHEN jenis_kelamin = "L" OR jenis_kelamin = "Laki-laki" THEN "Laki-laki"
                                 WHEN jenis_kelamin = "P" OR jenis_kelamin = "Perempuan" THEN "Perempuan"
                                 ELSE jenis_kelamin END as gender,
-                           "App\\\\Models\\\\Atlet" as type
+                           "App\Models\Atlet" as type
                     FROM atlets
                     UNION ALL
                     SELECT id,
                            CASE WHEN kelamin = "L" OR kelamin = "Laki-laki" THEN "Laki-laki"
                                 WHEN kelamin = "P" OR kelamin = "Perempuan" THEN "Perempuan"
                                 ELSE kelamin END as gender,
-                           "App\\\\Models\\\\Pelatih" as type
+                           "App\Models\Pelatih" as type
                     FROM pelatih
                 ) as subjects'), function($join) {
                     $join->on('prestasis.subject_id', '=', 'subjects.id')
@@ -84,9 +85,9 @@ class PrestasiController extends Controller
 
             case 'cabor':
                 $query->join(DB::raw('(
-                    SELECT id, cabor_id, "App\\\\Models\\\\Atlet" as type FROM atlets
+                    SELECT id, cabor_id, "App\Models\Atlet" as type FROM atlets
                     UNION ALL
-                    SELECT id, cabor_id, "App\\\\Models\\\\Pelatih" as type FROM pelatih
+                    SELECT id, cabor_id, "App\Models\Pelatih" as type FROM pelatih
                 ) as subjects'), function($join) {
                     $join->on('prestasis.subject_id', '=', 'subjects.id')
                          ->on('prestasis.subject_type', '=', 'subjects.type');
@@ -309,5 +310,218 @@ class PrestasiController extends Controller
 
         return redirect()->route('admin.konfigurasi.pelatih.show', $pelatih)
             ->with('OK', 'Prestasi pelatih berhasil ditambahkan!');
+    }
+
+    public function exportCsv(Request $request)
+    {
+        // Build the same query as the index method to ensure consistency
+        $allowedSorts = [
+            'nama', 'jenis_kelamin', 'nama_prestasi', 'cabor', 'tingkat',
+            'tempat', 'tahun', 'medali', 'updated_at', 'created_at'
+        ];
+
+        $sortBy = $request->get('sort_by', 'created_at');
+        $order = strtolower($request->get('order', 'desc'));
+
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'created_at';
+        }
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'desc';
+        }
+
+        $query = Prestasi::with(['subject', 'cabangOlahraga'])
+            ->select('prestasis.*');
+
+        switch ($sortBy) {
+            case 'nama':
+                $query->join(DB::raw('(
+                    SELECT id, nama, "App\Models\Atlet" as type FROM atlets
+                    UNION ALL
+                    SELECT id, nama, "App\Models\Pelatih" as type FROM pelatih
+                ) as subjects'), function($join) {
+                    $join->on('prestasis.subject_id', '=', 'subjects.id')
+                         ->on('prestasis.subject_type', '=', 'subjects.type');
+                })->orderBy('subjects.nama', $order);
+                break;
+
+            case 'jenis_kelamin':
+                $query->join(DB::raw('(
+                    SELECT id,
+                           CASE WHEN jenis_kelamin = "L" OR jenis_kelamin = "Laki-laki" THEN "Laki-laki"
+                                WHEN jenis_kelamin = "P" OR jenis_kelamin = "Perempuan" THEN "Perempuan"
+                                ELSE jenis_kelamin END as gender,
+                           "App\Models\Atlet" as type
+                    FROM atlets
+                    UNION ALL
+                    SELECT id,
+                           CASE WHEN kelamin = "L" OR kelamin = "Laki-laki" THEN "Laki-laki"
+                                WHEN kelamin = "P" OR kelamin = "Perempuan" THEN "Perempuan"
+                                ELSE kelamin END as gender,
+                           "App\Models\Pelatih" as type
+                    FROM pelatih
+                ) as subjects'), function($join) {
+                    $join->on('prestasis.subject_id', '=', 'subjects.id')
+                         ->on('prestasis.subject_type', '=', 'subjects.type');
+                })->orderBy('subjects.gender', $order);
+                break;
+
+            case 'cabor':
+                $query->join(DB::raw('(
+                    SELECT id, cabor_id, "App\Models\Atlet" as type FROM atlets
+                    UNION ALL
+                    SELECT id, cabor_id, "App\Models\Pelatih" as type FROM pelatih
+                ) as subjects'), function($join) {
+                    $join->on('prestasis.subject_id', '=', 'subjects.id')
+                         ->on('prestasis.subject_type', '=', 'subjects.type');
+                })
+                ->join('cabang_olahragas', 'subjects.cabor_id', '=', 'cabang_olahragas.id')
+                ->orderBy('cabang_olahragas.nama_cabor', $order);
+                break;
+
+            default:
+                $query->orderBy($sortBy, $order);
+                break;
+        }
+
+        // Apply the same filters as the index method
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_prestasi', 'like', "%{$search}%")
+                    ->orWhere('tingkat', 'like', "%{$search}%")
+                    ->orWhere('tempat', 'like', "%{$search}%")
+                    ->orWhereHasMorph('subject', [Atlet::class, Pelatih::class], function ($q) use ($search) {
+                        $q->where('nama', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        if ($request->filled('medali')) {
+            $query->where('medali', $request->medali);
+        }
+
+        if ($request->filled('tahun')) {
+            $query->where('tahun', $request->tahun);
+        }
+
+        if ($request->filled('tingkat')) {
+            $query->where('tingkat', $request->tingkat);
+        }
+
+        if ($request->filled('subject_type')) {
+            $query->where('subject_type', $request->subject_type === 'atlet' ? Atlet::class : Pelatih::class);
+        }
+
+        if ($request->filled('cabor')) {
+            $query->whereHasMorph('subject', [Atlet::class, Pelatih::class], function ($q) use ($request) {
+                $q->where('cabor_id', $request->cabor);
+            });
+        }
+
+        // Get all matching records for export
+        $prestasiData = $query->get();
+
+        // Generate the CSV response using StreamedResponse
+        $response = new StreamedResponse(function() use ($prestasiData) {
+            $handle = fopen('php://output', 'w');
+
+            // Set UTF-8 BOM for proper Excel compatibility
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            // CSV Headers
+            fputcsv($handle, [
+                'No',
+                'Nama',
+                'Role',
+                'Jenis Kelamin',
+                'Nama Prestasi',
+                'Kejuaraan',
+                'Cabang Olahraga',
+                'Tingkat',
+                'Tempat',
+                'Tahun',
+                'Medali'
+            ]);
+
+            foreach ($prestasiData as $index => $prestasi) {
+                // Get subject information
+                $subject = $prestasi->subject;
+                $role = $subject instanceof Atlet ? 'Atlet' : 'Pelatih';
+                
+                // Get jenis kelamin
+                $jenisKelamin = '';
+                if ($subject) {
+                    if (isset($subject->jenis_kelamin)) {
+                        $jk = $subject->jenis_kelamin;
+                        if ($jk === 'L' || $jk === 'Laki-laki') {
+                            $jenisKelamin = 'Laki-laki';
+                        } elseif ($jk === 'P' || $jk === 'Perempuan') {
+                            $jenisKelamin = 'Perempuan';
+                        } else {
+                            $jenisKelamin = $jk;
+                        }
+                    } elseif (isset($subject->kelamin)) {
+                        $jk = $subject->kelamin;
+                        if ($jk === 'L' || $jk === 'Laki-laki') {
+                            $jenisKelamin = 'Laki-laki';
+                        } elseif ($jk === 'P' || $jk === 'Perempuan') {
+                            $jenisKelamin = 'Perempuan';
+                        } else {
+                            $jenisKelamin = $jk;
+                        }
+                    }
+                }
+
+                fputcsv($handle, [
+                    $index + 1, // Row number
+                    $subject ? $subject->nama : '-',
+                    $role,
+                    $jenisKelamin ?: '-',
+                    $prestasi->nama_prestasi,
+                    $prestasi->kejuaraan,
+                    $prestasi->cabangOlahraga ? $prestasi->cabangOlahraga->nama_cabor : '-',
+                    $prestasi->tingkat,
+                    $prestasi->tempat,
+                    $prestasi->tahun,
+                    $prestasi->medali
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        // Generate filename with timestamp and applied filters
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filterInfo = '';
+
+        if ($request->filled('search')) {
+            $filterInfo .= '_search';
+        }
+        if ($request->filled('medali')) {
+            $filterInfo .= '_medali';
+        }
+        if ($request->filled('tahun')) {
+            $filterInfo .= '_tahun';
+        }
+        if ($request->filled('tingkat')) {
+            $filterInfo .= '_tingkat';
+        }
+        if ($request->filled('subject_type')) {
+            $filterInfo .= '_role';
+        }
+        if ($request->filled('cabor')) {
+            $filterInfo .= '_cabor';
+        }
+
+        $filename = "prestasi_export{$filterInfo}_{$timestamp}.csv";
+
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}\"");
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+
+        return $response;
     }
 }
