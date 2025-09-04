@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Detail Pelatih'); ?>
+<?php $__env->startSection('mainSection', 'Konfigurasi'); ?>
+<?php $__env->startSection('subSection', 'Pelatih'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.konfigurasi.pelatih.index')); ?>
+<?php $__env->startSection('currentSection', 'Detail Pelatih'); ?>
 
-@section('pageTitle', 'Detail Pelatih')
-@section('mainSection', 'Konfigurasi')
-@section('subSection', 'Pelatih')
-@section('subSectionUrl', route('admin.konfigurasi.pelatih.index'))
-@section('currentSection', 'Detail Pelatih')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     /* Base Layout */
     body { background-color: #f5f5f5 !important; }
@@ -361,21 +359,21 @@
                         <p class="detail-label-text">Foto</p>
                     </div>
                     <div class="detail-photo-container">
-                        @if ($pelatih->foto)
+                        <?php if($pelatih->foto): ?>
                             <div class="detail-photo-wrapper">
-                                <img src="{{ asset('storage/' . $pelatih->foto) }}" alt="Foto Pelatih" class="detail-photo">
+                                <img src="<?php echo e(asset('storage/' . $pelatih->foto)); ?>" alt="Foto Pelatih" class="detail-photo">
                             </div>
-                        @else
+                        <?php else: ?>
                             <div class="detail-photo-wrapper">
                                 <div style="width: 100%; height: 100%; background-color: #f1f1f4; display: flex; align-items: center; justify-content: center;">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
                                 </div>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
 
-                @php
+                <?php
                     $fields = [
                         ['label' => 'Nama', 'value' => $pelatih->nama],
                         ['label' => 'Cabor', 'value' => $pelatih->cabangOlahraga ? $pelatih->cabangOlahraga->nama_cabor : '-'],
@@ -386,20 +384,20 @@
                         ['label' => 'Umur', 'value' => \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age . ' Tahun'],
                         ['label' => 'Kelamin', 'value' => $pelatih->kelamin == 'L' ? 'Laki-laki' : 'Perempuan'],
                     ];
-                @endphp
+                ?>
 
-                @foreach($fields as $field)
+                <?php $__currentLoopData = $fields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $field): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="detail-divider"></div>
                     <div class="detail-row">
                         <div class="detail-label">
-                            <p class="detail-label-text">{{ $field['label'] }}</p>
+                            <p class="detail-label-text"><?php echo e($field['label']); ?></p>
                         </div>
-                        <p class="detail-value">{{ $field['value'] }}</p>
+                        <p class="detail-value"><?php echo e($field['value']); ?></p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
                         </div>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                 <!-- Ketersediaan Row -->
                 <div class="detail-divider"></div>
@@ -409,10 +407,10 @@
                     </div>
                     <div class="detail-value">
                         <select name="ketersediaan" id="ketersediaanSelect" class="ketersediaan-dropdown"
-                                data-status="{{ strtolower(str_replace('-', '-', $pelatih->ketersediaan)) }}"
+                                data-status="<?php echo e(strtolower(str_replace('-', '-', $pelatih->ketersediaan))); ?>"
                                 onchange="submitKetersediaanForm()">
-                            <option value="Tersedia" {{ $pelatih->ketersediaan == 'Tersedia' ? 'selected' : '' }}>Tersedia</option>
-                            <option value="Tidak-Tersedia" {{ $pelatih->ketersediaan == 'Tidak-Tersedia' ? 'selected' : '' }}>Tidak Tersedia</option>
+                            <option value="Tersedia" <?php echo e($pelatih->ketersediaan == 'Tersedia' ? 'selected' : ''); ?>>Tersedia</option>
+                            <option value="Tidak-Tersedia" <?php echo e($pelatih->ketersediaan == 'Tidak-Tersedia' ? 'selected' : ''); ?>>Tidak Tersedia</option>
                         </select>
                     </div>
                 </div>
@@ -424,42 +422,40 @@
                         <p class="detail-label-text">Alamat</p>
                     </div>
                     <div class="detail-value">
-                        @if($pelatih->alamatkota && $pelatih->alamatprovinsi)
-                            <div><strong>{{ $pelatih->alamatkota }}, {{ $pelatih->alamatprovinsi }}</strong></div>
-                            @if($pelatih->alamat)
-                                <div style="font-size: 12px; color: #78829d; margin-top: 4px;">{{ $pelatih->alamat }}</div>
-                            @endif
-                        @elseif($pelatih->alamat)
-                            <div>{{ $pelatih->alamat }}</div>
-                        @else
+                        <?php if($pelatih->alamatkota && $pelatih->alamatprovinsi): ?>
+                            <div><strong><?php echo e($pelatih->alamatkota); ?>, <?php echo e($pelatih->alamatprovinsi); ?></strong></div>
+                            <?php if($pelatih->alamat): ?>
+                                <div style="font-size: 12px; color: #78829d; margin-top: 4px;"><?php echo e($pelatih->alamat); ?></div>
+                            <?php endif; ?>
+                        <?php elseif($pelatih->alamat): ?>
+                            <div><?php echo e($pelatih->alamat); ?></div>
+                        <?php else: ?>
                             <span class="empty-value">Belum ada alamat yang tercantum</span>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- <div class="detail-card">
-            @include('admin.pelatih._tableprestasi')
-        </div> --}}
+        <div class="detail-card">
+            <?php echo $__env->make('admin.pelatih._tableprestasi', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        </div>
 
         <div class="detail-actions">
-            <a href="{{
-                match (request('back')) {
+            <a href="<?php echo e(match (request('back')) {
                     'cabor'     => route('admin.konfigurasi.cabang-olahraga.show', $pelatih->cabor_id),
                     'prestasi' => route('admin.konfigurasi.prestasi.index', $pelatih->id),
                     default     => route('admin.konfigurasi.pelatih.index'),
-                }
-            }}" class="btn btn-light-primary">
+                }); ?>" class="btn btn-light-primary">
                 <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
             </a>
         </div>
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
 <script>
     // Ketersediaan form submission
     function submitKetersediaanForm() {
@@ -482,7 +478,7 @@
         formData.append('_method', 'PATCH');
         formData.append('ketersediaan', selectedValue);
 
-        fetch('{{ route("admin.konfigurasi.pelatih.updateKetersediaan", $pelatih->id) }}', {
+        fetch('<?php echo e(route("admin.konfigurasi.pelatih.updateKetersediaan", $pelatih->id)); ?>', {
             method: 'POST',
             body: formData,
             headers: {
@@ -535,7 +531,7 @@
                 ajax: 1
             });
 
-            fetch(`{{ route('admin.konfigurasi.pelatih.show', $pelatih->id) }}?${params}`, {
+            fetch(`<?php echo e(route('admin.konfigurasi.pelatih.show', $pelatih->id)); ?>?${params}`, {
                 method: 'GET',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
@@ -696,4 +692,6 @@
         if (select) updateSelectStatus(select, select.value);
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/pelatih/show.blade.php ENDPATH**/ ?>
