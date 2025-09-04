@@ -126,25 +126,21 @@
     border: none !important;
 }
 
-        .table th:nth-child(2),
-.table td:nth-child(2) {
-    width: 40% !important;
-    padding: 0.75rem !important;
-    max-width: 30% !important;
+.table td:nth-child(2),
+.table th:nth-child(2) {
+    max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    background-color: #ffffff;
-    border: none !important;
 }
 
-        .table th:nth-child(3),
-.table td:nth-child(3) {
-    width: 35% !important;
-    padding: 0.75rem !important;
-    background-color: #ffffff;
-    border: none !important;
-    text-align: left !important;
+/* 📌 Kolom File Dokumen */
+.table td:nth-child(3),
+.table th:nth-child(3) {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
         .table th:nth-child(4),
@@ -1516,6 +1512,16 @@
                     });
                 }
             });
+
+            $(window).on('resize', function() {
+    if ($('#tambahFileModal').hasClass('show')) {
+        // Terapkan kembali styling lebar tetap
+        $('#tambahFileModal .modal-dialog').css({
+            'max-width': '600px',
+            'margin': '1rem auto'
+        });
+    }
+});
             
             // Tambahkan event listener untuk memastikan styling tetap diterapkan
             $('#editFileModal').on('shown.bs.modal', function() {
@@ -1785,27 +1791,30 @@
 
             // Show file preview in dropzone
             function showFilePreview(file, dropzoneElement) {
-                const fileExtension = file.name.split('.').pop().toLowerCase();
-                const fileIcon = getFileIconForPreview(fileExtension);
-                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const fileIcon = getFileIconForPreview(fileExtension);
+    const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+    
+    // Buat nama file dengan elipsis untuk tampilan (sama seperti modal edit)
+    const displayFileName = createEllipsisText(file.name, 35);
 
-                dropzoneElement.innerHTML = `
-                    <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded" style="width: 100%; max-width: 100%; box-sizing: border-box;">
-                        <div class="d-flex align-items-center" style="flex: 1; min-width: 0; max-width: calc(100% - 40px);">
-                            <i class="${fileIcon} fa-2x me-3 flex-shrink-0"></i>
-                            <div style="flex: 1; min-width: 0; overflow: hidden;">
-                                <div class="fw-bold text-truncate" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.name}">
-                                    ${file.name}
-                                </div>
-                                <small class="text-muted">${fileSize} MB</small>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeSelectedFile()" style="flex-shrink: 0; margin-left: 10px;">
-                            <i class="fas fa-times"></i>
-                        </button>
+    dropzoneElement.innerHTML = `
+        <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded" style="width: 100%; max-width: 100%; box-sizing: border-box;">
+            <div class="d-flex align-items-center" style="flex: 1; min-width: 0; max-width: calc(100% - 40px);">
+                <i class="${fileIcon} fa-2x me-3 flex-shrink-0"></i>
+                <div style="flex: 1; min-width: 0; overflow: hidden;">
+                    <div class="fw-bold" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;" title="${file.name}">
+                        ${displayFileName}
                     </div>
-                `;
-            }
+                    <small class="text-muted">${fileSize} MB</small>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeSelectedFile()" style="flex-shrink: 0; margin-left: 10px;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+}
 
             // Remove selected file
             function removeSelectedFile() {
@@ -1979,27 +1988,30 @@
             }
 
             function showEditFilePreview(file, dropzoneElement) {
-                const fileExtension = file.name.split('.').pop().toLowerCase();
-                const fileIcon = getFileIconForPreview(fileExtension);
-                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const fileIcon = getFileIconForPreview(fileExtension);
+    const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+    
+    // Buat nama file dengan elipsis untuk tampilan (sama seperti modal edit yang sudah diperbaiki)
+    const displayFileName = createEllipsisText(file.name, 35);
 
-                dropzoneElement.innerHTML = `
-                    <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded" style="width: 100%; max-width: 100%; box-sizing: border-box;">
-                        <div class="d-flex align-items-center" style="flex: 1; min-width: 0; max-width: calc(100% - 40px);">
-                            <i class="${fileIcon} fa-2x me-3 flex-shrink-0"></i>
-                            <div style="flex: 1; min-width: 0; overflow: hidden;">
-                                <div class="fw-bold text-truncate" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${file.name}">
-                                    ${file.name}
-                                </div>
-                                <small class="text-muted">${fileSize} MB</small>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeEditSelectedFile()" style="flex-shrink: 0; margin-left: 10px;">
-                            <i class="fas fa-times"></i>
-                        </button>
+    dropzoneElement.innerHTML = `
+        <div class="file-preview d-flex align-items-center justify-content-between p-3 bg-light rounded" style="width: 100%; max-width: 100%; box-sizing: border-box;">
+            <div class="d-flex align-items-center" style="flex: 1; min-width: 0; max-width: calc(100% - 40px);">
+                <i class="${fileIcon} fa-2x me-3 flex-shrink-0"></i>
+                <div style="flex: 1; min-width: 0; overflow: hidden;">
+                    <div class="fw-bold" style="max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;" title="${file.name}">
+                        ${displayFileName}
                     </div>
-                `;
-            }
+                    <small class="text-muted">${fileSize} MB</small>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-file" onclick="removeEditSelectedFile()" style="flex-shrink: 0; margin-left: 10px;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+}
 
             function removeEditSelectedFile() {
                 const dropzoneElement = document.getElementById('dropzone-editFileForm');

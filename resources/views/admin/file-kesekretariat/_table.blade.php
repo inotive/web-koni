@@ -30,50 +30,48 @@
     <div style="overflow-x:auto;">
         <table class="table-row-bordered gy-4 table align-middle">
             <thead>
-    <tr class="fw-bold text-uppercase text-muted">
-        <th class="bg-light px-6 text-center" style="width: 60px;">No</th>
-        <th class="bg-light px-6 sortable" data-sort="nama_dokumen" style="cursor: pointer;">
-            <div class="d-flex align-items-center justify-content-center gap-2">
-                <span>Nama Dokumen</span>
-                <div class="sort-icon">
-                    @if (request('sort_by') == 'nama_dokumen')
-                        @if (request('order') == 'asc')
-                            <i class="fas fa-sort-up text-primary"></i>
-                        @else
-                            <i class="fas fa-sort-down text-primary"></i>
-                        @endif
-                    @else
-                        <i class="fas fa-sort text-muted"></i>
-                    @endif
-                </div>
-            </div>
-        </th>
-        <th class="bg-light text-start px-6 sortable" data-sort="dokumen_file" style="cursor: pointer;">
-            <div class="d-flex align-items-center justify-content-start gap-2">
-                <span>File Dokumen</span>
-                <div class="sort-icon">
-                    @if (request('sort_by') == 'dokumen_file')
-                        @if (request('order') == 'asc')
-                            <i class="fas fa-sort-up text-primary"></i>
-                        @else
-                            <i class="fas fa-sort-down text-primary"></i>
-                        @endif
-                    @else
-                        <i class="fas fa-sort text-muted"></i>
-                    @endif
-                </div>
-            </div>
-        </th>
-        <th class="bg-light px-6 text-center">Aksi</th>
-    </tr>
-</thead>
+                <tr class="fw-bold text-uppercase text-muted">
+                    <th class="bg-light px-6 text-center" style="width: 60px;">No</th>
+                    <th class="bg-light px-6 sortable" data-sort="nama_dokumen" style="cursor: pointer;">
+                        <div class="d-flex align-items-center justify-content-center gap-2">
+                            <span>Nama Dokumen</span>
+                            <div class="sort-icon">
+                                @if (request('sort_by') == 'nama_dokumen')
+                                    @if (request('order') == 'asc')
+                                        <i class="fas fa-sort-up text-primary"></i>
+                                    @else
+                                        <i class="fas fa-sort-down text-primary"></i>
+                                    @endif
+                                @else
+                                    <i class="fas fa-sort text-muted"></i>
+                                @endif
+                            </div>
+                        </div>
+                    </th>
+                    <th class="bg-light text-start px-6 sortable" data-sort="dokumen_file" style="cursor: pointer;">
+                        <div class="d-flex align-items-center justify-content-start gap-2">
+                            <span>File Dokumen</span>
+                            <div class="sort-icon">
+                                @if (request('sort_by') == 'dokumen_file')
+                                    @if (request('order') == 'asc')
+                                        <i class="fas fa-sort-up text-primary"></i>
+                                    @else
+                                        <i class="fas fa-sort-down text-primary"></i>
+                                    @endif
+                                @else
+                                    <i class="fas fa-sort text-muted"></i>
+                                @endif
+                            </div>
+                        </div>
+                    </th>
+                    <th class="bg-light px-6 text-center">Aksi</th>
+                </tr>
+            </thead>
             <tbody class="border-bottom">
                 @forelse ($files as $index => $file)
                     @php
                         // Calculate row number correctly for pagination
-                        $rowNumber = method_exists($files, 'firstItem') 
-                            ? $files->firstItem() + $index 
-                            : $index + 1;
+                        $rowNumber = method_exists($files, 'firstItem') ? $files->firstItem() + $index : $index + 1;
                     @endphp
                     <tr data-id="{{ $file->id }}" style="position: relative;">
                         <td class="text-center fw-bold px-2">{{ $rowNumber }}</td>
@@ -81,7 +79,7 @@
                             <div class="d-flex flex-column">
                                 <div>{{ $file->nama_dokumen }}</div>
                                 <small class="text-muted">
-                                    {{ optional($file->created_at)->format('d M Y') }}
+                                    {{ optional($file->tanggal_dokumen)->format('d M Y') }}
                                 </small>
                             </div>
                         </td>
@@ -94,13 +92,14 @@
                                     // Memisahkan timestamp dari nama file
                                     $parts = explode('_', $fileName, 2);
                                     $displayName = count($parts) > 1 ? $parts[1] : $fileName;
-                                    
+
                                     // Gunakan path yang sudah dikonfirmasi bekerja
                                     $filePath = 'documents/' . $file->dokumen_file;
                                     $fileUrl = asset('storage/' . $filePath);
                                 @endphp
                                 <div class="document-link-container">
-                                    <a href="{{ $fileUrl }}" target="_blank" class="document-link" title="Klik untuk melihat {{ $fileName }}">
+                                    <a href="{{ $fileUrl }}" target="_blank" class="document-link"
+                                        title="Klik untuk melihat {{ $fileName }}">
                                         @if ($fileExtension === 'pdf')
                                             <i class="fas fa-file-pdf me-2"></i>
                                         @elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
@@ -188,122 +187,122 @@
         </table>
     </div>
 
-        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
-            <div class="mb-2 mb-md-0">
-                <div class="d-flex align-items-center">
-                    <span class="me-2">Show</span>
-                    <select name="per_page" class="form-select form-select-sm w-auto">
-                        @foreach ([10, 25, 50, 100] as $limit)
-                            <option value="{{ $limit }}"
-                                {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
-                                {{ $limit }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <span class="ms-2">per page</span>
+    <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
+        <div class="mb-2 mb-md-0">
+            <div class="d-flex align-items-center">
+                <span class="me-2">Show</span>
+                <select name="per_page" class="form-select form-select-sm w-auto">
+                    @foreach ([10, 25, 50, 100] as $limit)
+                        <option value="{{ $limit }}"
+                            {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
+                            {{ $limit }}
+                        </option>
+                    @endforeach
+                </select>
+                <span class="ms-2">per page</span>
+            </div>
+        </div>
+
+        @if (isset($files) && method_exists($files, 'hasPages') && $files->hasPages())
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-muted small">
+                    {{ $files->firstItem() }}-{{ $files->lastItem() }} of {{ $files->total() }}
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    @if ($files->onFirstPage())
+                        <span class="pagination-arrow disabled">←</span>
+                    @else
+                        <a href="{{ $files->appends(request()->query())->previousPageUrl() }}"
+                            class="pagination-arrow pagination-link" aria-label="Previous">←</a>
+                    @endif
+
+                    @php
+                        $current = $files->currentPage();
+                        $total = $files->lastPage();
+                        $start = max(1, $current - 2);
+                        $end = min($total, $current + 2);
+                        if ($end - $start < 4) {
+                            if ($start == 1) {
+                                $end = min($total, $start + 4);
+                            } else {
+                                $start = max(1, $end - 4);
+                            }
+                        }
+                    @endphp
+
+                    <div class="d-flex align-items-center">
+                        @for ($i = $start; $i <= $end; $i++)
+                            @if ($i == $current)
+                                <span class="pagination-number active">{{ $i }}</span>
+                            @else
+                                <a href="{{ $files->appends(request()->query())->url($i) }}"
+                                    class="pagination-number pagination-link">{{ $i }}</a>
+                            @endif
+                        @endfor
+                    </div>
+
+                    @if ($files->hasMorePages())
+                        <a href="{{ $files->appends(request()->query())->nextPageUrl() }}"
+                            class="pagination-arrow pagination-link" aria-label="Next">→</a>
+                    @else
+                        <span class="pagination-arrow disabled">→</span>
+                    @endif
                 </div>
             </div>
-
-            @if (isset($files) && method_exists($files, 'hasPages') && $files->hasPages())
-                <div class="d-flex align-items-center gap-3">
-                    <div class="text-muted small">
-                        {{ $files->firstItem() }}-{{ $files->lastItem() }} of {{ $files->total() }}
-                    </div>
-
-                    <div class="d-flex align-items-center gap-2">
-                        @if ($files->onFirstPage())
-                            <span class="pagination-arrow disabled">←</span>
-                        @else
-                            <a href="{{ $files->appends(request()->query())->previousPageUrl() }}"
-                                class="pagination-arrow pagination-link" aria-label="Previous">←</a>
-                        @endif
-
-                        @php
-                            $current = $files->currentPage();
-                            $total = $files->lastPage();
-                            $start = max(1, $current - 2);
-                            $end = min($total, $current + 2);
-                            if ($end - $start < 4) {
-                                if ($start == 1) {
-                                    $end = min($total, $start + 4);
-                                } else {
-                                    $start = max(1, $end - 4);
-                                }
-                            }
-                        @endphp
-
-                        <div class="d-flex align-items-center">
-                            @for ($i = $start; $i <= $end; $i++)
-                                @if ($i == $current)
-                                    <span class="pagination-number active">{{ $i }}</span>
-                                @else
-                                    <a href="{{ $files->appends(request()->query())->url($i) }}"
-                                        class="pagination-number pagination-link">{{ $i }}</a>
-                                @endif
-                            @endfor
-                        </div>
-
-                        @if ($files->hasMorePages())
-                            <a href="{{ $files->appends(request()->query())->nextPageUrl() }}"
-                                class="pagination-arrow pagination-link" aria-label="Next">→</a>
-                        @else
-                            <span class="pagination-arrow disabled">→</span>
-                        @endif
-                    </div>
-                </div>
-            @elseif(isset($files) && method_exists($files, 'hasPages'))
-                <div class="text-muted small">
-                    1-{{ $files->count() }} of {{ $files->total() }}
-                </div>
-            @endif
-        </div>
+        @elseif(isset($files) && method_exists($files, 'hasPages'))
+            <div class="text-muted small">
+                1-{{ $files->count() }} of {{ $files->total() }}
+            </div>
+        @endif
+    </div>
     </div>
 @endif
 
 <style>
-
     .pagination-arrow {
-    color: #6c757d;
-    text-decoration: none;
-    padding: 6px 8px;
-    transition: color 0.2s ease;
-    cursor: pointer;
-}
+        color: #6c757d;
+        text-decoration: none;
+        padding: 6px 8px;
+        transition: color 0.2s ease;
+        cursor: pointer;
+    }
 
-.pagination-arrow:hover {
-    color: #0b0b0b;
-    text-decoration: none;
-}
+    .pagination-arrow:hover {
+        color: #0b0b0b;
+        text-decoration: none;
+    }
 
-.pagination-arrow.disabled {
-    color: #adb5bd;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
+    .pagination-arrow.disabled {
+        color: #adb5bd;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
 
-.pagination-number {
-    color: #6c757d;
-    text-decoration: none;
-    padding: 6px 10px;
-    margin: 0 1px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    background-color: #f8f9fa;
-    border: 1px solid transparent;
-    font-size: 0.875rem;
-}
+    .pagination-number {
+        color: #6c757d;
+        text-decoration: none;
+        padding: 6px 10px;
+        margin: 0 1px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        background-color: #f8f9fa;
+        border: 1px solid transparent;
+        font-size: 0.875rem;
+    }
 
-.pagination-number:hover {
-    color: #89add1;
-    background-color: #e9ecef;
-    text-decoration: none;
-}
+    .pagination-number:hover {
+        color: #89add1;
+        background-color: #e9ecef;
+        text-decoration: none;
+    }
 
-.pagination-number.active {
-    background-color: #e4e6e9;
-    color: rgb(4, 4, 4);
-    border-color: #e0e1e4;
-}
+    .pagination-number.active {
+        background-color: #e4e6e9;
+        color: rgb(4, 4, 4);
+        border-color: #e0e1e4;
+    }
+
     /* Document info styling */
     .document-info {
         display: flex;
