@@ -151,7 +151,7 @@
 
                     @php
                         $fields = [
-                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Joko Widodo'],
+                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Masukkan nama pelatih '],
                             'cabor_id' => [
                                 'label' => 'Cabang Olahraga',
                                 'type' => 'select',
@@ -171,7 +171,7 @@
                             'tempat_lahir' => [
                                 'label' => 'Tempat Lahir',
                                 'type' => 'text',
-                                'placeholder' => 'Balikpapan, Kalimantan Timur',
+                                'placeholder' => 'Contoh: Balikpapan, Kalimantan Timur',
                             ],
                             'kelamin' => [
                                 'label' => 'Jenis Kelamin',
@@ -181,7 +181,7 @@
                             'alamat' => [
                                 'label' => 'Alamat',
                                 'type' => 'text',
-                                'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
+                                'placeholder' => 'Contoh: Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
                             ],
                             'alamatprovinsi' => [
                                 'label' => 'Provinsi',
