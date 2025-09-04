@@ -590,17 +590,7 @@
                                                 </select>
                                             </div>
 
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">Status Prestasi</label>
-                                                <select id="filter-prestasi" class="form-select">
-                                                    <option value="">Semua</option>
-                                                    <option value="ada">Ada Prestasi</option>
-                                                    <option value="tidak">Tidak Ada Prestasi</option>
-                                                    <option value="emas">Medali Emas</option>
-                                                    <option value="perak">Medali Perak</option>
-                                                    <option value="perunggu">Medali Perunggu</option>
-                                                </select>
-                                            </div>
+                                            
 
                                             <div class="d-flex gap-2">
                                                 <button type="button" id="apply-filters"
