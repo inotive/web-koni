@@ -28,32 +28,12 @@
                             <?php endif; ?>
                         </a>
                     </th>
-                    <th>
-                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'volume', 'direction' => (request()->get('sort') == 'volume' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
-                            class="text-dark text-decoration-none sortable-header">
-                            Volume
-                            <?php if(request()->get('sort') == 'volume'): ?>
-                                <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
-                            <?php else: ?>
-                                <i class="fas fa-sort"></i>
-                            <?php endif; ?>
-                        </a>
-                    </th>
-                    <th>
-                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'jumlah_harga_satuan', 'direction' => (request()->get('sort') == 'jumlah_harga_satuan' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
-                            class="text-dark text-decoration-none sortable-header">
-                            Jumlah Harga Satuan
-                            <?php if(request()->get('sort') == 'jumlah_harga_satuan'): ?>
-                                <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
-                            <?php else: ?>
-                                <i class="fas fa-sort"></i>
-                            <?php endif; ?>
-                        </a>
-                    </th>
+                    
+                    
                     <th>
                         <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'jumlah_harga', 'direction' => (request()->get('sort') == 'jumlah_harga' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
                             class="text-dark text-decoration-none sortable-header">
-                            Jumlah Harga
+                            Total Anggaran
                             <?php if(request()->get('sort') == 'jumlah_harga'): ?>
                                 <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
                             <?php else: ?>
@@ -62,6 +42,7 @@
                         </a>
                     </th>
                     <th>Foto Jurnal</th>
+                    <th>Dokumen Pendukung</th>
                     <th>Dokumen LPJ</th>
                     <th style="text-align: center">Aksi</th>
                 </tr>
@@ -82,8 +63,7 @@
                                 <?php endif; ?>
                             </div>
                         </td>
-                        <td><?php echo e($data->volume); ?></td>
-                        <td>Rp <?php echo e(number_format($data->jumlah_harga_satuan, 0, ',', '.')); ?></td>
+                        
                         <td>Rp <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?></td>
                         <td>
                             <?php if($data->foto_jurnal && count($data->foto_jurnal) > 0): ?>
@@ -96,6 +76,22 @@
                                         data-title="Foto Jurnal - <?php echo e($data->nama_program); ?>">
                                     <i class="fas fa-images me-1"></i>
                                     <?php echo e(count($data->foto_jurnal)); ?> Foto
+                                </button>
+                            <?php else: ?>
+                                <span class="text-muted">-</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if($data->dokumen_pendukung && count($data->dokumen_pendukung) > 0): ?>
+                                <button type="button"
+                                        class="btn btn-sm btn-light-primary preview-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#previewModal"
+                                        data-type="document"
+                                        data-files="<?php echo e(json_encode(array_map(fn($file) => ($file), $data->dokumen_pendukung))); ?>"
+                                        data-title="Dokumen Pendukung - <?php echo e($data->nama_program); ?>">
+                                    <i class="fas fa-file-alt me-1"></i>
+                                    <?php echo e(count($data->dokumen_pendukung)); ?> Dokumen
                                 </button>
                             <?php else: ?>
                                 <span class="text-muted">-</span>

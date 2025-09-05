@@ -178,8 +178,8 @@
         .table th:nth-child(3) { width: 100px; }
         .table th:nth-child(4) { width: 150px; }
         .table th:nth-child(5) { width: 150px; }
-        .table th:nth-child(6) { width: 100px; }
-        .table th:nth-child(7) { width: 120px; }
+        .table th:nth-child(6) { width: 150px; }
+        .table th:nth-child(7) { width: 80px; }
         .table th:nth-child(8) { width: 80px; }
 
         .text-truncate-custom {

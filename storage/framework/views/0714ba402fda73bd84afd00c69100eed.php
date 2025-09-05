@@ -119,7 +119,7 @@
                                         href="<?php echo e(route('admin.laporan-lpj.pengajuan.index')); ?>">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">
-                                            Pengajuan LPJ
+                                            Pengajuan Modifikasi LPJ
                                             <?php if($pengajuanCount > 0): ?>
                                                 <span class="badge bg-danger text-white ms-2" style="font-size: 0.7rem; border-radius: 50%;">
                                                     <?php echo e($pengajuanCount); ?>
@@ -320,4 +320,5 @@
     </div>
     <!--end::Aside menu-->
 
-</div><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/layouts/sidebar.blade.php ENDPATH**/ ?>
+</div>
+<?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/layouts/sidebar.blade.php ENDPATH**/ ?>

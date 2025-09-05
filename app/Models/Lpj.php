@@ -22,6 +22,7 @@ class Lpj extends Model
         'volume',
         'jumlah_harga_satuan',
         'jumlah_harga',
+        'dokumen_pendukung',
         'dokumen_lpj',
         'foto_jurnal',
         'keterangan_tambahan',
@@ -32,6 +33,7 @@ class Lpj extends Model
     ];
 
     protected $casts = [
+        'dokumen_pendukung' => 'array',
         'dokumen_lpj' => 'array',
         'foto_jurnal' => 'array',
         'is_approved' => 'boolean',

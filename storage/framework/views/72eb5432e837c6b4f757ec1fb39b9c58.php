@@ -43,36 +43,286 @@
 
 <?php $__env->startSection('content'); ?>
 <style>
-    body { background-color: #f5f5f5 !important; }
-    .main-content { background-color: #f5f5f5; min-height: 100vh; padding: 20px 10px 40px; }
-    .card-form { background-color: white; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); }
-    .form-control, .form-select { border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; }
-    .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2); }
-    .btn-danger { background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%); border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3); }
-    .btn-danger:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4); }
+    body {
+        background-color: #f5f5f5 !important;
+    }
 
-    .currency-input { position: relative; }
-    .currency-input::before { content: "Rp"; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6c757d; font-size: 0.95rem; z-index: 1; }
-    .currency-input input { padding-left: 35px; }
+    .main-content {
+        background-color: #f5f5f5;
+        min-height: 100vh;
+        padding: 20px 10px 40px;
+    }
 
-    .file-upload-wrapper { display: flex; align-items: center; gap: 12px; border: 1px solid #cfe2ff; background-color: #edf5ff; border-radius: 10px; padding: 16px 20px; cursor: pointer; transition: all 0.2s ease-in-out; }
-    .file-upload-wrapper:hover { border-color: #0d6efd; background-color: #e6f0ff; }
-    .file-upload-wrapper input[type="file"] { display: none; }
-    .file-upload-icon-wrapper { background-color: #d0e7ff; padding: 8px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .file-upload-icon { font-size: 1.5rem; color: #0d6efd; }
+    .card-form {
+        background-color: white;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
 
-    .preview-container { max-height: 250px; overflow-y: auto; margin-top: 15px; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; background-color: #f8f9fa; }
-    .file-preview-item { display: flex; align-items: center; gap: 12px; padding: 8px; border: 1px solid #e9ecef; border-radius: 6px; background-color: white; margin-bottom: 6px; }
-    .file-preview-item.existing { background-color: #e8f5e8; border-color: #28a745; }
-    .preview-image, .file-icon { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #e9ecef; }
-    .file-icon { display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; }
-    .file-info { flex: 1; }
-    .file-name { font-weight: 500; color: #212529; font-size: 0.9rem; word-break: break-all; }
-    .file-size { font-size: 0.75rem; color: #6c757d; }
-    .remove-file { background: none; border: none; color: #dc3545; font-size: 1rem; cursor: pointer; padding: 4px; border-radius: 4px; transition: all 0.2s ease; }
-    .remove-file:hover { background-color: #dc3545; color: white; }
-    .existing-files-section { background-color: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
-    .existing-files-section h6 { color: #495057; font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; }
+    .form-control, .form-select {
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+    }
+
+    .btn-danger:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+    }
+
+    .currency-input {
+        position: relative;
+    }
+
+    .currency-input::before {
+        content: "Rp";
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+        font-size: 0.95rem;
+        z-index: 1;
+    }
+
+    .currency-input input {
+        padding-left: 35px;
+    }
+
+    .file-upload-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid #cfe2ff;
+        background-color: #edf5ff;
+        border-radius: 10px;
+        padding: 16px 20px;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .file-upload-wrapper:hover {
+        border-color: #0d6efd;
+        background-color: #e6f0ff;
+    }
+
+    .file-upload-wrapper input[type="file"] {
+        display: none;
+    }
+
+    .file-upload-icon-wrapper {
+        background-color: #d0e7ff;
+        padding: 8px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .file-upload-icon {
+        font-size: 1.5rem;
+        color: #0d6efd;
+    }
+
+    /* Enhanced preview container with scrollable functionality */
+    .preview-container {
+        margin-top: 15px;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        /* Dynamic height based on content */
+        max-height: none;
+        overflow: visible;
+    }
+
+    /* Scrollable container when more than 5 items */
+    .preview-container.scrollable {
+        max-height: 350px; /* Approximately height for 5 items (5 * 64px + padding) */
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    /* Custom scrollbar styling */
+    .preview-container.scrollable::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .preview-container.scrollable::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .preview-container.scrollable::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+    }
+
+    .preview-container.scrollable::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    /* Firefox scrollbar styling */
+    .preview-container.scrollable {
+        scrollbar-width: thin;
+        scrollbar-color: #c1c1c1 #f1f1f1;
+    }
+
+    .file-preview-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        background-color: white;
+        margin-bottom: 8px;
+        min-height: 64px; /* Consistent height for better scrolling experience */
+        transition: all 0.2s ease;
+    }
+
+    .file-preview-item:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .file-preview-item.existing {
+        background-color: #e8f5e8;
+        border-color: #28a745;
+    }
+
+    .preview-image, .file-icon {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+        flex-shrink: 0; /* Prevent shrinking in flex container */
+    }
+
+    .file-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f8f9fa;
+    }
+
+    .file-info {
+        flex: 1;
+        min-width: 0; /* Allow text to wrap properly */
+    }
+
+    .file-name {
+        font-weight: 500;
+        color: #212529;
+        font-size: 0.9rem;
+        word-break: break-word; /* Better word breaking */
+        line-height: 1.3;
+    }
+
+    .file-size {
+        font-size: 0.75rem;
+        color: #6c757d;
+        margin-top: 2px;
+    }
+
+    .remove-file {
+        background: none;
+        border: none;
+        color: #dc3545;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        flex-shrink: 0; /* Prevent shrinking */
+    }
+
+    .remove-file:hover {
+        background-color: #dc3545;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .existing-files-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .existing-files-section h6 {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    /* Scroll indicator for better UX */
+    .preview-container.scrollable::after {
+        content: "";
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(45deg, #0d6efd 0%, #0056b3 100%);
+        border-radius: 50%;
+        opacity: 0.7;
+        animation: scrollPulse 2s infinite;
+        pointer-events: none;
+    }
+
+    @keyframes scrollPulse {
+        0%, 100% {
+            opacity: 0.7;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.4;
+            transform: scale(0.9);
+        }
+    }
+
+    /* Hide scroll indicator when scrolled to bottom */
+    .preview-container.scrollable.scrolled-bottom::after {
+        display: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .preview-container.scrollable {
+            max-height: 280px; /* Slightly shorter on mobile */
+        }
+
+        .file-preview-item {
+            padding: 10px;
+            gap: 10px;
+        }
+
+        .preview-image, .file-icon {
+            width: 35px;
+            height: 35px;
+        }
+}
 </style>
 
 <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
@@ -142,66 +392,24 @@ unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="volume" class="form-label">Volume</label>
-                        </div>
-                        <div class="col-md-9">
-                            <input type="text" name="volume" id="volume"
-                                   class="form-control <?php $__errorArgs = ['volume'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                   placeholder="100 orang, 5 unit, dll"
-                                   value="<?php echo e(old('volume', $lpj->volume)); ?>">
-                            <?php $__errorArgs = ['volume'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                        </div>
-                    </div>
+                    
+                            <input type="hidden" name="volume" id="volume"
+                                   
+                                   value="0">
+                            
+                        
 
                     
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
-                        </div>
-                        <div class="col-md-9">
-                            <div class="currency-input">
-                                <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
-                                       class="form-control <?php $__errorArgs = ['jumlah_harga_satuan'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                       placeholder="0" inputmode="numeric"
-                                       value="<?php echo e(old('jumlah_harga_satuan', number_format($lpj->jumlah_harga_satuan ?? 0, 0, ',', '.'))); ?>">
-                            </div>
-                            <?php $__errorArgs = ['jumlah_harga_satuan'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                        </div>
-                    </div>
+                    
+                                <input type="hidden" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                       
+                                       inputmode="numeric"
+                                       value="0">
+                            
 
                     <div class="row mb-3">
                         <div class="col-md-3">
-                            <label for="jumlah_harga" class="form-label">Total Harga</label>
+                            <label for="jumlah_harga" class="form-label">Total Anggaran</label>
                         </div>
                         <div class="col-md-9">
                             <div class="currency-input">
@@ -232,12 +440,12 @@ unset($__errorArgs, $__bag); ?>
                     <div class="row mb-3">
                         <div class="col-md-3">
                             <label class="form-label">Foto Jurnal</label>
-                            <small class="text-muted d-block">Max 10 foto, 10MB each</small>
+                            <small class="text-muted d-block">Ukuran per file maksimal 10MB</small>
                         </div>
                         <div class="col-md-9">
                             <?php if($lpj->foto_jurnal && count($lpj->foto_jurnal) > 0): ?>
                                 <div class="existing-files-section">
-                                    <h6><i class="fas fa-images me-2"></i>Foto Existing:</h6>
+                                    <h6><i class="fas fa-images me-2"></i>Foto yang sudah ada:</h6>
                                     <?php $__currentLoopData = $lpj->foto_jurnal; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <div class="file-preview-item existing">
                                             <img src="<?php echo e(asset('storage/' . $foto)); ?>" class="preview-image">
@@ -245,7 +453,7 @@ unset($__errorArgs, $__bag); ?>
                                                 <div class="file-name"><?php echo e(basename($foto)); ?></div>
                                                 <div class="file-size">Existing file</div>
                                             </div>
-                                            <button type="button" class="remove-file" onclick="removeExistingFile(this, '<?php echo e($foto); ?>', 'foto')">
+                                            <button type="button" class="remove-file" data-path="<?php echo e($foto); ?>" data-type="existing">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                             <input type="hidden" name="existing_foto_jurnal[]" value="<?php echo e($foto); ?>">
@@ -263,7 +471,7 @@ unset($__errorArgs, $__bag); ?>
                                     <p class="file-upload-text mb-0">Upload foto baru</p>
                                 </div>
                             </label>
-                            <div id="fotoPreview" class="preview-container" style="display: none;"></div>
+                            <div id="foto_jurnalPreview" class="preview-container" style="display: none;"></div>
                             <?php $__errorArgs = ['foto_jurnal.*'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -277,13 +485,68 @@ unset($__errorArgs, $__bag); ?>
 
                     <div class="row mb-3">
                         <div class="col-md-3">
+                            <label class="form-label">Dokumen pendukung</label>
+                            <small class="text-muted d-block">Ukuran per file maksimal 10MB</small>
+                        </div>
+                        <div class="col-md-9">
+                            <?php if($lpj->dokumen_pendukung && count($lpj->dokumen_pendukung) > 0): ?>
+                                <div class="existing-files-section">
+                                    <h6><i class="fas fa-file-alt me-2"></i>Dokumen yang sudah ada:</h6>
+                                    <?php $__currentLoopData = $lpj->dokumen_pendukung; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dokumen): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
+                                            $ext = pathinfo($dokumen, PATHINFO_EXTENSION);
+                                            $icon = match(strtolower($ext)) {
+                                                'pdf' => 'fas fa-file-pdf text-danger',
+                                                'doc', 'docx' => 'fas fa-file-word text-primary',
+                                                'xls', 'xlsx' => 'fas fa-file-excel text-success',
+                                                default => 'fas fa-file text-secondary'
+                                            };
+                                        ?>
+                                        <div class="file-preview-item existing">
+                                            <div class="file-icon"><i class="<?php echo e($icon); ?>"></i></div>
+                                            <div class="file-info">
+                                                <div class="file-name"><?php echo e(basename($dokumen)); ?></div>
+                                                <div class="file-size">Existing file</div>
+                                            </div>
+                                            <button type="button" class="remove-file" data-path="<?php echo e($dokumen); ?>" data-type="existing">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <input type="hidden" name="existing_dokumen_pendukung[]" value="<?php echo e($dokumen); ?>">
+                                        </div>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <label for="dokumen_pendukung" class="file-upload-wrapper">
+                                <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+                                <div class="file-upload-icon-wrapper">
+                                    <i class="fas fa-upload file-upload-icon"></i>
+                                </div>
+                                <div>
+                                    <p class="file-upload-text mb-0">Upload dokumen baru</p>
+                                </div>
+                            </label>
+                            <div id="dokumen_pendukungPreview" class="preview-container" style="display: none;"></div>
+                            <?php $__errorArgs = ['dokumen_pendukung.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="text-danger mt-2"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
                             <label class="form-label">Dokumen LPJ</label>
-                            <small class="text-muted d-block">Max 10 files, 10MB each</small>
+                            <small class="text-muted d-block">Ukuran per file maksimal 10MB</small>
                         </div>
                         <div class="col-md-9">
                             <?php if($lpj->dokumen_lpj && count($lpj->dokumen_lpj) > 0): ?>
                                 <div class="existing-files-section">
-                                    <h6><i class="fas fa-file-alt me-2"></i>Dokumen Existing:</h6>
+                                    <h6><i class="fas fa-file-alt me-2"></i>Dokumen yang sudah ada:</h6>
                                     <?php $__currentLoopData = $lpj->dokumen_lpj; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dokumen): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <?php
                                             $ext = pathinfo($dokumen, PATHINFO_EXTENSION);
@@ -300,7 +563,7 @@ unset($__errorArgs, $__bag); ?>
                                                 <div class="file-name"><?php echo e(basename($dokumen)); ?></div>
                                                 <div class="file-size">Existing file</div>
                                             </div>
-                                            <button type="button" class="remove-file" onclick="removeExistingFile(this, '<?php echo e($dokumen); ?>', 'dokumen')">
+                                            <button type="button" class="remove-file" data-path="<?php echo e($dokumen); ?>" data-type="existing">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                             <input type="hidden" name="existing_dokumen_lpj[]" value="<?php echo e($dokumen); ?>">
@@ -318,7 +581,7 @@ unset($__errorArgs, $__bag); ?>
                                     <p class="file-upload-text mb-0">Upload dokumen baru</p>
                                 </div>
                             </label>
-                            <div id="dokumenPreview" class="preview-container" style="display: none;"></div>
+                            <div id="dokumen_lpjPreview" class="preview-container" style="display: none;"></div>
                             <?php $__errorArgs = ['dokumen_lpj.*'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -376,195 +639,155 @@ unset($__errorArgs, $__bag); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const MAX_FILES = 10;
-    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-    // Currency formatting with number-only validation
-    function formatCurrency(input) {
-        // Remove all non-numeric characters
-        let value = input.value.replace(/[^\d]/g, '');
+    let selectedFiles = {
+        'foto_jurnal': [],
+        'dokumen_lpj': [],
+        'dokumen_pendukung': []
+    };
 
-        if (value) {
-            // Format with Indonesian number format
-            input.value = parseInt(value).toLocaleString('id-ID');
-        } else {
-            input.value = '';
-        }
-    }
+    // ... (currency and calculation functions)
 
-    // Set up currency inputs
-    ['jumlah_harga_satuan', 'jumlah_harga'].forEach(id => {
-        const input = document.getElementById(id);
-        if (input) {
-            // Prevent non-numeric input
-            input.addEventListener('keypress', function(e) {
-                // Allow: backspace, delete, tab, escape, enter, period, and numbers
-                if ([46, 8, 9, 27, 13].indexOf(e.keyCode) !== -1 ||
-                    (e.keyCode >= 48 && e.keyCode <= 57) ||
-                    (e.keyCode >= 96 && e.keyCode <= 105)) {
-                    return;
-                }
-                e.preventDefault();
-            });
-
-            // Format on input
-            input.addEventListener('input', function() {
-                formatCurrency(this);
-                calculateTotal();
-            });
-
-            // Prevent paste of non-numeric content
-            input.addEventListener('paste', function(e) {
-                e.preventDefault();
-                let paste = (e.clipboardData || window.clipboardData).getData('text');
-                let numericValue = paste.replace(/[^\d]/g, '');
-                if (numericValue) {
-                    this.value = parseInt(numericValue).toLocaleString('id-ID');
-                    calculateTotal();
-                }
-            });
-        }
-    });
-
-    // Calculate total price
-    function calculateTotal() {
-        const volumeEl = document.getElementById('volume');
-        const unitPriceEl = document.getElementById('jumlah_harga_satuan');
-        const totalPriceEl = document.getElementById('jumlah_harga');
-
-        if (!volumeEl || !unitPriceEl || !totalPriceEl) return;
-
-        const volume = parseVolume(volumeEl.value);
-        const unitPrice = parseInt(unitPriceEl.value.replace(/[^\d]/g, '') || '0');
-
-        if (volume > 0 && unitPrice > 0) {
-            const total = volume * unitPrice;
-            totalPriceEl.value = total.toLocaleString('id-ID');
-        }
-    }
-
-    function parseVolume(text) {
-        if (!text) return 0;
-        const numbers = text.match(/\d+/g);
-        return numbers ? numbers.reduce((sum, num) => sum + parseInt(num), 0) : 0;
-    }
-
-    // File upload handlers
-    function setupFileUpload(inputId, previewId, type) {
+    // File Upload Handler
+    function initFileUpload(inputId) {
         const input = document.getElementById(inputId);
-        const preview = document.getElementById(previewId);
+        if (!input) return;
 
-        if (!input || !preview) return;
+        const previewContainer = document.getElementById(`${inputId}Preview`);
 
         input.addEventListener('change', function() {
-            const files = Array.from(this.files);
-            updatePreview(files, preview, type);
-        });
-    }
-
-    function updatePreview(files, container, type) {
-        if (files.length === 0) {
-            container.style.display = 'none';
-            return;
-        }
-
-        container.style.display = 'block';
-        let html = '';
-
-        files.forEach((file, index) => {
-            const size = formatFileSize(file.size);
-
-            if (type === 'foto') {
-                const url = URL.createObjectURL(file);
-                html += `
-                    <div class="file-preview-item">
-                        <img src="${url}" class="preview-image">
-                        <div class="file-info">
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-size">${size}</div>
-                        </div>
-                        <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
-            } else {
-                const ext = file.name.split('.').pop().toLowerCase();
-                const icon = getFileIcon(ext);
-                html += `
-                    <div class="file-preview-item">
-                        <div class="file-icon"><i class="${icon}"></i></div>
-                        <div class="file-info">
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-size">${size}</div>
-                        </div>
-                        <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
-            }
+            handleFileSelection(this.files, inputId);
         });
 
-        container.innerHTML = html;
-    }
+        function handleFileSelection(files, inputId) {
+            const newFiles = Array.from(files).filter(file => {
+                if (file.size > MAX_FILE_SIZE) {
+                    alert(`File "${file.name}" terlalu besar. Maksimal 10MB per file.`);
+                    return false;
+                }
+                if (inputId === 'foto_jurnal' && !file.type.match('image.*')) {
+                    alert(`File "${file.name}" bukan file gambar yang valid.`);
+                    return false;
+                }
+                return true;
+            });
 
-    function formatFileSize(bytes) {
-        return bytes > 1024 * 1024 ?
-            (bytes / (1024 * 1024)).toFixed(1) + ' MB' :
-            (bytes / 1024).toFixed(1) + ' KB';
-    }
+            selectedFiles[inputId] = [...selectedFiles[inputId], ...newFiles];
 
-    function getFileIcon(ext) {
-        const icons = {
-            'pdf': 'fas fa-file-pdf text-danger',
-            'doc': 'fas fa-file-word text-primary', 'docx': 'fas fa-file-word text-primary',
-            'xls': 'fas fa-file-excel text-success', 'xlsx': 'fas fa-file-excel text-success'
-        };
-        return icons[ext] || 'fas fa-file text-secondary';
-    }
-
-    // Global functions for button actions
-    window.removeFile = function(index, type) {
-        const inputId = type === 'foto' ? 'foto_jurnal' : 'dokumen_lpj';
-        const input = document.getElementById(inputId);
-        const files = Array.from(input.files);
-        files.splice(index, 1);
-
-        const dt = new DataTransfer();
-        files.forEach(file => dt.items.add(file));
-        input.files = dt.files;
-
-        const preview = document.getElementById(type + 'Preview');
-        updatePreview(files, preview, type);
-    };
-
-    window.removeExistingFile = function(button, filePath, type) {
-        if (confirm('Hapus file ini?')) {
-            button.parentElement.remove();
+            updateFilePreview(inputId);
+            updateFileInput(inputId);
         }
-    };
 
-    // Form submission
-    document.getElementById('lpjForm').addEventListener('submit', function() {
-        // Convert formatted numbers back to plain numbers for submission
-        ['jumlah_harga_satuan', 'jumlah_harga'].forEach(id => {
-            const input = document.getElementById(id);
-            if (input?.value) {
-                input.value = input.value.replace(/[^\d]/g, '');
+        function updateFilePreview(inputId) {
+            const files = selectedFiles[inputId];
+
+            if (files.length === 0) {
+                previewContainer.style.display = 'none';
+                return;
             }
+
+            previewContainer.style.display = 'block';
+
+            let previewHTML = '';
+            files.forEach((file, index) => {
+                const fileSize = file.size > 1024 * 1024 ?
+                    (file.size / (1024 * 1024)).toFixed(1) + ' MB' :
+                    (file.size / 1024).toFixed(1) + ' KB';
+
+                if (inputId === 'foto_jurnal') {
+                    const imageUrl = URL.createObjectURL(file);
+                    previewHTML += `
+                        <div class="file-preview-item">
+                            <img src="${imageUrl}" alt="Preview" class="preview-image">
+                            <div class="file-info">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-size">${fileSize}</div>
+                            </div>
+                            <button type="button" class="remove-file" data-index="${index}" data-input-id="${inputId}" data-type="new">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>`;
+                } else {
+                    const extension = file.name.split('.').pop().toLowerCase();
+                    const iconMap = {
+                        'pdf': 'fas fa-file-pdf text-danger',
+                        'doc': 'fas fa-file-word text-primary',
+                        'docx': 'fas fa-file-word text-primary',
+                        'xls': 'fas fa-file-excel text-success',
+                        'xlsx': 'fas fa-file-excel text-success'
+                    };
+                    const iconClass = iconMap[extension] || 'fas fa-file text-muted';
+
+                    previewHTML += `
+                        <div class="file-preview-item">
+                            <div class="file-icon">
+                                <i class="${iconClass} fs-4"></i>
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-size">${fileSize}</div>
+                            </div>
+                            <button type="button" class="remove-file" data-index="${index}" data-input-id="${inputId}" data-type="new">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>`;
+                }
+            });
+
+            previewContainer.innerHTML = previewHTML;
+
+            previewContainer.querySelectorAll('.remove-file[data-type="new"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    const inputId = this.dataset.inputId;
+                    removeFile(index, inputId);
+                });
+            });
+        }
+
+        function updateFileInput(inputId) {
+            const files = selectedFiles[inputId];
+            const targetInput = document.getElementById(inputId);
+
+            const dt = new DataTransfer();
+            files.forEach(file => dt.items.add(file));
+            targetInput.files = dt.files;
+        }
+
+        function removeFile(index, inputId) {
+            selectedFiles[inputId].splice(index, 1);
+            updateFilePreview(inputId);
+            updateFileInput(inputId);
+        }
+    }
+
+    document.querySelectorAll('.remove-file[data-type="existing"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const filePath = this.dataset.path;
+            removeExistingFile(this, filePath);
         });
     });
 
-    // Setup file uploads
-    setupFileUpload('foto_jurnal', 'fotoPreview', 'foto');
-    setupFileUpload('dokumen_lpj', 'dokumenPreview', 'dokumen');
+    function removeExistingFile(button, filePath) {
+        if (confirm('Hapus file ini?')) {
+            button.parentElement.remove();
+            // Optionally, you can add an input with the path of the file to be deleted to handle it in the backend
+            const form = document.getElementById('lpjForm');
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'deleted_files[]';
+            input.value = filePath;
+            form.appendChild(input);
+        }
+    }
 
-    // Volume input listener for auto-calculation
-    document.getElementById('volume')?.addEventListener('input', calculateTotal);
+    // Initialize file uploads
+    initFileUpload('foto_jurnal');
+    initFileUpload('dokumen_lpj');
+    initFileUpload('dokumen_pendukung');
 
-    // Initial calculation
-    calculateTotal();
+    // ... (form submission logic)
 });
 </script>
 <?php $__env->stopSection(); ?>

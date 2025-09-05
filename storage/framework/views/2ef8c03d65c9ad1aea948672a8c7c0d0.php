@@ -176,8 +176,8 @@
         .table th:nth-child(3) { width: 100px; }
         .table th:nth-child(4) { width: 150px; }
         .table th:nth-child(5) { width: 150px; }
-        .table th:nth-child(6) { width: 100px; }
-        .table th:nth-child(7) { width: 120px; }
+        .table th:nth-child(6) { width: 150px; }
+        .table th:nth-child(7) { width: 80px; }
         .table th:nth-child(8) { width: 80px; }
 
         .text-truncate-custom {
@@ -1258,4 +1258,5 @@
         });
     </script>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang_new/dynamic/index.blade.php ENDPATH**/ ?>

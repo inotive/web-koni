@@ -29,7 +29,7 @@
     }
 ?>
 
-<?php $__env->startSection('pageTitle', 'Edit Laporan LPJ'); ?>
+<?php $__env->startSection('pageTitle', 'Tambah Laporan LPJ'); ?>
 <?php $__env->startSection('mainSection', 'Laporan LPJ'); ?>
 <?php $__env->startSection('subSection', 'Bidang Bidang'); ?>
 <?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.bidang.index')); ?>
@@ -154,12 +154,8 @@ unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
-                        <div class="row align-items-center mb-3">
-                            <div class="col-md-3">
-                                <label for="volume" class="form-label">Volume</label>
-                            </div>
-                            <div class="col-md-9">
-                                <input type="text" name="volume" id="volume"
+                        
+                                <input type="hidden" name="volume" id="volume"
                                     class="form-control <?php $__errorArgs = ['volume'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -168,7 +164,7 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                    placeholder="Masukkan volume (100 orang, 5 unit)" value="<?php echo e(old('volume')); ?>">
+                                     value="0">
                                 <?php $__errorArgs = ['volume'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -177,17 +173,12 @@ $message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
-                            </div>
-                        </div>
+                            
 
                         
-                        <div class="row align-items-center mb-3">
-                            <div class="col-md-3">
-                                <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="currency-input">
-                                    <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                        
+                                
+                                    <input type="hidden" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
                                         class="form-control currency-only <?php $__errorArgs = ['jumlah_harga_satuan'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -196,22 +187,12 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                        placeholder="0" value="<?php echo e(old('jumlah_harga_satuan')); ?>">
-                                </div>
-                                <?php $__errorArgs = ['jumlah_harga_satuan'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                            </div>
-                        </div>
+                                         value="0">
+                                
 
                         <div class="row align-items-center mb-3">
                             <div class="col-md-3">
-                                <label for="jumlah_harga" class="form-label">Total Harga</label>
+                                <label for="jumlah_harga" class="form-label">Total Anggaran</label>
                             </div>
                             <div class="col-md-9">
                                 <div class="currency-input">
@@ -241,7 +222,7 @@ unset($__errorArgs, $__bag); ?>
                         <div class="row align-items-start mb-4">
                             <div class="col-md-3">
                                 <label class="form-label">Foto Jurnal</label>
-                                <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
+                                <p class="file-upload-hint">Ukuran per file maksimal 10 MB</p>
                             </div>
                             <div class="col-md-9">
                                 <label for="foto_jurnal" class="file-upload-wrapper">
@@ -251,15 +232,14 @@ unset($__errorArgs, $__bag); ?>
                                             <i class="fas fa-upload file-upload-icon"></i>
                                         </div>
                                         <div>
-                                            <p class="file-upload-text" id="foto-file-name-display">
+                                            <p class="file-upload-text" id="foto_jurnal-file-name-display">
                                                 Seret dan lepas foto di sini, atau klik untuk mengunggah.
                                             </p>
                                         </div>
                                     </div>
                                 </label>
-                                <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
-                                <div id="fotoCounter" class="file-counter"></div>
-                                <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">Maksimal 10 foto yang dapat diunggah.</div>
+                                <div id="foto_jurnalPreviewContainer" class="preview-container" style="display: none;"></div>
+                                <div id="foto_jurnalCounter" class="file-counter"></div>
                                 <?php $__errorArgs = ['foto_jurnal.*'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -273,8 +253,40 @@ unset($__errorArgs, $__bag); ?>
 
                         <div class="row align-items-start mb-4">
                             <div class="col-md-3">
+                                <label class="form-label">Dokumen pendukung</label>
+                                <p class="file-upload-hint">Ukuran per file maksimal 10MB</p>
+                            </div>
+                            <div class="col-md-9">
+                                <label for="dokumen_pendukung" class="file-upload-wrapper">
+                                    <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+                                    <div class="d-flex align-items-center gap-12">
+                                        <div class="file-upload-icon-wrapper">
+                                            <i class="fas fa-upload file-upload-icon"></i>
+                                        </div>
+                                        <div>
+                                            <p class="file-upload-text" id="dokumen_pendukung-file-name-display">
+                                                Seret dan lepas dokumen di sini, atau klik untuk mengunggah.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <div id="dokumen_pendukungPreviewContainer" class="preview-container" style="display: none;"></div>
+                                <div id="dokumen_pendukungCounter" class="file-counter"></div>
+                                <?php $__errorArgs = ['dokumen_pendukung.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="text-danger mt-2"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-start mb-4">
+                            <div class="col-md-3">
                                 <label class="form-label">Dokumen LPJ</label>
-                                <p class="file-upload-hint">Maksimal 10 file PDF/Office, masing-masing hingga 10MB</p>
+                                <p class="file-upload-hint">Ukuran per file maksimal 10MB</p>
                             </div>
                             <div class="col-md-9">
                                 <label for="dokumen_lpj" class="file-upload-wrapper">
@@ -284,15 +296,14 @@ unset($__errorArgs, $__bag); ?>
                                             <i class="fas fa-upload file-upload-icon"></i>
                                         </div>
                                         <div>
-                                            <p class="file-upload-text" id="dokumen-file-name-display">
+                                            <p class="file-upload-text" id="dokumen_lpj-file-name-display">
                                                 Seret dan lepas dokumen di sini, atau klik untuk mengunggah.
                                             </p>
                                         </div>
                                     </div>
                                 </label>
-                                <div id="dokumenPreviewContainer" class="preview-container" style="display: none;"></div>
-                                <div id="dokumenCounter" class="file-counter"></div>
-                                <div id="dokumenMaxWarning" class="max-files-warning" style="display: none;">Maksimal 10 dokumen yang dapat diunggah.</div>
+                                <div id="dokumen_lpjPreviewContainer" class="preview-container" style="display: none;"></div>
+                                <div id="dokumen_lpjCounter" class="file-counter"></div>
                                 <?php $__errorArgs = ['dokumen_lpj.*'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -330,13 +341,13 @@ unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
-                        <div class="row mt-4">
-                            <div class="col-md-3 offset-md-3 d-flex justify-content-between">
-                                <button type="submit" class="btn btn-danger px-4">
-                                    <i class="fas fa-save me-2"></i>Simpan Laporan
+                        <div class="row">
+                            <div class="col-md-9 offset-md-3 d-flex gap-3">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-save me-2"></i>Simpan
                                 </button>
                                 <a href="<?php echo e($parentId ? route('admin.laporan-lpj.bidang.dynamic.child.index', $parentId) : route('admin.laporan-lpj.bidang.dynamic.index')); ?>"
-                                    class="btn btn-secondary px-4">
+                                class="btn btn-secondary">
                                     <i class="fas fa-arrow-left me-2"></i>Kembali
                                 </a>
                             </div>
@@ -350,11 +361,13 @@ unset($__errorArgs, $__bag); ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const MAX_FILES = 10;
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-    let selectedFotoFiles = [];
-    let selectedDokumenFiles = [];
+    let selectedFiles = {
+        'foto_jurnal': [],
+        'dokumen_lpj': [],
+        'dokumen_pendukung': []
+    };
 
     // Fixed Currency Input Handler - Only allows numbers
     function setupCurrencyInput(selector) {
@@ -455,68 +468,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // File Upload Handler
-    function initFileUpload(inputId, type) {
+    function initFileUpload(inputId) {
         const input = document.getElementById(inputId);
-        const previewContainer = document.getElementById(`${type}PreviewContainer`);
-        const fileNameDisplay = document.getElementById(`${type}-file-name-display`);
-        const counter = document.getElementById(`${type}Counter`);
-        const maxWarning = document.getElementById(`${type}MaxWarning`);
-
         if (!input) return;
 
+        const previewContainer = document.getElementById(`${inputId}PreviewContainer`);
+        const fileNameDisplay = document.getElementById(`${inputId}-file-name-display`);
+        const counter = document.getElementById(`${inputId}Counter`);
+
         input.addEventListener('change', function() {
-            handleFileSelection(this.files, type);
+            handleFileSelection(this.files, inputId);
         });
 
-        function handleFileSelection(files, fileType) {
-            const isPhoto = fileType === 'foto';
-            const currentFiles = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-
+        function handleFileSelection(files, inputId) {
             const newFiles = Array.from(files).filter(file => {
                 if (file.size > MAX_FILE_SIZE) {
                     alert(`File "${file.name}" terlalu besar. Maksimal 10MB per file.`);
                     return false;
                 }
-                if (isPhoto && !file.type.match('image.*')) {
+                if (inputId === 'foto_jurnal' && !file.type.match('image.*')) {
                     alert(`File "${file.name}" bukan file gambar yang valid.`);
                     return false;
                 }
                 return true;
             });
 
-            if (currentFiles.length + newFiles.length > MAX_FILES) {
-                alert(`Maksimal ${MAX_FILES} file dapat diunggah.`);
-                return;
-            }
+            selectedFiles[inputId] = [...selectedFiles[inputId], ...newFiles];
 
-            if (isPhoto) {
-                selectedFotoFiles = [...currentFiles, ...newFiles];
-            } else {
-                selectedDokumenFiles = [...currentFiles, ...newFiles];
-            }
-
-            updateFilePreview(fileType);
-            updateFileInput(fileType);
+            updateFilePreview(inputId);
+            updateFileInput(inputId);
         }
 
-        function updateFilePreview(fileType) {
-            const isPhoto = fileType === 'foto';
-            const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+        function updateFilePreview(inputId) {
+            const files = selectedFiles[inputId];
 
             if (files.length === 0) {
                 previewContainer.style.display = 'none';
                 counter.textContent = '';
-                maxWarning.style.display = 'none';
-                fileNameDisplay.textContent = isPhoto ?
-                    'Seret dan lepas foto di sini, atau klik untuk mengunggah.' :
-                    'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.';
+                fileNameDisplay.textContent = 'Seret dan lepas file di sini, atau klik untuk mengunggah.';
                 return;
             }
 
             previewContainer.style.display = 'block';
             fileNameDisplay.textContent = `${files.length} file dipilih`;
-            counter.textContent = `${files.length}/${MAX_FILES} file`;
-            maxWarning.style.display = files.length >= MAX_FILES ? 'block' : 'none';
+            counter.textContent = `${files.length} file diupload`;
 
             let previewHTML = '';
             files.forEach((file, index) => {
@@ -524,16 +519,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     (file.size / (1024 * 1024)).toFixed(1) + ' MB' :
                     (file.size / 1024).toFixed(1) + ' KB';
 
-                if (isPhoto) {
+                if (inputId === 'foto_jurnal') {
                     const imageUrl = URL.createObjectURL(file);
                     previewHTML += `
-                        <div class="file-preview-item" data-index="${index}">
+                        <div class="file-preview-item">
                             <img src="${imageUrl}" alt="Preview" class="preview-image">
                             <div class="file-info">
                                 <div class="file-name">${file.name}</div>
                                 <div class="file-size">${fileSize}</div>
                             </div>
-                            <button type="button" class="remove-file" onclick="removeFile(${index}, '${fileType}')">
+                            <button type="button" class="remove-file" data-index="${index}" data-input-id="${inputId}">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>`;
@@ -549,7 +544,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const iconClass = iconMap[extension] || 'fas fa-file text-muted';
 
                     previewHTML += `
-                        <div class="file-preview-item" data-index="${index}">
+                        <div class="file-preview-item">
                             <div class="file-icon">
                                 <i class="${iconClass} fs-4"></i>
                             </div>
@@ -557,7 +552,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="file-name">${file.name}</div>
                                 <div class="file-size">${fileSize}</div>
                             </div>
-                            <button type="button" class="remove-file" onclick="removeFile(${index}, '${fileType}')">
+                            <button type="button" class="remove-file" data-index="${index}" data-input-id="${inputId}">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>`;
@@ -565,35 +560,36 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             previewContainer.innerHTML = previewHTML;
+
+            previewContainer.querySelectorAll('.remove-file').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    const inputId = this.dataset.inputId;
+                    removeFile(index, inputId);
+                });
+            });
         }
 
-        function updateFileInput(fileType) {
-            const isPhoto = fileType === 'foto';
-            const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-            const targetInput = isPhoto ? input : document.getElementById('dokumen_lpj');
+        function updateFileInput(inputId) {
+            const files = selectedFiles[inputId];
+            const targetInput = document.getElementById(inputId);
 
             const dt = new DataTransfer();
             files.forEach(file => dt.items.add(file));
             targetInput.files = dt.files;
         }
 
-        window.removeFile = function(index, fileType) {
-            const isPhoto = fileType === 'foto';
-
-            if (isPhoto) {
-                selectedFotoFiles.splice(index, 1);
-            } else {
-                selectedDokumenFiles.splice(index, 1);
-            }
-
-            updateFilePreview(fileType);
-            updateFileInput(fileType);
-        };
+        function removeFile(index, inputId) {
+            selectedFiles[inputId].splice(index, 1);
+            updateFilePreview(inputId);
+            updateFileInput(inputId);
+        }
     }
 
     // Initialize file uploads
-    initFileUpload('foto_jurnal', 'foto');
-    initFileUpload('dokumen_lpj', 'dokumen');
+    initFileUpload('foto_jurnal');
+    initFileUpload('dokumen_lpj');
+    initFileUpload('dokumen_pendukung');
 
     // Form submission
     document.getElementById('lpjForm').addEventListener('submit', function(e) {

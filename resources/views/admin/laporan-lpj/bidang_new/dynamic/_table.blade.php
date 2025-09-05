@@ -28,7 +28,7 @@
                             @endif
                         </a>
                     </th>
-                    <th>
+                    {{-- <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort' => 'volume', 'direction' => (request()->get('sort') == 'volume' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
                             class="text-dark text-decoration-none sortable-header">
                             Volume
@@ -38,8 +38,8 @@
                                 <i class="fas fa-sort"></i>
                             @endif
                         </a>
-                    </th>
-                    <th>
+                    </th> --}}
+                    {{-- <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort' => 'jumlah_harga_satuan', 'direction' => (request()->get('sort') == 'jumlah_harga_satuan' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
                             class="text-dark text-decoration-none sortable-header">
                             Jumlah Harga Satuan
@@ -49,11 +49,11 @@
                                 <i class="fas fa-sort"></i>
                             @endif
                         </a>
-                    </th>
+                    </th> --}}
                     <th>
                         <a href="{{ request()->fullUrlWithQuery(['sort' => 'jumlah_harga', 'direction' => (request()->get('sort') == 'jumlah_harga' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
                             class="text-dark text-decoration-none sortable-header">
-                            Jumlah Harga
+                            Total Anggaran
                             @if(request()->get('sort') == 'jumlah_harga')
                                 <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
                             @else
@@ -62,6 +62,7 @@
                         </a>
                     </th>
                     <th>Foto Jurnal</th>
+                    <th>Dokumen Pendukung</th>
                     <th>Dokumen LPJ</th>
                     <th style="text-align: center">Aksi</th>
                 </tr>
@@ -81,8 +82,8 @@
                                 @endif
                             </div>
                         </td>
-                        <td>{{ $data->volume }}</td>
-                        <td>Rp {{ number_format($data->jumlah_harga_satuan, 0, ',', '.') }}</td>
+                        {{-- <td>{{ $data->volume }}</td>
+                        <td>Rp {{ number_format($data->jumlah_harga_satuan, 0, ',', '.') }}</td> --}}
                         <td>Rp {{ number_format($data->jumlah_harga, 0, ',', '.') }}</td>
                         <td>
                             @if ($data->foto_jurnal && count($data->foto_jurnal) > 0)
@@ -95,6 +96,22 @@
                                         data-title="Foto Jurnal - {{ $data->nama_program }}">
                                     <i class="fas fa-images me-1"></i>
                                     {{ count($data->foto_jurnal) }} Foto
+                                </button>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if ($data->dokumen_pendukung && count($data->dokumen_pendukung) > 0)
+                                <button type="button"
+                                        class="btn btn-sm btn-light-primary preview-btn"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#previewModal"
+                                        data-type="document"
+                                        data-files="{{ json_encode(array_map(fn($file) => ($file), $data->dokumen_pendukung)) }}"
+                                        data-title="Dokumen Pendukung - {{ $data->nama_program }}">
+                                    <i class="fas fa-file-alt me-1"></i>
+                                    {{ count($data->dokumen_pendukung) }} Dokumen
                                 </button>
                             @else
                                 <span class="text-muted">-</span>
