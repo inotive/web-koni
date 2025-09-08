@@ -215,12 +215,6 @@
             color: #6c757d;
             margin-top: 8px;
         }
-
-        .max-files-warning {
-            color: #e74c3c;
-            font-size: 0.85rem;
-            margin-top: 8px;
-        }
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
@@ -309,7 +303,7 @@
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="jumlah_harga" class="form-label">Total Harga</label>
+                                    <label for="jumlah_harga" class="form-label">Total Anggaran</label>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="currency-input">
@@ -328,7 +322,7 @@
                                                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Foto Jurnal</label>
-                                    <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
+                                    <p class="file-upload-hint">Unggah foto tanpa batasan jumlah, masing-masing hingga 10 MB</p>
                                 </div>
                                 <div class="col-md-9">
                                     <label for="foto_jurnal" class="file-upload-wrapper">
@@ -350,9 +344,6 @@
 
                                     <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
                                     <div id="fotoCounter" class="file-counter"></div>
-                                    <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
-                                        Maksimal 10 foto yang dapat diunggah.
-                                    </div>
 
                                     @error('foto_jurnal.*')
                                         <div class="text-danger mt-2">{{ $message }}</div>
@@ -396,6 +387,53 @@
                                 </div>
                             </div>
 
+                            {{-- Dokumen LPJ Upload (PDF Only) --}}
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Dokumen LPJ</label>
+                                    <p class="file-upload-hint">Unggah file PDF saja, maksimal 10MB</p>
+                                </div>
+                                <div class="col-md-9">
+                                    <label for="dokumen_lpj_pdf" class="file-upload-wrapper">
+                                        <input type="file" name="dokumen_lpj_pdf" id="dokumen_lpj_pdf"
+                                            class="@error('dokumen_lpj_pdf') is-invalid @enderror"
+                                            accept=".pdf">
+
+                                        <div class="d-flex align-items-center gap-12">
+                                            <div class="file-upload-icon-wrapper">
+                                                <i class="fas fa-upload file-upload-icon"></i>
+                                            </div>
+                                            <div>
+                                                <p class="file-upload-text" id="dokumen-lpj-file-name-display">
+                                                    Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <div id="dokumenLpjPreviewContainer" class="preview-container" style="display: none;"></div>
+
+                                    @error('dokumen_lpj_pdf')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label for="keterangan_tambahan" class="form-label">Keterangan Tambahan</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <textarea name="keterangan_tambahan" id="keterangan_tambahan"
+                                        class="form-control @error('keterangan_tambahan') is-invalid @enderror"
+                                        placeholder="Masukkan keterangan tambahan (opsional)"
+                                        rows="4">{{ old('keterangan_tambahan') }}</textarea>
+                                    @error('keterangan_tambahan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label for="keterangan_tambahan" class="form-label">Keterangan Tambahan</label>
@@ -432,12 +470,12 @@
 @section('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const MAX_FILES = 10;
             const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
             // File arrays to track selected files
             let selectedFotoFiles = [];
             let selectedDokumenFiles = [];
+            let selectedDokumenLpjFile = null;
 
             // Currency formatting
             const currencyInputs = ['jumlah_harga_satuan', 'jumlah_harga'];
@@ -466,13 +504,16 @@
             const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
             const fotoFileNameDisplay = document.getElementById('foto-file-name-display');
             const fotoCounter = document.getElementById('fotoCounter');
-            const fotoMaxWarning = document.getElementById('fotoMaxWarning');
 
             const dokumenInput = document.getElementById('dokumen_lpj');
             const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
             const dokumenFileNameDisplay = document.getElementById('dokumen-file-name-display');
             const dokumenCounter = document.getElementById('dokumenCounter');
             const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
+            
+            const dokumenLpjInput = document.getElementById('dokumen_lpj_pdf');
+            const dokumenLpjFileNameDisplay = document.getElementById('dokumen-lpj-file-name-display');
+            const dokumenLpjPreviewContainer = document.getElementById('dokumenLpjPreviewContainer');
 
             fotoInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'foto');
@@ -480,6 +521,46 @@
 
             dokumenInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'dokumen');
+            });
+            
+            dokumenLpjInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    if (file.size > MAX_FILE_SIZE) {
+                        alert(`File "${file.name}" terlalu besar. Maksimal 10MB.`);
+                        this.value = '';
+                        return;
+                    }
+                    
+                    if (!file.name.toLowerCase().endsWith('.pdf')) {
+                        alert(`File "${file.name}" bukan file PDF yang valid.`);
+                        this.value = '';
+                        return;
+                    }
+                    
+                    selectedDokumenLpjFile = file;
+                    dokumenLpjFileNameDisplay.textContent = file.name;
+                    dokumenLpjPreviewContainer.style.display = 'block';
+                    
+                    // Tampilkan preview dokumen LPJ
+                    const previewHTML = `
+                        <div class="file-preview-item">
+                            <div class="file-icon">
+                                <i class="fas fa-file-pdf text-danger fs-4"></i>
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-size">${(file.size / 1024).toFixed(1)} KB</div>
+                            </div>
+                        </div>
+                    `;
+                    dokumenLpjPreviewContainer.innerHTML = previewHTML;
+                } else {
+                    selectedDokumenLpjFile = null;
+                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
+                    dokumenLpjPreviewContainer.style.display = 'none';
+                    dokumenLpjPreviewContainer.innerHTML = '';
+                }
             });
 
             function handleFileSelection(files, type) {
@@ -501,12 +582,6 @@
 
                     return true;
                 });
-
-                // Check if adding new files would exceed the limit
-                if (currentFiles.length + newFiles.length > MAX_FILES) {
-                    alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${currentFiles.length} file.`);
-                    return;
-                }
 
                 // Add new files to the current files array
                 if (isPhoto) {
@@ -539,13 +614,9 @@
 
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file dipilih`;
-                counter.textContent = `${files.length}/${MAX_FILES} file`;
+                counter.textContent = `${files.length} file`;
 
-                if (files.length >= MAX_FILES) {
-                    maxWarning.style.display = 'block';
-                } else {
-                    maxWarning.style.display = 'none';
-                }
+                maxWarning.style.display = 'none';
 
                 // Generate preview HTML
                 let previewHTML = '';
