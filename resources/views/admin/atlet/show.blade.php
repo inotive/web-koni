@@ -5,8 +5,6 @@
 @section('subSection', 'Atlet')
 @section('subSectionUrl', route('admin.konfigurasi.atlet.index'))
 @section('currentSection', 'Detail Atlet')
-<h1 class="text-dark fw-bold fs-3 mb-0">Detail Atlet</h1>
-
 @section('content')
 <style>
     /* Base Layout */

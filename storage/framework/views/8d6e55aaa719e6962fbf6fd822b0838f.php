@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Manajemen Prestasi'); ?>
+<?php $__env->startSection('mainSection', 'Konfigurasi'); ?>
+<?php $__env->startSection('mainSectionUrl', route('admin.konfigurasi.atlet.index')); ?>
+<?php $__env->startSection('subSection', 'Prestasi'); ?>
+<?php $__env->startSection('currentSection', 'Daftar Prestasi'); ?>
 
-@section('pageTitle', 'Manajemen Prestasi')
-@section('mainSection', 'Konfigurasi')
-@section('mainSectionUrl', route('admin.konfigurasi.atlet.index'))
-@section('subSection', 'Prestasi')
-@section('currentSection', 'Daftar Prestasi')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
 body {
     background-color: #f5f5f5;
@@ -562,15 +560,16 @@ body {
 
 </style>
 
-    @if (session('success'))
-        <div class="alert alert-{{ session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger') }} alert-dismissible fade show"
+    <?php if(session('success')): ?>
+        <div class="alert alert-<?php echo e(session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger')); ?> alert-dismissible fade show"
             role="alert">
             <i
-                class="fas {{ session('action') === 'store' ? 'fa-check-circle' : (session('action') === 'update' ? 'fa-exclamation-circle' : 'fa-trash-alt') }} me-2"></i>
-            {{ session('success') }}
+                class="fas <?php echo e(session('action') === 'store' ? 'fa-check-circle' : (session('action') === 'update' ? 'fa-exclamation-circle' : 'fa-trash-alt')); ?> me-2"></i>
+            <?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="main-content">
         <div class="container-fluid">
@@ -582,7 +581,7 @@ body {
                                 <div class="header-wrapper">
                                     <h3 class="header-title fw-semibold text-dark">Daftar Kejuaraan</h3>
                                     <div class="header-controls">
-                                        <a href="{{ route('admin.konfigurasi.prestasi.create') }}" class="btn"
+                                        <a href="<?php echo e(route('admin.konfigurasi.prestasi.create')); ?>" class="btn"
                                             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 6px; padding: 10px 15px; font-weight: 500;">
                                             <i class="ki-duotone ki-plus fs-4 me-2"
                                                 style="color: white !important;"></i>Tambah
@@ -591,14 +590,14 @@ body {
 
                                         <div class="input-group" style="width: 280px;">
                                             <input type="search" name="search" id="search" class="form-control"
-                                                placeholder="Cari berdasarkan nama..." value="{{ request('search') }}">
+                                                placeholder="Cari berdasarkan nama..." value="<?php echo e(request('search')); ?>">
                                             <button class="btn btn-outline-secondary" type="button">
                                                 <i class="fas fa-search"></i>
                                             </button>
                                         </div>
 
 
-                                         <a href="{{ route('admin.konfigurasi.prestasi.export') }}" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
+                                         <a href="<?php echo e(route('admin.konfigurasi.prestasi.export')); ?>" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
                                         <i class="fas fa-file-csv me-1"></i> Export
                                     </a>
                                         <div class="dropdown">
@@ -624,13 +623,13 @@ body {
                                                     <select id="filter-medali" class="form-select" style="border: 1px solid #ced4da !important;">
                                                         <option value="">Semua Medali</option>
                                                         <option value="Emas"
-                                                            {{ request('medali') == 'Emas' ? 'selected' : '' }}>Emas
+                                                            <?php echo e(request('medali') == 'Emas' ? 'selected' : ''); ?>>Emas
                                                         </option>
                                                         <option value="Perak"
-                                                            {{ request('medali') == 'Perak' ? 'selected' : '' }}>Perak
+                                                            <?php echo e(request('medali') == 'Perak' ? 'selected' : ''); ?>>Perak
                                                         </option>
                                                         <option value="Perunggu"
-                                                            {{ request('medali') == 'Perunggu' ? 'selected' : '' }}>Perunggu
+                                                            <?php echo e(request('medali') == 'Perunggu' ? 'selected' : ''); ?>>Perunggu
                                                         </option>
                                                     </select>
                                                 </div>
@@ -642,16 +641,16 @@ body {
                                                     <select id="filter-tingkat" class="form-select" style="border: 1px solid #ced4da !important;">
                                                         <option value="">Semua Tingkat</option>
                                                         <option value="Nasional"
-                                                            {{ request('tingkat') == 'Nasional' ? 'selected' : '' }}>
+                                                            <?php echo e(request('tingkat') == 'Nasional' ? 'selected' : ''); ?>>
                                                             Nasional</option>
                                                         <option value="Regional"
-                                                            {{ request('tingkat') == 'Regional' ? 'selected' : '' }}>
+                                                            <?php echo e(request('tingkat') == 'Regional' ? 'selected' : ''); ?>>
                                                             Regional</option>
                                                         <option value="Provinsi"
-                                                            {{ request('tingkat') == 'Provinsi' ? 'selected' : '' }}>
+                                                            <?php echo e(request('tingkat') == 'Provinsi' ? 'selected' : ''); ?>>
                                                             Provinsi</option>
                                                         <option value="Kota/Kabupaten"
-                                                            {{ request('tingkat') == 'Kota/Kabupaten' ? 'selected' : '' }}>
+                                                            <?php echo e(request('tingkat') == 'Kota/Kabupaten' ? 'selected' : ''); ?>>
                                                             Kota/Kabupaten</option>
                                                     </select>
                                                 </div>
@@ -671,23 +670,23 @@ body {
                                     </div>
                                 </div>
 
-                                @if (!(isset($prestasis) && $prestasis->isEmpty()))
+                                <?php if(!(isset($prestasis) && $prestasis->isEmpty())): ?>
                                     <div class="d-flex justify-content-between align-items-center mt-3">
                                         <div id="filter-info" class="text-muted">
                                             Menampilkan <span
-                                                id="showing-count">{{ isset($prestasis) ? $prestasis->count() : 0 }}</span>
+                                                id="showing-count"><?php echo e(isset($prestasis) ? $prestasis->count() : 0); ?></span>
                                             dari
-                                            <span id="total-count">{{ isset($prestasis) ? $prestasis->total() : 0 }}</span>
+                                            <span id="total-count"><?php echo e(isset($prestasis) ? $prestasis->total() : 0); ?></span>
                                             prestasi
                                         </div>
                                     </div>
-                                @endif
+                                <?php endif; ?>
                             </div>
                             <div class="table-container">
 
 
                                 <div id="prestasi-table-container">
-                                    @include('admin.prestasi._table')
+                                    <?php echo $__env->make('admin.prestasi._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                 </div>
                             </div>
                         </div>
@@ -697,10 +696,10 @@ body {
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
-    @if (isset($prestasis) && $prestasis->isNotEmpty())
+<?php $__env->startSection('script'); ?>
+    <?php if(isset($prestasis) && $prestasis->isNotEmpty()): ?>
         <script>
 $(document).ready(function() {
     $.ajaxSetup({
@@ -972,7 +971,7 @@ $(document).ready(function() {
                 form.method = 'POST';
                 form.action = route;
                 form.innerHTML = `
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="_token" value="<?php echo e(csrf_token()); ?>">
                     <input type="hidden" name="_method" value="DELETE">
                 `;
                 document.body.appendChild(form);
@@ -992,7 +991,7 @@ $(document).ready(function() {
         const currentTahun = new URLSearchParams(window.location.search).get('tahun');
 
         $.ajax({
-            url: "{{ route('admin.konfigurasi.prestasi.index') }}",
+            url: "<?php echo e(route('admin.konfigurasi.prestasi.index')); ?>",
             type: 'GET',
             data: {
                 get_tahun: 1
@@ -1038,5 +1037,7 @@ $(document).ready(function() {
     updateSortingIcons();
 });
         </script>
-    @endif
-@endsection
+    <?php endif; ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/prestasi/index.blade.php ENDPATH**/ ?>

@@ -6,7 +6,7 @@
 
 @section('content')
 
-   <style>
+    <style>
         body {
             background-color: #f5f5f5;
         }
@@ -45,7 +45,7 @@
         }
 
         /* Buttons */
-        .btn-add-pelatih {
+        .btn-add-atlet {
             background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
             border: none;
             border-radius: 8px;
@@ -56,7 +56,7 @@
             box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
         }
 
-        .btn-add-pelatih:hover {
+        .btn-add-atlet:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
         }
@@ -213,18 +213,77 @@
         }
 
         /* Specific column widths */
-        .table th:nth-child(1), .table td:nth-child(1) { width: 40px; text-align: center !important; }
-        .table th:nth-child(2), .table td:nth-child(2) { width: 50px; text-align: center; }
-        .table th:nth-child(3), .table td:nth-child(3) { width: 140px; text-align: left !important; }
-        .table th:nth-child(4), .table td:nth-child(4) { width: 110px; text-align: left !important; }
-        .table th:nth-child(5), .table td:nth-child(5) { width: 100px; text-align: left !important; }
-        .table th:nth-child(6), .table td:nth-child(6) { width: 70px; text-align: left !important; }
-        .table th:nth-child(7), .table td:nth-child(7) { width: 80px; text-align: left !important; }
-        .table th:nth-child(8), .table td:nth-child(8) { width: 80px; text-align: left !important; }
-        .table th:nth-child(9), .table td:nth-child(9) { width: 110px; text-align: left !important; }
-        .table th:nth-child(10), .table td:nth-child(10) { width: 120px; text-align: left !important; }
-        .table th:nth-child(11), .table td:nth-child(11) { width: 90px; text-align: left !important; }
-        .table th:nth-child(12), .table td:nth-child(12) { width: 80px; text-align: center !important; }
+        .table th:nth-child(1),
+        .table td:nth-child(1) {
+            width: 40px;
+            text-align: center !important;
+        }
+
+        .table th:nth-child(2),
+        .table td:nth-child(2) {
+            width: 50px;
+            text-align: center;
+        }
+
+        .table th:nth-child(3),
+        .table td:nth-child(3) {
+            width: 140px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(4),
+        .table td:nth-child(4) {
+            width: 110px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(5),
+        .table td:nth-child(5) {
+            width: 100px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(6),
+        .table td:nth-child(6) {
+            width: 70px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(7),
+        .table td:nth-child(7) {
+            width: 80px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(8),
+        .table td:nth-child(8) {
+            width: 80px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(9),
+        .table td:nth-child(9) {
+            width: 110px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(10),
+        .table td:nth-child(10) {
+            width: 120px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(11),
+        .table td:nth-child(11) {
+            width: 90px;
+            text-align: left !important;
+        }
+
+        .table th:nth-child(12),
+        .table td:nth-child(12) {
+            width: 80px;
+            text-align: center !important;
+        }
 
         .table td:nth-child(1),
         .table td:nth-child(2),
@@ -422,6 +481,16 @@
             height: 1rem;
         }
 
+        /* Filter Button Custom */
+        .filter-btn-custom {
+            border: 1px solid #dee2e6 !important;
+            background-color: white;
+        }
+
+        .filter-btn-custom:hover {
+            background-color: #f8f9fa;
+        }
+
         /* Toast Notifications */
         .notification-toast {
             position: fixed;
@@ -438,6 +507,7 @@
 
         /* Responsive Styles */
         @media (max-width: 768px) {
+
             .table-header,
             .table-footer {
                 padding: 15px;
@@ -529,104 +599,111 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                        <div class="table-header" style="border-radius: 12px 12px 0px 0px">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h3 class="mb-0 fw-semibold text-dark">Informasi Atlet</h3>
+                            <div class="table-header" style="border-radius: 12px 12px 0px 0px">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h3 class="mb-0 fw-semibold text-dark">Informasi Atlet</h3>
 
-                                <div class="d-flex align-items-center gap-2 flex-wrap">
-                                    <div class="input-group" style="width: 250px;">
-                                        <input type="search" name="search" id="search" class="form-control"
-                                            placeholder="Cari atlet...">
-                                        <button class="btn btn-outline-secondary" type="button">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <div class="input-group" style="width: 250px;">
+                                            <input type="search" name="search" id="search" class="form-control"
+                                                placeholder="Cari atlet...">
+                                            <button class="btn btn-outline-secondary" type="button">
+                                                <i class="fas fa-search"></i>
+                                            </button>
+                                        </div>
 
-                                    <div class="dropdown">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        <a href="{{ route('admin.konfigurasi.atlet.export') }}" id="export-csv"
+                                            class="btn btn-outline-secondary filter-btn-custom">
+                                            <i class="fas fa-file-csv me-1"></i> Export
+                                        </a>
+                                        <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom" type="button"
                                             data-bs-toggle="dropdown">
                                             <i class="fas fa-filter me-1"></i> Filter
                                             <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
                                         </button>
-                                        <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">Cabang Olahraga</label>
-                                                <select id="filter-cabor" class="form-select">
-                                                    <option value="">Semua Cabor</option>
-                                                    @if (isset($allCabor))
-                                                        @foreach ($allCabor as $id => $nama)
-                                                            <option value="{{ $nama }}">{{ $nama }}</option>
-                                                        @endforeach
-                                                    @endif
-                                                </select>
-                                            </div>
+                                            <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Cabang Olahraga</label>
+                                                    <select id="filter-cabor" class="form-select">
+                                                        <option value="">Semua Cabor</option>
+                                                        @if (isset($allCabor))
+                                                            @foreach ($allCabor as $id => $nama)
+                                                                <option value="{{ $nama }}">{{ $nama }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </div>
 
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">Jenis Kelamin</label>
-                                                <select id="filter-gender" class="form-select">
-                                                    <option value="">Semua</option>
-                                                    <option value="Laki-Laki">Laki-Laki</option>
-                                                    <option value="Perempuan">Perempuan</option>
-                                                </select>
-                                            </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Jenis Kelamin</label>
+                                                    <select id="filter-gender" class="form-select">
+                                                        <option value="">Semua</option>
+                                                        <option value="Laki-Laki">Laki-Laki</option>
+                                                        <option value="Perempuan">Perempuan</option>
+                                                    </select>
+                                                </div>
 
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">Rentang Usia</label>
-                                                <select id="filter-age" class="form-select">
-                                                    <option value="">Semua Usia</option>
-                                                    <option value="20-30">20-30 tahun</option>
-                                                    <option value="31-40">31-40 tahun</option>
-                                                    <option value="41-50">41-50 tahun</option>
-                                                    <option value="51-60">51-60 tahun</option>
-                                                    <option value="60+">60+ tahun</option>
-                                                </select>
-                                            </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Rentang Usia</label>
+                                                    <select id="filter-age" class="form-select">
+                                                        <option value="">Semua Usia</option>
+                                                        <option value="20-30">20-30 tahun</option>
+                                                        <option value="31-40">31-40 tahun</option>
+                                                        <option value="41-50">41-50 tahun</option>
+                                                        <option value="51-60">51-60 tahun</option>
+                                                        <option value="60+">60+ tahun</option>
+                                                    </select>
+                                                </div>
 
-                                            <div class="mb-3">
-                                                <label class="form-label fw-semibold">Status Prestasi</label>
-                                                <select id="filter-prestasi" class="form-select">
-                                                    <option value="">Semua</option>
-                                                    <option value="ada">Ada Prestasi</option>
-                                                    <option value="tidak">Tidak Ada Prestasi</option>
-                                                    <option value="emas">Medali Emas</option>
-                                                    <option value="perak">Medali Perak</option>
-                                                    <option value="perunggu">Medali Perunggu</option>
-                                                </select>
-                                            </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Status Prestasi</label>
+                                                    <select id="filter-prestasi" class="form-select">
+                                                        <option value="">Semua</option>
+                                                        <option value="ada">Ada Prestasi</option>
+                                                        <option value="tidak">Tidak Ada Prestasi</option>
+                                                        <option value="emas">Medali Emas</option>
+                                                        <option value="perak">Medali Perak</option>
+                                                        <option value="perunggu">Medali Perunggu</option>
+                                                    </select>
+                                                </div>
 
-                                            <div class="d-flex gap-2">
-                                                <button type="button" id="apply-filters"
-                                                    class="btn btn-primary btn-sm flex-fill">
-                                                    <i class="fas fa-check"></i> Terapkan
-                                                </button>
-                                                <button type="button" id="reset-filters"
-                                                    class="btn btn-light btn-sm flex-fill">
-                                                    <i class="fas fa-redo"></i> Reset
-                                                </button>
+                                                <div class="d-flex gap-2">
+                                                    <button type="button" id="apply-filters"
+                                                        class="btn btn-primary btn-sm flex-fill">
+                                                        <i class="fas fa-check"></i> Terapkan
+                                                    </button>
+                                                    <button type="button" id="reset-filters"
+                                                        class="btn btn-light btn-sm flex-fill">
+                                                        <i class="fas fa-redo"></i> Reset
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            @if (!(isset($atlet) && $atlet->isEmpty()))
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <div id="filter-info" class="text-muted">
-                                        Menampilkan <span id="showing-count">{{ isset($atlet) ? $atlet->count() : 0 }}</span>
-                                        dari <span id="total-count">{{ isset($atlet) ? $atlet->total() : 0 }}</span> atlet
+                                @if (!(isset($atlet) && $atlet->isEmpty()))
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div id="filter-info" class="text-muted">
+                                            Menampilkan <span
+                                                id="showing-count">{{ isset($atlet) ? $atlet->count() : 0 }}</span>
+                                            dari <span id="total-count">{{ isset($atlet) ? $atlet->total() : 0 }}</span>
+                                            atlet
+                                        </div>
                                     </div>
-                                </div>
-                            @endif
-                        </div>
-                        <div class="table-container">
-                            @include('admin.atlet._table')
+                                @endif
+                            </div>
+                            <div class="table-container">
+                                @include('admin.atlet._table')
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
 @endsection
@@ -634,447 +711,523 @@
 @section('script')
     @if (isset($atlet) && $atlet->isNotEmpty())
         <script>
-        $(document).ready(function() {
-            // Initialize filters from URL on page load
-            initializeFiltersFromURL();
-            initializeSortingFromURL();
+            $(document).ready(function() {
+                // Initialize filters from URL on page load
+                initializeFiltersFromURL();
+                initializeSortingFromURL();
 
-            function loadTable(url) {
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    beforeSend: function() {
-                        $('.table-container').html(
-                            '<div class="text-center py-5">' +
-                            '<div class="spinner-border text-primary" role="status">' +
-                            '<span class="visually-hidden">Loading...</span>' +
-                            '</div></div>'
-                        );
-                    },
-                    success: function(response) {
-                        $('.table-container').html(response);
-                        bindEvents();
-                        updateFilterInfo(response);
-                        updateURL(url);
-                        // Re-sync filters and sorting after loading new content
-                        syncFiltersWithURL();
-                        syncSortingWithURL();
-                    },
-                    error: function(xhr) {
-                        console.error(xhr.responseText);
-                        Swal.fire({
-                            title: 'Error!',
-                            text: 'Gagal memuat data atlet',
-                            icon: 'error'
-                        });
-                    }
-                });
-            }
+                function loadTable(url) {
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        beforeSend: function() {
+                            $('.table-container').html(
+                                '<div class="text-center py-5">' +
+                                '<div class="spinner-border text-primary" role="status">' +
+                                '<span class="visually-hidden">Loading...</span>' +
+                                '</div></div>'
+                            );
+                        },
+                        success: function(response) {
+                            $('.table-container').html(response);
+                            bindEvents();
+                            updateFilterInfo(response);
+                            updateURL(url);
+                            // Re-sync filters and sorting after loading new content
+                            syncFiltersWithURL();
+                            syncSortingWithURL();
+                        },
+                        error: function(xhr) {
+                            console.error(xhr.responseText);
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Gagal memuat data atlet',
+                                icon: 'error'
+                            });
+                        }
+                    });
+                }
 
-            function bindEvents() {
-                // Remove all previous event bindings to prevent duplicates
-                $(document).off('click.customFilter change.customFilter input.customFilter');
+                function bindEvents() {
+                    // Remove all previous event bindings to prevent duplicates
+                    $(document).off('click.customFilter change.customFilter input.customFilter');
 
-                // Pagination links
-                $(document).on('click.customFilter', '.pagination-link', function(e) {
-                    e.preventDefault();
-                    const url = $(this).attr('href');
-                    if (url) loadTable(url);
-                });
+                    // Pagination links
+                    $(document).on('click.customFilter', '.pagination-link', function(e) {
+                        e.preventDefault();
+                        const url = $(this).attr('href');
+                        if (url) loadTable(url);
+                    });
 
-                // Per page selector
-                $(document).on('change.customFilter', 'select[name="per_page"]', function() {
-                    const url = buildURL();
-                    url.searchParams.set('per_page', $(this).val());
-                    url.searchParams.delete('page');
-                    loadTable(url.toString());
-                });
+                    // Per page selector
+                    $(document).on('change.customFilter', 'select[name="per_page"]', function() {
+                        const url = buildURL();
+                        url.searchParams.set('per_page', $(this).val());
+                        url.searchParams.delete('page');
+                        loadTable(url.toString());
+                    });
 
-                // Sorting links - FIXED VERSION
-                $(document).on('click.customFilter', '.sortable, .sort-link', function(e) {
-                    e.preventDefault();
+                    // Sorting links - FIXED VERSION
+                    $(document).on('click.customFilter', '.sortable, .sort-link', function(e) {
+                        e.preventDefault();
 
-                    const sortBy = $(this).data('sort');
-                    const url = buildURL();
+                        const sortBy = $(this).data('sort');
+                        const url = buildURL();
 
-                    // Get current sorting from URL parameters
-                    const currentSortBy = url.searchParams.get('sort_by');
-                    const currentOrder = url.searchParams.get('order');
+                        // Get current sorting from URL parameters
+                        const currentSortBy = url.searchParams.get('sort_by');
+                        const currentOrder = url.searchParams.get('order');
 
-                    let newOrder;
+                        let newOrder;
 
-                    if (currentSortBy === sortBy) {
-                        // Same column clicked - cycle through: asc -> desc -> no sort
-                        if (currentOrder === 'asc') {
-                            newOrder = 'desc';
-                        } else if (currentOrder === 'desc') {
-                            // Remove sorting (back to default)
-                            url.searchParams.delete('sort_by');
-                            url.searchParams.delete('order');
-                            url.searchParams.delete('page');
+                        if (currentSortBy === sortBy) {
+                            // Same column clicked - cycle through: asc -> desc -> no sort
+                            if (currentOrder === 'asc') {
+                                newOrder = 'desc';
+                            } else if (currentOrder === 'desc') {
+                                // Remove sorting (back to default)
+                                url.searchParams.delete('sort_by');
+                                url.searchParams.delete('order');
+                                url.searchParams.delete('page');
 
-                            // Update visual indicators
-                            updateSortingVisuals();
+                                // Update visual indicators
+                                updateSortingVisuals();
 
-                            loadTable(url.toString());
-                            return;
+                                loadTable(url.toString());
+                                return;
+                            } else {
+                                newOrder = 'asc';
+                            }
                         } else {
+                            // Different column clicked - start with asc
                             newOrder = 'asc';
                         }
-                    } else {
-                        // Different column clicked - start with asc
-                        newOrder = 'asc';
-                    }
 
-                    // Set new sorting parameters
-                    url.searchParams.set('sort_by', sortBy);
-                    url.searchParams.set('order', newOrder);
-                    url.searchParams.delete('page');
+                        // Set new sorting parameters
+                        url.searchParams.set('sort_by', sortBy);
+                        url.searchParams.set('order', newOrder);
+                        url.searchParams.delete('page');
 
-                    // Update visual indicators immediately
-                    updateSortingVisuals(sortBy, newOrder);
+                        // Update visual indicators immediately
+                        updateSortingVisuals(sortBy, newOrder);
 
-                    loadTable(url.toString());
-                });
-
-                // Filter buttons
-                $(document).on('click.customFilter', '#apply-filters', function() {
-                    applyFilters();
-                });
-
-                $(document).on('click.customFilter', '#reset-filters', function() {
-                    resetFilters();
-                });
-
-                $(document).on('click.customFilter', '#reset-all-filters', function() {
-                    resetFilters();
-                });
-
-                // Search input with debounce
-                let searchTimeout;
-                $(document).on('input.customFilter', '#search', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        applyFilters();
-                    }, 300);
-                });
-
-                // Quick filters
-                $(document).on('click.customFilter', '.quick-filter', function(e) {
-                    e.preventDefault();
-                    const filterType = $(this).data('filter-type');
-                    const filterValue = $(this).data('filter-value');
-
-                    $(`#filter-${filterType}`).val(filterValue);
-                    applyFilters();
-                });
-
-                // Update filter badge when dropdowns change
-                $(document).on('change.customFilter', '#filter-cabor, #filter-gender, #filter-age, #filter-prestasi, #filter-ketersediaan', function() {
-                    updateFilterBadge();
-                });
-
-                updateFilterBadge();
-            }
-
-            function applyFilters() {
-                const url = buildURL();
-
-                // Get all filter values
-                const search = $('#search').val().trim();
-                const cabor = $('#filter-cabor').val();
-                const gender = $('#filter-gender').val();
-                const age = $('#filter-age').val();
-                const prestasi = $('#filter-prestasi').val();
-                const ketersediaan = $('#filter-ketersediaan').val();
-
-                // Set or remove search parameter
-                if (search) {
-                    url.searchParams.set('search', search);
-                } else {
-                    url.searchParams.delete('search');
-                }
-
-                // Set or remove filter parameters
-                if (cabor) {
-                    url.searchParams.set('filter_cabor', cabor);
-                } else {
-                    url.searchParams.delete('filter_cabor');
-                }
-
-                if (gender) {
-                    url.searchParams.set('filter_gender', gender);
-                } else {
-                    url.searchParams.delete('filter_gender');
-                }
-
-                if (age) {
-                    url.searchParams.set('filter_age', age);
-                } else {
-                    url.searchParams.delete('filter_age');
-                }
-
-                if (prestasi) {
-                    url.searchParams.set('filter_prestasi', prestasi);
-                } else {
-                    url.searchParams.delete('filter_prestasi');
-                }
-
-                if (ketersediaan) {
-                    url.searchParams.set('filter_ketersediaan', ketersediaan);
-                } else {
-                    url.searchParams.delete('filter_ketersediaan');
-                }
-
-                // Reset to first page when applying filters
-                url.searchParams.delete('page');
-
-                // Preserve per_page setting
-                const perPage = $('select[name="per_page"]').val();
-                if (perPage && perPage !== '10') {
-                    url.searchParams.set('per_page', perPage);
-                }
-
-                // Close dropdown
-                $('.dropdown-toggle').dropdown('hide');
-
-                // Load filtered results
-                loadTable(url.toString());
-            }
-
-            function resetFilters() {
-                // Clear all form inputs
-                $('#search').val('');
-                $('#filter-cabor').val('');
-                $('#filter-gender').val('');
-                $('#filter-age').val('');
-                $('#filter-prestasi').val('');
-                $('#filter-ketersediaan').val('');
-
-                // Build clean URL (preserve only per_page if different from default)
-                const url = new URL(window.location.origin + window.location.pathname);
-                const perPage = $('select[name="per_page"]').val();
-                if (perPage && perPage !== '10') {
-                    url.searchParams.set('per_page', perPage);
-                }
-
-                // Close dropdown
-                $('.dropdown-toggle').dropdown('hide');
-
-                // Update filter badge
-                updateFilterBadge();
-
-                // Load clean results
-                loadTable(url.toString());
-            }
-
-            function buildURL() {
-                return new URL(window.location.href);
-            }
-
-            function initializeFiltersFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-
-                // Set form values from URL parameters
-                $('#search').val(urlParams.get('search') || '');
-                $('#filter-cabor').val(urlParams.get('filter_cabor') || '');
-                $('#filter-gender').val(urlParams.get('filter_gender') || '');
-                $('#filter-age').val(urlParams.get('filter_age') || '');
-                $('#filter-prestasi').val(urlParams.get('filter_prestasi') || '');
-                $('#filter-ketersediaan').val(urlParams.get('filter_ketersediaan') || '');
-                $('select[name="per_page"]').val(urlParams.get('per_page') || '10');
-
-                updateFilterBadge();
-            }
-
-            function initializeSortingFromURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const sortBy = urlParams.get('sort_by');
-                const order = urlParams.get('order');
-
-                updateSortingVisuals(sortBy, order);
-            }
-
-            function syncFiltersWithURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-
-                // Sync all filter elements with current URL
-                $('#search').val(urlParams.get('search') || '');
-                $('#filter-cabor').val(urlParams.get('filter_cabor') || '');
-                $('#filter-gender').val(urlParams.get('filter_gender') || '');
-                $('#filter-age').val(urlParams.get('filter_age') || '');
-                $('#filter-prestasi').val(urlParams.get('filter_prestasi') || '');
-                $('#filter-ketersediaan').val(urlParams.get('filter_ketersediaan') || '');
-
-                // Sync per_page selector
-                const perPage = urlParams.get('per_page') || '10';
-                $('select[name="per_page"]').val(perPage);
-
-                updateFilterBadge();
-            }
-
-            function syncSortingWithURL() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const sortBy = urlParams.get('sort_by');
-                const order = urlParams.get('order');
-
-                updateSortingVisuals(sortBy, order);
-            }
-
-            function updateSortingVisuals(activeSortBy = null, activeOrder = null) {
-                // Reset all sort indicators
-                $('.sort-link').each(function() {
-                    const $link = $(this);
-                    const $icon = $link.find('i');
-                    const sortBy = $link.data('sort');
-
-                    // Update data-order for next click
-                    if (sortBy === activeSortBy) {
-                        $link.data('order', activeOrder);
-
-                        // Update icon based on current state
-                        if (activeOrder === 'asc') {
-                            $icon.removeClass('fa-sort fa-sort-down text-muted').addClass('fa-sort-up');
-                        } else if (activeOrder === 'desc') {
-                            $icon.removeClass('fa-sort fa-sort-up text-muted').addClass('fa-sort-down');
-                        } else {
-                            $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
-                        }
-                    } else {
-                        // Reset other columns
-                        $link.data('order', 'asc');
-                        $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
-                    }
-                });
-            }
-
-            function updateFilterBadge() {
-                const activeFilters = [
-                    $('#filter-cabor').val(),
-                    $('#filter-gender').val(),
-                    $('#filter-age').val(),
-                    $('#filter-prestasi').val(),
-                    $('#filter-ketersediaan').val()
-                ].filter(val => val && val.length > 0).length;
-
-                const badge = $('#filter-count');
-                if (activeFilters > 0) {
-                    badge.text(activeFilters).removeClass('d-none');
-                } else {
-                    badge.addClass('d-none');
-                }
-            }
-
-            function updateFilterInfo(response) {
-                try {
-                    const tempDiv = $('<div>').html(response);
-                    const showingInfo = tempDiv.find('#filter-info, .showing-info').text();
-                    if (showingInfo) {
-                        $('#filter-info, .showing-info').text(showingInfo);
-                    }
-                } catch (e) {
-                    console.log('Could not update filter info');
-                }
-            }
-
-            function updateURL(url) {
-                if (window.history && window.history.pushState) {
-                    window.history.pushState({}, '', url);
-                }
-            }
-
-            // Handle browser back/forward buttons
-            window.onpopstate = function() {
-                syncFiltersWithURL();
-                syncSortingWithURL();
-                loadTable(window.location.href);
-            };
-
-            // Initialize event bindings
-            bindEvents();
-
-            // Keyboard shortcuts
-            $(document).keydown(function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.keyCode === 70) { // Ctrl+F
-                    e.preventDefault();
-                    $('#search').focus();
-                }
-
-                if (e.keyCode === 27) { // Escape
-                    $('#search').val('').trigger('input');
-                }
-            });
-
-            // Delete functionality (existing code preserved)
-            window.showDeleteWarning = function(button, atletName, prestasiList) {
-                $('#atletName').text(atletName);
-
-                const prestasiListElement = $('#prestasiList');
-                prestasiListElement.empty();
-
-                if (prestasiList && prestasiList.length > 0) {
-                    prestasiList.forEach(function(prestasi) {
-                        prestasiListElement.append(`<li>${prestasi}</li>`);
+                        loadTable(url.toString());
                     });
-                } else {
-                    prestasiListElement.append('<li>Prestasi yang terkait</li>');
-                }
 
-                $('#atletDeleteWarningModal').modal('show');
-            };
+                    // Filter buttons
+                    $(document).on('click.customFilter', '#apply-filters', function() {
+                        applyFilters();
+                    });
 
-            window.destroyItem = function(button) {
-                const route = button.dataset.route;
+                    $(document).on('click.customFilter', '#reset-filters', function() {
+                        resetFilters();
+                    });
 
-                Swal.fire({
-                    title: "Apakah Anda Yakin?",
-                    html: "<p style='text-align:center'>Setelah data atlet dihapus, Anda tidak bisa mengembalikannya!</p>",
-                    icon: "warning",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus!',
-                    cancelButtonText: 'Batalkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Menghapus...',
-                            text: 'Mohon tunggu',
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            willOpen: () => {
-                                Swal.showLoading();
-                            }
+                    $(document).on('click.customFilter', '#reset-all-filters', function() {
+                        resetFilters();
+                    });
+
+                    // Search input with debounce
+                    let searchTimeout;
+                    $(document).on('input.customFilter', '#search', function() {
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(() => {
+                            applyFilters();
+                        }, 300);
+                    });
+
+                    // Quick filters
+                    $(document).on('click.customFilter', '.quick-filter', function(e) {
+                        e.preventDefault();
+                        const filterType = $(this).data('filter-type');
+                        const filterValue = $(this).data('filter-value');
+
+                        $(`#filter-${filterType}`).val(filterValue);
+                        applyFilters();
+                    });
+
+                    // Update filter badge when dropdowns change
+                    $(document).on('change.customFilter',
+                        '#filter-cabor, #filter-gender, #filter-age, #filter-prestasi, #filter-ketersediaan',
+                        function() {
+                            updateFilterBadge();
                         });
 
-                        $.ajax({
-                            url: route,
-                            type: 'DELETE',
-                            data: {
-                                _token: $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}'
-                            },
-                            success: function(response) {
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: response.message || 'Data atlet berhasil dihapus',
-                                    icon: 'success',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
+                    updateFilterBadge();
+                }
 
-                                loadTable(window.location.href);
-                            },
-                            error: function(xhr) {
-                                Swal.close();
+                function applyFilters() {
+                    const url = buildURL();
 
-                                try {
-                                    const response = JSON.parse(xhr.responseText);
+                    // Get all filter values
+                    const search = $('#search').val().trim();
+                    const cabor = $('#filter-cabor').val();
+                    const gender = $('#filter-gender').val();
+                    const age = $('#filter-age').val();
+                    const prestasi = $('#filter-prestasi').val();
+                    const ketersediaan = $('#filter-ketersediaan').val();
 
-                                    if (response.reason === 'has_prestasis') {
-                                        Swal.fire({
-                                            title: 'Tidak Dapat Menghapus Atlet',
-                                            html: `Atlet <strong>${response.atlet_name}</strong> tidak dapat dihapus karena masih memiliki ${response.prestasi_count} prestasi terkait.<br><br>
+                    // Set or remove search parameter
+                    if (search) {
+                        url.searchParams.set('search', search);
+                    } else {
+                        url.searchParams.delete('search');
+                    }
+
+                    // Set or remove filter parameters
+                    if (cabor) {
+                        url.searchParams.set('filter_cabor', cabor);
+                    } else {
+                        url.searchParams.delete('filter_cabor');
+                    }
+
+                    if (gender) {
+                        url.searchParams.set('filter_gender', gender);
+                    } else {
+                        url.searchParams.delete('filter_gender');
+                    }
+
+                    if (age) {
+                        url.searchParams.set('filter_age', age);
+                    } else {
+                        url.searchParams.delete('filter_age');
+                    }
+
+                    if (prestasi) {
+                        url.searchParams.set('filter_prestasi', prestasi);
+                    } else {
+                        url.searchParams.delete('filter_prestasi');
+                    }
+
+                    if (ketersediaan) {
+                        url.searchParams.set('filter_ketersediaan', ketersediaan);
+                    } else {
+                        url.searchParams.delete('filter_ketersediaan');
+                    }
+
+                    // Reset to first page when applying filters
+                    url.searchParams.delete('page');
+
+                    // Preserve per_page setting
+                    const perPage = $('select[name="per_page"]').val();
+                    if (perPage && perPage !== '10') {
+                        url.searchParams.set('per_page', perPage);
+                    }
+
+                    // Close dropdown
+                    $('.dropdown-toggle').dropdown('hide');
+
+                    // Load filtered results
+                    loadTable(url.toString());
+                }
+
+                function resetFilters() {
+                    // Clear all form inputs
+                    $('#search').val('');
+                    $('#filter-cabor').val('');
+                    $('#filter-gender').val('');
+                    $('#filter-age').val('');
+                    $('#filter-prestasi').val('');
+                    $('#filter-ketersediaan').val('');
+
+                    // Build clean URL (preserve only per_page if different from default)
+                    const url = new URL(window.location.origin + window.location.pathname);
+                    const perPage = $('select[name="per_page"]').val();
+                    if (perPage && perPage !== '10') {
+                        url.searchParams.set('per_page', perPage);
+                    }
+
+                    // Close dropdown
+                    $('.dropdown-toggle').dropdown('hide');
+
+                    // Update filter badge
+                    updateFilterBadge();
+
+                    // Load clean results
+                    loadTable(url.toString());
+                }
+
+                function buildURL() {
+                    return new URL(window.location.href);
+                }
+
+                function initializeFiltersFromURL() {
+                    const urlParams = new URLSearchParams(window.location.search);
+
+                    // Set form values from URL parameters
+                    $('#search').val(urlParams.get('search') || '');
+                    $('#filter-cabor').val(urlParams.get('filter_cabor') || '');
+                    $('#filter-gender').val(urlParams.get('filter_gender') || '');
+                    $('#filter-age').val(urlParams.get('filter_age') || '');
+                    $('#filter-prestasi').val(urlParams.get('filter_prestasi') || '');
+                    $('#filter-ketersediaan').val(urlParams.get('filter_ketersediaan') || '');
+                    $('select[name="per_page"]').val(urlParams.get('per_page') || '10');
+
+                    updateFilterBadge();
+                }
+
+                function initializeSortingFromURL() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sortBy = urlParams.get('sort_by');
+                    const order = urlParams.get('order');
+
+                    updateSortingVisuals(sortBy, order);
+                }
+
+                function syncFiltersWithURL() {
+                    const urlParams = new URLSearchParams(window.location.search);
+
+                    // Sync all filter elements with current URL
+                    $('#search').val(urlParams.get('search') || '');
+                    $('#filter-cabor').val(urlParams.get('filter_cabor') || '');
+                    $('#filter-gender').val(urlParams.get('filter_gender') || '');
+                    $('#filter-age').val(urlParams.get('filter_age') || '');
+                    $('#filter-prestasi').val(urlParams.get('filter_prestasi') || '');
+                    $('#filter-ketersediaan').val(urlParams.get('filter_ketersediaan') || '');
+
+                    // Sync per_page selector
+                    const perPage = urlParams.get('per_page') || '10';
+                    $('select[name="per_page"]').val(perPage);
+
+                    updateFilterBadge();
+                }
+
+                function syncSortingWithURL() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sortBy = urlParams.get('sort_by');
+                    const order = urlParams.get('order');
+
+                    updateSortingVisuals(sortBy, order);
+                }
+
+                function updateSortingVisuals(activeSortBy = null, activeOrder = null) {
+                    // Reset all sort indicators
+                    $('.sort-link').each(function() {
+                        const $link = $(this);
+                        const $icon = $link.find('i');
+                        const sortBy = $link.data('sort');
+
+                        // Update data-order for next click
+                        if (sortBy === activeSortBy) {
+                            $link.data('order', activeOrder);
+
+                            // Update icon based on current state
+                            if (activeOrder === 'asc') {
+                                $icon.removeClass('fa-sort fa-sort-down text-muted').addClass('fa-sort-up');
+                            } else if (activeOrder === 'desc') {
+                                $icon.removeClass('fa-sort fa-sort-up text-muted').addClass('fa-sort-down');
+                            } else {
+                                $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
+                            }
+                        } else {
+                            // Reset other columns
+                            $link.data('order', 'asc');
+                            $icon.removeClass('fa-sort-up fa-sort-down').addClass('fa-sort text-muted');
+                        }
+                    });
+                }
+
+                function updateFilterBadge() {
+                    const activeFilters = [
+                        $('#filter-cabor').val(),
+                        $('#filter-gender').val(),
+                        $('#filter-age').val(),
+                        $('#filter-prestasi').val(),
+                        $('#filter-ketersediaan').val()
+                    ].filter(val => val && val.length > 0).length;
+
+                    const badge = $('#filter-count');
+                    if (activeFilters > 0) {
+                        badge.text(activeFilters).removeClass('d-none');
+                    } else {
+                        badge.addClass('d-none');
+                    }
+                }
+
+                function updateFilterInfo(response) {
+                    try {
+                        const tempDiv = $('<div>').html(response);
+                        const showingInfo = tempDiv.find('#filter-info, .showing-info').text();
+                        if (showingInfo) {
+                            $('#filter-info, .showing-info').text(showingInfo);
+                        }
+                    } catch (e) {
+                        console.log('Could not update filter info');
+                    }
+                }
+
+                function updateURL(url) {
+                    if (window.history && window.history.pushState) {
+                        window.history.pushState({}, '', url);
+                    }
+                }
+
+                // Handle browser back/forward buttons
+                window.onpopstate = function() {
+                    syncFiltersWithURL();
+                    syncSortingWithURL();
+                    loadTable(window.location.href);
+                };
+
+                // Initialize event bindings
+                bindEvents();
+
+                // Keyboard shortcuts
+                $(document).keydown(function(e) {
+                    if ((e.ctrlKey || e.metaKey) && e.keyCode === 70) { // Ctrl+F
+                        e.preventDefault();
+                        $('#search').focus();
+                    }
+
+                    if (e.keyCode === 27) { // Escape
+                        $('#search').val('').trigger('input');
+                    }
+                });
+
+                // Export CSV button
+                $(document).on('click', '#export-csv', function(e) {
+                    e.preventDefault();
+                    
+                    // Get the base export URL
+                    const baseUrl = $(this).attr('href');
+                    const url = new URL(baseUrl, window.location.origin);
+                    
+                    // Get all current parameters from the window URL
+                    const currentParams = new URLSearchParams(window.location.search);
+                    
+                    // Append all current filter and search params to the export URL
+                    currentParams.forEach((value, key) => {
+                        if (key !== 'page') { // Don't include pagination in export
+                            url.searchParams.append(key, value);
+                        }
+                    });
+                    
+                    // Also get values directly from form elements in case they haven't been applied yet
+                    const search = $('#search').val();
+                    const filterCabor = $('#filter-cabor').val();
+                    const filterGender = $('#filter-gender').val();
+                    const filterAge = $('#filter-age').val();
+                    const filterPrestasi = $('#filter-prestasi').val();
+                    const filterKetersediaan = $('#filter-ketersediaan').val();
+                    
+                    // Add form values to URL if they exist and aren't already in currentParams
+                    if (search && !currentParams.has('search')) {
+                        url.searchParams.set('search', search);
+                    }
+                    if (filterCabor && !currentParams.has('filter_cabor')) {
+                        url.searchParams.set('filter_cabor', filterCabor);
+                    }
+                    if (filterGender && !currentParams.has('filter_gender')) {
+                        url.searchParams.set('filter_gender', filterGender);
+                    }
+                    if (filterAge && !currentParams.has('filter_age')) {
+                        url.searchParams.set('filter_age', filterAge);
+                    }
+                    if (filterPrestasi && !currentParams.has('filter_prestasi')) {
+                        url.searchParams.set('filter_prestasi', filterPrestasi);
+                    }
+                    if (filterKetersediaan && !currentParams.has('filter_ketersediaan')) {
+                        url.searchParams.set('filter_ketersediaan', filterKetersediaan);
+                    }
+                    
+                    // Add current sorting parameters
+                    const sortBy = new URLSearchParams(window.location.search).get('sort_by');
+                    const order = new URLSearchParams(window.location.search).get('order');
+                    
+                    if (sortBy) {
+                        url.searchParams.set('sort_by', sortBy);
+                    }
+                    if (order) {
+                        url.searchParams.set('order', order);
+                    }
+                    
+                    // Show a brief loading indication
+                    const originalText = $(this).html();
+                    $(this).html('<i class="fas fa-spinner fa-spin me-1"></i> Exporting...');
+                    $(this).prop('disabled', true);
+                    
+                    // Navigate to the export URL
+                    window.location.href = url.toString();
+                    
+                    // Reset button after a short delay (since page might redirect)
+                    setTimeout(() => {
+                        $(this).html(originalText);
+                        $(this).prop('disabled', false);
+                    }, 2000);
+                });
+                
+                // Delete functionality (existing code preserved)
+                window.showDeleteWarning = function(button, atletName, prestasiList) {
+                    $('#atletName').text(atletName);
+
+                    const prestasiListElement = $('#prestasiList');
+                    prestasiListElement.empty();
+
+                    if (prestasiList && prestasiList.length > 0) {
+                        prestasiList.forEach(function(prestasi) {
+                            prestasiListElement.append(`<li>${prestasi}</li>`);
+                        });
+                    } else {
+                        prestasiListElement.append('<li>Prestasi yang terkait</li>');
+                    }
+
+                    $('#atletDeleteWarningModal').modal('show');
+                };
+
+                window.destroyItem = function(button) {
+                    const route = button.dataset.route;
+
+                    Swal.fire({
+                        title: "Apakah Anda Yakin?",
+                        html: "<p style='text-align:center'>Setelah data atlet dihapus, Anda tidak bisa mengembalikannya!</p>",
+                        icon: "warning",
+                        showCancelButton: true,
+                        reverseButtons: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Hapus!',
+                        cancelButtonText: 'Batalkan!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                title: 'Menghapus...',
+                                text: 'Mohon tunggu',
+                                allowOutsideClick: false,
+                                showConfirmButton: false,
+                                willOpen: () => {
+                                    Swal.showLoading();
+                                }
+                            });
+
+                            $.ajax({
+                                url: route,
+                                type: 'DELETE',
+                                data: {
+                                    _token: $('meta[name="csrf-token"]').attr('content') ||
+                                        '{{ csrf_token() }}'
+                                },
+                                success: function(response) {
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: response.message ||
+                                            'Data atlet berhasil dihapus',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+
+                                    loadTable(window.location.href);
+                                },
+                                error: function(xhr) {
+                                    Swal.close();
+
+                                    try {
+                                        const response = JSON.parse(xhr.responseText);
+
+                                        if (response.reason === 'has_prestasis') {
+                                            Swal.fire({
+                                                title: 'Tidak Dapat Menghapus Atlet',
+                                                html: `Atlet <strong>${response.atlet_name}</strong> tidak dapat dihapus karena masih memiliki ${response.prestasi_count} prestasi terkait.<br><br>
                                             <div class="text-start mt-3">
                                                 <strong>Prestasi yang terkait:</strong>
                                                 <ul class="mt-2">
@@ -1085,50 +1238,49 @@
                                                 Silakan hapus semua prestasi yang terkait dengan atlet ini terlebih dahulu,
                                                 atau nonaktifkan data atlet ini jika diperlukan.
                                             </p>`,
-                                            icon: "warning",
-                                            confirmButtonText: 'Mengerti',
-                                            width: '500px'
-                                        });
-                                    }
-                                    else if (response.reason === 'has_atlets') {
-                                        Swal.fire({
-                                            title: 'Tidak Dapat Menghapus Atlet',
-                                            html: `Atlet <strong>${response.atlet_name}</strong> tidak dapat dihapus karena masih memiliki ${response.atlet_count} atlet terkait.<br><br>
+                                                icon: "warning",
+                                                confirmButtonText: 'Mengerti',
+                                                width: '500px'
+                                            });
+                                        } else if (response.reason === 'has_atlets') {
+                                            Swal.fire({
+                                                title: 'Tidak Dapat Menghapus Atlet',
+                                                html: `Atlet <strong>${response.atlet_name}</strong> tidak dapat dihapus karena masih memiliki ${response.atlet_count} atlet terkait.<br><br>
                                             <p class="text-muted">
                                                 Silakan pindahkan atau hapus atlet yang terkait dengan atlet ini terlebih dahulu,
                                                 atau nonaktifkan data atlet ini jika diperlukan.
                                             </p>`,
-                                            icon: "warning",
-                                            confirmButtonText: 'Mengerti'
-                                        });
-                                    } else {
+                                                icon: "warning",
+                                                confirmButtonText: 'Mengerti'
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                title: 'Error!',
+                                                text: response.message ||
+                                                    'Gagal menghapus data atlet',
+                                                icon: 'error'
+                                            });
+                                        }
+                                    } catch (e) {
                                         Swal.fire({
                                             title: 'Error!',
-                                            text: response.message || 'Gagal menghapus data atlet',
+                                            text: 'Gagal menghapus data atlet',
                                             icon: 'error'
                                         });
                                     }
-                                } catch (e) {
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Gagal menghapus data atlet',
-                                        icon: 'error'
-                                    });
                                 }
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Aksi Dibatalkan :)",
-                            icon: "info",
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    }
-                });
-            };
-        });
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Aksi Dibatalkan :)",
+                                icon: "info",
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        }
+                    });
+                };
+            });
         </script>
     @endif
 @endsection
-
