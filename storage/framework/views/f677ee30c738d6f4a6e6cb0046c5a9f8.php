@@ -1116,29 +1116,34 @@
                     <div class="detail-divider"></div>
 
                 <div class="detail-row">
-                <div class="detail-label">
-                    <p class="detail-label-text">Alamat</p>
-                </div>
-                <div class="detail-value">
-                    <?php if($atlet->alamatkota && $atlet->alamatprovinsi): ?>
-                        <div>
-                            <strong><?php echo e($atlet->alamatkota); ?>, <?php echo e($atlet->alamatprovinsi); ?></strong>
-                        </div>
-                        <?php if($atlet->alamat): ?>
-                            <div class="text-muted" style="font-size: 12px; color: #78829d; margin-top: 4px;">
-                                <?php echo e($atlet->alamat); ?>
-
+                    <div class="detail-label">
+                        <p class="detail-label-text">Alamat</p>
+                    </div>
+                    <div class="detail-value">
+                        <?php if($atlet->alamatkota && $atlet->alamatprovinsi): ?>
+                            <div>
+                                <strong><?php echo e($atlet->alamatkota); ?>, <?php echo e($atlet->alamatprovinsi); ?></strong>
                             </div>
+                            <?php if($atlet->alamat): ?>
+                                <div class="text-muted" style="font-size: 12px; color: #78829d; margin-top: 4px;">
+                                    <?php echo e($atlet->alamat); ?>
+
+                                </div>
+                            <?php endif; ?>
+                        <?php elseif($atlet->alamat): ?>
+                            <div><?php echo e($atlet->alamat); ?></div>
+                        <?php else: ?>
+                            <span class="empty-value">Belum ada alamat yang tercantum</span>
                         <?php endif; ?>
-                    <?php elseif($atlet->alamat): ?>
-                        <div><?php echo e($atlet->alamat); ?></div>
-                    <?php else: ?>
-                        <span class="empty-value">Belum ada alamat yang tercantum</span>
-                    <?php endif; ?>
+                    </div>
+                    <div>
+                        <a href="<?php echo e(route('admin.konfigurasi.prestasi.atlet.exportDetail', $atlet->id)); ?>" 
+                           class="btn btn-outline-primary btn-sm" 
+                           style="margin-left: 10px;">
+                            <i class="fas fa-file-export"></i> Export
+                        </a>
+                    </div>
                 </div>
-                <div class="add-address">
-                </div>
-            </div>
             </div>
         </div>
 

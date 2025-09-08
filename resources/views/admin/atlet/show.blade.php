@@ -1118,28 +1118,33 @@
                     <div class="detail-divider"></div>
 
                 <div class="detail-row">
-                <div class="detail-label">
-                    <p class="detail-label-text">Alamat</p>
-                </div>
-                <div class="detail-value">
-                    @if($atlet->alamatkota && $atlet->alamatprovinsi)
-                        <div>
-                            <strong>{{ $atlet->alamatkota }}, {{ $atlet->alamatprovinsi }}</strong>
-                        </div>
-                        @if($atlet->alamat)
-                            <div class="text-muted" style="font-size: 12px; color: #78829d; margin-top: 4px;">
-                                {{ $atlet->alamat }}
+                    <div class="detail-label">
+                        <p class="detail-label-text">Alamat</p>
+                    </div>
+                    <div class="detail-value">
+                        @if($atlet->alamatkota && $atlet->alamatprovinsi)
+                            <div>
+                                <strong>{{ $atlet->alamatkota }}, {{ $atlet->alamatprovinsi }}</strong>
                             </div>
+                            @if($atlet->alamat)
+                                <div class="text-muted" style="font-size: 12px; color: #78829d; margin-top: 4px;">
+                                    {{ $atlet->alamat }}
+                                </div>
+                            @endif
+                        @elseif($atlet->alamat)
+                            <div>{{ $atlet->alamat }}</div>
+                        @else
+                            <span class="empty-value">Belum ada alamat yang tercantum</span>
                         @endif
-                    @elseif($atlet->alamat)
-                        <div>{{ $atlet->alamat }}</div>
-                    @else
-                        <span class="empty-value">Belum ada alamat yang tercantum</span>
-                    @endif
+                    </div>
+                    <div>
+                        <a href="{{ route('admin.konfigurasi.prestasi.atlet.exportDetail', $atlet->id) }}" 
+                           class="btn btn-outline-primary btn-sm" 
+                           style="margin-left: 10px;">
+                            <i class="fas fa-file-export"></i> Export
+                        </a>
+                    </div>
                 </div>
-                <div class="add-address">
-                </div>
-            </div>
             </div>
         </div>
 
