@@ -15,6 +15,7 @@
                             ['key' => 'jumlah_harga', 'title' => 'Total Anggaran'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
+                            ['key' => null, 'title' => 'Dokumen LPJ', 'sortable' => false],
                             ['key' => 'created_at', 'title' => 'Tanggal Ditambahkan'],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
@@ -75,6 +76,36 @@
                                     <i class="fas fa-file-alt me-1"></i>{{ count($kegiatan->dokumen_lpj) }}
                                     Dokumen
                                 </button>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
+                        <td class="text-start">
+                            @if ($kegiatan->dokumen_lpj_pdf)
+                                @php
+                                    // Handle berbagai tipe data untuk dokumen LPJ PDF
+                                    $path = '';
+                                    $originalName = '';
+
+                                    if (is_object($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = $kegiatan->dokumen_lpj_pdf->path;
+                                        $originalName = $kegiatan->dokumen_lpj_pdf->original_name ?? basename($path);
+                                    } elseif (is_array($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = isset($kegiatan->dokumen_lpj_pdf['path']) ? $kegiatan->dokumen_lpj_pdf['path'] : '';
+                                        $originalName = isset($kegiatan->dokumen_lpj_pdf['original_name']) ? $kegiatan->dokumen_lpj_pdf['original_name'] : (is_string($path) ? basename($path) : '');
+                                    } elseif (is_string($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = $kegiatan->dokumen_lpj_pdf;
+                                        $originalName = basename($path);
+                                    }
+
+                                    // Pastikan kita punya nama file
+                                    if (empty($originalName) && is_string($path)) {
+                                        $originalName = basename($path);
+                                    }
+                                @endphp
+                                <a href="{{ asset('storage/' . $path) }}" target="_blank" class="btn btn-sm btn-light-danger">
+                                    <i class="fas fa-file-pdf me-1"></i>PDF
+                                </a>
                             @else
                                 <span class="text-muted">-</span>
                             @endif
@@ -175,7 +206,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                        <td colspan="8" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                     </tr>
                 @endforelse
             </tbody>

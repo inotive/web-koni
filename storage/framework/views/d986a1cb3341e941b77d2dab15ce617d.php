@@ -50,6 +50,10 @@
         }
 
         .table th:nth-child(7) {
+            width: 120px;
+        }
+
+        .table th:nth-child(8) {
             width: 80px;
         }
 
@@ -1119,10 +1123,10 @@
     let dokumenLpjPdfHtml = '';
     if (data.dokumen_lpj_pdf) {
         const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
-        const name = typeof data.dokumen_lpj_pdf === 'object' ?
-            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) :
+        const name = typeof data.dokumen_lpj_pdf === 'object' ? 
+            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) : 
             path.split('/').pop();
-
+            
         dokumenLpjPdfHtml = `
             <div class="mb-3">
                 <label class="fw-semibold text-dark mb-2 d-block">
