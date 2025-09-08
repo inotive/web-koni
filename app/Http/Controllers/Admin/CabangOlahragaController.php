@@ -371,6 +371,116 @@ class CabangOlahragaController extends Controller
         ]);
     }
 
+    // TAMBAHAN: Method untuk export data ke Excel
+    public function exportExcel(Request $request)
+    {
+        \Log::info('ExportExcel method called', [
+            'user_id' => auth()->id(),
+            'request_params' => $request->all()
+        ]);
+        
+        try {
+            // Bangun query yang sama dengan index
+            $query = CabangOlahraga::with(['atlets', 'pelatihs']);
+
+            // Terapkan filter yang sama
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_cabor', 'LIKE', "%{$search}%")
+                        ->orWhere('ketua_penanggung_jawab', 'LIKE', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            // Terapkan sorting
+            $sortBy = $request->get('sort_by', 'terakhir_update');
+            $order = $request->get('order', 'desc');
+
+            $allowedSortFields = [
+                'nama_cabor',
+                'ketua_penanggung_jawab',
+                'status',
+                'tanggal_pembentukan',
+                'terakhir_update',
+                'created_at',
+                'id'
+            ];
+
+            if (in_array($sortBy, $allowedSortFields)) {
+                $query->orderBy($sortBy, $order);
+            } else {
+                $query->orderBy('terakhir_update', 'desc')
+                      ->orderBy('created_at', 'desc');
+            }
+
+            // Ambil semua data
+            $cabors = $query->get();
+
+            // Buat nama file dengan timestamp
+            $fileName = 'Data_Cabang_Olahraga_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+
+            \Log::info('Exporting data', [
+                'count' => $cabors->count(),
+                'filename' => $fileName
+            ]);
+
+            // Return response dengan header untuk download
+            return response()->streamDownload(function () use ($cabors) {
+                // Output headers
+                $headers = [
+                    'No',
+                    'Nama Cabang Olahraga',
+                    'Ketua Penanggung Jawab',
+                    'Status',
+                    'Tanggal Pembentukan',
+                    'Jumlah Atlet',
+                    'Jumlah Pelatih',
+                    'Terakhir Update'
+                ];
+
+                $csv = fopen('php://output', 'w');
+                
+                // Add BOM for Excel UTF-8 compatibility
+                fprintf($csv, chr(0xEF).chr(0xBB).chr(0xBF));
+                
+                // Write headers
+                fputcsv($csv, $headers);
+
+                // Write data
+                foreach ($cabors as $index => $cabor) {
+                    $data = [
+                        $index + 1,
+                        $cabor->nama_cabor,
+                        $cabor->ketua_penanggung_jawab,
+                        $cabor->status,
+                        $cabor->tanggal_pembentukan ? \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->format('d/m/Y') : '-',
+                        $cabor->atlets ? $cabor->atlets->count() : 0,
+                        $cabor->pelatihs ? $cabor->pelatihs->count() : 0,
+                        $cabor->terakhir_update ? \Carbon\Carbon::parse($cabor->terakhir_update)->format('d/m/Y H:i:s') : '-'
+                    ];
+                    
+                    fputcsv($csv, $data);
+                }
+
+                fclose($csv);
+            }, $fileName, [
+                'Content-Type' => 'text/csv; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error exporting cabang olahraga: ' . $e->getMessage(), [
+                'exception' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Gagal mengekspor data: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Menangani upload icon dan resize ke 80x80px
      */

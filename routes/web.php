@@ -123,7 +123,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
             // TAMBAHAN: Rute untuk fitur khusus CabangOlahraga
             Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
-            Route::get('/export', [CabangOlahragaController::class, 'export'])->name('export');
+            Route::get('/export', [CabangOlahragaController::class, 'exportExcel'])->name('export');
             Route::patch('/{cabor}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
             Route::get('/{cabor}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('check-dependencies');
             Route::delete('/{cabor}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('force-destroy');
@@ -265,11 +265,3 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::get('/{bendahara}/download', [BendaharaController::class, 'download'])->name('download');
     });
 }); //Batas Admin
-
-// TAMBAHAN: Rute untuk panggilan API jika diperlukan (opsional)
-Route::prefix('api/admin')->name('api.admin.')->middleware('auth')->group(function () {
-    Route::prefix('cabang-olahraga')->name('cabang-olahraga.')->group(function () {
-        Route::get('/search', [CabangOlahragaController::class, 'search'])->name('search');
-        Route::get('/{id}/dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('dependencies');
-    });
-});

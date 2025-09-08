@@ -674,6 +674,11 @@
                                         <h3 class="mb-0 fw-semibold text-dark">Table Daftar Cabor Tabalong</h3>
 
                                         <div class="d-flex align-items-center gap-2 flex-wrap">
+                                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.export') }}"
+                                                class="btn btn-success" id="export-excel-btn" title="Export ke Excel">
+                                                <i class="fas fa-file-excel"></i>
+                                            </a>
+
                                             <div class="input-group" style="width: 250px;">
                                                 <input type="search" name="search" id="search" class="form-control"
                                                     placeholder="Cari cabang olahraga..." value="{{ request('search') }}">
@@ -763,7 +768,7 @@
             </div>
         </div>
 
-        @endsection
+    @endsection
 
     @section('script')
         <script>
@@ -1011,6 +1016,37 @@
                     badge.toggleClass('d-none', count === 0);
                 }
 
+                // ✅ Update Export Button URL
+                function updateExportButtonUrl() {
+                    // Get current filter values
+                    const searchValue = $('#search').val();
+                    const statusValue = $('#filter-status').val();
+
+                    // Build URL with current filters
+                    let exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?";
+                    const params = new URLSearchParams();
+
+                    if (searchValue) {
+                        params.append('search', searchValue);
+                    }
+
+                    if (statusValue) {
+                        params.append('status', statusValue);
+                    }
+
+                    // Add current sorting parameters if they exist
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.has('sort_by')) {
+                        params.append('sort_by', urlParams.get('sort_by'));
+                    }
+                    if (urlParams.has('order')) {
+                        params.append('order', urlParams.get('order'));
+                    }
+
+                    exportUrl += params.toString();
+                    $('#export-excel-btn').attr('href', exportUrl);
+                }
+
                 // ✅ EVENT HANDLERS
 
                 // Search dengan debounce - FIXED: Prevent default form submission
@@ -1027,6 +1063,7 @@
                             page: 1
                         });
                         updateFilterCountBadge();
+                        updateExportButtonUrl(); // Update export button URL
                     }, 500);
 
                     return false; // Prevent any form submission
@@ -1080,6 +1117,7 @@
                         page: 1
                     });
                     updateFilterCountBadge();
+                    updateExportButtonUrl(); // Update export button URL
 
                     return false;
                 });
@@ -1102,6 +1140,7 @@
                         page: 1
                     });
                     updateFilterCountBadge();
+                    updateExportButtonUrl(); // Update export button URL
 
                     return false;
                 });
@@ -1141,6 +1180,8 @@
                             .always(() => {
                                 setTimeout(() => {
                                     $('.ajax-pagination').removeClass('processing');
+                                    updateExportButtonUrl
+                                (); // Update export button URL after pagination
                                 }, 500);
                             });
                     }
@@ -1185,6 +1226,7 @@
                         .always(() => {
                             setTimeout(() => {
                                 $('.ajax-sort').removeClass('processing');
+                                updateExportButtonUrl(); // Update export button URL after sorting
                             }, 500);
                         });
 
@@ -1205,8 +1247,15 @@
                     return false;
                 });
 
+                // ✅ Add export button click handler
+                $('#export-excel-btn').on('click', function(e) {
+                    e.preventDefault();
+                    exportToExcel();
+                });
+
                 // ✅ Initialize on page load
                 updateFilterCountBadge();
+                updateExportButtonUrl(); // Update export button URL on page load
 
                 // ✅ Handle browser back/forward - FIXED: Better handling
                 window.addEventListener('popstate', function(event) {
@@ -1291,7 +1340,7 @@
 
             window.confirmDelete = function(form) {
                 const nama = form.querySelector('button[type="submit"]').title.replace('Hapus ', '');
-                
+
                 Swal.fire({
                     title: "Apakah Anda Yakin?",
                     html: "<p style='text-align:center'>Setelah data cabang olahraga dihapus, Anda tidak bisa mengembalikannya!</p>",
@@ -1313,44 +1362,45 @@
                                 Swal.showLoading();
                             }
                         });
-                        
+
                         // Submit via AJAX
                         const formData = new FormData(form);
                         fetch(form.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: data.message || 'Data cabang olahraga berhasil dihapus',
-                                    icon: 'success',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                                
-                                // Reload the table
-                                window.location.reload();
-                            } else {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                        .getAttribute('content')
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: data.message || 'Data cabang olahraga berhasil dihapus',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+
+                                    // Reload the table
+                                    window.location.reload();
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message || 'Gagal menghapus data cabang olahraga',
+                                        icon: 'error'
+                                    });
+                                }
+                            })
+                            .catch(error => {
                                 Swal.fire({
                                     title: 'Error!',
-                                    text: data.message || 'Gagal menghapus data cabang olahraga',
+                                    text: 'Gagal menghapus data cabang olahraga',
                                     icon: 'error'
                                 });
-                            }
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'Gagal menghapus data cabang olahraga',
-                                icon: 'error'
                             });
-                        });
                     }
                 });
                 // Return false to prevent default form submission
@@ -1392,7 +1442,8 @@
                             success: function(response) {
                                 Swal.fire({
                                     title: 'Berhasil!',
-                                    text: response.message || 'Data cabang olahraga berhasil dihapus',
+                                    text: response.message ||
+                                        'Data cabang olahraga berhasil dihapus',
                                     icon: 'success',
                                     timer: 2000,
                                     showConfirmButton: false
@@ -1429,7 +1480,8 @@
                                     } else {
                                         Swal.fire({
                                             title: 'Error!',
-                                            text: response.message || 'Gagal menghapus data cabang olahraga',
+                                            text: response.message ||
+                                                'Gagal menghapus data cabang olahraga',
                                             icon: 'error'
                                         });
                                     }
@@ -1451,6 +1503,39 @@
                         });
                     }
                 });
+            };
+
+            // ✅ Global function for export functionality
+            window.exportToExcel = function() {
+                // Get current filter values
+                const searchValue = $('#search').val();
+                const statusValue = $('#filter-status').val();
+
+                // Build URL with current filters
+                let exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?";
+                const params = new URLSearchParams();
+
+                if (searchValue) {
+                    params.append('search', searchValue);
+                }
+
+                if (statusValue) {
+                    params.append('status', statusValue);
+                }
+
+                // Add current sorting parameters if they exist
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('sort_by')) {
+                    params.append('sort_by', urlParams.get('sort_by'));
+                }
+                if (urlParams.has('order')) {
+                    params.append('order', urlParams.get('order'));
+                }
+
+                exportUrl += params.toString();
+
+                // Redirect to export URL
+                window.location.href = exportUrl;
             };
         </script>
 
@@ -1732,6 +1817,37 @@
                     badge.toggleClass('d-none', count === 0);
                 }
 
+                // ✅ Update Export Button URL
+                function updateExportButtonUrl() {
+                    // Get current filter values
+                    const searchValue = $('#search').val();
+                    const statusValue = $('#filter-status').val();
+
+                    // Build URL with current filters
+                    let exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?";
+                    const params = new URLSearchParams();
+
+                    if (searchValue) {
+                        params.append('search', searchValue);
+                    }
+
+                    if (statusValue) {
+                        params.append('status', statusValue);
+                    }
+
+                    // Add current sorting parameters if they exist
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.has('sort_by')) {
+                        params.append('sort_by', urlParams.get('sort_by'));
+                    }
+                    if (urlParams.has('order')) {
+                        params.append('order', urlParams.get('order'));
+                    }
+
+                    exportUrl += params.toString();
+                    $('#export-excel-btn').attr('href', exportUrl);
+                }
+
                 // ✅ EVENT HANDLERS
 
                 // Search dengan debounce - FIXED: Prevent default form submission
@@ -1748,6 +1864,7 @@
                             page: 1
                         });
                         updateFilterCountBadge();
+                        updateExportButtonUrl(); // Update export button URL
                     }, 500);
 
                     return false; // Prevent any form submission
@@ -1801,6 +1918,7 @@
                         page: 1
                     });
                     updateFilterCountBadge();
+                    updateExportButtonUrl(); // Update export button URL
 
                     return false;
                 });
@@ -1823,6 +1941,7 @@
                         page: 1
                     });
                     updateFilterCountBadge();
+                    updateExportButtonUrl(); // Update export button URL
 
                     return false;
                 });
@@ -1862,6 +1981,8 @@
                             .always(() => {
                                 setTimeout(() => {
                                     $('.ajax-pagination').removeClass('processing');
+                                    updateExportButtonUrl
+                                (); // Update export button URL after pagination
                                 }, 500);
                             });
                     }
@@ -1906,6 +2027,7 @@
                         .always(() => {
                             setTimeout(() => {
                                 $('.ajax-sort').removeClass('processing');
+                                updateExportButtonUrl(); // Update export button URL after sorting
                             }, 500);
                         });
 
@@ -1926,8 +2048,58 @@
                     return false;
                 });
 
+                // ✅ Add export button click handler
+                $('#export-excel-btn').on('click', function(e) {
+                    2 e.preventDefault();
+                    3
+                    4 // Get current filter values
+                    5
+                    const searchValue = $('#search').val();
+                    6
+                    const statusValue = $('#filter-status').val();
+                    7
+                    8 // Build URL with current filters
+                    9
+                    let exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?";
+                    10
+                    const params = new URLSearchParams();
+                    11
+                    12
+                    if (searchValue) {
+                        13 params.append('search', searchValue);
+                        14
+                    }
+                    15
+                    16
+                    if (statusValue) {
+                        17 params.append('status', statusValue);
+                        18
+                    }
+                    19
+                    20 // Add current sorting parameters if they exist
+                    21
+                    const urlParams = new URLSearchParams(window.location.search);
+                    22
+                    if (urlParams.has('sort_by')) {
+                        23 params.append('sort_by', urlParams.get('sort_by'));
+                        24
+                    }
+                    25
+                    if (urlParams.has('order')) {
+                        26 params.append('order', urlParams.get('order'));
+                        27
+                    }
+                    28
+                    29 exportUrl += params.toString();
+                    31 // Redirect to export URL
+                    32 window.location.href = exportUrl;
+                    33
+                });
+
+
                 // ✅ Initialize on page load
                 updateFilterCountBadge();
+                updateExportButtonUrl(); // Update export button URL on page load
 
                 // ✅ Handle browser back/forward - FIXED: Better handling
                 window.addEventListener('popstate', function(event) {
@@ -2012,7 +2184,7 @@
 
             window.confirmDelete = function(form) {
                 const nama = form.querySelector('button[type="submit"]').title.replace('Hapus ', '');
-                
+
                 Swal.fire({
                     title: "Apakah Anda Yakin?",
                     html: "<p style='text-align:center'>Setelah data cabang olahraga dihapus, Anda tidak bisa mengembalikannya!</p>",
@@ -2034,44 +2206,45 @@
                                 Swal.showLoading();
                             }
                         });
-                        
+
                         // Submit via AJAX
                         const formData = new FormData(form);
                         fetch(form.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: data.message || 'Data cabang olahraga berhasil dihapus',
-                                    icon: 'success',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-                                
-                                // Reload the table
-                                window.location.reload();
-                            } else {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                        .getAttribute('content')
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        title: 'Berhasil!',
+                                        text: data.message || 'Data cabang olahraga berhasil dihapus',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+
+                                    // Reload the table
+                                    window.location.reload();
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message || 'Gagal menghapus data cabang olahraga',
+                                        icon: 'error'
+                                    });
+                                }
+                            })
+                            .catch(error => {
                                 Swal.fire({
                                     title: 'Error!',
-                                    text: data.message || 'Gagal menghapus data cabang olahraga',
+                                    text: 'Gagal menghapus data cabang olahraga',
                                     icon: 'error'
                                 });
-                            }
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'Gagal menghapus data cabang olahraga',
-                                icon: 'error'
                             });
-                        });
                     }
                 });
                 // Return false to prevent default form submission
@@ -2113,7 +2286,8 @@
                             success: function(response) {
                                 Swal.fire({
                                     title: 'Berhasil!',
-                                    text: response.message || 'Data cabang olahraga berhasil dihapus',
+                                    text: response.message ||
+                                        'Data cabang olahraga berhasil dihapus',
                                     icon: 'success',
                                     timer: 2000,
                                     showConfirmButton: false
@@ -2150,7 +2324,8 @@
                                     } else {
                                         Swal.fire({
                                             title: 'Error!',
-                                            text: response.message || 'Gagal menghapus data cabang olahraga',
+                                            text: response.message ||
+                                                'Gagal menghapus data cabang olahraga',
                                             icon: 'error'
                                         });
                                     }
@@ -2172,6 +2347,39 @@
                         });
                     }
                 });
+            };
+
+            // ✅ Global function for export functionality
+            window.exportToExcel = function() {
+                // Get current filter values
+                const searchValue = $('#search').val();
+                const statusValue = $('#filter-status').val();
+
+                // Build URL with current filters
+                let exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?";
+                const params = new URLSearchParams();
+
+                if (searchValue) {
+                    params.append('search', searchValue);
+                }
+
+                if (statusValue) {
+                    params.append('status', statusValue);
+                }
+
+                // Add current sorting parameters if they exist
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('sort_by')) {
+                    params.append('sort_by', urlParams.get('sort_by'));
+                }
+                if (urlParams.has('order')) {
+                    params.append('order', urlParams.get('order'));
+                }
+
+                exportUrl += params.toString();
+
+                // Redirect to export URL
+                window.location.href = exportUrl;
             };
         </script>
 
