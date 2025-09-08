@@ -587,13 +587,11 @@
                 const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
                 const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
                 const counter = isPhoto ? fotoCounter : dokumenCounter;
-                const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
                 const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
 
                 if (files.length === 0) {
                     container.style.display = 'none';
                     counter.textContent = '';
-                    maxWarning.style.display = 'none';
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto di sini, atau klik untuk mengunggah.' :
                         'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.';
@@ -603,8 +601,6 @@
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file dipilih`;
                 counter.textContent = `${files.length} file`;
-
-                maxWarning.style.display = 'none';
 
                 // Generate preview HTML
                 let previewHTML = '';

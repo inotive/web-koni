@@ -71,8 +71,8 @@ class SekretariatController extends Controller
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
-            'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'volume' => 'nullable|string|max:255',
+            'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
@@ -96,8 +96,8 @@ class SekretariatController extends Controller
             'parent_id' => $parentCategory->id,
             'nama_program' => $request->nama_program_kegiatan,
             'nama_kegiatan' => $request->jenis_kegiatan,
-            'volume' => $request->volume,
-            'jumlah_harga_satuan' => $request->jumlah_harga_satuan,
+            'volume' => $request->volume ?? '',
+            'jumlah_harga_satuan' => $request->jumlah_harga_satuan ?? 0,
             'jumlah_harga' => $request->jumlah_harga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
             'icon' => 'fas fa-clipboard-list'
@@ -179,8 +179,8 @@ class SekretariatController extends Controller
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
-            'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'volume' => 'nullable|string|max:255',
+            'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
@@ -204,8 +204,8 @@ class SekretariatController extends Controller
         $data = [
             'nama_program' => $request->nama_program_kegiatan,
             'nama_kegiatan' => $request->jenis_kegiatan,
-            'volume' => $request->volume,
-            'jumlah_harga_satuan' => $request->jumlah_harga_satuan,
+            'volume' => $request->volume ?? '',
+            'jumlah_harga_satuan' => $request->jumlah_harga_satuan ?? 0,
             'jumlah_harga' => $request->jumlah_harga,
             'keterangan_tambahan' => $request->keterangan_tambahan
         ];

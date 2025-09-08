@@ -778,7 +778,6 @@
                 const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
                 const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
                 const counter = isPhoto ? fotoCounter : dokumenCounter;
-                const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
                 const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
 
                 const existingFiles = isPhoto ? existingFotoFiles : existingDokumenFiles;
@@ -789,7 +788,6 @@
                 if (files.length === 0) {
                     container.style.display = 'none';
                     counter.textContent = totalFiles > 0 ? `${totalFiles} file` : '';
-                    maxWarning.style.display = 'none';
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto baru di sini, atau klik untuk mengunggah.' :
                         'Seret dan lepas dokumen baru di sini, atau klik untuk mengunggah.';
@@ -799,8 +797,6 @@
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file baru dipilih`;
                 counter.textContent = `${totalFiles} file`;
-
-                maxWarning.style.display = 'none';
 
                 let previewHTML = '';
                 files.forEach((file, index) => {
