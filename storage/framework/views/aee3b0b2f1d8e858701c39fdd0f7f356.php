@@ -711,13 +711,11 @@ unset($__errorArgs, $__bag); ?>
                 const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
                 const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
                 const counter = isPhoto ? fotoCounter : dokumenCounter;
-                const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
                 const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
 
                 if (files.length === 0) {
                     container.style.display = 'none';
                     counter.textContent = '';
-                    maxWarning.style.display = 'none';
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto di sini, atau klik untuk mengunggah.' :
                         'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.';
@@ -727,8 +725,6 @@ unset($__errorArgs, $__bag); ?>
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file dipilih`;
                 counter.textContent = `${files.length} file`;
-
-                maxWarning.style.display = 'none';
 
                 // Generate preview HTML
                 let previewHTML = '';
@@ -875,14 +871,8 @@ unset($__errorArgs, $__bag); ?>
                     }
                 });
             });
-        });
 
-        function calculateTotalPrice() {
-            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
-            return;
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
+            // Volume and price calculation
             const volumeInput = document.getElementById('volume');
             const unitPriceInput = document.getElementById('jumlah_harga_satuan');
 
@@ -898,6 +888,11 @@ unset($__errorArgs, $__bag); ?>
                 calculateTotalPrice();
             }
         });
+
+        function calculateTotalPrice() {
+            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
+            return;
+        }
     </script>
 <?php $__env->stopSection(); ?>
 

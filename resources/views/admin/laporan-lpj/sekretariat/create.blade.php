@@ -747,14 +747,8 @@
                     }
                 });
             });
-        });
 
-        function calculateTotalPrice() {
-            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
-            return;
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
+            // Volume and price calculation
             const volumeInput = document.getElementById('volume');
             const unitPriceInput = document.getElementById('jumlah_harga_satuan');
 
@@ -770,5 +764,10 @@
                 calculateTotalPrice();
             }
         });
+
+        function calculateTotalPrice() {
+            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
+            return;
+        }
     </script>
 @endsection
