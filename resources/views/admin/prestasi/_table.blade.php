@@ -179,7 +179,7 @@
 
                             <td>
                                 <div class="text-truncate-custom">
-                                    {{ $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-' }}
+                                    {{ $prestasi->cabangOlahraga?->nama_cabor ?? $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-' }}
                                 </div>
                             </td>
 
