@@ -11,6 +11,13 @@
 @endsection
 
 @section('content')
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <style>
         body {
             background-color: #f5f5f5;
@@ -1557,8 +1564,8 @@ $('#ajukanPerubahanBtn').on('click', function() {
 
             $('#exportBtn').on('click', function() {
                 const lpjId = $('#detailModal').data('lpj-id');
-                // TODO: Add export logic here
-                alert('Export functionality will be implemented later');
+                // Redirect to export route
+                window.open(`/admin/laporan-lpj/sekretariat/${lpjId}/export`, '_blank');
             });
 
             $('#submitPengajuanBtn').on('click', function() {

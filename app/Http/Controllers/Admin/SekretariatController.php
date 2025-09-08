@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Lpj;
 use App\Models\Pengajuan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\PdfParser\StreamReader;
 
 class SekretariatController extends Controller
 {
@@ -481,5 +484,36 @@ class SekretariatController extends Controller
                 'icon' => 'fas fa-building'
             ]
         );
+    }
+
+    /**
+     * Export laporan sekretariat ke PDF dengan kop surat
+     */
+    public function export($id)
+    {
+        try {
+            $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                              ->findOrFail($id);
+
+            // Data untuk ditampilkan di PDF
+            $data = [
+                'sekretariat' => $sekretariat,
+            ];
+
+            // Generate PDF menggunakan DomPDF
+            $pdf = Pdf::loadView('admin.laporan-lpj.sekretariat.export', $data)
+                      ->setPaper('a4', 'portrait');
+
+            // Nama file PDF
+            $fileName = 'Laporan_Sekretariat_' . Str::slug($sekretariat->nama_program) . '.pdf';
+
+            return $pdf->download($fileName);
+        } catch (\Exception $e) {
+            // Log error
+            \Log::error('Error exporting PDF: ' . $e->getMessage());
+            
+            // Return error response with redirect
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor laporan. Silakan coba lagi.');
+        }
     }
 }
