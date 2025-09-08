@@ -363,7 +363,7 @@
 
     <div class="d-flex flex-column mb-8">
         <h1 class="text-dark fw-bold mb-1">Laporan Sekretariat</h1>
-        <div class="text-muted fw-semibold fs-6">Manajemen Laporan Sekretariat Anda Sekarang</div>
+        {{-- <div class="text-muted fw-semibold fs-6">Manajemen Laporan Sekretariat Anda Sekarang</div> --}}
     </div>
 
     <div class="row col-12 mt-5">
@@ -374,7 +374,7 @@
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     <a href="{{ route('admin.laporan-lpj.sekretariat.create') }}" class="btn btn-primary"
     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
 </a>
 
                     <div class="input-group position-relative" style="width: 250px;">
@@ -593,7 +593,7 @@
                     tooltipEl.addEventListener('mouseenter', function() {
                         clearTimeout(hideTimeout);
                     });
-                    
+
                     tooltipEl.addEventListener('mouseleave', function() {
                         hideTimeout = setTimeout(function() {
                             tooltip.hide();
@@ -1037,7 +1037,7 @@
         const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
         const hasApprovalPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
         const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
-        
+
         // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
         if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
             statusIcon.innerHTML = 'Terbuka';
@@ -1112,15 +1112,15 @@
             </div>
         `;
     }
-    
+
     // Tampilkan dokumen LPJ PDF jika ada
     let dokumenLpjPdfHtml = '';
     if (data.dokumen_lpj_pdf) {
         const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
-        const name = typeof data.dokumen_lpj_pdf === 'object' ? 
-            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) : 
+        const name = typeof data.dokumen_lpj_pdf === 'object' ?
+            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) :
             path.split('/').pop();
-            
+
         dokumenLpjPdfHtml = `
             <div class="mb-3">
                 <label class="fw-semibold text-dark mb-2 d-block">
@@ -1235,7 +1235,7 @@
                             ${fotoJurnalHtml}
                         </div>
                     </div>
-                    
+
                     ${dokumenLpjPdfHtml}
 
                     <div>

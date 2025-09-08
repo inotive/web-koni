@@ -293,35 +293,38 @@
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
-                                <div class="col-md-3">
-                                    <label for="volume" class="form-label">Volume</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="text" name="volume" id="volume"
-                                        class="form-control @error('volume') is-invalid @enderror"
-                                        placeholder="Masukkan volume (misal: 100 orang, 5 unit, dll)"
-                                        value="{{ old('volume', $sekretariat->volume) }}">
-                                    @error('volume')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row align-items-center mb-3">
-                                <div class="col-md-3">
-                                    <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="currency-input">
-                                        <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
-                                            class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
-                                            placeholder="0"
-                                            value="{{ old('jumlah_harga_satuan', $sekretariat->jumlah_harga_satuan) }}">
+                            {{-- HIDDEN FIELDS --}}
+                            <div style="display: none;">
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-md-3">
+                                        <label for="volume" class="form-label">Volume</label>
                                     </div>
-                                    @error('jumlah_harga_satuan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <div class="col-md-9">
+                                        <input type="text" name="volume" id="volume"
+                                            class="form-control @error('volume') is-invalid @enderror"
+                                            placeholder="Masukkan volume (misal: 100 orang, 5 unit, dll)"
+                                            value="{{ old('volume', $sekretariat->volume) }}">
+                                        @error('volume')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-md-3">
+                                        <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="currency-input">
+                                            <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                                class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
+                                                placeholder="0"
+                                                value="{{ old('jumlah_harga_satuan', $sekretariat->jumlah_harga_satuan) }}">
+                                        </div>
+                                        @error('jumlah_harga_satuan')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
 
@@ -517,7 +520,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             {{-- Dokumen LPJ Upload (PDF Only) --}}
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
@@ -611,21 +614,6 @@
                                 </div>
                             </div>
 
-                            <div class="row align-items-start mb-4">
-                                <div class="col-md-3">
-                                    <label for="keterangan_tambahan" class="form-label">Keterangan Tambahan</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <textarea name="keterangan_tambahan" id="keterangan_tambahan"
-                                        class="form-control @error('keterangan_tambahan') is-invalid @enderror"
-                                        placeholder="Masukkan keterangan tambahan (opsional)"
-                                        rows="4">{{ old('keterangan_tambahan', $sekretariat->keterangan_tambahan) }}</textarea>
-                                    @error('keterangan_tambahan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
                              <div class="row">
                         <div class="col-md-9 offset-md-3 d-flex gap-3">
                             <button type="submit" class="btn btn-danger">
@@ -700,7 +688,7 @@
             const dokumenFileNameDisplay = document.getElementById('dokumen-file-name-display');
             const dokumenCounter = document.getElementById('dokumenCounter');
             const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
-            
+
             const dokumenLpjInput = document.getElementById('dokumen_lpj_pdf');
             const dokumenLpjFileNameDisplay = document.getElementById('dokumen-lpj-file-name-display');
             const dokumenLpjPreviewContainer = document.getElementById('dokumenLpjPreviewContainer');
@@ -712,7 +700,7 @@
             dokumenInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'dokumen');
             });
-            
+
             dokumenLpjInput.addEventListener('change', function() {
                 const file = this.files[0];
                 if (file) {
@@ -721,17 +709,17 @@
                         this.value = '';
                         return;
                     }
-                    
+
                     if (!file.name.toLowerCase().endsWith('.pdf')) {
                         alert(`File "${file.name}" bukan file PDF yang valid.`);
                         this.value = '';
                         return;
                     }
-                    
+
                     selectedDokumenLpjFile = file;
                     dokumenLpjFileNameDisplay.textContent = file.name;
                     dokumenLpjPreviewContainer.style.display = 'block';
-                    
+
                     // Tampilkan preview dokumen LPJ
                     const previewHTML = `
                         <div class="file-preview-item">
@@ -917,7 +905,7 @@
                     }
                 }
             };
-            
+
             window.removeExistingDokumenLpj = function(button, filePath) {
                 if (confirm('Apakah Anda yakin ingin menghapus dokumen LPJ ini? File akan dihapus permanen setelah disimpan.')) {
                     const item = button.closest('.file-preview-item');
@@ -993,25 +981,8 @@
         });
 
         function calculateTotalPrice() {
-            const volumeInput = document.getElementById('volume');
-            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
-            const totalPriceInput = document.getElementById('jumlah_harga');
-
-            if (!volumeInput || !unitPriceInput || !totalPriceInput) return;
-
-            const volumeValue = volumeInput.value.trim();
-            const unitPriceValue = unitPriceInput.value.replace(/[^\\d]/g, ''); // Remove formatting
-
-            const volumeMatch = volumeValue.match(/^\\d+/);
-            const volumeNumber = volumeMatch ? parseInt(volumeMatch[0]) : 0;
-            const unitPriceNumber = unitPriceValue ? parseInt(unitPriceValue) : 0;
-
-            if (volumeNumber > 0 && unitPriceNumber > 0) {
-                const totalPrice = volumeNumber * unitPriceNumber;
-                totalPriceInput.value = totalPrice.toLocaleString('id-ID');
-            } else {
-                totalPriceInput.value = '';
-            }
+            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
+            return;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
