@@ -11,6 +11,10 @@
                     Prestasi
                     <span class="sort-icon"></span>
                 </th>
+                <th data-column="kejuaraan" class="sortable">
+                    Kejuaraan
+                    <span class="sort-icon"></span>
+                </th>
                 <th data-column="tempat" class="sortable">
                     Tempat
                     <span class="sort-icon"></span>
@@ -19,7 +23,7 @@
         </thead>
         <tbody id="achievement-tbody">
             <tr>
-                <td colspan="3" class="text-center">
+                <td colspan="4" class="text-center">
                     <div class="spinner-border spinner-border-sm" role="status">
                         <span class="sr-only">Loading...</span>
                     </div>

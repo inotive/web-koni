@@ -394,11 +394,17 @@
     .achievement-table th:nth-child(2),
     .achievement-table td:nth-child(2) {
         width: auto;
-        min-width: 300px;
+        min-width: 80px;
     }
 
     .achievement-table th:nth-child(3),
     .achievement-table td:nth-child(3) {
+        width: 350px;
+        text-align: center;
+    }
+
+    .achievement-table th:nth-child(4),
+    .achievement-table td:nth-child(4) {
         width: 150px;
         text-align: center;
     }
@@ -1358,7 +1364,7 @@ $(document).ready(function() {
     if (!prestasis || prestasis.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="3" class="empty-achievement">
+                <td colspan="4" class="empty-achievement">
                     <br>
                     <center><i class="fas fa-trophy"></i></center>
                     <center><div>Belum ada data prestasi.</div></center>
@@ -1395,6 +1401,7 @@ $(document).ready(function() {
                             </div>
                         </div>
                     </td>
+                    <td style="text-align: center;">${prestasi.kejuaraan || '-'}</td>
                     <td style="text-align: center;">${prestasi.tempat || '-'}</td>
                 </tr>
             `;
