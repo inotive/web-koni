@@ -341,6 +341,33 @@
             appearance: none;
         }
 
+        #exportBtn {
+            background-color: #0d6efd; /* Blue color like other primary buttons */
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px; /* Rounded corners */
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* for icon if added */
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+        }
+
+        #exportBtn:hover {
+            background-color: #0b5ed7; /* Slightly darker on hover */
+            box-shadow: 0 3px 8px rgba(13, 110, 253, 0.4);
+            transform: translateY(-1px);
+        }
+
+        #exportBtn:active {
+            background-color: #0a58ca;
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+        }
+
         #ajukanPerubahanBtn {
             background-color: #4CAF50; /* Soft green like screenshot */
             color: white;
@@ -478,6 +505,10 @@
                         <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
                     </div>
                     <div class="ms-auto d-flex align-items-center gap-2">
+                        <button type="button" id="exportBtn" class="btn btn-primary">
+                            <i class="fas fa-file-export"></i>
+                            <strong>Export</strong>
+                        </button>
                         <button type="button" id="ajukanPerubahanBtn" class="btn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i>
                             <strong>Ajukan Perubahan</strong>
@@ -1520,6 +1551,12 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 $('#pengajuan_lpj_id').val(lpjId);
                 $('#detailModal').modal('hide');
                 new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
+            });
+
+            $('#exportBtn').on('click', function() {
+                const lpjId = $('#detailModal').data('lpj-id');
+                // TODO: Add export logic here
+                alert('Export functionality will be implemented later');
             });
 
             $('#submitPengajuanBtn').on('click', function() {

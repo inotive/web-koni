@@ -902,7 +902,6 @@ unset($__errorArgs, $__bag); ?>
                 const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
                 const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
                 const counter = isPhoto ? fotoCounter : dokumenCounter;
-                const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
                 const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
 
                 const existingFiles = isPhoto ? existingFotoFiles : existingDokumenFiles;
@@ -913,7 +912,6 @@ unset($__errorArgs, $__bag); ?>
                 if (files.length === 0) {
                     container.style.display = 'none';
                     counter.textContent = totalFiles > 0 ? `${totalFiles} file` : '';
-                    maxWarning.style.display = 'none';
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto baru di sini, atau klik untuk mengunggah.' :
                         'Seret dan lepas dokumen baru di sini, atau klik untuk mengunggah.';
@@ -923,8 +921,6 @@ unset($__errorArgs, $__bag); ?>
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file baru dipilih`;
                 counter.textContent = `${totalFiles} file`;
-
-                maxWarning.style.display = 'none';
 
                 let previewHTML = '';
                 files.forEach((file, index) => {
@@ -1102,14 +1098,8 @@ unset($__errorArgs, $__bag); ?>
                     }
                 });
             });
-        });
 
-        function calculateTotalPrice() {
-            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
-            return;
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
+            // Volume and price calculation
             const volumeInput = document.getElementById('volume');
             const unitPriceInput = document.getElementById('jumlah_harga_satuan');
 
@@ -1125,6 +1115,11 @@ unset($__errorArgs, $__bag); ?>
                 calculateTotalPrice();
             }
         });
+
+        function calculateTotalPrice() {
+            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
+            return;
+        }
     </script>
 <?php $__env->stopSection(); ?>
 
