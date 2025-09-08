@@ -179,7 +179,7 @@
         .table th:nth-child(4) { width: 150px; }
         .table th:nth-child(5) { width: 150px; }
         .table th:nth-child(6) { width: 150px; }
-        .table th:nth-child(7) { width: 80px; }
+        .table th:nth-child(7) { width: 150px; }
         .table th:nth-child(8) { width: 80px; }
 
         .text-truncate-custom {
@@ -399,6 +399,33 @@
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
         }
+
+                #export-pdf-btn {
+            background-color: #e63946; /* Modern, softer red */
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(230, 57, 70, 0.3);
+        }
+
+        #export-pdf-btn:hover {
+            background-color: #d62828; /* Darker shade for hover */
+            box-shadow: 0 3px 8px rgba(214, 40, 40, 0.4);
+            transform: translateY(-1px);
+        }
+
+        #export-pdf-btn:active {
+            background-color: #ba181b; /* Even deeper red for active press */
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(186, 24, 27, 0.3);
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -426,15 +453,6 @@
                            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                         </a>
-
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-                            <i class="fas fa-file-export me-1" style="color: white !important;"></i>Export
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" id="export-excel-btn" href="#" style="font-weight: bold; background-color: #2e7d32; color: white;"> <i class="fa-solid fa-file-excel" style="color: white"></i> Export to Excel</a></li>
-                        </ul>
-                    </div>
 
                     {{-- Search Input --}}
                     <div class="input-group position-relative" style="width: 250px;">
@@ -521,12 +539,18 @@
                     <span id="statusIcon"class="ms-2 fs-6 gap-3"></span>
 
                     <div class="ms-auto d-flex align-items-center gap-2">
+                        <button type="button" id="export-pdf-btn" class="btn">
+                            <i class="fa-solid fa-file-export" style="color: white"></i>
+                            Export Data
+                        </button>
                         <button type="button" id="ajukanPerubahanBtn" class="btn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i>
                             <strong>Ajukan Perubahan</strong>
                         </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
+
+
                 </div>
 
                 <div class="modal-body" id="detailModalBody">
@@ -822,6 +846,11 @@
             window.showDetailModal = function (data) {
                 const modalBody = document.getElementById('detailModalBody');
                 const statusIcon  = document.getElementById('statusIcon');
+                const exportBtn = document.getElementById('export-pdf-btn');
+
+                if(exportBtn) {
+                    exportBtn.setAttribute('data-lpj-id', data.id);
+                }
 
                 if (!modalBody) return;
 
@@ -872,10 +901,10 @@
                 }
 
                 let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-                if (data.dokumen_lpj && data.dokumen_lpj.length) {
+                if (data.dokumen_pendukung && data.dokumen_pendukung.length) {
                     dokumenHtml = `
                         <div class="d-flex flex-column gap-2">
-                            ${data.dokumen_lpj.map(d => {
+                            ${data.dokumen_pendukung.map(d => {
                                 const name = d.split('/').pop();
                                 const ext  = name.split('.').pop().toLowerCase();
                                 const icon = {
@@ -1016,24 +1045,19 @@
             });
 
             // Export functionality
-            $('#export-excel-btn').on('click', function(e) {
+            $('#export-pdf-btn').on('click', function(e) {
                 e.preventDefault();
 
-                let exportUrl;
-                if (parentId) {
-                    exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.child.export-csv', ':parentId') }}".replace(':parentId', parentId);
+                const lpjId = $(this).attr('data-lpj-id');
+
+                if (lpjId) {
+                    let exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.export-pdf', ':id') }}".replace(':id', lpjId);
+                    window.location.href = exportUrl;
                 } else {
-                    exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.export-csv') }}";
+                    console.error('LPJ ID not found for export.');
+                    // You could show a user-friendly error message here
+                    alert('Tidak dapat mengekspor PDF, ID laporan tidak ditemukan.');
                 }
-
-                const search = $('#search').val();
-
-                const url = new URL(exportUrl, window.location.origin);
-                if (search) {
-                    url.searchParams.set('search', search);
-                }
-
-                window.location.href = url.toString();
             });
 
             // Enhanced Preview Modal functionality

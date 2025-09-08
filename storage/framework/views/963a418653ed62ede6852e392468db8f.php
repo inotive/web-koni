@@ -115,7 +115,7 @@
     }
 
     /* Buttons */
-    .btn-secondary, .btn-light-primary {
+    .btn-secondary, .btn-light-primary, .btn-success, .btn-danger {
         padding: 13px 16px;
         border-radius: 6px;
         font-family: "Inter", sans-serif;
@@ -135,6 +135,24 @@
     }
 
     .btn-secondary:hover { background-color: #4b5563; }
+
+    .btn-success {
+        background-color: #198754;
+        color: #fff;
+    }
+
+    .btn-success:hover {
+        background-color: #157347;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: #fff;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
 
     .edit-icon {
         padding: 6px;
@@ -437,17 +455,20 @@
             </div>
         </div>
 
-        <div class="detail-card">
-            <?php echo $__env->make('admin.pelatih._tableprestasi', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-        </div>
+        
 
-        <div class="detail-actions">
+        <div class="detail-actions" style="display: flex; gap: 10px; margin-top: 20px;">
             <a href="<?php echo e(match (request('back')) {
                     'cabor'     => route('admin.konfigurasi.cabang-olahraga.show', $pelatih->cabor_id),
                     'prestasi' => route('admin.konfigurasi.prestasi.index', $pelatih->id),
                     default     => route('admin.konfigurasi.pelatih.index'),
                 }); ?>" class="btn btn-light-primary">
-                <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
+                <i class="bi bi-arrow-left fs-2"></i> Kembali
+            </a>
+
+            <a href="<?php echo e(route('admin.konfigurasi.pelatih.export-single-pdf', $pelatih->id)); ?>"
+            class="btn btn-light-primary">
+                <i class="fas fa-file-csv me-1"></i> Export Data
             </a>
         </div>
     </div>
@@ -693,5 +714,6 @@
     });
 </script>
 <?php $__env->stopSection(); ?>
+
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/pelatih/show.blade.php ENDPATH**/ ?>

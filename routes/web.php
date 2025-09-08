@@ -100,6 +100,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::resource('atlet', AtletController::class);
         Route::get('pelatih/export', [PelatihController::class, 'exportCsv'])->name('pelatih.export');
+        Route::get('pelatih/{id}/export-pdf', [PelatihController::class, 'exportSinglePdf'])->name('pelatih.export-single-pdf');
         Route::resource('pelatih', PelatihController::class);
         Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
             ->name('pelatih.updateKetersediaan');
@@ -197,6 +198,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/item/{id}/edit', [App\Http\Controllers\Admin\LpjController::class, 'edit'])->name('edit');
             Route::put('/item/{id}', [App\Http\Controllers\Admin\LpjController::class, 'update'])->name('update');
             Route::delete('/item/{id}', [App\Http\Controllers\Admin\LpjController::class, 'destroy'])->name('destroy');
+            Route::get('/item/{id}/export-pdf', [App\Http\Controllers\Admin\LpjController::class, 'exportPdf'])->name('export-pdf');
 
             // API routes for tree structure
             Route::get('/api/tree/{parentId?}', [App\Http\Controllers\Admin\LpjController::class, 'getTreeStructure'])->name('api.tree');

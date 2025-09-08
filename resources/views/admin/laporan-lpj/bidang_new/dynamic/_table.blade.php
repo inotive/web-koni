@@ -64,6 +64,17 @@
                     <th>Foto Jurnal</th>
                     <th>Dokumen Pendukung</th>
                     <th>Dokumen LPJ</th>
+                    <th>
+                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'created_at', 'direction' => (request()->get('sort') == 'created_at' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
+                                class="text-dark text-decoration-none sortable-header">
+                                Tanggal Ditambahkan
+                                @if(request()->get('sort') == 'created_at')
+                                    <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                @else
+                                    <i class="fas fa-sort"></i>
+                                @endif
+                            </a>
+                    </th>
                     <th style="text-align: center">Aksi</th>
                 </tr>
             </thead>
@@ -132,6 +143,12 @@
                             @else
                                 <span class="text-muted">-</span>
                             @endif
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold">{{ $data->created_at->format('d M Y') }}</span>
+                                <small class="text-muted">{{ $data->created_at->format('H:i') }}</small>
+                            </div>
                         </td>
                         <td class="text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $data->id }}">

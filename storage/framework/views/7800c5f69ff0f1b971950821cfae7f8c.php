@@ -44,6 +44,17 @@
                     <th>Foto Jurnal</th>
                     <th>Dokumen Pendukung</th>
                     <th>Dokumen LPJ</th>
+                    <th>
+                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'created_at', 'direction' => (request()->get('sort') == 'created_at' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
+                                class="text-dark text-decoration-none sortable-header">
+                                Tanggal Ditambahkan
+                                <?php if(request()->get('sort') == 'created_at'): ?>
+                                    <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                                <?php else: ?>
+                                    <i class="fas fa-sort"></i>
+                                <?php endif; ?>
+                            </a>
+                    </th>
                     <th style="text-align: center">Aksi</th>
                 </tr>
             </thead>
@@ -112,6 +123,12 @@
                             <?php else: ?>
                                 <span class="text-muted">-</span>
                             <?php endif; ?>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold"><?php echo e($data->created_at->format('d M Y')); ?></span>
+                                <small class="text-muted"><?php echo e($data->created_at->format('H:i')); ?></small>
+                            </div>
                         </td>
                         <td class="text-center">
                             <div class="dropdown dropdown-action" data-row-id="<?php echo e($data->id); ?>">
