@@ -118,7 +118,7 @@
                                         href="{{ route('admin.laporan-lpj.pengajuan.index') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">
-                                            Pengajuan LPJ
+                                            Pengajuan Modifikasi LPJ
                                             @if($pengajuanCount > 0)
                                                 <span class="badge bg-danger text-white ms-2" style="font-size: 0.7rem; border-radius: 50%;">
                                                     {{ $pengajuanCount }}

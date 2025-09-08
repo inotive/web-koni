@@ -151,7 +151,7 @@
 
                     @php
                         $fields = [
-                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Joko Widodo'],
+                            'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Masukkan nama pelatih '],
                             'cabor_id' => [
                                 'label' => 'Cabang Olahraga',
                                 'type' => 'select',
@@ -171,7 +171,7 @@
                             'tempat_lahir' => [
                                 'label' => 'Tempat Lahir',
                                 'type' => 'text',
-                                'placeholder' => 'Balikpapan, Kalimantan Timur',
+                                'placeholder' => 'Contoh: Balikpapan, Kalimantan Timur',
                             ],
                             'kelamin' => [
                                 'label' => 'Jenis Kelamin',
@@ -181,7 +181,7 @@
                             'alamat' => [
                                 'label' => 'Alamat',
                                 'type' => 'text',
-                                'placeholder' => 'Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
+                                'placeholder' => 'Contoh: Jln Prapatan Dalam RT 43 NO.08, Kelurahan Prapatan',
                             ],
                             'alamatprovinsi' => [
                                 'label' => 'Provinsi',
@@ -237,13 +237,13 @@
                         </div>
                     @endforeach
                     <input type="hidden" name="ketersediaan" value="Tersedia">
-                    <div class="row mt-4">
-                        <div class="col-md-3 offset-md-3 d-flex justify-content-between">
-                            <button type="submit" class="btn btn-danger px-4">
-                                <i class="fas fa-save me-2"></i>Simpan Laporan
+                     <div class="row">
+                        <div class="col-md-9 offset-md-3 d-flex gap-3">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-save me-2"></i>Simpan
                             </button>
                             <a href="{{ route('admin.konfigurasi.pelatih.index') }}"
-                                class="btn btn-secondary px-4">
+                               class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>
                         </div>

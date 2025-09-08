@@ -124,7 +124,7 @@
                             @endif
                         </a>
                     </th>
-                    <th>
+                    {{-- <th>
                         <a href="#" class="text-decoration-none text-dark sort-link"
                         data-sort="prestasi">
                             Prestasi Terbaru
@@ -138,7 +138,7 @@
                                 <i class="fas fa-sort text-muted"></i>
                             @endif
                         </a>
-                    </th>
+                    </th> --}}
                     <th>
                         <a href="#" class="text-decoration-none text-dark sort-link"
                         data-sort="updated_at">
@@ -269,7 +269,7 @@
                                     @endif
                                 </div>
                             </td>
-                            <td>
+                            {{-- <td>
                                 @if($prestasiTerbaru)
                                     <div class="d-flex align-items-center">
                                         <div class="me-2">
@@ -295,7 +295,7 @@
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
-                            </td>
+                            </td> --}}
                             <td>
                                 {{ \Carbon\Carbon::parse($item->updated_at)->format('M d, Y') }}
                             </td>
