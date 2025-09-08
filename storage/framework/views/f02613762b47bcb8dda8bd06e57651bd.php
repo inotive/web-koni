@@ -122,21 +122,7 @@
                             <?php endif; ?>
                         </a>
                     </th>
-                    <th>
-                        <a href="#" class="text-decoration-none text-dark sort-link"
-                        data-sort="prestasi">
-                            Prestasi Terbaru
-                            <?php if(request('sort_by') == 'prestasi'): ?>
-                                <?php if(request('order') == 'asc'): ?>
-                                    <i class="fas fa-sort-up"></i>
-                                <?php else: ?>
-                                    <i class="fas fa-sort-down"></i>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <i class="fas fa-sort text-muted"></i>
-                            <?php endif; ?>
-                        </a>
-                    </th>
+                    
                     <th>
                         <a href="#" class="text-decoration-none text-dark sort-link"
                         data-sort="updated_at">
@@ -282,34 +268,7 @@
                                     <?php endif; ?>
                                 </div>
                             </td>
-                            <td>
-                                <?php if($prestasiTerbaru): ?>
-                                    <div class="d-flex align-items-center">
-                                        <div class="me-2">
-                                            <?php if($medaliType === 'emas'): ?>
-                                                <i class="fas fa-medal text-warning"></i>
-                                            <?php elseif($medaliType === 'perak'): ?>
-                                                <i class="fas fa-medal text-dark"></i>
-                                            <?php elseif($medaliType === 'perunggu'): ?>
-                                                <i class="fas fa-medal text-bronze"></i>
-                                            <?php endif; ?>
-                                        </div>
-                                        <div class="d-flex flex-column">
-                                            <span class="text-truncate-custom">
-                                                <?php if(request('search')): ?>
-                                                    <?php echo preg_replace('/(' . preg_quote(request('search'), '/') . ')/i', '<span class="search-highlight">$1</span>', $prestasiTerbaru->nama_prestasi); ?>
-
-                                                <?php else: ?>
-                                                    <strong><?php echo e($prestasiTerbaru->nama_prestasi); ?></strong>
-                                                <?php endif; ?>
-                                            </span>
-                                            <small class="text-muted"><?php echo e($prestasiTerbaru->tahun); ?><?php if($prestasiTerbaru->tempat): ?> • <?php echo e($prestasiTerbaru->tempat); ?><?php endif; ?></small>
-                                        </div>
-                                    </div>
-                                <?php else: ?>
-                                    <span class="text-muted">-</span>
-                                <?php endif; ?>
-                            </td>
+                            
                             <td>
                                 <?php echo e(\Carbon\Carbon::parse($item->updated_at)->format('M d, Y')); ?>
 

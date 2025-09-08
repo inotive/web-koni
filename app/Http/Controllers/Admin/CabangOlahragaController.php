@@ -481,6 +481,22 @@ class CabangOlahragaController extends Controller
         }
     }
 
+    // Method untuk export atlet berdasarkan cabang olahraga
+    public function exportAtlet(Request $request, $caborId)
+    {
+        // Redirect ke AtletController dengan parameter cabor_id
+        $request->merge(['cabor_id' => $caborId]);
+        return redirect()->route('admin.konfigurasi.atlet.export', ['cabor_id' => $caborId]);
+    }
+
+    // Method untuk export pelatih berdasarkan cabang olahraga
+    public function exportPelatih(Request $request, $caborId)
+    {
+        // Redirect ke PelatihController dengan parameter cabor_id
+        $request->merge(['cabor_id' => $caborId]);
+        return redirect()->route('admin.konfigurasi.pelatih.export', ['cabor_id' => $caborId]);
+    }
+
     /**
      * Menangani upload icon dan resize ke 80x80px
      */
