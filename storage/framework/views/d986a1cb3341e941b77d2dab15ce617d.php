@@ -1154,10 +1154,10 @@
     let dokumenLpjPdfHtml = '';
     if (data.dokumen_lpj_pdf) {
         const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
-        const name = typeof data.dokumen_lpj_pdf === 'object' ? 
-            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) : 
+        const name = typeof data.dokumen_lpj_pdf === 'object' ?
+            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) :
             path.split('/').pop();
-            
+
         dokumenLpjPdfHtml = `
             <div class="mb-3">
                 <label class="fw-semibold text-dark mb-2 d-block">
@@ -1282,12 +1282,8 @@
                         <div class="bg-light p-3 rounded">
                             ${dokumenHtml}
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        ${data.keterangan_tambahan ? `
+                          ${data.keterangan_tambahan ? `
                     <div class="mb-4">
                         <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
                             <i class="fas fa-sticky-note me-2"></i>
@@ -1297,6 +1293,12 @@
                             <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
                         </div>
                     </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
                 ` : ''}
     `;
 
