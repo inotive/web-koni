@@ -3,6 +3,13 @@
     @section('pageTitle', 'Cabang Olahraga')
     @section('mainSection', 'Konfigurasi')
     @section('currentSection', 'Cabang Olahraga')
+    @push('styles')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    @endpush
+    @push('scripts')
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    @endpush
     @php
         if (!function_exists('sortIcon')) {
             function sortIcon($field)
@@ -693,9 +700,9 @@
                                                                 {{ request('status') == 'Aktif' ? 'selected' : '' }}>
                                                                 Aktif
                                                             </option>
-                                                            <option value="Tidak Aktif"
-                                                                {{ request('status') == 'Tidak Aktif' ? 'selected' : '' }}>
-                                                                Tidak Aktif</option>
+                                                            <option value="Pembinaan"
+                                                                {{ request('status') == 'Pembinaan' ? 'selected' : '' }}>
+                                                                Pembinaan</option>
                                                         </select>
                                                     </div>
 
@@ -756,32 +763,7 @@
             </div>
         </div>
 
-        <!-- Delete Warning Modal -->
-        <div class="modal fade" id="deleteWarningModal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">
-                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
-                            Tidak Dapat Menghapus
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Cabang olahraga <strong id="caborName"></strong>
-                            tidak dapat dihapus karena masih memiliki:</p>
-                        <ul id="dependencyList"></ul>
-                        <p class="text-muted">Silakan pindahkan atau hapus data
-                            tersebut terlebih dahulu, atau nonaktifkan cabang
-                            olahraga ini.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endsection
+        @endsection
 
     @section('script')
         <script>
@@ -1278,19 +1260,197 @@
             });
 
             // ✅ Global functions for delete operations (outside document ready)
-            window.showDeleteWarning = function(nama, jumlahAtlet, jumlahPelatih) {
-                $('#caborName').text(nama);
-
+            window.showDeleteWarning = function(button, caborName, atletCount, pelatihCount) {
+                // Build dependency list
                 const dependencies = [];
-                if (jumlahAtlet > 0) dependencies.push(`${jumlahAtlet} atlet`);
-                if (jumlahPelatih > 0) dependencies.push(`${jumlahPelatih} pelatih`);
+                if (atletCount > 0) dependencies.push(`${atletCount} atlet`);
+                if (pelatihCount > 0) dependencies.push(`${pelatihCount} pelatih`);
 
-                $('#dependencyList').html(dependencies.map(dep => `<li>${dep}</li>`).join(''));
-                $('#deleteWarningModal').modal('show');
+                // Create HTML for dependency list
+                let dependencyListHtml = '';
+                if (dependencies.length > 0) {
+                    dependencyListHtml = '<ul class="mt-2 text-start">';
+                    dependencies.forEach(dep => {
+                        dependencyListHtml += `<li>${dep}</li>`;
+                    });
+                    dependencyListHtml += '</ul>';
+                }
+
+                Swal.fire({
+                    title: 'Tidak Dapat Menghapus Cabang Olahraga',
+                    html: `Cabang olahraga <strong>${caborName}</strong> tidak dapat dihapus karena masih memiliki:${dependencyListHtml}
+                    <p class="text-muted mt-3">
+                        Silakan pindahkan atau hapus data tersebut terlebih dahulu, 
+                        atau nonaktifkan cabang olahraga ini.
+                    </p>`,
+                    icon: "warning",
+                    confirmButtonText: 'Mengerti',
+                    width: '500px'
+                });
             };
 
-            window.confirmDelete = function(nama) {
-                return confirm(`Apakah Anda yakin ingin menghapus cabang olahraga "${nama}"?`);
+            window.confirmDelete = function(form) {
+                const nama = form.querySelector('button[type="submit"]').title.replace('Hapus ', '');
+                
+                Swal.fire({
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data cabang olahraga dihapus, Anda tidak bisa mengembalikannya!</p>",
+                    icon: "warning",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Menghapus...',
+                            text: 'Mohon tunggu',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            willOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        
+                        // Submit via AJAX
+                        const formData = new FormData(form);
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: data.message || 'Data cabang olahraga berhasil dihapus',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                
+                                // Reload the table
+                                window.location.reload();
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: data.message || 'Gagal menghapus data cabang olahraga',
+                                    icon: 'error'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Gagal menghapus data cabang olahraga',
+                                icon: 'error'
+                            });
+                        });
+                    }
+                });
+                // Return false to prevent default form submission
+                return false;
+            };
+
+            window.destroyItem = function(button) {
+                const route = button.dataset.route;
+
+                Swal.fire({
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data cabang olahraga dihapus, Anda tidak bisa mengembalikannya!</p>",
+                    icon: "warning",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Menghapus...',
+                            text: 'Mohon tunggu',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            willOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        $.ajax({
+                            url: route,
+                            type: 'POST',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                _method: 'DELETE'
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: response.message || 'Data cabang olahraga berhasil dihapus',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+
+                                // Reload current page to refresh the table
+                                window.location.reload();
+                            },
+                            error: function(xhr) {
+                                Swal.close();
+
+                                try {
+                                    const response = JSON.parse(xhr.responseText);
+
+                                    if (response.reason === 'has_dependencies') {
+                                        Swal.fire({
+                                            title: 'Tidak Dapat Menghapus Cabang Olahraga',
+                                            html: `Cabang olahraga <strong>${response.cabor_name}</strong> tidak dapat dihapus karena masih memiliki ${response.atlet_count + response.pelatih_count} data terkait.<br><br>
+                                            <div class="text-start mt-3">
+                                                <strong>Data yang terkait:</strong>
+                                                <ul class="mt-2">
+                                                    ${response.atlet_count > 0 ? `<li>${response.atlet_count} atlet</li>` : ''}
+                                                    ${response.pelatih_count > 0 ? `<li>${response.pelatih_count} pelatih</li>` : ''}
+                                                </ul>
+                                            </div>
+                                            <p class="text-muted mt-3">
+                                                Silakan pindahkan atau hapus data yang terkait dengan cabang olahraga ini terlebih dahulu,
+                                                atau nonaktifkan data cabang olahraga ini jika diperlukan.
+                                            </p>`,
+                                            icon: "warning",
+                                            confirmButtonText: 'Mengerti',
+                                            width: '500px'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: response.message || 'Gagal menghapus data cabang olahraga',
+                                            icon: 'error'
+                                        });
+                                    }
+                                } catch (e) {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: 'Gagal menghapus data cabang olahraga',
+                                        icon: 'error'
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Aksi Dibatalkan :)",
+                            icon: "info",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                });
             };
         </script>
 
@@ -1821,19 +1981,197 @@
             });
 
             // ✅ Global functions for delete operations (outside document ready)
-            window.showDeleteWarning = function(nama, jumlahAtlet, jumlahPelatih) {
-                $('#caborName').text(nama);
-
+            window.showDeleteWarning = function(button, caborName, atletCount, pelatihCount) {
+                // Build dependency list
                 const dependencies = [];
-                if (jumlahAtlet > 0) dependencies.push(`${jumlahAtlet} atlet`);
-                if (jumlahPelatih > 0) dependencies.push(`${jumlahPelatih} pelatih`);
+                if (atletCount > 0) dependencies.push(`${atletCount} atlet`);
+                if (pelatihCount > 0) dependencies.push(`${pelatihCount} pelatih`);
 
-                $('#dependencyList').html(dependencies.map(dep => `<li>${dep}</li>`).join(''));
-                $('#deleteWarningModal').modal('show');
+                // Create HTML for dependency list
+                let dependencyListHtml = '';
+                if (dependencies.length > 0) {
+                    dependencyListHtml = '<ul class="mt-2 text-start">';
+                    dependencies.forEach(dep => {
+                        dependencyListHtml += `<li>${dep}</li>`;
+                    });
+                    dependencyListHtml += '</ul>';
+                }
+
+                Swal.fire({
+                    title: 'Tidak Dapat Menghapus Cabang Olahraga',
+                    html: `Cabang olahraga <strong>${caborName}</strong> tidak dapat dihapus karena masih memiliki:${dependencyListHtml}
+                    <p class="text-muted mt-3">
+                        Silakan pindahkan atau hapus data tersebut terlebih dahulu, 
+                        atau nonaktifkan cabang olahraga ini.
+                    </p>`,
+                    icon: "warning",
+                    confirmButtonText: 'Mengerti',
+                    width: '500px'
+                });
             };
 
-            window.confirmDelete = function(nama) {
-                return confirm(`Apakah Anda yakin ingin menghapus cabang olahraga "${nama}"?`);
+            window.confirmDelete = function(form) {
+                const nama = form.querySelector('button[type="submit"]').title.replace('Hapus ', '');
+                
+                Swal.fire({
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data cabang olahraga dihapus, Anda tidak bisa mengembalikannya!</p>",
+                    icon: "warning",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Menghapus...',
+                            text: 'Mohon tunggu',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            willOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        
+                        // Submit via AJAX
+                        const formData = new FormData(form);
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: data.message || 'Data cabang olahraga berhasil dihapus',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                
+                                // Reload the table
+                                window.location.reload();
+                            } else {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: data.message || 'Gagal menghapus data cabang olahraga',
+                                    icon: 'error'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: 'Gagal menghapus data cabang olahraga',
+                                icon: 'error'
+                            });
+                        });
+                    }
+                });
+                // Return false to prevent default form submission
+                return false;
+            };
+
+            window.destroyItem = function(button) {
+                const route = button.dataset.route;
+
+                Swal.fire({
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data cabang olahraga dihapus, Anda tidak bisa mengembalikannya!</p>",
+                    icon: "warning",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: 'Menghapus...',
+                            text: 'Mohon tunggu',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            willOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        $.ajax({
+                            url: route,
+                            type: 'POST',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                _method: 'DELETE'
+                            },
+                            success: function(response) {
+                                Swal.fire({
+                                    title: 'Berhasil!',
+                                    text: response.message || 'Data cabang olahraga berhasil dihapus',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+
+                                // Reload current page to refresh the table
+                                window.location.reload();
+                            },
+                            error: function(xhr) {
+                                Swal.close();
+
+                                try {
+                                    const response = JSON.parse(xhr.responseText);
+
+                                    if (response.reason === 'has_dependencies') {
+                                        Swal.fire({
+                                            title: 'Tidak Dapat Menghapus Cabang Olahraga',
+                                            html: `Cabang olahraga <strong>${response.cabor_name}</strong> tidak dapat dihapus karena masih memiliki ${response.atlet_count + response.pelatih_count} data terkait.<br><br>
+                                            <div class="text-start mt-3">
+                                                <strong>Data yang terkait:</strong>
+                                                <ul class="mt-2">
+                                                    ${response.atlet_count > 0 ? `<li>${response.atlet_count} atlet</li>` : ''}
+                                                    ${response.pelatih_count > 0 ? `<li>${response.pelatih_count} pelatih</li>` : ''}
+                                                </ul>
+                                            </div>
+                                            <p class="text-muted mt-3">
+                                                Silakan pindahkan atau hapus data yang terkait dengan cabang olahraga ini terlebih dahulu,
+                                                atau nonaktifkan data cabang olahraga ini jika diperlukan.
+                                            </p>`,
+                                            icon: "warning",
+                                            confirmButtonText: 'Mengerti',
+                                            width: '500px'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: response.message || 'Gagal menghapus data cabang olahraga',
+                                            icon: 'error'
+                                        });
+                                    }
+                                } catch (e) {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: 'Gagal menghapus data cabang olahraga',
+                                        icon: 'error'
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Aksi Dibatalkan :)",
+                            icon: "info",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                });
             };
         </script>
 

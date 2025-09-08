@@ -135,7 +135,7 @@ class CabangOlahragaController extends Controller
         $validatedData = $request->validate([
             'nama_cabor' => 'required|string|max:50',
             'ketua_penanggung_jawab' => 'required|string|max:100',
-            'status' => 'required|in:Aktif,Tidak Aktif',
+            'status' => 'required|in:Aktif,Pembinaan',
             'tanggal_pembentukan' => 'required|date',
             'icon_cabor' => 'nullable|file|mimes:png,webp,svg|max:2048',
         ], [
@@ -190,7 +190,7 @@ class CabangOlahragaController extends Controller
         $validatedData = $request->validate([
             'nama_cabor' => 'required|string|max:50',
             'ketua_penanggung_jawab' => 'required|string|max:100',
-            'status' => 'required|in:Aktif,Tidak Aktif',
+            'status' => 'required|in:Aktif,Pembinaan',
             'tanggal_pembentukan' => 'required|date',
             'icon_cabor' => 'nullable|file|mimes:png,webp,svg|max:2048',
         ], [
@@ -220,8 +220,24 @@ class CabangOlahragaController extends Controller
         ])->with('cabor_updated', 'Cabang olahraga berhasil diperbarui.');
     }
 
-    public function destroy($cabor)
+    public function destroy(Request $request, $cabor)
     {
+        // Check if this is a POST request with _method=DELETE (method spoofing)
+        if ($request->method() === 'POST' && $request->input('_method') === 'DELETE') {
+            // Continue with the deletion process
+        } 
+        // Check if this is a direct DELETE request
+        elseif ($request->method() === 'DELETE') {
+            // Continue with the deletion process
+        }
+        // If neither, return error
+        else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Method not allowed'
+            ], 405);
+        }
+
         try {
             $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($cabor);
 
@@ -231,23 +247,14 @@ class CabangOlahragaController extends Controller
             $totalData = $jumlahAtlet + $jumlahPelatih;
 
             if ($totalData > 0) {
-                $pesanError = "Tidak dapat menghapus cabang olahraga '{$cabor->nama_cabor}' karena masih ada data terkait:";
-
-                if ($jumlahAtlet > 0) {
-                    $pesanError .= " {$jumlahAtlet} atlet";
-                }
-
-                if ($jumlahPelatih > 0) {
-                    if ($jumlahAtlet > 0) {
-                        $pesanError .= " dan {$jumlahPelatih} pelatih";
-                    } else {
-                        $pesanError .= " {$jumlahPelatih} pelatih";
-                    }
-                }
-
-                $pesanError .= " yang terdaftar. Silakan pindahkan atau hapus data tersebut terlebih dahulu, atau nonaktifkan cabang olahraga ini.";
-
-                return redirect()->back()->with('error', $pesanError);
+                return response()->json([
+                    'success' => false,
+                    'reason' => 'has_dependencies',
+                    'cabor_name' => $cabor->nama_cabor,
+                    'atlet_count' => $jumlahAtlet,
+                    'pelatih_count' => $jumlahPelatih,
+                    'message' => "Tidak dapat menghapus cabang olahraga '{$cabor->nama_cabor}' karena masih ada data terkait."
+                ], 400);
             }
 
             // Jika tidak ada data terkait, lanjutkan penghapusan
@@ -257,20 +264,28 @@ class CabangOlahragaController extends Controller
 
             $cabor->delete();
 
-            return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
-                ->with('cabor_deleted', 'Cabang olahraga berhasil dihapus.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Cabang olahraga berhasil dihapus.'
+            ]);
         } catch (\Illuminate\Database\QueryException $e) {
             // Tangkap error foreign key constraint dari database
             if ($e->getCode() == '23000') {
-                return redirect()->back()->with(
-                    'error',
-                    'Tidak dapat menghapus cabang olahraga ini karena masih ada data terkait. Silakan hapus data terkait terlebih dahulu.'
-                );
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak dapat menghapus cabang olahraga ini karena masih ada data terkait. Silakan hapus data terkait terlebih dahulu.'
+                ], 400);
             }
 
-            return redirect()->back()->with('error', 'Gagal menghapus cabang olahraga: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus cabang olahraga: ' . $e->getMessage()
+            ], 500);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -281,7 +296,7 @@ class CabangOlahragaController extends Controller
             $cabor = CabangOlahraga::findOrFail($cabor);
 
             $cabor->update([
-                'status' => 'Tidak Aktif',
+                'status' => 'Pembinaan',
                 'terakhir_update' => now()
             ]);
 

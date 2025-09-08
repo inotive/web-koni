@@ -119,6 +119,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/{cabor}/edit', [CabangOlahragaController::class, 'edit'])->name('edit');
             Route::put('/{cabor}', [CabangOlahragaController::class, 'update'])->name('update');
             Route::delete('/{cabor}', [CabangOlahragaController::class, 'destroy'])->name('destroy');
+            Route::post('/{cabor}', [CabangOlahragaController::class, 'destroy'])->name('destroy.post');
 
             // TAMBAHAN: Rute untuk fitur khusus CabangOlahraga
             Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
