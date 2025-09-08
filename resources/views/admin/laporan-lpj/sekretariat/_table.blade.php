@@ -15,6 +15,7 @@
                             ['key' => 'jumlah_harga', 'title' => 'Total Anggaran'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
+                            ['key' => 'created_at', 'title' => 'Tanggal Ditambahkan'],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
                     @endphp
@@ -78,6 +79,7 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
+                        <td class="text-start">{{ $kegiatan->created_at ? $kegiatan->created_at->format('d/m/Y') : '-' }}</td>
                         <td class="text-start">
                             <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
@@ -173,7 +175,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                        <td colspan="7" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                     </tr>
                 @endforelse
             </tbody>

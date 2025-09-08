@@ -46,6 +46,10 @@
         }
 
         .table th:nth-child(6) {
+            width: 120px;
+        }
+
+        .table th:nth-child(7) {
             width: 80px;
         }
 

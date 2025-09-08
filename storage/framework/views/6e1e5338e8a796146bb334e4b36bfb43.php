@@ -15,6 +15,7 @@
                             ['key' => 'jumlah_harga', 'title' => 'Total Anggaran'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
+                            ['key' => 'created_at', 'title' => 'Tanggal Ditambahkan'],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
                     ?>
@@ -82,6 +83,7 @@
                                 <span class="text-muted">-</span>
                             <?php endif; ?>
                         </td>
+                        <td class="text-start"><?php echo e($kegiatan->created_at ? $kegiatan->created_at->format('d/m/Y') : '-'); ?></td>
                         <td class="text-start">
                             <div class="dropdown dropdown-action" data-row-id="<?php echo e($kegiatan->id); ?>">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
@@ -177,7 +179,7 @@
                     </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                        <td colspan="7" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
