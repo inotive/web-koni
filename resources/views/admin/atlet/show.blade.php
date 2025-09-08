@@ -215,6 +215,21 @@
         background-color: #4b5563;
     }
 
+    /* Export Button Style */
+    .btn-export-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+        min-width: 90px;
+    }
+
     .edit-icon {
         display: flex;
         padding: 6px;
@@ -951,6 +966,10 @@
             <div class="detail-card">
                 <div class="detail-card-header">
                     <h2 class="detail-card-title">Personal Info</h2>
+                    <a href="{{ route('admin.konfigurasi.prestasi.atlet.exportDetail', $atlet->id) }}" 
+                       class="btn btn-outline-secondary filter-btn-custom btn-export-custom">
+                        <i class="fas fa-file-export me-1"></i> Export
+                    </a>
                 </div>
 
                 <div class="detail-body">
@@ -1136,13 +1155,6 @@
                         @else
                             <span class="empty-value">Belum ada alamat yang tercantum</span>
                         @endif
-                    </div>
-                    <div>
-                        <a href="{{ route('admin.konfigurasi.prestasi.atlet.exportDetail', $atlet->id) }}" 
-                           class="btn btn-outline-primary btn-sm" 
-                           style="margin-left: 10px;">
-                            <i class="fas fa-file-export"></i> Export
-                        </a>
                     </div>
                 </div>
             </div>
