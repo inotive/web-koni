@@ -46,7 +46,7 @@
         }
 
         .table th:nth-child(6) {
-            width: 120px;
+            width: 80px;
         }
 
         .table th:nth-child(7) {
