@@ -8,6 +8,7 @@ use App\Models\CabangOlahraga;
 use App\Models\Pelatih;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PelatihController extends Controller
 {
@@ -436,5 +437,216 @@ class PelatihController extends Controller
 
             return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui data');
         }
+    }
+
+    public function exportCsv(Request $request)
+    {
+        // Build the same query as the index method to ensure consistency
+        $allowedSorts = [
+            'nama', 'tanggal_lahir', 'kelamin', 'alamat',
+            'no_telepon', 'email', 'updated_at', 'created_at', 'prestasi'
+        ];
+
+        $sortBy = $request->get('sort_by', 'created_at');
+        $order = strtolower($request->get('order', 'desc'));
+
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'created_at';
+        }
+
+        if (!in_array($order, ['asc', 'desc'])) {
+            $order = 'desc';
+        }
+
+        $query = Pelatih::with(['cabangOlahraga', 'prestasis' => function ($q) {
+            $q->orderByDesc('tahun');
+        }])
+        ->withCount('prestasis');
+
+        // Handle prestasi sorting separately
+        if ($sortBy === 'prestasi') {
+            $query->orderBy('prestasis_count', $order);
+        } else {
+            $query->orderBy($sortBy, $order);
+        }
+
+        // Apply the same filters as the index method
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('nama', 'like', '%' . $searchTerm . '%')
+                ->orWhere('email', 'like', '%' . $searchTerm . '%')
+                ->orWhere('no_telepon', 'like', '%' . $searchTerm . '%')
+                ->orWhere('alamat', 'like', '%' . $searchTerm . '%')
+                ->orWhere('alamatkota', 'like', '%' . $searchTerm . '%')
+                ->orWhere('alamatprovinsi', 'like', '%' . $searchTerm . '%')
+                ->orWhere('tempat_lahir', 'like', '%' . $searchTerm . '%')
+                ->orWhereHas('cabangOlahraga', function ($q) use ($searchTerm) {
+                    $q->where('nama_cabor', 'like', '%' . $searchTerm . '%');
+                })
+                ->orWhereHas('prestasis', function ($q) use ($searchTerm) {
+                    $q->where('nama_prestasi', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('tempat', 'like', '%' . $searchTerm . '%');
+                });
+            });
+        }
+
+        // Apply all filters using the same logic as index method
+        if ($request->filled('cabor') || $request->filled('filter_cabor')) {
+            $caborValue = $request->filled('cabor') ? $request->cabor : $request->filter_cabor;
+            $query->whereHas('cabangOlahraga', function ($q) use ($caborValue) {
+                $q->where('nama_cabor', $caborValue);
+            });
+        }
+
+        if ($request->filled('gender') || $request->filled('filter_gender')) {
+            $genderValue = $request->filled('gender') ? $request->gender : $request->filter_gender;
+            $query->where('kelamin', $genderValue);
+        }
+
+        if ($request->filled('age') || $request->filled('filter_age')) {
+            $ageValue = $request->filled('age') ? $request->age : $request->filter_age;
+
+            if ($ageValue === '60+' || $ageValue === '36+') {
+                $minAge = $ageValue === '60+' ? 60 : 36;
+                $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) >= ?', [$minAge]);
+            } else {
+                [$min, $max] = array_map('intval', explode('-', $ageValue));
+                $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) BETWEEN ? AND ?', [$min, $max]);
+            }
+        }
+
+        if ($request->filled('prestasi') || $request->filled('filter_prestasi')) {
+            $prestasiValue = $request->filled('prestasi') ? $request->prestasi : $request->filter_prestasi;
+
+            switch ($prestasiValue) {
+                case 'ada':
+                    $query->has('prestasis');
+                    break;
+                case 'tidak':
+                    $query->doesntHave('prestasis');
+                    break;
+                case 'emas':
+                case 'perak':
+                case 'perunggu':
+                    $query->whereHas('prestasis', function ($q) use ($prestasiValue) {
+                        $q->where('medali', ucfirst($prestasiValue));
+                    });
+                    break;
+            }
+        }
+
+        if ($request->filled('filter_ketersediaan')) {
+            $query->where('ketersediaan', $request->filter_ketersediaan);
+        }
+
+        // Add secondary sorting for non-prestasi sorts
+        if ($sortBy !== 'created_at' && $sortBy !== 'prestasi') {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // Add final ordering by ID for consistency
+        $query->orderBy('id', 'desc');
+
+        // Get all matching records for export
+        $pelatihData = $query->get();
+
+        // Generate the CSV response using StreamedResponse like in LpjController
+        $response = new StreamedResponse(function() use ($pelatihData) {
+            $handle = fopen('php://output', 'w');
+
+            // Set UTF-8 BOM for proper Excel compatibility
+            fwrite($handle, "\xEF\xBB\xBF");
+
+            // CSV Headers
+            fputcsv($handle, [
+                'No',
+                'Nama Pelatih',
+                'Cabang Olahraga',
+                'Jenis Kelamin',
+                'Tempat Lahir',
+                'Tanggal Lahir',
+                'Usia',
+                'Alamat Lengkap',
+                'No Telepon',
+                'Email',
+                'Ketersediaan',
+                'Total Prestasi',
+                'Prestasi Terbaru',
+                'Tahun Prestasi Terbaru',
+                'Tempat Prestasi Terbaru'
+            ]);
+
+            foreach ($pelatihData as $index => $pelatih) {
+                $prestasiTerbaru = $pelatih->prestasis->first();
+
+                // Calculate age
+                $age = $pelatih->tanggal_lahir
+                    ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age
+                    : 'N/A';
+
+                // Combine address components
+                $alamatLengkap = collect([
+                    $pelatih->alamat,
+                    $pelatih->alamatkota,
+                    $pelatih->alamatprovinsi
+                ])->filter()->implode(', ');
+
+                fputcsv($handle, [
+                    $index + 1, // Row number
+                    $pelatih->nama,
+                    $pelatih->cabangOlahraga->nama_cabor ?? '-',
+                    $pelatih->kelamin,
+                    $pelatih->tempat_lahir,
+                    $pelatih->tanggal_lahir
+                        ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d/m/Y')
+                        : '-',
+                    $age . ' tahun',
+                    $alamatLengkap ?: '-',
+                    $pelatih->no_telepon ?: '-',
+                    $pelatih->email ?: '-',
+                    $pelatih->ketersediaan,
+                    $pelatih->prestasis_count,
+                    $prestasiTerbaru ? $prestasiTerbaru->nama_prestasi : '-',
+                    $prestasiTerbaru ? $prestasiTerbaru->tahun : '-',
+                    $prestasiTerbaru ? $prestasiTerbaru->tempat : '-'
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        // Generate filename with timestamp and applied filters
+        $timestamp = now()->format('Y-m-d_H-i-s');
+        $filterInfo = '';
+
+        if ($request->filled('search')) {
+            $filterInfo .= '_search';
+        }
+        if ($request->filled('filter_cabor')) {
+            $filterInfo .= '_cabor';
+        }
+        if ($request->filled('filter_gender')) {
+            $filterInfo .= '_gender';
+        }
+        if ($request->filled('filter_age')) {
+            $filterInfo .= '_age';
+        }
+        if ($request->filled('filter_prestasi')) {
+            $filterInfo .= '_prestasi';
+        }
+        if ($request->filled('filter_ketersediaan')) {
+            $filterInfo .= '_ketersediaan';
+        }
+
+        $filename = "pelatih_export{$filterInfo}_{$timestamp}.csv";
+
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}\"");
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+
+        return $response;
     }
 }

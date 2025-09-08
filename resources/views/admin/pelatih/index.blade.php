@@ -551,6 +551,9 @@
                                         </button>
                                     </div>
 
+                                    <a href="{{ route('admin.konfigurasi.pelatih.export') }}" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
+                                        <i class="fas fa-file-csv me-1"></i> Export
+                                    </a>
                                     <div class="dropdown">
                                         <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom" type="button"
                                             data-bs-toggle="dropdown">
@@ -591,7 +594,7 @@
                                                 </select>
                                             </div>
 
-                                            <div class="mb-3">
+                                            {{-- <div class="mb-3">
                                                 <label class="form-label fw-semibold">Status Prestasi</label>
                                                 <select id="filter-prestasi" class="form-select">
                                                     <option value="">Semua</option>
@@ -601,7 +604,7 @@
                                                     <option value="perak">Medali Perak</option>
                                                     <option value="perunggu">Medali Perunggu</option>
                                                 </select>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="d-flex gap-2">
                                                 <button type="button" id="apply-filters"
@@ -1013,6 +1016,77 @@
                 }
             });
 
+            // Export CSV button
+            $(document).on('click', '#export-csv', function(e) {
+            e.preventDefault();
+
+            // Get the base export URL
+            const baseUrl = $(this).attr('href');
+            const url = new URL(baseUrl, window.location.origin);
+
+            // Get all current parameters from the window URL
+            const currentParams = new URLSearchParams(window.location.search);
+
+            // Append all current filter and search params to the export URL
+            currentParams.forEach((value, key) => {
+                if (key !== 'page') { // Don't include pagination in export
+                    url.searchParams.append(key, value);
+                }
+            });
+
+            // Also get values directly from form elements in case they haven't been applied yet
+            const search = $('#search').val();
+            const filterCabor = $('#filter-cabor').val();
+            const filterGender = $('#filter-gender').val();
+            const filterAge = $('#filter-age').val();
+            const filterPrestasi = $('#filter-prestasi').val();
+            const filterKetersediaan = $('#filter-ketersediaan').val();
+
+            // Add form values to URL if they exist and aren't already in currentParams
+            if (search && !currentParams.has('search')) {
+                url.searchParams.set('search', search);
+            }
+            if (filterCabor && !currentParams.has('filter_cabor')) {
+                url.searchParams.set('filter_cabor', filterCabor);
+            }
+            if (filterGender && !currentParams.has('filter_gender')) {
+                url.searchParams.set('filter_gender', filterGender);
+            }
+            if (filterAge && !currentParams.has('filter_age')) {
+                url.searchParams.set('filter_age', filterAge);
+            }
+            if (filterPrestasi && !currentParams.has('filter_prestasi')) {
+                url.searchParams.set('filter_prestasi', filterPrestasi);
+            }
+            if (filterKetersediaan && !currentParams.has('filter_ketersediaan')) {
+                url.searchParams.set('filter_ketersediaan', filterKetersediaan);
+            }
+
+            // Add current sorting parameters
+            const sortBy = new URLSearchParams(window.location.search).get('sort_by');
+            const order = new URLSearchParams(window.location.search).get('order');
+
+            if (sortBy) {
+                url.searchParams.set('sort_by', sortBy);
+            }
+            if (order) {
+                url.searchParams.set('order', order);
+            }
+
+            // Show a brief loading indication
+            const originalText = $(this).html();
+            $(this).html('<i class="fas fa-spinner fa-spin me-1"></i> Exporting...');
+            $(this).prop('disabled', true);
+
+            // Navigate to the export URL
+            window.location.href = url.toString();
+
+            // Reset button after a short delay (since page might redirect)
+            setTimeout(() => {
+                $(this).html(originalText);
+                $(this).prop('disabled', false);
+            }, 2000);
+        });
             // Delete functionality (existing code preserved)
             window.showDeleteWarning = function(button, pelatihName, prestasiList) {
                 $('#pelatihName').text(pelatihName);

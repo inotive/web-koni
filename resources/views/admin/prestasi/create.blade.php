@@ -118,53 +118,23 @@
                         <form action="{{ route('admin.konfigurasi.prestasi.store') }}" method="POST">
                             @csrf
 
+                            <input type="hidden" name="subject_type" value="atlet">
+
+                            <input type="hidden" name="subject_type" value="atlet">
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="subject_type" class="form-label">Jenis Pemilik</label>
+                                    <label for="subject_id" class="form-label">Nama Atlet</label>
                                 </div>
                                 <div class="col-md-9">
-                                    <select class="form-select @error('subject_type') is-invalid @enderror"
-                                        id="subject_type" name="subject_type" required>
-                                        <option value="">-- Pilih Jenis --</option>
-                                        <option value="atlet" @selected(old('subject_type', $subjectType ?? null) == 'atlet')>Atlet</option>
-                                        <option value="pelatih" @selected(old('subject_type', $subjectType ?? null) == 'pelatih')>Pelatih</option>
+                                    <select class="form-select select2-ajax @error('subject_id') is-invalid @enderror" id="subject_atlet" name="subject_id" required>
+                                        <option value="">-- Pilih Atlet --</option>
+                                        @foreach ($atlets as $a)
+                                            <option value="{{ $a->id }}"
+                                                data-cabor="{{ $a->cabangOlahraga->nama_cabor ?? '' }}">
+                                                {{ $a->nama }} ({{ $a->jenis_kelamin }})
+                                            </option>
+                                        @endforeach
                                     </select>
-                                    @error('subject_type')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row align-items-center mb-3">
-                                <div class="col-md-3">
-                                    <label for="subject_id" class="form-label">Pemilik Prestasi</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <!-- wrapper agar tidak terjadi geser -->
-                                    <div class="d-grid">
-                                        <select class="form-select select2-ajax" id="subject_atlet" name="subject_id"
-                                            style="display: none;">
-                                            <option value="">-- Pilih Atlet --</option>
-                                            @foreach ($atlets as $a)
-                                                <option value="{{ $a->id }}"
-                                                    data-cabor="{{ $a->cabangOlahraga->nama_cabor ?? '' }}">
-                                                    {{ $a->nama }} ({{ $a->jenis_kelamin }})
-                                                </option>
-                                            @endforeach
-                                        </select>
-
-                                        <select class="form-select select2-ajax" id="subject_pelatih" name="subject_id"
-                                            style="display: none;">
-                                            <option value="">-- Pilih Pelatih --</option>
-                                            @foreach ($pelatihs as $p)
-                                                <option value="{{ $p->id }}"
-                                                    data-cabor="{{ $p->cabangOlahraga->nama_cabor ?? '' }}">
-                                                    {{ $p->nama }} ({{ $p->kelamin }})
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-
                                     @error('subject_id')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -306,16 +276,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const atletSelect = $('#subject_atlet');
-            const pelatihSelect = $('#subject_pelatih');
-            const subjectTypeSelect = document.getElementById('subject_type');
             const caborInput = $('#cabor');
             const form = document.querySelector('form');
-
-
-            const hiddenSubjectInput = document.createElement('input');
-            hiddenSubjectInput.type = 'hidden';
-            hiddenSubjectInput.name = 'subject_id';
-            form.appendChild(hiddenSubjectInput);
 
             function updateCabor(selectedOption) {
                 if (selectedOption.length && selectedOption.data('cabor')) {
@@ -334,94 +296,32 @@
                 }
             }
 
-            function toggleOptions() {
-                const type = subjectTypeSelect.value;
+            // Inisialisasi Select2 untuk atlet
+            atletSelect.select2({
+                theme: 'bootstrap-5',
+                placeholder: 'Cari atlet...',
+                allowClear: true,
+                width: '100%',
+                dropdownParent: $('.card-form')
+            });
 
-                if (atletSelect.hasClass("select2-hidden-accessible")) {
-                    atletSelect.select2('destroy');
+            // Event listener untuk perubahan pada select atlet
+            atletSelect.on('change', function() {
+                const selectedValue = $(this).val();
+
+                if (selectedValue) {
+                    updateCabor($(this).find(':selected'));
+                } else {
+                    caborInput.val('').trigger('change');
                 }
-                if (pelatihSelect.hasClass("select2-hidden-accessible")) {
-                    pelatihSelect.select2('destroy');
-                }
+            });
 
-                atletSelect.hide().next('.select2-container').remove();
-                pelatihSelect.hide().next('.select2-container').remove();
-
-                atletSelect.val('');
-                pelatihSelect.val('');
-                hiddenSubjectInput.value = '';
-
-                atletSelect.off('change.prestasi');
-                pelatihSelect.off('change.prestasi');
-
-                if (type === 'atlet') {
-                    atletSelect.show();
-                    atletSelect.select2({
-                        theme: 'bootstrap-5',
-                        placeholder: 'Cari atlet...',
-                        allowClear: true,
-                        width: '100%',
-                        dropdownParent: $('.card-form')
-                    });
-
-                    atletSelect.on('change.prestasi', function() {
-                        const selectedValue = $(this).val();
-                        hiddenSubjectInput.value = selectedValue || '';
-
-                        if (selectedValue) {
-                            updateCabor($(this).find(':selected'));
-                        } else {
-                            caborInput.val('').trigger('change');
-                        }
-                    });
-
-                } else if (type === 'pelatih') {
-                    pelatihSelect.show();
-                    pelatihSelect.select2({
-                        theme: 'bootstrap-5',
-                        placeholder: 'Cari pelatih...',
-                        allowClear: true,
-                        width: '100%',
-                        dropdownParent: $('.card-form')
-                    });
-
-                    pelatihSelect.on('change.prestasi', function() {
-                        const selectedValue = $(this).val();
-                        hiddenSubjectInput.value = selectedValue || '';
-
-                        if (selectedValue) {
-                            updateCabor($(this).find(':selected'));
-                        } else {
-                            caborInput.val('').trigger('change');
-                        }
-                    });
-                }
-            }
-
+            // Inisialisasi Select2 untuk cabor
             caborInput.select2({
                 theme: 'bootstrap-5',
                 placeholder: 'Pilih Cabang Olahraga',
                 allowClear: true,
                 width: '100%'
-            });
-
-            subjectTypeSelect.addEventListener('change', toggleOptions);
-
-            toggleOptions();
-
-            form.addEventListener('submit', function(e) {
-                const type = subjectTypeSelect.value;
-                let selectedValue = '';
-
-                if (type === 'atlet') {
-                    selectedValue = atletSelect.val();
-                } else if (type === 'pelatih') {
-                    selectedValue = pelatihSelect.val();
-                }
-
-                hiddenSubjectInput.value = selectedValue || '';
-
-                console.log('Form submitted with subject_id:', hiddenSubjectInput.value);
             });
         });
     </script>

@@ -103,16 +103,18 @@ class LpjController extends Controller
         $validated = $request->validate([
             'nama_program' => 'required|string|max:255',
             'nama_kegiatan' => 'required|string|max:255',
-            'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'volume' => 'nullable|string|max:255',
+            'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
             'foto_jurnal.*' => 'nullable|image|max:10240', // 10MB
+            'dokumen_pendukung.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
             'dokumen_lpj.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240'
         ]);
 
         // Handle file uploads
         $fotoJurnal = $this->handleFileUploads($request, 'foto_jurnal', 'lpj/foto');
+        $dokumenPendukung = $this->handleFileUploads($request, 'dokumen_pendukung', 'lpj/dokumen');
         $dokumenLpj = $this->handleFileUploads($request, 'dokumen_lpj', 'lpj/dokumen');
 
         $lpj = Lpj::create([
@@ -124,6 +126,7 @@ class LpjController extends Controller
             'jumlah_harga' => $validated['jumlah_harga'] ?? 0,
             'keterangan_tambahan' => $validated['keterangan_tambahan'],
             'foto_jurnal' => $fotoJurnal,
+            'dokumen_pendukung' => $dokumenPendukung,
             'dokumen_lpj' => $dokumenLpj,
         ]);
 
@@ -185,18 +188,21 @@ class LpjController extends Controller
         $validated = $request->validate([
             'nama_program' => 'required|string|max:255',
             'nama_kegiatan' => 'required|string|max:255',
-            'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'volume' => 'nullable|string|max:255',
+            'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
             'foto_jurnal.*' => 'nullable|image|max:10240',
+            'dokumen_pendukung.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
             'dokumen_lpj.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
             'existing_foto_jurnal' => 'nullable|array',
+            'existing_dokumen_pendukung' => 'nullable|array',
             'existing_dokumen_lpj' => 'nullable|array',
         ]);
 
         // Handle existing files
         $existingFotoJurnal = $request->get('existing_foto_jurnal', []);
+        $existingDokumenPendukung = $request->input('existing_dokumen_pendukung', []);
         $existingDokumenLpj = $request->get('existing_dokumen_lpj', []);
 
         // Delete removed files
@@ -204,6 +210,14 @@ class LpjController extends Controller
             foreach ($lpj->foto_jurnal as $foto) {
                 if (!in_array($foto, $existingFotoJurnal)) {
                     Storage::delete($foto);
+                }
+            }
+        }
+
+        if ($lpj->dokumen_Pendukung) {
+            foreach ($lpj->dokumen_Pendukung as $dokumen) {
+                if (!in_array($dokumen, $existingDokumenPendukung)) {
+                    Storage::delete($dokumen);
                 }
             }
         }
@@ -218,10 +232,12 @@ class LpjController extends Controller
 
         // Handle new file uploads
         $newFotoJurnal = $this->handleFileUploads($request, 'foto_jurnal', 'lpj/foto');
+        $newDokumenPendukung = $this->handleFileUploads($request, 'dokumen_pendukung', 'lpj/dokumen');
         $newDokumenLpj = $this->handleFileUploads($request, 'dokumen_lpj', 'lpj/dokumen');
 
         // Merge existing and new files
         $allFotoJurnal = array_merge($existingFotoJurnal, $newFotoJurnal);
+        $allDokumenPendukung = array_merge($existingDokumenPendukung, $newDokumenPendukung);
         $allDokumenLpj = array_merge($existingDokumenLpj, $newDokumenLpj);
 
         $lpj->update([
@@ -232,6 +248,7 @@ class LpjController extends Controller
             'jumlah_harga' => $validated['jumlah_harga'] ?? 0,
             'keterangan_tambahan' => $validated['keterangan_tambahan'],
             'foto_jurnal' => $allFotoJurnal,
+            'dokumen_pendukung' => $allDokumenPendukung,
             'dokumen_lpj' => $allDokumenLpj,
         ]);
 

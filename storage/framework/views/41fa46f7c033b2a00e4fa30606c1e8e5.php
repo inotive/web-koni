@@ -206,4 +206,4 @@
         cursor: pointer;
     }
 </style>
-<?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/layouts/header.blade.php ENDPATH**/ ?>
+<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/layouts/header.blade.php ENDPATH**/ ?>

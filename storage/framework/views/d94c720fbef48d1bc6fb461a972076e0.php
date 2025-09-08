@@ -1,5 +1,4 @@
-@extends('layouts.app')
-@php
+<?php
     $subSection3Url = '';
 
     if ($parent?->parent) {
@@ -28,21 +27,21 @@
             $subSection3Url = route('admin.laporan-lpj.bidang.dynamic.index');
         }
     }
-@endphp
+?>
 
-@section('pageTitle', 'Tambah Laporan LPJ')
-@section('mainSection', 'Laporan LPJ')
-@section('subSection', 'Bidang Bidang')
-@section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
-@section('subSection2', $parent?->parent?->parent?->nama_program ?? '')
-@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
-@section('subSection3', $parent?->parent?->nama_program ?? '')
-@section('subSection3Url', $subSection3Url)
-@section('subSection4', $parent?->nama_program ?? '')
-@section('subSection4Url', $parent ? route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $parent->id]) : route('admin.laporan-lpj.bidang.dynamic.index'))
-@section('currentSection', 'Tambah Laporan')
+<?php $__env->startSection('pageTitle', 'Tambah Laporan LPJ'); ?>
+<?php $__env->startSection('mainSection', 'Laporan LPJ'); ?>
+<?php $__env->startSection('subSection', 'Bidang Bidang'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.bidang.index')); ?>
+<?php $__env->startSection('subSection2', $parent?->parent?->parent?->nama_program ?? ''); ?>
+<?php $__env->startSection('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index')); ?>
+<?php $__env->startSection('subSection3', $parent?->parent?->nama_program ?? ''); ?>
+<?php $__env->startSection('subSection3Url', $subSection3Url); ?>
+<?php $__env->startSection('subSection4', $parent?->nama_program ?? ''); ?>
+<?php $__env->startSection('subSection4Url', $parent ? route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $parent->id]) : route('admin.laporan-lpj.bidang.dynamic.index')); ?>
+<?php $__env->startSection('currentSection', 'Tambah Laporan'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     body { background-color: #f5f5f5 !important; }
     .main-content { background-color: #f5f5f5; min-height: 100vh; padding: 20px 10px 40px; }
@@ -91,27 +90,41 @@
                 <div class="card-body p-4 p-md-5">
                     <h3 class="fw-bold mb-4">Tambah Laporan Baru</h3>
 
-                    @if($parent)
+                    <?php if($parent): ?>
                         <div class="alert alert-info mb-4">
                             <i class="fas fa-info-circle me-2"></i>
-                            Laporan akan ditambahkan ke dalam kategori: <strong>{{ $parent->nama_program }}</strong>
+                            Laporan akan ditambahkan ke dalam kategori: <strong><?php echo e($parent->nama_program); ?></strong>
                         </div>
-                    @endif
+                    <?php endif; ?>
 
-                    <form action="{{ $parentId ? route('admin.laporan-lpj.bidang.dynamic.child.store', $parentId) : route('admin.laporan-lpj.bidang.dynamic.store') }}"
+                    <form action="<?php echo e($parentId ? route('admin.laporan-lpj.bidang.dynamic.child.store', $parentId) : route('admin.laporan-lpj.bidang.dynamic.store')); ?>"
                           method="POST" id="lpjForm" enctype="multipart/form-data">
-                        @csrf
+                        <?php echo csrf_field(); ?>
 
-                        {{-- Basic Fields --}}
+                        
                         <div class="row align-items-center mb-3">
                             <div class="col-md-3">
                                 <label for="nama_program" class="form-label">Nama Program <span class="text-danger">*</span></label>
                             </div>
                             <div class="col-md-9">
                                 <input type="text" name="nama_program" id="nama_program"
-                                    class="form-control @error('nama_program') is-invalid @enderror"
-                                    placeholder="Masukkan nama program" value="{{ old('nama_program') }}" required>
-                                @error('nama_program')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    class="form-control <?php $__errorArgs = ['nama_program'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                    placeholder="Masukkan nama program" value="<?php echo e(old('nama_program')); ?>" required>
+                                <?php $__errorArgs = ['nama_program'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
@@ -121,38 +134,61 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="text" name="nama_kegiatan" id="nama_kegiatan"
-                                    class="form-control @error('nama_kegiatan') is-invalid @enderror"
-                                    placeholder="Masukkan nama kegiatan" value="{{ old('nama_kegiatan') }}" required>
-                                @error('nama_kegiatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    class="form-control <?php $__errorArgs = ['nama_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                    placeholder="Masukkan nama kegiatan" value="<?php echo e(old('nama_kegiatan')); ?>" required>
+                                <?php $__errorArgs = ['nama_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
-                        {{-- <div class="row align-items-center mb-3">
-                            <div class="col-md-3">
-                                <label for="volume" class="form-label">Volume</label>
-                            </div>
-                            <div class="col-md-9"> --}}
+                        
                                 <input type="hidden" name="volume" id="volume"
-                                    class="form-control @error('volume') is-invalid @enderror"
+                                    class="form-control <?php $__errorArgs = ['volume'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                      value="0">
-                                @error('volume')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            {{-- </div>
-                        </div> --}}
+                                <?php $__errorArgs = ['volume'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            
 
-                        {{-- Currency Fields with Fixed Input Validation --}}
-                        {{-- <div class="row align-items-center mb-3">
-                            <div class="col-md-3">
-                                <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
-                            </div>
-                            <div class="col-md-9"> --}}
-                                {{-- <div class="currency-input"> --}}
+                        
+                        
+                                
                                     <input type="hidden" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
-                                        class="form-control currency-only @error('jumlah_harga_satuan') is-invalid @enderror"
+                                        class="form-control currency-only <?php $__errorArgs = ['jumlah_harga_satuan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                          value="0">
-                                {{-- </div>
-                                @error('jumlah_harga_satuan')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                            </div>
-                        </div> --}}
+                                
 
                         <div class="row align-items-center mb-3">
                             <div class="col-md-3">
@@ -161,14 +197,28 @@
                             <div class="col-md-9">
                                 <div class="currency-input">
                                     <input type="text" name="jumlah_harga" id="jumlah_harga"
-                                        class="form-control currency-only @error('jumlah_harga') is-invalid @enderror"
-                                        placeholder="0" value="{{ old('jumlah_harga') }}">
+                                        class="form-control currency-only <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                        placeholder="0" value="<?php echo e(old('jumlah_harga')); ?>">
                                 </div>
-                                @error('jumlah_harga')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
-                        {{-- File Uploads --}}
+                        
                         <div class="row align-items-start mb-4">
                             <div class="col-md-3">
                                 <label class="form-label">Foto Jurnal</label>
@@ -190,7 +240,14 @@
                                 </label>
                                 <div id="foto_jurnalPreviewContainer" class="preview-container" style="display: none;"></div>
                                 <div id="foto_jurnalCounter" class="file-counter"></div>
-                                @error('foto_jurnal.*')<div class="text-danger mt-2">{{ $message }}</div>@enderror
+                                <?php $__errorArgs = ['foto_jurnal.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="text-danger mt-2"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
@@ -215,7 +272,14 @@
                                 </label>
                                 <div id="dokumen_pendukungPreviewContainer" class="preview-container" style="display: none;"></div>
                                 <div id="dokumen_pendukungCounter" class="file-counter"></div>
-                                @error('dokumen_pendukung.*')<div class="text-danger mt-2">{{ $message }}</div>@enderror
+                                <?php $__errorArgs = ['dokumen_pendukung.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="text-danger mt-2"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
@@ -240,7 +304,14 @@
                                 </label>
                                 <div id="dokumen_lpjPreviewContainer" class="preview-container" style="display: none;"></div>
                                 <div id="dokumen_lpjCounter" class="file-counter"></div>
-                                @error('dokumen_lpj.*')<div class="text-danger mt-2">{{ $message }}</div>@enderror
+                                <?php $__errorArgs = ['dokumen_lpj.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="text-danger mt-2"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
@@ -250,9 +321,23 @@
                             </div>
                             <div class="col-md-9">
                                 <textarea name="keterangan_tambahan" id="keterangan_tambahan"
-                                    class="form-control @error('keterangan_tambahan') is-invalid @enderror"
-                                    placeholder="Masukkan keterangan tambahan (opsional)" rows="4">{{ old('keterangan_tambahan') }}</textarea>
-                                @error('keterangan_tambahan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    class="form-control <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                    placeholder="Masukkan keterangan tambahan (opsional)" rows="4"><?php echo e(old('keterangan_tambahan')); ?></textarea>
+                                <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
 
@@ -261,7 +346,7 @@
                                 <button type="submit" class="btn btn-danger">
                                     <i class="fas fa-save me-2"></i>Simpan
                                 </button>
-                                <a href="{{ $parentId ? route('admin.laporan-lpj.bidang.dynamic.child.index', $parentId) : route('admin.laporan-lpj.bidang.dynamic.index') }}"
+                                <a href="<?php echo e($parentId ? route('admin.laporan-lpj.bidang.dynamic.child.index', $parentId) : route('admin.laporan-lpj.bidang.dynamic.index')); ?>"
                                 class="btn btn-secondary">
                                     <i class="fas fa-arrow-left me-2"></i>Kembali
                                 </a>
@@ -536,4 +621,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang_new/dynamic/create.blade.php ENDPATH**/ ?>

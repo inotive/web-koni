@@ -21,4 +21,4 @@
     </div>
     <!--end::Container-->
 </div>
-<?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/layouts/footer.blade.php ENDPATH**/ ?>
+<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/layouts/footer.blade.php ENDPATH**/ ?>

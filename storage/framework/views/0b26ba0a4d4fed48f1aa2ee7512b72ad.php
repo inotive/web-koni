@@ -193,4 +193,4 @@
 </body>
 
 </html>
-<?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/layouts/app.blade.php ENDPATH**/ ?>
+<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/layouts/app.blade.php ENDPATH**/ ?>

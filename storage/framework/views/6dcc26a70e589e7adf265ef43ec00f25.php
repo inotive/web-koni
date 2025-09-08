@@ -79,4 +79,4 @@
 </script>
 <!--end::Custom Javascript-->
 <!--end::Javascript-->
-<?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/layouts/js-file.blade.php ENDPATH**/ ?>
+<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/layouts/js-file.blade.php ENDPATH**/ ?>

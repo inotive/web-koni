@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@php
+<?php
     $subSection3Url = '';
 
     if ($lpj->parent?->parent) {
@@ -29,21 +27,21 @@
             $subSection3Url = route('admin.laporan-lpj.bidang.dynamic.index');
         }
     }
-@endphp
+?>
 
-@section('pageTitle', 'Edit Laporan LPJ')
-@section('mainSection', 'Laporan LPJ')
-@section('subSection', 'Bidang Bidang')
-@section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
-@section('subSection2', $lpj->parent?->parent?->parent?->nama_program ?? '')
-@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
-@section('subSection3', $lpj->parent?->parent?->nama_program ?? '')
-@section('subSection3Url', $subSection3Url)
-@section('subSection4', $lpj->parent?->nama_program ?? '')
-@section('subSection4Url', $lpj->parent ? route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $lpj->parent->id]) : route('admin.laporan-lpj.bidang.dynamic.index'))
-@section('currentSection', 'Edit Laporan')
+<?php $__env->startSection('pageTitle', 'Edit Laporan LPJ'); ?>
+<?php $__env->startSection('mainSection', 'Laporan LPJ'); ?>
+<?php $__env->startSection('subSection', 'Bidang Bidang'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.bidang.index')); ?>
+<?php $__env->startSection('subSection2', $lpj->parent?->parent?->parent?->nama_program ?? ''); ?>
+<?php $__env->startSection('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index')); ?>
+<?php $__env->startSection('subSection3', $lpj->parent?->parent?->nama_program ?? ''); ?>
+<?php $__env->startSection('subSection3Url', $subSection3Url); ?>
+<?php $__env->startSection('subSection4', $lpj->parent?->nama_program ?? ''); ?>
+<?php $__env->startSection('subSection4Url', $lpj->parent ? route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $lpj->parent->id]) : route('admin.laporan-lpj.bidang.dynamic.index')); ?>
+<?php $__env->startSection('currentSection', 'Edit Laporan'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     body {
         background-color: #f5f5f5 !important;
@@ -335,22 +333,36 @@
     <div class="container-fluid">
         <div class="card card-form">
             <div class="card-body p-4 p-md-5">
-                <h3 class="fw-bold mb-4">Edit: {{ $lpj->nama_program }}</h3>
+                <h3 class="fw-bold mb-4">Edit: <?php echo e($lpj->nama_program); ?></h3>
 
-                <form action="{{ route('admin.laporan-lpj.bidang.dynamic.update', $lpj->id) }}" method="POST" id="lpjForm" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+                <form action="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.update', $lpj->id)); ?>" method="POST" id="lpjForm" enctype="multipart/form-data">
+                    <?php echo csrf_field(); ?>
+                    <?php echo method_field('PUT'); ?>
 
-                    {{-- Basic Information --}}
+                    
                     <div class="row mb-3">
                         <div class="col-md-3">
                             <label for="nama_program" class="form-label">Nama Program <span class="text-danger">*</span></label>
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="nama_program" id="nama_program"
-                                   class="form-control @error('nama_program') is-invalid @enderror"
-                                   value="{{ old('nama_program', $lpj->nama_program) }}" required>
-                            @error('nama_program')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                   class="form-control <?php $__errorArgs = ['nama_program'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                   value="<?php echo e(old('nama_program', $lpj->nama_program)); ?>" required>
+                            <?php $__errorArgs = ['nama_program'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
@@ -360,39 +372,40 @@
                         </div>
                         <div class="col-md-9">
                             <input type="text" name="nama_kegiatan" id="nama_kegiatan"
-                                   class="form-control @error('nama_kegiatan') is-invalid @enderror"
-                                   value="{{ old('nama_kegiatan', $lpj->nama_kegiatan) }}" required>
-                            @error('nama_kegiatan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                   class="form-control <?php $__errorArgs = ['nama_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                   value="<?php echo e(old('nama_kegiatan', $lpj->nama_kegiatan)); ?>" required>
+                            <?php $__errorArgs = ['nama_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
-                    {{-- <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="volume" class="form-label">Volume</label>
-                        </div>
-                        <div class="col-md-9"> --}}
+                    
                             <input type="hidden" name="volume" id="volume"
-                                   {{-- class="form-control @error('volume') is-invalid @enderror" --}}
+                                   
                                    value="0">
-                            {{-- @error('volume')<div class="invalid-feedback">{{ $message }}</div>@enderror --}}
-                        {{-- </div>
-                    </div> --}}
+                            
+                        
 
-                    {{-- Price Fields --}}
-                    {{-- <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
-                        </div>
-                        <div class="col-md-9">
-                            <div class="currency-input"> --}}
+                    
+                    
                                 <input type="hidden" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
-                                       {{-- class="form-control @error('jumlah_harga_satuan') is-invalid @enderror" --}}
+                                       
                                        inputmode="numeric"
                                        value="0">
-                            {{-- </div>
-                            @error('jumlah_harga_satuan')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                    </div> --}}
+                            
 
                     <div class="row mb-3">
                         <div class="col-md-3">
@@ -401,39 +414,53 @@
                         <div class="col-md-9">
                             <div class="currency-input">
                                 <input type="text" name="jumlah_harga" id="jumlah_harga"
-                                       class="form-control @error('jumlah_harga') is-invalid @enderror"
+                                       class="form-control <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                        placeholder="0" inputmode="numeric"
-                                       value="{{ old('jumlah_harga', number_format($lpj->jumlah_harga ?? 0, 0, ',', '.')) }}">
+                                       value="<?php echo e(old('jumlah_harga', number_format($lpj->jumlah_harga ?? 0, 0, ',', '.'))); ?>">
                             </div>
-                            @error('jumlah_harga')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
-                    {{-- File Uploads --}}
+                    
                     <div class="row mb-3">
                         <div class="col-md-3">
                             <label class="form-label">Foto Jurnal</label>
                             <small class="text-muted d-block">Ukuran per file maksimal 10MB</small>
                         </div>
                         <div class="col-md-9">
-                            @if($lpj->foto_jurnal && count($lpj->foto_jurnal) > 0)
+                            <?php if($lpj->foto_jurnal && count($lpj->foto_jurnal) > 0): ?>
                                 <div class="existing-files-section">
                                     <h6><i class="fas fa-images me-2"></i>Foto yang sudah ada:</h6>
-                                    @foreach($lpj->foto_jurnal as $foto)
+                                    <?php $__currentLoopData = $lpj->foto_jurnal; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <div class="file-preview-item existing">
-                                            <img src="{{ asset('storage/' . $foto) }}" class="preview-image">
+                                            <img src="<?php echo e(asset('storage/' . $foto)); ?>" class="preview-image">
                                             <div class="file-info">
-                                                <div class="file-name">{{ basename($foto) }}</div>
+                                                <div class="file-name"><?php echo e(basename($foto)); ?></div>
                                                 <div class="file-size">Existing file</div>
                                             </div>
-                                            <button type="button" class="remove-file" data-path="{{ $foto }}" data-type="existing">
+                                            <button type="button" class="remove-file" data-path="<?php echo e($foto); ?>" data-type="existing">
                                                 <i class="fas fa-times"></i>
                                             </button>
-                                            <input type="hidden" name="existing_foto_jurnal[]" value="{{ $foto }}">
+                                            <input type="hidden" name="existing_foto_jurnal[]" value="<?php echo e($foto); ?>">
                                         </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
-                            @endif
+                            <?php endif; ?>
 
                             <label for="foto_jurnal" class="file-upload-wrapper">
                                 <input type="file" name="foto_jurnal[]" id="foto_jurnal" accept="image/*" multiple>
@@ -445,7 +472,14 @@
                                 </div>
                             </label>
                             <div id="foto_jurnalPreview" class="preview-container" style="display: none;"></div>
-                            @error('foto_jurnal.*')<div class="text-danger mt-2">{{ $message }}</div>@enderror
+                            <?php $__errorArgs = ['foto_jurnal.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="text-danger mt-2"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
@@ -455,11 +489,11 @@
                             <small class="text-muted d-block">Ukuran per file maksimal 10MB</small>
                         </div>
                         <div class="col-md-9">
-                            @if($lpj->dokumen_pendukung && count($lpj->dokumen_pendukung) > 0)
+                            <?php if($lpj->dokumen_pendukung && count($lpj->dokumen_pendukung) > 0): ?>
                                 <div class="existing-files-section">
                                     <h6><i class="fas fa-file-alt me-2"></i>Dokumen yang sudah ada:</h6>
-                                    @foreach($lpj->dokumen_pendukung as $dokumen)
-                                        @php
+                                    <?php $__currentLoopData = $lpj->dokumen_pendukung; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dokumen): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
                                             $ext = pathinfo($dokumen, PATHINFO_EXTENSION);
                                             $icon = match(strtolower($ext)) {
                                                 'pdf' => 'fas fa-file-pdf text-danger',
@@ -467,21 +501,21 @@
                                                 'xls', 'xlsx' => 'fas fa-file-excel text-success',
                                                 default => 'fas fa-file text-secondary'
                                             };
-                                        @endphp
+                                        ?>
                                         <div class="file-preview-item existing">
-                                            <div class="file-icon"><i class="{{ $icon }}"></i></div>
+                                            <div class="file-icon"><i class="<?php echo e($icon); ?>"></i></div>
                                             <div class="file-info">
-                                                <div class="file-name">{{ basename($dokumen) }}</div>
+                                                <div class="file-name"><?php echo e(basename($dokumen)); ?></div>
                                                 <div class="file-size">Existing file</div>
                                             </div>
-                                            <button type="button" class="remove-file" data-path="{{ $dokumen }}" data-type="existing">
+                                            <button type="button" class="remove-file" data-path="<?php echo e($dokumen); ?>" data-type="existing">
                                                 <i class="fas fa-times"></i>
                                             </button>
-                                            <input type="hidden" name="existing_dokumen_pendukung[]" value="{{ $dokumen }}">
+                                            <input type="hidden" name="existing_dokumen_pendukung[]" value="<?php echo e($dokumen); ?>">
                                         </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
-                            @endif
+                            <?php endif; ?>
 
                             <label for="dokumen_pendukung" class="file-upload-wrapper">
                                 <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
@@ -493,7 +527,14 @@
                                 </div>
                             </label>
                             <div id="dokumen_pendukungPreview" class="preview-container" style="display: none;"></div>
-                            @error('dokumen_pendukung.*')<div class="text-danger mt-2">{{ $message }}</div>@enderror
+                            <?php $__errorArgs = ['dokumen_pendukung.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="text-danger mt-2"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
@@ -503,11 +544,11 @@
                             <small class="text-muted d-block">Ukuran per file maksimal 10MB</small>
                         </div>
                         <div class="col-md-9">
-                            @if($lpj->dokumen_lpj && count($lpj->dokumen_lpj) > 0)
+                            <?php if($lpj->dokumen_lpj && count($lpj->dokumen_lpj) > 0): ?>
                                 <div class="existing-files-section">
                                     <h6><i class="fas fa-file-alt me-2"></i>Dokumen yang sudah ada:</h6>
-                                    @foreach($lpj->dokumen_lpj as $dokumen)
-                                        @php
+                                    <?php $__currentLoopData = $lpj->dokumen_lpj; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $dokumen): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php
                                             $ext = pathinfo($dokumen, PATHINFO_EXTENSION);
                                             $icon = match(strtolower($ext)) {
                                                 'pdf' => 'fas fa-file-pdf text-danger',
@@ -515,21 +556,21 @@
                                                 'xls', 'xlsx' => 'fas fa-file-excel text-success',
                                                 default => 'fas fa-file text-secondary'
                                             };
-                                        @endphp
+                                        ?>
                                         <div class="file-preview-item existing">
-                                            <div class="file-icon"><i class="{{ $icon }}"></i></div>
+                                            <div class="file-icon"><i class="<?php echo e($icon); ?>"></i></div>
                                             <div class="file-info">
-                                                <div class="file-name">{{ basename($dokumen) }}</div>
+                                                <div class="file-name"><?php echo e(basename($dokumen)); ?></div>
                                                 <div class="file-size">Existing file</div>
                                             </div>
-                                            <button type="button" class="remove-file" data-path="{{ $dokumen }}" data-type="existing">
+                                            <button type="button" class="remove-file" data-path="<?php echo e($dokumen); ?>" data-type="existing">
                                                 <i class="fas fa-times"></i>
                                             </button>
-                                            <input type="hidden" name="existing_dokumen_lpj[]" value="{{ $dokumen }}">
+                                            <input type="hidden" name="existing_dokumen_lpj[]" value="<?php echo e($dokumen); ?>">
                                         </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
-                            @endif
+                            <?php endif; ?>
 
                             <label for="dokumen_lpj" class="file-upload-wrapper">
                                 <input type="file" name="dokumen_lpj[]" id="dokumen_lpj" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
@@ -541,7 +582,14 @@
                                 </div>
                             </label>
                             <div id="dokumen_lpjPreview" class="preview-container" style="display: none;"></div>
-                            @error('dokumen_lpj.*')<div class="text-danger mt-2">{{ $message }}</div>@enderror
+                            <?php $__errorArgs = ['dokumen_lpj.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="text-danger mt-2"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
@@ -551,19 +599,33 @@
                         </div>
                         <div class="col-md-9">
                             <textarea name="keterangan_tambahan" id="keterangan_tambahan"
-                                      class="form-control @error('keterangan_tambahan') is-invalid @enderror"
-                                      rows="4">{{ old('keterangan_tambahan', $lpj->keterangan_tambahan) }}</textarea>
-                            @error('keterangan_tambahan')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                      class="form-control <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                      rows="4"><?php echo e(old('keterangan_tambahan', $lpj->keterangan_tambahan)); ?></textarea>
+                            <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
-                    {{-- Action Buttons --}}
+                    
                     <div class="row">
                         <div class="col-md-9 offset-md-3 d-flex gap-3">
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-save me-2"></i>Simpan
                             </button>
-                            <a href="{{ $lpj->parent_id ? route('admin.laporan-lpj.bidang.dynamic.child.index', $lpj->parent_id) : route('admin.laporan-lpj.bidang.dynamic.index') }}"
+                            <a href="<?php echo e($lpj->parent_id ? route('admin.laporan-lpj.bidang.dynamic.child.index', $lpj->parent_id) : route('admin.laporan-lpj.bidang.dynamic.index')); ?>"
                                class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>
@@ -728,4 +790,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // ... (form submission logic)
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang_new/dynamic/edit.blade.php ENDPATH**/ ?>
