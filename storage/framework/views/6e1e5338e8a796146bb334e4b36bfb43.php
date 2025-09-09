@@ -1,14 +1,14 @@
-@if ($kegiatanLainnya->isEmpty())
+<?php if($kegiatanLainnya->isEmpty()): ?>
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
         <h4>Tidak ada data kegiatan sekretariat.</h4>
     </div>
-@else
+<?php else: ?>
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning_kegiatan">
             <thead class="bg-light">
                 <tr>
-                    @php
+                    <?php
                         $columns = [
                             ['key' => null, 'title' => 'No', 'sortable' => false],
                             ['key' => 'nama_program_kegiatan', 'title' => 'Nama Program & Kegiatan'],
@@ -19,70 +19,74 @@
                             ['key' => 'created_at', 'title' => 'Tanggal Ditambahkan'],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
-                    @endphp
+                    ?>
 
-                    @foreach ($columns as $column)
+                    <?php $__currentLoopData = $columns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $column): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <th class="text-start">
-                            @if (($column['sortable'] ?? true) && $column['key'])
-                                <a href="{{ request()->fullUrlWithQuery(['sort' => $column['key'], 'direction' => request('sort') == $column['key'] && request('direction') == 'asc' ? 'desc' : 'asc']) }}"
+                            <?php if(($column['sortable'] ?? true) && $column['key']): ?>
+                                <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => $column['key'], 'direction' => request('sort') == $column['key'] && request('direction') == 'asc' ? 'desc' : 'asc'])); ?>"
                                     class="text-dark text-decoration-none sortable-header">
-                                    {{ $column['title'] }}
+                                    <?php echo e($column['title']); ?>
+
                                     <i
-                                        class="fas fa-sort{{ request('sort') == $column['key'] ? '-' . (request('direction') == 'asc' ? 'up' : 'down') : '' }}"></i>
+                                        class="fas fa-sort<?php echo e(request('sort') == $column['key'] ? '-' . (request('direction') == 'asc' ? 'up' : 'down') : ''); ?>"></i>
                                 </a>
-                            @else
-                                {{ $column['title'] }}
-                            @endif
+                            <?php else: ?>
+                                <?php echo e($column['title']); ?>
+
+                            <?php endif; ?>
                         </th>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </tr>
             </thead>
 
             <tbody>
-                @forelse ($kegiatanLainnya as $index => $kegiatan)
+                <?php $__empty_1 = true; $__currentLoopData = $kegiatanLainnya; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $kegiatan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <tr>
                         <td class="text-start">
-                            {{ ($kegiatanLainnya->currentPage() - 1) * $kegiatanLainnya->perPage() + $index + 1 }}
+                            <?php echo e(($kegiatanLainnya->currentPage() - 1) * $kegiatanLainnya->perPage() + $index + 1); ?>
+
                         </td>
-                        {{-- PERBAIKAN: Ubah dari nama_program_kegiatan ke nama_program dan jenis_kegiatan ke nama_kegiatan --}}
+                        
                         <td class="text-start">
                             <div class="d-flex flex-column">
-                                <strong class="text-truncate-custom">{{ $kegiatan->nama_program }}</strong>
-                                @if ($kegiatan->nama_kegiatan)
-                                    <small class="text-muted">{{ $kegiatan->nama_kegiatan }}</small>
-                                @endif
+                                <strong class="text-truncate-custom"><?php echo e($kegiatan->nama_program); ?></strong>
+                                <?php if($kegiatan->nama_kegiatan): ?>
+                                    <small class="text-muted"><?php echo e($kegiatan->nama_kegiatan); ?></small>
+                                <?php endif; ?>
                             </div>
                         </td>
-                        <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga, 0, ',', '.') }}</td>
+                        <td class="text-start">Rp <?php echo e(number_format($kegiatan->jumlah_harga, 0, ',', '.')); ?></td>
                         <td class="text-start">
-                            @if ($kegiatan->foto_jurnal && count($kegiatan->foto_jurnal) > 0)
+                            <?php if($kegiatan->foto_jurnal && count($kegiatan->foto_jurnal) > 0): ?>
                                 <button type="button" class="btn btn-sm btn-light-info preview-btn"
                                     data-bs-toggle="modal" data-bs-target="#previewModal" data-type="image"
-                                    data-files="{{ json_encode($kegiatan->foto_jurnal) }}"
-                                    data-title="Foto Jurnal - {{ $kegiatan->nama_program }}">
-                                    <i class="fas fa-images me-1"></i>{{ count($kegiatan->foto_jurnal) }} Foto
+                                    data-files="<?php echo e(json_encode($kegiatan->foto_jurnal)); ?>"
+                                    data-title="Foto Jurnal - <?php echo e($kegiatan->nama_program); ?>">
+                                    <i class="fas fa-images me-1"></i><?php echo e(count($kegiatan->foto_jurnal)); ?> Foto
                                 </button>
-                            @else
+                            <?php else: ?>
                                 <span class="text-muted">-</span>
-                            @endif
+                            <?php endif; ?>
                         </td>
-                        {{-- PERBAIKAN: Ubah dari dokumen_pendukung ke dokumen_lpj --}}
+                        
                         <td class="text-start">
-                            @if ($kegiatan->dokumen_lpj && count($kegiatan->dokumen_lpj) > 0)
+                            <?php if($kegiatan->dokumen_lpj && count($kegiatan->dokumen_lpj) > 0): ?>
                                 <button type="button" class="btn btn-sm btn-light-primary preview-btn"
                                     data-bs-toggle="modal" data-bs-target="#previewModal" data-type="document"
-                                    data-files="{{ json_encode($kegiatan->dokumen_lpj) }}"
-                                    data-title="Dokumen Pendukung - {{ $kegiatan->nama_program }}">
-                                    <i class="fas fa-file-alt me-1"></i>{{ count($kegiatan->dokumen_lpj) }}
+                                    data-files="<?php echo e(json_encode($kegiatan->dokumen_lpj)); ?>"
+                                    data-title="Dokumen Pendukung - <?php echo e($kegiatan->nama_program); ?>">
+                                    <i class="fas fa-file-alt me-1"></i><?php echo e(count($kegiatan->dokumen_lpj)); ?>
+
                                     Dokumen
                                 </button>
-                            @else
+                            <?php else: ?>
                                 <span class="text-muted">-</span>
-                            @endif
+                            <?php endif; ?>
                         </td>
                         <td class="text-start">
-                            @if ($kegiatan->dokumen_lpj_pdf)
-                                @php
+                            <?php if($kegiatan->dokumen_lpj_pdf): ?>
+                                <?php
                                     // Handle berbagai tipe data untuk dokumen LPJ PDF
                                     $path = '';
                                     $originalName = '';
@@ -102,17 +106,17 @@
                                     if (empty($originalName) && is_string($path)) {
                                         $originalName = basename($path);
                                     }
-                                @endphp
-                                <a href="{{ asset('storage/' . $path) }}" target="_blank" class="btn btn-sm btn-light-danger">
+                                ?>
+                                <a href="<?php echo e(asset('storage/' . $path)); ?>" target="_blank" class="btn btn-sm btn-light-danger">
                                     <i class="fas fa-file-pdf me-1"></i>PDF
                                 </a>
-                            @else
+                            <?php else: ?>
                                 <span class="text-muted">-</span>
-                            @endif
+                            <?php endif; ?>
                         </td>
-                        <td class="text-start">{{ $kegiatan->created_at ? $kegiatan->created_at->format('d/m/Y') : '-' }}</td>
+                        <td class="text-start"><?php echo e($kegiatan->created_at ? $kegiatan->created_at->format('d/m/Y') : '-'); ?></td>
                         <td class="text-start">
-                            <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
+                            <div class="dropdown dropdown-action" data-row-id="<?php echo e($kegiatan->id); ?>">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -138,20 +142,20 @@
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                    <li>
                                         <a href="javascript:void(0)" class="dropdown-item-custom"
-                                           onclick="showDetailModal({{ json_encode($kegiatan) }})">
+                                           onclick="showDetailModal(<?php echo e(json_encode($kegiatan)); ?>)">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail
                                         </a>
                                     </li>
 
-                                    {{-- Check if user is superadmin, has pengajuan-modifikasi-laporan permission, or has modification permission for Edit button --}}
-                                    @if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
+                                    
+                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
                                         <li>
-                                            <a href="{{ route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) }}"
+                                            <a href="<?php echo e(route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id)); ?>"
                                                 class="dropdown-item-custom edit">
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </a>
                                         </li>
-                                    @else
+                                    <?php else: ?>
                                         <li>
                                             <span class="dropdown-item-custom restricted-action"
                                                 data-bs-toggle="tooltip"
@@ -163,7 +167,7 @@
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
                                                             modifikasi laporan<br>
-                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                            <a href='javascript:void(0)' onclick='showDetailModal(<?php echo e(json_encode($kegiatan)); ?>)' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
                                                         </div>"
                                                 style="cursor: not-allowed; opacity: 0.6;"
                                                 onmouseover="keepTooltipVisible(this)"
@@ -171,16 +175,16 @@
                                                 <i class="fas fa-edit me-2"></i> Modifikasi
                                             </span>
                                         </li>
-                                    @endif
+                                    <?php endif; ?>
 
-                                    {{-- Check if user is superadmin, has pengajuan-modifikasi-laporan permission, or has modification permission for Delete button --}}
-                                    @if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
+                                    
+                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
                                         <li class="dropdown-item-custom delete"
                                             onclick="destroyItem(this)"
-                                            data-route="{{ route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id) }}">
+                                            data-route="<?php echo e(route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id)); ?>">
                                             <i class="fas fa-trash me-2"></i> Hapus
                                         </li>
-                                    @else
+                                    <?php else: ?>
                                         <li>
                                             <span class="dropdown-item-custom restricted-action"
                                                 data-bs-toggle="tooltip"
@@ -199,16 +203,16 @@
                                                 <i class="fas fa-trash me-2"></i> Hapus
                                             </span>
                                         </li>
-                                    @endif
+                                    <?php endif; ?>
                                 </ul>
                             </div>
                         </td>
                     </tr>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
                         <td colspan="8" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                     </tr>
-                @endforelse
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
@@ -219,30 +223,30 @@
                 <div class="d-flex align-items-center">
                     <span class="me-2">Show</span>
                     <select name="per_page" class="form-select form-select-sm w-auto">
-                        @foreach ([10, 25, 50, 100] as $limit)
-                            <option value="{{ $limit }}"
-                                {{ request('per_page', 10) == $limit ? 'selected' : '' }}>{{ $limit }}</option>
-                        @endforeach
+                        <?php $__currentLoopData = [10, 25, 50, 100]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $limit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($limit); ?>"
+                                <?php echo e(request('per_page', 10) == $limit ? 'selected' : ''); ?>><?php echo e($limit); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                     <span class="ms-2">per page</span>
                 </div>
             </div>
 
-            @if (isset($kegiatanLainnya) && method_exists($kegiatanLainnya, 'hasPages') && $kegiatanLainnya->hasPages())
+            <?php if(isset($kegiatanLainnya) && method_exists($kegiatanLainnya, 'hasPages') && $kegiatanLainnya->hasPages()): ?>
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $kegiatanLainnya->firstItem() }}-{{ $kegiatanLainnya->lastItem() }} of
-                        {{ $kegiatanLainnya->total() }}</div>
+                        <?php echo e($kegiatanLainnya->firstItem()); ?>-<?php echo e($kegiatanLainnya->lastItem()); ?> of
+                        <?php echo e($kegiatanLainnya->total()); ?></div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($kegiatanLainnya->onFirstPage())
+                        <?php if($kegiatanLainnya->onFirstPage()): ?>
                             <span class="pagination-arrow disabled">←</span>
-                        @else
-                            <a href="{{ $kegiatanLainnya->appends(request()->query())->previousPageUrl() }}"
+                        <?php else: ?>
+                            <a href="<?php echo e($kegiatanLainnya->appends(request()->query())->previousPageUrl()); ?>"
                                 class="pagination-arrow pagination-link" aria-label="Previous">←</a>
-                        @endif
+                        <?php endif; ?>
 
-                        @php
+                        <?php
                             $current = $kegiatanLainnya->currentPage();
                             $total = $kegiatanLainnya->lastPage();
                             $start = max(1, $current - 2);
@@ -254,31 +258,32 @@
                                     $start = max(1, $end - 4);
                                 }
                             }
-                        @endphp
+                        ?>
 
                         <div class="d-flex align-items-center">
-                            @for ($i = $start; $i <= $end; $i++)
-                                @if ($i == $current)
-                                    <span class="pagination-number active">{{ $i }}</span>
-                                @else
-                                    <a href="{{ $kegiatanLainnya->appends(request()->query())->url($i) }}"
-                                        class="pagination-number pagination-link">{{ $i }}</a>
-                                @endif
-                            @endfor
+                            <?php for($i = $start; $i <= $end; $i++): ?>
+                                <?php if($i == $current): ?>
+                                    <span class="pagination-number active"><?php echo e($i); ?></span>
+                                <?php else: ?>
+                                    <a href="<?php echo e($kegiatanLainnya->appends(request()->query())->url($i)); ?>"
+                                        class="pagination-number pagination-link"><?php echo e($i); ?></a>
+                                <?php endif; ?>
+                            <?php endfor; ?>
                         </div>
 
-                        @if ($kegiatanLainnya->hasMorePages())
-                            <a href="{{ $kegiatanLainnya->appends(request()->query())->nextPageUrl() }}"
+                        <?php if($kegiatanLainnya->hasMorePages()): ?>
+                            <a href="<?php echo e($kegiatanLainnya->appends(request()->query())->nextPageUrl()); ?>"
                                 class="pagination-arrow pagination-link" aria-label="Next">→</a>
-                        @else
+                        <?php else: ?>
                             <span class="pagination-arrow disabled">→</span>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
-            @elseif(isset($kegiatanLainnya) && method_exists($kegiatanLainnya, 'hasPages'))
-                <div class="text-muted small">1-{{ $kegiatanLainnya->count() }} of {{ $kegiatanLainnya->total() }}
+            <?php elseif(isset($kegiatanLainnya) && method_exists($kegiatanLainnya, 'hasPages')): ?>
+                <div class="text-muted small">1-<?php echo e($kegiatanLainnya->count()); ?> of <?php echo e($kegiatanLainnya->total()); ?>
+
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
@@ -690,4 +695,5 @@
             }
         }
     </style>
-@endif
+<?php endif; ?>
+<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/laporan-lpj/sekretariat/_table.blade.php ENDPATH**/ ?>

@@ -1,11 +1,9 @@
-@extends('layouts.app')
-
-@section('pageTitle', 'Detail Atlet')
-@section('mainSection', 'Konfigurasi')
-@section('subSection', 'Atlet')
-@section('subSectionUrl', route('admin.konfigurasi.atlet.index'))
-@section('currentSection', 'Detail Atlet')
-@section('content')
+<?php $__env->startSection('pageTitle', 'Detail Atlet'); ?>
+<?php $__env->startSection('mainSection', 'Konfigurasi'); ?>
+<?php $__env->startSection('subSection', 'Atlet'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.konfigurasi.atlet.index')); ?>
+<?php $__env->startSection('currentSection', 'Detail Atlet'); ?>
+<?php $__env->startSection('content'); ?>
 <style>
     /* Base Layout */
     body {
@@ -966,7 +964,7 @@
             <div class="detail-card">
                 <div class="detail-card-header">
                     <h2 class="detail-card-title">Personal Info</h2>
-                    <a href="{{ route('admin.konfigurasi.prestasi.atlet.exportDetail', $atlet->id) }}" 
+                    <a href="<?php echo e(route('admin.konfigurasi.prestasi.atlet.exportDetail', $atlet->id)); ?>" 
                        class="btn btn-outline-secondary filter-btn-custom btn-export-custom">
                         <i class="fas fa-file-export me-1"></i> Export
                     </a>
@@ -978,12 +976,12 @@
                             <p class="detail-label-text">Foto</p>
                         </div>
                         <div class="detail-photo-container">
-                            @if ($atlet->foto)
+                            <?php if($atlet->foto): ?>
                                 <div class="detail-photo-wrapper">
-                                    <img src="{{ asset('storage/' . $atlet->foto) }}" alt="Foto Atlet"
+                                    <img src="<?php echo e(asset('storage/' . $atlet->foto)); ?>" alt="Foto Atlet"
                                         class="detail-photo">
                                 </div>
-                            @else
+                            <?php else: ?>
                                 <div class="detail-photo-wrapper">
                                     <div
                                         style="width: 60px; height: 60px; background-color: #f1f1f4; display: flex; align-items: center; justify-content: center;">
@@ -993,10 +991,10 @@
                                         </svg>
                                     </div>
                                 </div>
-                            @endif
-                            @php
+                            <?php endif; ?>
+                            <?php
                                 $caborNama = $atlet->cabangOlahraga ? $atlet->cabangOlahraga->nama_cabor : '-';
-                            @endphp
+                            ?>
                         </div>
                     </div>
 
@@ -1006,7 +1004,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">Nama</p>
                         </div>
-                        <p class="detail-value">{{ $atlet->nama }}</p>
+                        <p class="detail-value"><?php echo e($atlet->nama); ?></p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1021,7 +1019,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">Cabor</p>
                         </div>
-                        <p class="detail-value">{{ $caborNama }}</p>
+                        <p class="detail-value"><?php echo e($caborNama); ?></p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1036,7 +1034,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">Email</p>
                         </div>
-                        <p class="detail-value">{{ $atlet->email ?? '-' }}</p>
+                        <p class="detail-value"><?php echo e($atlet->email ?? '-'); ?></p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1053,10 +1051,10 @@
                     </div>
                     <div class="detail-value">
                         <select name="ketersediaan" id="ketersediaanSelect" class="ketersediaan-dropdown"
-                                data-status="{{ strtolower(str_replace('-', '-', $atlet->ketersediaan)) }}"
+                                data-status="<?php echo e(strtolower(str_replace('-', '-', $atlet->ketersediaan))); ?>"
                                 onchange="submitKetersediaanForm()">
-                            <option value="Tersedia" {{ $atlet->ketersediaan == 'Tersedia' ? 'selected' : '' }}>Tersedia</option>
-                            <option value="Tidak-Tersedia" {{ $atlet->ketersediaan == 'Tidak-Tersedia' ? 'selected' : '' }}>Tidak Tersedia</option>
+                            <option value="Tersedia" <?php echo e($atlet->ketersediaan == 'Tersedia' ? 'selected' : ''); ?>>Tersedia</option>
+                            <option value="Tidak-Tersedia" <?php echo e($atlet->ketersediaan == 'Tidak-Tersedia' ? 'selected' : ''); ?>>Tidak Tersedia</option>
                         </select>
                     </div>
                 </div>
@@ -1066,7 +1064,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">No Telepon</p>
                         </div>
-                        <p class="detail-value">{{ $atlet->no_telepon ?? '-' }}</p>
+                        <p class="detail-value"><?php echo e($atlet->no_telepon ?? '-'); ?></p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1081,7 +1079,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">Tempat Lahir</p>
                         </div>
-                        <p class="detail-value">{{ $atlet->tempat_lahir }}</p>
+                        <p class="detail-value"><?php echo e($atlet->tempat_lahir); ?></p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1096,7 +1094,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">Tanggal Lahir</p>
                         </div>
-                        <p class="detail-value">{{ \Carbon\Carbon::parse($atlet->tanggal_lahir)->format('d M Y') }}</p>
+                        <p class="detail-value"><?php echo e(\Carbon\Carbon::parse($atlet->tanggal_lahir)->format('d M Y')); ?></p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1111,7 +1109,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">Umur</p>
                         </div>
-                        <p class="detail-value">{{ \Carbon\Carbon::parse($atlet->tanggal_lahir)->age }} Tahun</p>
+                        <p class="detail-value"><?php echo e(\Carbon\Carbon::parse($atlet->tanggal_lahir)->age); ?> Tahun</p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1126,7 +1124,7 @@
                         <div class="detail-label">
                             <p class="detail-label-text">Kelamin</p>
                         </div>
-                        <p class="detail-value">{{ $atlet->jenis_kelamin === 'Laki-Laki' ? 'Laki-Laki' : 'Perempuan' }}</p>
+                        <p class="detail-value"><?php echo e($atlet->jenis_kelamin === 'Laki-Laki' ? 'Laki-Laki' : 'Perempuan'); ?></p>
                         <div class="edit-icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -1141,44 +1139,43 @@
                         <p class="detail-label-text">Alamat</p>
                     </div>
                     <div class="detail-value">
-                        @if($atlet->alamatkota && $atlet->alamatprovinsi)
+                        <?php if($atlet->alamatkota && $atlet->alamatprovinsi): ?>
                             <div>
-                                <strong>{{ $atlet->alamatkota }}, {{ $atlet->alamatprovinsi }}</strong>
+                                <strong><?php echo e($atlet->alamatkota); ?>, <?php echo e($atlet->alamatprovinsi); ?></strong>
                             </div>
-                            @if($atlet->alamat)
+                            <?php if($atlet->alamat): ?>
                                 <div class="text-muted" style="font-size: 12px; color: #78829d; margin-top: 4px;">
-                                    {{ $atlet->alamat }}
+                                    <?php echo e($atlet->alamat); ?>
+
                                 </div>
-                            @endif
-                        @elseif($atlet->alamat)
-                            <div>{{ $atlet->alamat }}</div>
-                        @else
+                            <?php endif; ?>
+                        <?php elseif($atlet->alamat): ?>
+                            <div><?php echo e($atlet->alamat); ?></div>
+                        <?php else: ?>
                             <span class="empty-value">Belum ada alamat yang tercantum</span>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
 
 <div class="detail-card">
-    @include('admin.atlet._tableprestasi')
+    <?php echo $__env->make('admin.atlet._tableprestasi', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 </div>
 
 <div class="detail-actions">
-    <a href="{{
-        match (request('back')) {
+    <a href="<?php echo e(match (request('back')) {
             'cabor'     => route('admin.konfigurasi.cabang-olahraga.show', $atlet->cabor_id),
             'prestasi' => route('admin.konfigurasi.prestasi.index', $atlet->id),
             default     => route('admin.konfigurasi.atlet.index'),
-        }
-    }}" class="btn btn-light-primary">
+        }); ?>" class="btn btn-light-primary">
         <i class="ki-duotone ki-arrow-left fs-2"></i> Kembali
     </a>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
 <script>
     function submitKetersediaanForm() {
         console.log('Function called!');
@@ -1213,7 +1210,7 @@
         }
 
         // Submit the request
-        fetch('{{ route("admin.konfigurasi.atlet.updateKetersediaan", $atlet->id) }}', {
+        fetch('<?php echo e(route("admin.konfigurasi.atlet.updateKetersediaan", $atlet->id)); ?>', {
             method: 'POST',
             body: formData,
             headers: {
@@ -1313,7 +1310,7 @@ $(document).ready(function() {
             ajax: 1  // Add this to identify AJAX requests
         });
 
-        const url = `{{ route('admin.konfigurasi.atlet.show', $atlet->id) }}?${params}`;
+        const url = `<?php echo e(route('admin.konfigurasi.atlet.show', $atlet->id)); ?>?${params}`;
 
         fetch(url, {
             method: 'GET',
@@ -1647,4 +1644,6 @@ function bindPaginationEvents() {
     window.handleSort = handleSort;
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/atlet/show.blade.php ENDPATH**/ ?>

@@ -238,9 +238,25 @@ class PrestasiController extends Controller
             'cabor_id' => 'required|exists:cabang_olahragas,id',
         ]);
 
+        // Log before update
+        \Log::info('Updating prestasi', [
+            'prestasi_id' => $prestasi->id,
+            'old_cabor_id' => $prestasi->cabor_id,
+            'new_cabor_id' => $request->cabor_id,
+            'request_data' => $request->only([
+                'nama_prestasi', 'kejuaraan', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id'
+            ])
+        ]);
+
         $prestasi->update($request->only([
             'nama_prestasi', 'kejuaraan', 'tingkat', 'tempat', 'tahun', 'medali', 'cabor_id'
         ]));
+
+        // Log after update
+        \Log::info('Prestasi updated successfully', [
+            'prestasi_id' => $prestasi->id,
+            'updated_cabor_id' => $prestasi->cabor_id
+        ]);
 
         return redirect()->route('admin.konfigurasi.prestasi.index')
             ->with('OK', 'Prestasi berhasil diperbarui!')

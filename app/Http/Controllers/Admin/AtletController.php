@@ -657,4 +657,100 @@ class AtletController extends Controller
 
         return $response;
     }
+
+    public function exportDetail(Atlet $atlet)
+    {
+        try {
+            // Load atlet with related data
+            $atlet->load(['cabangOlahraga', 'prestasis' => function ($query) {
+                $query->orderBy('tahun', 'desc');
+            }]);
+
+            // Generate the CSV response using StreamedResponse
+            $response = new StreamedResponse(function() use ($atlet) {
+                $handle = fopen('php://output', 'w');
+
+                // Set UTF-8 BOM for proper Excel compatibility
+                fwrite($handle, "\xEF\xBB\xBF");
+
+                // CSV Headers for atlet details
+                fputcsv($handle, ['DATA DETAIL ATLET']);
+                fputcsv($handle, []);
+                
+                // Personal Info
+                fputcsv($handle, ['INFORMASI PRIBADI']);
+                fputcsv($handle, ['Nama', $atlet->nama]);
+                fputcsv($handle, ['Cabang Olahraga', $atlet->cabangOlahraga->nama_cabor ?? '-']);
+                fputcsv($handle, ['Email', $atlet->email ?? '-']);
+                fputcsv($handle, ['No Telepon', $atlet->no_telepon ?? '-']);
+                fputcsv($handle, ['Tempat Lahir', $atlet->tempat_lahir ?? '-']);
+                fputcsv($handle, ['Tanggal Lahir', $atlet->tanggal_lahir ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->format('d/m/Y') : '-']);
+                fputcsv($handle, ['Jenis Kelamin', $atlet->jenis_kelamin]);
+                fputcsv($handle, ['Ketersediaan', $atlet->ketersediaan]);
+                fputcsv($handle, []);
+                
+                // Address Info
+                fputcsv($handle, ['ALAMAT']);
+                fputcsv($handle, ['Alamat', $atlet->alamat ?? '-']);
+                fputcsv($handle, ['Kota', $atlet->alamatkota ?? '-']);
+                fputcsv($handle, ['Provinsi', $atlet->alamatprovinsi ?? '-']);
+                fputcsv($handle, []);
+                
+                // Prestasi Info
+                fputcsv($handle, ['RIWAYAT PRESTASI']);
+                fputcsv($handle, ['Total Prestasi', $atlet->prestasis->count()]);
+                fputcsv($handle, []);
+                
+                // Prestasi details header
+                if ($atlet->prestasis->count() > 0) {
+                    fputcsv($handle, [
+                        'No',
+                        'Nama Prestasi',
+                        'Kejuaraan',
+                        'Cabang Olahraga',
+                        'Tingkat',
+                        'Tempat',
+                        'Tahun',
+                        'Medali'
+                    ]);
+                    
+                    foreach ($atlet->prestasis as $index => $prestasi) {
+                        fputcsv($handle, [
+                            $index + 1,
+                            $prestasi->nama_prestasi ?? '-',
+                            $prestasi->kejuaraan ?? '-',
+                            $prestasi->cabangOlahraga->nama_cabor ?? '-',
+                            $prestasi->tingkat ?? '-',
+                            $prestasi->tempat ?? '-',
+                            $prestasi->tahun ?? '-',
+                            $prestasi->medali ?? '-'
+                        ]);
+                    }
+                } else {
+                    fputcsv($handle, ['Belum ada data prestasi']);
+                }
+
+                fclose($handle);
+            });
+
+            // Generate filename
+            $timestamp = now()->format('Y-m-d_H-i-s');
+            $filename = "detail_atlet_{$atlet->id}_{$timestamp}.csv";
+
+            $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+            $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}\"");
+            $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+
+            return $response;
+        } catch (\Exception $e) {
+            \Log::error('Error exporting atlet detail: ' . $e->getMessage(), [
+                'atlet_id' => $atlet->id,
+                'exception' => $e
+            ]);
+            
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor data atlet.');
+        }
+    }
 }

@@ -24,6 +24,7 @@ class Lpj extends Model
         'jumlah_harga',
         'dokumen_pendukung',
         'dokumen_lpj',
+        'dokumen_lpj_pdf',
         'foto_jurnal',
         'keterangan_tambahan',
         'is_approved',
@@ -35,6 +36,7 @@ class Lpj extends Model
     protected $casts = [
         'dokumen_pendukung' => 'array',
         'dokumen_lpj' => 'array',
+        'dokumen_lpj_pdf' => 'array',
         'foto_jurnal' => 'array',
         'is_approved' => 'boolean',
         'approved_at' => 'datetime',

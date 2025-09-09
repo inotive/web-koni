@@ -160,14 +160,12 @@
                                 </div>
                                 <div class="col-md-9">
                                     @php
-                                        $effectiveCaborId = old(
-                                            'cabor_id',
-                                            $prestasi->cabor_id ?: $prestasi->subject->cabor_id ?? null,
-                                        );
+                                        // Prioritaskan cabor_id dari prestasi, jika tidak ada maka gunakan dari subject
+                                        $effectiveCaborId = old('cabor_id', $prestasi->cabor_id ?? $prestasi->subject->cabor_id ?? null);
                                     @endphp
 
                                     <select class="form-select @error('cabor_id') is-invalid @enderror" id="cabor_id"
-                                        name="cabor_id" data-selected="{{ $effectiveCaborId }}" required>
+                                        name="cabor_id" required>
                                         <option value="">-- Pilih Cabang Olahraga --</option>
                                         @foreach ($cabors as $cabor)
                                             <option value="{{ $cabor->id }}"
@@ -183,8 +181,8 @@
                                     @if (!$prestasi->cabor_id && $prestasi->subject->cabor_id)
                                         <div class="form-hint mt-1" style="color: #fd7e14;">
                                             <i class="fas fa-info-circle"></i>
-                                            Menggunakan cabang olahraga dari {{ class_basename($prestasi->subject_type) }}:
-                                            {{ $prestasi->subject->cabangOlahraga->nama_cabor ?? 'Unknown' }}
+                                            Catatan: Saat ini menggunakan cabang olahraga dari {{ class_basename($prestasi->subject_type) }}.
+                                            Jika Anda memilih cabang olahraga yang berbeda, itu akan disimpan khusus untuk prestasi ini.
                                         </div>
                                     @endif
                                 </div>
@@ -277,26 +275,7 @@
 
     <script>
         $(document).ready(function() {
-            console.log('=== DEBUG SELECT2 PREFILL ===');
-            console.log('Available cabors in select:', $('#cabor_id option').map(function() {
-                return {
-                    value: $(this).val(),
-                    text: $(this).text(),
-                    debug: $(this).data('debug')
-                };
-            }).get());
-
-            const selectedValue = "{{ old('cabor_id', $prestasi->cabor_id) }}";
-            console.log('Selected value from backend:', selectedValue, typeof selectedValue);
-
-            const optionExists = $('#cabor_id option[value="' + selectedValue + '"]').length > 0;
-            console.log('Option exists:', optionExists);
-
-            if (optionExists) {
-                console.log('Setting value before Select2 init:', selectedValue);
-                $('#cabor_id').val(selectedValue);
-            }
-
+            // Inisialisasi Select2 untuk cabang olahraga
             $('#cabor_id').select2({
                 theme: 'bootstrap-5',
                 placeholder: 'Pilih Cabang Olahraga',
@@ -304,24 +283,11 @@
                 width: '100%'
             });
 
-            if (selectedValue && optionExists) {
-                console.log('Setting value after Select2 init:', selectedValue);
-                $('#cabor_id').val(selectedValue).trigger('change');
-
-                setTimeout(function() {
-                    const currentValue = $('#cabor_id').val();
-                    console.log('Current value after set:', currentValue);
-                    console.log('Selected text:', $('#cabor_id option:selected').text());
-                }, 100);
+            // Pastikan nilai yang dipilih sudah benar setelah Select2 diinisialisasi
+            const selectedValue = "{{ old('cabor_id', $prestasi->cabor_id ?? $prestasi->subject->cabor_id ?? '') }}";
+            if (selectedValue) {
+                $('#cabor_id').val(selectedValue).trigger('change.select2');
             }
-
-            $('#cabor_id').on('select2:open', function() {
-                console.log('Select2 opened, current value:', $(this).val());
-            });
-
-            $('#cabor_id').on('select2:select', function(e) {
-                console.log('Select2 selection changed:', e.params.data);
-            });
         });
     </script>
 
