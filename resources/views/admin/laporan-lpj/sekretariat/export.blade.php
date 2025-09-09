@@ -1,416 +1,419 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
+    <title>Laporan LPJ - {{ $lpj->nama_program }}</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Sekretariat - {{ $sekretariat->nama_program }}</title>
     <style>
+       @page {
+            margin: 1cm 1.5cm 1.5cm 1.5cm;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.4;
             margin: 0;
             padding: 0;
             color: #333;
-            font-size: 12pt;
         }
-        
-        @page {
-            margin: 80px 50px 30px 50px;
-            header: page-header;
-            footer: page-footer;
-        }
-        
-        #header {
-            position: fixed;
-            top: -60px;
-            left: 0;
-            right: 0;
-            height: 80px;
+
+        /* Header/Letterhead styling */
+        .letterhead {
+            position: running(header);
             text-align: center;
-            border-bottom: 3px solid #2c3e50;
+            margin-bottom: 10px; /* reduced from 20px */
         }
-        
-        #footer {
-            position: fixed;
-            bottom: -30px;
-            left: 0;
-            right: 0;
-            height: 50px;
+
+        .letterhead-img {
+            width: 100%;
+            max-width: 710px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 120px;
+        }
+
+        .logo img {
+            width: 90px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .koni-text {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #d32f2f;
+            margin-top: 3px; /* reduced from 5px */
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             text-align: center;
-            font-size: 10pt;
-            color: #7f8c8d;
-            border-top: 1px solid #eee;
-            padding-top: 5px;
+            flex: 1;
         }
-        
-        .page-number:before {
-            content: "Halaman " counter(page);
-        }
-        
-        .kop-surat {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        
-        .kop-surat h1 {
+
+        .header-text h1 {
             font-size: 18pt;
+            font-weight: bold;
             margin: 0;
-            color: #2c3e50;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-        
-        .kop-surat h2 {
-            font-size: 15pt;
-            margin: 5px 0;
-            color: #34495e;
-            font-weight: 500;
-        }
-        
-        .kop-surat p {
-            font-size: 10pt;
-            margin: 2px 0;
-            color: #7f8c8d;
-        }
-        
-        .divider {
-            border-top: 1px solid #bdc3c7;
-            margin: 15px 0;
-        }
-        
-        .content {
-            margin-top: 20px;
-        }
-        
-        .section {
-            margin-bottom: 25px;
-        }
-        
-        .section-title {
-            font-size: 14pt;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            line-height: 1.1; /* reduced */
         }
-        
+
+        .header-text h2 {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 3px 0; /* reduced from 5px */
+            text-transform: uppercase;
+            line-height: 1.1; /* reduced */
+        }
+
+        .header-contact {
+            font-size: 9pt;
+            line-height: 1.3; /* reduced */
+            margin-top: 5px; /* reduced from 8px */
+        }
+
+        .header-contact a {
+            color: blue;
+            text-decoration: underline;
+        }
+
+        .content {
+
+        }
+
+        .document-title {
+            text-align: center;
+            font-size: 18pt;
+            font-weight: bold;
+            margin: 15px 0; /* reduced from 30px */
+            color: #d32f2f;
+            text-transform: uppercase;
+            text-decoration: underline;
+        }
+
+        .lpj-item {
+            page-break-inside: avoid;
+            margin-bottom: 15px; /* reduced from 30px */
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 15px; /* reduced from 25px */
+        }
+
+        .program-header {
+            background: linear-gradient(135deg, #d32f2f, #f44336);
+            color: white;
+            padding: 15px; /* reduced from 20px */
+            border-radius: 8px 8px 0 0;
+            margin: -15px -15px 15px -15px; /* adjusted for new padding */
+        }
+
+        .program-header h2 {
+            margin: 0;
+            font-size: 16pt;
+            font-weight: bold;
+        }
+
+        .program-header h3 {
+            margin: 5px 0 0 0; /* reduced from 8px */
+            font-size: 14pt;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+
         .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin: 15px 0; /* reduced from 20px */
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        
+
         .info-table th {
-            background-color: #ecf0f1;
-            padding: 12px 15px;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            color: #333;
+            font-weight: bold;
+            padding: 10px 15px; /* reduced vertical padding from 15px */
             text-align: left;
-            font-weight: 600;
             width: 30%;
-            border: 1px solid #bdc3c7;
-            color: #2c3e50;
+            border-bottom: 2px solid #ddd;
         }
-        
+
         .info-table td {
-            padding: 12px 15px;
-            border: 1px solid #bdc3c7;
-            background-color: #fff;
+            padding: 10px 15px; /* reduced vertical padding from 15px */
+            border-bottom: 1px solid #eee;
+            background: #fafafa;
         }
-        
-        .foto-container {
+
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .amount {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #000000;
+            margin: 20px 0 10px 0; /* reduced from 30px 0 15px 0 */
+            padding-bottom: 5px; /* reduced from 8px */
+            border-bottom: 2px solid #d32f2f;
+        }
+
+        .photos {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
+            gap: 15px; /* spacing between photos */
+            justify-content: center;
         }
-        
-        .foto-item {
-            width: 140px;
-            border: 1px solid #bdc3c7;
+
+        .photo-container {
+            flex: 1 1 calc(33.33% - 15px); /* 3 per row by default */
+            max-width: calc(33.33% - 15px);
+            text-align: center;
+            background: #fff;
             padding: 10px;
-            text-align: center;
-            background-color: #fff;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            page-break-inside: avoid; /* prevent splitting on PDF */
         }
-        
-        .foto-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+
+        @media (max-width: 768px) {
+            .photo-container {
+                flex: 1 1 calc(50% - 15px); /* 2 per row on smaller screens */
+                max-width: calc(50% - 15px);
+            }
         }
-        
-        .foto-item img {
+
+        @media (max-width: 480px) {
+            .photo-container {
+                flex: 1 1 100%; /* 1 per row on very small screens */
+                max-width: 100%;
+            }
+        }
+
+
+        .photos img {
             max-width: 100%;
-            height: 110px;
-            object-fit: cover;
-            border-radius: 4px;
-            border: 1px solid #eee;
-        }
-        
-        .foto-item .foto-name {
-            font-size: 9pt;
-            margin-top: 8px;
-            color: #34495e;
-            word-break: break-word;
-            font-weight: 500;
-        }
-        
-        .dokumen-container {
-            margin-top: 15px;
-        }
-        
-        .dokumen-item {
-            padding: 15px;
-            border: 1px solid #bdc3c7;
-            margin-bottom: 12px;
-            background-color: #fff;
-            border-left: 4px solid #3498db;
-            border-radius: 0 4px 4px 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        
-        .dokumen-item .dokumen-name {
-            font-size: 11pt;
-            color: #2c3e50;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .dokumen-item .dokumen-path {
-            font-size: 9pt;
-            color: #7f8c8d;
-            font-style: italic;
-        }
-        
-        .no-data {
-            font-style: italic;
-            color: #95a5a6;
-            text-align: center;
-            padding: 25px;
-            background-color: #f8f9fa;
-            border: 1px dashed #bdc3c7;
+            max-height: 200px;
             border-radius: 6px;
-            margin: 10px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
         }
-        
-        .keterangan {
-            background-color: #e3f2fd;
-            padding: 15px;
-            border-left: 4px solid #2196f3;
-            margin-top: 10px;
-            border-radius: 0 4px 4px 0;
+
+        .photos img:hover {
+            transform: scale(1.05);
+        }
+
+        .photo-caption {
+            margin-top: 8px; /* reduced from 10px */
             font-size: 10pt;
+            color: #666;
+            font-style: italic;
         }
-        
-        .keterangan strong {
-            color: #0d47a1;
+
+        /* Print specific styles */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .lpj-item {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                border: 1px solid #ddd;
+            }
+
+            .lpj-item::before {
+                background: #d32f2f;
+            }
+
+            .info-table th::after {
+                display: none;
+            }
+
+            .info-table tr:hover td {
+                transform: none;
+            }
+
+            .photos img:hover {
+                transform: none;
+            }
+
+            .photo-container:hover {
+                transform: none;
+            }
+
+            .amount::before,
+            .section-title::before {
+                display: none;
+            }
+
+            /* Better print page breaks for images */
+            .photos {
+                page-break-inside: auto;
+            }
+
+            .photo-container {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                margin-bottom: 15px;
+            }
+
+            /* Reduce spacing on print */
+            .letterhead {
+                margin-bottom: 5px;
+            }
+
+            .content {
+                margin-top: 0;
+            }
         }
-        
+
+        /* Page break controls */
         .page-break {
             page-break-before: always;
         }
-        
-        .footer-note {
-            font-size: 9pt;
-            color: #95a5a6;
+
+        .no-break {
+            page-break-inside: avoid;
+        }
+
+        /* Footer styling */
+        .signature-section {
+            margin-top: 30px; /* reduced from 50px */
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature-box {
             text-align: center;
-            margin-top: 30px;
-            font-style: italic;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
+            width: 200px;
         }
-        
-        /* Icon styling */
-        .section-title:before {
-            content: "▸ ";
-            color: #3498db;
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            margin: 40px 0 8px 0; /* reduced from 60px 0 10px 0 */
         }
+
+        .signature-title {
+            font-weight: bold;
+            margin-bottom: 3px; /* reduced from 5px */
+        }
+
+        .photo-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 15px;
+        }
+
+        .photo-td {
+            width: 33%;
+            vertical-align: top;
+            text-align: center;
+        }
+
+        .photos img,
+        .photo-container img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            max-height: 100%; /* Larger size for PDF */
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            object-fit: cover;
+        }
+
+        @media print {
+            .photo-container img {
+                max-height: 400px !important; /* even larger on PDF */
+            }
+        }
+
     </style>
 </head>
 <body>
-    <htmlpageheader name="page-header">
-        <div class="kop-surat">
-            <h1>KOMITE OLAHRAGA NASIONAL INDONESIA</h1>
-            <h2>KONI KABUPATEN/KOTA</h2>
-            <p>Alamat: Jl. Contoh Alamat No. 123, Kota/Kabupaten</p>
-            <p>Telp: (021) 12345678 | Email: info@konikotakab.go.id</p>
-        </div>
-        <div class="divider"></div>
-    </htmlpageheader>
+    <!-- Letterhead that appears on every page -->
+    <div class="letterhead">
+        <img src="{{ public_path('assets/img/kop-nobg.png') }}"
+             alt="KONI Letterhead"
+             style="width: 100%; max-height: 250px; object-fit: contain;"> <!-- reduced max-height from 296px -->
+    </div>
 
-    <htmlpagefooter name="page-footer">
-        <div class="page-number"></div>
-    </htmlpagefooter>
-
+    <!-- Main content starts here -->
     <div class="content">
-        <div class="section">
-            <div class="section-title">Informasi Kegiatan</div>
+        <div class="lpj-item no-break">
+            <h3 class="section-title">Detail Program dan Kegiatan</h3>
             <table class="info-table">
                 <tr>
-                    <th>Nama Program</th>
-                    <td>{{ $sekretariat->nama_program }}</td>
+                    <th>Program</th>
+                    <td>{{ $lpj->nama_program }}</td>
                 </tr>
-                
-                @if($sekretariat->nama_kegiatan)
                 <tr>
-                    <th>Nama Kegiatan</th>
-                    <td>{{ $sekretariat->nama_kegiatan }}</td>
+                    <th>Kegiatan</th>
+                    <td>{{ $lpj->nama_kegiatan }}</td>
                 </tr>
-                @endif
-                
-                @if($sekretariat->volume)
-                <tr>
-                    <th>Volume</th>
-                    <td>{{ $sekretariat->volume }}</td>
-                </tr>
-                @endif
-                
-                @if($sekretariat->jumlah_harga_satuan)
-                <tr>
-                    <th>Harga Satuan</th>
-                    <td>Rp {{ number_format($sekretariat->jumlah_harga_satuan, 0, ',', '.') }}</td>
-                </tr>
-                @endif
-                
-                @if($sekretariat->jumlah_harga)
                 <tr>
                     <th>Total Anggaran</th>
-                    <td>Rp {{ number_format($sekretariat->jumlah_harga, 0, ',', '.') }}</td>
+                    <td class="amount">Rp {{ number_format($lpj->jumlah_harga, 2, ',', '.') }}</td>
+                </tr>
+                @if($lpj->tanggal_kegiatan)
+                <tr>
+                    <th>Tanggal Kegiatan</th>
+                    <td>{{ \Carbon\Carbon::parse($lpj->tanggal_kegiatan)->format('d F Y') }}</td>
                 </tr>
                 @endif
-                
-                @if($sekretariat->keterangan_tambahan)
+                @if($lpj->lokasi_kegiatan)
+                <tr>
+                    <th>Lokasi</th>
+                    <td>{{ $lpj->lokasi_kegiatan }}</td>
+                </tr>
+                @endif
+                @if($lpj->keterangan_tambahan)
                 <tr>
                     <th>Keterangan Tambahan</th>
-                    <td>{{ $sekretariat->keterangan_tambahan }}</td>
+                    <td>{{ $lpj->keterangan_tambahan }}</td>
                 </tr>
                 @endif
             </table>
-        </div>
 
-        <div class="section">
-            <div class="section-title">Lampiran Foto Jurnal</div>
-            @if($sekretariat->foto_jurnal && count($sekretariat->foto_jurnal) > 0)
-                <div class="foto-container">
-                    @foreach($sekretariat->foto_jurnal as $foto)
-                        @php
-                            $path = '';
-                            $originalName = '';
-                            
-                            if (is_object($foto)) {
-                                $path = $foto->path;
-                                $originalName = $foto->original_name ?? basename($path);
-                            } elseif (is_array($foto)) {
-                                $path = isset($foto['path']) ? $foto['path'] : '';
-                                $originalName = isset($foto['original_name']) ? $foto['original_name'] : (is_string($path) ? basename($path) : '');
-                            } elseif (is_string($foto)) {
-                                $path = $foto;
-                                $originalName = basename($path);
-                            }
-                            
-                            // Check if file exists
-                            $fileExists = $path && Storage::disk('public')->exists($path);
-                        @endphp
-                        
-                        @if($fileExists)
-                            <div class="foto-item">
-                                <img src="{{ storage_path('app/public/' . $path) }}" alt="Foto Jurnal">
-                                <div class="foto-name">{{ $originalName }}</div>
-                            </div>
-                        @else
-                            <div class="foto-item">
-                                <div style="height: 110px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; border: 1px solid #eee; border-radius: 4px;">
-                                    <span style="color: #95a5a6; font-size: 9pt;">Gambar tidak tersedia</span>
-                                </div>
-                                <div class="foto-name">{{ $originalName }}</div>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-            @else
-                <div class="no-data">Tidak ada foto jurnal tersedia</div>
+            @if($lpj->foto_jurnal && count($lpj->foto_jurnal) > 0)
+                <h3 class="section-title">Dokumentasi Kegiatan</h3>
+                <table class="photo-table">
+                    <tr>
+                        @foreach($lpj->foto_jurnal as $index => $foto)
+                            @if(file_exists(storage_path('app/public/' . $foto)))
+                                <td class="photo-td">
+                                    <div class="photo-container">
+                                        <img src="{{ storage_path('app/public/' . $foto) }}" alt="Dokumentasi {{ $index + 1 }}">
+                                        <div class="photo-caption">Dokumentasi {{ $index + 1 }}</div>
+                                    </div>
+                                </td>
+                                @if(($index + 1) % 3 == 0)
+                                    </tr><tr> <!-- Start new row every 3 images -->
+                                @endif
+                            @endif
+                        @endforeach
+                    </tr>
+                </table>
             @endif
-        </div>
-
-        <div class="section">
-            <div class="section-title">Dokumen Pendukung</div>
-            @if($sekretariat->dokumen_lpj && count($sekretariat->dokumen_lpj) > 0)
-                <div class="dokumen-container">
-                    @foreach($sekretariat->dokumen_lpj as $dokumen)
-                        @php
-                            $path = '';
-                            $originalName = '';
-                            
-                            if (is_object($dokumen)) {
-                                $path = $dokumen->path;
-                                $originalName = $dokumen->original_name ?? basename($path);
-                            } elseif (is_array($dokumen)) {
-                                $path = isset($dokumen['path']) ? $dokumen['path'] : '';
-                                $originalName = isset($dokumen['original_name']) ? $dokumen['original_name'] : (is_string($path) ? basename($path) : '');
-                            } elseif (is_string($dokumen)) {
-                                $path = $dokumen;
-                                $originalName = basename($path);
-                            }
-                            
-                            // Check if file exists
-                            $fileExists = $path && Storage::disk('public')->exists($path);
-                        @endphp
-                        
-                        @if($path)
-                            <div class="dokumen-item">
-                                <div class="dokumen-name">{{ $originalName }}</div>
-                                <div class="dokumen-path">{{ $fileExists ? 'File tersedia' : 'File tidak ditemukan' }}</div>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-            @else
-                <div class="no-data">Tidak ada dokumen pendukung tersedia</div>
-            @endif
-        </div>
-
-        <div class="section">
-            <div class="section-title">Dokumen LPJ</div>
-            @if($sekretariat->dokumen_lpj_pdf)
-                @php
-                    $path = '';
-                    $originalName = '';
-                    
-                    if (is_object($sekretariat->dokumen_lpj_pdf)) {
-                        $path = $sekretariat->dokumen_lpj_pdf->path;
-                        $originalName = $sekretariat->dokumen_lpj_pdf->original_name ?? basename($path);
-                    } elseif (is_array($sekretariat->dokumen_lpj_pdf)) {
-                        $path = isset($sekretariat->dokumen_lpj_pdf['path']) ? $sekretariat->dokumen_lpj_pdf['path'] : '';
-                        $originalName = isset($sekretariat->dokumen_lpj_pdf['original_name']) ? $sekretariat->dokumen_lpj_pdf['original_name'] : (is_string($path) ? basename($path) : '');
-                    } elseif (is_string($sekretariat->dokumen_lpj_pdf)) {
-                        $path = $sekretariat->dokumen_lpj_pdf;
-                        $originalName = basename($path);
-                    }
-                    
-                    // Check if file exists
-                    $fileExists = $path && Storage::disk('public')->exists($path);
-                @endphp
-                
-                @if($path)
-                    <div class="dokumen-item">
-                        <div class="dokumen-name">{{ $originalName }}</div>
-                        <div class="dokumen-path">{{ $fileExists ? 'File PDF tersedia sebagai lampiran' : 'File PDF tidak ditemukan' }}</div>
-                    </div>
-                    <div class="keterangan">
-                        <strong>Catatan:</strong> File PDF ini {{ $fileExists ? 'dapat diakses terpisah sebagai bagian dari laporan' : 'tidak tersedia' }}
-                    </div>
-                @endif
-            @else
-                <div class="no-data">Tidak ada dokumen LPJ tersedia</div>
-            @endif
-        </div>
-        
-        <div class="footer-note">
-            Dokumen ini dicetak pada {{ date('d F Y H:i') }} dan merupakan laporan resmi kegiatan sekretariat.
         </div>
     </div>
 </body>
