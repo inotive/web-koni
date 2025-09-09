@@ -511,8 +511,8 @@ class LpjController extends Controller
             fputcsv($handle, [
                 'Nama Program',
                 'Nama Kegiatan',
-                'Volume',
-                'Harga Satuan',
+                // 'Volume',
+                // 'Harga Satuan',
                 'Jumlah',
                 'Keterangan'
             ]);
@@ -521,8 +521,8 @@ class LpjController extends Controller
                 fputcsv($handle, [
                     $lpj->nama_program,
                     $lpj->nama_kegiatan,
-                    $lpj->volume,
-                    $lpj->jumlah_harga_satuan,
+                    // $lpj->volume,
+                    // $lpj->jumlah_harga_satuan,
                     $lpj->jumlah_harga,
                     $lpj->keterangan_tambahan
                 ]);
