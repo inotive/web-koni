@@ -166,9 +166,9 @@ class CabangOlahragaController extends Controller
         //     ->with('show_new_data', true); // Flag untuk highlight data baru
     }
 
-    public function show($id)
+    public function show($cabor)
     {
-        $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
+        $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($cabor);
 
         // Tambahkan paginate untuk atlet dan pelatih
         $atlets = $cabor->atlets()->paginate(10, ['*'], 'atlet_page');
@@ -177,15 +177,15 @@ class CabangOlahragaController extends Controller
         return view('admin.cabang-olahraga.show', compact('cabor', 'atlets', 'pelatihs'));
     }
 
-    public function edit($id)
+    public function edit($cabor)
     {
-        $cabor = CabangOlahraga::findOrFail($id);
+        $cabor = CabangOlahraga::findOrFail($cabor);
         return view('admin.cabang-olahraga.edit', compact('cabor'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $cabor)
     {
-        $cabor = CabangOlahraga::findOrFail($id);
+        $cabor = CabangOlahraga::findOrFail($cabor);
 
         $validatedData = $request->validate([
             'nama_cabor' => 'required|string|max:50',
@@ -220,10 +220,10 @@ class CabangOlahragaController extends Controller
         ])->with('cabor_updated', 'Cabang olahraga berhasil diperbarui.');
     }
 
-    public function destroy($id)
+    public function destroy($cabor)
     {
         try {
-            $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
+            $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($cabor);
 
             // Cek apakah masih ada atlet yang terkait
             $jumlahAtlet = $cabor->atlets()->count();
@@ -275,10 +275,10 @@ class CabangOlahragaController extends Controller
     }
 
     // Method untuk nonaktifkan cabor (sebagai alternatif)
-    public function deactivate($id)
+    public function deactivate($cabor)
     {
         try {
-            $cabor = CabangOlahraga::findOrFail($id);
+            $cabor = CabangOlahraga::findOrFail($cabor);
 
             $cabor->update([
                 'status' => 'Tidak Aktif',
@@ -296,10 +296,10 @@ class CabangOlahragaController extends Controller
     }
 
     // Method untuk cek dependency (untuk AJAX call jika diperlukan)
-    public function checkDependencies($id)
+    public function checkDependencies($cabor)
     {
         try {
-            $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($id);
+            $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($cabor);
 
             $jumlahAtlet = $cabor->atlets()->count();
             $jumlahPelatih = $cabor->pelatihs()->count();
@@ -321,6 +321,27 @@ class CabangOlahragaController extends Controller
                 'error' => true,
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    // Method untuk force destroy (menghapus permanen meskipun ada data terkait)
+    public function forceDestroy($cabor)
+    {
+        try {
+            $cabor = CabangOlahraga::findOrFail($cabor);
+
+            // Hapus icon jika ada
+            if ($cabor->icon_cabor) {
+                Storage::disk('public')->delete($cabor->icon_cabor);
+            }
+
+            // Hapus cabang olahraga (akan menghapus data terkait karena ada constraint foreign key)
+            $cabor->delete();
+
+            return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
+                ->with('cabor_deleted', 'Cabang olahraga berhasil dihapus permanen.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menghapus permanen cabang olahraga: ' . $e->getMessage());
         }
     }
 

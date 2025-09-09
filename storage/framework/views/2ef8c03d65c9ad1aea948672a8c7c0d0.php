@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@php
+<?php
     $subSection3Url = '';
 
     if ($parent?->parent) {
@@ -29,23 +27,23 @@
             $subSection3Url = route('admin.laporan-lpj.bidang.dynamic.index');
         }
     }
-@endphp
+?>
 
-@section('pageTitle', $currentParent ? $currentParent->nama_program : 'Root Level')
-@section('mainSection', 'Laporan LPJ')
-@section('subSection', 'Bidang Bidang')
-@section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
-@section('subSection2', $parent?->parent?->parent?->nama_program ?? '')
-@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
-@section('subSection3', $parent?->parent?->nama_program ?? '')
-@section('subSection3Url', $subSection3Url)
-{{-- @section('subSection3Url', $parent?->parent ? route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $parent->parent->id]) : '') --}}
-@section('currentSection', $currentParent ? $currentParent->nama_program : 'Root Level')
+<?php $__env->startSection('pageTitle', $currentParent ? $currentParent->nama_program : 'Root Level'); ?>
+<?php $__env->startSection('mainSection', 'Laporan LPJ'); ?>
+<?php $__env->startSection('subSection', 'Bidang Bidang'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.bidang.index')); ?>
+<?php $__env->startSection('subSection2', $parent?->parent?->parent?->nama_program ?? ''); ?>
+<?php $__env->startSection('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index')); ?>
+<?php $__env->startSection('subSection3', $parent?->parent?->nama_program ?? ''); ?>
+<?php $__env->startSection('subSection3Url', $subSection3Url); ?>
 
-@section('breadcrumb-title')
-@endsection
+<?php $__env->startSection('currentSection', $currentParent ? $currentParent->nama_program : 'Root Level'); ?>
 
-@section('content')
+<?php $__env->startSection('breadcrumb-title'); ?>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
     <style>
         /* Include your existing styles */
         body {
@@ -403,25 +401,27 @@
 
     <div class="d-flex flex-column mb-8">
         <h1 class="text-dark fw-bold mb-1">
-            Laporan {{ $currentParent ? $currentParent->nama_program : 'Root Level' }}
+            Laporan <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?>
+
         </h1>
-        @if($currentParent)
-            <p class="text-muted">{{ $currentParent->breadcrumb }}</p>
-        @endif
+        <?php if($currentParent): ?>
+            <p class="text-muted"><?php echo e($currentParent->breadcrumb); ?></p>
+        <?php endif; ?>
     </div>
 
-    {{-- Main Content Card --}}
+    
     <div class="row col-12 mt-5">
         <div class="card">
-            {{-- Card Header --}}
+            
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
                 <h3 class="card-title fw-bold fs-4 mb-0">
-                    Daftar {{ $currentParent ? $currentParent->nama_program : 'Root Level' }}
+                    Daftar <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?>
+
                 </h3>
 
-                {{-- Action Buttons --}}
+                
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    <a href="{{ $parentId ? route('admin.laporan-lpj.bidang.dynamic.child.create', $parentId) : route('admin.laporan-lpj.bidang.dynamic.create') }}"
+                    <a href="<?php echo e($parentId ? route('admin.laporan-lpj.bidang.dynamic.child.create', $parentId) : route('admin.laporan-lpj.bidang.dynamic.create')); ?>"
                            class="btn custom-red-button"
                            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
@@ -436,10 +436,10 @@
                         </ul>
                     </div>
 
-                    {{-- Search Input --}}
+                    
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari program/kegiatan..." value="{{ request('search') }}" autocomplete="off">
+                            placeholder="Cari program/kegiatan..." value="<?php echo e(request('search')); ?>" autocomplete="off">
 
                         <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
                             style="position: absolute; right: 45px; z-index: 10; border: none; background: transparent; padding: 8px;">
@@ -460,7 +460,7 @@
                 </div>
             </div>
 
-            {{-- Card Body --}}
+            
             <div class="card-body position-relative">
                 <div class="loading-overlay d-none" id="loading-overlay">
                     <div class="spinner-border text-primary" role="status">
@@ -469,13 +469,13 @@
                 </div>
 
                 <div id="table-container">
-                    @include('admin.laporan-lpj.bidang_new.dynamic._table')
+                    <?php echo $__env->make('admin.laporan-lpj.bidang_new.dynamic._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- Enhanced Preview Modal --}}
+    
     <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -511,7 +511,7 @@
         </div>
     </div>
 
-    {{-- Enhanced Detail Modal --}}
+    
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -530,7 +530,7 @@
                 </div>
 
                 <div class="modal-body" id="detailModalBody">
-                    {{-- Populated by JS --}}
+                    
                 </div>
 
                 <div class="modal-footer">
@@ -540,7 +540,7 @@
         </div>
     </div>
 
-    {{-- Pengajuan Modal --}}
+    
     <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -564,15 +564,15 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
         $(document).ready(function() {
             let dataTable = null;
             let searchTimeout;
             let isSearching = false;
-            const parentId = {{ $parentId ?? 'null' }};
+            const parentId = <?php echo e($parentId ?? 'null'); ?>;
 
             function initializeDataTable() {
                 const table = $("#kt_datatable_dom_positioning_sumberdaya");
@@ -621,9 +621,9 @@
 
                     let baseUrl;
                     if (parentId) {
-                        baseUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ':parentId') }}".replace(':parentId', parentId);
+                        baseUrl = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ':parentId')); ?>".replace(':parentId', parentId);
                     } else {
-                        baseUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.index') }}";
+                        baseUrl = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.index')); ?>";
                     }
 
                     const currentUrl = new URL(baseUrl, window.location.origin);
@@ -758,7 +758,7 @@
             initializeDropdownEvents();
 
             window.deleteItemWithSwal = function(itemId, itemName = 'item ini') {
-                const url = "{{ route('admin.laporan-lpj.bidang.dynamic.destroy', ':id') }}".replace(':id', itemId);
+                const url = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.destroy', ':id')); ?>".replace(':id', itemId);
 
                 Swal.fire({
                     title: "Apakah Anda Yakin?",
@@ -784,7 +784,7 @@
                             url: url,
                             type: 'POST',
                             data: {
-                                _token: '{{ csrf_token() }}',
+                                _token: '<?php echo e(csrf_token()); ?>',
                                 _method: 'DELETE'
                             },
                             success: function(response) {
@@ -827,8 +827,8 @@
 
                 /* ---------- status indicator ---------- */
                 if (statusIcon) {
-                    const canPengajuanModifikasi = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
-                    const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
+                    const canPengajuanModifikasi = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
+                    const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
                     const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
                     const hasToken = pengajuan && pengajuan.token > 0;
 
@@ -986,13 +986,14 @@
                 }
 
                 $.ajax({
-                    url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
+                    url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
                     type: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}',
+                        _token: '<?php echo e(csrf_token()); ?>',
                         lpj_id: lpjId,
                         alasan: alasan,
-                        user_id: {{ auth()->id() }}
+                        user_id: <?php echo e(auth()->id()); ?>
+
                     },
                     success: function(response) {
                         if(response.success) {
@@ -1021,9 +1022,9 @@
 
                 let exportUrl;
                 if (parentId) {
-                    exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.child.export-csv', ':parentId') }}".replace(':parentId', parentId);
+                    exportUrl = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.export-csv', ':parentId')); ?>".replace(':parentId', parentId);
                 } else {
-                    exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.export-csv') }}";
+                    exportUrl = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.export-csv')); ?>";
                 }
 
                 const search = $('#search').val();
@@ -1256,4 +1257,6 @@
 
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang_new/dynamic/index.blade.php ENDPATH**/ ?>

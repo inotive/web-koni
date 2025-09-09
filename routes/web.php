@@ -117,17 +117,17 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/', [CabangOlahragaController::class, 'index'])->name('index');
             Route::get('/create', [CabangOlahragaController::class, 'create'])->name('create');
             Route::post('/', [CabangOlahragaController::class, 'store'])->name('store');
-            Route::get('/{cabang-olahraga}', [CabangOlahragaController::class, 'show'])->name('show');
-            Route::get('/{cabang-olahraga}/edit', [CabangOlahragaController::class, 'edit'])->name('edit');
-            Route::put('/{cabang-olahraga}', [CabangOlahragaController::class, 'update'])->name('update');
-            Route::delete('/{cabang-olahraga}', [CabangOlahragaController::class, 'destroy'])->name('destroy');
+            Route::get('/{cabor}', [CabangOlahragaController::class, 'show'])->name('show');
+            Route::get('/{cabor}/edit', [CabangOlahragaController::class, 'edit'])->name('edit');
+            Route::put('/{cabor}', [CabangOlahragaController::class, 'update'])->name('update');
+            Route::delete('/{cabor}', [CabangOlahragaController::class, 'destroy'])->name('destroy');
 
             // TAMBAHAN: Rute untuk fitur khusus CabangOlahraga
             Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
             Route::get('/export', [CabangOlahragaController::class, 'export'])->name('export');
-            Route::patch('/{cabang-olahraga}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
-            Route::get('/{cabang-olahraga}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('check-dependencies');
-            Route::delete('/{cabang-olahraga}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('force-destroy');
+            Route::patch('/{cabor}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
+            Route::get('/{cabor}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('check-dependencies');
+            Route::delete('/{cabor}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('force-destroy');
         });
 
         // Rute Prestasi - Diperbaiki struktur
