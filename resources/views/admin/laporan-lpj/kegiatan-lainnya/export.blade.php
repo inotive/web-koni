@@ -149,7 +149,7 @@
                 <span class="info-label">Nama Kegiatan:</span><br>
                 <span class="info-value">{{ $item['nama_kegiatan'] ?? '-' }}</span>
             </div>
-            <div class="info-item">
+            <div class="info-item" style="display: none;">
                 <span class="info-label">Volume:</span><br>
                 <span class="info-value">{{ $item['volume'] ?? '-' }}</span>
             </div>
@@ -175,7 +175,7 @@
         <h3>RINCIAN ANGGARAN</h3>
         <div class="financial-grid">
             @if(!empty($item['jumlah_harga_satuan']))
-            <div class="financial-box">
+            <div class="financial-box" style="display: none;">
                 <div class="financial-label">Harga Satuan:</div>
                 <div class="financial-value">Rp {{ number_format($item['jumlah_harga_satuan'], 0, ',', '.') }}</div>
             </div>
@@ -183,7 +183,7 @@
 
             @if(!empty($item['jumlah_harga']))
             <div class="financial-box">
-                <div class="financial-label">Total Harga:</div>
+                <div class="financial-label">Total Anggaran:</div>
                 <div class="financial-value">Rp {{ number_format($item['jumlah_harga'], 0, ',', '.') }}</div>
             </div>
             @endif

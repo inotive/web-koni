@@ -272,7 +272,7 @@
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
+                            <div class="row align-items-center mb-3" style="display: none;">
                                 <div class="col-md-3">
                                     <label class="form-label">Volume</label>
                                 </div>
@@ -281,7 +281,7 @@
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
+                            <div class="row align-items-center mb-3" style="display: none;">
                                 <div class="col-md-3">
                                     <label class="form-label">Harga Satuan</label>
                                 </div>
@@ -294,7 +294,7 @@
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label class="form-label">Total Harga</label>
+                                    <label class="form-label">Total Anggaran</label>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="currency-input">

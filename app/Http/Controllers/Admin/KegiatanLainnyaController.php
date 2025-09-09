@@ -77,24 +77,28 @@ class KegiatanLainnyaController extends Controller
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
-            'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|string',
+            'volume' => 'nullable|string|max:255',
+            'jumlah_harga_satuan' => 'nullable|string',
             'jumlah_harga' => 'required|string',
-            'foto_jurnal' => 'required|array|min:1|max:10',
+            'foto_jurnal' => 'required|array',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
-            'dokumen_pendukung' => 'nullable|array|max:10',
-            'dokumen_pendukung.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj' => 'nullable|array|max:10',
+            'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj_pdf' => 'nullable|array',
+            'dokumen_lpj_pdf.*' => 'file|mimes:pdf|max:10240',
         ], [
             'foto_jurnal.required' => 'Foto jurnal wajib diisi.',
             'foto_jurnal.min' => 'Minimal 1 foto jurnal harus diunggah.',
-            'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
             'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
-            'dokumen_pendukung.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
-            'dokumen_pendukung.*.file' => 'File dokumen tidak valid.',
-            'dokumen_pendukung.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
-            'dokumen_pendukung.*.max' => 'Ukuran dokumen maksimal 10MB.',
+            'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
+            'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
+            'dokumen_lpj_pdf.*.file' => 'File dokumen LPJ tidak valid.',
+            'dokumen_lpj_pdf.*.mimes' => 'Format dokumen LPJ harus PDF.',
+            'dokumen_lpj_pdf.*.max' => 'Ukuran dokumen LPJ maksimal 10MB.',
         ]);
         
         // Parse numeric values
@@ -117,8 +121,8 @@ class KegiatanLainnyaController extends Controller
             'parent_id' => $parentCategory->id,
             'nama_program' => $request->nama_program_kegiatan, // Map ke nama_program
             'nama_kegiatan' => $request->jenis_kegiatan, // Map ke nama_kegiatan
-            'volume' => $request->volume,
-            'jumlah_harga_satuan' => $jumlahHargaSatuan,
+            'volume' => $request->volume ?? '', // Default ke string kosong jika null
+            'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
             'jumlah_harga' => $jumlahHarga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
             'icon' => 'fas fa-clipboard-list' // Default icon untuk kegiatan-lainnya
@@ -134,14 +138,25 @@ class KegiatanLainnyaController extends Controller
             $data['foto_jurnal'] = $fotoPaths;
         }
 
-        if ($request->hasFile('dokumen_pendukung')) {
+        if ($request->hasFile('dokumen_lpj')) {
             $dokumenPaths = [];
-            foreach ($request->file('dokumen_pendukung') as $file) {
+            foreach ($request->file('dokumen_lpj') as $file) {
                 // Simpan dengan nama file asli
                 $originalName = $file->getClientOriginalName();
                 $dokumenPaths[] = $file->storeAs('kegiatan-lainnya/dokumen_pendukung', $originalName, 'public');
             }
             $data['dokumen_lpj'] = $dokumenPaths; // Map ke dokumen_lpj
+        }
+
+        // Handle dokumen_lpj_pdf uploads
+        if ($request->hasFile('dokumen_lpj_pdf')) {
+            $dokumenLpjPdfPaths = [];
+            foreach ($request->file('dokumen_lpj_pdf') as $file) {
+                // Simpan dengan nama file asli
+                $originalName = $file->getClientOriginalName();
+                $dokumenLpjPdfPaths[] = $file->storeAs('kegiatan-lainnya/dokumen_lpj_pdf', $originalName, 'public');
+            }
+            $data['dokumen_lpj_pdf'] = $dokumenLpjPdfPaths;
         }
 
         Lpj::create($data);
@@ -182,28 +197,33 @@ class KegiatanLainnyaController extends Controller
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
-            'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|string',
+            'volume' => 'nullable|string|max:255',
+            'jumlah_harga_satuan' => 'nullable|string',
             'jumlah_harga' => 'required|string',
-            'foto_jurnal' => 'nullable|array|max:10',
+            'foto_jurnal' => 'nullable|array',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
-            'dokumen_pendukung' => 'nullable|array|max:10',
-            'dokumen_pendukung.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj' => 'nullable|array|max:10',
+            'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj_pdf' => 'nullable|array',
+            'dokumen_lpj_pdf.*' => 'file|mimes:pdf|max:10240',
+            'existing_foto_jurnal' => 'nullable|array',
+            'existing_dokumen_lpj' => 'nullable|array',
+            'existing_dokumen_lpj_pdf' => 'nullable|array',
         ], [
-            'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
             'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
-            'dokumen_pendukung.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
-            'dokumen_pendukung.*.file' => 'File dokumen tidak valid.',
-            'dokumen_pendukung.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
-            'dokumen_pendukung.*.max' => 'Ukuran dokumen maksimal 10MB.',
+            'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
+            'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
+            'dokumen_lpj_pdf.*.file' => 'File dokumen LPJ tidak valid.',
+            'dokumen_lpj_pdf.*.mimes' => 'Format dokumen LPJ harus PDF.',
+            'dokumen_lpj_pdf.*.max' => 'Ukuran dokumen LPJ maksimal 10MB.',
         ]);
         
         // Validasi tambahan: jika tidak ada foto lama dan tidak ada foto baru diunggah
-        if (!$kegiatanLainnya->foto_jurnal && (!$request->hasFile('foto_jurnal') || $request->file('foto_jurnal') == null)) {
-            return back()->withErrors(['foto_jurnal' => 'Foto jurnal wajib diisi.'])->withInput();
-        }
+        // Diabaikan karena kita mengizinkan user mengupload foto tanpa batasan jumlah
         
         // Parse numeric values
         $jumlahHargaSatuan = $this->parseNumber($request->jumlah_harga_satuan);
@@ -221,10 +241,13 @@ class KegiatanLainnyaController extends Controller
         $data = [
             'nama_program' => $request->nama_program_kegiatan,
             'nama_kegiatan' => $request->jenis_kegiatan,
-            'volume' => $request->volume,
-            'jumlah_harga_satuan' => $jumlahHargaSatuan,
+            'volume' => $request->volume ?? '', // Default ke string kosong jika null
+            'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
             'jumlah_harga' => $jumlahHarga,
-            'keterangan_tambahan' => $request->keterangan_tambahan
+            'keterangan_tambahan' => $request->keterangan_tambahan,
+            'foto_jurnal' => $allFotoJurnal,
+            'dokumen_lpj' => $allDokumenLpj,
+            'dokumen_lpj_pdf' => $allDokumenLpjPdf
         ];
 
         if ($request->hasFile('foto_jurnal')) {
@@ -243,21 +266,67 @@ class KegiatanLainnyaController extends Controller
             $data['foto_jurnal'] = $fotoPaths;
         }
 
-        if ($request->hasFile('dokumen_pendukung')) {
-            if ($kegiatanLainnya->dokumen_lpj) {
-                foreach ($kegiatanLainnya->dokumen_lpj as $oldDokumen) {
+        // Handle existing files
+        $existingFotoJurnal = $request->input('existing_foto_jurnal', []);
+        $existingDokumenLpj = $request->input('existing_dokumen_lpj', []);
+        $existingDokumenLpjPdf = $request->input('existing_dokumen_lpj_pdf', []);
+
+        // Delete removed foto_jurnal files
+        if ($kegiatanLainnya->foto_jurnal) {
+            foreach ($kegiatanLainnya->foto_jurnal as $oldFoto) {
+                if (!in_array($oldFoto, $existingFotoJurnal)) {
+                    Storage::disk('public')->delete($oldFoto);
+                }
+            }
+        }
+
+        // Delete removed dokumen_lpj files
+        if ($kegiatanLainnya->dokumen_lpj) {
+            foreach ($kegiatanLainnya->dokumen_lpj as $oldDokumen) {
+                if (!in_array($oldDokumen, $existingDokumenLpj)) {
                     Storage::disk('public')->delete($oldDokumen);
                 }
             }
-
-            $dokumenPaths = [];
-            foreach ($request->file('dokumen_pendukung') as $file) {
-                // Simpan dengan nama file asli
-                $originalName = $file->getClientOriginalName();
-                $dokumenPaths[] = $file->storeAs('kegiatan-lainnya/dokumen_pendukung', $originalName, 'public');
-            }
-            $data['dokumen_lpj'] = $dokumenPaths;
         }
+
+        // Delete removed dokumen_lpj_pdf files
+        if ($kegiatanLainnya->dokumen_lpj_pdf) {
+            foreach ($kegiatanLainnya->dokumen_lpj_pdf as $oldDokumen) {
+                if (!in_array($oldDokumen, $existingDokumenLpjPdf)) {
+                    Storage::disk('public')->delete($oldDokumen);
+                }
+            }
+        }
+
+        // Handle new file uploads
+        $newFotoJurnal = [];
+        if ($request->hasFile('foto_jurnal')) {
+            foreach ($request->file('foto_jurnal') as $file) {
+                $originalName = $file->getClientOriginalName();
+                $newFotoJurnal[] = $file->storeAs('kegiatan-lainnya/foto_jurnal', $originalName, 'public');
+            }
+        }
+
+        $newDokumenLpj = [];
+        if ($request->hasFile('dokumen_lpj')) {
+            foreach ($request->file('dokumen_lpj') as $file) {
+                $originalName = $file->getClientOriginalName();
+                $newDokumenLpj[] = $file->storeAs('kegiatan-lainnya/dokumen_pendukung', $originalName, 'public');
+            }
+        }
+
+        $newDokumenLpjPdf = [];
+        if ($request->hasFile('dokumen_lpj_pdf')) {
+            foreach ($request->file('dokumen_lpj_pdf') as $file) {
+                $originalName = $file->getClientOriginalName();
+                $newDokumenLpjPdf[] = $file->storeAs('kegiatan-lainnya/dokumen_lpj_pdf', $originalName, 'public');
+            }
+        }
+
+        // Merge existing and new files
+        $allFotoJurnal = array_merge($existingFotoJurnal, $newFotoJurnal);
+        $allDokumenLpj = array_merge($existingDokumenLpj, $newDokumenLpj);
+        $allDokumenLpjPdf = array_merge($existingDokumenLpjPdf, $newDokumenLpjPdf);
 
         $kegiatanLainnya->update($data);
 
@@ -285,6 +354,13 @@ class KegiatanLainnyaController extends Controller
         // Hapus file dokumen_lpj
         if ($kegiatanLainnya->dokumen_lpj) {
             foreach ($kegiatanLainnya->dokumen_lpj as $dokumen) {
+                Storage::disk('public')->delete($dokumen);
+            }
+        }
+
+        // Hapus file dokumen_lpj_pdf
+        if ($kegiatanLainnya->dokumen_lpj_pdf) {
+            foreach ($kegiatanLainnya->dokumen_lpj_pdf as $dokumen) {
                 Storage::disk('public')->delete($dokumen);
             }
         }
@@ -324,7 +400,7 @@ class KegiatanLainnyaController extends Controller
                           ->findOrFail($id);
 
         $request->validate([
-            'file_type' => 'required|in:foto_jurnal,dokumen_lpj', // Ubah dokumen_pendukung ke dokumen_lpj
+            'file_type' => 'required|in:foto_jurnal,dokumen_lpj,dokumen_lpj_pdf',
             'file_index' => 'required|integer|min:0'
         ]);
 

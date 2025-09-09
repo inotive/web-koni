@@ -1,16 +1,14 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Manajemen Sekretariat'); ?>
+<?php $__env->startSection('mainSection', 'Laporan Pertanggungjawaban'); ?>
+<?php $__env->startSection('currentSection', 'Sekretariat'); ?>
 
-@section('pageTitle', 'Manajemen Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
-@section('currentSection', 'Kegiatan Lainnya')
+<?php $__env->startSection('breadcrumb-title'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-title')
-@endsection
+<?php $__env->startSection('breadcrumb-items'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-items')
-@endsection
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         body {
             background-color: #f5f5f5;
@@ -370,24 +368,24 @@
     </style>
 
     <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">Kegiatan Lainnya</h1>
-        <div class="text-muted fw-semibold fs-6">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</div>
+        <h1 class="text-dark fw-bold mb-1">Laporan Sekretariat</h1>
+        <div class="text-muted fw-semibold fs-6">Manajemen Laporan Sekretariat Anda Sekarang</div>
     </div>
 
     <div class="row col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Kegiatan Lainnya - 2025</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Sekretariat - 2025</h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
+                    <a href="<?php echo e(route('admin.laporan-lpj.sekretariat.create')); ?>" class="btn btn-primary"
     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
 </a>
 
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
+                            placeholder="Cari kegiatan..." value="<?php echo e(request('search')); ?>" autocomplete="off">
 
                         <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
                             style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
@@ -420,7 +418,7 @@
                 </div>
 
                 <div id="table-container">
-                    @include('admin.laporan-lpj.kegiatan-lainnya._table')
+                    <?php echo $__env->make('admin.laporan-lpj.sekretariat._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                 </div>
             </div>
         </div>
@@ -472,15 +470,15 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header d-flex align-items-center" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
-                    <h5 class="modal-title" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
-                    <div class="ms-auto d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <h5 class="modal-title mb-0" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
                         <!-- Status Icon -->
-                        <div id="statusIconContainer" class="d-flex align-items-center me-2">
-                            <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
-                        </div>
-                        
-                        <button type="button" id="ajukanPerubahanBtn">
-                            <i class="bi bi-arrow-repeat" style="color: white"></i> <strong>Ajukan Perubahan</strong>
+                        <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
+                    </div>
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <button type="button" id="ajukanPerubahanBtn" class="btn">
+                            <i class="bi bi-arrow-repeat" style="color: white"></i>
+                            <strong>Ajukan Perubahan</strong>
                         </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
@@ -494,7 +492,7 @@
         </div>
     </div>
 
-    {{-- Pengajuan Modal --}}
+    
     <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -518,9 +516,9 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
        $(document).ready(function() {
     let dataTable = null;
@@ -874,7 +872,7 @@
                     <img src="/storage/${path}"
                          alt="Preview"
                          class="preview-image"
-                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>">
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>'">
                 `;
             } else {
                 if (fileExtension === 'pdf') {
@@ -949,7 +947,7 @@
 
         Swal.fire({
             title: "Apakah Anda Yakin?",
-            html: "<p style='text-align:center'>Setelah data laporan kegiatan lainnya dihapus, Anda tidak bisa mengembalikannya!</p>",
+            html: "<p style='text-align:center'>Setelah data laporan sekretariat dihapus, Anda tidak bisa mengembalikannya!</p>",
             icon: "warning",
             showCancelButton: true,
             reverseButtons: true,
@@ -978,7 +976,7 @@
                     success: function(response) {
                         Swal.fire({
                             title: 'Berhasil!',
-                            text: response.message || 'Data laporan kegiatan lainnya berhasil dihapus',
+                            text: response.message || 'Data laporan sekretariat berhasil dihapus',
                             icon: 'success',
                             timer: 2000,
                             showConfirmButton: false
@@ -1005,14 +1003,14 @@
                             } else {
                                 Swal.fire({
                                     title: 'Error!',
-                                    text: response.message || 'Gagal menghapus data laporan kegiatan lainnya',
+                                    text: response.message || 'Gagal menghapus data laporan sekretariat',
                                     icon: 'error'
                                 });
                             }
                         } catch (e) {
                             Swal.fire({
                                 title: 'Error!',
-                                text: 'Gagal menghapus data laporan kegiatan lainnya',
+                                text: 'Gagal menghapus data laporan sekretariat',
                                 icon: 'error'
                             });
                         }
@@ -1042,17 +1040,17 @@
     if (statusIcon) {
         // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
         // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
-        const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
-        const hasApprovalPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
-        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
+        const isSuperAdmin = <?php echo e(auth()->user()->hasRole('superadmin') ? 'true' : 'false'); ?>;
+        const hasApprovalPermission = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
+        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
         
         // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
         if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
-            statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
-            statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
+            statusIcon.innerHTML = 'Terbuka';
+            statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
         } else {
-            statusIcon.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
-            statusIcon.className = 'badge bg-danger fs-7 d-flex align-items-center';
+            statusIcon.innerHTML = 'Terkunci';
+            statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
         }
     }
 
@@ -1177,7 +1175,7 @@
                                 ` : ''}
                                 ${data.jumlah_harga ? `
                                     <div class="col-md-6">
-                                        <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
+                                        <label class="fw-semibold text-dark mb-1">Total Harga:</label>
                                         <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                     </div>
                                 ` : ''}
@@ -1499,13 +1497,14 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 }
 
                 $.ajax({
-                    url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
+                    url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
                     type: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}',
+                        _token: '<?php echo e(csrf_token()); ?>',
                         lpj_id: lpjId,
                         alasan: alasan,
-                        user_id: {{ auth()->id() }}
+                        user_id: <?php echo e(auth()->id()); ?>
+
                     },
                     success: function(response) {
                         if(response.success) {
@@ -1530,4 +1529,6 @@ $('#ajukanPerubahanBtn').on('click', function() {
 
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/sekretariat/index.blade.php ENDPATH**/ ?>

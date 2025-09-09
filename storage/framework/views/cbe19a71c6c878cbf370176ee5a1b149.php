@@ -1,16 +1,14 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Manajemen Kegiatan Lainnya'); ?>
+<?php $__env->startSection('mainSection', 'Laporan Pertanggungjawaban'); ?>
+<?php $__env->startSection('currentSection', 'Kegiatan Lainnya'); ?>
 
-@section('pageTitle', 'Manajemen Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
-@section('currentSection', 'Kegiatan Lainnya')
+<?php $__env->startSection('breadcrumb-title'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-title')
-@endsection
+<?php $__env->startSection('breadcrumb-items'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-items')
-@endsection
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         body {
             background-color: #f5f5f5;
@@ -380,14 +378,14 @@
                 <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Kegiatan Lainnya - 2025</h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
+                    <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.create')); ?>" class="btn btn-primary"
     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
 </a>
 
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
+                            placeholder="Cari kegiatan..." value="<?php echo e(request('search')); ?>" autocomplete="off">
 
                         <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
                             style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
@@ -420,7 +418,7 @@
                 </div>
 
                 <div id="table-container">
-                    @include('admin.laporan-lpj.kegiatan-lainnya._table')
+                    <?php echo $__env->make('admin.laporan-lpj.kegiatan-lainnya._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                 </div>
             </div>
         </div>
@@ -494,7 +492,7 @@
         </div>
     </div>
 
-    {{-- Pengajuan Modal --}}
+    
     <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -518,9 +516,9 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
        $(document).ready(function() {
     let dataTable = null;
@@ -1042,9 +1040,9 @@
     if (statusIcon) {
         // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
         // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
-        const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
-        const hasApprovalPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
-        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
+        const isSuperAdmin = <?php echo e(auth()->user()->hasRole('superadmin') ? 'true' : 'false'); ?>;
+        const hasApprovalPermission = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
+        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
         
         // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
         if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
@@ -1499,13 +1497,14 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 }
 
                 $.ajax({
-                    url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
+                    url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
                     type: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}',
+                        _token: '<?php echo e(csrf_token()); ?>',
                         lpj_id: lpjId,
                         alasan: alasan,
-                        user_id: {{ auth()->id() }}
+                        user_id: <?php echo e(auth()->id()); ?>
+
                     },
                     success: function(response) {
                         if(response.success) {
@@ -1530,4 +1529,5 @@ $('#ajukanPerubahanBtn').on('click', function() {
 
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/kegiatan-lainnya/index.blade.php ENDPATH**/ ?>
