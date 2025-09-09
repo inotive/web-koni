@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Lpj;
 use App\Models\Pengajuan;
+use App\Models\Target; // Fixed capitalization
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -23,10 +24,25 @@ class LpjController extends Controller
     {
         $query = Lpj::query();
 
+        $target = null;
+        $current_budget = 0;
+        $kegiatan_count = 0;
+
         // Filter by parent ID
         if ($parentId) {
             $parent = Lpj::findOrFail($parentId);
             $query->where('parent_id', $parentId);
+
+            // Fixed model reference
+            $target = Target::where('id_lpj', $parentId)->first();
+
+            // Fixed budget calculation - use proper field names
+            $children = Lpj::where('parent_id', $parentId)->get();
+            foreach ($children as $child) {
+                // Use jumlah_harga instead of getTotalBudget() method
+                $current_budget += ($child->jumlah_harga ?? 0);
+            }
+            $kegiatan_count = $children->count();
         } else {
             $query->whereNull('parent_id');
         }
@@ -83,9 +99,14 @@ class LpjController extends Controller
             'parent',
             'breadcrumbs',
             'uniqueKegiatan',
-            'parentId'
+            'parentId',
+            'target',
+            'current_budget',
+            'kegiatan_count'
         ));
     }
+
+    // ... rest of your methods remain the same ...
 
     /**
      * Show the form for creating a new resource
@@ -217,8 +238,8 @@ class LpjController extends Controller
             }
         }
 
-        if ($lpj->dokumen_Pendukung) {
-            foreach ($lpj->dokumen_Pendukung as $dokumen) {
+        if ($lpj->dokumen_pendukung) { // Fixed typo here
+            foreach ($lpj->dokumen_pendukung as $dokumen) {
                 if (!in_array($dokumen, $existingDokumenPendukung)) {
                     Storage::delete($dokumen);
                 }

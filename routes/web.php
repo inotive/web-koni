@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\BidangController;
 use App\Http\Controllers\Admin\LpjController;
 use App\Http\Controllers\LaporanRKAController;
 use App\Http\Controllers\Admin\KegiatanLainnyaController;
+use App\Http\Controllers\Admin\TargetController;
 
 
 
@@ -202,6 +203,9 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
             // API routes for tree structure
             Route::get('/api/tree/{parentId?}', [App\Http\Controllers\Admin\LpjController::class, 'getTreeStructure'])->name('api.tree');
+
+            // Target routes
+            Route::post('/target/store-or-update', [TargetController::class, 'storeOrUpdate'])->name('target.store-or-update');
         });
     });
 

@@ -293,6 +293,20 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .top-progress-wrapper {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 20px 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: #A3AED0;
+        }
+
     </style>
 
     <div class="main-content">
@@ -317,6 +331,41 @@
 
                     <!-- Sort Dropdown -->
                     
+                </div>
+            </div>
+
+           <?php
+                $anggaran_percentage = $target_anggaran > 0 ? ($total_anggaran / $target_anggaran) * 100 : 0;
+            ?>
+            <div class="top-progress-wrapper mb-4">
+                <h3 class="text-muted mb-0">Total Anggaran</h3>
+                <div class="d-flex justify-content-between mb-2">
+                    <h1 class="fw-bold mb-1">Rp. <?php echo e(number_format($total_anggaran, 0, ',', '.')); ?> / Rp. <?php echo e(number_format($target_anggaran, 0, ',', '.')); ?></h1>
+                    <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="<?php echo e(round($anggaran_percentage, 2)); ?>% dari total anggaran">
+                        <?php echo e(round($anggaran_percentage)); ?>%
+                    </h3>
+                </div>
+
+                <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                        role="progressbar"
+                        style="width: <?php echo e($anggaran_percentage); ?>%; background-color: #F8285A; border-radius: 12px;"
+                        aria-valuenow="<?php echo e($anggaran_percentage); ?>"
+                        aria-valuemin="0"
+                        aria-valuemax="100">
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row-reverse bd-highlight mt-2">
+                    <div class="info-label mt-1 d-flex align-items-center gap-2">
+                        <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
+                            <?php echo e($total_kegiatan); ?> Kegiatan Berjalan
+                        </span>
+                        <span>/</span>
+                        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
+                            <?php echo e($target_kegiatan); ?> Target Kegiatan
+                        </span>
+                    </div>
                 </div>
             </div>
 
