@@ -966,9 +966,9 @@
             <div class="detail-card">
                 <div class="detail-card-header">
                     <h2 class="detail-card-title">Personal Info</h2>
-                    <a href="{{ route('admin.konfigurasi.prestasi.atlet.exportDetail', $atlet->id) }}" 
+                    <a href="{{ route('admin.konfigurasi.prestasi.atlet.exportPdf', $atlet->id) }}" 
                        class="btn btn-outline-secondary filter-btn-custom btn-export-custom">
-                        <i class="fas fa-file-export me-1"></i> Export
+                        <i class="fas fa-file-pdf me-1"></i> Export PDF
                     </a>
                 </div>
 
