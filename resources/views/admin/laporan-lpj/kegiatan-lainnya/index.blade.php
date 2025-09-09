@@ -374,6 +374,46 @@
         <div class="text-muted fw-semibold fs-6">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</div>
     </div>
 
+    <div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="flex-shrink-0 me-3">
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                        <i class="fas fa-list-alt fs-2 text-primary"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="text-muted mb-1 fw-normal">Total Kegiatan</h6>
+                     <h3 class="mb-0 fw-bold text-dark" id="total-kegiatan">
+                            {{ $totalKegiatan ?? $kegiatanLainnya->total() ?? 0 }}/10
+                        </h3>
+                    <small class="text-muted">Kegiatan terdaftar</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="flex-shrink-0 me-3">
+                    <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                        <i class="fas fa-money-bill-wave fs-2 text-success"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="text-muted mb-1 fw-normal">Total Anggaran</h6>
+                    <h3 class="mb-0 fw-bold text-dark" id="total-anggaran">
+                            {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }}/200.000.000.000
+                        </h3>
+                    <small class="text-muted">Anggaran keseluruhan</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div class="row col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
@@ -1331,6 +1371,25 @@
             'page': 1
         });
     });
+
+    function updateSummaryCards() {
+    const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(':contains("Data tidak ditemukan")');
+    const totalKegiatan = tableRows.length;
+    
+    let totalAnggaran = 0;
+    tableRows.each(function() {
+        const anggaranText = $(this).find('td').eq(2).text().trim();
+        if (anggaranText && anggaranText !== '-') {
+            const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
+            totalAnggaran += anggaranValue;
+        }
+    });
+    
+    $('#total-kegiatan').text(totalKegiatan);
+    $('#total-anggaran').text('Rp ' + totalAnggaran.toLocaleString('id-ID'));
+}
+
+// Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
 
     $(document).on('change', 'select[name="per_page"]', function() {
         const perPage = $(this).val();

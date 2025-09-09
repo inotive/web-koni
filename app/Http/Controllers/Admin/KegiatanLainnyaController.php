@@ -14,56 +14,62 @@ class KegiatanLainnyaController extends Controller
     const PARENT_CATEGORY = 'kegiatan-lainnya';
 
     public function index(Request $request)
-    {
-        // Cari atau buat parent kategori kegiatan-lainnya
-        $parentCategory = $this->getOrCreateParentCategory();
+{
+    // Cari atau buat parent kategori kegiatan-lainnya
+    $parentCategory = $this->getOrCreateParentCategory();
 
-        $query = Lpj::where('parent_id', $parentCategory->id);
+    $query = Lpj::where('parent_id', $parentCategory->id);
 
-        // Filter berdasarkan jenis kegiatan
-        if ($request->jenis_kegiatan_filter) {
-            $query->where('nama_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
-        }
-        
-        // Filter berdasarkan tanggal
-        if ($request->start_date) {
-            $query->whereDate('created_at', '>=', $request->start_date);
-        }
-        if ($request->end_date) {
-            $query->whereDate('created_at', '<=', $request->end_date);
-        }
-        
-        // Filter berdasarkan pencarian
-        if ($request->search) {
-            $query->where(function($q) use ($request) {
-                $q->where('nama_program', 'like', "%{$request->search}%")
-                  ->orWhere('nama_kegiatan', 'like', "%{$request->search}%");
-            });
-        }
-
-        // Sorting
-        $allowedSorts = ['nama_program', 'nama_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga', 'created_at'];
-        $sort = $request->get('sort_by', 'created_at');
-        $direction = $request->get('sort_order', 'desc');
-
-        if (!in_array($sort, $allowedSorts)) {
-            $sort = 'created_at';
-        }
-        if (!in_array($direction, ['asc', 'desc'])) {
-            $direction = 'desc';
-        }
-
-        $kegiatanLainnya = $query
-            ->orderBy($sort, $direction)
-            ->paginate($request->get('per_page', 10))
-            ->appends($request->except('page'));
-
-        if ($request->ajax()) {
-            return view('admin.laporan-lpj.kegiatan-lainnya._table', compact('kegiatanLainnya'))->render();
-        }
-
-        return view('admin.laporan-lpj.kegiatan-lainnya.index', compact('kegiatanLainnya'));
+    // Filter berdasarkan jenis kegiatan
+    if ($request->jenis_kegiatan_filter) {
+        $query->where('nama_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
     }
+    
+    // Filter berdasarkan tanggal
+    if ($request->start_date) {
+        $query->whereDate('created_at', '>=', $request->start_date);
+    }
+    if ($request->end_date) {
+        $query->whereDate('created_at', '<=', $request->end_date);
+    }
+    
+    // Filter berdasarkan pencarian
+    if ($request->search) {
+        $query->where(function($q) use ($request) {
+            $q->where('nama_program', 'like', "%{$request->search}%")
+              ->orWhere('nama_kegiatan', 'like', "%{$request->search}%");
+        });
+    }
+
+    // Hitung total kegiatan dan total anggaran SEBELUM pagination berdasarkan filter yang diterapkan
+    $totalKegiatan = (clone $query)->count();
+    $totalAnggaran = (clone $query)->sum('jumlah_harga');
+
+    // Sorting
+    $allowedSorts = ['nama_program', 'nama_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga', 'created_at'];
+    $sort = $request->get('sort_by', 'created_at');
+    $direction = $request->get('sort_order', 'desc');
+
+    if (!in_array($sort, $allowedSorts)) {
+        $sort = 'created_at';
+    }
+    if (!in_array($direction, ['asc', 'desc'])) {
+        $direction = 'desc';
+    }
+
+    $kegiatanLainnya = $query
+        ->orderBy($sort, $direction)
+        ->paginate($request->get('per_page', 10))
+        ->appends($request->except('page'));
+
+    // Untuk AJAX request (filtering/searching), return partial view dengan data summary
+    if ($request->ajax()) {
+        return view('admin.laporan-lpj.kegiatan-lainnya._table', compact('kegiatanLainnya', 'totalKegiatan', 'totalAnggaran'))->render();
+    }
+
+    // Untuk request biasa, return full view dengan data summary
+    return view('admin.laporan-lpj.kegiatan-lainnya.index', compact('kegiatanLainnya', 'totalKegiatan', 'totalAnggaran'));
+}
 
     public function create()
     {
@@ -238,34 +244,6 @@ class KegiatanLainnyaController extends Controller
             return back()->withErrors(['jumlah_harga' => 'Jumlah harga tidak boleh negatif.'])->withInput();
         }
 
-        $data = [
-            'nama_program' => $request->nama_program_kegiatan,
-            'nama_kegiatan' => $request->jenis_kegiatan,
-            'volume' => $request->volume ?? '', // Default ke string kosong jika null
-            'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
-            'jumlah_harga' => $jumlahHarga,
-            'keterangan_tambahan' => $request->keterangan_tambahan,
-            'foto_jurnal' => $allFotoJurnal,
-            'dokumen_lpj' => $allDokumenLpj,
-            'dokumen_lpj_pdf' => $allDokumenLpjPdf
-        ];
-
-        if ($request->hasFile('foto_jurnal')) {
-            if ($kegiatanLainnya->foto_jurnal) {
-                foreach ($kegiatanLainnya->foto_jurnal as $oldFoto) {
-                    Storage::disk('public')->delete($oldFoto);
-                }
-            }
-
-            $fotoPaths = [];
-            foreach ($request->file('foto_jurnal') as $file) {
-                // Simpan dengan nama file asli
-                $originalName = $file->getClientOriginalName();
-                $fotoPaths[] = $file->storeAs('kegiatan-lainnya/foto_jurnal', $originalName, 'public');
-            }
-            $data['foto_jurnal'] = $fotoPaths;
-        }
-
         // Handle existing files
         $existingFotoJurnal = $request->input('existing_foto_jurnal', []);
         $existingDokumenLpj = $request->input('existing_dokumen_lpj', []);
@@ -327,6 +305,18 @@ class KegiatanLainnyaController extends Controller
         $allFotoJurnal = array_merge($existingFotoJurnal, $newFotoJurnal);
         $allDokumenLpj = array_merge($existingDokumenLpj, $newDokumenLpj);
         $allDokumenLpjPdf = array_merge($existingDokumenLpjPdf, $newDokumenLpjPdf);
+
+        $data = [
+            'nama_program' => $request->nama_program_kegiatan,
+            'nama_kegiatan' => $request->jenis_kegiatan,
+            'volume' => $request->volume ?? '', // Default ke string kosong jika null
+            'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
+            'jumlah_harga' => $jumlahHarga,
+            'keterangan_tambahan' => $request->keterangan_tambahan,
+            'foto_jurnal' => $allFotoJurnal,
+            'dokumen_lpj' => $allDokumenLpj,
+            'dokumen_lpj_pdf' => $allDokumenLpjPdf
+        ];
 
         $kegiatanLainnya->update($data);
 
