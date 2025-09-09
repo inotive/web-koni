@@ -147,6 +147,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
             // Prestasi untuk Atlet
             Route::prefix('atlet')->name('atlet.')->group(function () {
+                Route::get('/{atlet}/export-detail', [AtletController::class, 'exportDetail'])->name('exportDetail');
                 Route::get('/{atlet}/create', [PrestasiController::class, 'createForAtlet'])->name('create');
                 Route::post('/{atlet}', [PrestasiController::class, 'storeForAtlet'])->name('store');
             });
@@ -218,6 +219,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/{sekretariat}/edit', [App\Http\Controllers\Admin\SekretariatController::class, 'edit'])->name('edit');
             Route::put('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'update'])->name('update');
             Route::delete('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'destroy'])->name('destroy');
+            Route::get('/{sekretariat}/export', [App\Http\Controllers\Admin\SekretariatController::class, 'export'])->name('export');
         });
 
         // Route untuk Bidang

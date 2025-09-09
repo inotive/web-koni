@@ -182,7 +182,7 @@
 
                             <td>
                                 <div class="text-truncate-custom">
-                                    <?php echo e($prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-'); ?>
+                                    <?php echo e($prestasi->cabangOlahraga?->nama_cabor ?? $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-'); ?>
 
                                 </div>
                             </td>

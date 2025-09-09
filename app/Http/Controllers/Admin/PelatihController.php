@@ -444,7 +444,7 @@ class PelatihController extends Controller
         // Build the same query as the index method to ensure consistency
         $allowedSorts = [
             'nama', 'tanggal_lahir', 'kelamin', 'alamat',
-            'no_telepon', 'email', 'updated_at', 'created_at', 'prestasi'
+            'no_telepon', 'email', 'updated_at', 'created_at'
         ];
 
         $sortBy = $request->get('sort_by', 'created_at');
@@ -458,17 +458,9 @@ class PelatihController extends Controller
             $order = 'desc';
         }
 
-        $query = Pelatih::with(['cabangOlahraga', 'prestasis' => function ($q) {
-            $q->orderByDesc('tahun');
-        }])
-        ->withCount('prestasis');
+        $query = Pelatih::with('cabangOlahraga');
 
-        // Handle prestasi sorting separately
-        if ($sortBy === 'prestasi') {
-            $query->orderBy('prestasis_count', $order);
-        } else {
-            $query->orderBy($sortBy, $order);
-        }
+        $query->orderBy($sortBy, $order);
 
         // If cabor_id is provided in the request, filter by that cabang olahraga
         if ($request->filled('cabor_id')) {
@@ -488,10 +480,6 @@ class PelatihController extends Controller
                 ->orWhere('tempat_lahir', 'like', '%' . $searchTerm . '%')
                 ->orWhereHas('cabangOlahraga', function ($q) use ($searchTerm) {
                     $q->where('nama_cabor', 'like', '%' . $searchTerm . '%');
-                })
-                ->orWhereHas('prestasis', function ($q) use ($searchTerm) {
-                    $q->where('nama_prestasi', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('tempat', 'like', '%' . $searchTerm . '%');
                 });
             });
         }
@@ -521,32 +509,12 @@ class PelatihController extends Controller
             }
         }
 
-        if ($request->filled('prestasi') || $request->filled('filter_prestasi')) {
-            $prestasiValue = $request->filled('prestasi') ? $request->prestasi : $request->filter_prestasi;
-
-            switch ($prestasiValue) {
-                case 'ada':
-                    $query->has('prestasis');
-                    break;
-                case 'tidak':
-                    $query->doesntHave('prestasis');
-                    break;
-                case 'emas':
-                case 'perak':
-                case 'perunggu':
-                    $query->whereHas('prestasis', function ($q) use ($prestasiValue) {
-                        $q->where('medali', ucfirst($prestasiValue));
-                    });
-                    break;
-            }
-        }
-
         if ($request->filled('filter_ketersediaan')) {
             $query->where('ketersediaan', $request->filter_ketersediaan);
         }
 
-        // Add secondary sorting for non-prestasi sorts
-        if ($sortBy !== 'created_at' && $sortBy !== 'prestasi') {
+        // Add secondary sorting
+        if ($sortBy !== 'created_at') {
             $query->orderBy('created_at', 'desc');
         }
 
@@ -556,7 +524,7 @@ class PelatihController extends Controller
         // Get all matching records for export
         $pelatihData = $query->get();
 
-        // Generate the CSV response using StreamedResponse like in LpjController
+        // Generate the CSV response using StreamedResponse
         $response = new StreamedResponse(function() use ($pelatihData) {
             $handle = fopen('php://output', 'w');
 
@@ -576,15 +544,9 @@ class PelatihController extends Controller
                 'No Telepon',
                 'Email',
                 'Ketersediaan',
-                'Total Prestasi',
-                'Prestasi Terbaru',
-                'Tahun Prestasi Terbaru',
-                'Tempat Prestasi Terbaru'
             ]);
 
             foreach ($pelatihData as $index => $pelatih) {
-                $prestasiTerbaru = $pelatih->prestasis->first();
-
                 // Calculate age
                 $age = $pelatih->tanggal_lahir
                     ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age
@@ -611,10 +573,6 @@ class PelatihController extends Controller
                     $pelatih->no_telepon ?: '-',
                     $pelatih->email ?: '-',
                     $pelatih->ketersediaan,
-                    $pelatih->prestasis_count,
-                    $prestasiTerbaru ? $prestasiTerbaru->nama_prestasi : '-',
-                    $prestasiTerbaru ? $prestasiTerbaru->tahun : '-',
-                    $prestasiTerbaru ? $prestasiTerbaru->tempat : '-'
                 ]);
             }
 
@@ -637,9 +595,6 @@ class PelatihController extends Controller
         if ($request->filled('filter_age')) {
             $filterInfo .= '_age';
         }
-        if ($request->filled('filter_prestasi')) {
-            $filterInfo .= '_prestasi';
-        }
         if ($request->filled('filter_ketersediaan')) {
             $filterInfo .= '_ketersediaan';
         }
@@ -647,7 +602,7 @@ class PelatihController extends Controller
         $filename = "pelatih_export{$filterInfo}_{$timestamp}.csv";
 
         $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}\"");
+        $response->headers->set('Content-Disposition', "attachment; filename=\"$filename\"");
         $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
         $response->headers->set('Pragma', 'no-cache');
         $response->headers->set('Expires', '0');
