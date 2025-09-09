@@ -731,7 +731,10 @@ class AtletController extends Controller
 
             // Generate filename
             $timestamp = now()->format('Y-m-d_H-i-s');
-            $filename = "detail_atlet_{$atlet->id}_{$timestamp}.csv";
+            // Clean the atlet name for filename (remove special characters and replace spaces with underscores)
+            $cleanAtletName = preg_replace('/[^a-zA-Z0-9\s]/', '', $atlet->nama);
+            $cleanAtletName = str_replace(' ', '_', $cleanAtletName);
+            $filename = "detail_{$cleanAtletName}_{$timestamp}.csv";
 
             $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
             $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}\"");
@@ -761,9 +764,12 @@ class AtletController extends Controller
             // Generate PDF
             $pdf = Pdf::loadView('admin.atlet.export-pdf', compact('atlet'));
             
-            // Generate filename
+            // Generate filename with atlet name
             $timestamp = now()->format('Y-m-d_H-i-s');
-            $filename = "detail_atlet_{$atlet->id}_{$timestamp}.pdf";
+            // Clean the atlet name for filename (remove special characters and replace spaces with underscores)
+            $cleanAtletName = preg_replace('/[^a-zA-Z0-9\s]/', '', $atlet->nama);
+            $cleanAtletName = str_replace(' ', '_', $cleanAtletName);
+            $filename = "detail_{$cleanAtletName}_{$timestamp}.pdf";
 
             return $pdf->download($filename);
         } catch (\Exception $e) {

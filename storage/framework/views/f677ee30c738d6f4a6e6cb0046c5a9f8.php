@@ -964,9 +964,9 @@
             <div class="detail-card">
                 <div class="detail-card-header">
                     <h2 class="detail-card-title">Personal Info</h2>
-                    <a href="<?php echo e(route('admin.konfigurasi.prestasi.atlet.exportPdf', $atlet->id)); ?>" 
-                       class="btn btn-outline-secondary filter-btn-custom btn-export-custom">
-                        <i class="fas fa-file-pdf me-1"></i> Export PDF
+                    <a href="<?php echo e(route('admin.konfigurasi.prestasi.atlet.exportPdf', $atlet->id)); ?>"
+                       class="btn btn-outline-secondary filter-btn-custom btn-export-custom" style="border: #b0b5c3 1px solid;">
+                        <i class="fas fa-file-pdf me-1"></i> Export
                     </a>
                 </div>
 
