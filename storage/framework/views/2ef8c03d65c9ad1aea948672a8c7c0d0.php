@@ -42,19 +42,18 @@
         }
 
         /* Table styles */
-        table td, table th {
-            vertical-align: middle;
-            word-wrap: break-word;
-            max-width: 200px;
+        .table {
+            table-layout: fixed !important;
+            width: 100%;
         }
-
+        
         .table th:nth-child(1) { width: 40px; }
         .table th:nth-child(2) { width: 250px; }
-        .table th:nth-child(3) { width: 100px; }
+        .table th:nth-child(3) { width: 200px; }
         .table th:nth-child(4) { width: 150px; }
-        .table th:nth-child(5) { width: 150px; }
+        .table th:nth-child(5) { width: 200px; }
         .table th:nth-child(6) { width: 150px; }
-        .table th:nth-child(7) { width: 150px; }
+        .table th:nth-child(7) { width: 210px; }
         .table th:nth-child(8) { width: 80px; }
 
         /* Dropdown styles */
