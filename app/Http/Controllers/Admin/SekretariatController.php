@@ -492,6 +492,8 @@ class SekretariatController extends Controller
     public function export($id)
     {
         try {
+            \Log::info('Exporting sekretariat LPJ with ID: ' . $id);
+            
             $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                               ->findOrFail($id);
 
@@ -507,10 +509,11 @@ class SekretariatController extends Controller
             // Nama file PDF
             $fileName = 'Laporan_Sekretariat_' . Str::slug($sekretariat->nama_program) . '.pdf';
 
+            \Log::info('Successfully generated PDF for sekretariat LPJ: ' . $fileName);
             return $pdf->download($fileName);
         } catch (\Exception $e) {
             // Log error
-            \Log::error('Error exporting PDF: ' . $e->getMessage());
+            \Log::error('Error exporting PDF: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
             
             // Return error response with redirect
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor laporan. Silakan coba lagi.');
