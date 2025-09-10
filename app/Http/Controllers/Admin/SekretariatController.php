@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Lpj;
 use App\Models\Pengajuan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\PdfParser\StreamReader;
 
 class SekretariatController extends Controller
 {
@@ -71,8 +74,8 @@ class SekretariatController extends Controller
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
-            'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'volume' => 'nullable|string|max:255',
+            'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
@@ -96,8 +99,8 @@ class SekretariatController extends Controller
             'parent_id' => $parentCategory->id,
             'nama_program' => $request->nama_program_kegiatan,
             'nama_kegiatan' => $request->jenis_kegiatan,
-            'volume' => $request->volume,
-            'jumlah_harga_satuan' => $request->jumlah_harga_satuan,
+            'volume' => $request->volume ?? '',
+            'jumlah_harga_satuan' => $request->jumlah_harga_satuan ?? 0,
             'jumlah_harga' => $request->jumlah_harga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
             'icon' => 'fas fa-clipboard-list'
@@ -131,6 +134,17 @@ class SekretariatController extends Controller
                 ];
             }
             $data['dokumen_lpj'] = $dokumenPaths;
+        }
+
+        // Handle dokumen_lpj_pdf
+        if ($request->hasFile('dokumen_lpj_pdf')) {
+            $file = $request->file('dokumen_lpj_pdf');
+            $originalName = $file->getClientOriginalName();
+            $path = $file->storeAs('sekretariat/dokumen_lpj_pdf', $originalName, 'public');
+            $data['dokumen_lpj_pdf'] = [
+                'path' => $path,
+                'original_name' => $originalName,
+            ];
         }
 
         Lpj::create($data);
@@ -179,8 +193,8 @@ class SekretariatController extends Controller
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
-            'volume' => 'required|string|max:255',
-            'jumlah_harga_satuan' => 'required|numeric|min:0',
+            'volume' => 'nullable|string|max:255',
+            'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
@@ -204,8 +218,8 @@ class SekretariatController extends Controller
         $data = [
             'nama_program' => $request->nama_program_kegiatan,
             'nama_kegiatan' => $request->jenis_kegiatan,
-            'volume' => $request->volume,
-            'jumlah_harga_satuan' => $request->jumlah_harga_satuan,
+            'volume' => $request->volume ?? '',
+            'jumlah_harga_satuan' => $request->jumlah_harga_satuan ?? 0,
             'jumlah_harga' => $request->jumlah_harga,
             'keterangan_tambahan' => $request->keterangan_tambahan
         ];
@@ -300,6 +314,34 @@ class SekretariatController extends Controller
         }
         $data['dokumen_lpj'] = !empty($existingDokumens) ? $existingDokumens : null;
 
+        // Handle dokumen_lpj_pdf
+        if ($request->hasFile('dokumen_lpj_pdf')) {
+            $file = $request->file('dokumen_lpj_pdf');
+            $originalName = $file->getClientOriginalName();
+            // Cek jika file dengan nama yang sama sudah ada, tambahkan timestamp jika perlu
+            $path = 'sekretariat/dokumen_lpj_pdf/' . $originalName;
+            if (Storage::disk('public')->exists($path)) {
+                $filename = pathinfo($originalName, PATHINFO_FILENAME);
+                $extension = $file->getClientOriginalExtension();
+                $timestamp = time();
+                $originalName = $filename . '_' . $timestamp . '.' . $extension;
+            }
+            $path = $file->storeAs('sekretariat/dokumen_lpj_pdf', $originalName, 'public');
+            $data['dokumen_lpj_pdf'] = [
+                'path' => $path,
+                'original_name' => $originalName,
+            ];
+        } else if ($request->has('existing_dokumen_lpj_pdf')) {
+            // Keep existing dokumen_lpj_pdf if no new file was uploaded
+            $data['dokumen_lpj_pdf'] = $sekretariat->dokumen_lpj_pdf;
+        } else if ($request->has('deleted_dokumen_lpj_pdf')) {
+            // Delete the file if marked for deletion
+            if ($sekretariat->dokumen_lpj_pdf && isset($sekretariat->dokumen_lpj_pdf['path'])) {
+                Storage::disk('public')->delete($sekretariat->dokumen_lpj_pdf['path']);
+            }
+            $data['dokumen_lpj_pdf'] = null;
+        }
+
         $sekretariat->update($data);
 
         return redirect()->route('admin.laporan-lpj.sekretariat.index')
@@ -348,6 +390,11 @@ class SekretariatController extends Controller
                 }
             }
 
+            // Hapus dokumen_lpj_pdf jika ada
+            if ($sekretariat->dokumen_lpj_pdf && isset($sekretariat->dokumen_lpj_pdf['path'])) {
+                Storage::disk('public')->delete($sekretariat->dokumen_lpj_pdf['path']);
+            }
+
             $sekretariat->delete();
 
             return response()->json(['message' => 'Kegiatan berhasil dihapus.']);
@@ -372,7 +419,7 @@ class SekretariatController extends Controller
         }
 
         $request->validate([
-            'file_type' => 'required|in:foto_jurnal,dokumen_lpj',
+            'file_type' => 'required|in:foto_jurnal,dokumen_lpj,dokumen_lpj_pdf',
             'file_index' => 'required|integer|min:0'
         ]);
 
@@ -380,30 +427,46 @@ class SekretariatController extends Controller
         $fileIndex = $request->file_index;
         $files = $sekretariat->$fileType ?? [];
 
-        if (!isset($files[$fileIndex])) {
-            return response()->json(['error' => 'File tidak ditemukan'], 404);
+        if ($fileType === 'dokumen_lpj_pdf') {
+            // Handle dokumen_lpj_pdf (single file, not array)
+            if ($sekretariat->dokumen_lpj_pdf && isset($sekretariat->dokumen_lpj_pdf['path'])) {
+                Storage::disk('public')->delete($sekretariat->dokumen_lpj_pdf['path']);
+                $sekretariat->update(['dokumen_lpj_pdf' => null]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'File berhasil dihapus',
+                    'remaining_files' => 0
+                ]);
+            } else {
+                return response()->json(['error' => 'File tidak ditemukan'], 404);
+            }
+        } else {
+            // Handle array files (foto_jurnal, dokumen_lpj)
+            if (!isset($files[$fileIndex])) {
+                return response()->json(['error' => 'File tidak ditemukan'], 404);
+            }
+
+            $filePath = $files[$fileIndex];
+            // Jika $filePath adalah array dengan key 'path'
+            if (is_array($filePath) && isset($filePath['path'])) {
+                Storage::disk('public')->delete($filePath['path']);
+            } 
+            // Jika $filePath adalah string path
+            else if (is_string($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+
+            unset($files[$fileIndex]);
+            $files = array_values($files);
+
+            $sekretariat->update([$fileType => $files]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'File berhasil dihapus',
+                'remaining_files' => count($files)
+            ]);
         }
-
-        $filePath = $files[$fileIndex];
-        // Jika $filePath adalah array dengan key 'path'
-        if (is_array($filePath) && isset($filePath['path'])) {
-            Storage::disk('public')->delete($filePath['path']);
-        } 
-        // Jika $filePath adalah string path
-        else if (is_string($filePath)) {
-            Storage::disk('public')->delete($filePath);
-        }
-
-        unset($files[$fileIndex]);
-        $files = array_values($files);
-
-        $sekretariat->update([$fileType => $files]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'File berhasil dihapus',
-            'remaining_files' => count($files)
-        ]);
     }
 
     /**
@@ -421,5 +484,36 @@ class SekretariatController extends Controller
                 'icon' => 'fas fa-building'
             ]
         );
+    }
+
+    /**
+     * Export laporan sekretariat ke PDF dengan kop surat
+     */
+    public function export($id)
+    {
+        try {
+            $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                              ->findOrFail($id);
+
+            // Data untuk ditampilkan di PDF
+            $data = [
+                'sekretariat' => $sekretariat,
+            ];
+
+            // Generate PDF menggunakan DomPDF
+            $pdf = Pdf::loadView('admin.laporan-lpj.sekretariat.export', $data)
+                      ->setPaper('a4', 'portrait');
+
+            // Nama file PDF
+            $fileName = 'Laporan_Sekretariat_' . Str::slug($sekretariat->nama_program) . '.pdf';
+
+            return $pdf->download($fileName);
+        } catch (\Exception $e) {
+            // Log error
+            \Log::error('Error exporting PDF: ' . $e->getMessage());
+            
+            // Return error response with redirect
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor laporan. Silakan coba lagi.');
+        }
     }
 }

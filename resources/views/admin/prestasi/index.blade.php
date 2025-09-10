@@ -447,13 +447,16 @@ body {
     height: 1rem;
 }
 
-/* Search Highlight */
-.search-highlight {
-    background-color: #fff3cd;
-    color: #856404;
-    padding: 1px 2px;
-    border-radius: 2px;
-    font-weight: 600;
+
+
+/* Filter Button Custom */
+.filter-btn-custom {
+    border: 1px solid #dee2e6 !important;
+    background-color: white;
+}
+
+.filter-btn-custom:hover {
+    background-color: #f8f9fa;
 }
 
 /* Toast Notifications */
@@ -594,19 +597,22 @@ body {
                                             </button>
                                         </div>
 
+
+                                         <a href="{{ route('admin.konfigurasi.prestasi.export') }}" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
+                                        <i class="fas fa-file-csv me-1"></i> Export
+                                    </a>
                                         <div class="dropdown">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                                data-bs-toggle="dropdown">
-                                                <i class="fas fa-filter me-1"></i> Filter
-                                                <span id="filter-count"
-                                                    class="badge badge-circle badge-danger ms-1 d-none">0</span>
-                                            </button>
-                                            <div class="dropdown-menu p-3 shadow" style="min-width: 280px;">
+                                        <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom" type="button"
+                                            data-bs-toggle="dropdown">
+                                            <i class="fas fa-filter me-1"></i> Filter
+                                            <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                        </button>
+                                            <div class="dropdown-menu p-3 shadow" style="min-width: 280px; border: 1px solid #ced4da;">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold">
                                                         <i class="fas fa-calendar-alt me-1"></i>Tahun
                                                     </label>
-                                                    <select id="filter-tahun" class="form-select">
+                                                    <select id="filter-tahun" class="form-select" style="border: 1px solid #ced4da !important;">
                                                         <option value="">Semua Tahun</option>
                                                     </select>
                                                 </div>
@@ -615,7 +621,7 @@ body {
                                                     <label class="form-label fw-semibold">
                                                         <i class="fas fa-medal me-1"></i>Medali
                                                     </label>
-                                                    <select id="filter-medali" class="form-select">
+                                                    <select id="filter-medali" class="form-select" style="border: 1px solid #ced4da !important;">
                                                         <option value="">Semua Medali</option>
                                                         <option value="Emas"
                                                             {{ request('medali') == 'Emas' ? 'selected' : '' }}>Emas
@@ -633,7 +639,7 @@ body {
                                                     <label class="form-label fw-semibold">
                                                         <i class="fas fa-layer-group me-1"></i>Tingkat
                                                     </label>
-                                                    <select id="filter-tingkat" class="form-select">
+                                                    <select id="filter-tingkat" class="form-select" style="border: 1px solid #ced4da !important;">
                                                         <option value="">Semua Tingkat</option>
                                                         <option value="Nasional"
                                                             {{ request('tingkat') == 'Nasional' ? 'selected' : '' }}>
@@ -652,11 +658,11 @@ body {
 
                                                 <div class="d-flex gap-2">
                                                     <button type="button" id="apply-filters"
-                                                        class="btn btn-primary btn-sm flex-fill">
+                                                        class="btn btn-primary btn-sm flex-fill" style="border: 1px solid #0d6efd !important;">
                                                         <i class="fas fa-check"></i> Terapkan
                                                     </button>
                                                     <button type="button" id="reset-filters"
-                                                        class="btn btn-light btn-sm flex-fill">
+                                                        class="btn btn-light btn-sm flex-fill" style="border: 1px solid #6c757d !important;">
                                                         <i class="fas fa-redo"></i> Reset
                                                     </button>
                                                 </div>
@@ -856,6 +862,70 @@ $(document).ready(function() {
                 e.preventDefault();
                 destroyItem(this);
             });
+            
+        // Export CSV button
+        $(document).on('click', '#export-csv', function(e) {
+            e.preventDefault();
+            
+            // Get the base export URL
+            const baseUrl = $(this).attr('href');
+            const url = new URL(baseUrl, window.location.origin);
+            
+            // Get all current parameters from the window URL
+            const currentParams = new URLSearchParams(window.location.search);
+            
+            // Append all current filter and search params to the export URL
+            currentParams.forEach((value, key) => {
+                if (key !== 'page') { // Don't include pagination in export
+                    url.searchParams.append(key, value);
+                }
+            });
+            
+            // Also get values directly from form elements in case they haven't been applied yet
+            const search = $('#search').val();
+            const filterTahun = $('#filter-tahun').val();
+            const filterMedali = $('#filter-medali').val();
+            const filterTingkat = $('#filter-tingkat').val();
+            
+            // Add form values to URL if they exist and aren't already in currentParams
+            if (search && !currentParams.has('search')) {
+                url.searchParams.set('search', search);
+            }
+            if (filterTahun && !currentParams.has('tahun')) {
+                url.searchParams.set('tahun', filterTahun);
+            }
+            if (filterMedali && !currentParams.has('medali')) {
+                url.searchParams.set('medali', filterMedali);
+            }
+            if (filterTingkat && !currentParams.has('tingkat')) {
+                url.searchParams.set('tingkat', filterTingkat);
+            }
+            
+            // Add current sorting parameters
+            const sortBy = new URLSearchParams(window.location.search).get('sort_by');
+            const order = new URLSearchParams(window.location.search).get('order');
+            
+            if (sortBy) {
+                url.searchParams.set('sort_by', sortBy);
+            }
+            if (order) {
+                url.searchParams.set('order', order);
+            }
+            
+            // Show a brief loading indication
+            const originalText = $(this).html();
+            $(this).html('<i class="fas fa-spinner fa-spin me-1"></i> Exporting...');
+            $(this).prop('disabled', true);
+            
+            // Navigate to the export URL
+            window.location.href = url.toString();
+            
+            // Reset button after a short delay (since page might redirect)
+            setTimeout(() => {
+                $(this).html(originalText);
+                $(this).prop('disabled', false);
+            }, 2000);
+        });
 
         updateFilterBadge();
     }

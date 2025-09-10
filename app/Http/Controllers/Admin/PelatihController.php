@@ -463,6 +463,11 @@ class PelatihController extends Controller
 
         $query->orderBy($sortBy, $order);
 
+        // If cabor_id is provided in the request, filter by that cabang olahraga
+        if ($request->filled('cabor_id')) {
+            $query->where('cabor_id', $request->cabor_id);
+        }
+
         // Apply the same filters as the index method
         if ($request->filled('search')) {
             $searchTerm = $request->search;
@@ -582,7 +587,7 @@ class PelatihController extends Controller
         if ($request->filled('search')) {
             $filterInfo .= '_search';
         }
-        if ($request->filled('filter_cabor')) {
+        if ($request->filled('filter_cabor') || $request->filled('cabor_id')) {
             $filterInfo .= '_cabor';
         }
         if ($request->filled('filter_gender')) {

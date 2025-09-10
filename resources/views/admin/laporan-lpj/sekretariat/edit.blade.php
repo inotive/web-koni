@@ -220,12 +220,6 @@
             margin-top: 8px;
         }
 
-        .max-files-warning {
-            color: #e74c3c;
-            font-size: 0.85rem;
-            margin-top: 8px;
-        }
-
         .existing-files-section {
             background-color: #f8f9fa;
             border-radius: 8px;
@@ -299,41 +293,44 @@
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
-                                <div class="col-md-3">
-                                    <label for="volume" class="form-label">Volume</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="text" name="volume" id="volume"
-                                        class="form-control @error('volume') is-invalid @enderror"
-                                        placeholder="Masukkan volume (misal: 100 orang, 5 unit, dll)"
-                                        value="{{ old('volume', $sekretariat->volume) }}">
-                                    @error('volume')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row align-items-center mb-3">
-                                <div class="col-md-3">
-                                    <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="currency-input">
-                                        <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
-                                            class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
-                                            placeholder="0"
-                                            value="{{ old('jumlah_harga_satuan', $sekretariat->jumlah_harga_satuan) }}">
+                            {{-- HIDDEN FIELDS --}}
+                            <div style="display: none;">
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-md-3">
+                                        <label for="volume" class="form-label">Volume</label>
                                     </div>
-                                    @error('jumlah_harga_satuan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <div class="col-md-9">
+                                        <input type="text" name="volume" id="volume"
+                                            class="form-control @error('volume') is-invalid @enderror"
+                                            placeholder="Masukkan volume (misal: 100 orang, 5 unit, dll)"
+                                            value="{{ old('volume', $sekretariat->volume) }}">
+                                        @error('volume')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-md-3">
+                                        <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="currency-input">
+                                            <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                                class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
+                                                placeholder="0"
+                                                value="{{ old('jumlah_harga_satuan', $sekretariat->jumlah_harga_satuan) }}">
+                                        </div>
+                                        @error('jumlah_harga_satuan')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="jumlah_harga" class="form-label">Total Harga</label>
+                                    <label for="jumlah_harga" class="form-label">Total Anggaran</label>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="currency-input">
@@ -351,7 +348,7 @@
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Foto Jurnal</label>
-                                    <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
+                                    <p class="file-upload-hint">Unggah foto tanpa batasan jumlah, masing-masing hingga 10 MB</p>
                                 </div>
                                 <div class="col-md-9">
                                     @php
@@ -419,9 +416,6 @@
 
                                     <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
                                     <div id="fotoCounter" class="file-counter"></div>
-                                    <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
-                                        Maksimal 10 foto yang dapat diunggah.
-                                    </div>
 
                                     @error('foto_jurnal.*')
                                         <div class="text-danger mt-2">{{ $message }}</div>
@@ -527,6 +521,84 @@
                                 </div>
                             </div>
 
+                            {{-- Dokumen LPJ Upload (PDF Only) --}}
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Dokumen LPJ</label>
+                                    <p class="file-upload-hint">Unggah file PDF saja, maksimal 10MB</p>
+                                </div>
+                                <div class="col-md-9">
+                                    @php
+                                        $dokumenLpj = $sekretariat->dokumen_lpj_pdf ?? null;
+                                    @endphp
+                                    @if($dokumenLpj)
+                                        <div class="existing-files-section">
+                                            <h6><i class="fas fa-file-pdf me-2 text-danger"></i>Dokumen LPJ yang sudah ada:</h6>
+                                            <div id="existing-dokumen-lpj-preview">
+                                                @php
+                                                    // Handle berbagai tipe data untuk dokumen LPJ
+                                                    $path = '';
+                                                    $originalName = '';
+
+                                                    if (is_object($dokumenLpj)) {
+                                                        $path = $dokumenLpj->path;
+                                                        $originalName = $dokumenLpj->original_name ?? basename($path);
+                                                    } elseif (is_array($dokumenLpj)) {
+                                                        $path = isset($dokumenLpj['path']) ? $dokumenLpj['path'] : '';
+                                                        $originalName = isset($dokumenLpj['original_name']) ? $dokumenLpj['original_name'] : (is_string($path) ? basename($path) : '');
+                                                    } elseif (is_string($dokumenLpj)) {
+                                                        $path = $dokumenLpj;
+                                                        $originalName = basename($path);
+                                                    }
+
+                                                    // Pastikan kita punya nama file
+                                                    if (empty($originalName) && is_string($path)) {
+                                                        $originalName = basename($path);
+                                                    }
+                                                @endphp
+                                                <div class="file-preview-item existing" data-file-path="{{ $path }}">
+                                                    <div class="file-icon">
+                                                        <i class="fas fa-file-pdf text-danger fs-4"></i>
+                                                    </div>
+                                                    <div class="file-info">
+                                                        <div class="file-name">{{ $originalName }}</div>
+                                                        <div class="file-size">File yang ada</div>
+                                                    </div>
+                                                    <button type="button" class="remove-file"
+                                                            onclick="removeExistingDokumenLpj(this, '{{ $path }}')">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <input type="hidden" name="existing_dokumen_lpj_pdf" value="{{ $path }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <label for="dokumen_lpj_pdf" class="file-upload-wrapper">
+                                        <input type="file" name="dokumen_lpj_pdf" id="dokumen_lpj_pdf"
+                                               class="@error('dokumen_lpj_pdf') is-invalid @enderror"
+                                               accept=".pdf">
+
+                                        <div class="d-flex align-items-center gap-12">
+                                            <div class="file-upload-icon-wrapper">
+                                                <i class="fas fa-upload file-upload-icon"></i>
+                                            </div>
+                                            <div>
+                                                <p class="file-upload-text" id="dokumen-lpj-file-name-display">
+                                                    Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <div id="dokumenLpjPreviewContainer" class="preview-container" style="display: none;"></div>
+
+                                    @error('dokumen_lpj_pdf')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label for="keterangan_tambahan" class="form-label">Keterangan Tambahan</label>
@@ -562,11 +634,11 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const MAX_FILES = 10;
             const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
             let selectedFotoFiles = [];
             let selectedDokumenFiles = [];
+            let selectedDokumenLpjFile = null;
 
             // Initialize existing files from PHP
             let existingFotoFiles = [];
@@ -610,7 +682,6 @@
             const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
             const fotoFileNameDisplay = document.getElementById('foto-file-name-display');
             const fotoCounter = document.getElementById('fotoCounter');
-            const fotoMaxWarning = document.getElementById('fotoMaxWarning');
 
             const dokumenInput = document.getElementById('dokumen_lpj');
             const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
@@ -618,12 +689,56 @@
             const dokumenCounter = document.getElementById('dokumenCounter');
             const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
 
+            const dokumenLpjInput = document.getElementById('dokumen_lpj_pdf');
+            const dokumenLpjFileNameDisplay = document.getElementById('dokumen-lpj-file-name-display');
+            const dokumenLpjPreviewContainer = document.getElementById('dokumenLpjPreviewContainer');
+
             fotoInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'foto');
             });
 
             dokumenInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'dokumen');
+            });
+
+            dokumenLpjInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    if (file.size > MAX_FILE_SIZE) {
+                        alert(`File "${file.name}" terlalu besar. Maksimal 10MB.`);
+                        this.value = '';
+                        return;
+                    }
+
+                    if (!file.name.toLowerCase().endsWith('.pdf')) {
+                        alert(`File "${file.name}" bukan file PDF yang valid.`);
+                        this.value = '';
+                        return;
+                    }
+
+                    selectedDokumenLpjFile = file;
+                    dokumenLpjFileNameDisplay.textContent = file.name;
+                    dokumenLpjPreviewContainer.style.display = 'block';
+
+                    // Tampilkan preview dokumen LPJ
+                    const previewHTML = `
+                        <div class="file-preview-item">
+                            <div class="file-icon">
+                                <i class="fas fa-file-pdf text-danger fs-4"></i>
+                            </div>
+                            <div class="file-info">
+                                <div class="file-name">${file.name}</div>
+                                <div class="file-size">${(file.size / 1024).toFixed(1)} KB</div>
+                            </div>
+                        </div>
+                    `;
+                    dokumenLpjPreviewContainer.innerHTML = previewHTML;
+                } else {
+                    selectedDokumenLpjFile = null;
+                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
+                    dokumenLpjPreviewContainer.style.display = 'none';
+                    dokumenLpjPreviewContainer.innerHTML = '';
+                }
             });
 
             function handleFileSelection(files, type) {
@@ -648,13 +763,6 @@
                     return true;
                 });
 
-                if (existingFilesCount + newFiles.length > MAX_FILES) {
-                    alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${existingFilesCount} file.`);
-                    // Clear the input to prevent adding the oversized/overcounted files
-                    input.value = '';
-                    return;
-                }
-
                 if (isPhoto) {
                     selectedFotoFiles = newFiles;
                 } else {
@@ -670,7 +778,6 @@
                 const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
                 const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
                 const counter = isPhoto ? fotoCounter : dokumenCounter;
-                const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
                 const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
 
                 const existingFiles = isPhoto ? existingFotoFiles : existingDokumenFiles;
@@ -680,8 +787,7 @@
 
                 if (files.length === 0) {
                     container.style.display = 'none';
-                    counter.textContent = totalFiles > 0 ? `${totalFiles}/${MAX_FILES} file` : '';
-                    maxWarning.style.display = 'none';
+                    counter.textContent = totalFiles > 0 ? `${totalFiles} file` : '';
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto baru di sini, atau klik untuk mengunggah.' :
                         'Seret dan lepas dokumen baru di sini, atau klik untuk mengunggah.';
@@ -690,13 +796,7 @@
 
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file baru dipilih`;
-                counter.textContent = `${totalFiles}/${MAX_FILES} file`;
-
-                if (totalFiles >= MAX_FILES) {
-                    maxWarning.style.display = 'block';
-                } else {
-                    maxWarning.style.display = 'none';
-                }
+                counter.textContent = `${totalFiles} file`;
 
                 let previewHTML = '';
                 files.forEach((file, index) => {
@@ -799,20 +899,20 @@
                             existingDokumenFiles.splice(index, 1);
                         }
                     }
-
-                    updateFileCounters();
                 }
             };
 
-            function updateFileCounters() {
-                const totalFotos = existingFotoFiles.length + selectedFotoFiles.length;
-                fotoCounter.textContent = totalFotos > 0 ? `${totalFotos}/${MAX_FILES} file` : '';
-                fotoMaxWarning.style.display = totalFotos >= MAX_FILES ? 'block' : 'none';
-
-                const totalDokumens = existingDokumenFiles.length + selectedDokumenFiles.length;
-                dokumenCounter.textContent = totalDokumens > 0 ? `${totalDokumens}/${MAX_FILES} file` : '';
-                dokumenMaxWarning.style.display = totalDokumens >= MAX_FILES ? 'block' : 'none';
-            }
+            window.removeExistingDokumenLpj = function(button, filePath) {
+                if (confirm('Apakah Anda yakin ingin menghapus dokumen LPJ ini? File akan dihapus permanen setelah disimpan.')) {
+                    const item = button.closest('.file-preview-item');
+                    // Change input name to mark for deletion
+                    const hiddenInput = item.querySelector('input[type=hidden]');
+                    if (hiddenInput) {
+                        hiddenInput.name = 'deleted_dokumen_lpj_pdf';
+                    }
+                    item.style.display = 'none';
+                }
+            };
 
             function getFileIcon(extension) {
                 const icons = {
@@ -865,42 +965,17 @@
                 });
             });
 
-            updateFileCounters();
-
             // Form submission
             document.getElementById('lpjForm').addEventListener('submit', function(e) {
                 currencyInputs.forEach(inputId => {
                     const input = document.getElementById(inputId);
                     if (input && input.value) {
-                        input.value = input.value.replace(/[^\d]/g, '');
+                        input.value = input.value.replace(/[^\\d]/g, '');
                     }
                 });
             });
-        });
 
-        function calculateTotalPrice() {
-            const volumeInput = document.getElementById('volume');
-            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
-            const totalPriceInput = document.getElementById('jumlah_harga');
-
-            if (!volumeInput || !unitPriceInput || !totalPriceInput) return;
-
-            const volumeValue = volumeInput.value.trim();
-            const unitPriceValue = unitPriceInput.value.replace(/[^\d]/g, ''); // Remove formatting
-
-            const volumeMatch = volumeValue.match(/^\d+/);
-            const volumeNumber = volumeMatch ? parseInt(volumeMatch[0]) : 0;
-            const unitPriceNumber = unitPriceValue ? parseInt(unitPriceValue) : 0;
-
-            if (volumeNumber > 0 && unitPriceNumber > 0) {
-                const totalPrice = volumeNumber * unitPriceNumber;
-                totalPriceInput.value = totalPrice.toLocaleString('id-ID');
-            } else {
-                totalPriceInput.value = '';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
+            // Volume and price calculation
             const volumeInput = document.getElementById('volume');
             const unitPriceInput = document.getElementById('jumlah_harga_satuan');
 
@@ -916,5 +991,10 @@
                 calculateTotalPrice();
             }
         });
+
+        function calculateTotalPrice() {
+            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
+            return;
+        }
     </script>
 @endsection

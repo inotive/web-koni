@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_cabor', 50);
             $table->string('ketua_penanggung_jawab', 100);
-            $table->enum('status', ['Aktif', 'Tidak Aktif'])->default('Aktif');
+            $table->enum('status', ['Aktif', 'Pembinaan'])->default('Aktif');
             $table->date('tanggal_pembentukan');
             $table->integer('jumlah_atlet')->default(0);
             $table->integer('jumlah_pelatih')->default(0);

@@ -5,8 +5,6 @@
 @section('subSection', 'Atlet')
 @section('subSectionUrl', route('admin.konfigurasi.atlet.index'))
 @section('currentSection', 'Detail Atlet')
-<h1 class="text-dark fw-bold fs-3 mb-0">Detail Atlet</h1>
-
 @section('content')
 <style>
     /* Base Layout */
@@ -217,6 +215,21 @@
         background-color: #4b5563;
     }
 
+    /* Export Button Style */
+    .btn-export-custom {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        line-height: 1;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+        min-width: 90px;
+    }
+
     .edit-icon {
         display: flex;
         padding: 6px;
@@ -396,11 +409,17 @@
     .achievement-table th:nth-child(2),
     .achievement-table td:nth-child(2) {
         width: auto;
-        min-width: 300px;
+        min-width: 80px;
     }
 
     .achievement-table th:nth-child(3),
     .achievement-table td:nth-child(3) {
+        width: 350px;
+        text-align: center;
+    }
+
+    .achievement-table th:nth-child(4),
+    .achievement-table td:nth-child(4) {
         width: 150px;
         text-align: center;
     }
@@ -947,6 +966,10 @@
             <div class="detail-card">
                 <div class="detail-card-header">
                     <h2 class="detail-card-title">Personal Info</h2>
+                    <a href="{{ route('admin.konfigurasi.prestasi.atlet.exportDetail', $atlet->id) }}" 
+                       class="btn btn-outline-secondary filter-btn-custom btn-export-custom">
+                        <i class="fas fa-file-export me-1"></i> Export
+                    </a>
                 </div>
 
                 <div class="detail-body">
@@ -1114,28 +1137,26 @@
                     <div class="detail-divider"></div>
 
                 <div class="detail-row">
-                <div class="detail-label">
-                    <p class="detail-label-text">Alamat</p>
-                </div>
-                <div class="detail-value">
-                    @if($atlet->alamatkota && $atlet->alamatprovinsi)
-                        <div>
-                            <strong>{{ $atlet->alamatkota }}, {{ $atlet->alamatprovinsi }}</strong>
-                        </div>
-                        @if($atlet->alamat)
-                            <div class="text-muted" style="font-size: 12px; color: #78829d; margin-top: 4px;">
-                                {{ $atlet->alamat }}
+                    <div class="detail-label">
+                        <p class="detail-label-text">Alamat</p>
+                    </div>
+                    <div class="detail-value">
+                        @if($atlet->alamatkota && $atlet->alamatprovinsi)
+                            <div>
+                                <strong>{{ $atlet->alamatkota }}, {{ $atlet->alamatprovinsi }}</strong>
                             </div>
+                            @if($atlet->alamat)
+                                <div class="text-muted" style="font-size: 12px; color: #78829d; margin-top: 4px;">
+                                    {{ $atlet->alamat }}
+                                </div>
+                            @endif
+                        @elseif($atlet->alamat)
+                            <div>{{ $atlet->alamat }}</div>
+                        @else
+                            <span class="empty-value">Belum ada alamat yang tercantum</span>
                         @endif
-                    @elseif($atlet->alamat)
-                        <div>{{ $atlet->alamat }}</div>
-                    @else
-                        <span class="empty-value">Belum ada alamat yang tercantum</span>
-                    @endif
+                    </div>
                 </div>
-                <div class="add-address">
-                </div>
-            </div>
             </div>
         </div>
 
@@ -1360,7 +1381,7 @@ $(document).ready(function() {
     if (!prestasis || prestasis.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="3" class="empty-achievement">
+                <td colspan="4" class="empty-achievement">
                     <br>
                     <center><i class="fas fa-trophy"></i></center>
                     <center><div>Belum ada data prestasi.</div></center>
@@ -1397,6 +1418,7 @@ $(document).ready(function() {
                             </div>
                         </div>
                     </td>
+                    <td style="text-align: center;">${prestasi.kejuaraan || '-'}</td>
                     <td style="text-align: center;">${prestasi.tempat || '-'}</td>
                 </tr>
             `;

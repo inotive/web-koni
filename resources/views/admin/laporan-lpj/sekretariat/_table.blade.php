@@ -12,11 +12,11 @@
                         $columns = [
                             ['key' => null, 'title' => 'No', 'sortable' => false],
                             ['key' => 'nama_program_kegiatan', 'title' => 'Nama Program & Kegiatan'],
-                            ['key' => 'volume', 'title' => 'Volume'],
-                            ['key' => 'jumlah_harga_satuan', 'title' => 'Jumlah Harga Satuan'],
-                            ['key' => 'jumlah_harga', 'title' => 'Jumlah Harga'],
+                            ['key' => 'jumlah_harga', 'title' => 'Total Anggaran'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
+                            ['key' => null, 'title' => 'Dokumen LPJ', 'sortable' => false],
+                            ['key' => 'created_at', 'title' => 'Tanggal Ditambahkan'],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
                     @endphp
@@ -53,8 +53,6 @@
                                 @endif
                             </div>
                         </td>
-                        <td class="text-start">{{ $kegiatan->volume }}</td>
-                        <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga_satuan, 0, ',', '.') }}</td>
                         <td class="text-start">Rp {{ number_format($kegiatan->jumlah_harga, 0, ',', '.') }}</td>
                         <td class="text-start">
                             @if ($kegiatan->foto_jurnal && count($kegiatan->foto_jurnal) > 0)
@@ -82,6 +80,37 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
+                        <td class="text-start">
+                            @if ($kegiatan->dokumen_lpj_pdf)
+                                @php
+                                    // Handle berbagai tipe data untuk dokumen LPJ PDF
+                                    $path = '';
+                                    $originalName = '';
+
+                                    if (is_object($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = $kegiatan->dokumen_lpj_pdf->path;
+                                        $originalName = $kegiatan->dokumen_lpj_pdf->original_name ?? basename($path);
+                                    } elseif (is_array($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = isset($kegiatan->dokumen_lpj_pdf['path']) ? $kegiatan->dokumen_lpj_pdf['path'] : '';
+                                        $originalName = isset($kegiatan->dokumen_lpj_pdf['original_name']) ? $kegiatan->dokumen_lpj_pdf['original_name'] : (is_string($path) ? basename($path) : '');
+                                    } elseif (is_string($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = $kegiatan->dokumen_lpj_pdf;
+                                        $originalName = basename($path);
+                                    }
+
+                                    // Pastikan kita punya nama file
+                                    if (empty($originalName) && is_string($path)) {
+                                        $originalName = basename($path);
+                                    }
+                                @endphp
+                                <a href="{{ asset('storage/' . $path) }}" target="_blank" class="btn btn-sm btn-light-danger">
+                                    <i class="fas fa-file-pdf me-1"></i>PDF
+                                </a>
+                            @else
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
+                        <td class="text-start">{{ $kegiatan->created_at ? $kegiatan->created_at->format('d/m/Y') : '-' }}</td>
                         <td class="text-start">
                             <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">

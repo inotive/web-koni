@@ -132,40 +132,21 @@
                                 : '-';
 
                             $jenisKelamin = '';
-                            if ($prestasi->subject_type === 'App\Models\Atlet') {
-                                $gender = $prestasi->subject->jenis_kelamin;
-                                if ($gender === 'Laki-laki' || $gender === 'L') {
-                                    $jenisKelamin = 'Laki-laki';
-                                } elseif ($gender === 'Perempuan' || $gender === 'P') {
-                                    $jenisKelamin = 'Perempuan';
-                                } else {
-                                    $jenisKelamin = $gender ?? '-';
-                                }
-                            } elseif ($prestasi->subject_type === 'App\Models\Pelatih') {
-                                $gender = $prestasi->subject->kelamin;
-                                if ($gender === 'Laki-laki' || $gender === 'L') {
-                                    $jenisKelamin = 'Laki-laki';
-                                } elseif ($gender === 'Perempuan' || $gender === 'P') {
-                                    $jenisKelamin = 'Perempuan';
-                                } else {
-                                    $jenisKelamin = $gender ?? '-';
-                                }
+                            $gender = $prestasi->subject->jenis_kelamin;
+                            if ($gender === 'Laki-laki' || $gender === 'L') {
+                                $jenisKelamin = 'Laki-laki';
+                            } elseif ($gender === 'Perempuan' || $gender === 'P') {
+                                $jenisKelamin = 'Perempuan';
+                            } else {
+                                $jenisKelamin = $gender ?? '-';
                             }
 
                             $rowNumber = ($prestasis->currentPage() - 1) * $prestasis->perPage() + $loop->iteration;
 
-                            $detailRoute = '';
-                            if ($prestasi->subject_type === 'App\Models\Atlet') {
-                                $detailRoute = route('admin.konfigurasi.atlet.show', [
-                                    'atlet' => $prestasi->subject->id,
-                                    'back' => 'prestasi',
-                                ]);
-                            } elseif ($prestasi->subject_type === 'App\Models\Pelatih') {
-                                $detailRoute = route('admin.konfigurasi.pelatih.show', [
-                                    'pelatih' => $prestasi->subject->id,
-                                    'back' => 'prestasi',
-                                ]);
-                            }
+                            $detailRoute = route('admin.konfigurasi.atlet.show', [
+                                'atlet' => $prestasi->subject->id,
+                                'back' => 'prestasi',
+                            ]);
                         @endphp
 
                         <tr data-tahun="{{ $prestasi->tahun }}" data-nama="{{ $prestasi->subject?->nama ?? '-' }}">
@@ -175,18 +156,10 @@
                                 <div class="d-flex flex-column">
                                     <strong class="text-truncate-custom"
                                         title="{{ $prestasi->subject->nama }}">
-                                        @if (request('search'))
-                                            {!! preg_replace(
-                                                '/(' . preg_quote(request('search'), '/') . ')/i',
-                                                '<span class="search-highlight">$1</span>',
-                                                $prestasi->subject->nama,
-                                            ) !!}
-                                        @else
-                                            {{ $prestasi->subject->nama }}
-                                        @endif
+                                        {{ $prestasi->subject->nama }}
                                     </strong>
-                                    <small class="text-muted" title="{{ class_basename($prestasi->subject_type) }}">
-                                        {{ class_basename($prestasi->subject_type) }}
+                                    <small class="text-muted">
+                                        Atlet
                                     </small>
                                 </div>
                             </td>
@@ -196,41 +169,17 @@
                             <td>
                                 <div class="d-flex flex-column">
                                     <strong class="text-truncate-custom">
-                                        @if (request('search'))
-                                            {!! preg_replace(
-                                                '/(' . preg_quote(request('search'), '/') . ')/i',
-                                                '<span class="search-highlight">$1</span>',
-                                                $prestasi->nama_prestasi,
-                                            ) !!}
-                                        @else
-                                            {{ $prestasi->nama_prestasi }}
-                                        @endif
+                                        {{ $prestasi->nama_prestasi }}
                                     </strong>
                                     <small class="text-muted text-truncate-custom">
-                                        @if (request('search'))
-                                            {!! preg_replace(
-                                                '/(' . preg_quote(request('search'), '/') . ')/i',
-                                                '<span class="search-highlight">$1</span>',
-                                                $prestasi->kejuaraan,
-                                            ) !!}
-                                        @else
-                                            {{ $prestasi->kejuaraan }}
-                                        @endif
+                                        {{ $prestasi->kejuaraan }}
                                     </small>
                                 </div>
                             </td>
 
                             <td>
                                 <div class="text-truncate-custom">
-                                    @if (request('search'))
-                                        {!! preg_replace(
-                                            '/(' . preg_quote(request('search'), '/') . ')/i',
-                                            '<span class="search-highlight">$1</span>',
-                                            $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-',
-                                        ) !!}
-                                    @else
-                                        {{ $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-' }}
-                                    @endif
+                                    {{ $prestasi->cabangOlahraga?->nama_cabor ?? $prestasi->subject?->cabangOlahraga?->nama_cabor ?? '-' }}
                                 </div>
                             </td>
 
@@ -239,15 +188,7 @@
                             <td>
                                 <div class="d-flex flex-column">
                                     <strong class="text-truncate-custom">
-                                        @if (request('search'))
-                                            {!! preg_replace(
-                                                '/(' . preg_quote(request('search'), '/') . ')/i',
-                                                '<span class="search-highlight">$1</span>',
-                                                $prestasi->tempat,
-                                            ) !!}
-                                        @else
-                                            {{ $prestasi->tempat }}
-                                        @endif
+                                        {{ $prestasi->tempat }}
                                     </strong>
                                     <small class="text-muted">{{ $prestasi->tahun }}</small>
                                 </div>
@@ -279,13 +220,11 @@
 
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
-                                    @if ($detailRoute)
-                                        <a href="{{ $detailRoute }}" class="btn btn-icon btn-sm btn-light-primary"
-                                            title="Lihat Detail {{ class_basename($prestasi->subject_type) }}"
-                                            data-bs-toggle="tooltip">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                    @endif
+                                    <a href="{{ $detailRoute }}" class="btn btn-icon btn-sm btn-light-primary"
+                                        title="Lihat Detail Atlet"
+                                        data-bs-toggle="tooltip">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
                                     <a href="{{ route('admin.konfigurasi.prestasi.edit', $prestasi->id) }}"
                                         class="btn btn-icon btn-sm btn-light-warning" title="Edit"
                                         data-bs-toggle="tooltip">
