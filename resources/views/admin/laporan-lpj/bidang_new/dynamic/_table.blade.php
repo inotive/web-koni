@@ -87,9 +87,9 @@
                         </td>
                         <td>
                             <div class="d-flex flex-column">
-                                <strong class="text-truncate-custom">{{ $data->nama_program }}</strong>
+                                <strong class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="{{ $data->nama_program }}">{{ $data->nama_program }}</strong>
                                 @if ($data->nama_kegiatan)
-                                    <small class="text-muted" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $data->nama_kegiatan }}</small>
+                                    <small class="text-muted text-truncate-custom">{{ $data->nama_kegiatan }}</small>
                                 @endif
                             </div>
                         </td>

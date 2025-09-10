@@ -68,9 +68,9 @@
                         </td>
                         <td>
                             <div class="d-flex flex-column">
-                                <strong class="text-truncate-custom"><?php echo e($data->nama_program); ?></strong>
+                                <b class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<?php echo e($data->nama_program); ?>"><?php echo e($data->nama_program); ?></b>
                                 <?php if($data->nama_kegiatan): ?>
-                                    <small class="text-muted" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo e($data->nama_kegiatan); ?></small>
+                                    <small class="text-muted text-truncate-custom"><?php echo e($data->nama_kegiatan); ?></small>
                                 <?php endif; ?>
                             </div>
                         </td>
