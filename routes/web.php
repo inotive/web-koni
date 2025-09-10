@@ -149,6 +149,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             // Prestasi untuk Atlet
             Route::prefix('atlet')->name('atlet.')->group(function () {
                 Route::get('/{atlet}/export-detail', [AtletController::class, 'exportDetail'])->name('exportDetail');
+                Route::get('/{atlet}/export-pdf', [AtletController::class, 'exportPdf'])->name('exportPdf');
                 Route::get('/{atlet}/create', [PrestasiController::class, 'createForAtlet'])->name('create');
                 Route::post('/{atlet}', [PrestasiController::class, 'storeForAtlet'])->name('store');
             });
@@ -255,9 +256,9 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             // Export route - generates: admin.laporan-lpj.kegiatan-lainnya.export
             Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
 
-    Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
-        ->name('detail-ajax')
-        ->where('id', '[0-9]+');
+            Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
+                ->name('detail-ajax')
+                ->where('id', '[0-9]+');
 
             Route::get('/{id}', [KegiatanLainnyaController::class, 'show'])->name('show');
             Route::get('/{id}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');

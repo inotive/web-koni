@@ -647,9 +647,51 @@ document.addEventListener('DOMContentLoaded', function() {
         'dokumen_pendukung': []
     };
 
-    // ... (currency and calculation functions)
+    // ✅ Rupiah formatter WITHOUT prefix
+    function initRupiahFormatter() {
+        const jumlahHargaInput = document.getElementById('jumlah_harga');
 
-    // File Upload Handler
+        if (jumlahHargaInput) {
+            // Format number with thousand separators (no prefix)
+            function formatRupiah(number) {
+                let numericValue = number.toString().replace(/[^0-9]/g, '');
+                if (numericValue === '') return '';
+                return parseInt(numericValue).toLocaleString('id-ID');
+            }
+
+            function extractNumeric(value) {
+                return value.replace(/[^0-9]/g, '');
+            }
+
+            jumlahHargaInput.addEventListener('input', function(e) {
+                let cursorPos = e.target.selectionStart;
+                let numericValue = extractNumeric(e.target.value);
+
+                let oldLength = e.target.value.length;
+                e.target.value = formatRupiah(numericValue);
+                let newLength = e.target.value.length;
+
+                // Adjust cursor position based on difference in length
+                let diff = newLength - oldLength;
+                let newPos = cursorPos + diff;
+                e.target.setSelectionRange(newPos, newPos);
+            });
+
+            // Format initial value if any
+            if (jumlahHargaInput.value) {
+                jumlahHargaInput.value = formatRupiah(extractNumeric(jumlahHargaInput.value));
+            }
+
+            // Before form submit, strip formatting
+            const form = document.getElementById('lpjForm');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    jumlahHargaInput.value = extractNumeric(jumlahHargaInput.value);
+                });
+            }
+        }
+    }
+
     function initFileUpload(inputId) {
         const input = document.getElementById(inputId);
         if (!input) return;
@@ -674,42 +716,38 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             selectedFiles[inputId] = [...selectedFiles[inputId], ...newFiles];
-
             updateFilePreview(inputId);
             updateFileInput(inputId);
         }
 
         function updateFilePreview(inputId) {
             const files = selectedFiles[inputId];
-
             if (files.length === 0) {
                 previewContainer.style.display = 'none';
                 return;
             }
 
             previewContainer.style.display = 'block';
-
-            let previewHTML = '';
-            files.forEach((file, index) => {
+            previewContainer.innerHTML = files.map((file, index) => {
                 const fileSize = file.size > 1024 * 1024 ?
                     (file.size / (1024 * 1024)).toFixed(1) + ' MB' :
                     (file.size / 1024).toFixed(1) + ' KB';
 
                 if (inputId === 'foto_jurnal') {
                     const imageUrl = URL.createObjectURL(file);
-                    previewHTML += `
+                    return `
                         <div class="file-preview-item">
                             <img src="${imageUrl}" alt="Preview" class="preview-image">
                             <div class="file-info">
                                 <div class="file-name">${file.name}</div>
                                 <div class="file-size">${fileSize}</div>
                             </div>
-                            <button type="button" class="remove-file" data-index="${index}" data-input-id="${inputId}" data-type="new">
+                            <button type="button" class="remove-file" data-index="${index}" data-input-id="${inputId}">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>`;
                 } else {
-                    const extension = file.name.split('.').pop().toLowerCase();
+                    const ext = file.name.split('.').pop().toLowerCase();
                     const iconMap = {
                         'pdf': 'fas fa-file-pdf text-danger',
                         'doc': 'fas fa-file-word text-primary',
@@ -717,42 +755,33 @@ document.addEventListener('DOMContentLoaded', function() {
                         'xls': 'fas fa-file-excel text-success',
                         'xlsx': 'fas fa-file-excel text-success'
                     };
-                    const iconClass = iconMap[extension] || 'fas fa-file text-muted';
+                    const iconClass = iconMap[ext] || 'fas fa-file text-muted';
 
-                    previewHTML += `
+                    return `
                         <div class="file-preview-item">
-                            <div class="file-icon">
-                                <i class="${iconClass} fs-4"></i>
-                            </div>
+                            <i class="${iconClass} fs-4"></i>
                             <div class="file-info">
                                 <div class="file-name">${file.name}</div>
                                 <div class="file-size">${fileSize}</div>
                             </div>
-                            <button type="button" class="remove-file" data-index="${index}" data-input-id="${inputId}" data-type="new">
+                            <button type="button" class="remove-file" data-index="${index}" data-input-id="${inputId}">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>`;
                 }
-            });
+            }).join('');
 
-            previewContainer.innerHTML = previewHTML;
-
-            previewContainer.querySelectorAll('.remove-file[data-type="new"]').forEach(button => {
+            previewContainer.querySelectorAll('.remove-file').forEach(button => {
                 button.addEventListener('click', function() {
-                    const index = parseInt(this.dataset.index);
-                    const inputId = this.dataset.inputId;
-                    removeFile(index, inputId);
+                    removeFile(parseInt(this.dataset.index), inputId);
                 });
             });
         }
 
         function updateFileInput(inputId) {
-            const files = selectedFiles[inputId];
-            const targetInput = document.getElementById(inputId);
-
             const dt = new DataTransfer();
-            files.forEach(file => dt.items.add(file));
-            targetInput.files = dt.files;
+            selectedFiles[inputId].forEach(file => dt.items.add(file));
+            input.files = dt.files;
         }
 
         function removeFile(index, inputId) {
@@ -764,30 +793,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('.remove-file[data-type="existing"]').forEach(button => {
         button.addEventListener('click', function() {
-            const filePath = this.dataset.path;
-            removeExistingFile(this, filePath);
+            if (confirm('Hapus file ini?')) {
+                this.parentElement.remove();
+                const form = document.getElementById('lpjForm');
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'deleted_files[]';
+                input.value = this.dataset.path;
+                form.appendChild(input);
+            }
         });
     });
 
-    function removeExistingFile(button, filePath) {
-        if (confirm('Hapus file ini?')) {
-            button.parentElement.remove();
-            // Optionally, you can add an input with the path of the file to be deleted to handle it in the backend
-            const form = document.getElementById('lpjForm');
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'deleted_files[]';
-            input.value = filePath;
-            form.appendChild(input);
-        }
-    }
+    // ✅ Initialize formatter WITHOUT prefix
+    initRupiahFormatter();
 
     // Initialize file uploads
     initFileUpload('foto_jurnal');
     initFileUpload('dokumen_lpj');
     initFileUpload('dokumen_pendukung');
-
-    // ... (form submission logic)
 });
 </script>
 <?php $__env->stopSection(); ?>

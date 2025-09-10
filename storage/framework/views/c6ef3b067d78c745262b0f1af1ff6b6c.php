@@ -165,14 +165,12 @@
             <div class="contact-info">
                 <?php if($pelatih->email): ?>
                 <div class="contact-item">
-                    <span>📧</span>
                     <span><?php echo e($pelatih->email); ?></span>
                 </div>
                 <?php endif; ?>
 
                 <?php if($pelatih->no_telepon): ?>
                 <div class="contact-item">
-                    <span>📞</span>
                     <span><?php echo e($pelatih->no_telepon); ?></span>
                 </div>
                 <?php endif; ?>

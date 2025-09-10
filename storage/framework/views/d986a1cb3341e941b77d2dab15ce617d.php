@@ -9,6 +9,14 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
+    <?php if(session('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?php echo e(session('error')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <style>
         body {
             background-color: #f5f5f5;
@@ -1086,7 +1094,11 @@
     }
 
     // Simpan ID LPJ dalam data modal
-    $('#detailModal').data('lpj-id', data.id);
+    if (data && data.id) {
+        $('#detailModal').data('lpj-id', data.id);
+    } else {
+        console.error('Data ID tidak ditemukan:', data);
+    }
 
     const formatRupiah = (num) => {
         if (!num) return 'Rp 0';
@@ -1555,8 +1567,31 @@ $('#ajukanPerubahanBtn').on('click', function() {
 
             $('#exportBtn').on('click', function() {
                 const lpjId = $('#detailModal').data('lpj-id');
-                // TODO: Add export logic here
-                alert('Export functionality will be implemented later');
+                
+                // Periksa apakah ID tersedia
+                if (!lpjId) {
+                    alert('Terjadi kesalahan: ID laporan tidak ditemukan. Silakan coba muat ulang halaman.');
+                    console.error('ID laporan tidak ditemukan di data modal');
+                    return;
+                }
+                
+                // Validasi ID
+                if (isNaN(lpjId) || lpjId <= 0) {
+                    alert('Terjadi kesalahan: ID laporan tidak valid.');
+                    console.error('ID laporan tidak valid:', lpjId);
+                    return;
+                }
+                
+                // Redirect to export route
+                const exportUrl = `/admin/laporan-lpj/sekretariat/${lpjId}/export`;
+                console.log('Membuka URL export:', exportUrl);
+                
+                const exportWindow = window.open(exportUrl, '_blank');
+                
+                // Periksa apakah window.open berhasil
+                if (!exportWindow) {
+                    alert('Popup blocker mencegah pembukaan jendela export. Silakan izinkan popup untuk situs ini.');
+                }
             });
 
             $('#submitPengajuanBtn').on('click', function() {
