@@ -271,6 +271,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::put('/{id}', [KegiatanLainnyaController::class, 'update'])->name('update');
             Route::delete('/{id}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
             Route::post('/{id}/approve', [KegiatanLainnyaController::class, 'approve'])->name('approve');
+            Route::get('/{id}/export', [KegiatanLainnyaController::class, 'exportDetail'])->name('export');
         });
     }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {

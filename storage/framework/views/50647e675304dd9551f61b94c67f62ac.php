@@ -9,6 +9,14 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
+    <?php if(session('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?php echo e(session('error')); ?>
+
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <style>
         body {
             background-color: #f5f5f5;
@@ -34,19 +42,19 @@
         }
 
         .table th:nth-child(3) {
-            width: 100px;
+            width: 150px;
         }
 
         .table th:nth-child(4) {
-            width: 150px;
+            width: 100px;
         }
 
         .table th:nth-child(5) {
-            width: 150px;
+            width: 120px;
         }
 
         .table th:nth-child(6) {
-            width: 100px;
+            width: 80px;
         }
 
         .table th:nth-child(7) {
@@ -339,6 +347,33 @@
             appearance: none;
         }
 
+        #exportBtn {
+            background-color: #0d6efd; /* Blue color like other primary buttons */
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px; /* Rounded corners */
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* for icon if added */
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+        }
+
+        #exportBtn:hover {
+            background-color: #0b5ed7; /* Slightly darker on hover */
+            box-shadow: 0 3px 8px rgba(13, 110, 253, 0.4);
+            transform: translateY(-1px);
+        }
+
+        #exportBtn:active {
+            background-color: #0a58ca;
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+        }
+
         #ajukanPerubahanBtn {
             background-color: #4CAF50; /* Soft green like screenshot */
             color: white;
@@ -369,7 +404,7 @@
 
     <div class="d-flex flex-column mb-8">
         <h1 class="text-dark fw-bold mb-1">Laporan Sekretariat</h1>
-        <div class="text-muted fw-semibold fs-6">Manajemen Laporan Sekretariat Anda Sekarang</div>
+        
     </div>
 
     <div class="row col-12 mt-5">
@@ -380,7 +415,7 @@
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     <a href="<?php echo e(route('admin.laporan-lpj.sekretariat.create')); ?>" class="btn btn-primary"
     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
 </a>
 
                     <div class="input-group position-relative" style="width: 250px;">
@@ -476,6 +511,10 @@
                         <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
                     </div>
                     <div class="ms-auto d-flex align-items-center gap-2">
+                        <button type="button" id="exportBtn" class="btn btn-primary">
+                            <i class="fas fa-file-export"></i>
+                            <strong>Export</strong>
+                        </button>
                         <button type="button" id="ajukanPerubahanBtn" class="btn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i>
                             <strong>Ajukan Perubahan</strong>
@@ -599,7 +638,7 @@
                     tooltipEl.addEventListener('mouseenter', function() {
                         clearTimeout(hideTimeout);
                     });
-                    
+
                     tooltipEl.addEventListener('mouseleave', function() {
                         hideTimeout = setTimeout(function() {
                             tooltip.hide();
@@ -1043,7 +1082,7 @@
         const isSuperAdmin = <?php echo e(auth()->user()->hasRole('superadmin') ? 'true' : 'false'); ?>;
         const hasApprovalPermission = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
         const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
-        
+
         // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
         if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
             statusIcon.innerHTML = 'Terbuka';
@@ -1055,7 +1094,11 @@
     }
 
     // Simpan ID LPJ dalam data modal
-    $('#detailModal').data('lpj-id', data.id);
+    if (data && data.id) {
+        $('#detailModal').data('lpj-id', data.id);
+    } else {
+        console.error('Data ID tidak ditemukan:', data);
+    }
 
     const formatRupiah = (num) => {
         if (!num) return 'Rp 0';
@@ -1119,6 +1162,37 @@
         `;
     }
 
+    // Tampilkan dokumen LPJ PDF jika ada
+    let dokumenLpjPdfHtml = '';
+    if (data.dokumen_lpj_pdf) {
+        const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
+        const name = typeof data.dokumen_lpj_pdf === 'object' ?
+            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) :
+            path.split('/').pop();
+
+        dokumenLpjPdfHtml = `
+            <div class="mb-3">
+                <label class="fw-semibold text-dark mb-2 d-block">
+                    <i class="fas fa-file-pdf text-danger me-1"></i>Dokumen LPJ (PDF):
+                </label>
+                <div class="bg-light p-3 rounded">
+                    <div class="d-flex align-items-center p-2 border rounded bg-white">
+                        <i class="fas fa-file-pdf text-danger me-3" style="font-size: 1.2em;"></i>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium text-dark">${name}</div>
+                            <small class="text-muted">PDF</small>
+                        </div>
+                        <a href="/storage/${path}"
+                           target="_blank"
+                           class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-download me-1"></i>Unduh
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     modalBody.innerHTML = `
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
@@ -1175,7 +1249,7 @@
                                 ` : ''}
                                 ${data.jumlah_harga ? `
                                     <div class="col-md-6">
-                                        <label class="fw-semibold text-dark mb-1">Total Harga:</label>
+                                        <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
                                         <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                     </div>
                                 ` : ''}
@@ -1211,6 +1285,8 @@
                         </div>
                     </div>
 
+                    ${dokumenLpjPdfHtml}
+
                     <div>
                         <label class="fw-semibold text-dark mb-2 d-block">
                             <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
@@ -1218,12 +1294,8 @@
                         <div class="bg-light p-3 rounded">
                             ${dokumenHtml}
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        ${data.keterangan_tambahan ? `
+                          ${data.keterangan_tambahan ? `
                     <div class="mb-4">
                         <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
                             <i class="fas fa-sticky-note me-2"></i>
@@ -1233,6 +1305,12 @@
                             <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
                         </div>
                     </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
                 ` : ''}
     `;
 
@@ -1485,6 +1563,35 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 $('#pengajuan_lpj_id').val(lpjId);
                 $('#detailModal').modal('hide');
                 new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
+            });
+
+            $('#exportBtn').on('click', function() {
+                const lpjId = $('#detailModal').data('lpj-id');
+                
+                // Periksa apakah ID tersedia
+                if (!lpjId) {
+                    alert('Terjadi kesalahan: ID laporan tidak ditemukan. Silakan coba muat ulang halaman.');
+                    console.error('ID laporan tidak ditemukan di data modal');
+                    return;
+                }
+                
+                // Validasi ID
+                if (isNaN(lpjId) || lpjId <= 0) {
+                    alert('Terjadi kesalahan: ID laporan tidak valid.');
+                    console.error('ID laporan tidak valid:', lpjId);
+                    return;
+                }
+                
+                // Redirect to export route
+                const exportUrl = `/admin/laporan-lpj/sekretariat/${lpjId}/export`;
+                console.log('Membuka URL export:', exportUrl);
+                
+                const exportWindow = window.open(exportUrl, '_blank');
+                
+                // Periksa apakah window.open berhasil
+                if (!exportWindow) {
+                    alert('Popup blocker mencegah pembukaan jendela export. Silakan izinkan popup untuk situs ini.');
+                }
             });
 
             $('#submitPengajuanBtn').on('click', function() {

@@ -519,6 +519,11 @@
                             <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
                         </div>
                         
+                        <!-- Tombol Export -->
+                        <a href="#" id="exportBtn" class="btn btn-success btn-sm" target="_blank">
+                            <i class="fas fa-file-pdf me-1"></i> Export PDF
+                        </a>
+                        
                         <button type="button" id="ajukanPerubahanBtn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i> <strong>Ajukan Perubahan</strong>
                         </button>
@@ -1072,10 +1077,16 @@
     window.showDetailModal = function(data) {
     const modalBody = document.getElementById('detailModalBody');
     const statusIcon = document.getElementById('statusIcon');
+    const exportBtn = document.getElementById('exportBtn');
 
     if (!modalBody) {
         console.error('Modal body not found');
         return;
+    }
+
+    // Set URL export berdasarkan ID kegiatan
+    if (exportBtn && data && data.id) {
+        exportBtn.href = `/admin/laporan-lpj/kegiatan-lainnya/${data.id}/export`;
     }
 
     // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id

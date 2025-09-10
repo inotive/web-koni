@@ -7,6 +7,7 @@ use App\Models\Lpj;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str; // Tambahkan ini
 
 class KegiatanLainnyaController extends Controller
 {
@@ -172,11 +173,11 @@ class KegiatanLainnyaController extends Controller
     }
 
     public function show($id)
-    {
-        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                          ->findOrFail($id);
-        return view('admin.laporan-lpj.kegiatan-lainnya.show', compact('kegiatanLainnya'));
-    }
+{
+    $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                      ->findOrFail($id);
+    return view('admin.laporan-lpj.kegiatan-lainnya.show', compact('kegiatanLainnya'));
+}
 
     public function edit($id)
     {
@@ -480,16 +481,34 @@ class KegiatanLainnyaController extends Controller
     }
 }
 
-public function export(Request $request)
+public function exportDetail($id)
 {
-    $data = json_decode($request->data, true);
-    $title = $request->title ?? 'LPJ_Export_' . date('Ymd_His');
-    
-    $pdf = PDF::loadView('admin.laporan-lpj.kegiatan-lainnya.export', [
-        'data' => [$data], // Wrap in array for consistency
-        'title' => $title
-    ]);
-    
-    return $pdf->download($title . '.pdf');
+    try {
+        \Log::info('Exporting kegiatan lainnya LPJ with ID: ' . $id);
+        
+        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                              ->findOrFail($id);
+
+        // Data untuk ditampilkan di PDF
+        $data = [
+            'kegiatanLainnya' => $kegiatanLainnya,
+        ];
+
+        // Generate PDF menggunakan DomPDF
+        $pdf = Pdf::loadView('admin.laporan-lpj.kegiatan-lainnya.export', $data)
+                  ->setPaper('a4', 'portrait');
+
+        // Nama file PDF
+        $fileName = 'Laporan_Kegiatan_Lainnya_' . Str::slug($kegiatanLainnya->nama_program) . '.pdf';
+
+        \Log::info('Successfully generated PDF for kegiatan lainnya LPJ: ' . $fileName);
+        return $pdf->download($fileName);
+    } catch (\Exception $e) {
+        // Log error
+        \Log::error('Error exporting PDF: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+        
+        // Return error response with redirect
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor laporan. Silakan coba lagi.');
+    }
 }
 }
