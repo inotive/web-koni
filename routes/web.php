@@ -97,35 +97,40 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
     Route::resource('surat', SuratController::class);
 
-            Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
-            Route::get('atlet/export', [AtletController::class, 'exportCsv'])->name('atlet.export');
-            Route::resource('atlet', AtletController::class);
-            Route::get('pelatih/export', [PelatihController::class, 'exportCsv'])->name('pelatih.export');
-            Route::resource('pelatih', PelatihController::class);
-            Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
-                ->name('pelatih.updateKetersediaan');
-            Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
-                ->name('pelatih.prestasi.store');
-            Route::patch('atlet/{atlet}/ketersediaan', [AtletController::class, 'updateKetersediaan'])
-                ->name('atlet.updateKetersediaan');
-            Route::post('atlet/{atlet}/prestasi', [PrestasiController::class, 'store'])
-                ->name('atlet.prestasi.store');
+    Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
+        Route::get('atlet/export', [AtletController::class, 'exportCsv'])->name('atlet.export');
+        Route::resource('atlet', AtletController::class);
+        Route::get('pelatih/export', [PelatihController::class, 'exportCsv'])->name('pelatih.export');
+        Route::resource('pelatih', PelatihController::class);
+        Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
+            ->name('pelatih.updateKetersediaan');
+        Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
+            ->name('pelatih.prestasi.store');
+        Route::patch('atlet/{atlet}/ketersediaan', [AtletController::class, 'updateKetersediaan'])
+            ->name('atlet.updateKetersediaan');
+        Route::post('atlet/{atlet}/prestasi', [PrestasiController::class, 'store'])
+            ->name('atlet.prestasi.store');
 
-        // PERBAIKAN: Rute Cabang Olahraga - Dipisahkan dan Diperbaiki
         Route::prefix('cabang-olahraga')->name('cabang-olahraga.')->group(function () {
-            // Rute CRUD standar
+            // ✅ FIXED: Export routes MUST come BEFORE {cabor} parameter routes
+            Route::get('/export', [CabangOlahragaController::class, 'exportExcel'])->name('export');
+            Route::get('/export-preview', [CabangOlahragaController::class, 'exportPreview'])->name('export-preview');
+            Route::get('/export-with-date', [CabangOlahragaController::class, 'exportExcelWithDateRange'])->name('export-with-date');
+            Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
+
+            // Basic CRUD routes
             Route::get('/', [CabangOlahragaController::class, 'index'])->name('index');
             Route::get('/create', [CabangOlahragaController::class, 'create'])->name('create');
             Route::post('/', [CabangOlahragaController::class, 'store'])->name('store');
+
+            // ✅ FIXED: Parameterized routes come AFTER static routes
             Route::get('/{cabor}', [CabangOlahragaController::class, 'show'])->name('show');
             Route::get('/{cabor}/edit', [CabangOlahragaController::class, 'edit'])->name('edit');
             Route::put('/{cabor}', [CabangOlahragaController::class, 'update'])->name('update');
             Route::delete('/{cabor}', [CabangOlahragaController::class, 'destroy'])->name('destroy');
             Route::post('/{cabor}', [CabangOlahragaController::class, 'destroy'])->name('destroy.post');
 
-            // TAMBAHAN: Rute untuk fitur khusus CabangOlahraga
-            Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
-            Route::get('/export', [CabangOlahragaController::class, 'exportExcel'])->name('export');
+            // Additional utility routes with {cabor} parameter
             Route::get('/{cabor}/export-atlet', [CabangOlahragaController::class, 'exportAtlet'])->name('export-atlet');
             Route::get('/{cabor}/export-pelatih', [CabangOlahragaController::class, 'exportPelatih'])->name('export-pelatih');
             Route::patch('/{cabor}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
@@ -250,9 +255,9 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             // Export route - generates: admin.laporan-lpj.kegiatan-lainnya.export
             Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
 
-    Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
-        ->name('detail-ajax')
-        ->where('id', '[0-9]+');
+            Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
+                ->name('detail-ajax')
+                ->where('id', '[0-9]+');
 
             Route::get('/{id}', [KegiatanLainnyaController::class, 'show'])->name('show');
             Route::get('/{id}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');

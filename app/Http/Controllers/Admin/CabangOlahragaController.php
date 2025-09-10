@@ -8,6 +8,7 @@ use App\Models\CabangOlahraga;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CabangOlahragaController extends Controller
 {
@@ -372,41 +373,47 @@ class CabangOlahragaController extends Controller
     }
 
     // TAMBAHAN: Method untuk export data ke Excel
-    public function exportExcel(Request $request)
+     public function exportExcel(Request $request)
     {
-        \Log::info('ExportExcel method called', [
-            'user_id' => auth()->id(),
-            'request_params' => $request->all()
-        ]);
-        
         try {
-            // Bangun query yang sama dengan index
-            $query = CabangOlahraga::with(['atlets', 'pelatihs']);
+            $startTime = microtime(true);
+            
+            Log::info('Export Excel request initiated', [
+                'user_id' => auth()->id(),
+                'filters' => $request->only(['search', 'status', 'sort_by', 'order']),
+                'timestamp' => now()
+            ]);
 
-            // Terapkan filter yang sama
+            // ✅ FIXED: Use withCount for better performance
+            $query = CabangOlahraga::withCount(['atlets', 'pelatihs']);
+
+            // Apply search filter
             if ($request->filled('search')) {
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('nama_cabor', 'LIKE', "%{$search}%")
-                        ->orWhere('ketua_penanggung_jawab', 'LIKE', "%{$search}%");
+                      ->orWhere('singkatan', 'LIKE', "%{$search}%")
+                      ->orWhere('ketua_penanggung_jawab', 'LIKE', "%{$search}%");
                 });
             }
 
+            // Apply status filter
             if ($request->filled('status')) {
                 $query->where('status', $request->status);
             }
 
-            // Terapkan sorting
+            // Apply sorting
             $sortBy = $request->get('sort_by', 'terakhir_update');
             $order = $request->get('order', 'desc');
 
             $allowedSortFields = [
-                'nama_cabor',
-                'ketua_penanggung_jawab',
-                'status',
-                'tanggal_pembentukan',
-                'terakhir_update',
-                'created_at',
+                'nama_cabor', 
+                'singkatan',
+                'ketua_penanggung_jawab', 
+                'status', 
+                'tanggal_pembentukan', 
+                'terakhir_update', 
+                'created_at', 
                 'id'
             ];
 
@@ -417,67 +424,185 @@ class CabangOlahragaController extends Controller
                       ->orderBy('created_at', 'desc');
             }
 
-            // Ambil semua data
+            // ✅ FIXED: Get all filtered data (no pagination for export)
             $cabors = $query->get();
 
-            // Buat nama file dengan timestamp
-            $fileName = 'Data_Cabang_Olahraga_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
-
-            \Log::info('Exporting data', [
-                'count' => $cabors->count(),
-                'filename' => $fileName
+            Log::info('Export data prepared', [
+                'total_records' => $cabors->count(),
+                'memory_usage' => memory_get_usage(true),
+                'elapsed_time' => microtime(true) - $startTime
             ]);
 
-            // Return response dengan header untuk download
-            return response()->streamDownload(function () use ($cabors) {
-                // Output headers
+            // ✅ FIXED: Create StreamedResponse for memory efficiency with proper Excel format
+            $response = new StreamedResponse(function() use ($cabors, $request, $startTime) {
+                $handle = fopen('php://output', 'w');
+                
+                // ✅ FIXED: Add UTF-8 BOM for proper Excel encoding
+                fwrite($handle, "\xEF\xBB\xBF");
+
+                // ✅ FIXED: Proper CSV Headers for Cabang Olahraga
                 $headers = [
                     'No',
                     'Nama Cabang Olahraga',
+                    'Singkatan',
                     'Ketua Penanggung Jawab',
                     'Status',
                     'Tanggal Pembentukan',
                     'Jumlah Atlet',
                     'Jumlah Pelatih',
-                    'Terakhir Update'
+                    'Total Data',
+                    'Terakhir Update',
+                    'Tanggal Dibuat'
                 ];
-
-                $csv = fopen('php://output', 'w');
                 
-                // Add BOM for Excel UTF-8 compatibility
-                fprintf($csv, chr(0xEF).chr(0xBB).chr(0xBF));
-                
-                // Write headers
-                fputcsv($csv, $headers);
+                fputcsv($handle, $headers);
 
-                // Write data
+                // ✅ FIXED: Data rows with proper formatting
                 foreach ($cabors as $index => $cabor) {
-                    $data = [
+                    $row = [
                         $index + 1,
-                        $cabor->nama_cabor,
-                        $cabor->ketua_penanggung_jawab,
-                        $cabor->status,
-                        $cabor->tanggal_pembentukan ? \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->format('d/m/Y') : '-',
-                        $cabor->atlets ? $cabor->atlets->count() : 0,
-                        $cabor->pelatihs ? $cabor->pelatihs->count() : 0,
-                        $cabor->terakhir_update ? \Carbon\Carbon::parse($cabor->terakhir_update)->format('d/m/Y H:i:s') : '-'
+                        $cabor->nama_cabor ?? '-',
+                        $cabor->singkatan ?? '-',
+                        $cabor->ketua_penanggung_jawab ?? '-',
+                        $cabor->status ?? '-',
+                        $cabor->tanggal_pembentukan ? 
+                            \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->format('d/m/Y') : '-',
+                        $cabor->atlets_count ?? 0,
+                        $cabor->pelatihs_count ?? 0,
+                        ($cabor->atlets_count ?? 0) + ($cabor->pelatihs_count ?? 0),
+                        $cabor->terakhir_update ? 
+                            \Carbon\Carbon::parse($cabor->terakhir_update)->format('d/m/Y H:i:s') : '-',
+                        $cabor->created_at ? 
+                            \Carbon\Carbon::parse($cabor->created_at)->format('d/m/Y H:i:s') : '-'
                     ];
                     
-                    fputcsv($csv, $data);
+                    fputcsv($handle, $row);
                 }
 
-                fclose($csv);
-            }, $fileName, [
-                'Content-Type' => 'text/csv; charset=UTF-8',
-                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+                fclose($handle);
+                
+                Log::info('Export completed', [
+                    'total_time' => microtime(true) - $startTime,
+                    'final_memory' => memory_get_usage(true)
+                ]);
+            });
+
+            // ✅ FIXED: Generate filename with current timestamp and filters
+            $timestamp = now()->format('Y-m-d_H-i-s');
+            $filterSuffix = '';
+            
+            if ($request->filled('search') || $request->filled('status')) {
+                $filters = [];
+                if ($request->filled('search')) {
+                    $filters[] = 'search-' . str_replace(' ', '-', substr($request->search, 0, 10));
+                }
+                if ($request->filled('status')) {
+                    $filters[] = strtolower($request->status);
+                }
+                $filterSuffix = '_' . implode('_', $filters);
+            }
+            
+            $filename = "Data_Cabang_Olahraga_{$timestamp}{$filterSuffix}.csv";
+
+            // ✅ FIXED: Set proper response headers for Excel download
+            $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+            $response->headers->set('Content-Disposition', "attachment; filename=\"$filename\"");
+            $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+            
+            return $response;
+
+        } catch (\Exception $e) {
+            Log::error('Error exporting cabang olahraga', [
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'request_data' => $request->all(),
+                'user_id' => auth()->id()
+            ]);
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal mengekspor data: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->back()->with('error', 'Gagal mengekspor data: ' . $e->getMessage());
+        }
+    }
+
+/**
+ * Export data with custom date range (optional enhancement)
+ */
+public function exportExcelWithDateRange(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date'
+        ]);
+
+        // Add date filtering to the query if dates provided
+        if ($request->filled('start_date') || $request->filled('end_date')) {
+            $originalMethod = $this->exportExcel($request);
+            return $originalMethod;
+        }
+
+        return $this->exportExcel($request);
+    }
+
+    public function resetFilters(Request $request)
+    {
+        return redirect()->route('admin.konfigurasi.cabang-olahraga.index');
+    }
+
+/**
+ * Get export preview (first 10 rows) for validation
+ */
+    public function exportPreview(Request $request)
+    {
+        try {
+            $query = CabangOlahraga::withCount(['atlets', 'pelatihs']);
+
+            // Apply same filters as export
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_cabor', 'LIKE', "%{$search}%")
+                      ->orWhere('singkatan', 'LIKE', "%{$search}%")
+                      ->orWhere('ketua_penanggung_jawab', 'LIKE', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            $total = $query->count();
+            $preview = $query->limit(10)->get();
+
+            return response()->json([
+                'success' => true,
+                'total_records' => $total,
+                'preview_data' => $preview->map(function($cabor) {
+                    return [
+                        'nama_cabor' => $cabor->nama_cabor,
+                        'singkatan' => $cabor->singkatan,
+                        'ketua_penanggung_jawab' => $cabor->ketua_penanggung_jawab,
+                        'status' => $cabor->status,
+                        'jumlah_atlet' => $cabor->atlets_count ?? 0,
+                        'jumlah_pelatih' => $cabor->pelatihs_count ?? 0,
+                    ];
+                }),
+                'message' => "Siap mengekspor {$total} records"
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Error exporting cabang olahraga: ' . $e->getMessage(), [
-                'exception' => $e->getTraceAsString()
-            ]);
-
-            return redirect()->back()->with('error', 'Gagal mengekspor data: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memuat preview: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -621,4 +746,6 @@ class CabangOlahragaController extends Controller
 
         return $result;
     }
+
+    
 }
