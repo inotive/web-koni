@@ -149,6 +149,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             // Prestasi untuk Atlet
             Route::prefix('atlet')->name('atlet.')->group(function () {
                 Route::get('/{atlet}/export-detail', [AtletController::class, 'exportDetail'])->name('exportDetail');
+                Route::get('/{atlet}/export-pdf', [AtletController::class, 'exportPdf'])->name('exportPdf');
                 Route::get('/{atlet}/create', [PrestasiController::class, 'createForAtlet'])->name('create');
                 Route::post('/{atlet}', [PrestasiController::class, 'storeForAtlet'])->name('store');
             });
