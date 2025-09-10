@@ -364,12 +364,14 @@
                     @php
                         // Menggunakan nilai serapan yang sudah dihitung di controller
                         $serapan = $item->serapan;
+                        // Membagi RKA secara merata ke 8 kegiatan
+                        $rka_per_kegiatan = $total_rka > 0 ? $total_rka / 8 : 0;
                         $total_budget = $item->total_budget;
                         // Menangani kasus ketika tidak ada RKA
-                        $persen = ($total_budget > 0) ? round(($serapan / $total_budget) * 100) : 0;
-                        // Menampilkan 0 jika tidak ada RKA
+                        $persen = ($rka_per_kegiatan > 0) ? round(($serapan / $rka_per_kegiatan) * 100) : 0;
+                        // Menampilkan serapan per kegiatan
                         $display_serapan = $serapan;
-                        $display_budget = $total_rka; // Menampilkan total RKA keseluruhan
+                        $display_budget = $rka_per_kegiatan;
 
                         $barClass = 'bar-success';
                         if ($persen <= 30) {
@@ -416,7 +418,9 @@
                                 @foreach($item->children as $j => $child)
                                     @php
                                         $child_serapan = $child->jumlah_harga;
-                                        $child_budget = isset($child->allocated_budget) ? $child->allocated_budget : 0;
+                                        // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
+                                        $rka_per_kegiatan = $total_rka > 0 ? $total_rka / 8 : 0;
+                                        $child_budget = $item->children->count() > 0 ? $rka_per_kegiatan / $item->children->count() : 0;
                                         $child_persen = ($child_budget > 0) ? round(($child_serapan / $child_budget) * 100) : 0;
 
                                         $childBarClass = 'bar-success';
@@ -455,7 +459,7 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <span class="fw-bold">
-                                            Rp {{ number_format($item->total_serapan, 0, ',', '.') }}
+                                            Rp {{ number_format($item->children->sum('jumlah_harga'), 0, ',', '.') }} / Rp {{ number_format($display_budget, 0, ',', '.') }}
                                         </span>
                                     </div>
                                 </div>
