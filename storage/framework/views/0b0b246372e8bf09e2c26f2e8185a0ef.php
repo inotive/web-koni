@@ -362,14 +362,42 @@
 
                 <?php $__currentLoopData = $kegiatan->take(8); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php
-                        // Menggunakan nilai serapan yang sudah dihitung di controller
-                        $serapan = $item->serapan;
-                        $total_budget = $item->total_budget;
-                        // Menangani kasus ketika tidak ada RKA
-                        $persen = ($total_budget > 0) ? round(($serapan / $total_budget) * 100) : 0;
-                        // Menampilkan 0 jika tidak ada RKA
+                        // Memastikan nilai serapan adalah numerik dan bukan null
+                        $serapan = 0;
+                        if (isset($item->serapan) && is_numeric($item->serapan)) {
+                            $serapan = (int)$item->serapan;
+                        }
+                        
+                        // Membagi RKA secara merata ke 8 kegiatan
+                        $rka_per_kegiatan = 0;
+                        if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
+                            $rka_per_kegiatan = (int)($total_rka / 8);
+                        }
+                        
+                        $total_budget = isset($item->total_budget) ? $item->total_budget : 0;
+                        
+                        // Perhitungan persentase dengan pengecekan aman
+                        $persen = 0;
+                        if ($rka_per_kegiatan > 0) {
+                            $persen = round(($serapan / $rka_per_kegiatan) * 100);
+                            // Batasi maksimal 100%
+                            $persen = min(100, $persen);
+                        }
+                        
+                        // Menampilkan serapan per kegiatan
                         $display_serapan = $serapan;
-                        $display_budget = $total_rka; // Menampilkan total RKA keseluruhan
+                        $display_budget = $rka_per_kegiatan;
+                        
+                        // Debugging - Hapus komentar untuk debugging
+                        /*
+                        if ($i == 0) { // Hanya untuk kegiatan pertama
+                            echo "<!-- Debug Kegiatan Utama: ";
+                            echo "Nama: " . (isset($item->nama_program) ? $item->nama_program : 'N/A') . ", ";
+                            echo "Serapan: " . $serapan . ", ";
+                            echo "Total RKA: " . (isset($total_rka) ? $total_rka : 'N/A') . ", ";
+                            echo "RKA per kegiatan: " . $rka_per_kegiatan . " -->";
+                        }
+                        */
 
                         $barClass = 'bar-success';
                         if ($persen <= 30) {
@@ -416,9 +444,43 @@
                                 <h6 class="mb-3">Detail Kegiatan Pembinaan Prestasi</h6>
                                 <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                        $child_serapan = $child->jumlah_harga;
-                                        $child_budget = isset($child->allocated_budget) ? $child->allocated_budget : 0;
-                                        $child_persen = ($child_budget > 0) ? round(($child_serapan / $child_budget) * 100) : 0;
+                                        // Memastikan nilai serapan adalah numerik dan bukan null
+                                        $child_serapan = 0;
+                                        if (isset($child->jumlah_harga) && is_numeric($child->jumlah_harga)) {
+                                            $child_serapan = (int)$child->jumlah_harga;
+                                        }
+                                        
+                                        // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
+                                        $rka_per_kegiatan = 0;
+                                        if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
+                                            $rka_per_kegiatan = (int)($total_rka / 8);
+                                        }
+                                        
+                                        $jumlah_anak = $item->children->count();
+                                        $child_budget = 0;
+                                        if ($jumlah_anak > 0 && $rka_per_kegiatan > 0) {
+                                            $child_budget = (int)($rka_per_kegiatan / $jumlah_anak);
+                                        }
+                                        
+                                        // Perhitungan persentase dengan pengecekan aman
+                                        $child_persen = 0;
+                                        if ($child_budget > 0) {
+                                            $child_persen = round(($child_serapan / $child_budget) * 100);
+                                            // Batasi maksimal 100%
+                                            $child_persen = min(100, $child_persen);
+                                        }
+                                        
+                                        // Debugging - Hapus komentar untuk debugging
+                                        /*
+                                        if ($j == 0) { // Hanya untuk anak pertama
+                                            echo "<!-- Debug Anak Kegiatan: ";
+                                            echo "Nama: " . (isset($child->nama_program) ? $child->nama_program : 'N/A') . ", ";
+                                            echo "Serapan: " . $child_serapan . ", ";
+                                            echo "RKA per kegiatan: " . $rka_per_kegiatan . ", ";
+                                            echo "Jumlah anak: " . $jumlah_anak . ", ";
+                                            echo "Budget per anak: " . $child_budget . " -->";
+                                        }
+                                        */
 
                                         $childBarClass = 'bar-success';
                                         if ($child_persen <= 30) {
@@ -456,9 +518,29 @@
                                         <span class="fw-bold">Total Serapan:</span>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
+                                        <?php
+                                            // Memastikan total serapan adalah numerik
+                                            $total_serapan_anak = 0;
+                                            if (isset($item->children)) {
+                                                $total_serapan_anak = (int)$item->children->sum('jumlah_harga');
+                                            }
+                                            
+                                            // Memastikan nilai RKA adalah numerik
+                                            $rka_per_kegiatan = 0;
+                                            if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
+                                                $rka_per_kegiatan = (int)($total_rka / 8);
+                                            }
+                                            
+                                            // Perhitungan persentase total dengan pengecekan aman
+                                            $total_persen_anak = 0;
+                                            if ($rka_per_kegiatan > 0) {
+                                                $total_persen_anak = round(($total_serapan_anak / $rka_per_kegiatan) * 100);
+                                                // Batasi maksimal 100%
+                                                $total_persen_anak = min(100, $total_persen_anak);
+                                            }
+                                        ?>
                                         <span class="fw-bold">
-                                            Rp <?php echo e(number_format($item->total_serapan, 0, ',', '.')); ?>
-
+                                            Rp <?php echo e(number_format($total_serapan_anak, 0, ',', '.')); ?> / Rp <?php echo e(number_format($rka_per_kegiatan, 0, ',', '.')); ?> (<?php echo e($total_persen_anak); ?>%)
                                         </span>
                                     </div>
                                 </div>
