@@ -194,6 +194,49 @@
         .dropdown-icon:hover {
             background-color: #e9ecef;
         }
+
+        /* Export specific styles */
+        .export-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .export-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .export-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .export-date {
+            color: #666;
+            font-size: 16px;
+        }
+
+        /* Progress bar text styles */
+        .progress-bar-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            pointer-events: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
     </style>
 @endpush
 
@@ -309,31 +352,52 @@
                         <h5 class="card-title mb-0 f-3">Informasi Kegiatan</h5>
 
                         <div class="d-flex gap-2">
-                            <a href="{{ route('admin.dashboard.export') }}" class="btn btn-light-primary" target="_blank">
+                            <button type="button" id="export-screenshot" class="btn btn-light-primary">
                                 <i class="fa-solid fa-download me-1"></i> Export Data
-                            </a>
-
-                            <form method="GET" id="filter-form">
-                                <select name="filter" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
-                                    <option value="" {{ request('filter') == '' ? 'selected' : '' }}>Default</option>
-                                    <option value="tertinggi" {{ request('filter') == 'tertinggi' ? 'selected' : '' }}>Tertinggi</option>
-                                    <option value="terendah" {{ request('filter') == 'terendah' ? 'selected' : '' }}>Terendah</option>
-                                </select>
-                            </form>
+                            </button>
                         </div>
                     </div>
                 </div>
+                <div id="informasi-kegiatan-content">
 
                 @foreach ($kegiatan->take(8) as $i => $item)
                     @php
-                        // Menggunakan nilai serapan yang sudah dihitung di controller
-                        $serapan = $item->serapan;
-                        $total_budget = $item->total_budget;
-                        // Menangani kasus ketika tidak ada RKA
-                        $persen = ($total_budget > 0) ? round(($serapan / $total_budget) * 100) : 0;
-                        // Menampilkan 0 jika tidak ada RKA
+                        // Memastikan nilai serapan adalah numerik dan bukan null
+                        $serapan = 0;
+                        if (isset($item->serapan) && is_numeric($item->serapan)) {
+                            $serapan = (int)$item->serapan;
+                        }
+                        
+                        // Membagi RKA secara merata ke 8 kegiatan
+                        $rka_per_kegiatan = 0;
+                        if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
+                            $rka_per_kegiatan = (int)($total_rka / 8);
+                        }
+                        
+                        $total_budget = isset($item->total_budget) ? $item->total_budget : 0;
+                        
+                        // Perhitungan persentase dengan pengecekan aman
+                        $persen = 0;
+                        if ($rka_per_kegiatan > 0) {
+                            $persen = round(($serapan / $rka_per_kegiatan) * 100);
+                            // Batasi maksimal 100%
+                            $persen = min(100, $persen);
+                        }
+                        
+                        // Menampilkan serapan per kegiatan
                         $display_serapan = $serapan;
-                        $display_budget = $total_rka; // Menampilkan total RKA keseluruhan
+                        $display_budget = $rka_per_kegiatan;
+                        
+                        // Debugging - Hapus komentar untuk debugging
+                        /*
+                        if ($i == 0) { // Hanya untuk kegiatan pertama
+                            echo "<!-- Debug Kegiatan Utama: ";
+                            echo "Nama: " . (isset($item->nama_program) ? $item->nama_program : 'N/A') . ", ";
+                            echo "Serapan: " . $serapan . ", ";
+                            echo "Total RKA: " . (isset($total_rka) ? $total_rka : 'N/A') . ", ";
+                            echo "RKA per kegiatan: " . $rka_per_kegiatan . " -->";
+                        }
+                        */
 
                         $barClass = 'bar-success';
                         if ($persen <= 30) {
@@ -356,18 +420,19 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 position-relative">
-                            <div class="progress w-100" style="border-radius: 8px;">
-                                <div class="progress-bar {{ $barClass }} text-white d-flex justify-content-between align-items-center px-3"
+                            <div class="progress w-100" style="border-radius: 8px; height: 45px;">
+                                <div class="progress-bar {{ $barClass }}"
                                     role="progressbar"
-                                    style="width: {{ $persen }}%; font-size: 12px; border-radius: 8px;"
+                                    style="width: {{ $persen }}%; border-radius: 8px; opacity: 0.8;"
                                     aria-valuenow="{{ $persen }}" aria-valuemin="0" aria-valuemax="100">
-                                    <span>
+                                </div>
+                                <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
+                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
                                         Serapan : Rp {{ number_format($display_serapan, 0, ',', '.') }} / Rp {{ number_format($display_budget, 0, ',', '.') }} | {{ $item->children->where('jumlah_harga', '>', 0)->count() }}/{{ $item->children->count() }}
                                     </span>
-                                    <span class="fw-bold">{{ $persen }}%</span>
+                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">{{ $persen }}%</span>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -375,12 +440,46 @@
                     @if($item->id == 6 && $item->children->count() > 0)
                         <div class="collapse" id="collapsePembinaanPrestasi">
                             <div class="card card-body mt-2 p-3">
-                                <h6 class="mb-3">Detail Anak Kegiatan Pembinaan Prestasi</h6>
+                                <h6 class="mb-3">Detail Kegiatan Pembinaan Prestasi</h6>
                                 @foreach($item->children as $j => $child)
                                     @php
-                                        $child_serapan = $child->jumlah_harga;
-                                        $child_budget = isset($child->allocated_budget) ? $child->allocated_budget : 0;
-                                        $child_persen = ($child_budget > 0) ? round(($child_serapan / $child_budget) * 100) : 0;
+                                        // Memastikan nilai serapan adalah numerik dan bukan null
+                                        $child_serapan = 0;
+                                        if (isset($child->jumlah_harga) && is_numeric($child->jumlah_harga)) {
+                                            $child_serapan = (int)$child->jumlah_harga;
+                                        }
+                                        
+                                        // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
+                                        $rka_per_kegiatan = 0;
+                                        if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
+                                            $rka_per_kegiatan = (int)($total_rka / 8);
+                                        }
+                                        
+                                        $jumlah_anak = $item->children->count();
+                                        $child_budget = 0;
+                                        if ($jumlah_anak > 0 && $rka_per_kegiatan > 0) {
+                                            $child_budget = (int)($rka_per_kegiatan / $jumlah_anak);
+                                        }
+                                        
+                                        // Perhitungan persentase dengan pengecekan aman
+                                        $child_persen = 0;
+                                        if ($child_budget > 0) {
+                                            $child_persen = round(($child_serapan / $child_budget) * 100);
+                                            // Batasi maksimal 100%
+                                            $child_persen = min(100, $child_persen);
+                                        }
+                                        
+                                        // Debugging - Hapus komentar untuk debugging
+                                        /*
+                                        if ($j == 0) { // Hanya untuk anak pertama
+                                            echo "<!-- Debug Anak Kegiatan: ";
+                                            echo "Nama: " . (isset($child->nama_program) ? $child->nama_program : 'N/A') . ", ";
+                                            echo "Serapan: " . $child_serapan . ", ";
+                                            echo "RKA per kegiatan: " . $rka_per_kegiatan . ", ";
+                                            echo "Jumlah anak: " . $jumlah_anak . ", ";
+                                            echo "Budget per anak: " . $child_budget . " -->";
+                                        }
+                                        */
 
                                         $childBarClass = 'bar-success';
                                         if ($child_persen <= 30) {
@@ -390,19 +489,22 @@
                                         }
                                     @endphp
 
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div style="min-width: 200px;">
-                                            <span class="text-muted small">{{ $j + 1 }}. {{ $child->nama_program }}</span>
+                                    <div class="d-flex align-items-center mb-3 gap-3">
+                                        <div style="min-width: 220px; max-width: 220px;">
+                                            <span class="title-kegiatan">{{ $j + 1 }}. {{ $child->nama_program }}</span>
                                         </div>
-                                        <div class="flex-grow-1 ms-3">
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar {{ $childBarClass }} d-flex justify-content-between align-items-center px-2"
+                                        <div class="flex-grow-1 position-relative">
+                                            <div class="progress w-100" style="border-radius: 8px; height: 45px;">
+                                                <div class="progress-bar {{ $childBarClass }}"
                                                     role="progressbar"
-                                                    style="width: {{ $child_persen }}%;"
+                                                    style="width: {{ $child_persen }}%; border-radius: 8px; opacity: 0.8;"
                                                     aria-valuenow="{{ $child_persen }}" aria-valuemin="0" aria-valuemax="100">
-                                                    <span class="text-white" style="font-size: 10px;">
+                                                </div>
+                                                <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
+                                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
                                                         Rp {{ number_format($child_serapan, 0, ',', '.') }} / Rp {{ number_format($child_budget, 0, ',', '.') }}
                                                     </span>
+                                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">{{ $child_persen }}%</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -410,12 +512,33 @@
                                 @endforeach
                                 {{-- Total untuk Pembinaan Prestasi --}}
                                 <div class="d-flex align-items-center mt-3 pt-3 border-top">
-                                    <div style="min-width: 200px;">
+                                    <div style="min-width: 220px; max-width: 220px;">
                                         <span class="fw-bold">Total Serapan:</span>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
+                                        @php
+                                            // Memastikan total serapan adalah numerik
+                                            $total_serapan_anak = 0;
+                                            if (isset($item->children)) {
+                                                $total_serapan_anak = (int)$item->children->sum('jumlah_harga');
+                                            }
+                                            
+                                            // Memastikan nilai RKA adalah numerik
+                                            $rka_per_kegiatan = 0;
+                                            if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
+                                                $rka_per_kegiatan = (int)($total_rka / 8);
+                                            }
+                                            
+                                            // Perhitungan persentase total dengan pengecekan aman
+                                            $total_persen_anak = 0;
+                                            if ($rka_per_kegiatan > 0) {
+                                                $total_persen_anak = round(($total_serapan_anak / $rka_per_kegiatan) * 100);
+                                                // Batasi maksimal 100%
+                                                $total_persen_anak = min(100, $total_persen_anak);
+                                            }
+                                        @endphp
                                         <span class="fw-bold">
-                                            Rp {{ number_format($item->total_serapan, 0, ',', '.') }}
+                                            Rp {{ number_format($total_serapan_anak, 0, ',', '.') }} / Rp {{ number_format($rka_per_kegiatan, 0, ',', '.') }} ({{ $total_persen_anak }}%)
                                         </span>
                                     </div>
                                 </div>
@@ -423,6 +546,7 @@
                         </div>
                     @endif
                 @endforeach
+                </div>
             </div>
         </div>
 
@@ -448,36 +572,20 @@
         </div>
 
 
-        <!-- Prestasi Terbaru dengan Tab Navigation -->
+        <!-- Prestasi Terbaru -->
         <div class="card border-0 shadow-sm">
             <div class="card-body p-6">
                 <div class="d-flex align-items-center justify-content-between mb-6">
                     <h5 class="mb-0">Prestasi Terbaru</h5>
                 </div>
 
-                <!-- Tab Navigation -->
-                <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x mb-5 fs-5">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#atlet-prestasi">Atlet</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#pelatih-prestasi">Pelatih</a>
-                    </li>
-                </ul>
-
-                <!-- Tab Content -->
-                <div class="tab-content" id="prestasi-tab-content">
-                    <!-- Prestasi Atlet -->
-                    <div class="tab-pane fade show active" id="atlet-prestasi" role="tabpanel">
-                        @include('admin.dashboard.partials._prestasi-atlet-table', ['prestasi_list' => $latest_prestasi, 'type' => 'atlet'])
-                    </div>
-
-                    <!-- Prestasi Pelatih -->
-                    <div class="tab-pane fade" id="pelatih-prestasi" role="tabpanel">
-                        @include('admin.dashboard.partials._prestasi-pelatih-table', ['prestasi_list' => $latest_prestasi_pelatih, 'type' => 'pelatih'])
-                    </div>
-                </div>
                 
+
+                                <!-- Prestasi Atlet -->
+                <div>
+                    @include('admin.dashboard.partials._prestasi-atlet-table', ['prestasi_list' => $latest_prestasi, 'type' => 'atlet'])
+                </div>
+
                 <div class="text-center mt-6">
                     <a href="{{ route('admin.konfigurasi.prestasi.index') }}" class="btn btn-primary">
                         Lihat Selengkapnya
@@ -489,6 +597,9 @@
 @endsection
 
 @push('stack-script')
+    <!-- html2canvas library for screenshot functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
     <script>
         const ctx = document.getElementById('caborChart').getContext('2d');
         const caborData = @json($cabor_chart_data);
@@ -542,6 +653,29 @@
                     }
                 }
             }
+        });
+
+        // Screenshot functionality for exporting "Informasi Kegiatan" section
+        document.getElementById('export-screenshot').addEventListener('click', function() {
+            const targetElement = document.getElementById('informasi-kegiatan-content'); // The Informasi Kegiatan section
+
+            html2canvas(targetElement, {
+                scale: 2, // Higher scale for better quality
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                // Convert canvas to blob
+                canvas.toBlob(function(blob) {
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'informasi-kegiatan-' + new Date().toISOString().slice(0, 10) + '.png';
+                    link.click();
+                });
+            }).catch(error => {
+                console.error('Error capturing screenshot:', error);
+                alert('Gagal mengekspor data. Silakan coba lagi.');
+            });
         });
     </script>
 @endpush
