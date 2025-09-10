@@ -358,6 +358,7 @@
                         </div>
                     </div>
                 </div>
+                <div id="informasi-kegiatan-content">
 
                 @foreach ($kegiatan->take(8) as $i => $item)
                     @php
@@ -462,6 +463,7 @@
                         </div>
                     @endif
                 @endforeach
+                </div>
             </div>
         </div>
 
@@ -487,34 +489,18 @@
         </div>
 
 
-        <!-- Prestasi Terbaru dengan Tab Navigation -->
+        <!-- Prestasi Terbaru -->
         <div class="card border-0 shadow-sm">
             <div class="card-body p-6">
                 <div class="d-flex align-items-center justify-content-between mb-6">
                     <h5 class="mb-0">Prestasi Terbaru</h5>
                 </div>
 
-                <!-- Tab Navigation -->
-                <ul class="nav nav-tabs nav-line-tabs nav-line-tabs-2x mb-5 fs-5">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#atlet-prestasi">Atlet</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#pelatih-prestasi">Pelatih</a>
-                    </li>
-                </ul>
+                
 
-                <!-- Tab Content -->
-                <div class="tab-content" id="prestasi-tab-content">
-                    <!-- Prestasi Atlet -->
-                    <div class="tab-pane fade show active" id="atlet-prestasi" role="tabpanel">
-                        @include('admin.dashboard.partials._prestasi-atlet-table', ['prestasi_list' => $latest_prestasi, 'type' => 'atlet'])
-                    </div>
-
-                    <!-- Prestasi Pelatih -->
-                    <div class="tab-pane fade" id="pelatih-prestasi" role="tabpanel">
-                        @include('admin.dashboard.partials._prestasi-pelatih-table', ['prestasi_list' => $latest_prestasi_pelatih, 'type' => 'pelatih'])
-                    </div>
+                                <!-- Prestasi Atlet -->
+                <div>
+                    @include('admin.dashboard.partials._prestasi-atlet-table', ['prestasi_list' => $latest_prestasi, 'type' => 'atlet'])
                 </div>
 
                 <div class="text-center mt-6">
@@ -588,7 +574,7 @@
 
         // Screenshot functionality for exporting "Informasi Kegiatan" section
         document.getElementById('export-screenshot').addEventListener('click', function() {
-            const targetElement = document.querySelector('.card-body'); // The Informasi Kegiatan section
+            const targetElement = document.getElementById('informasi-kegiatan-content'); // The Informasi Kegiatan section
 
             html2canvas(targetElement, {
                 scale: 2, // Higher scale for better quality
