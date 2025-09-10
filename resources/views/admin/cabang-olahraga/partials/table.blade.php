@@ -115,19 +115,18 @@
                             @if ($totalData > 0)
                                 <button type="button" class="btn btn-icon btn-sm btn-light-danger"
                                     title="Tidak dapat dihapus - Ada {{ $totalData }} data terkait"
-                                    onclick="showDeleteWarning('{{ $cabor->nama_cabor }}', {{ $jumlahAtlet }}, {{ $jumlahPelatih }})"
+                                    onclick="showDeleteWarning(this, '{{ $cabor->nama_cabor }}', {{ $jumlahAtlet }}, {{ $jumlahPelatih }})"
                                     style="opacity: 0.6;">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             @else
-                                <form action="{{ route('admin.konfigurasi.cabang-olahraga.destroy', $cabor->id) }}"
-                                    method="POST" class="d-inline delete-form"
-                                    onsubmit="return confirmDelete('{{ $cabor->nama_cabor }}')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-icon btn-sm btn-light-danger" title="Hapus">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </form>
+                                <button type="button" 
+                                    class="btn btn-icon btn-sm btn-light-danger" 
+                                    title="Hapus {{ $cabor->nama_cabor }}"
+                                    data-route="{{ route('admin.konfigurasi.cabang-olahraga.destroy', $cabor->id) }}"
+                                    onclick="destroyItem(this)">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             @endif
                         </div>
                     </td>

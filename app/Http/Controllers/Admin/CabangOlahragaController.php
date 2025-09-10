@@ -135,7 +135,7 @@ class CabangOlahragaController extends Controller
         $validatedData = $request->validate([
             'nama_cabor' => 'required|string|max:50',
             'ketua_penanggung_jawab' => 'required|string|max:100',
-            'status' => 'required|in:Aktif,Tidak Aktif',
+            'status' => 'required|in:Aktif,Pembinaan',
             'tanggal_pembentukan' => 'required|date',
             'icon_cabor' => 'nullable|file|mimes:png,webp,svg|max:2048',
         ], [
@@ -190,7 +190,7 @@ class CabangOlahragaController extends Controller
         $validatedData = $request->validate([
             'nama_cabor' => 'required|string|max:50',
             'ketua_penanggung_jawab' => 'required|string|max:100',
-            'status' => 'required|in:Aktif,Tidak Aktif',
+            'status' => 'required|in:Aktif,Pembinaan',
             'tanggal_pembentukan' => 'required|date',
             'icon_cabor' => 'nullable|file|mimes:png,webp,svg|max:2048',
         ], [
@@ -220,8 +220,24 @@ class CabangOlahragaController extends Controller
         ])->with('cabor_updated', 'Cabang olahraga berhasil diperbarui.');
     }
 
-    public function destroy($cabor)
+    public function destroy(Request $request, $cabor)
     {
+        // Check if this is a POST request with _method=DELETE (method spoofing)
+        if ($request->method() === 'POST' && $request->input('_method') === 'DELETE') {
+            // Continue with the deletion process
+        } 
+        // Check if this is a direct DELETE request
+        elseif ($request->method() === 'DELETE') {
+            // Continue with the deletion process
+        }
+        // If neither, return error
+        else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Method not allowed'
+            ], 405);
+        }
+
         try {
             $cabor = CabangOlahraga::with(['atlets', 'pelatihs'])->findOrFail($cabor);
 
@@ -231,23 +247,14 @@ class CabangOlahragaController extends Controller
             $totalData = $jumlahAtlet + $jumlahPelatih;
 
             if ($totalData > 0) {
-                $pesanError = "Tidak dapat menghapus cabang olahraga '{$cabor->nama_cabor}' karena masih ada data terkait:";
-
-                if ($jumlahAtlet > 0) {
-                    $pesanError .= " {$jumlahAtlet} atlet";
-                }
-
-                if ($jumlahPelatih > 0) {
-                    if ($jumlahAtlet > 0) {
-                        $pesanError .= " dan {$jumlahPelatih} pelatih";
-                    } else {
-                        $pesanError .= " {$jumlahPelatih} pelatih";
-                    }
-                }
-
-                $pesanError .= " yang terdaftar. Silakan pindahkan atau hapus data tersebut terlebih dahulu, atau nonaktifkan cabang olahraga ini.";
-
-                return redirect()->back()->with('error', $pesanError);
+                return response()->json([
+                    'success' => false,
+                    'reason' => 'has_dependencies',
+                    'cabor_name' => $cabor->nama_cabor,
+                    'atlet_count' => $jumlahAtlet,
+                    'pelatih_count' => $jumlahPelatih,
+                    'message' => "Tidak dapat menghapus cabang olahraga '{$cabor->nama_cabor}' karena masih ada data terkait."
+                ], 400);
             }
 
             // Jika tidak ada data terkait, lanjutkan penghapusan
@@ -257,20 +264,28 @@ class CabangOlahragaController extends Controller
 
             $cabor->delete();
 
-            return redirect()->route('admin.konfigurasi.cabang-olahraga.index')
-                ->with('cabor_deleted', 'Cabang olahraga berhasil dihapus.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Cabang olahraga berhasil dihapus.'
+            ]);
         } catch (\Illuminate\Database\QueryException $e) {
             // Tangkap error foreign key constraint dari database
             if ($e->getCode() == '23000') {
-                return redirect()->back()->with(
-                    'error',
-                    'Tidak dapat menghapus cabang olahraga ini karena masih ada data terkait. Silakan hapus data terkait terlebih dahulu.'
-                );
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak dapat menghapus cabang olahraga ini karena masih ada data terkait. Silakan hapus data terkait terlebih dahulu.'
+                ], 400);
             }
 
-            return redirect()->back()->with('error', 'Gagal menghapus cabang olahraga: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus cabang olahraga: ' . $e->getMessage()
+            ], 500);
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus: ' . $e->getMessage()
+            ], 500);
         }
     }
 
@@ -281,7 +296,7 @@ class CabangOlahragaController extends Controller
             $cabor = CabangOlahraga::findOrFail($cabor);
 
             $cabor->update([
-                'status' => 'Tidak Aktif',
+                'status' => 'Pembinaan',
                 'terakhir_update' => now()
             ]);
 
@@ -354,6 +369,132 @@ class CabangOlahragaController extends Controller
             'order' => 'desc',
             'per_page' => 10
         ]);
+    }
+
+    // TAMBAHAN: Method untuk export data ke Excel
+    public function exportExcel(Request $request)
+    {
+        \Log::info('ExportExcel method called', [
+            'user_id' => auth()->id(),
+            'request_params' => $request->all()
+        ]);
+        
+        try {
+            // Bangun query yang sama dengan index
+            $query = CabangOlahraga::with(['atlets', 'pelatihs']);
+
+            // Terapkan filter yang sama
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('nama_cabor', 'LIKE', "%{$search}%")
+                        ->orWhere('ketua_penanggung_jawab', 'LIKE', "%{$search}%");
+                });
+            }
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            // Terapkan sorting
+            $sortBy = $request->get('sort_by', 'terakhir_update');
+            $order = $request->get('order', 'desc');
+
+            $allowedSortFields = [
+                'nama_cabor',
+                'ketua_penanggung_jawab',
+                'status',
+                'tanggal_pembentukan',
+                'terakhir_update',
+                'created_at',
+                'id'
+            ];
+
+            if (in_array($sortBy, $allowedSortFields)) {
+                $query->orderBy($sortBy, $order);
+            } else {
+                $query->orderBy('terakhir_update', 'desc')
+                      ->orderBy('created_at', 'desc');
+            }
+
+            // Ambil semua data
+            $cabors = $query->get();
+
+            // Buat nama file dengan timestamp
+            $fileName = 'Data_Cabang_Olahraga_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+
+            \Log::info('Exporting data', [
+                'count' => $cabors->count(),
+                'filename' => $fileName
+            ]);
+
+            // Return response dengan header untuk download
+            return response()->streamDownload(function () use ($cabors) {
+                // Output headers
+                $headers = [
+                    'No',
+                    'Nama Cabang Olahraga',
+                    'Ketua Penanggung Jawab',
+                    'Status',
+                    'Tanggal Pembentukan',
+                    'Jumlah Atlet',
+                    'Jumlah Pelatih',
+                    'Terakhir Update'
+                ];
+
+                $csv = fopen('php://output', 'w');
+                
+                // Add BOM for Excel UTF-8 compatibility
+                fprintf($csv, chr(0xEF).chr(0xBB).chr(0xBF));
+                
+                // Write headers
+                fputcsv($csv, $headers);
+
+                // Write data
+                foreach ($cabors as $index => $cabor) {
+                    $data = [
+                        $index + 1,
+                        $cabor->nama_cabor,
+                        $cabor->ketua_penanggung_jawab,
+                        $cabor->status,
+                        $cabor->tanggal_pembentukan ? \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->format('d/m/Y') : '-',
+                        $cabor->atlets ? $cabor->atlets->count() : 0,
+                        $cabor->pelatihs ? $cabor->pelatihs->count() : 0,
+                        $cabor->terakhir_update ? \Carbon\Carbon::parse($cabor->terakhir_update)->format('d/m/Y H:i:s') : '-'
+                    ];
+                    
+                    fputcsv($csv, $data);
+                }
+
+                fclose($csv);
+            }, $fileName, [
+                'Content-Type' => 'text/csv; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error exporting cabang olahraga: ' . $e->getMessage(), [
+                'exception' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()->with('error', 'Gagal mengekspor data: ' . $e->getMessage());
+        }
+    }
+
+    // Method untuk export atlet berdasarkan cabang olahraga
+    public function exportAtlet(Request $request, $caborId)
+    {
+        // Redirect ke AtletController dengan parameter cabor_id
+        $request->merge(['cabor_id' => $caborId]);
+        return redirect()->route('admin.konfigurasi.atlet.export', ['cabor_id' => $caborId]);
+    }
+
+    // Method untuk export pelatih berdasarkan cabang olahraga
+    public function exportPelatih(Request $request, $caborId)
+    {
+        // Redirect ke PelatihController dengan parameter cabor_id
+        $request->merge(['cabor_id' => $caborId]);
+        return redirect()->route('admin.konfigurasi.pelatih.export', ['cabor_id' => $caborId]);
     }
 
     /**

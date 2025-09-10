@@ -23,6 +23,8 @@ return new class extends Migration
             $table->json('dokumen_lpj')->nullable();
             $table->json('dokumen_lpj_pdf')->nullable();
             $table->json('dokumen_pendukung')->nullable();
+            $table->json('dokumen_pendukung')->nullable();
+            $table->json('dokumen_lpj_pdf')->nullable();
             $table->json('foto_jurnal')->nullable();
             $table->text('keterangan_tambahan')->nullable();
             $table->timestamps();

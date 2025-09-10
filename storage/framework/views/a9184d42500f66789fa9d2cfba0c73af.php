@@ -176,7 +176,7 @@ unset($__errorArgs, $__bag); ?>
                             'status' => [
                                 'label' => 'Status Keaktifan',
                                 'type' => 'select',
-                                'options' => ['Aktif', 'Tidak Aktif'],
+                                'options' => ['Aktif', 'Pembinaan'],
                                 'required' => true,
                                 'value' => $cabor->status,
                             ],

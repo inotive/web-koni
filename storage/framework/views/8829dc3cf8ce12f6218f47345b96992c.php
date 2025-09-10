@@ -127,19 +127,18 @@
                             <?php if($totalData > 0): ?>
                                 <button type="button" class="btn btn-icon btn-sm btn-light-danger"
                                     title="Tidak dapat dihapus - Ada <?php echo e($totalData); ?> data terkait"
-                                    onclick="showDeleteWarning('<?php echo e($cabor->nama_cabor); ?>', <?php echo e($jumlahAtlet); ?>, <?php echo e($jumlahPelatih); ?>)"
+                                    onclick="showDeleteWarning(this, '<?php echo e($cabor->nama_cabor); ?>', <?php echo e($jumlahAtlet); ?>, <?php echo e($jumlahPelatih); ?>)"
                                     style="opacity: 0.6;">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             <?php else: ?>
-                                <form action="<?php echo e(route('admin.konfigurasi.cabang-olahraga.destroy', $cabor->id)); ?>"
-                                    method="POST" class="d-inline delete-form"
-                                    onsubmit="return confirmDelete('<?php echo e($cabor->nama_cabor); ?>')">
-                                    <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
-                                    <button type="submit" class="btn btn-icon btn-sm btn-light-danger" title="Hapus">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </form>
+                                <button type="button" 
+                                    class="btn btn-icon btn-sm btn-light-danger" 
+                                    title="Hapus <?php echo e($cabor->nama_cabor); ?>"
+                                    data-route="<?php echo e(route('admin.konfigurasi.cabang-olahraga.destroy', $cabor->id)); ?>"
+                                    onclick="destroyItem(this)">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             <?php endif; ?>
                         </div>
                     </td>
