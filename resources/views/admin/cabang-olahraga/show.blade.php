@@ -724,6 +724,14 @@
                                     </div>
                                     <div class="card-toolbar">
                                         <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
+                                            {{-- Tombol Export Gabungan --}}
+                                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.export-gabungan', $cabor->id) }}" 
+                                               class="btn btn-primary" id="export-gabungan-btn" title="Export Data Atlet dan Pelatih ke Excel">
+                                                <i class="fas fa-file-excel me-1"></i>
+                                                <span class="d-none d-sm-inline">Export Gabungan</span>
+                                                <span class="d-sm-none">Export</span>
+                                            </a>
+                                            
                                             {{-- Tombol Export Atlet --}}
                                             <a href="{{ route('admin.konfigurasi.cabang-olahraga.export-atlet', $cabor->id) }}" 
                                                class="btn btn-success" id="export-atlet-btn" title="Export Data Atlet ke Excel">
@@ -929,6 +937,14 @@
                                     </div>
                                     <div class="card-toolbar">
                                         <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
+                                            {{-- Tombol Export Gabungan --}}
+                                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.export-gabungan', $cabor->id) }}" 
+                                               class="btn btn-primary" id="export-gabungan-btn" title="Export Data Atlet dan Pelatih ke Excel">
+                                                <i class="fas fa-file-excel me-1"></i>
+                                                <span class="d-none d-sm-inline">Export Gabungan</span>
+                                                <span class="d-sm-none">Export</span>
+                                            </a>
+                                            
                                             {{-- Tombol Export Pelatih --}}
                                             <a href="{{ route('admin.konfigurasi.cabang-olahraga.export-pelatih', $cabor->id) }}" 
                                                class="btn btn-success" id="export-pelatih-btn" title="Export Data Pelatih ke Excel">

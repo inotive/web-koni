@@ -133,6 +133,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             // Additional utility routes with {cabor} parameter
             Route::get('/{cabor}/export-atlet', [CabangOlahragaController::class, 'exportAtlet'])->name('export-atlet');
             Route::get('/{cabor}/export-pelatih', [CabangOlahragaController::class, 'exportPelatih'])->name('export-pelatih');
+            Route::get('/{cabor}/export-gabungan', [CabangOlahragaController::class, 'exportExcelGabungan'])->name('export-gabungan');
             Route::patch('/{cabor}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
             Route::get('/{cabor}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('check-dependencies');
             Route::delete('/{cabor}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('force-destroy');

@@ -622,6 +622,173 @@ public function exportExcelWithDateRange(Request $request)
         return redirect()->route('admin.konfigurasi.pelatih.export', ['cabor_id' => $caborId]);
     }
 
+    // Method untuk export gabungan atlet dan pelatih dalam satu file Excel
+    public function exportExcelGabungan(Request $request, $caborId)
+    {
+        try {
+            // Ambil data cabang olahraga
+            $cabor = CabangOlahraga::findOrFail($caborId);
+            
+            // Ambil data atlet dengan relasi
+            $atlets = $cabor->atlets()->with(['cabangOlahraga', 'prestasis' => function ($q) {
+                $q->orderByDesc('tahun');
+            }])->withCount('prestasis')->get();
+            
+            // Ambil data pelatih dengan relasi
+            $pelatihs = $cabor->pelatihs()->with('cabangOlahraga')->get();
+            
+            // Buat response streamed
+            $response = new StreamedResponse(function() use ($cabor, $atlets, $pelatihs) {
+                $handle = fopen('php://output', 'w');
+                
+                // Set UTF-8 BOM untuk kompatibilitas Excel
+                fwrite($handle, "\xEF\xBB\xBF");
+                
+                // Informasi Cabang Olahraga
+                fputcsv($handle, ["DATA GABUNGAN CABANG OLAHRAGA " . strtoupper($cabor->nama_cabor)]);
+                fputcsv($handle, []);
+                fputcsv($handle, ["INFORMASI UMUM"]);
+                fputcsv($handle, ['Nama Cabang Olahraga', $cabor->nama_cabor]);
+                fputcsv($handle, ['Ketua Penanggung Jawab', $cabor->ketua_penanggung_jawab ?? '-']);
+                fputcsv($handle, ['Tanggal Pembentukan', $cabor->tanggal_pembentukan ? \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->format('d/m/Y') : '-']);
+                fputcsv($handle, ['Status', $cabor->status]);
+                fputcsv($handle, []);
+                fputcsv($handle, []);
+                
+                // Bagian Atlet
+                fputcsv($handle, ["DATA ATLET"]);
+                fputcsv($handle, [
+                    'No',
+                    'Nama Atlet',
+                    'Cabang Olahraga',
+                    'Jenis Kelamin',
+                    'Tempat Lahir',
+                    'Tanggal Lahir',
+                    'Usia',
+                    'Alamat Lengkap',
+                    'No Telepon',
+                    'Email',
+                    'Ketersediaan',
+                    'Total Prestasi',
+                    'Prestasi Terbaru',
+                    'Tahun Prestasi Terbaru',
+                    'Tempat Prestasi Terbaru'
+                ]);
+                
+                foreach ($atlets as $index => $atlet) {
+                    $prestasiTerbaru = $atlet->prestasis->first();
+                    
+                    // Hitung usia
+                    $age = $atlet->tanggal_lahir
+                        ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->age
+                        : 'N/A';
+                    
+                    // Gabungkan komponen alamat
+                    $alamatLengkap = collect([
+                        $atlet->alamat,
+                        $atlet->alamatkota,
+                        $atlet->alamatprovinsi
+                    ])->filter()->implode(', ');
+                    
+                    fputcsv($handle, [
+                        $index + 1,
+                        $atlet->nama,
+                        $atlet->cabangOlahraga->nama_cabor ?? '-',
+                        $atlet->jenis_kelamin,
+                        $atlet->tempat_lahir,
+                        $atlet->tanggal_lahir
+                            ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->format('d/m/Y')
+                            : '-',
+                        $age . ' tahun',
+                        $alamatLengkap ?: '-',
+                        $atlet->no_telepon ?: '-',
+                        $atlet->email ?: '-',
+                        $atlet->ketersediaan,
+                        $atlet->prestasis_count,
+                        $prestasiTerbaru ? $prestasiTerbaru->nama_prestasi : '-',
+                        $prestasiTerbaru ? $prestasiTerbaru->tahun : '-',
+                        $prestasiTerbaru ? $prestasiTerbaru->tempat : '-'
+                    ]);
+                }
+                
+                fputcsv($handle, []);
+                fputcsv($handle, []);
+                
+                // Bagian Pelatih
+                fputcsv($handle, ["DATA PELATIH"]);
+                fputcsv($handle, [
+                    'No',
+                    'Nama Pelatih',
+                    'Cabang Olahraga',
+                    'Jenis Kelamin',
+                    'Tempat Lahir',
+                    'Tanggal Lahir',
+                    'Usia',
+                    'Alamat Lengkap',
+                    'No Telepon',
+                    'Email',
+                    'Ketersediaan',
+                ]);
+                
+                foreach ($pelatihs as $index => $pelatih) {
+                    // Hitung usia
+                    $age = $pelatih->tanggal_lahir
+                        ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age
+                        : 'N/A';
+                    
+                    // Gabungkan komponen alamat
+                    $alamatLengkap = collect([
+                        $pelatih->alamat,
+                        $pelatih->alamatkota,
+                        $pelatih->alamatprovinsi
+                    ])->filter()->implode(', ');
+                    
+                    fputcsv($handle, [
+                        $index + 1,
+                        $pelatih->nama,
+                        $pelatih->cabangOlahraga->nama_cabor ?? '-',
+                        $pelatih->kelamin,
+                        $pelatih->tempat_lahir,
+                        $pelatih->tanggal_lahir
+                            ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d/m/Y')
+                            : '-',
+                        $age . ' tahun',
+                        $alamatLengkap ?: '-',
+                        $pelatih->no_telepon ?: '-',
+                        $pelatih->email ?: '-',
+                        $pelatih->ketersediaan,
+                    ]);
+                }
+                
+                fclose($handle);
+            });
+            
+            // Buat nama file
+            $timestamp = now()->format('Y-m-d_H-i-s');
+            $filename = "Data_Gabungan_{$cabor->nama_cabor}_{$timestamp}.csv";
+            
+            // Set header response
+            $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+            $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}\"");
+            $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            $response->headers->set('Pragma', 'no-cache');
+            $response->headers->set('Expires', '0');
+            
+            return $response;
+            
+        } catch (\Exception $e) {
+            Log::error('Error exporting gabungan data', [
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'cabor_id' => $caborId,
+                'user_id' => auth()->id()
+            ]);
+            
+            return redirect()->back()->with('error', 'Gagal mengekspor data gabungan: ' . $e->getMessage());
+        }
+    }
+
     /**
      * Menangani upload icon dan resize ke 80x80px
      */
