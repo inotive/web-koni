@@ -48,7 +48,7 @@
             table-layout: fixed !important;
             width: 100%;
         }
-        
+
         .table th:nth-child(1) { width: 40px; }
         .table th:nth-child(2) { width: 250px; }
         .table th:nth-child(3) { width: 200px; }
@@ -495,6 +495,57 @@ $(document).ready(function() {
         setTimeout(() => notification.alert('close'), 5000);
     };
 
+    // Reset form functions (enhanced from Document 2)
+    function resetFormAdd() {
+        const form = document.getElementById('formAdd');
+        if (form) {
+            form.reset();
+            // Clear validation errors
+            form.querySelectorAll('.invalid-feedback').forEach(el => {
+                el.textContent = '';
+            });
+            form.querySelectorAll('.is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+        }
+
+        // Reset dropzone if exists
+        if (typeof dropzones !== 'undefined' && dropzones['formAdd']) {
+            dropzones['formAdd'].removeAllFiles();
+        }
+    }
+
+    function resetEditForm(formId) {
+        const form = document.getElementById(formId);
+        if (form) {
+            // Reset form fields to their original values
+            const modal = $(form).closest('.modal');
+            const originalData = modal.data('original-data');
+
+            if (originalData) {
+                form.querySelectorAll('input, select, textarea').forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (input.type !== 'file' && originalData.hasOwnProperty(name)) {
+                        input.value = originalData[name];
+                    }
+                });
+            }
+
+            // Clear validation errors
+            form.querySelectorAll('.invalid-feedback').forEach(el => {
+                el.textContent = '';
+            });
+            form.querySelectorAll('.is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+        }
+
+        // Reset dropzone if exists
+        if (typeof dropzones !== 'undefined' && dropzones[formId]) {
+            dropzones[formId].removeAllFiles();
+        }
+    }
+
     // Initialize DataTable
     function initializeDataTable() {
         const table = $("#kt_datatable_dom_positioning_sumberdaya");
@@ -633,6 +684,103 @@ $(document).ready(function() {
                 });
             }
         });
+    };
+
+    // Enhanced form submission function (adapted from Document 2)
+    window.submitForm = function(formId) {
+        const formElement = document.getElementById(formId);
+        if (!formElement) {
+            showNotification("Form tidak ditemukan", "error");
+            return;
+        }
+
+        let formData = new FormData();
+        let actionUrl;
+
+        if (formId === 'formAdd') {
+            formData = new FormData(formElement);
+            actionUrl = formElement.action;
+        } else {
+            actionUrl = formElement.getAttribute('data-action');
+            formElement.querySelectorAll('input, select, textarea').forEach(input => {
+                if (input.type === 'file') return;
+                if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
+                    formData.append(input.name, input.value);
+                } else if (input.type !== 'checkbox' && input.type !== 'radio') {
+                    formData.append(input.name, input.value);
+                }
+            });
+        }
+
+        // Handle dropzone files if available
+        if (typeof dropzones !== 'undefined') {
+            const dz = dropzones[formId];
+            if (dz && dz.getAcceptedFiles().length > 0) {
+                dz.getAcceptedFiles().forEach(file => {
+                    formData.append('dokumen', file);
+                });
+            }
+        }
+
+        // Add loading state to button
+        const submitBtn = document.querySelector(
+            `#submitBtn${formId === 'formAdd' ? 'Add' : formId.replace('form-', '')}`);
+        if (submitBtn) {
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+        }
+
+        fetch(actionUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                        '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: formData,
+            })
+            .then(async response => {
+                const data = await response.json();
+
+                // Remove loading state
+                if (submitBtn) {
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.disabled = false;
+                }
+
+                if (!response.ok) {
+                    if (data.errors) {
+                        Object.entries(data.errors).forEach(([field, msgs]) => {
+                            showNotification(msgs.join(', '), "error");
+                        });
+                    } else {
+                        showNotification(data.message || "Gagal menyimpan data", "error");
+                    }
+                } else {
+                    // Reset form immediately after successful submission
+                    if (formId === 'formAdd') {
+                        resetFormAdd();
+                    } else {
+                        resetEditForm(formId);
+                    }
+
+                    $('.modal.show').addClass('submit-success');
+                    $('.modal.show').modal('hide');
+
+                    showNotification(data.message || "Data berhasil disimpan", "success");
+                    updateTable();
+                }
+            })
+            .catch(error => {
+                // Remove loading state
+                if (submitBtn) {
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.disabled = false;
+                }
+
+                showNotification("Terjadi kesalahan. Silakan coba lagi.", "error");
+                console.error('Error:', error);
+            });
     };
 
     // Show detail modal
@@ -1024,6 +1172,76 @@ $(document).ready(function() {
         });
     });
 
+    // Enhanced Modal Event Handlers (from Document 2)
+    $(document).on('show.bs.modal', '.modal', function(e) {
+        const modalId = $(this).attr('id');
+        const modal = $(this);
+
+        modal.removeClass('has-changes submit-success');
+
+        // Store original form data for reset on cancel
+        setTimeout(() => {
+            const form = modal.find('form, [id^="form-"]').first();
+            if (form.length) {
+                const originalData = {};
+                form.find('input, select, textarea').each(function() {
+                    const input = $(this);
+                    if (input.attr('type') !== 'file') {
+                        originalData[input.attr('name')] = input.val();
+                    }
+                });
+                modal.data('original-data', originalData);
+            }
+        }, 100);
+    });
+
+    $(document).on('hidden.bs.modal', '.modal', function(e) {
+        const modalId = $(this).attr('id');
+        const modal = $(this);
+
+        // Only reset if the form was not successfully submitted
+        // (successful submissions are already reset in submitForm)
+        if (!modal.hasClass('submit-success')) {
+            const originalData = modal.data('original-data');
+            if (originalData) {
+                const form = modal.find('form, [id^="form-"]').first();
+                if (form.length) {
+                    form.find('input, select, textarea').each(function() {
+                        const input = $(this);
+                        const name = input.attr('name');
+                        if (input.attr('type') !== 'file' && originalData.hasOwnProperty(name)) {
+                            input.val(originalData[name]);
+                        }
+                    });
+                }
+            }
+
+            // Reset dropzone files
+            if (typeof dropzones !== 'undefined') {
+                if (modalId.startsWith('edit-')) {
+                    const itemId = modalId.split('-')[1];
+                    const formId = `form-${itemId}`;
+                    if (dropzones[formId]) {
+                        dropzones[formId].removeAllFiles();
+                    }
+                } else if (modalId === 'add') {
+                    if (dropzones['formAdd']) {
+                        dropzones['formAdd'].removeAllFiles();
+                    }
+                }
+            }
+        }
+
+        // Always clean up modal state
+        modal.removeClass('has-changes submit-success');
+        modal.removeData('original-data');
+    });
+
+    // Track form changes
+    $(document).on('input change', '.modal input, .modal select, .modal textarea', function() {
+        const modal = $(this).closest('.modal');
+        modal.addClass('has-changes');
+    });
     // Initialize everything
     initializeDataTable();
     initializeDropdownEvents();
