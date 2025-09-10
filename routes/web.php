@@ -112,23 +112,29 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::post('atlet/{atlet}/prestasi', [PrestasiController::class, 'store'])
             ->name('atlet.prestasi.store');
 
-        // PERBAIKAN: Rute Cabang Olahraga - Dipisahkan dan Diperbaiki
         Route::prefix('cabang-olahraga')->name('cabang-olahraga.')->group(function () {
-            // Rute CRUD standar
+            // ✅ FIXED: Export routes MUST come BEFORE {cabor} parameter routes
+            Route::get('/export', [CabangOlahragaController::class, 'exportExcel'])->name('export');
+            Route::get('/export-preview', [CabangOlahragaController::class, 'exportPreview'])->name('export-preview');
+            Route::get('/export-with-date', [CabangOlahragaController::class, 'exportExcelWithDateRange'])->name('export-with-date');
+            Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
+
+            // Basic CRUD routes
             Route::get('/', [CabangOlahragaController::class, 'index'])->name('index');
             Route::get('/create', [CabangOlahragaController::class, 'create'])->name('create');
             Route::post('/', [CabangOlahragaController::class, 'store'])->name('store');
+
+            // ✅ FIXED: Parameterized routes come AFTER static routes
             Route::get('/{cabor}', [CabangOlahragaController::class, 'show'])->name('show');
             Route::get('/{cabor}/edit', [CabangOlahragaController::class, 'edit'])->name('edit');
             Route::put('/{cabor}', [CabangOlahragaController::class, 'update'])->name('update');
             Route::delete('/{cabor}', [CabangOlahragaController::class, 'destroy'])->name('destroy');
             Route::post('/{cabor}', [CabangOlahragaController::class, 'destroy'])->name('destroy.post');
 
-            // TAMBAHAN: Rute untuk fitur khusus CabangOlahraga
-            Route::get('/reset-filters', [CabangOlahragaController::class, 'resetFilters'])->name('reset-filters');
-            Route::get('/export', [CabangOlahragaController::class, 'exportExcel'])->name('export');
+            // Additional utility routes with {cabor} parameter
             Route::get('/{cabor}/export-atlet', [CabangOlahragaController::class, 'exportAtlet'])->name('export-atlet');
             Route::get('/{cabor}/export-pelatih', [CabangOlahragaController::class, 'exportPelatih'])->name('export-pelatih');
+            Route::get('/{cabor}/export-gabungan', [CabangOlahragaController::class, 'exportExcelGabungan'])->name('export-gabungan');
             Route::patch('/{cabor}/deactivate', [CabangOlahragaController::class, 'deactivate'])->name('deactivate');
             Route::get('/{cabor}/check-dependencies', [CabangOlahragaController::class, 'checkDependencies'])->name('check-dependencies');
             Route::delete('/{cabor}/force', [CabangOlahragaController::class, 'forceDestroy'])->name('force-destroy');
@@ -265,6 +271,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::put('/{id}', [KegiatanLainnyaController::class, 'update'])->name('update');
             Route::delete('/{id}', [KegiatanLainnyaController::class, 'destroy'])->name('destroy');
             Route::post('/{id}/approve', [KegiatanLainnyaController::class, 'approve'])->name('approve');
+            Route::get('/{id}/export', [KegiatanLainnyaController::class, 'exportDetail'])->name('export');
         });
     }); //Batas LPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
