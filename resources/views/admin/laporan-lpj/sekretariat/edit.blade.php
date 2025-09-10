@@ -970,7 +970,9 @@
                 currencyInputs.forEach(inputId => {
                     const input = document.getElementById(inputId);
                     if (input && input.value) {
-                        input.value = input.value.replace(/[^\\d]/g, '');
+                        // Remove all non-digit characters but preserve the actual value
+                        const numericValue = input.value.replace(/[^\d]/g, '');
+                        input.value = numericValue;
                     }
                 });
             });
