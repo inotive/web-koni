@@ -9,6 +9,7 @@ use App\Models\Atlet;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class AtletController extends Controller
 {
@@ -735,7 +736,10 @@ class AtletController extends Controller
 
             // Generate filename
             $timestamp = now()->format('Y-m-d_H-i-s');
-            $filename = "detail_atlet_{$atlet->id}_{$timestamp}.csv";
+            // Clean the atlet name for filename (remove special characters and replace spaces with underscores)
+            $cleanAtletName = preg_replace('/[^a-zA-Z0-9\s]/', '', $atlet->nama);
+            $cleanAtletName = str_replace(' ', '_', $cleanAtletName);
+            $filename = "detail_{$cleanAtletName}_{$timestamp}.csv";
 
             $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
             $response->headers->set('Content-Disposition', "attachment; filename=\"{$filename}\"");
@@ -751,6 +755,35 @@ class AtletController extends Controller
             ]);
             
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor data atlet.');
+        }
+    }
+
+    public function exportPdf(Atlet $atlet)
+    {
+        try {
+            // Load atlet with related data
+            $atlet->load(['cabangOlahraga', 'prestasis' => function ($query) {
+                $query->orderBy('tahun', 'desc');
+            }]);
+
+            // Generate PDF
+            $pdf = Pdf::loadView('admin.atlet.export-pdf', compact('atlet'));
+            
+            // Generate filename with atlet name
+            $timestamp = now()->format('Y-m-d_H-i-s');
+            // Clean the atlet name for filename (remove special characters and replace spaces with underscores)
+            $cleanAtletName = preg_replace('/[^a-zA-Z0-9\s]/', '', $atlet->nama);
+            $cleanAtletName = str_replace(' ', '_', $cleanAtletName);
+            $filename = "detail_{$cleanAtletName}_{$timestamp}.pdf";
+
+            return $pdf->download($filename);
+        } catch (\Exception $e) {
+            \Log::error('Error exporting atlet detail to PDF: ' . $e->getMessage(), [
+                'atlet_id' => $atlet->id,
+                'exception' => $e
+            ]);
+            
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor data atlet ke PDF.');
         }
     }
 }

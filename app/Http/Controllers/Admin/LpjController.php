@@ -5,25 +5,44 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Lpj;
 use App\Models\Pengajuan;
+use App\Models\Target; // Fixed capitalization
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
+use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\PdfReader\PageBoundaries;
 
 class LpjController extends Controller
 {
     /**
-     * Display a listing based on parent ID
+     * DIPAKE BUAT BIDANG-BIDANG, BUKAN UNTUK SEMUA LPJ
      */
     public function index(Request $request, $parentId = null)
     {
         $query = Lpj::query();
 
+        $target = null;
+        $current_budget = 0;
+        $kegiatan_count = 0;
+
         // Filter by parent ID
         if ($parentId) {
             $parent = Lpj::findOrFail($parentId);
             $query->where('parent_id', $parentId);
+
+            // Fixed model reference
+            $target = Target::where('id_lpj', $parentId)->first();
+
+            // Fixed budget calculation - use proper field names
+            $children = Lpj::where('parent_id', $parentId)->get();
+            foreach ($children as $child) {
+                // Use jumlah_harga instead of getTotalBudget() method
+                $current_budget += ($child->jumlah_harga ?? 0);
+            }
+            $kegiatan_count = $children->count();
         } else {
             $query->whereNull('parent_id');
         }
@@ -80,9 +99,14 @@ class LpjController extends Controller
             'parent',
             'breadcrumbs',
             'uniqueKegiatan',
-            'parentId'
+            'parentId',
+            'target',
+            'current_budget',
+            'kegiatan_count'
         ));
     }
+
+    // ... rest of your methods remain the same ...
 
     /**
      * Show the form for creating a new resource
@@ -214,8 +238,8 @@ class LpjController extends Controller
             }
         }
 
-        if ($lpj->dokumen_Pendukung) {
-            foreach ($lpj->dokumen_Pendukung as $dokumen) {
+        if ($lpj->dokumen_pendukung) { // Fixed typo here
+            foreach ($lpj->dokumen_pendukung as $dokumen) {
                 if (!in_array($dokumen, $existingDokumenPendukung)) {
                     Storage::delete($dokumen);
                 }
@@ -322,6 +346,83 @@ class LpjController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Export specific LPJ data to PDF with letterhead
+     */
+    public function exportPdf($id)
+    {
+        try {
+            $lpj = Lpj::findOrFail($id);
+
+            // Create initial PDF with letterhead and content
+            $pdf = Pdf::loadView('admin.laporan-lpj.bidang_new.dynamic.pdf-export', compact('lpj'));
+            $pdf->setPaper('A4', 'portrait');
+
+            // Generate initial PDF content
+            $tempMainFile = tempnam(sys_get_temp_dir(), 'main_pdf_');
+            file_put_contents($tempMainFile, $pdf->output());
+
+            // Initialize FPDI for PDF merging
+            $fpdi = new Fpdi();
+
+            // Add main content pages
+            $pageCount = $fpdi->setSourceFile($tempMainFile);
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                $fpdi->AddPage();
+                $fpdi->useTemplate($templateId);
+            }
+
+            // Merge PDF attachments (dokumen_pendukung only, excluding dokumen_lpj)
+            if ($lpj->dokumen_pendukung && count($lpj->dokumen_pendukung) > 0) {
+                foreach ($lpj->dokumen_pendukung as $dokumen) {
+                    $filePath = storage_path('app/public/' . $dokumen);
+
+                    if (file_exists($filePath)) {
+                        $fileExtension = strtolower(pathinfo($dokumen, PATHINFO_EXTENSION));
+
+                        // Only merge PDF files
+                        if ($fileExtension === 'pdf') {
+                            try {
+                                $attachmentPageCount = $fpdi->setSourceFile($filePath);
+
+                                for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
+                                    $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                                    $fpdi->AddPage();
+                                    $fpdi->useTemplate($templateId);
+                                }
+                            } catch (\Exception $e) {
+                                // Log error but continue with other files
+                                \Log::warning("Could not merge PDF file: {$dokumen}. Error: " . $e->getMessage());
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Clean up temporary file
+            unlink($tempMainFile);
+
+            // Generate final PDF
+            $finalPdf = $fpdi->Output('S');
+
+            // Generate filename
+            $filename = 'Laporan_' . Str::slug($lpj->nama_program) . '_' . date('Y-m-d') . '.pdf';
+
+            return response($finalPdf, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Length' => strlen($finalPdf)
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error generating PDF: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -480,60 +581,101 @@ class LpjController extends Controller
 
     public function exportCsv(Request $request, $parentId = null)
     {
-        $query = Lpj::query();
+        try {
+            $query = Lpj::query();
 
-        // Filter by parent ID
-        if ($parentId) {
-            $query->where('parent_id', $parentId);
-        } else {
-            $query->whereNull('parent_id');
-        }
-
-        // Apply search filter
-        if ($request->filled('search')) {
-            $searchTerm = $request->get('search');
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('nama_program', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('nama_kegiatan', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('keterangan_tambahan', 'LIKE', "%{$searchTerm}%");
-            });
-        }
-
-        // Apply kegiatan filter
-        if ($request->filled('jenis_kegiatan_filter')) {
-            $query->where('nama_kegiatan', $request->get('jenis_kegiatan_filter'));
-        }
-
-        $lpjData = $query->get();
-
-        $response = new StreamedResponse(function() use ($lpjData) {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, [
-                'Nama Program',
-                'Nama Kegiatan',
-                // 'Volume',
-                // 'Harga Satuan',
-                'Jumlah',
-                'Keterangan'
-            ]);
-
-            foreach ($lpjData as $lpj) {
-                fputcsv($handle, [
-                    $lpj->nama_program,
-                    $lpj->nama_kegiatan,
-                    // $lpj->volume,
-                    // $lpj->jumlah_harga_satuan,
-                    $lpj->jumlah_harga,
-                    $lpj->keterangan_tambahan
-                ]);
+            // Filter by parent ID
+            if ($parentId) {
+                $query->where('parent_id', $parentId);
+            } else {
+                $query->whereNull('parent_id');
             }
 
-            fclose($handle);
-        });
+            // Apply search filter
+            if ($request->filled('search')) {
+                $searchTerm = $request->get('search');
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('nama_program', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('nama_kegiatan', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('keterangan_tambahan', 'LIKE', "%{$searchTerm}%");
+                });
+            }
 
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="lpj_export.csv"');
+            // Apply kegiatan filter
+            if ($request->filled('jenis_kegiatan_filter')) {
+                $query->where('nama_kegiatan', $request->get('jenis_kegiatan_filter'));
+            }
 
-        return $response;
+            $lpjData = $query->get();
+
+            // Create initial PDF with letterhead and content
+            $pdf = Pdf::loadView('admin.laporan-lpj.bidang_new.dynamic.pdf-export-all', compact('lpjData'));
+            $pdf->setPaper('A4', 'portrait');
+
+            // Generate initial PDF content
+            $tempMainFile = tempnam(sys_get_temp_dir(), 'main_pdf_');
+            file_put_contents($tempMainFile, $pdf->output());
+
+            // Initialize FPDI for PDF merging
+            $fpdi = new Fpdi();
+
+            // Add main content pages
+            $pageCount = $fpdi->setSourceFile($tempMainFile);
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                $fpdi->AddPage();
+                $fpdi->useTemplate($templateId);
+            }
+
+            // Merge PDF attachments from all LPJ documents
+            foreach ($lpjData as $lpj) {
+                if ($lpj->dokumen_pendukung && count($lpj->dokumen_pendukung) > 0) {
+                    foreach ($lpj->dokumen_pendukung as $dokumen) {
+                        $filePath = storage_path('app/public/' . $dokumen);
+
+                        if (file_exists($filePath)) {
+                            $fileExtension = strtolower(pathinfo($dokumen, PATHINFO_EXTENSION));
+
+                            // Only merge PDF files
+                            if ($fileExtension === 'pdf') {
+                                try {
+                                    $attachmentPageCount = $fpdi->setSourceFile($filePath);
+
+                                    for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
+                                        $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                                        $fpdi->AddPage();
+                                        $fpdi->useTemplate($templateId);
+                                    }
+                                } catch (\Exception $e) {
+                                    // Log error but continue with other files
+                                    \Log::warning("Could not merge PDF file: {$dokumen}. Error: " . $e->getMessage());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Clean up temporary file
+            unlink($tempMainFile);
+
+            // Generate final PDF
+            $finalPdf = $fpdi->Output('S');
+
+            // Generate filename
+            $filename = 'Laporan_LPJ_All_' . date('Y-m-d') . '.pdf';
+
+            return response($finalPdf, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Content-Length' => strlen($finalPdf)
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error generating PDF: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

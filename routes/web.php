@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\BidangController;
 use App\Http\Controllers\Admin\LpjController;
 use App\Http\Controllers\LaporanRKAController;
 use App\Http\Controllers\Admin\KegiatanLainnyaController;
+use App\Http\Controllers\Admin\TargetController;
 
 
 
@@ -100,7 +101,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::get('atlet/export', [AtletController::class, 'exportCsv'])->name('atlet.export');
         Route::resource('atlet', AtletController::class);
-        Route::get('pelatih/export', [PelatihController::class, 'exportCsv'])->name('pelatih.export');
+        Route::get('pelatih/{id}/export-pdf', [PelatihController::class, 'exportSinglePdf'])->name('pelatih.export-single-pdf');
         Route::resource('pelatih', PelatihController::class);
         Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
             ->name('pelatih.updateKetersediaan');
@@ -154,6 +155,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             // Prestasi untuk Atlet
             Route::prefix('atlet')->name('atlet.')->group(function () {
                 Route::get('/{atlet}/export-detail', [AtletController::class, 'exportDetail'])->name('exportDetail');
+                Route::get('/{atlet}/export-pdf', [AtletController::class, 'exportPdf'])->name('exportPdf');
                 Route::get('/{atlet}/create', [PrestasiController::class, 'createForAtlet'])->name('create');
                 Route::post('/{atlet}', [PrestasiController::class, 'storeForAtlet'])->name('store');
             });
@@ -209,9 +211,13 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/item/{id}/edit', [App\Http\Controllers\Admin\LpjController::class, 'edit'])->name('edit');
             Route::put('/item/{id}', [App\Http\Controllers\Admin\LpjController::class, 'update'])->name('update');
             Route::delete('/item/{id}', [App\Http\Controllers\Admin\LpjController::class, 'destroy'])->name('destroy');
+            Route::get('/item/{id}/export-pdf', [App\Http\Controllers\Admin\LpjController::class, 'exportPdf'])->name('export-pdf');
 
             // API routes for tree structure
             Route::get('/api/tree/{parentId?}', [App\Http\Controllers\Admin\LpjController::class, 'getTreeStructure'])->name('api.tree');
+
+            // Target routes
+            Route::post('/target/store-or-update', [TargetController::class, 'storeOrUpdate'])->name('target.store-or-update');
         });
     });
 

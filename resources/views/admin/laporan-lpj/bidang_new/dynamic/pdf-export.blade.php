@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan LPJ - {{ $sekretariat->nama_program }}</title>
+    <title>Laporan LPJ - {{ $lpj->nama_program }}</title>
     <meta charset="UTF-8">
     <style>
        @page {
@@ -352,12 +352,7 @@
 <body>
     <!-- Letterhead that appears on every page -->
     <div class="letterhead">
-        @php
-            $imagePath = public_path('assets/img/kob-nobg.png');
-            $imageData = base64_encode(file_get_contents($imagePath));
-            $imageSrc = 'data:image/png;base64,' . $imageData;
-        @endphp
-        <img src="{{ $imageSrc }}"
+        <img src="{{ public_path('assets/img/kop-nobg.png') }}"
              alt="KONI Letterhead"
              style="width: 100%; max-height: 250px; object-fit: contain;"> <!-- reduced max-height from 296px -->
     </div>
@@ -369,57 +364,45 @@
             <table class="info-table">
                 <tr>
                     <th>Program</th>
-                    <td>{{ $sekretariat->nama_program }}</td>
+                    <td>{{ $lpj->nama_program }}</td>
                 </tr>
                 <tr>
                     <th>Kegiatan</th>
-                    <td>{{ $sekretariat->nama_kegiatan }}</td>
+                    <td>{{ $lpj->nama_kegiatan }}</td>
                 </tr>
                 <tr>
                     <th>Total Anggaran</th>
-                    <td class="amount">Rp {{ number_format($sekretariat->jumlah_harga, 2, ',', '.') }}</td>
+                    <td class="amount">Rp {{ number_format($lpj->jumlah_harga, 2, ',', '.') }}</td>
                 </tr>
-                @if($sekretariat->tanggal_kegiatan)
+                @if($lpj->tanggal_kegiatan)
                 <tr>
                     <th>Tanggal Kegiatan</th>
-                    <td>{{ \Carbon\Carbon::parse($sekretariat->tanggal_kegiatan)->format('d F Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($lpj->tanggal_kegiatan)->format('d F Y') }}</td>
                 </tr>
                 @endif
-                @if($sekretariat->lokasi_kegiatan)
+                @if($lpj->lokasi_kegiatan)
                 <tr>
                     <th>Lokasi</th>
-                    <td>{{ $sekretariat->lokasi_kegiatan }}</td>
+                    <td>{{ $lpj->lokasi_kegiatan }}</td>
                 </tr>
                 @endif
-                @if($sekretariat->keterangan_tambahan)
+                @if($lpj->keterangan_tambahan)
                 <tr>
                     <th>Keterangan Tambahan</th>
-                    <td>{{ $sekretariat->keterangan_tambahan }}</td>
+                    <td>{{ $lpj->keterangan_tambahan }}</td>
                 </tr>
                 @endif
             </table>
 
-            @if($sekretariat->foto_jurnal && count($sekretariat->foto_jurnal) > 0)
+            @if($lpj->foto_jurnal && count($lpj->foto_jurnal) > 0)
                 <h3 class="section-title">Dokumentasi Kegiatan</h3>
                 <table class="photo-table">
                     <tr>
-                        @foreach($sekretariat->foto_jurnal as $index => $foto)
-                            @if(is_array($foto))
-                                @php
-                                    $path = $foto['path'] ?? '';
-                                    $originalName = $foto['original_name'] ?? basename($path);
-                                @endphp
-                            @else
-                                @php
-                                    $path = $foto;
-                                    $originalName = basename($path);
-                                @endphp
-                            @endif
-                            
-                            @if($path && file_exists(storage_path('app/public/' . $path)))
+                        @foreach($lpj->foto_jurnal as $index => $foto)
+                            @if(file_exists(storage_path('app/public/' . $foto)))
                                 <td class="photo-td">
                                     <div class="photo-container">
-                                        <img src="{{ storage_path('app/public/' . $path) }}" alt="Dokumentasi {{ $originalName }}">
+                                        <img src="{{ storage_path('app/public/' . $foto) }}" alt="Dokumentasi {{ $index + 1 }}">
                                         <div class="photo-caption">Dokumentasi {{ $index + 1 }}</div>
                                     </div>
                                 </td>
