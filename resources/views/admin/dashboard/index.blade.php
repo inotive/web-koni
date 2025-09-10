@@ -194,7 +194,7 @@
         .dropdown-icon:hover {
             background-color: #e9ecef;
         }
-        
+
         /* Export specific styles */
         .export-container {
             background: white;
@@ -202,26 +202,26 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        
+
         .export-header {
             text-align: center;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #dee2e6;
         }
-        
+
         .export-title {
             font-size: 24px;
             font-weight: bold;
             color: #333;
             margin-bottom: 5px;
         }
-        
+
         .export-date {
             color: #666;
             font-size: 16px;
         }
-        
+
         /* Progress bar text styles */
         .progress-bar-text {
             position: absolute;
@@ -392,7 +392,7 @@
                         </div>
                         <div class="flex-grow-1 position-relative">
                             <div class="progress w-100" style="border-radius: 8px; height: 45px;">
-                                <div class="progress-bar {{ $barClass }}" 
+                                <div class="progress-bar {{ $barClass }}"
                                     role="progressbar"
                                     style="width: {{ $persen }}%; border-radius: 8px; opacity: 0.8;"
                                     aria-valuenow="{{ $persen }}" aria-valuemin="0" aria-valuemax="100">
@@ -411,7 +411,7 @@
                     @if($item->id == 6 && $item->children->count() > 0)
                         <div class="collapse" id="collapsePembinaanPrestasi">
                             <div class="card card-body mt-2 p-3">
-                                <h6 class="mb-3">Detail Anak Kegiatan Pembinaan Prestasi</h6>
+                                <h6 class="mb-3">Detail Kegiatan Pembinaan Prestasi</h6>
                                 @foreach($item->children as $j => $child)
                                     @php
                                         $child_serapan = $child->jumlah_harga;
@@ -426,19 +426,22 @@
                                         }
                                     @endphp
 
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div style="min-width: 200px;">
-                                            <span class="text-muted small">{{ $j + 1 }}. {{ $child->nama_program }}</span>
+                                    <div class="d-flex align-items-center mb-3 gap-3">
+                                        <div style="min-width: 220px; max-width: 220px;">
+                                            <span class="title-kegiatan">{{ $j + 1 }}. {{ $child->nama_program }}</span>
                                         </div>
-                                        <div class="flex-grow-1 ms-3">
-                                            <div class="progress" style="height: 20px;">
-                                                <div class="progress-bar {{ $childBarClass }} d-flex justify-content-between align-items-center px-2"
+                                        <div class="flex-grow-1 position-relative">
+                                            <div class="progress w-100" style="border-radius: 8px; height: 45px;">
+                                                <div class="progress-bar {{ $childBarClass }}"
                                                     role="progressbar"
-                                                    style="width: {{ $child_persen }}%;"
+                                                    style="width: {{ $child_persen }}%; border-radius: 8px; opacity: 0.8;"
                                                     aria-valuenow="{{ $child_persen }}" aria-valuemin="0" aria-valuemax="100">
-                                                    <span class="text-white" style="font-size: 10px;">
+                                                </div>
+                                                <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
+                                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
                                                         Rp {{ number_format($child_serapan, 0, ',', '.') }} / Rp {{ number_format($child_budget, 0, ',', '.') }}
                                                     </span>
+                                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">{{ $child_persen }}%</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -446,7 +449,7 @@
                                 @endforeach
                                 {{-- Total untuk Pembinaan Prestasi --}}
                                 <div class="d-flex align-items-center mt-3 pt-3 border-top">
-                                    <div style="min-width: 200px;">
+                                    <div style="min-width: 220px; max-width: 220px;">
                                         <span class="fw-bold">Total Serapan:</span>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
@@ -513,7 +516,7 @@
                         @include('admin.dashboard.partials._prestasi-pelatih-table', ['prestasi_list' => $latest_prestasi_pelatih, 'type' => 'pelatih'])
                     </div>
                 </div>
-                
+
                 <div class="text-center mt-6">
                     <a href="{{ route('admin.konfigurasi.prestasi.index') }}" class="btn btn-primary">
                         Lihat Selengkapnya
@@ -527,7 +530,7 @@
 @push('stack-script')
     <!-- html2canvas library for screenshot functionality -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    
+
     <script>
         const ctx = document.getElementById('caborChart').getContext('2d');
         const caborData = @json($cabor_chart_data);
@@ -582,11 +585,11 @@
                 }
             }
         });
-        
+
         // Screenshot functionality for exporting "Informasi Kegiatan" section
         document.getElementById('export-screenshot').addEventListener('click', function() {
             const targetElement = document.querySelector('.card-body'); // The Informasi Kegiatan section
-            
+
             html2canvas(targetElement, {
                 scale: 2, // Higher scale for better quality
                 useCORS: true,
