@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Lpj;
+use App\Models\Target;
 
 class BidangController extends Controller
 {
@@ -13,55 +14,70 @@ class BidangController extends Controller
      */
     public function index()
     {
-        // Define the parent IDs for each bidang based on your seeded data
-        // You can adjust these IDs based on your actual database structure
+        // Define the parent IDs for each bidang
         $bidangParentIds = [
-            'mobilisasi' => 1,           // Mobilisasi Sumberdaya
-            'hubungan_lembaga' => 2,     // Hubungan Antar Lembaga
-            'kesehatan' => 3,            // Kesehatan
-            'organisasi' => 4,           // Organisasi
-            'pembinaan_hukum' => 5,      // Pembinaan Hukum Olahraga
-            'prestasi' => 6,             // Pembinaan Prestasi
-            'science' => 7,              // Sport Science & Iptek
-            'perencanaan_program' => 8,  // Perencanaan Program dan Anggaran
+            'mobilisasi' => 1,
+            'hubungan_lembaga' => 2,
+            'kesehatan' => 3,
+            'organisasi' => 4,
+            'pembinaan_hukum' => 5,
+            'prestasi' => 6,
+            'science' => 7,
+            'perencanaan_program' => 8,
         ];
 
-        // Get counts for each bidang by counting their children
-        $mobilisasiCount = $this->getChildrenCount($bidangParentIds['mobilisasi']);
-        $hubunganLembagaCount = $this->getChildrenCount($bidangParentIds['hubungan_lembaga']);
-        $kesehatanCount = $this->getChildrenCount($bidangParentIds['kesehatan']);
-        $organisasiCount = $this->getChildrenCount($bidangParentIds['organisasi']);
-        $pembinaanHukumCount = $this->getChildrenCount($bidangParentIds['pembinaan_hukum']);
-        $prestasiCount = $this->getChildrenCount($bidangParentIds['prestasi']);
-        $scienceCount = $this->getChildrenCount($bidangParentIds['science']);
-        $perencanaanProgramCount = $this->getChildrenCount($bidangParentIds['perencanaan_program']);
+        // Initialize totals
+        $total_anggaran = 0;
+        $total_kegiatan = 0;
 
-        return view('admin.laporan-lpj.bidang.index', compact(
-            'mobilisasiCount',
-            'hubunganLembagaCount',
-            'kesehatanCount',
-            'organisasiCount',
-            'pembinaanHukumCount',
-            'prestasiCount',
-            'scienceCount',
-            'perencanaanProgramCount'
-        ));
+        // Calculate counts and totals for each bidang
+        $bidangInfo = [];
+        foreach ($bidangParentIds as $key => $id) {
+            $info = $this->getDescendantsInfo($id);
+            $bidangInfo[$key . 'Count'] = $info['count'];
+            $total_anggaran += $info['anggaran'];
+            $total_kegiatan += $info['count'];
+        }
+
+        // Get target values
+        $target_anggaran = Target::sum('target_anggaran');
+        $target_kegiatan = Target::sum('target_kegiatan');
+
+        return view('admin.laporan-lpj.bidang.index', array_merge($bidangInfo, [
+            'total_anggaran' => $total_anggaran,
+            'total_kegiatan' => $total_kegiatan,
+            'target_anggaran' => $target_anggaran,
+            'target_kegiatan' => $target_kegiatan,
+        ]));
     }
 
     /**
-     * Get count of children for a specific parent ID
-     * This can count direct children or all descendants based on your needs
+     * Recursively get descendants' information (count and budget)
      */
-    private function getChildrenCount($parentId)
+    private function getDescendantsInfo($parentId)
     {
-        // Count direct children only
-        $directCount = Lpj::where('parent_id', $parentId)->count();
+        $children = Lpj::where('parent_id', $parentId)->get();
 
-        // If you want to count all descendants (children + grandchildren + etc), use this instead:
-        // $allDescendantsCount = $this->countAllDescendants($parentId);
+        $count = 0;
+        $anggaran = 0;
 
-        return $directCount;
+        foreach ($children as $child) {
+            $subChildren = Lpj::where('parent_id', $child->id)->get();
+            if ($subChildren->isEmpty()) {
+                // This is a leaf node (an activity)
+                $count++;
+                $anggaran += $child->jumlah_harga;
+            } else {
+                // This is a category, recurse
+                $info = $this->getDescendantsInfo($child->id);
+                $count += $info['count'];
+                $anggaran += $info['anggaran'];
+            }
+        }
+
+        return ['count' => $count, 'anggaran' => $anggaran];
     }
+
 
     /**
      * Recursively count all descendants of a parent

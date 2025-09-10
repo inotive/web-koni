@@ -8,6 +8,7 @@ use App\Models\CabangOlahraga;
 use App\Models\Pelatih;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PelatihController extends Controller
@@ -608,5 +609,12 @@ class PelatihController extends Controller
         $response->headers->set('Expires', '0');
 
         return $response;
+    }
+
+    public function exportSinglePdf($id)
+    {
+        $pelatih = Pelatih::with('cabangOlahraga')->findOrFail($id);
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.pelatih.pdf-export', compact('pelatih'));
+        return $pdf->download('pelatih-' . Str::slug($pelatih->nama) . '.pdf');
     }
 }

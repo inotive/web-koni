@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\BidangController;
 use App\Http\Controllers\Admin\LpjController;
 use App\Http\Controllers\LaporanRKAController;
 use App\Http\Controllers\Admin\KegiatanLainnyaController;
+use App\Http\Controllers\Admin\TargetController;
 
 
 
@@ -97,19 +98,19 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
     Route::resource('surat', SuratController::class);
 
-            Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
-            Route::get('atlet/export', [AtletController::class, 'exportCsv'])->name('atlet.export');
-            Route::resource('atlet', AtletController::class);
-            Route::get('pelatih/export', [PelatihController::class, 'exportCsv'])->name('pelatih.export');
-            Route::resource('pelatih', PelatihController::class);
-            Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
-                ->name('pelatih.updateKetersediaan');
-            Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
-                ->name('pelatih.prestasi.store');
-            Route::patch('atlet/{atlet}/ketersediaan', [AtletController::class, 'updateKetersediaan'])
-                ->name('atlet.updateKetersediaan');
-            Route::post('atlet/{atlet}/prestasi', [PrestasiController::class, 'store'])
-                ->name('atlet.prestasi.store');
+    Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
+        Route::get('atlet/export', [AtletController::class, 'exportCsv'])->name('atlet.export');
+        Route::resource('atlet', AtletController::class);
+        Route::get('pelatih/{id}/export-pdf', [PelatihController::class, 'exportSinglePdf'])->name('pelatih.export-single-pdf');
+        Route::resource('pelatih', PelatihController::class);
+        Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
+            ->name('pelatih.updateKetersediaan');
+        Route::post('pelatih/{pelatih}/prestasi', [PrestasiController::class, 'store'])
+            ->name('pelatih.prestasi.store');
+        Route::patch('atlet/{atlet}/ketersediaan', [AtletController::class, 'updateKetersediaan'])
+            ->name('atlet.updateKetersediaan');
+        Route::post('atlet/{atlet}/prestasi', [PrestasiController::class, 'store'])
+            ->name('atlet.prestasi.store');
 
         // PERBAIKAN: Rute Cabang Olahraga - Dipisahkan dan Diperbaiki
         Route::prefix('cabang-olahraga')->name('cabang-olahraga.')->group(function () {
@@ -203,9 +204,13 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/item/{id}/edit', [App\Http\Controllers\Admin\LpjController::class, 'edit'])->name('edit');
             Route::put('/item/{id}', [App\Http\Controllers\Admin\LpjController::class, 'update'])->name('update');
             Route::delete('/item/{id}', [App\Http\Controllers\Admin\LpjController::class, 'destroy'])->name('destroy');
+            Route::get('/item/{id}/export-pdf', [App\Http\Controllers\Admin\LpjController::class, 'exportPdf'])->name('export-pdf');
 
             // API routes for tree structure
             Route::get('/api/tree/{parentId?}', [App\Http\Controllers\Admin\LpjController::class, 'getTreeStructure'])->name('api.tree');
+
+            // Target routes
+            Route::post('/target/store-or-update', [TargetController::class, 'storeOrUpdate'])->name('target.store-or-update');
         });
     });
 
@@ -250,9 +255,9 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             // Export route - generates: admin.laporan-lpj.kegiatan-lainnya.export
             Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
 
-    Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
-        ->name('detail-ajax')
-        ->where('id', '[0-9]+');
+            Route::get('/{id}/detail-ajax', [KegiatanLainnyaController::class, 'getDetail'])
+                ->name('detail-ajax')
+                ->where('id', '[0-9]+');
 
             Route::get('/{id}', [KegiatanLainnyaController::class, 'show'])->name('show');
             Route::get('/{id}/edit', [KegiatanLainnyaController::class, 'edit'])->name('edit');
