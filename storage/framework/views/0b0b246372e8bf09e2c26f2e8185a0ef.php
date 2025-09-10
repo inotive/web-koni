@@ -192,6 +192,49 @@
         .dropdown-icon:hover {
             background-color: #e9ecef;
         }
+        
+        /* Export specific styles */
+        .export-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .export-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .export-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .export-date {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        /* Progress bar text styles */
+        .progress-bar-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 12px;
+            pointer-events: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
     </style>
 <?php $__env->stopPush(); ?>
 
@@ -309,17 +352,9 @@
                         <h5 class="card-title mb-0 f-3">Informasi Kegiatan</h5>
 
                         <div class="d-flex gap-2">
-                            <a href="<?php echo e(route('admin.dashboard.export')); ?>" class="btn btn-light-primary" target="_blank">
+                            <button type="button" id="export-screenshot" class="btn btn-light-primary">
                                 <i class="fa-solid fa-download me-1"></i> Export Data
-                            </a>
-
-                            <form method="GET" id="filter-form">
-                                <select name="filter" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
-                                    <option value="" <?php echo e(request('filter') == '' ? 'selected' : ''); ?>>Default</option>
-                                    <option value="tertinggi" <?php echo e(request('filter') == 'tertinggi' ? 'selected' : ''); ?>>Tertinggi</option>
-                                    <option value="terendah" <?php echo e(request('filter') == 'terendah' ? 'selected' : ''); ?>>Terendah</option>
-                                </select>
-                            </form>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -356,19 +391,20 @@
                             </div>
                         </div>
                         <div class="flex-grow-1 position-relative">
-                            <div class="progress w-100" style="border-radius: 8px;">
-                                <div class="progress-bar <?php echo e($barClass); ?> text-white d-flex justify-content-between align-items-center px-3"
+                            <div class="progress w-100" style="border-radius: 8px; height: 45px;">
+                                <div class="progress-bar <?php echo e($barClass); ?>" 
                                     role="progressbar"
-                                    style="width: <?php echo e($persen); ?>%; font-size: 12px; border-radius: 8px;"
+                                    style="width: <?php echo e($persen); ?>%; border-radius: 8px; opacity: 0.8;"
                                     aria-valuenow="<?php echo e($persen); ?>" aria-valuemin="0" aria-valuemax="100">
-                                    <span>
+                                </div>
+                                <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
+                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
                                         Serapan : Rp <?php echo e(number_format($display_serapan, 0, ',', '.')); ?> / Rp <?php echo e(number_format($display_budget, 0, ',', '.')); ?> | <?php echo e($item->children->where('jumlah_harga', '>', 0)->count()); ?>/<?php echo e($item->children->count()); ?>
 
                                     </span>
-                                    <span class="fw-bold"><?php echo e($persen); ?>%</span>
+                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);"><?php echo e($persen); ?>%</span>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -492,6 +528,9 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('stack-script'); ?>
+    <!-- html2canvas library for screenshot functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
     <script>
         const ctx = document.getElementById('caborChart').getContext('2d');
         const caborData = <?php echo json_encode($cabor_chart_data, 15, 512) ?>;
@@ -545,6 +584,29 @@
                     }
                 }
             }
+        });
+        
+        // Screenshot functionality for exporting "Informasi Kegiatan" section
+        document.getElementById('export-screenshot').addEventListener('click', function() {
+            const targetElement = document.querySelector('.card-body'); // The Informasi Kegiatan section
+            
+            html2canvas(targetElement, {
+                scale: 2, // Higher scale for better quality
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                // Convert canvas to blob
+                canvas.toBlob(function(blob) {
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'informasi-kegiatan-' + new Date().toISOString().slice(0, 10) + '.png';
+                    link.click();
+                });
+            }).catch(error => {
+                console.error('Error capturing screenshot:', error);
+                alert('Gagal mengekspor data. Silakan coba lagi.');
+            });
         });
     </script>
 <?php $__env->stopPush(); ?>
