@@ -732,14 +732,6 @@
                                                 <span class="d-sm-none">Export</span>
                                             </a>
                                             
-                                            {{-- Tombol Export Atlet --}}
-                                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.export-atlet', $cabor->id) }}" 
-                                               class="btn btn-success" id="export-atlet-btn" title="Export Data Atlet ke Excel">
-                                                <i class="fas fa-file-excel me-1"></i>
-                                                <span class="d-none d-sm-inline">Export Atlet</span>
-                                                <span class="d-sm-none">Export</span>
-                                            </a>
-                                            
                                             {{-- Search Input --}}
                                             <div class="d-flex align-items-center position-relative">
                                                 <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
@@ -942,14 +934,6 @@
                                                class="btn btn-primary" id="export-gabungan-btn" title="Export Data Atlet dan Pelatih ke Excel">
                                                 <i class="fas fa-file-excel me-1"></i>
                                                 <span class="d-none d-sm-inline">Export Gabungan</span>
-                                                <span class="d-sm-none">Export</span>
-                                            </a>
-                                            
-                                            {{-- Tombol Export Pelatih --}}
-                                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.export-pelatih', $cabor->id) }}" 
-                                               class="btn btn-success" id="export-pelatih-btn" title="Export Data Pelatih ke Excel">
-                                                <i class="fas fa-file-excel me-1"></i>
-                                                <span class="d-none d-sm-inline">Export Pelatih</span>
                                                 <span class="d-sm-none">Export</span>
                                             </a>
                                             
