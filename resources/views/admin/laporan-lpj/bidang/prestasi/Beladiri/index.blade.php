@@ -29,7 +29,7 @@
         </div>
 
         <div id="table" class="container">
-            @include('admin.laporan-lpj.bidang.prestasi.beladiri._table')
+            @include('admin.laporan-lpj.bidang.prestasi.Beladiri._table')
         </div>
     </div>
 @endsection

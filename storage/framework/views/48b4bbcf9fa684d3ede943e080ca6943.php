@@ -388,12 +388,12 @@
             </a>
 
             <!-- Hubungan Antar Lembaga -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2])); ?>" class="bidang-card" data-title="hubungan antar lembaga" data-docs="<?php echo e($mobilisasiCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2])); ?>" class="bidang-card" data-title="hubungan antar lembaga" data-docs="<?php echo e($hubungan_lembagaCount ?? 0); ?>">
                 <div class="bidang-icon icon-hubungan">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/data.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Hubungan Antar Lembaga</h4>
-                <p class="bidang-count"><?php echo e($mobilisasiCount ?? 0); ?> Dokumen</p>
+                <p class="bidang-count"><?php echo e($hubungan_lembagaCount ?? 0); ?> Dokumen</p>
             </a>
 
             <!-- Continue for other cards... -->
@@ -416,12 +416,12 @@
             </a>
 
             <!-- Pembinaan Hukum Olahraga -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 5])); ?>" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="<?php echo e($pembinaanHukumCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 5])); ?>" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="<?php echo e($pembinaan_hukumCount ?? 0); ?>">
                 <div class="bidang-icon icon-hukum">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/shield.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Pembinaan Hukum Olahraga</h4>
-                <p class="bidang-count"><?php echo e($pembinaanHukumCount ?? 0); ?> Dokumen</p>
+                <p class="bidang-count"><?php echo e($pembinaan_hukumCount ?? 0); ?> Dokumen</p>
             </a>
 
                 <!-- Pembinaan Prestasi -->
@@ -444,12 +444,12 @@
             </a>
 
             <!-- Perencanaan Program dan Anggaran -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 8])); ?>" class="bidang-card" data-title="perencanaan program anggaran" data-docs="<?php echo e($perencanaanProgramCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 8])); ?>" class="bidang-card" data-title="perencanaan program anggaran" data-docs="<?php echo e($perencanaan_programCount ?? 0); ?>">
                 <div class="bidang-icon icon-perencanaan">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/tab-tablet.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Perencanaan Program dan Anggaran</h4>
-                <p class="bidang-count"><?php echo e($perencanaanProgramCount ?? 0); ?> Dokumen</p>
+                <p class="bidang-count"><?php echo e($perencanaan_programCount ?? 0); ?> Dokumen</p>
             </a>
         </div>
     </div>
