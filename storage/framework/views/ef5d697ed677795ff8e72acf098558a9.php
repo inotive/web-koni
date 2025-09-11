@@ -1,11 +1,9 @@
-@extends('layouts.app')
-
-@section('pageTitle', 'Rencana Kegiatan Anggaran')
-@section('mainSection', 'Menu Utama')
-@section('subSection', 'Manajemen RKA')
-@section('subSectionUrl', route('admin.manajemen-rka.index'))
-@section('currentSection', "{$data->name}")
-@section('style')
+<?php $__env->startSection('pageTitle', 'Rencana Kegiatan Anggaran'); ?>
+<?php $__env->startSection('mainSection', 'Menu Utama'); ?>
+<?php $__env->startSection('subSection', 'Manajemen RKA'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.manajemen-rka.index')); ?>
+<?php $__env->startSection('currentSection', "{$data->name}"); ?>
+<?php $__env->startSection('style'); ?>
     <style>
         .edit:hover {
             background-color: rgb(249, 245, 172) !important;
@@ -46,13 +44,13 @@
             }
         }
     </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="d-grid gap-5 border-0">
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
-                <h1>{{ $data->name }}</h1>
+                <h1><?php echo e($data->name); ?></h1>
             </div>
             <form id="filter" class="d-flex gap-3">
                 <button type="button" data-bs-toggle="modal" data-bs-target="#add"
@@ -73,14 +71,14 @@
                 </button>
                 <div class="position-relative bg-light" style="width: 180px">
                     <i class="ki-outline ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-3"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" data-kt-docs-table-filter="search"
+                    <input type="text" name="search" value="<?php echo e(request('search')); ?>" data-kt-docs-table-filter="search"
                         placeholder="Cari RKA" class="form-control border border-gray-500 py-2 ps-12" />
                 </div>
             </form>
         </div>
 
         <div id="table" class="container">
-            @include('admin.manajemen-rka.components.table-laporan', compact('data'))
+            <?php echo $__env->make('admin.manajemen-rka.components.table-laporan', compact('data'), \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
 
         <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
@@ -92,11 +90,11 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form id="formAdd" action="{{ route('admin.laporan-rka.store') }}" method="POST"
+                    <form id="formAdd" action="<?php echo e(route('admin.laporan-rka.store')); ?>" method="POST"
                         enctype="multipart/form-data" class="d-grid gap-4">
-                        @csrf
+                        <?php echo csrf_field(); ?>
 
-                        <input type="hidden" name="rka_id" value="{{ $data->id }}" />
+                        <input type="hidden" name="rka_id" value="<?php echo e($data->id); ?>" />
                         <div>
                             <div class="fw-semibold required mb-3 text-gray-800">Total Anggaran</div>
                             <div class="input-group">
@@ -138,9 +136,9 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
         const formatRupiah = n => new Intl.NumberFormat('id-ID').format(n);
         const parseRupiah = str => parseInt(str.replace(/\D/g, '')) || 0;
@@ -152,7 +150,7 @@
 
         function reloadTable(url = null) {
             let formData = $('#filter').serialize();
-            let target = url ?? "{{ route('admin.manajemen-rka.show', $data->id) }}";
+            let target = url ?? "<?php echo e(route('admin.manajemen-rka.show', $data->id)); ?>";
 
             let perPage = $('#per_page').val();
             if (perPage) {
@@ -205,7 +203,7 @@
                     fetch(url, {
                             method: 'DELETE',
                             headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
                                 'Accept': 'application/json'
                             }
                         })
@@ -314,7 +312,7 @@
             fetch(form.action, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
                         'Accept': 'application/json'
                     },
                     body: formData,
@@ -359,4 +357,6 @@
                 })
         }
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Inotive\KONI\web-koni\resources\views/admin/manajemen-rka/show.blade.php ENDPATH**/ ?>

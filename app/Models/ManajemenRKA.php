@@ -15,6 +15,10 @@ class ManajemenRKA extends Model
         'name',
     ];
 
+    protected $casts = [
+        'name' => 'integer',
+    ];
+
     public function laporans()
     {
         return $this->hasMany(LaporanRKA::class, 'manajemen_rka_id')->orderBy('id', 'desc');
