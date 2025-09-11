@@ -7,7 +7,7 @@ use App\Models\CabangOlahraga;
 
 class CabangOlahragaSeeder extends Seeder
 {
- public function run()
+    public function run()
     {
         $cabangOlahraga = [
             ['nama_cabor' => 'Sepak Bola', 'ketua_penanggung_jawab' => 'Ahmad Sulaiman', 'status' => 'Aktif', 'tanggal_pembentukan' => '2020-01-15'],
@@ -47,6 +47,6 @@ class CabangOlahragaSeeder extends Seeder
                 'tanggal_pembentukan' => $cabor['tanggal_pembentukan'],
                 'terakhir_update' => now(),
             ]);
-}
-}
+        }
+    }
 }

@@ -14,12 +14,12 @@ class ManajemenRKASeeder extends Seeder
     public function run(): void
     {
         $names = [
-            'Lembaga 1',
-            'Lembaga 2',
-            'Lembaga 3',
-            'Lembaga 4',
-            'Lembaga 5',
-            'Lembaga 6',
+            '2020',
+            '2021',
+            '2022',
+            '2023',
+            '2024',
+            '2025',
         ];
 
         foreach ($names as $name) {

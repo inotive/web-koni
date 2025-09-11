@@ -53,12 +53,11 @@
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
                 <h1>{{ $data->name }}</h1>
-                <span>Laporan Kursus & Pelatihan RKA</span>
             </div>
             <form id="filter" class="d-flex gap-3">
                 <button type="button" data-bs-toggle="modal" data-bs-target="#add"
                     class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
-                    Tambah Laporan
+                    Tambah RKA
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_851_8468)">
                             <path

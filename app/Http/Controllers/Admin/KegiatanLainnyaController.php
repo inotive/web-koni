@@ -21,6 +21,12 @@ class KegiatanLainnyaController extends Controller
 
     $query = Lpj::where('parent_id', $parentCategory->id);
 
+    // Filter berdasarkan kolom tahun
+    $selectedYear = $request->get('year');
+    if ($selectedYear) {
+        $query->where('year', $selectedYear);
+    }
+
     // Filter berdasarkan jenis kegiatan
     if ($request->jenis_kegiatan_filter) {
         $query->where('nama_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
@@ -46,6 +52,14 @@ class KegiatanLainnyaController extends Controller
     $totalKegiatan = (clone $query)->count();
     $totalAnggaran = (clone $query)->sum('jumlah_harga');
 
+    // Daftar tahun untuk dropdown dari kolom 'year'
+    $availableYears = Lpj::where('parent_id', $parentCategory->id)
+        ->whereNotNull('year')
+        ->select('year')
+        ->distinct()
+        ->orderByDesc('year')
+        ->pluck('year');
+
     // Sorting
     $allowedSorts = ['nama_program', 'nama_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga', 'created_at'];
     $sort = $request->get('sort_by', 'created_at');
@@ -69,7 +83,13 @@ class KegiatanLainnyaController extends Controller
     }
 
     // Untuk request biasa, return full view dengan data summary
-    return view('admin.laporan-lpj.kegiatan-lainnya.index', compact('kegiatanLainnya', 'totalKegiatan', 'totalAnggaran'));
+    return view('admin.laporan-lpj.kegiatan-lainnya.index', [
+        'kegiatanLainnya' => $kegiatanLainnya,
+        'totalKegiatan' => $totalKegiatan,
+        'totalAnggaran' => $totalAnggaran,
+        'availableYears' => $availableYears,
+        'selectedYear' => $selectedYear,
+    ]);
 }
 
     public function create()
@@ -132,6 +152,7 @@ class KegiatanLainnyaController extends Controller
             'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
             'jumlah_harga' => $jumlahHarga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
+            'year' => (int) ($request->input('year') ?: now()->year),
             'icon' => 'fas fa-clipboard-list' // Default icon untuk kegiatan-lainnya
         ];
 
@@ -314,6 +335,7 @@ class KegiatanLainnyaController extends Controller
             'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
             'jumlah_harga' => $jumlahHarga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
+            'year' => (int) ($request->input('year') ?: $kegiatanLainnya->year ?: now()->year),
             'foto_jurnal' => $allFotoJurnal,
             'dokumen_lpj' => $allDokumenLpj,
             'dokumen_lpj_pdf' => $allDokumenLpjPdf

@@ -50,7 +50,7 @@
         .main-content {
             background-color: #f5f5f5;
             min-height: 100vh;
-            padding: 20px 0;
+            padding: 0px 0;
         }
 
         /* Card Styles - MATCHING PASTE 1 EXACTLY */
@@ -726,7 +726,7 @@
         </div>
     @endif
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Cabang Olahraga</h2>
         <a href="{{ route('admin.konfigurasi.cabang-olahraga.create') }}" class="btn"
             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
@@ -739,9 +739,9 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body py-1">
                             <div class="table-header" style="border-radius: 12px 12px 0px 0px">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <h3 class="mb-0 fw-semibold text-dark">Table Daftar Cabor Tabalong</h3>
 
                                     <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -1016,107 +1016,108 @@
             }
 
             // ✅ Enhanced Export Function
-    window.exportToExcel = function(showPreview = false) {
-        console.log('📊 Export function called, showPreview:', showPreview);
-        
-        try {
-            // Get current filter values
-            const searchValue = $('#search').val()?.trim() || '';
-            const statusValue = $('#filter-status').val() || '';
-            
-            // Get current URL parameters for sorting
-            const urlParams = new URLSearchParams(window.location.search);
-            const sortBy = urlParams.get('sort_by') || 'terakhir_update';
-            const order = urlParams.get('order') || 'desc';
+            window.exportToExcel = function(showPreview = false) {
+                console.log('📊 Export function called, showPreview:', showPreview);
 
-            // Build export parameters
-            const exportParams = new URLSearchParams();
-            
-            if (searchValue) exportParams.append('search', searchValue);
-            if (statusValue) exportParams.append('status', statusValue);
-            exportParams.append('sort_by', sortBy);
-            exportParams.append('order', order);
+                try {
+                    // Get current filter values
+                    const searchValue = $('#search').val()?.trim() || '';
+                    const statusValue = $('#filter-status').val() || '';
 
-            // Log the export parameters
-            console.log('📊 Export parameters:', {
-                search: searchValue,
-                status: statusValue,
-                sort_by: sortBy,
-                order: order
-            });
+                    // Get current URL parameters for sorting
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sortBy = urlParams.get('sort_by') || 'terakhir_update';
+                    const order = urlParams.get('order') || 'desc';
 
-            if (showPreview) {
-                // Show preview first
-                showExportPreview(exportParams);
-            } else {
-                // Direct export
-                performExport(exportParams);
+                    // Build export parameters
+                    const exportParams = new URLSearchParams();
+
+                    if (searchValue) exportParams.append('search', searchValue);
+                    if (statusValue) exportParams.append('status', statusValue);
+                    exportParams.append('sort_by', sortBy);
+                    exportParams.append('order', order);
+
+                    // Log the export parameters
+                    console.log('📊 Export parameters:', {
+                        search: searchValue,
+                        status: statusValue,
+                        sort_by: sortBy,
+                        order: order
+                    });
+
+                    if (showPreview) {
+                        // Show preview first
+                        showExportPreview(exportParams);
+                    } else {
+                        // Direct export
+                        performExport(exportParams);
+                    }
+
+                } catch (error) {
+                    console.error('❌ Error in exportToExcel:', error);
+                    showErrorMessage('Terjadi kesalahan saat mempersiapkan export.');
+                }
+            };
+
+            // ✅ Show Export Preview
+            function showExportPreview(params) {
+                console.log('👁️ Showing export preview...');
+
+                // Show loading modal
+                Swal.fire({
+                    title: 'Mempersiapkan Export...',
+                    text: 'Mohon tunggu sebentar',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Get preview data
+                const previewUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export-preview') }}?" + params
+                    .toString();
+
+                fetch(previewUrl, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show preview modal
+                            showPreviewModal(data, params);
+                        } else {
+                            throw new Error(data.message || 'Gagal memuat preview');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('❌ Preview error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Gagal memuat preview export: ' + error.message
+                        });
+                    });
             }
-            
-        } catch (error) {
-            console.error('❌ Error in exportToExcel:', error);
-            showErrorMessage('Terjadi kesalahan saat mempersiapkan export.');
-        }
-    };
 
-    // ✅ Show Export Preview
-    function showExportPreview(params) {
-        console.log('👁️ Showing export preview...');
-        
-        // Show loading modal
-        Swal.fire({
-            title: 'Mempersiapkan Export...',
-            text: 'Mohon tunggu sebentar',
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            willOpen: () => {
-                Swal.showLoading();
-            }
-        });
+            // ✅ Show Preview Modal
+            function showPreviewModal(data, params) {
+                const filterInfo = buildFilterInfo();
 
-         // Get preview data
-        const previewUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export-preview') }}?" + params.toString();
-        
-        fetch(previewUrl, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Show preview modal
-                showPreviewModal(data, params);
-            } else {
-                throw new Error(data.message || 'Gagal memuat preview');
-            }
-        })
-        .catch(error => {
-            console.error('❌ Preview error:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Gagal memuat preview export: ' + error.message
-            });
-        });
-    }
-
-    // ✅ Show Preview Modal
-    function showPreviewModal(data, params) {
-        const filterInfo = buildFilterInfo();
-        
-        Swal.fire({
-            title: '📋 Preview Export Data',
-            html: `
+                Swal.fire({
+                    title: '📋 Preview Export Data',
+                    html: `
                 <div class="text-start">
                     <div class="alert alert-info mb-3">
                         <strong>📊 Total Records:</strong> ${data.total_records} cabang olahraga<br>
                         <strong>🔍 Filter Aktif:</strong> ${filterInfo}
                     </div>
-                    
+
                     <div class="mb-3">
                         <strong>📄 Format Export:</strong>
                         <ul class="list-unstyled ms-3 mt-2">
@@ -1126,7 +1127,7 @@
                             <li>✅ Terurut sesuai pengaturan tabel</li>
                         </ul>
                     </div>
-                    
+
                     <div class="mb-3">
                         <strong>📋 Kolom yang akan diekspor:</strong>
                         <div class="row mt-2" style="font-size: 0.85rem;">
@@ -1153,160 +1154,162 @@
                     </div>
                 </div>
             `,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: '📥 Download Excel',
-            cancelButtonText: '❌ Batal',
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#6c757d',
-            width: '600px'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                performExport(params);
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: '📥 Download Excel',
+                    cancelButtonText: '❌ Batal',
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    width: '600px'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        performExport(params);
+                    }
+                });
             }
+
+            // ✅ Perform Actual Export
+            function performExport(params) {
+                console.log('📥 Performing export with params:', params.toString());
+
+                try {
+                    // Build export URL
+                    const exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?" + params
+                        .toString();
+                    console.log('📥 Export URL:', exportUrl);
+
+                    // Show success message
+                    showSuccessMessage('📥 File sedang diunduh...');
+
+                    // Create temporary link and trigger download
+                    const link = document.createElement('a');
+                    link.href = exportUrl;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    // Show completion message after short delay
+                    setTimeout(() => {
+                        showSuccessMessage('✅ Export selesai! File telah diunduh.');
+                    }, 1000);
+
+                } catch (error) {
+                    console.error('❌ Export error:', error);
+                    showErrorMessage('Gagal mengunduh file export.');
+                }
+            }
+
+            // ✅ Build Filter Info String
+            function buildFilterInfo() {
+                const filters = [];
+
+                const searchVal = $('#search').val()?.trim();
+                const statusVal = $('#filter-status').val();
+
+                if (searchVal) filters.push(`Pencarian: "${searchVal}"`);
+                if (statusVal) filters.push(`Status: ${statusVal}`);
+
+                return filters.length > 0 ? filters.join(', ') : 'Tidak ada filter';
+            }
+
+            // ✅ Update Export Button URL (called from main script)
+            window.updateExportButtonUrl = function() {
+                try {
+                    const searchValue = $('#search').val()?.trim() || '';
+                    const statusValue = $('#filter-status').val() || '';
+                    const urlParams = new URLSearchParams(window.location.search);
+
+                    // Build export URL with current filters
+                    const params = new URLSearchParams();
+                    if (searchValue) params.append('search', searchValue);
+                    if (statusValue) params.append('status', statusValue);
+                    if (urlParams.has('sort_by')) params.append('sort_by', urlParams.get('sort_by'));
+                    if (urlParams.has('order')) params.append('order', urlParams.get('order'));
+
+                    const exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?" + params
+                        .toString();
+                    $('#export-excel-btn').attr('href', exportUrl);
+
+                    console.log('🔗 Export URL updated:', exportUrl);
+                } catch (error) {
+                    console.error('❌ Error updating export URL:', error);
+                }
+            };
+
+            // ✅ Enhanced Event Handlers
+            $(document).on('click', '#export-excel-btn', function(e) {
+                e.preventDefault();
+                console.log('🖱️ Export button clicked');
+                exportToExcel(false); // Direct export
+            });
+
+            // Optional: Export with preview button
+            $(document).on('click', '#export-preview-btn', function(e) {
+                e.preventDefault();
+                console.log('🖱️ Export preview button clicked');
+                exportToExcel(true); // Show preview first
+            });
+
+            // ✅ Utility Functions
+            function showSuccessMessage(message) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.success(message, 'Export', {
+                        timeOut: 3000,
+                        closeButton: true,
+                        progressBar: true
+                    });
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Export',
+                        text: message,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                } else {
+                    console.log('✅', message);
+                }
+            }
+
+            function showErrorMessage(message) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error(message, 'Error', {
+                        timeOut: 5000,
+                        closeButton: true,
+                        progressBar: true
+                    });
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: message,
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 5000
+                    });
+                } else {
+                    console.error('❌', message);
+                    alert(message);
+                }
+            }
+
+            // ✅ Initialize export functionality
+            updateExportButtonUrl();
+
+            console.log('✅ Enhanced Export System initialized successfully');
         });
-    }
 
-    // ✅ Perform Actual Export
-    function performExport(params) {
-        console.log('📥 Performing export with params:', params.toString());
-        
-        try {
-            // Build export URL
-            const exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?" + params.toString();
-            console.log('📥 Export URL:', exportUrl);
+        // ✅ Enhanced Loading State Functions
+        function showTableLoading() {
+            isLoading = true;
+            const tableContainer = $('#tableContainer');
 
-            // Show success message
-            showSuccessMessage('📥 File sedang diunduh...');
-            
-            // Create temporary link and trigger download
-            const link = document.createElement('a');
-            link.href = exportUrl;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Show completion message after short delay
-            setTimeout(() => {
-                showSuccessMessage('✅ Export selesai! File telah diunduh.');
-            }, 1000);
-            
-        } catch (error) {
-            console.error('❌ Export error:', error);
-            showErrorMessage('Gagal mengunduh file export.');
-        }
-    }
-
-    // ✅ Build Filter Info String
-    function buildFilterInfo() {
-        const filters = [];
-        
-        const searchVal = $('#search').val()?.trim();
-        const statusVal = $('#filter-status').val();
-        
-        if (searchVal) filters.push(`Pencarian: "${searchVal}"`);
-        if (statusVal) filters.push(`Status: ${statusVal}`);
-        
-        return filters.length > 0 ? filters.join(', ') : 'Tidak ada filter';
-    }
-
-    // ✅ Update Export Button URL (called from main script)
-    window.updateExportButtonUrl = function() {
-        try {
-            const searchValue = $('#search').val()?.trim() || '';
-            const statusValue = $('#filter-status').val() || '';
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            // Build export URL with current filters
-            const params = new URLSearchParams();
-            if (searchValue) params.append('search', searchValue);
-            if (statusValue) params.append('status', statusValue);
-            if (urlParams.has('sort_by')) params.append('sort_by', urlParams.get('sort_by'));
-            if (urlParams.has('order')) params.append('order', urlParams.get('order'));
-            
-            const exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?" + params.toString();
-            $('#export-excel-btn').attr('href', exportUrl);
-            
-            console.log('🔗 Export URL updated:', exportUrl);
-        } catch (error) {
-            console.error('❌ Error updating export URL:', error);
-        }
-    };
-
-    // ✅ Enhanced Event Handlers
-    $(document).on('click', '#export-excel-btn', function(e) {
-        e.preventDefault();
-        console.log('🖱️ Export button clicked');
-        exportToExcel(false); // Direct export
-    });
-
-    // Optional: Export with preview button
-    $(document).on('click', '#export-preview-btn', function(e) {
-        e.preventDefault();
-        console.log('🖱️ Export preview button clicked');
-        exportToExcel(true); // Show preview first
-    });
-
-    // ✅ Utility Functions
-    function showSuccessMessage(message) {
-        if (typeof toastr !== 'undefined') {
-            toastr.success(message, 'Export', {
-                timeOut: 3000,
-                closeButton: true,
-                progressBar: true
-            });
-        } else if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'success',
-                title: 'Export',
-                text: message,
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
-            });
-        } else {
-            console.log('✅', message);
-        }
-    }
-
-    function showErrorMessage(message) {
-        if (typeof toastr !== 'undefined') {
-            toastr.error(message, 'Error', {
-                timeOut: 5000,
-                closeButton: true,
-                progressBar: true
-            });
-        } else if (typeof Swal !== 'undefined') {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: message,
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 5000
-            });
-        } else {
-            console.error('❌', message);
-            alert(message);
-        }
-    }
-
-    // ✅ Initialize export functionality
-    updateExportButtonUrl();
-    
-    console.log('✅ Enhanced Export System initialized successfully');
-});
-
-            // ✅ Enhanced Loading State Functions
-            function showTableLoading() {
-                isLoading = true;
-                const tableContainer = $('#tableContainer');
-
-                if (tableContainer.length && !tableContainer.find('.loading-overlay').length) {
-                    const overlay = $(`
+            if (tableContainer.length && !tableContainer.find('.loading-overlay').length) {
+                const overlay = $(`
                 <div class="loading-overlay" style="
                     position: absolute !important;
                     top: 0; left: 0; right: 0; bottom: 0;
@@ -1327,341 +1330,341 @@
                 </div>
             `);
 
-                    tableContainer.css('position', 'relative').append(overlay);
-                }
+                tableContainer.css('position', 'relative').append(overlay);
             }
+        }
 
-            function hideTableLoading() {
-                isLoading = false;
-                $('.loading-overlay').remove();
-            }
+        function hideTableLoading() {
+            isLoading = false;
+            $('.loading-overlay').remove();
+        }
 
-            // ✅ Enhanced Error Toast Function
-            function showErrorToast(message) {
-                if (typeof toastr !== 'undefined') {
-                    toastr.error(message, 'Error', {
-                        timeOut: 5000,
-                        closeButton: true,
-                        progressBar: true
-                    });
-                } else if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: message,
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 5000
-                    });
-                } else {
-                    console.error(message);
-                    alert(message);
-                }
-            }
-
-            // ✅ Update Filter Count Badge
-            function updateFilterCountBadge() {
-                let count = 0;
-
-                const statusVal = $('#filter-status').val();
-                if (statusVal) count++;
-
-                const badge = $('#filter-count');
-                badge.text(count);
-                badge.toggleClass('d-none', count === 0);
-            }
-
-            // ✅ Update Export Button URL
-            function updateExportButtonUrl() {
-                // Get current filter values
-                const searchValue = $('#search').val();
-                const statusValue = $('#filter-status').val();
-
-                // Build URL with current filters
-                let exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?";
-                const params = new URLSearchParams();
-
-                if (searchValue) {
-                    params.append('search', searchValue);
-                }
-
-                if (statusValue) {
-                    params.append('status', statusValue);
-                }
-
-                // Add current sorting parameters if they exist
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('sort_by')) {
-                    params.append('sort_by', urlParams.get('sort_by'));
-                }
-                if (urlParams.has('order')) {
-                    params.append('order', urlParams.get('order'));
-                }
-
-                exportUrl += params.toString();
-                $('#export-excel-btn').attr('href', exportUrl);
-            }
-
-            // ✅ EVENT HANDLERS
-
-            // Search dengan debounce - FIXED: Prevent default form submission
-            $('#search').on('input', function(e) {
-                e.preventDefault();
-                clearTimeout(searchTimeout);
-                const searchValue = $(this).val().trim();
-
-                console.log('🔍 Search input:', searchValue);
-
-                searchTimeout = setTimeout(() => {
-                    performAjaxRequest({
-                        search: searchValue,
-                        page: 1
-                    });
-                    updateFilterCountBadge();
-                    updateExportButtonUrl(); // Update export button URL
-                }, 500);
-
-                return false; // Prevent any form submission
-            });
-
-            // FIXED: Prevent Enter key from submitting form in search
-            $('#search').on('keypress', function(e) {
-                if (e.which === 13) { // Enter key
-                    e.preventDefault();
-                    clearTimeout(searchTimeout);
-
-                    const searchValue = $(this).val().trim();
-                    performAjaxRequest({
-                        search: searchValue,
-                        page: 1
-                    });
-                    updateFilterCountBadge();
-
-                    return false;
-                }
-            });
-
-            // Filter Status Change - FIXED: Prevent default
-            $(document).on('change', '#filter-status', function(e) {
-                e.preventDefault();
-                const statusValue = $(this).val();
-                console.log('🔽 Filter status changed:', statusValue);
-
-                performAjaxRequest({
-                    status: statusValue,
-                    page: 1
+        // ✅ Enhanced Error Toast Function
+        function showErrorToast(message) {
+            if (typeof toastr !== 'undefined') {
+                toastr.error(message, 'Error', {
+                    timeOut: 5000,
+                    closeButton: true,
+                    progressBar: true
                 });
-                updateFilterCountBadge();
+            } else if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: message,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 5000
+                });
+            } else {
+                console.error(message);
+                alert(message);
+            }
+        }
 
-                return false;
-            });
+        // ✅ Update Filter Count Badge
+        function updateFilterCountBadge() {
+            let count = 0;
 
-            // Apply Filters Button - FIXED: Better event handling
-            $(document).on('click', '#apply-filters', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
+            const statusVal = $('#filter-status').val();
+            if (statusVal) count++;
 
-                const statusValue = $('#filter-status').val();
-                const searchValue = $('#search').val().trim();
+            const badge = $('#filter-count');
+            badge.text(count);
+            badge.toggleClass('d-none', count === 0);
+        }
 
-                console.log('✅ Applying filters - Status:', statusValue, 'Search:', searchValue);
+        // ✅ Update Export Button URL
+        function updateExportButtonUrl() {
+            // Get current filter values
+            const searchValue = $('#search').val();
+            const statusValue = $('#filter-status').val();
 
+            // Build URL with current filters
+            let exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?";
+            const params = new URLSearchParams();
+
+            if (searchValue) {
+                params.append('search', searchValue);
+            }
+
+            if (statusValue) {
+                params.append('status', statusValue);
+            }
+
+            // Add current sorting parameters if they exist
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('sort_by')) {
+                params.append('sort_by', urlParams.get('sort_by'));
+            }
+            if (urlParams.has('order')) {
+                params.append('order', urlParams.get('order'));
+            }
+
+            exportUrl += params.toString();
+            $('#export-excel-btn').attr('href', exportUrl);
+        }
+
+        // ✅ EVENT HANDLERS
+
+        // Search dengan debounce - FIXED: Prevent default form submission
+        $('#search').on('input', function(e) {
+            e.preventDefault();
+            clearTimeout(searchTimeout);
+            const searchValue = $(this).val().trim();
+
+            console.log('🔍 Search input:', searchValue);
+
+            searchTimeout = setTimeout(() => {
                 performAjaxRequest({
-                    status: statusValue,
                     search: searchValue,
                     page: 1
                 });
                 updateFilterCountBadge();
                 updateExportButtonUrl(); // Update export button URL
+            }, 500);
 
-                return false;
-            });
+            return false; // Prevent any form submission
+        });
 
-            // Reset Filters Button - FIXED: Better reset handling
-            $(document).on('click', '#reset-filters', function(e) {
+        // FIXED: Prevent Enter key from submitting form in search
+        $('#search').on('keypress', function(e) {
+            if (e.which === 13) { // Enter key
                 e.preventDefault();
-                e.stopPropagation();
+                clearTimeout(searchTimeout);
 
-                console.log('🔄 Resetting filters');
-
-                // Clear form fields
-                $('#search').val('');
-                $('#filter-status').val('');
-
-                // Make AJAX request with empty parameters
+                const searchValue = $(this).val().trim();
                 performAjaxRequest({
-                    search: '',
-                    status: '',
+                    search: searchValue,
                     page: 1
                 });
                 updateFilterCountBadge();
-                updateExportButtonUrl(); // Update export button URL
 
                 return false;
+            }
+        });
+
+        // Filter Status Change - FIXED: Prevent default
+        $(document).on('change', '#filter-status', function(e) {
+            e.preventDefault();
+            const statusValue = $(this).val();
+            console.log('🔽 Filter status changed:', statusValue);
+
+            performAjaxRequest({
+                status: statusValue,
+                page: 1
+            });
+            updateFilterCountBadge();
+
+            return false;
+        });
+
+        // Apply Filters Button - FIXED: Better event handling
+        $(document).on('click', '#apply-filters', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const statusValue = $('#filter-status').val();
+            const searchValue = $('#search').val().trim();
+
+            console.log('✅ Applying filters - Status:', statusValue, 'Search:', searchValue);
+
+            performAjaxRequest({
+                status: statusValue,
+                search: searchValue,
+                page: 1
+            });
+            updateFilterCountBadge();
+            updateExportButtonUrl(); // Update export button URL
+
+            return false;
+        });
+
+        // Reset Filters Button - FIXED: Better reset handling
+        $(document).on('click', '#reset-filters', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            console.log('🔄 Resetting filters');
+
+            // Clear form fields
+            $('#search').val('');
+            $('#filter-status').val('');
+
+            // Make AJAX request with empty parameters
+            performAjaxRequest({
+                search: '',
+                status: '',
+                page: 1
+            });
+            updateFilterCountBadge();
+            updateExportButtonUrl(); // Update export button URL
+
+            return false;
+        });
+
+        // FIXED: Per Page Change Handler - Use event delegation
+        $(document).on('change', '#ajax-per-page', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const perPageValue = $(this).val();
+            console.log('📄 Per page changed:', perPageValue);
+
+            performAjaxRequest({
+                per_page: perPageValue,
+                page: 1
             });
 
-            // FIXED: Per Page Change Handler - Use event delegation
-            $(document).on('change', '#ajax-per-page', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
+            return false;
+        });
 
-                const perPageValue = $(this).val();
-                console.log('📄 Per page changed:', perPageValue);
+        // FIXED: Pagination Click Handler - Better event handling
+        $(document).on('click', '.ajax-pagination', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
 
-                performAjaxRequest({
-                    per_page: perPageValue,
-                    page: 1
-                });
+            const $this = $(this);
+            const page = $this.data('page');
 
-                return false;
-            });
+            console.log('📄 Pagination clicked, page:', page);
 
-            // FIXED: Pagination Click Handler - Better event handling
-            $(document).on('click', '.ajax-pagination', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const $this = $(this);
-                const page = $this.data('page');
-
-                console.log('📄 Pagination clicked, page:', page);
-
-                if (page && !$this.hasClass('processing')) {
-                    $this.addClass('processing');
-
-                    performAjaxRequest({
-                            page: page
-                        })
-                        .always(() => {
-                            setTimeout(() => {
-                                $('.ajax-pagination').removeClass('processing');
-                                updateExportButtonUrl
-                                    (); // Update export button URL after pagination
-                            }, 500);
-                        });
-                }
-
-                return false;
-            });
-
-            // FIXED: Sorting Click Handler - Prevent any navigation
-            $(document).on('click', '.ajax-sort', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const $this = $(this);
-                const sortBy = $this.data('sort');
-
-                console.log('🔄 Sort button clicked, sort by:', sortBy);
-
-                if (!sortBy || $this.hasClass('processing')) {
-                    console.log('⚠️ No sort data found or already processing');
-                    return false;
-                }
-
+            if (page && !$this.hasClass('processing')) {
                 $this.addClass('processing');
 
-                const currentParams = new URLSearchParams(window.location.search);
-                const currentSortBy = currentParams.get('sort_by');
-                const currentOrder = currentParams.get('order');
-
-                // Toggle order if same field, default to asc for new field
-                let newOrder = 'asc';
-                if (currentSortBy === sortBy && currentOrder === 'asc') {
-                    newOrder = 'desc';
-                }
-
-                console.log('🔄 Sorting:', sortBy, newOrder);
-
                 performAjaxRequest({
-                        sort_by: sortBy,
-                        order: newOrder,
-                        page: 1
+                        page: page
                     })
                     .always(() => {
                         setTimeout(() => {
-                            $('.ajax-sort').removeClass('processing');
-                            updateExportButtonUrl(); // Update export button URL after sorting
+                            $('.ajax-pagination').removeClass('processing');
+                            updateExportButtonUrl
+                                (); // Update export button URL after pagination
                         }, 500);
                     });
+            }
 
+            return false;
+        });
+
+        // FIXED: Sorting Click Handler - Prevent any navigation
+        $(document).on('click', '.ajax-sort', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const $this = $(this);
+            const sortBy = $this.data('sort');
+
+            console.log('🔄 Sort button clicked, sort by:', sortBy);
+
+            if (!sortBy || $this.hasClass('processing')) {
+                console.log('⚠️ No sort data found or already processing');
                 return false;
-            });
+            }
 
-            // ✅ CRITICAL: Prevent ALL form submissions on this page
-            $(document).on('submit', 'form', function(e) {
-                console.log('🛑 Form submission prevented');
-                e.preventDefault();
-                return false;
-            });
+            $this.addClass('processing');
 
-            // ✅ CRITICAL: Prevent default link behavior for any AJAX elements
-            $(document).on('click', 'a[href*="sort_by"], a[href*="page"], .ajax-sort, .ajax-pagination', function(
-                e) {
-                e.preventDefault();
-                return false;
-            });
+            const currentParams = new URLSearchParams(window.location.search);
+            const currentSortBy = currentParams.get('sort_by');
+            const currentOrder = currentParams.get('order');
 
-            // ✅ Add export button click handler
-            $('#export-excel-btn').on('click', function(e) {
-                e.preventDefault();
-                exportToExcel();
-            });
+            // Toggle order if same field, default to asc for new field
+            let newOrder = 'asc';
+            if (currentSortBy === sortBy && currentOrder === 'asc') {
+                newOrder = 'desc';
+            }
 
-            // ✅ Initialize on page load
-            updateFilterCountBadge();
-            updateExportButtonUrl(); // Update export button URL on page load
+            console.log('🔄 Sorting:', sortBy, newOrder);
 
-            // ✅ Handle browser back/forward - FIXED: Better handling
-            window.addEventListener('popstate', function(event) {
-                console.log('🔙 Browser back/forward detected');
-
-                // Get parameters from current URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const params = {};
-
-                for (let [key, value] of urlParams) {
-                    params[key] = value;
-                }
-
-                // Update form fields to match URL
-                $('#search').val(params.search || '');
-                $('#filter-status').val(params.status || '');
-
-                // Make AJAX request to load content
-                performAjaxRequest(params, true);
-                updateFilterCountBadge();
-            });
-
-            // ✅ Cleanup on page unload
-            $(window).on('beforeunload', function() {
-                hideTableLoading();
-                clearTimeout(searchTimeout);
-                clearTimeout(clickTimeout);
-                isLoading = false;
-            });
-
-            console.log('✅ FIXED Enhanced AJAX system initialized successfully');
-
-            // ✅ Add debugging function
-            window.testAjax = function() {
-                console.log('🧪 Testing AJAX manually...');
-                performAjaxRequest({
+            performAjaxRequest({
+                    sort_by: sortBy,
+                    order: newOrder,
                     page: 1
-                }, true);
-            };
+                })
+                .always(() => {
+                    setTimeout(() => {
+                        $('.ajax-sort').removeClass('processing');
+                        updateExportButtonUrl(); // Update export button URL after sorting
+                    }, 500);
+                });
 
-            // ✅ Final diagnostic
-            setTimeout(() => {
-                console.log('🔍 Final diagnostic:');
-                console.log('- Search element:', $('#search').length);
-                console.log('- Filter element:', $('#filter-status').length);
-                console.log('- Table container:', $('#tableContainer').length);
-                console.log('- Sort buttons:', $('.ajax-sort').length);
-                console.log('- Pagination buttons:', $('.ajax-pagination').length);
-                console.log('💡 Run testAjax() to test manually');
-            }, 1000);
+            return false;
+        });
+
+        // ✅ CRITICAL: Prevent ALL form submissions on this page
+        $(document).on('submit', 'form', function(e) {
+            console.log('🛑 Form submission prevented');
+            e.preventDefault();
+            return false;
+        });
+
+        // ✅ CRITICAL: Prevent default link behavior for any AJAX elements
+        $(document).on('click', 'a[href*="sort_by"], a[href*="page"], .ajax-sort, .ajax-pagination', function(
+            e) {
+            e.preventDefault();
+            return false;
+        });
+
+        // ✅ Add export button click handler
+        $('#export-excel-btn').on('click', function(e) {
+            e.preventDefault();
+            exportToExcel();
+        });
+
+        // ✅ Initialize on page load
+        updateFilterCountBadge();
+        updateExportButtonUrl(); // Update export button URL on page load
+
+        // ✅ Handle browser back/forward - FIXED: Better handling
+        window.addEventListener('popstate', function(event) {
+            console.log('🔙 Browser back/forward detected');
+
+            // Get parameters from current URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const params = {};
+
+            for (let [key, value] of urlParams) {
+                params[key] = value;
+            }
+
+            // Update form fields to match URL
+            $('#search').val(params.search || '');
+            $('#filter-status').val(params.status || '');
+
+            // Make AJAX request to load content
+            performAjaxRequest(params, true);
+            updateFilterCountBadge();
+        });
+
+        // ✅ Cleanup on page unload
+        $(window).on('beforeunload', function() {
+            hideTableLoading();
+            clearTimeout(searchTimeout);
+            clearTimeout(clickTimeout);
+            isLoading = false;
+        });
+
+        console.log('✅ FIXED Enhanced AJAX system initialized successfully');
+
+        // ✅ Add debugging function
+        window.testAjax = function() {
+            console.log('🧪 Testing AJAX manually...');
+            performAjaxRequest({
+                page: 1
+            }, true);
+        };
+
+        // ✅ Final diagnostic
+        setTimeout(() => {
+        console.log('🔍 Final diagnostic:');
+        console.log('- Search element:', $('#search').length);
+        console.log('- Filter element:', $('#filter-status').length);
+        console.log('- Table container:', $('#tableContainer').length);
+        console.log('- Sort buttons:', $('.ajax-sort').length);
+        console.log('- Pagination buttons:', $('.ajax-pagination').length);
+        console.log('💡 Run testAjax() to test manually');
+        }, 1000);
         });
 
         // ✅ Global functions for delete operations (outside document ready)
@@ -1685,7 +1688,7 @@
                 title: 'Tidak Dapat Menghapus Cabang Olahraga',
                 html: `Cabang olahraga <strong>${caborName}</strong> tidak dapat dihapus karena masih memiliki:${dependencyListHtml}
                 <p class="text-muted mt-3">
-                    Silakan pindahkan atau hapus data tersebut terlebih dahulu, 
+                    Silakan pindahkan atau hapus data tersebut terlebih dahulu,
                     atau nonaktifkan cabang olahraga ini.
                 </p>`,
                 icon: "warning",

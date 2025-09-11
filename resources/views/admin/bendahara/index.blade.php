@@ -6,6 +6,11 @@
 
 @section('style')
     <style>
+        /* Match page background with Sekretariat & Kegiatan Lainnya */
+        body {
+            background-color: #f5f5f5;
+        }
+
         .filter-container {
             display: flex;
             align-items: center;
@@ -356,7 +361,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 400px; /* Adjust as needed */
+            max-width: 400px;
+            /* Adjust as needed */
         }
 
         /* Form elements should also respect modal width */
@@ -508,152 +514,193 @@
 @endsection
 
 @section('content')
-    <div class="d-grid gap-5 border-0">
-        <div class="d-flex justify-content-between align-items-center container">
-            <div class="d-none d-md-block">
-                <h1>Database Bendahara</h1>
-                <span>Kelola laporan bendahara dengan mudah</span>
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="padding:10px 30px">
+        <h2 class="fw-bold fs-2 mb-0 text-dark">Database Bendahara</h2>
+        <button id="tambahLaporanBtn" class="btn"
+            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
+            <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Laporan
+        </button>
+    </div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-grid gap-5 border-0">
+                                <div class="d-flex justify-content-between align-items-center ">
+                                    <div class="d-none d-md-block">
+                                        <h3 class="fw-bold fs-4 mb-0">Database Bendahara</h3>
+                                        <div class="text-muted small">Kelola laporan bendahara</div>
+                                    </div>
+
+                                    <form id="filter" class="d-flex filter-container gap-3">
+                                        {{-- <button type="button" id="tambahLaporanBtn"
+                                            class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                                            <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
+                                            <span>Tambah Laporan</span>
+                                        </button> --}}
+
+                                        <div class="search-container">
+                                            <div class="position-relative bg-light">
+                                                <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
+                                                <input type="text" name="search" value="{{ request('search') }}"
+                                                    placeholder="Cari laporan..."
+                                                    class="form-control search-input border border-gray-500 py-2" />
+                                            </div>
+                                        </div>
+
+                                        <div class="date-filter-container">
+                                            <div class="date-filter-btn {{ request('date_from') || request('date_to') ? 'date-filter-active' : '' }}"
+                                                id="dateFilterBtn">
+                                                @if (request('date_from') || request('date_to'))
+                                                    <i class="fas fa-calendar-check"></i>
+                                                @else
+                                                    <i class="fas fa-calendar"></i>
+                                                @endif
+                                                <span class="filter-text">
+                                                    @if (request('date_from') || request('date_to'))
+                                                        @if (request('date_from') && request('date_to'))
+                                                            {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }}
+                                                            -
+                                                            {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
+                                                        @elseif(request('date_from'))
+                                                            Dari
+                                                            {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }}
+                                                        @else
+                                                            Sampai
+                                                            {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
+                                                        @endif
+                                                    @endif
+                                                </span>
+                                            </div>
+
+                                            <div class="date-filter-menu" id="dateFilterMenu">
+                                                <div class="date-presets">
+                                                    <div class="date-presets-label">Preset Cepat:</div>
+                                                    <div class="date-preset-buttons">
+                                                        <button type="button" class="date-preset-btn"
+                                                            data-preset="today">Hari Ini</button>
+                                                        <button type="button" class="date-preset-btn"
+                                                            data-preset="this-week">Minggu Ini</button>
+                                                        <button type="button" class="date-preset-btn"
+                                                            data-preset="this-month">Bulan Ini</button>
+                                                        <button type="button" class="date-preset-btn"
+                                                            data-preset="this-year">Tahun Ini</button>
+                                                        <button type="button" class="date-preset-btn"
+                                                            data-preset="last-30-days">30 Hari
+                                                            Terakhir</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="date-input-group">
+                                                    <div class="date-input-wrapper">
+                                                        <label class="date-input-label">Dari Tanggal</label>
+                                                        <input type="date" name="date_from"
+                                                            value="{{ request('date_from') }}" class="date-input"
+                                                            id="dateFromInput">
+                                                    </div>
+                                                    <div class="date-input-wrapper">
+                                                        <label class="date-input-label">Sampai Tanggal</label>
+                                                        <input type="date" name="date_to"
+                                                            value="{{ request('date_to') }}" class="date-input"
+                                                            id="dateToInput">
+                                                    </div>
+                                                </div>
+
+                                                <div class="date-filter-actions">
+                                                    <button type="button" class="date-filter-apply"
+                                                        id="applyDateFilter">Terapkan</button>
+                                                    <button type="button" class="date-filter-clear"
+                                                        id="clearDateFilter">Reset</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="filter-dropdown">
+                                            <div class="filter-btn {{ request('filter_type') && request('filter_type') != 'all' ? 'filter-active' : '' }}"
+                                                id="filterBtn">
+                                                <span>
+                                                    @if (request('filter_type') == 'pdf')
+                                                        <i class="fas fa-file-pdf me-2"
+                                                            style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#dc3545' }};"></i>File
+                                                        PDF
+                                                    @elseif(request('filter_type') == 'excel')
+                                                        <i class="fas fa-file-excel me-2"
+                                                            style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#198754' }};"></i>File
+                                                        Excel
+                                                    @elseif(request('filter_type') == 'other')
+                                                        <i class="fas fa-file me-2"
+                                                            style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#6c757d' }};"></i>File
+                                                        Lain
+                                                    @else
+                                                        <i class="fas fa-filter me-2"></i>Filter Tipe File
+                                                    @endif
+                                                </span>
+                                                <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                                            </div>
+
+                                            <div class="filter-menu" id="filterMenu">
+                                                <div class="filter-option {{ request('filter_type', 'all') == 'all' ? 'active' : '' }}"
+                                                    data-filter="all">
+                                                    <span>
+                                                        <i class="fas fa-list file-type-icon"></i>
+                                                        Semua File
+                                                    </span>
+                                                    <span class="filter-count">{{ $fileCounts['all'] ?? 0 }}</span>
+                                                </div>
+                                                <div class="filter-option {{ request('filter_type') == 'pdf' ? 'active' : '' }}"
+                                                    data-filter="pdf">
+                                                    <span>
+                                                        <i class="fas fa-file-pdf file-type-icon"
+                                                            style="color: #dc3545;"></i>
+                                                        File PDF
+                                                    </span>
+                                                    <span class="filter-count">{{ $fileCounts['pdf'] ?? 0 }}</span>
+                                                </div>
+                                                <div class="filter-option {{ request('filter_type') == 'excel' ? 'active' : '' }}"
+                                                    data-filter="excel">
+                                                    <span>
+                                                        <i class="fas fa-file-excel file-type-icon"
+                                                            style="color: #198754;"></i>
+                                                        File Excel
+                                                    </span>
+                                                    <span class="filter-count">{{ $fileCounts['excel'] ?? 0 }}</span>
+                                                </div>
+                                                <div class="filter-option {{ request('filter_type') == 'other' ? 'active' : '' }}"
+                                                    data-filter="other">
+                                                    <span>
+                                                        <i class="fas fa-file file-type-icon" style="color: #6c757d;"></i>
+                                                        File Lain
+                                                    </span>
+                                                    <span class="filter-count">{{ $fileCounts['other'] ?? 0 }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <input type="hidden" name="filter_type" id="filter_type_input"
+                                            value="{{ request('filter_type', 'all') }}">
+                                        <input type="hidden" name="date_from" id="date_from_input"
+                                            value="{{ request('date_from') }}">
+                                        <input type="hidden" name="date_to" id="date_to_input"
+                                            value="{{ request('date_to') }}">
+                                        <input type="hidden" name="sort_by" id="sort_by_input"
+                                            value="{{ request('sort_by', 'created_at') }}">
+                                        <input type="hidden" name="order" id="order_input"
+                                            value="{{ request('order', 'desc') }}">
+                                    </form>
+                                </div>
+
+                                <div id="table">
+                                    @include(
+                                        'admin.bendahara._table',
+                                        compact('laporanBendahara', 'fileCounts', 'currentSort'))
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <form id="filter" class="d-flex filter-container gap-3">
-                <button type="button" id="tambahLaporanBtn"
-                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
-                    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
-                    <span>Tambah Laporan</span>
-                </button>
-
-                <div class="search-container">
-                    <div class="position-relative bg-light">
-                        <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari laporan..."
-                            class="form-control search-input border border-gray-500 py-2" />
-                    </div>
-                </div>
-
-                <div class="date-filter-container">
-                    <div class="date-filter-btn {{ request('date_from') || request('date_to') ? 'date-filter-active' : '' }}"
-                        id="dateFilterBtn">
-                        @if (request('date_from') || request('date_to'))
-                            <i class="fas fa-calendar-check"></i>
-                        @else
-                            <i class="fas fa-calendar"></i>
-                        @endif
-                        <span class="filter-text">
-                            @if (request('date_from') || request('date_to'))
-                                @if (request('date_from') && request('date_to'))
-                                    {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }} -
-                                    {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
-                                @elseif(request('date_from'))
-                                    Dari {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }}
-                                @else
-                                    Sampai {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
-                                @endif
-                            @endif
-                        </span>
-                    </div>
-
-                    <div class="date-filter-menu" id="dateFilterMenu">
-                        <div class="date-presets">
-                            <div class="date-presets-label">Preset Cepat:</div>
-                            <div class="date-preset-buttons">
-                                <button type="button" class="date-preset-btn" data-preset="today">Hari Ini</button>
-                                <button type="button" class="date-preset-btn" data-preset="this-week">Minggu Ini</button>
-                                <button type="button" class="date-preset-btn" data-preset="this-month">Bulan Ini</button>
-                                <button type="button" class="date-preset-btn" data-preset="this-year">Tahun Ini</button>
-                                <button type="button" class="date-preset-btn" data-preset="last-30-days">30 Hari
-                                    Terakhir</button>
-                            </div>
-                        </div>
-
-                        <div class="date-input-group">
-                            <div class="date-input-wrapper">
-                                <label class="date-input-label">Dari Tanggal</label>
-                                <input type="date" name="date_from" value="{{ request('date_from') }}" class="date-input"
-                                    id="dateFromInput">
-                            </div>
-                            <div class="date-input-wrapper">
-                                <label class="date-input-label">Sampai Tanggal</label>
-                                <input type="date" name="date_to" value="{{ request('date_to') }}" class="date-input"
-                                    id="dateToInput">
-                            </div>
-                        </div>
-
-                        <div class="date-filter-actions">
-                            <button type="button" class="date-filter-apply" id="applyDateFilter">Terapkan</button>
-                            <button type="button" class="date-filter-clear" id="clearDateFilter">Reset</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="filter-dropdown">
-                    <div class="filter-btn {{ request('filter_type') && request('filter_type') != 'all' ? 'filter-active' : '' }}"
-                        id="filterBtn">
-                        <span>
-                            @if (request('filter_type') == 'pdf')
-                                <i class="fas fa-file-pdf me-2"
-                                    style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#dc3545' }};"></i>File
-                                PDF
-                            @elseif(request('filter_type') == 'excel')
-                                <i class="fas fa-file-excel me-2"
-                                    style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#198754' }};"></i>File
-                                Excel
-                            @elseif(request('filter_type') == 'other')
-                                <i class="fas fa-file me-2"
-                                    style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#6c757d' }};"></i>File
-                                Lain
-                            @else
-                                <i class="fas fa-filter me-2"></i>Filter Tipe File
-                            @endif
-                        </span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
-                    </div>
-
-                    <div class="filter-menu" id="filterMenu">
-                        <div class="filter-option {{ request('filter_type', 'all') == 'all' ? 'active' : '' }}"
-                            data-filter="all">
-                            <span>
-                                <i class="fas fa-list file-type-icon"></i>
-                                Semua File
-                            </span>
-                            <span class="filter-count">{{ $fileCounts['all'] ?? 0 }}</span>
-                        </div>
-                        <div class="filter-option {{ request('filter_type') == 'pdf' ? 'active' : '' }}" data-filter="pdf">
-                            <span>
-                                <i class="fas fa-file-pdf file-type-icon" style="color: #dc3545;"></i>
-                                File PDF
-                            </span>
-                            <span class="filter-count">{{ $fileCounts['pdf'] ?? 0 }}</span>
-                        </div>
-                        <div class="filter-option {{ request('filter_type') == 'excel' ? 'active' : '' }}"
-                            data-filter="excel">
-                            <span>
-                                <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
-                                File Excel
-                            </span>
-                            <span class="filter-count">{{ $fileCounts['excel'] ?? 0 }}</span>
-                        </div>
-                        <div class="filter-option {{ request('filter_type') == 'other' ? 'active' : '' }}"
-                            data-filter="other">
-                            <span>
-                                <i class="fas fa-file file-type-icon" style="color: #6c757d;"></i>
-                                File Lain
-                            </span>
-                            <span class="filter-count">{{ $fileCounts['other'] ?? 0 }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <input type="hidden" name="filter_type" id="filter_type_input"
-                    value="{{ request('filter_type', 'all') }}">
-                <input type="hidden" name="date_from" id="date_from_input" value="{{ request('date_from') }}">
-                <input type="hidden" name="date_to" id="date_to_input" value="{{ request('date_to') }}">
-                <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
-                <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
-            </form>
-        </div>
-
-        <div id="table" class="container">
-            @include('admin.bendahara._table', compact('laporanBendahara', 'fileCounts', 'currentSort'))
         </div>
     </div>
 

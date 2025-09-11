@@ -247,17 +247,33 @@
 
     <div class="main-content">
         <div class="container-fluid">
-            <div class="row">
-                <div class="card card-form">
-                    <div class="card-body p-4 p-md-5">
-                        <h3 class="fw-bold mb-4">Edit Laporan: {{ $sekretariat->nama_program }}</h3>
 
-                        <form action="{{ route('admin.laporan-lpj.sekretariat.update', $sekretariat->id) }}"
-                              method="POST"
-                              id="lpjForm"
-                              enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT')
+                            <form action="{{ route('admin.laporan-lpj.sekretariat.update', $sekretariat->id) }}"
+                                  method="POST"
+                                  id="lpjForm"
+                                  enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="year" class="form-label">Tahun <span class="text-danger">*</span></label>
+                                </div>
+                                <div class="col-md-9">
+                                    @php
+                                        $currentYear = now()->year;
+                                        $startYear = $currentYear - 5;
+                                        $endYear = $currentYear + 2;
+                                        $selectedYear = old('year', isset($sekretariat->year) ? $sekretariat->year : $currentYear);
+                                    @endphp
+                                    <select name="year" id="year" class="form-select @error('year') is-invalid @enderror" required>
+                                        @for ($y = $endYear; $y >= $startYear; $y--)
+                                            <option value="{{ $y }}" {{ (int) $selectedYear === (int) $y ? 'selected' : '' }}>{{ $y }}</option>
+                                        @endfor
+                                    </select>
+                                    @error('year')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                </div>
+                            </div>
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">

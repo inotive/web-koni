@@ -239,13 +239,32 @@
         }
     </style>
 
-    <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">
-            Laporan {{ $currentParent ? $currentParent->nama_program : 'Root Level' }}
-        </h1>
-        @if($currentParent)
-            <p class="text-muted">{{ $currentParent->breadcrumb }}</p>
-        @endif
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-8">
+        <div>
+            <h1 class="text-dark fw-bold mb-1">
+                Laporan {{ $currentParent ? $currentParent->nama_program : 'Root Level' }}
+            </h1>
+            @if($currentParent)
+                <p class="text-muted mb-0">{{ $currentParent->breadcrumb }}</p>
+            @endif
+        </div>
+        <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
+            @foreach (request()->except('year') as $k => $v)
+                <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+            @endforeach
+            <select name="year" class="form-select" style="width: 120px"
+                onchange="document.getElementById('yearFilterForm').submit()">
+                @if (isset($availableYears) && count($availableYears))
+                    @foreach ($availableYears as $year)
+                        <option value="{{ $year }}"
+                            {{ (string) $year === (string) ($selectedYear ?? now()->year) ? 'selected' : '' }}>
+                            {{ $year }}</option>
+                    @endforeach
+                @else
+                    <option value="{{ now()->year }}" selected>{{ now()->year }}</option>
+                @endif
+            </select>
+        </form>
     </div>
 
     @if($parentId)
@@ -297,7 +316,7 @@
         {{-- Card Header --}}
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
             <h3 class="card-title fw-bold fs-4 mb-0">
-                Daftar {{ $currentParent ? $currentParent->nama_program : 'Root Level' }}
+                Daftar {{ $currentParent ? $currentParent->nama_program : 'Root Level' }} - {{ $selectedYear ?? now()->year }}
             </h3>
 
             {{-- Action Buttons --}}

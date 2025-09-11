@@ -24,6 +24,12 @@ class SekretariatController extends Controller
 
         $query = Lpj::where('parent_id', $parentCategory->id);
 
+        // Filter berdasarkan kolom 'year'
+        $selectedYear = $request->get('year');
+        if ($selectedYear) {
+            $query->where('year', $selectedYear);
+        }
+
         if ($request->jenis_kegiatan_filter) {
             $query->where('nama_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
         }
@@ -51,16 +57,35 @@ class SekretariatController extends Controller
             $direction = 'desc';
         }
 
+        // Tersedia daftar tahun untuk dropdown
+        $availableYears = Lpj::where('parent_id', $parentCategory->id)
+            ->whereNotNull('year')
+            ->select('year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
+
+        // Hitung total sebelum pagination, mengikuti filter yang diterapkan
+        $totalKegiatanSekretariat = (clone $query)->count();
+        $totalAnggaranSekretariat = (clone $query)->sum('jumlah_harga');
+
         $kegiatanLainnya = $query
             ->select(['*', 'modifiable_by_user_id']) // Pastikan field modifiable_by_user_id selalu diambil
             ->orderBy($sort, $direction)
-            ->paginate($request->get('per_page', 10));
+            ->paginate($request->get('per_page', 10))
+            ->appends($request->except('page'));
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.sekretariat._table', compact('kegiatanLainnya'))->render();
         }
 
-        return view('admin.laporan-lpj.sekretariat.index', compact('kegiatanLainnya'));
+        return view('admin.laporan-lpj.sekretariat.index', [
+            'kegiatanLainnya' => $kegiatanLainnya,
+            'availableYears' => $availableYears,
+            'selectedYear' => $selectedYear,
+            'totalKegiatanSekretariat' => $totalKegiatanSekretariat,
+            'totalAnggaranSekretariat' => $totalAnggaranSekretariat,
+        ]);
     }
 
     public function create()
@@ -77,6 +102,7 @@ class SekretariatController extends Controller
             'volume' => 'nullable|string|max:255',
             'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
+            'year' => 'nullable|integer|min:2000|max:2100',
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array|max:10',
@@ -103,6 +129,7 @@ class SekretariatController extends Controller
             'jumlah_harga_satuan' => $request->jumlah_harga_satuan ?? 0,
             'jumlah_harga' => $request->jumlah_harga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
+            'year' => (int) ($request->input('year') ?: now()->year),
             'icon' => 'fas fa-clipboard-list'
         ];
 
@@ -196,6 +223,7 @@ class SekretariatController extends Controller
             'volume' => 'nullable|string|max:255',
             'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
+            'year' => 'nullable|integer|min:2000|max:2100',
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array|max:10',
@@ -221,7 +249,8 @@ class SekretariatController extends Controller
             'volume' => $request->volume ?? '',
             'jumlah_harga_satuan' => $request->jumlah_harga_satuan ?? 0,
             'jumlah_harga' => $request->jumlah_harga,
-            'keterangan_tambahan' => $request->keterangan_tambahan
+            'keterangan_tambahan' => $request->keterangan_tambahan,
+            'year' => (int) ($request->input('year') ?: $sekretariat->year ?: now()->year),
         ];
 
         // Handle foto_jurnal

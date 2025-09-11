@@ -15,7 +15,6 @@
 
             background-color: #f5f5f5;
             min-height: 100vh;
-            padding: 20px 0;
         }
 
         /* Card Styles */
@@ -598,24 +597,21 @@
         </div>
     @endif
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
         <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Pelatih
         </a>
     </div>
-
-
-
     <div class="main-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body py-1">
                             <div class="table-header" style="border-radius: 12px 12px 0px 0px">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>
 
                                     <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -627,7 +623,7 @@
                                             </button>
                                         </div>
 
-                                        <a href="{{ route('cabang-olahraga.export') }}" id="export-excel-btn"
+                                        <a href="{{ route('admin.konfigurasi.pelatih.export') }}" id="export-excel-btn"
                                             class="btn btn-outline-secondary filter-btn-custom" title="Export ke Excel">
                                             <i class="fas fa-file-excel me-1"></i> Export
                                         </a>

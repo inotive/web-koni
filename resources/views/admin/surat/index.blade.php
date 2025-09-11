@@ -6,10 +6,13 @@
 
 @section('style')
     <style>
+        /* Match page background with Bendahara */
+        body { background-color: #f5f5f5; }
+        main.flex-grow-1 { background-color: #f5f5f5 !important; }
+
         .is-invalid {
             border-color: #dc3545 !important;
         }
-
 
         .filter-container {
             display: flex;
@@ -227,70 +230,80 @@
 @endsection
 
 @section('content')
-    <div class="d-grid gap-5 border-0">
-        <div class="d-flex justify-content-between align-items-center container">
-            <div class="d-none d-md-block">
-                <h1>Template Surat Masuk & Keluar</h1>
-                <span>Manajemen Template Surat Masuk & Keluar</span>
-            </div>
-
-            <form id="filter" class="d-flex gap-3 filter-container">
-                <!-- Hidden inputs untuk sorting -->
-                <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
-                <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
-                <input type="hidden" name="jenis_surat" id="jenis_surat_input" value="{{ request('jenis_surat', 'all') }}">
-
-                <button type="button" id="tambahSuratBtn"
-                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
-                    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
-                    <span id="tambahSuratText">Upload Template</span>
-                </button>
-
-                <div class="search-container">
-                    <div class="position-relative bg-light">
-                        <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari surat..."
-                            class="form-control border border-gray-500 py-2 search-input" />
-                    </div>
-                </div>
-            </form>
+    {{-- Top header bar (match Bendahara) --}}
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="padding:10px 30px">
+        <div class="d-none d-md-block">
+            <h2 class="fw-bold fs-2 mb-0 text-dark">Template Surat Masuk & Keluar</h2>
+            <span>Manajemen Template Surat Masuk & Keluar</span>
         </div>
+        <button type="button" id="tambahSuratBtn" class="btn"
+            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
+            <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>
+            <span id="tambahSuratText">Upload Template</span>
+        </button>
+    </div>
 
-        <div class="container">
-            <div class="card-header border-bottom-0 pb-0">
-                <ul class="nav nav-tabs nav-tabs-custom" id="suratTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content"
-                            type="button" role="tab" aria-controls="masuk-content" aria-selected="true">
-                            <i class="fas fa-inbox me-2"></i>Surat Masuk
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="keluar-tab" data-bs-toggle="tab" data-bs-target="#keluar-content"
-                            type="button" role="tab" aria-controls="keluar-content" aria-selected="false">
-                            <i class="fas fa-paper-plane me-2"></i>Surat Keluar
-                        </button>
-                    </li>
-                </ul>
-            </div>
+    {{-- Main content wrapped in a card (match Bendahara) --}}
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            {{-- Tabs + Search (single row) --}}
+                            <div class="d-flex align-items-center justify-content-between gap-3 border-bottom pb-2 mb-3">
+                                <ul class="nav nav-tabs nav-tabs-custom mb-0" id="suratTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content"
+                                            type="button" role="tab" aria-controls="masuk-content" aria-selected="true">
+                                            <i class="fas fa-inbox me-2"></i>Surat Masuk
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="keluar-tab" data-bs-toggle="tab" data-bs-target="#keluar-content"
+                                            type="button" role="tab" aria-controls="keluar-content" aria-selected="false">
+                                            <i class="fas fa-paper-plane me-2"></i>Surat Keluar
+                                        </button>
+                                    </li>
+                                </ul>
 
-            <div class="card-body">
-                <div class="tab-content tab-content-custom" id="suratTabContent">
-                    <div class="tab-pane fade show active" id="masuk-content" role="tabpanel" aria-labelledby="masuk-tab">
-                        <div id="table-masuk">
-                            @include('admin.surat._table', [
-                                'suratData' => $suratMasuk,
-                                'tableId' => 'masuk',
-                            ])
-                        </div>
-                    </div>
+                                <form id="filter" class="d-flex gap-3 filter-container align-items-center ms-auto" style="margin:0;">
+                                    <!-- Hidden inputs untuk sorting -->
+                                    <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
+                                    <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
+                                    <input type="hidden" name="jenis_surat" id="jenis_surat_input" value="{{ request('jenis_surat', 'all') }}">
 
-                    <div class="tab-pane fade" id="keluar-content" role="tabpanel" aria-labelledby="keluar-tab">
-                        <div id="table-keluar">
-                            @include('admin.surat._table', [
-                                'suratData' => $suratKeluar,
-                                'tableId' => 'keluar',
-                            ])
+                                    <div class="search-container" style="width:260px;">
+                                        <div class="position-relative bg-light">
+                                            <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
+                                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari surat..."
+                                                class="form-control border border-gray-500 py-2 search-input" />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="card-body px-0">
+                                <div class="tab-content tab-content-custom" id="suratTabContent">
+                                    <div class="tab-pane fade show active" id="masuk-content" role="tabpanel" aria-labelledby="masuk-tab">
+                                        <div id="table-masuk">
+                                            @include('admin.surat._table', [
+                                                'suratData' => $suratMasuk,
+                                                'tableId' => 'masuk',
+                                            ])
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="keluar-content" role="tabpanel" aria-labelledby="keluar-tab">
+                                        <div id="table-keluar">
+                                            @include('admin.surat._table', [
+                                                'suratData' => $suratKeluar,
+                                                'tableId' => 'keluar',
+                                            ])
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

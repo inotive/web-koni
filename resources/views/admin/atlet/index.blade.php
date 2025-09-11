@@ -14,7 +14,7 @@
         .main-content {
             background-color: #f5f5f5;
             min-height: 100vh;
-            padding: 20px 0;
+            padding: 0px 0;
         }
 
         /* Card Styles */
@@ -500,10 +500,25 @@
             min-width: 300px;
         }
 
-        .toast-success { background-color: #51a351; color: white; }
-        .toast-error { background-color: #bd362f; color: white; }
-        .toast-warning { background-color: #f89406; color: white; }
-        .toast-info { background-color: #2f96b4; color: white; }
+        .toast-success {
+            background-color: #51a351;
+            color: white;
+        }
+
+        .toast-error {
+            background-color: #bd362f;
+            color: white;
+        }
+
+        .toast-warning {
+            background-color: #f89406;
+            color: white;
+        }
+
+        .toast-info {
+            background-color: #2f96b4;
+            color: white;
+        }
 
         /* Responsive Styles */
         @media (max-width: 768px) {
@@ -583,7 +598,7 @@
         </div>
     @endif
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Atlet</h2>
         <a href="{{ route('admin.konfigurasi.atlet.create') }}" class="btn"
             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
@@ -591,16 +606,14 @@
         </a>
     </div>
 
-
-
     <div class="main-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body py-1">
                             <div class="table-header" style="border-radius: 12px 12px 0px 0px">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <h3 class="mb-0 fw-semibold text-dark">Informasi Atlet</h3>
 
                                     <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -617,11 +630,12 @@
                                             <i class="fas fa-file-csv me-1"></i> Export
                                         </a>
                                         <div class="dropdown">
-                                        <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom" type="button"
-                                            data-bs-toggle="dropdown">
-                                            <i class="fas fa-filter me-1"></i> Filter
-                                            <span id="filter-count" class="badge badge-circle badge-danger ms-1 d-none">0</span>
-                                        </button>
+                                            <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom"
+                                                type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-filter me-1"></i> Filter
+                                                <span id="filter-count"
+                                                    class="badge badge-circle badge-danger ms-1 d-none">0</span>
+                                            </button>
                                             <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold">Cabang Olahraga</label>
@@ -1087,21 +1101,21 @@
                 // Export CSV button
                 $(document).on('click', '#export-csv', function(e) {
                     e.preventDefault();
-                    
+
                     // Get the base export URL
                     const baseUrl = $(this).attr('href');
                     const url = new URL(baseUrl, window.location.origin);
-                    
+
                     // Get all current parameters from the window URL
                     const currentParams = new URLSearchParams(window.location.search);
-                    
+
                     // Append all current filter and search params to the export URL
                     currentParams.forEach((value, key) => {
                         if (key !== 'page') { // Don't include pagination in export
                             url.searchParams.append(key, value);
                         }
                     });
-                    
+
                     // Also get values directly from form elements in case they haven't been applied yet
                     const search = $('#search').val();
                     const filterCabor = $('#filter-cabor').val();
@@ -1109,7 +1123,7 @@
                     const filterAge = $('#filter-age').val();
                     const filterPrestasi = $('#filter-prestasi').val();
                     const filterKetersediaan = $('#filter-ketersediaan').val();
-                    
+
                     // Add form values to URL if they exist and aren't already in currentParams
                     if (search && !currentParams.has('search')) {
                         url.searchParams.set('search', search);
@@ -1129,33 +1143,33 @@
                     if (filterKetersediaan && !currentParams.has('filter_ketersediaan')) {
                         url.searchParams.set('filter_ketersediaan', filterKetersediaan);
                     }
-                    
+
                     // Add current sorting parameters
                     const sortBy = new URLSearchParams(window.location.search).get('sort_by');
                     const order = new URLSearchParams(window.location.search).get('order');
-                    
+
                     if (sortBy) {
                         url.searchParams.set('sort_by', sortBy);
                     }
                     if (order) {
                         url.searchParams.set('order', order);
                     }
-                    
+
                     // Show a brief loading indication
                     const originalText = $(this).html();
                     $(this).html('<i class="fas fa-spinner fa-spin me-1"></i> Exporting...');
                     $(this).prop('disabled', true);
-                    
+
                     // Navigate to the export URL
                     window.location.href = url.toString();
-                    
+
                     // Reset button after a short delay (since page might redirect)
                     setTimeout(() => {
                         $(this).html(originalText);
                         $(this).prop('disabled', false);
                     }, 2000);
                 });
-                
+
                 // Delete functionality (existing code preserved)
                 window.showDeleteWarning = function(button, atletName, prestasiList) {
                     $('#atletName').text(atletName);
