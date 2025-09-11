@@ -888,9 +888,9 @@ unset($__errorArgs, $__bag); ?>
                 });
 
                 if (isPhoto) {
-                    selectedFotoFiles = newFiles;
+                    selectedFotoFiles.push(...newFiles);
                 } else {
-                    selectedDokumenFiles = newFiles;
+                    selectedDokumenFiles.push(...newFiles);
                 }
 
                 updateFilePreview(type);
