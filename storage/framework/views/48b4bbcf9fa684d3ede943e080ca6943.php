@@ -426,7 +426,7 @@
 
                 <!-- Pembinaan Prestasi -->
                 <a href="<?php echo e(route('admin.laporan-lpj.bidang.prestasi.index')); ?>" class="bidang-card"
-                    data-title="pembinaan prestasi" data-docs="48">
+                    data-title="pembinaan prestasi" data-docs="<?php echo e($prestasiCount ?? 0); ?>">
                     <div class="bidang-icon icon-prestasi">
                         <img src="<?php echo e(asset('assets2/media/misc/bidang/dribbble.png')); ?>" alt="">
                     </div>

@@ -456,7 +456,7 @@
 
                 <!-- Pembinaan Prestasi -->
                 <a href="{{ route('admin.laporan-lpj.bidang.prestasi.index') }}" class="bidang-card"
-                    data-title="pembinaan prestasi" data-docs="48">
+                    data-title="pembinaan prestasi" data-docs="{{ $prestasiCount ?? 0 }}">
                     <div class="bidang-icon icon-prestasi">
                         <img src="{{ asset('assets2/media/misc/bidang/dribbble.png') }}" alt="">
                     </div>
