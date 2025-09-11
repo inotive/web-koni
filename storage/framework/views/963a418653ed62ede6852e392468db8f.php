@@ -368,6 +368,10 @@
         <div class="detail-card">
             <div class="detail-card-header">
                 <h2 class="detail-card-title">Personal Info</h2>
+                <a href="<?php echo e(route('admin.konfigurasi.pelatih.export-single-pdf', $pelatih->id)); ?>"
+                       class="btn btn-outline-secondary filter-btn-custom btn-export-custom" style="border: #b0b5c3 1px solid;">
+                        <i class="fas fa-file-pdf me-1"></i> Export
+                    </a>
             </div>
 
             <div class="detail-body">
@@ -466,10 +470,7 @@
                 <i class="bi bi-arrow-left fs-2"></i> Kembali
             </a>
 
-            <a href="<?php echo e(route('admin.konfigurasi.pelatih.export-single-pdf', $pelatih->id)); ?>"
-            class="btn btn-light-primary">
-                <i class="fas fa-file-csv me-1"></i> Export Data
-            </a>
+            
         </div>
     </div>
 </div>

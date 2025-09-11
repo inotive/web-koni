@@ -510,7 +510,7 @@
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
                 <h1>Database Bendahara</h1>
-                <span>Kelola laporan bendahara dengan mudah</span>
+                
             </div>
 
             <form id="filter" class="d-flex filter-container gap-3">
@@ -519,14 +519,6 @@
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
                     <span>Tambah Laporan</span>
                 </button>
-
-                <div class="search-container">
-                    <div class="position-relative bg-light">
-                        <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
-                        <input type="text" name="search" value="<?php echo e(request('search')); ?>" placeholder="Cari laporan..."
-                            class="form-control search-input border border-gray-500 py-2" />
-                    </div>
-                </div>
 
                 <div class="date-filter-container">
                     <div class="date-filter-btn <?php echo e(request('date_from') || request('date_to') ? 'date-filter-active' : ''); ?>"
@@ -586,63 +578,17 @@
                     </div>
                 </div>
 
-                <div class="filter-dropdown">
-                    <div class="filter-btn <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'filter-active' : ''); ?>"
-                        id="filterBtn">
-                        <span>
-                            <?php if(request('filter_type') == 'pdf'): ?>
-                                <i class="fas fa-file-pdf me-2"
-                                    style="color: <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'white' : '#dc3545'); ?>;"></i>File
-                                PDF
-                            <?php elseif(request('filter_type') == 'excel'): ?>
-                                <i class="fas fa-file-excel me-2"
-                                    style="color: <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'white' : '#198754'); ?>;"></i>File
-                                Excel
-                            <?php elseif(request('filter_type') == 'other'): ?>
-                                <i class="fas fa-file me-2"
-                                    style="color: <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'white' : '#6c757d'); ?>;"></i>File
-                                Lain
-                            <?php else: ?>
-                                <i class="fas fa-filter me-2"></i>Filter Tipe File
-                            <?php endif; ?>
-                        </span>
-                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
-                    </div>
-
-                    <div class="filter-menu" id="filterMenu">
-                        <div class="filter-option <?php echo e(request('filter_type', 'all') == 'all' ? 'active' : ''); ?>"
-                            data-filter="all">
-                            <span>
-                                <i class="fas fa-list file-type-icon"></i>
-                                Semua File
-                            </span>
-                            <span class="filter-count"><?php echo e($fileCounts['all'] ?? 0); ?></span>
-                        </div>
-                        <div class="filter-option <?php echo e(request('filter_type') == 'pdf' ? 'active' : ''); ?>" data-filter="pdf">
-                            <span>
-                                <i class="fas fa-file-pdf file-type-icon" style="color: #dc3545;"></i>
-                                File PDF
-                            </span>
-                            <span class="filter-count"><?php echo e($fileCounts['pdf'] ?? 0); ?></span>
-                        </div>
-                        <div class="filter-option <?php echo e(request('filter_type') == 'excel' ? 'active' : ''); ?>"
-                            data-filter="excel">
-                            <span>
-                                <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
-                                File Excel
-                            </span>
-                            <span class="filter-count"><?php echo e($fileCounts['excel'] ?? 0); ?></span>
-                        </div>
-                        <div class="filter-option <?php echo e(request('filter_type') == 'other' ? 'active' : ''); ?>"
-                            data-filter="other">
-                            <span>
-                                <i class="fas fa-file file-type-icon" style="color: #6c757d;"></i>
-                                File Lain
-                            </span>
-                            <span class="filter-count"><?php echo e($fileCounts['other'] ?? 0); ?></span>
-                        </div>
+                <div class="search-container">
+                    <div class="position-relative bg-light">
+                        <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
+                        <input type="text" name="search" value="<?php echo e(request('search')); ?>" placeholder="Cari laporan..."
+                            class="form-control search-input border border-gray-500 py-2" />
                     </div>
                 </div>
+
+
+
+                
 
                 <input type="hidden" name="filter_type" id="filter_type_input"
                     value="<?php echo e(request('filter_type', 'all')); ?>">

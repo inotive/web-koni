@@ -1,0 +1,46 @@
+
+<div class="modal fade" tabindex="-1" id="kt_modal_<?php echo e($value->id); ?>">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Ubah Data Jabatan</h3>
+
+                <!--begin::Close-->
+                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ki-duotone ki-cross fs-1"><span class="path1"></span><span class="path2"></span></i>
+                </div>
+                <!--end::Close-->
+            </div>
+
+            <div class="modal-body">
+                <form method="POST" action="<?php echo e(route('admin.manajemen-pengguna.role.update', $value->id)); ?>">
+                    <?php echo method_field('PUT'); ?>
+                    <?php echo csrf_field(); ?>
+                    <div class="input-group mb-5">
+                        <div class="col-xl-12 mb-2">
+                            <label for="">Nama Jabatan</label>
+                        </div>
+                        <div class="col-xl-12">
+                            <input type="text" class="form-control" id="inputNama" name="name"
+                                   value="<?php echo e(old('name', $value->name)); ?>" required placeholder="Masukkan Nama Jabatan"
+                                   aria-label="Username" aria-describedby="basic-addon1" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        
+                        <div class="col-12">
+                            <button type="submit" class="btn w-100 d-flex align-items-center justify-content-center" style="background-color: #F8285A; color: white; border-radius: 8px; padding: 12px 0;">
+                                <!-- icon disini -->
+                                Simpan Jabatan
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/role/component/modal.blade.php ENDPATH**/ ?>

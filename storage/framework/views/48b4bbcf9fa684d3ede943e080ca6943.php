@@ -322,12 +322,7 @@
                 </div>
 
                 <!-- Enhanced Search and Sort Controls -->
-                <div class="controls-container">
-                    <!-- Search Container -->
-                    <div class="search-container">
-                        <input type="text" class="form-control search-input" placeholder="Search Teams..." id="searchInput">
-                        <i class="fas fa-search search-icon"></i>
-                    </div>
+                
 
                     <!-- Sort Dropdown -->
                     
