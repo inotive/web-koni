@@ -388,12 +388,12 @@
             </a>
 
             <!-- Hubungan Antar Lembaga -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2])); ?>" class="bidang-card" data-title="hubungan antar lembaga" data-docs="<?php echo e($hubunganLembagaCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2])); ?>" class="bidang-card" data-title="hubungan antar lembaga" data-docs="<?php echo e($mobilisasiCount ?? 0); ?>">
                 <div class="bidang-icon icon-hubungan">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/data.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Hubungan Antar Lembaga</h4>
-                <p class="bidang-count"><?php echo e($hubunganLembagaCount ?? 0); ?> Dokumen</p>
+                <p class="bidang-count"><?php echo e($mobilisasiCount ?? 0); ?> Dokumen</p>
             </a>
 
             <!-- Continue for other cards... -->
