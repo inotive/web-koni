@@ -274,7 +274,7 @@
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
+                            <div class="row align-items-center mb-3" style="display: none;">
                                 <div class="col-md-3">
                                     <label for="volume" class="form-label">Volume</label>
                                 </div>
@@ -282,14 +282,14 @@
                                     <input type="text" name="volume" id="volume"
                                         class="form-control @error('volume') is-invalid @enderror"
                                         placeholder="Masukkan volume (misal: 5 unit,)"
-                                        value="{{ old('volume') }}">
+                                        value="{{ old('volume') }}" disabled>
                                     @error('volume')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
+                            <div class="row align-items-center mb-3" style="display: none;">
                                 <div class="col-md-3">
                                     <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
                                 </div>
@@ -299,7 +299,7 @@
                                             inputmode="numeric"
                                             class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
                                             placeholder="0"
-                                            value="{{ old('jumlah_harga_satuan') }}">
+                                            value="{{ old('jumlah_harga_satuan') }}" disabled>
                                     </div>
                                     @error('jumlah_harga_satuan')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -309,7 +309,7 @@
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="jumlah_harga" class="form-label">Total Harga</label>
+                                    <label for="jumlah_harga" class="form-label">Total Anggaran</label>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="currency-input">
@@ -328,7 +328,7 @@
                                                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Foto Jurnal</label>
-                                    <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
+                                    <p class="file-upload-hint">Unggah foto jurnal, masing-masing hingga 10 MB</p>
                                 </div>
                                 <div class="col-md-9">
                                     <label for="foto_jurnal" class="file-upload-wrapper">
@@ -351,7 +351,6 @@
                                     <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
                                     <div id="fotoCounter" class="file-counter"></div>
                                     <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
-                                        Maksimal 10 foto yang dapat diunggah.
                                     </div>
 
                                     @error('foto_jurnal.*')
@@ -391,6 +390,39 @@
                                     </div>
 
                                     @error('dokumen_lpj.*')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            {{-- Dokumen LPJ with PDF-only restrictions --}}
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Dokumen LPJ</label>
+                                    <p class="file-upload-hint">Unggah file PDF, masing-masing hingga 10MB</p>
+                                </div>
+                                <div class="col-md-9">
+                                    <label for="dokumen_lpj_pdf" class="file-upload-wrapper">
+                                        <input type="file" name="dokumen_lpj_pdf[]" id="dokumen_lpj_pdf"
+                                            class="@error('dokumen_lpj_pdf.*') is-invalid @enderror"
+                                            accept=".pdf" multiple>
+
+                                        <div class="d-flex align-items-center gap-12">
+                                            <div class="file-upload-icon-wrapper">
+                                                <i class="fas fa-upload file-upload-icon"></i>
+                                            </div>
+                                            <div>
+                                                <p class="file-upload-text" id="dokumen-lpj-file-name-display">
+                                                    Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <div id="dokumenLpjPreviewContainer" class="preview-container" style="display: none;"></div>
+                                    <div id="dokumenLpjCounter" class="file-counter"></div>
+
+                                    @error('dokumen_lpj_pdf.*')
                                         <div class="text-danger mt-2">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -438,6 +470,7 @@
             // File arrays to track selected files
             let selectedFotoFiles = [];
             let selectedDokumenFiles = [];
+            let selectedDokumenLpjFiles = [];
 
             // Currency formatting
             const currencyInputs = ['jumlah_harga_satuan', 'jumlah_harga'];
@@ -474,6 +507,11 @@
             const dokumenCounter = document.getElementById('dokumenCounter');
             const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
 
+            const dokumenLpjInput = document.getElementById('dokumen_lpj_pdf');
+            const dokumenLpjPreviewContainer = document.getElementById('dokumenLpjPreviewContainer');
+            const dokumenLpjFileNameDisplay = document.getElementById('dokumen-lpj-file-name-display');
+            const dokumenLpjCounter = document.getElementById('dokumenLpjCounter');
+
             fotoInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'foto');
             });
@@ -482,10 +520,24 @@
                 handleFileSelection(this.files, 'dokumen');
             });
 
+            dokumenLpjInput.addEventListener('change', function() {
+                handleFileSelection(this.files, 'dokumenLpj');
+            });
+
             function handleFileSelection(files, type) {
                 const isPhoto = type === 'foto';
-                const currentFiles = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                const input = isPhoto ? fotoInput : dokumenInput;
+                const isDokumenLpj = type === 'dokumenLpj';
+                let currentFiles = [];
+                
+                if (isPhoto) {
+                    currentFiles = selectedFotoFiles;
+                } else if (isDokumenLpj) {
+                    currentFiles = selectedDokumenLpjFiles;
+                } else {
+                    currentFiles = selectedDokumenFiles;
+                }
+                
+                const input = isPhoto ? fotoInput : (isDokumenLpj ? dokumenLpjInput : dokumenInput);
 
                 // Convert FileList to Array and filter valid files
                 const newFiles = Array.from(files).filter(file => {
@@ -499,11 +551,16 @@
                         return false;
                     }
 
+                    if (isDokumenLpj && !file.name.toLowerCase().endsWith('.pdf')) {
+                        alert(`File "${file.name}" bukan file PDF yang valid.`);
+                        return false;
+                    }
+
                     return true;
                 });
 
-                // Check if adding new files would exceed the limit
-                if (currentFiles.length + newFiles.length > MAX_FILES) {
+                // Check if adding new files would exceed the limit (only for dokumen pendukung)
+                if (!isPhoto && !isDokumenLpj && currentFiles.length + newFiles.length > MAX_FILES) {
                     alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${currentFiles.length} file.`);
                     return;
                 }
@@ -511,6 +568,8 @@
                 // Add new files to the current files array
                 if (isPhoto) {
                     selectedFotoFiles = [...currentFiles, ...newFiles];
+                } else if (isDokumenLpj) {
+                    selectedDokumenLpjFiles = [...currentFiles, ...newFiles];
                 } else {
                     selectedDokumenFiles = [...currentFiles, ...newFiles];
                 }
@@ -521,30 +580,51 @@
 
             function updateFilePreview(type) {
                 const isPhoto = type === 'foto';
-                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
-                const counter = isPhoto ? fotoCounter : dokumenCounter;
-                const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
-                const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
+                const isDokumenLpj = type === 'dokumenLpj';
+                let files = [];
+                
+                if (isPhoto) {
+                    files = selectedFotoFiles;
+                } else if (isDokumenLpj) {
+                    files = selectedDokumenLpjFiles;
+                } else {
+                    files = selectedDokumenFiles;
+                }
+                
+                const container = isPhoto ? fotoPreviewContainer : (isDokumenLpj ? dokumenLpjPreviewContainer : dokumenPreviewContainer);
+                const counter = isPhoto ? fotoCounter : (isDokumenLpj ? dokumenLpjCounter : dokumenCounter);
+                const maxWarning = isPhoto ? fotoMaxWarning : (isDokumenLpj ? null : dokumenMaxWarning);
+                const nameDisplay = isPhoto ? fotoFileNameDisplay : (isDokumenLpj ? dokumenLpjFileNameDisplay : dokumenFileNameDisplay);
 
                 if (files.length === 0) {
                     container.style.display = 'none';
                     counter.textContent = '';
-                    maxWarning.style.display = 'none';
+                    if (maxWarning) maxWarning.style.display = 'none';
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto di sini, atau klik untuk mengunggah.' :
-                        'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.';
+                        (isDokumenLpj ? 
+                            'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.' :
+                            'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.');
                     return;
                 }
 
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file dipilih`;
-                counter.textContent = `${files.length}/${MAX_FILES} file`;
-
-                if (files.length >= MAX_FILES) {
-                    maxWarning.style.display = 'block';
+                
+                if (!isPhoto) {
+                    if (isDokumenLpj) {
+                        counter.textContent = `${files.length} file`;
+                    } else {
+                        counter.textContent = `${files.length}/${MAX_FILES} file`;
+                        if (files.length >= MAX_FILES && maxWarning) {
+                            maxWarning.style.display = 'block';
+                        } else if (maxWarning) {
+                            maxWarning.style.display = 'none';
+                        }
+                    }
                 } else {
-                    maxWarning.style.display = 'none';
+                    // Hilangkan batasan jumlah upload foto jurnal
+                    counter.textContent = `${files.length} file`;
                 }
 
                 // Generate preview HTML
@@ -596,8 +676,18 @@
 
             function updateFileInput(type) {
                 const isPhoto = type === 'foto';
-                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                const input = isPhoto ? fotoInput : dokumenInput;
+                const isDokumenLpj = type === 'dokumenLpj';
+                let files = [];
+                
+                if (isPhoto) {
+                    files = selectedFotoFiles;
+                } else if (isDokumenLpj) {
+                    files = selectedDokumenLpjFiles;
+                } else {
+                    files = selectedDokumenFiles;
+                }
+                
+                const input = isPhoto ? fotoInput : (isDokumenLpj ? dokumenLpjInput : dokumenInput);
 
                 // Create new FileList using DataTransfer
                 const dt = new DataTransfer();
@@ -610,6 +700,7 @@
             // Global function to remove file
             window.removeFile = function(index, type) {
                 const isPhoto = type === 'foto';
+                const isDokumenLpj = type === 'dokumenLpj';
 
                 if (isPhoto) {
                     // Revoke object URL to prevent memory leaks for images
@@ -623,6 +714,8 @@
                         });
                     }
                     selectedFotoFiles.splice(index, 1);
+                } else if (isDokumenLpj) {
+                    selectedDokumenLpjFiles.splice(index, 1);
                 } else {
                     selectedDokumenFiles.splice(index, 1);
                 }
@@ -676,7 +769,7 @@
 
                     const input = wrapper.querySelector('input[type="file"]');
                     if (e.dataTransfer.files.length && input) {
-                        const type = input.id === 'foto_jurnal' ? 'foto' : 'dokumen';
+                        const type = input.id === 'foto_jurnal' ? 'foto' : (input.id === 'dokumen_lpj_pdf' ? 'dokumenLpj' : 'dokumen');
                         handleFileSelection(e.dataTransfer.files, type);
                     }
                 });
@@ -694,50 +787,9 @@
             });
         });
 
-        function calculateTotalPrice() {
-            const volumeInput = document.getElementById('volume');
-            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
-            const totalPriceInput = document.getElementById('jumlah_harga');
-
-            if (!volumeInput || !unitPriceInput || !totalPriceInput) return;
-
-            const volumeValue = volumeInput.value.trim();
-            const unitPriceValue = unitPriceInput.value.replace(/[^\d]/g, ''); // Remove formatting
-
-            // Extract numeric value from volume (handles cases like "100 orang", "5 unit", etc.)
-            const volumeMatch = volumeValue.match(/^\d+/);
-            const volumeNumber = volumeMatch ? parseInt(volumeMatch[0]) : 0;
-            const unitPriceNumber = unitPriceValue ? parseInt(unitPriceValue) : 0;
-
-            if (volumeNumber > 0 && unitPriceNumber > 0) {
-                const totalPrice = volumeNumber * unitPriceNumber;
-                totalPriceInput.value = totalPrice.toLocaleString('id-ID');
-
-                // Add visual feedback
-                totalPriceInput.style.backgroundColor = '#e8f5e8';
-                setTimeout(() => {
-                    totalPriceInput.style.backgroundColor = '';
-                }, 1000);
-            } else if (volumeNumber === 0 || unitPriceNumber === 0) {
-                totalPriceInput.value = '';
-            }
-        }
-
+        // Field Total Anggaran diinput manual sesuai permintaan
         document.addEventListener('DOMContentLoaded', function() {
-            const volumeInput = document.getElementById('volume');
-            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
-
-            if (volumeInput && unitPriceInput) {
-                volumeInput.addEventListener('input', calculateTotalPrice);
-                unitPriceInput.addEventListener('input', function() {
-                    setTimeout(calculateTotalPrice, 10);
-                });
-
-                volumeInput.addEventListener('blur', calculateTotalPrice);
-                unitPriceInput.addEventListener('blur', calculateTotalPrice);
-
-                calculateTotalPrice();
-            }
+            // Tidak ada kalkulasi otomatis karena field Total Anggaran diinput manual
         });
     </script>
 @endsection

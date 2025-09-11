@@ -16,9 +16,7 @@
             $currentOrder = request('order');
 
             if ($currentSort === $field) {
-                return $currentOrder === 'asc'
-                    ? '<i class="fas fa-sort-up"></i>'
-                    : '<i class="fas fa-sort-down"></i>';
+                return $currentOrder === 'asc' ? '<i class="fas fa-sort-up"></i>' : '<i class="fas fa-sort-down"></i>';
             }
 
             return '<i class="fas fa-sort text-muted"></i>';
@@ -501,10 +499,25 @@
             min-width: 300px;
         }
 
-        .toast-success { background-color: #51a351; color: white; }
-        .toast-error { background-color: #bd362f; color: white; }
-        .toast-warning { background-color: #f89406; color: white; }
-        .toast-info { background-color: #2f96b4; color: white; }
+        .toast-success {
+            background-color: #51a351;
+            color: white;
+        }
+
+        .toast-error {
+            background-color: #bd362f;
+            color: white;
+        }
+
+        .toast-warning {
+            background-color: #f89406;
+            color: white;
+        }
+
+        .toast-info {
+            background-color: #2f96b4;
+            color: white;
+        }
 
         /* AJAX Loading Overlay */
         .loading-overlay {
@@ -612,20 +625,92 @@
             }
         }
 
-        .btn-filter {
-            border: 1px solid #000;
-            /* garis tipis hitam */
+
+        /* Style untuk tombol filter seperti di halaman Pelatih */
+        .filter-btn-custom {
+            border: 1px solid #dee2e6 !important;
+            background-color: white;
             border-radius: 6px;
-            /* sudut melengkung */
-            background-color: transparent;
-            color: #000;
             padding: 0.375rem 0.75rem;
             font-size: 0.875rem;
             transition: all 0.2s ease-in-out;
+            color: #000;
         }
 
-        .btn-filter:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+        .filter-btn-custom:hover {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+            color: #000;
+        }
+
+        /* Style untuk badge count filter */
+        .badge-circle {
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        /* Container demo */
+        .demo-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .demo-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .button-comparison {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .button-item {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            background: #f8f9fa;
+            width: 250px;
+        }
+
+        .button-item h4 {
+            margin-bottom: 1rem;
+            color: #495057;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            font-family: monospace;
+            white-space: pre-wrap;
+            border-left: 4px solid #F8285A;
+        }
+
+        .badge-circle {
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
         }
     </style>
 
@@ -660,8 +745,9 @@
 
                                     <div class="d-flex align-items-center gap-2 flex-wrap">
                                         <a href="<?php echo e(route('admin.konfigurasi.cabang-olahraga.export')); ?>"
-                                            class="btn btn-success" id="export-excel-btn" title="Export ke Excel">
-                                            <i class="fas fa-file-excel"></i>
+                                            id="export-excel-btn" class="btn btn-outline-secondary filter-btn-custom"
+                                            title="Export ke Excel">
+                                            <i class="fas fa-file-excel me-1"></i> Export
                                         </a>
 
                                         <div class="input-group" style="width: 250px;">
@@ -673,8 +759,8 @@
                                         </div>
 
                                         <div class="dropdown">
-                                            <button class="btn btn-filter dropdown-toggle" type="button"
-                                                data-bs-toggle="dropdown">
+                                            <button class="btn btn-outline-secondary dropdown-toggle filter-btn-custom"
+                                                type="button" data-bs-toggle="dropdown">
                                                 <i class="fas fa-filter me-1"></i> Filter
                                                 <span id="filter-count"
                                                     class="badge badge-circle badge-danger ms-1 <?php echo e(request('status') ? '' : 'd-none'); ?>">
@@ -716,8 +802,7 @@
                                         <div id="filter-info" class="text-muted">
                                             Menampilkan <span
                                                 id="showing-count"><?php echo e(isset($cabors) ? $cabors->count() : 0); ?></span>
-                                            dari <span
-                                                id="total-count"><?php echo e(isset($cabors) ? $cabors->total() : 0); ?></span>
+                                            dari <span id="total-count"><?php echo e(isset($cabors) ? $cabors->total() : 0); ?></span>
                                             cabang olahraga
                                         </div>
                                     </div>
@@ -929,6 +1014,291 @@
                     window.location.href = url;
                 }, 1000);
             }
+
+            // ✅ Enhanced Export Function
+    window.exportToExcel = function(showPreview = false) {
+        console.log('📊 Export function called, showPreview:', showPreview);
+        
+        try {
+            // Get current filter values
+            const searchValue = $('#search').val()?.trim() || '';
+            const statusValue = $('#filter-status').val() || '';
+            
+            // Get current URL parameters for sorting
+            const urlParams = new URLSearchParams(window.location.search);
+            const sortBy = urlParams.get('sort_by') || 'terakhir_update';
+            const order = urlParams.get('order') || 'desc';
+
+            // Build export parameters
+            const exportParams = new URLSearchParams();
+            
+            if (searchValue) exportParams.append('search', searchValue);
+            if (statusValue) exportParams.append('status', statusValue);
+            exportParams.append('sort_by', sortBy);
+            exportParams.append('order', order);
+
+            // Log the export parameters
+            console.log('📊 Export parameters:', {
+                search: searchValue,
+                status: statusValue,
+                sort_by: sortBy,
+                order: order
+            });
+
+            if (showPreview) {
+                // Show preview first
+                showExportPreview(exportParams);
+            } else {
+                // Direct export
+                performExport(exportParams);
+            }
+            
+        } catch (error) {
+            console.error('❌ Error in exportToExcel:', error);
+            showErrorMessage('Terjadi kesalahan saat mempersiapkan export.');
+        }
+    };
+
+    // ✅ Show Export Preview
+    function showExportPreview(params) {
+        console.log('👁️ Showing export preview...');
+        
+        // Show loading modal
+        Swal.fire({
+            title: 'Mempersiapkan Export...',
+            text: 'Mohon tunggu sebentar',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+         // Get preview data
+        const previewUrl = "<?php echo e(route('admin.konfigurasi.cabang-olahraga.export-preview')); ?>?" + params.toString();
+        
+        fetch(previewUrl, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show preview modal
+                showPreviewModal(data, params);
+            } else {
+                throw new Error(data.message || 'Gagal memuat preview');
+            }
+        })
+        .catch(error => {
+            console.error('❌ Preview error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Gagal memuat preview export: ' + error.message
+            });
+        });
+    }
+
+    // ✅ Show Preview Modal
+    function showPreviewModal(data, params) {
+        const filterInfo = buildFilterInfo();
+        
+        Swal.fire({
+            title: '📋 Preview Export Data',
+            html: `
+                <div class="text-start">
+                    <div class="alert alert-info mb-3">
+                        <strong>📊 Total Records:</strong> ${data.total_records} cabang olahraga<br>
+                        <strong>🔍 Filter Aktif:</strong> ${filterInfo}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>📄 Format Export:</strong>
+                        <ul class="list-unstyled ms-3 mt-2">
+                            <li>✅ Format: Excel (.csv)</li>
+                            <li>✅ Encoding: UTF-8 with BOM</li>
+                            <li>✅ Mencakup semua data yang difilter</li>
+                            <li>✅ Terurut sesuai pengaturan tabel</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <strong>📋 Kolom yang akan diekspor:</strong>
+                        <div class="row mt-2" style="font-size: 0.85rem;">
+                            <div class="col-6">
+                                <ul class="list-unstyled">
+                                    <li>• No</li>
+                                    <li>• Nama Cabang Olahraga</li>
+                                    <li>• Singkatan</li>
+                                    <li>• Ketua Penanggung Jawab</li>
+                                    <li>• Status</li>
+                                    <li>• Tanggal Pembentukan</li>
+                                </ul>
+                            </div>
+                            <div class="col-6">
+                                <ul class="list-unstyled">
+                                    <li>• Jumlah Atlet</li>
+                                    <li>• Jumlah Pelatih</li>
+                                    <li>• Total Data</li>
+                                    <li>• Terakhir Update</li>
+                                    <li>• Tanggal Dibuat</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '📥 Download Excel',
+            cancelButtonText: '❌ Batal',
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            width: '600px'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                performExport(params);
+            }
+        });
+    }
+
+    // ✅ Perform Actual Export
+    function performExport(params) {
+        console.log('📥 Performing export with params:', params.toString());
+        
+        try {
+            // Build export URL
+            const exportUrl = "<?php echo e(route('admin.konfigurasi.cabang-olahraga.export')); ?>?" + params.toString();
+            console.log('📥 Export URL:', exportUrl);
+
+            // Show success message
+            showSuccessMessage('📥 File sedang diunduh...');
+            
+            // Create temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = exportUrl;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show completion message after short delay
+            setTimeout(() => {
+                showSuccessMessage('✅ Export selesai! File telah diunduh.');
+            }, 1000);
+            
+        } catch (error) {
+            console.error('❌ Export error:', error);
+            showErrorMessage('Gagal mengunduh file export.');
+        }
+    }
+
+    // ✅ Build Filter Info String
+    function buildFilterInfo() {
+        const filters = [];
+        
+        const searchVal = $('#search').val()?.trim();
+        const statusVal = $('#filter-status').val();
+        
+        if (searchVal) filters.push(`Pencarian: "${searchVal}"`);
+        if (statusVal) filters.push(`Status: ${statusVal}`);
+        
+        return filters.length > 0 ? filters.join(', ') : 'Tidak ada filter';
+    }
+
+    // ✅ Update Export Button URL (called from main script)
+    window.updateExportButtonUrl = function() {
+        try {
+            const searchValue = $('#search').val()?.trim() || '';
+            const statusValue = $('#filter-status').val() || '';
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Build export URL with current filters
+            const params = new URLSearchParams();
+            if (searchValue) params.append('search', searchValue);
+            if (statusValue) params.append('status', statusValue);
+            if (urlParams.has('sort_by')) params.append('sort_by', urlParams.get('sort_by'));
+            if (urlParams.has('order')) params.append('order', urlParams.get('order'));
+            
+            const exportUrl = "<?php echo e(route('admin.konfigurasi.cabang-olahraga.export')); ?>?" + params.toString();
+            $('#export-excel-btn').attr('href', exportUrl);
+            
+            console.log('🔗 Export URL updated:', exportUrl);
+        } catch (error) {
+            console.error('❌ Error updating export URL:', error);
+        }
+    };
+
+    // ✅ Enhanced Event Handlers
+    $(document).on('click', '#export-excel-btn', function(e) {
+        e.preventDefault();
+        console.log('🖱️ Export button clicked');
+        exportToExcel(false); // Direct export
+    });
+
+    // Optional: Export with preview button
+    $(document).on('click', '#export-preview-btn', function(e) {
+        e.preventDefault();
+        console.log('🖱️ Export preview button clicked');
+        exportToExcel(true); // Show preview first
+    });
+
+    // ✅ Utility Functions
+    function showSuccessMessage(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.success(message, 'Export', {
+                timeOut: 3000,
+                closeButton: true,
+                progressBar: true
+            });
+        } else if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'success',
+                title: 'Export',
+                text: message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        } else {
+            console.log('✅', message);
+        }
+    }
+
+    function showErrorMessage(message) {
+        if (typeof toastr !== 'undefined') {
+            toastr.error(message, 'Error', {
+                timeOut: 5000,
+                closeButton: true,
+                progressBar: true
+            });
+        } else if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: message,
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 5000
+            });
+        } else {
+            console.error('❌', message);
+            alert(message);
+        }
+    }
+
+    // ✅ Initialize export functionality
+    updateExportButtonUrl();
+    
+    console.log('✅ Enhanced Export System initialized successfully');
+});
 
             // ✅ Enhanced Loading State Functions
             function showTableLoading() {
@@ -1167,7 +1537,7 @@
                             setTimeout(() => {
                                 $('.ajax-pagination').removeClass('processing');
                                 updateExportButtonUrl
-                            (); // Update export button URL after pagination
+                                    (); // Update export button URL after pagination
                             }, 500);
                         });
                 }
@@ -1556,4 +1926,5 @@
         </script>
     <?php endif; ?>
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/cabang-olahraga/index.blade.php ENDPATH**/ ?>

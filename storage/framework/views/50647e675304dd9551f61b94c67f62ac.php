@@ -1,16 +1,22 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Manajemen Sekretariat'); ?>
+<?php $__env->startSection('mainSection', 'Laporan Pertanggungjawaban'); ?>
+<?php $__env->startSection('currentSection', 'Sekretariat'); ?>
 
-@section('pageTitle', 'Manajemen Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
-@section('currentSection', 'Kegiatan Lainnya')
+<?php $__env->startSection('breadcrumb-title'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-title')
-@endsection
+<?php $__env->startSection('breadcrumb-items'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-items')
-@endsection
+<?php $__env->startSection('content'); ?>
+    <?php if(session('error')): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?php echo e(session('error')); ?>
 
-@section('content')
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <style>
         body {
             background-color: #f5f5f5;
@@ -36,19 +42,19 @@
         }
 
         .table th:nth-child(3) {
-            width: 100px;
+            width: 150px;
         }
 
         .table th:nth-child(4) {
-            width: 150px;
+            width: 100px;
         }
 
         .table th:nth-child(5) {
-            width: 150px;
+            width: 120px;
         }
 
         .table th:nth-child(6) {
-            width: 100px;
+            width: 80px;
         }
 
         .table th:nth-child(7) {
@@ -341,6 +347,33 @@
             appearance: none;
         }
 
+        #exportBtn {
+            background-color: #0d6efd; /* Blue color like other primary buttons */
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px; /* Rounded corners */
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px; /* for icon if added */
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3);
+        }
+
+        #exportBtn:hover {
+            background-color: #0b5ed7; /* Slightly darker on hover */
+            box-shadow: 0 3px 8px rgba(13, 110, 253, 0.4);
+            transform: translateY(-1px);
+        }
+
+        #exportBtn:active {
+            background-color: #0a58ca;
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+        }
+
         #ajukanPerubahanBtn {
             background-color: #4CAF50; /* Soft green like screenshot */
             color: white;
@@ -370,64 +403,24 @@
     </style>
 
     <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">Kegiatan Lainnya</h1>
-        <div class="text-muted fw-semibold fs-6">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</div>
+        <h1 class="text-dark fw-bold mb-1">Laporan Sekretariat</h1>
+        
     </div>
-
-    <div class="row g-3 mb-4">
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex align-items-center">
-                <div class="flex-shrink-0 me-3">
-                    <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                        <i class="fas fa-list-alt fs-2 text-primary"></i>
-                    </div>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="text-muted mb-1 fw-normal">Total Kegiatan</h6>
-                     <h3 class="mb-0 fw-bold text-dark" id="total-kegiatan">
-                            {{ $totalKegiatan ?? $kegiatanLainnya->total() ?? 0 }}/10
-                        </h3>
-                    <small class="text-muted">Kegiatan terdaftar</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex align-items-center">
-                <div class="flex-shrink-0 me-3">
-                    <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                        <i class="fas fa-money-bill-wave fs-2 text-success"></i>
-                    </div>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="text-muted mb-1 fw-normal">Total Anggaran</h6>
-                    <h3 class="mb-0 fw-bold text-dark" id="total-anggaran">
-                            {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }}/200.000.000.000
-                        </h3>
-                    <small class="text-muted">Anggaran keseluruhan</small>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
     <div class="row col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Kegiatan Lainnya - 2025</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Sekretariat - 2025</h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
+                    <a href="<?php echo e(route('admin.laporan-lpj.sekretariat.create')); ?>" class="btn btn-primary"
     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
 </a>
 
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
+                            placeholder="Cari kegiatan..." value="<?php echo e(request('search')); ?>" autocomplete="off">
 
                         <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
                             style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
@@ -460,7 +453,7 @@
                 </div>
 
                 <div id="table-container">
-                    @include('admin.laporan-lpj.kegiatan-lainnya._table')
+                    <?php echo $__env->make('admin.laporan-lpj.sekretariat._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                 </div>
             </div>
         </div>
@@ -512,20 +505,19 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header d-flex align-items-center" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
-                    <h5 class="modal-title" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
-                    <div class="ms-auto d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <h5 class="modal-title mb-0" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
                         <!-- Status Icon -->
-                        <div id="statusIconContainer" class="d-flex align-items-center me-2">
-                            <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
-                        </div>
-                        
-                        <!-- Tombol Export -->
-                        <a href="#" id="exportBtn" class="btn btn-success btn-sm" target="_blank">
-                            <i class="fas fa-file-pdf me-1"></i> Export PDF
-                        </a>
-                        
-                        <button type="button" id="ajukanPerubahanBtn">
-                            <i class="bi bi-arrow-repeat" style="color: white"></i> <strong>Ajukan Perubahan</strong>
+                        <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
+                    </div>
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <button type="button" id="exportBtn" class="btn btn-primary">
+                            <i class="fas fa-file-export"></i>
+                            <strong>Export</strong>
+                        </button>
+                        <button type="button" id="ajukanPerubahanBtn" class="btn">
+                            <i class="bi bi-arrow-repeat" style="color: white"></i>
+                            <strong>Ajukan Perubahan</strong>
                         </button>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
@@ -539,7 +531,7 @@
         </div>
     </div>
 
-    {{-- Pengajuan Modal --}}
+    
     <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -563,9 +555,9 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
        $(document).ready(function() {
     let dataTable = null;
@@ -646,7 +638,7 @@
                     tooltipEl.addEventListener('mouseenter', function() {
                         clearTimeout(hideTimeout);
                     });
-                    
+
                     tooltipEl.addEventListener('mouseleave', function() {
                         hideTimeout = setTimeout(function() {
                             tooltip.hide();
@@ -919,7 +911,7 @@
                     <img src="/storage/${path}"
                          alt="Preview"
                          class="preview-image"
-                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>">
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>'">
                 `;
             } else {
                 if (fileExtension === 'pdf') {
@@ -994,7 +986,7 @@
 
         Swal.fire({
             title: "Apakah Anda Yakin?",
-            html: "<p style='text-align:center'>Setelah data laporan kegiatan lainnya dihapus, Anda tidak bisa mengembalikannya!</p>",
+            html: "<p style='text-align:center'>Setelah data laporan sekretariat dihapus, Anda tidak bisa mengembalikannya!</p>",
             icon: "warning",
             showCancelButton: true,
             reverseButtons: true,
@@ -1023,7 +1015,7 @@
                     success: function(response) {
                         Swal.fire({
                             title: 'Berhasil!',
-                            text: response.message || 'Data laporan kegiatan lainnya berhasil dihapus',
+                            text: response.message || 'Data laporan sekretariat berhasil dihapus',
                             icon: 'success',
                             timer: 2000,
                             showConfirmButton: false
@@ -1050,14 +1042,14 @@
                             } else {
                                 Swal.fire({
                                     title: 'Error!',
-                                    text: response.message || 'Gagal menghapus data laporan kegiatan lainnya',
+                                    text: response.message || 'Gagal menghapus data laporan sekretariat',
                                     icon: 'error'
                                 });
                             }
                         } catch (e) {
                             Swal.fire({
                                 title: 'Error!',
-                                text: 'Gagal menghapus data laporan kegiatan lainnya',
+                                text: 'Gagal menghapus data laporan sekretariat',
                                 icon: 'error'
                             });
                         }
@@ -1077,38 +1069,36 @@
     window.showDetailModal = function(data) {
     const modalBody = document.getElementById('detailModalBody');
     const statusIcon = document.getElementById('statusIcon');
-    const exportBtn = document.getElementById('exportBtn');
 
     if (!modalBody) {
         console.error('Modal body not found');
         return;
     }
 
-    // Set URL export berdasarkan ID kegiatan
-    if (exportBtn && data && data.id) {
-        exportBtn.href = `/admin/laporan-lpj/kegiatan-lainnya/${data.id}/export`;
-    }
-
     // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id
     if (statusIcon) {
         // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
         // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
-        const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
-        const hasApprovalPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
-        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
-        
+        const isSuperAdmin = <?php echo e(auth()->user()->hasRole('superadmin') ? 'true' : 'false'); ?>;
+        const hasApprovalPermission = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
+        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
+
         // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
         if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
-            statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
-            statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
+            statusIcon.innerHTML = 'Terbuka';
+            statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
         } else {
-            statusIcon.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
-            statusIcon.className = 'badge bg-danger fs-7 d-flex align-items-center';
+            statusIcon.innerHTML = 'Terkunci';
+            statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
         }
     }
 
     // Simpan ID LPJ dalam data modal
-    $('#detailModal').data('lpj-id', data.id);
+    if (data && data.id) {
+        $('#detailModal').data('lpj-id', data.id);
+    } else {
+        console.error('Data ID tidak ditemukan:', data);
+    }
 
     const formatRupiah = (num) => {
         if (!num) return 'Rp 0';
@@ -1168,6 +1158,37 @@
                         </div>
                     `;
                 }).join('')}
+            </div>
+        `;
+    }
+
+    // Tampilkan dokumen LPJ PDF jika ada
+    let dokumenLpjPdfHtml = '';
+    if (data.dokumen_lpj_pdf) {
+        const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
+        const name = typeof data.dokumen_lpj_pdf === 'object' ?
+            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) :
+            path.split('/').pop();
+
+        dokumenLpjPdfHtml = `
+            <div class="mb-3">
+                <label class="fw-semibold text-dark mb-2 d-block">
+                    <i class="fas fa-file-pdf text-danger me-1"></i>Dokumen LPJ (PDF):
+                </label>
+                <div class="bg-light p-3 rounded">
+                    <div class="d-flex align-items-center p-2 border rounded bg-white">
+                        <i class="fas fa-file-pdf text-danger me-3" style="font-size: 1.2em;"></i>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium text-dark">${name}</div>
+                            <small class="text-muted">PDF</small>
+                        </div>
+                        <a href="/storage/${path}"
+                           target="_blank"
+                           class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-download me-1"></i>Unduh
+                        </a>
+                    </div>
+                </div>
             </div>
         `;
     }
@@ -1264,6 +1285,8 @@
                         </div>
                     </div>
 
+                    ${dokumenLpjPdfHtml}
+
                     <div>
                         <label class="fw-semibold text-dark mb-2 d-block">
                             <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
@@ -1271,12 +1294,8 @@
                         <div class="bg-light p-3 rounded">
                             ${dokumenHtml}
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        ${data.keterangan_tambahan ? `
+                          ${data.keterangan_tambahan ? `
                     <div class="mb-4">
                         <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
                             <i class="fas fa-sticky-note me-2"></i>
@@ -1286,6 +1305,12 @@
                             <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
                         </div>
                     </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
                 ` : ''}
     `;
 
@@ -1382,25 +1407,6 @@
             'page': 1
         });
     });
-
-    function updateSummaryCards() {
-    const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(':contains("Data tidak ditemukan")');
-    const totalKegiatan = tableRows.length;
-    
-    let totalAnggaran = 0;
-    tableRows.each(function() {
-        const anggaranText = $(this).find('td').eq(2).text().trim();
-        if (anggaranText && anggaranText !== '-') {
-            const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
-            totalAnggaran += anggaranValue;
-        }
-    });
-    
-    $('#total-kegiatan').text(totalKegiatan);
-    $('#total-anggaran').text('Rp ' + totalAnggaran.toLocaleString('id-ID'));
-}
-
-// Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
 
     $(document).on('change', 'select[name="per_page"]', function() {
         const perPage = $(this).val();
@@ -1559,6 +1565,35 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
             });
 
+            $('#exportBtn').on('click', function() {
+                const lpjId = $('#detailModal').data('lpj-id');
+                
+                // Periksa apakah ID tersedia
+                if (!lpjId) {
+                    alert('Terjadi kesalahan: ID laporan tidak ditemukan. Silakan coba muat ulang halaman.');
+                    console.error('ID laporan tidak ditemukan di data modal');
+                    return;
+                }
+                
+                // Validasi ID
+                if (isNaN(lpjId) || lpjId <= 0) {
+                    alert('Terjadi kesalahan: ID laporan tidak valid.');
+                    console.error('ID laporan tidak valid:', lpjId);
+                    return;
+                }
+                
+                // Redirect to export route
+                const exportUrl = `/admin/laporan-lpj/sekretariat/${lpjId}/export`;
+                console.log('Membuka URL export:', exportUrl);
+                
+                const exportWindow = window.open(exportUrl, '_blank');
+                
+                // Periksa apakah window.open berhasil
+                if (!exportWindow) {
+                    alert('Popup blocker mencegah pembukaan jendela export. Silakan izinkan popup untuk situs ini.');
+                }
+            });
+
             $('#submitPengajuanBtn').on('click', function() {
                 const lpjId = $('#pengajuan_lpj_id').val();
                 const alasan = $('#alasan').val();
@@ -1569,13 +1604,14 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 }
 
                 $.ajax({
-                    url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
+                    url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
                     type: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}',
+                        _token: '<?php echo e(csrf_token()); ?>',
                         lpj_id: lpjId,
                         alasan: alasan,
-                        user_id: {{ auth()->id() }}
+                        user_id: <?php echo e(auth()->id()); ?>
+
                     },
                     success: function(response) {
                         if(response.success) {
@@ -1600,4 +1636,6 @@ $('#ajukanPerubahanBtn').on('click', function() {
 
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/sekretariat/index.blade.php ENDPATH**/ ?>

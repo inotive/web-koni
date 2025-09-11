@@ -1237,7 +1237,7 @@
                     <div class="mb-4">
                         <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
                             <i class="fas fa-calculator me-2"></i>
-                            Rincian Anggaran
+                            Total Anggaran
                         </h6>
                         <div class="bg-light p-3 rounded">
                             <div class="row g-3">
@@ -1249,7 +1249,6 @@
                                 ` : ''}
                                 ${data.jumlah_harga ? `
                                     <div class="col-md-6">
-                                        <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
                                         <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                     </div>
                                 ` : ''}
@@ -1567,27 +1566,27 @@ $('#ajukanPerubahanBtn').on('click', function() {
 
             $('#exportBtn').on('click', function() {
                 const lpjId = $('#detailModal').data('lpj-id');
-                
+
                 // Periksa apakah ID tersedia
                 if (!lpjId) {
                     alert('Terjadi kesalahan: ID laporan tidak ditemukan. Silakan coba muat ulang halaman.');
                     console.error('ID laporan tidak ditemukan di data modal');
                     return;
                 }
-                
+
                 // Validasi ID
                 if (isNaN(lpjId) || lpjId <= 0) {
                     alert('Terjadi kesalahan: ID laporan tidak valid.');
                     console.error('ID laporan tidak valid:', lpjId);
                     return;
                 }
-                
+
                 // Redirect to export route
                 const exportUrl = `/admin/laporan-lpj/sekretariat/${lpjId}/export`;
                 console.log('Membuka URL export:', exportUrl);
-                
+
                 const exportWindow = window.open(exportUrl, '_blank');
-                
+
                 // Periksa apakah window.open berhasil
                 if (!exportWindow) {
                     alert('Popup blocker mencegah pembukaan jendela export. Silakan izinkan popup untuk situs ini.');

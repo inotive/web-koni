@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan LPJ - {{ $kegiatanLainnya->nama_program }}</title>
+    <title>Laporan LPJ - <?php echo e($sekretariat->nama_program); ?></title>
     <meta charset="UTF-8">
     <style>
        @page {
@@ -352,12 +352,12 @@
 <body>
     <!-- Letterhead that appears on every page -->
     <div class="letterhead">
-        @php
+        <?php
             $imagePath = public_path('assets/img/kob-nobg.png');
             $imageData = base64_encode(file_get_contents($imagePath));
             $imageSrc = 'data:image/png;base64,' . $imageData;
-        @endphp
-        <img src="{{ $imageSrc }}"
+        ?>
+        <img src="<?php echo e($imageSrc); ?>"
              alt="KONI Letterhead"
              style="width: 100%; max-height: 250px; object-fit: contain;"> <!-- reduced max-height from 296px -->
     </div>
@@ -369,137 +369,69 @@
             <table class="info-table">
                 <tr>
                     <th>Program</th>
-                    <td>{{ $kegiatanLainnya->nama_program }}</td>
+                    <td><?php echo e($sekretariat->nama_program); ?></td>
                 </tr>
                 <tr>
                     <th>Kegiatan</th>
-                    <td>{{ $kegiatanLainnya->nama_kegiatan }}</td>
+                    <td><?php echo e($sekretariat->nama_kegiatan); ?></td>
                 </tr>
                 <tr>
                     <th>Total Anggaran</th>
-                    <td class="amount">Rp {{ number_format($kegiatanLainnya->jumlah_harga, 2, ',', '.') }}</td>
+                    <td class="amount">Rp <?php echo e(number_format($sekretariat->jumlah_harga, 2, ',', '.')); ?></td>
                 </tr>
-                @if($kegiatanLainnya->volume)
+                <?php if($sekretariat->tanggal_kegiatan): ?>
                 <tr>
-                    <th>Volume</th>
-                    <td>{{ $kegiatanLainnya->volume }}</td>
+                    <th>Tanggal Kegiatan</th>
+                    <td><?php echo e(\Carbon\Carbon::parse($sekretariat->tanggal_kegiatan)->format('d F Y')); ?></td>
                 </tr>
-                @endif
-                @if($kegiatanLainnya->jumlah_harga_satuan)
+                <?php endif; ?>
+                <?php if($sekretariat->lokasi_kegiatan): ?>
                 <tr>
-                    <th>Harga Satuan</th>
-                    <td>Rp {{ number_format($kegiatanLainnya->jumlah_harga_satuan, 2, ',', '.') }}</td>
+                    <th>Lokasi</th>
+                    <td><?php echo e($sekretariat->lokasi_kegiatan); ?></td>
                 </tr>
-                @endif
-                @if($kegiatanLainnya->keterangan_tambahan)
+                <?php endif; ?>
+                <?php if($sekretariat->keterangan_tambahan): ?>
                 <tr>
                     <th>Keterangan Tambahan</th>
-                    <td>{{ $kegiatanLainnya->keterangan_tambahan }}</td>
+                    <td><?php echo e($sekretariat->keterangan_tambahan); ?></td>
                 </tr>
-                @endif
+                <?php endif; ?>
             </table>
 
-            @if($kegiatanLainnya->foto_jurnal && count($kegiatanLainnya->foto_jurnal) > 0)
+            <?php if($sekretariat->foto_jurnal && count($sekretariat->foto_jurnal) > 0): ?>
                 <h3 class="section-title">Dokumentasi Kegiatan</h3>
                 <table class="photo-table">
                     <tr>
-                        @foreach($kegiatanLainnya->foto_jurnal as $index => $foto)
-                            @php
-                                $path = is_array($foto) ? ($foto['path'] ?? '') : $foto;
-                                $originalName = is_array($foto) ? 
-                                               ($foto['original_name'] ?? basename($path)) : 
-                                               basename($path);
-                            @endphp
+                        <?php $__currentLoopData = $sekretariat->foto_jurnal; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php if(is_array($foto)): ?>
+                                <?php
+                                    $path = $foto['path'] ?? '';
+                                    $originalName = $foto['original_name'] ?? basename($path);
+                                ?>
+                            <?php else: ?>
+                                <?php
+                                    $path = $foto;
+                                    $originalName = basename($path);
+                                ?>
+                            <?php endif; ?>
                             
-                            @if($path && file_exists(storage_path('app/public/' . $path)))
+                            <?php if($path && file_exists(storage_path('app/public/' . $path))): ?>
                                 <td class="photo-td">
                                     <div class="photo-container">
-                                        <img src="{{ storage_path('app/public/' . $path) }}" alt="Dokumentasi {{ $originalName }}">
-                                        <div class="photo-caption">Dokumentasi {{ $index + 1 }}</div>
+                                        <img src="<?php echo e(storage_path('app/public/' . $path)); ?>" alt="Dokumentasi <?php echo e($originalName); ?>">
+                                        <div class="photo-caption">Dokumentasi <?php echo e($index + 1); ?></div>
                                     </div>
                                 </td>
-                                @if(($index + 1) % 3 == 0)
+                                <?php if(($index + 1) % 3 == 0): ?>
                                     </tr><tr> <!-- Start new row every 3 images -->
-                                @endif
-                            @endif
-                        @endforeach
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tr>
                 </table>
-            @endif
-
-            @if(($kegiatanLainnya->dokumen_lpj && count($kegiatanLainnya->dokumen_lpj) > 0) || 
-                ($kegiatanLainnya->dokumen_lpj_pdf))
-                <h3 class="section-title">Dokumen Pendukung</h3>
-                
-                @if($kegiatanLainnya->dokumen_lpj_pdf)
-                    @php
-                        $path = is_array($kegiatanLainnya->dokumen_lpj_pdf) ? 
-                                ($kegiatanLainnya->dokumen_lpj_pdf['path'] ?? '') : 
-                                $kegiatanLainnya->dokumen_lpj_pdf;
-                        $originalName = is_array($kegiatanLainnya->dokumen_lpj_pdf) ? 
-                                       ($kegiatanLainnya->dokumen_lpj_pdf['original_name'] ?? basename($path)) : 
-                                       basename($path);
-                    @endphp
-                    
-                    @if($path && file_exists(storage_path('app/public/' . $path)))
-                        <div class="mb-3">
-                            <label class="fw-semibold text-dark mb-2 d-block">
-                                <i class="fas fa-file-pdf text-danger me-1"></i>Dokumen LPJ (PDF):
-                            </label>
-                            <div class="bg-light p-3 rounded">
-                                <div class="d-flex align-items-center p-2 border rounded bg-white">
-                                    <i class="fas fa-file-pdf text-danger me-3" style="font-size: 1.2em;"></i>
-                                    <div class="flex-grow-1">
-                                        <div class="fw-medium text-dark">{{ $originalName }}</div>
-                                        <small class="text-muted">PDF</small>
-                                    </div>
-                                    <a href="{{ storage_path('app/public/' . $path) }}"
-                                       target="_blank"
-                                       class="btn btn-outline-danger btn-sm">
-                                        <i class="fas fa-download me-1"></i>Unduh
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                @endif
-
-                @if($kegiatanLainnya->dokumen_lpj && count($kegiatanLainnya->dokumen_lpj) > 0)
-                    <div class="d-flex flex-column gap-2">
-                        @foreach($kegiatanLainnya->dokumen_lpj as $dokumen)
-                            @php
-                                $path = is_array($dokumen) ? ($dokumen['path'] ?? '') : $dokumen;
-                                $originalName = is_array($dokumen) ? 
-                                               ($dokumen['original_name'] ?? basename($path)) : 
-                                               basename($path);
-                                $extension = pathinfo($originalName, PATHINFO_EXTENSION);
-                                
-                                $iconClass = 'fas fa-file text-secondary';
-                                if ($extension === 'pdf') $iconClass = 'fas fa-file-pdf text-danger';
-                                else if (in_array($extension, ['doc', 'docx'])) $iconClass = 'fas fa-file-word text-primary';
-                                else if (in_array($extension, ['xls', 'xlsx'])) $iconClass = 'fas fa-file-excel text-success';
-                                else if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif'])) $iconClass = 'fas fa-file-image text-info';
-                            @endphp
-                            
-                            @if($path && file_exists(storage_path('app/public/' . $path)))
-                                <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                    <i class="{{ $iconClass }} me-3" style="font-size: 1.2em;"></i>
-                                    <div class="flex-grow-1">
-                                        <div class="fw-medium text-dark">{{ $originalName }}</div>
-                                        <small class="text-muted">{{ strtoupper($extension) }}</small>
-                                    </div>
-                                    <a href="{{ storage_path('app/public/' . $path) }}"
-                                       target="_blank"
-                                       class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-download me-1"></i>Unduh
-                                    </a>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                @endif
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 </body>
-</html>
+</html><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/sekretariat/export.blade.php ENDPATH**/ ?>

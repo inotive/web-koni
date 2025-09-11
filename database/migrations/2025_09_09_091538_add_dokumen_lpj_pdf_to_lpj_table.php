@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('lpj', function (Blueprint $table) {
-            if (!Schema::hasColumn('lpj', 'dokumen_lpj_pdf')) {
-                $table->json('dokumen_lpj_pdf')->nullable()->after('dokumen_lpj');
-            }
+            $table->json('dokumen_lpj_pdf')->nullable()->after('dokumen_lpj');
         });
     }
 
@@ -24,9 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('lpj', function (Blueprint $table) {
-            if (Schema::hasColumn('lpj', 'dokumen_lpj_pdf')) {
-                $table->dropColumn('dokumen_lpj_pdf');
-            }
+            $table->dropColumn('dokumen_lpj_pdf');
         });
     }
 };

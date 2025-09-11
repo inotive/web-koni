@@ -300,7 +300,7 @@
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
+                            <div class="row align-items-center mb-3" style="display: none;">
                                 <div class="col-md-3">
                                     <label for="volume" class="form-label">Volume</label>
                                 </div>
@@ -308,14 +308,14 @@
                                     <input type="text" name="volume" id="volume"
                                         class="form-control @error('volume') is-invalid @enderror"
                                         placeholder="Masukkan volume (misal: 100 orang, 5 unit, dll)"
-                                        value="{{ old('volume', $kegiatanLainnya->volume) }}">
+                                        value="{{ old('volume', $kegiatanLainnya->volume) }}" disabled>
                                     @error('volume')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
+                            <div class="row align-items-center mb-3" style="display: none;">
                                 <div class="col-md-3">
                                     <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
                                 </div>
@@ -324,7 +324,7 @@
                                         <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
                                             class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
                                             placeholder="0"
-                                            value="{{ old('jumlah_harga_satuan', $kegiatanLainnya->jumlah_harga_satuan) }}">
+                                            value="{{ old('jumlah_harga_satuan', $kegiatanLainnya->jumlah_harga_satuan) }}" disabled>
                                     </div>
                                     @error('jumlah_harga_satuan')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -334,7 +334,7 @@
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
-                                    <label for="jumlah_harga" class="form-label">Total Harga</label>
+                                    <label for="jumlah_harga" class="form-label">Total Anggaran</label>
                                 </div>
                                 <div class="col-md-9">
                                     <div class="currency-input">
@@ -352,7 +352,7 @@
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Foto Jurnal</label>
-                                    <p class="file-upload-hint">Maksimal 10 file foto, masing-masing hingga 10 MB</p>
+                                    <p class="file-upload-hint">Unggah foto jurnal, masing-masing hingga 10 MB</p>
                                 </div>
                                 <div class="col-md-9">
                                     @php
@@ -421,7 +421,6 @@
                                     <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
                                     <div id="fotoCounter" class="file-counter"></div>
                                     <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
-                                        Maksimal 10 foto yang dapat diunggah.
                                     </div>
 
                                     @error('foto_jurnal.*')
@@ -528,6 +527,94 @@
                                 </div>
                             </div>
 
+                            {{-- Dokumen LPJ with PDF-only restrictions --}}
+                            <div class="row align-items-start mb-4">
+                                <div class="col-md-3">
+                                    <label class="form-label">Dokumen LPJ</label>
+                                    <p class="file-upload-hint">Unggah file PDF, masing-masing hingga 10MB</p>
+                                </div>
+                                <div class="col-md-9">
+                                    @php
+                                        $dokumenLpjs = $kegiatanLainnya->dokumen_lpj_pdf ? (is_array($kegiatanLainnya->dokumen_lpj_pdf) ? $kegiatanLainnya->dokumen_lpj_pdf : [$kegiatanLainnya->dokumen_lpj_pdf]) : [];
+                                    @endphp
+                                    @if(count($dokumenLpjs) > 0)
+                                        <div class="existing-files-section">
+                                            <h6><i class="fas fa-file-pdf me-2"></i>Dokumen LPJ yang sudah ada:</h6>
+                                            <div id="existing-dokumen-lpj-preview">
+                                                @foreach($dokumenLpjs as $index => $dokumen)
+                                                    @php
+                                                        // Handle berbagai tipe data untuk dokumen
+                                                        $path = '';
+                                                        $originalName = '';
+
+                                                        if (is_object($dokumen)) {
+                                                            $path = $dokumen->path;
+                                                            $originalName = $dokumen->original_name;
+                                                        } elseif (is_array($dokumen)) {
+                                                            $path = isset($dokumen['path']) ? $dokumen['path'] : '';
+                                                            $originalName = isset($dokumen['original_name']) ? $dokumen['original_name'] : (is_string($path) ? basename($path) : '');
+                                                        } elseif (is_string($dokumen)) {
+                                                            $path = $dokumen;
+                                                            $originalName = basename($path);
+                                                        }
+
+                                                        // Pastikan kita punya nama file
+                                                        if (empty($originalName) && is_string($path)) {
+                                                            $originalName = basename($path);
+                                                        }
+
+                                                        $extension = '';
+                                                        if (!empty($originalName)) {
+                                                            $extension = pathinfo($originalName, PATHINFO_EXTENSION);
+                                                        }
+
+                                                        $icon = 'fas fa-file-pdf text-danger';
+                                                    @endphp
+                                                    <div class="file-preview-item existing" data-file-path="{{ $path }}">
+                                                        <div class="file-icon">
+                                                            <i class="{{ $icon }} fs-4"></i>
+                                                        </div>
+                                                        <div class="file-info">
+                                                            <div class="file-name">{{ $originalName }}</div>
+                                                            <div class="file-size">File yang ada</div>
+                                                        </div>
+                                                        <button type="button" class="remove-file"
+                                                                onclick="removeExistingFile(this, 'dokumenLpj', '{{ $path }}')">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                        <input type="hidden" name="existing_dokumen_lpj_pdf[]" value="{{ $path }}">
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    <label for="dokumen_lpj_pdf" class="file-upload-wrapper">
+                                        <input type="file" name="dokumen_lpj_pdf[]" id="dokumen_lpj_pdf"
+                                               class="@error('dokumen_lpj_pdf.*') is-invalid @enderror"
+                                               accept=".pdf" multiple>
+
+                                        <div class="d-flex align-items-center gap-12">
+                                            <div class="file-upload-icon-wrapper">
+                                                <i class="fas fa-upload file-upload-icon"></i>
+                                            </div>
+                                            <div>
+                                                <p class="file-upload-text" id="dokumen-lpj-file-name-display">
+                                                    Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    <div id="dokumenLpjPreviewContainer" class="preview-container" style="display: none;"></div>
+                                    <div id="dokumenLpjCounter" class="file-counter"></div>
+
+                                    @error('dokumen_lpj_pdf.*')
+                                        <div class="text-danger mt-2">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label for="keterangan_tambahan" class="form-label">Keterangan Tambahan</label>
@@ -568,19 +655,23 @@
 
             let selectedFotoFiles = [];
             let selectedDokumenFiles = [];
+            let selectedDokumenLpjFiles = [];
 
             // Initialize existing files from PHP
             let existingFotoFiles = [];
             let existingDokumenFiles = [];
+            let existingDokumenLpjFiles = [];
 
             // Safely parse existing files
             try {
                 existingFotoFiles = @json($kegiatanLainnya->foto_jurnal ? (is_array($kegiatanLainnya->foto_jurnal) ? $kegiatanLainnya->foto_jurnal : [$kegiatanLainnya->foto_jurnal]) : []);
                 existingDokumenFiles = @json($kegiatanLainnya->dokumen_lpj ? (is_array($kegiatanLainnya->dokumen_lpj) ? $kegiatanLainnya->dokumen_lpj : [$kegiatanLainnya->dokumen_lpj]) : []);
+                existingDokumenLpjFiles = @json($kegiatanLainnya->dokumen_lpj_pdf ? (is_array($kegiatanLainnya->dokumen_lpj_pdf) ? $kegiatanLainnya->dokumen_lpj_pdf : [$kegiatanLainnya->dokumen_lpj_pdf]) : []);
             } catch (e) {
                 console.error('Error parsing existing files:', e);
                 existingFotoFiles = [];
                 existingDokumenFiles = [];
+                existingDokumenLpjFiles = [];
             }
 
             // Currency formatting
@@ -619,6 +710,11 @@
             const dokumenCounter = document.getElementById('dokumenCounter');
             const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
 
+            const dokumenLpjInput = document.getElementById('dokumen_lpj_pdf');
+            const dokumenLpjPreviewContainer = document.getElementById('dokumenLpjPreviewContainer');
+            const dokumenLpjFileNameDisplay = document.getElementById('dokumen-lpj-file-name-display');
+            const dokumenLpjCounter = document.getElementById('dokumenLpjCounter');
+
             fotoInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'foto');
             });
@@ -627,12 +723,26 @@
                 handleFileSelection(this.files, 'dokumen');
             });
 
+            dokumenLpjInput.addEventListener('change', function() {
+                handleFileSelection(this.files, 'dokumenLpj');
+            });
+
             function handleFileSelection(files, type) {
                 const isPhoto = type === 'foto';
-                const currentFiles = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                const input = isPhoto ? fotoInput : dokumenInput;
+                const isDokumenLpj = type === 'dokumenLpj';
+                let currentFiles = [];
+                
+                if (isPhoto) {
+                    currentFiles = selectedFotoFiles;
+                } else if (isDokumenLpj) {
+                    currentFiles = selectedDokumenLpjFiles;
+                } else {
+                    currentFiles = selectedDokumenFiles;
+                }
+                
+                const input = isPhoto ? fotoInput : (isDokumenLpj ? dokumenLpjInput : dokumenInput);
 
-                const existingFiles = isPhoto ? existingFotoFiles : existingDokumenFiles;
+                const existingFiles = isPhoto ? existingFotoFiles : (isDokumenLpj ? existingDokumenLpjFiles : existingDokumenFiles);
                 const existingFilesCount = existingFiles.length;
 
                 const newFiles = Array.from(files).filter(file => {
@@ -646,10 +756,16 @@
                         return false;
                     }
 
+                    if (isDokumenLpj && !file.name.toLowerCase().endsWith('.pdf')) {
+                        alert(`File "${file.name}" bukan file PDF yang valid.`);
+                        return false;
+                    }
+
                     return true;
                 });
 
-                if (existingFilesCount + newFiles.length > MAX_FILES) {
+                // Check if adding new files would exceed the limit (only for dokumen pendukung)
+                if (!isPhoto && !isDokumenLpj && existingFilesCount + newFiles.length > MAX_FILES) {
                     alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${existingFilesCount} file.`);
                     // Clear the input to prevent adding the oversized/overcounted files
                     input.value = '';
@@ -658,6 +774,8 @@
 
                 if (isPhoto) {
                     selectedFotoFiles = [...currentFiles, ...newFiles];
+                } else if (isDokumenLpj) {
+                    selectedDokumenLpjFiles = [...currentFiles, ...newFiles];
                 } else {
                     selectedDokumenFiles = [...currentFiles, ...newFiles];
                 }
@@ -668,35 +786,56 @@
 
             function updateFilePreview(type) {
                 const isPhoto = type === 'foto';
-                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
-                const counter = isPhoto ? fotoCounter : dokumenCounter;
-                const maxWarning = isPhoto ? fotoMaxWarning : dokumenMaxWarning;
-                const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
+                const isDokumenLpj = type === 'dokumenLpj';
+                let files = [];
+                
+                if (isPhoto) {
+                    files = selectedFotoFiles;
+                } else if (isDokumenLpj) {
+                    files = selectedDokumenLpjFiles;
+                } else {
+                    files = selectedDokumenFiles;
+                }
+                
+                const container = isPhoto ? fotoPreviewContainer : (isDokumenLpj ? dokumenLpjPreviewContainer : dokumenPreviewContainer);
+                const counter = isPhoto ? fotoCounter : (isDokumenLpj ? dokumenLpjCounter : dokumenCounter);
+                const maxWarning = isPhoto ? fotoMaxWarning : (isDokumenLpj ? null : dokumenMaxWarning);
+                const nameDisplay = isPhoto ? fotoFileNameDisplay : (isDokumenLpj ? dokumenLpjFileNameDisplay : dokumenFileNameDisplay);
 
-                const existingFiles = isPhoto ? existingFotoFiles : existingDokumenFiles;
+                const existingFiles = isPhoto ? existingFotoFiles : (isDokumenLpj ? existingDokumenLpjFiles : existingDokumenFiles);
                 const existingFilesCount = existingFiles.length;
 
                 const totalFiles = existingFilesCount + files.length;
 
                 if (files.length === 0) {
                     container.style.display = 'none';
-                    counter.textContent = totalFiles > 0 ? `${totalFiles}/${MAX_FILES} file` : '';
-                    maxWarning.style.display = 'none';
+                    counter.textContent = totalFiles > 0 ? (isPhoto || isDokumenLpj ? `${totalFiles} file` : `${totalFiles}/${MAX_FILES} file`) : '';
+                    if (maxWarning) maxWarning.style.display = 'none';
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto baru di sini, atau klik untuk mengunggah.' :
-                        'Seret dan lepas dokumen baru di sini, atau klik untuk mengunggah.';
+                        (isDokumenLpj ? 
+                            'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.' :
+                            'Seret dan lepas dokumen baru di sini, atau klik untuk mengunggah.');
                     return;
                 }
 
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file baru dipilih`;
-                counter.textContent = `${totalFiles}/${MAX_FILES} file`;
-
-                if (totalFiles >= MAX_FILES) {
-                    maxWarning.style.display = 'block';
+                
+                if (!isPhoto) {
+                    if (isDokumenLpj) {
+                        counter.textContent = `${totalFiles} file`;
+                    } else {
+                        counter.textContent = `${totalFiles}/${MAX_FILES} file`;
+                        if (totalFiles >= MAX_FILES && maxWarning) {
+                            maxWarning.style.display = 'block';
+                        } else if (maxWarning) {
+                            maxWarning.style.display = 'none';
+                        }
+                    }
                 } else {
-                    maxWarning.style.display = 'none';
+                    // Hilangkan batasan jumlah upload foto jurnal
+                    counter.textContent = `${totalFiles} file`;
                 }
 
                 // Generate preview HTML
@@ -748,8 +887,18 @@
 
             function updateFileInput(type) {
                 const isPhoto = type === 'foto';
-                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                const input = isPhoto ? fotoInput : dokumenInput;
+                const isDokumenLpj = type === 'dokumenLpj';
+                let files = [];
+                
+                if (isPhoto) {
+                    files = selectedFotoFiles;
+                } else if (isDokumenLpj) {
+                    files = selectedDokumenLpjFiles;
+                } else {
+                    files = selectedDokumenFiles;
+                }
+                
+                const input = isPhoto ? fotoInput : (isDokumenLpj ? dokumenLpjInput : dokumenInput);
 
                 const dt = new DataTransfer();
                 files.forEach(file => {
@@ -761,6 +910,7 @@
             // Global function to remove file
             window.removeFile = function(index, type) {
                 const isPhoto = type === 'foto';
+                const isDokumenLpj = type === 'dokumenLpj';
 
                 if (isPhoto) {
                     // Revoke object URL to prevent memory leaks for images
@@ -774,6 +924,8 @@
                         });
                     }
                     selectedFotoFiles.splice(index, 1);
+                } else if (isDokumenLpj) {
+                    selectedDokumenLpjFiles.splice(index, 1);
                 } else {
                     selectedDokumenFiles.splice(index, 1);
                 }
@@ -794,6 +946,8 @@
                     item.style.display = 'none';
 
                     const isPhoto = type === 'foto';
+                    const isDokumenLpj = type === 'dokumenLpj';
+
                     if (isPhoto) {
                         const index = existingFotoFiles.findIndex(f => {
                             if (typeof f === 'string') return f === filePath;
@@ -802,6 +956,15 @@
                         });
                         if (index > -1) {
                             existingFotoFiles.splice(index, 1);
+                        }
+                    } else if (isDokumenLpj) {
+                        const index = existingDokumenLpjFiles.findIndex(d => {
+                            if (typeof d === 'string') return d === filePath;
+                            if (typeof d === 'object' && d !== null) return d.path === filePath;
+                            return false;
+                        });
+                        if (index > -1) {
+                            existingDokumenLpjFiles.splice(index, 1);
                         }
                     } else {
                         const index = existingDokumenFiles.findIndex(d => {
@@ -820,12 +983,14 @@
 
             function updateFileCounters() {
                 const totalFotos = existingFotoFiles.length + selectedFotoFiles.length;
-                fotoCounter.textContent = totalFotos > 0 ? `${totalFotos}/${MAX_FILES} file` : '';
-                fotoMaxWarning.style.display = totalFotos >= MAX_FILES ? 'block' : 'none';
+                fotoCounter.textContent = totalFotos > 0 ? `${totalFotos} file` : '';
 
                 const totalDokumens = existingDokumenFiles.length + selectedDokumenFiles.length;
                 dokumenCounter.textContent = totalDokumens > 0 ? `${totalDokumens}/${MAX_FILES} file` : '';
                 dokumenMaxWarning.style.display = totalDokumens >= MAX_FILES ? 'block' : 'none';
+
+                const totalDokumenLpjs = existingDokumenLpjFiles.length + selectedDokumenLpjFiles.length;
+                dokumenLpjCounter.textContent = totalDokumenLpjs > 0 ? `${totalDokumenLpjs} file` : '';
             }
 
             function getFileIcon(extension) {
@@ -873,7 +1038,7 @@
 
                     const input = wrapper.querySelector('input[type="file"]');
                     if (e.dataTransfer.files.length && input) {
-                        const type = input.id === 'foto_jurnal' ? 'foto' : 'dokumen';
+                        const type = input.id === 'foto_jurnal' ? 'foto' : (input.id === 'dokumen_lpj_pdf' ? 'dokumenLpj' : 'dokumen');
                         handleFileSelection(e.dataTransfer.files, type);
                     }
                 });
@@ -893,50 +1058,9 @@
             });
         });
 
-        function calculateTotalPrice() {
-            const volumeInput = document.getElementById('volume');
-            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
-            const totalPriceInput = document.getElementById('jumlah_harga');
-
-            if (!volumeInput || !unitPriceInput || !totalPriceInput) return;
-
-            const volumeValue = volumeInput.value.trim();
-            const unitPriceValue = unitPriceInput.value.replace(/[^\d]/g, ''); // Remove formatting
-
-            // Extract numeric value from volume (handles cases like "100 orang", "5 unit", etc.)
-            const volumeMatch = volumeValue.match(/^\d+/);
-            const volumeNumber = volumeMatch ? parseInt(volumeMatch[0]) : 0;
-            const unitPriceNumber = unitPriceValue ? parseInt(unitPriceValue) : 0;
-
-            if (volumeNumber > 0 && unitPriceNumber > 0) {
-                const totalPrice = volumeNumber * unitPriceNumber;
-                totalPriceInput.value = totalPrice.toLocaleString('id-ID');
-
-                // Add visual feedback
-                totalPriceInput.style.backgroundColor = '#e8f5e8';
-                setTimeout(() => {
-                    totalPriceInput.style.backgroundColor = '';
-                }, 1000);
-            } else if (volumeNumber === 0 || unitPriceNumber === 0) {
-                totalPriceInput.value = '';
-            }
-        }
-
+        // Field Total Anggaran diinput manual sesuai permintaan
         document.addEventListener('DOMContentLoaded', function() {
-            const volumeInput = document.getElementById('volume');
-            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
-
-            if (volumeInput && unitPriceInput) {
-                volumeInput.addEventListener('input', calculateTotalPrice);
-                unitPriceInput.addEventListener('input', function() {
-                    setTimeout(calculateTotalPrice, 10);
-                });
-
-                volumeInput.addEventListener('blur', calculateTotalPrice);
-                unitPriceInput.addEventListener('blur', calculateTotalPrice);
-
-                calculateTotalPrice();
-            }
+            // Tidak ada kalkulasi otomatis karena field Total Anggaran diinput manual
         });
     </script>
 @endsection

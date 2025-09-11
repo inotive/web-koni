@@ -87,21 +87,8 @@ class DashboardController extends Controller
             return $item;
         });
         
-        // Filter kegiatan berdasarkan parameter request SETELAH menghitung serapan
-        if ($request->has('filter') && $request->filter != '') {
-            switch ($request->filter) {
-                case 'tertinggi':
-                    $kegiatan = $kegiatan->sortByDesc(function($item) {
-                        return $item->serapan;
-                    })->values();
-                    break;
-                case 'terendah':
-                    $kegiatan = $kegiatan->sortBy(function($item) {
-                        return $item->serapan;
-                    })->values();
-                    break;
-            }
-        }
+        // Sort kegiatan by default order (no filter options)
+        $kegiatan = $kegiatan->values();
 
         // Mengambil semua prestasi terbaru dengan pagination (tanpa pencarian di index)
         // Gunakan per_page default 10 untuk halaman index
@@ -203,7 +190,7 @@ class DashboardController extends Controller
         $rka_per_kegiatan = ($jumlah_kegiatan > 0 && $total_rka > 0) ? $total_rka / $jumlah_kegiatan : 0;
 
         // Menyiapkan data untuk export
-        $exportData = [];
+        $exportKegiatan = collect();
         foreach ($kegiatan as $item) {
             // Menetapkan total budget untuk setiap kegiatan
             $item->total_budget = $rka_per_kegiatan;
@@ -221,23 +208,15 @@ class DashboardController extends Controller
             });
             $serapan_aktif = $serapan_aktif_induk + $serapan_aktif_anak;
 
-            $persen = ($rka_per_kegiatan > 0) ? round(($serapan_aktif / $rka_per_kegiatan) * 100) : 0;
-
-            $exportData[] = [
-                'no' => count($exportData) + 1,
-                'nama_kegiatan' => $item->nama_program,
-                'serapan' => $serapan_aktif,
-                'anggaran' => $rka_per_kegiatan,
-                'persen' => $persen,
-                'jumlah_anak' => $item->children->count(),
-            ];
+            $item->serapan = $serapan_aktif;
+            
+            $exportKegiatan->push($item);
         }
 
         // Return view untuk export sebagai gambar
         return view('admin.dashboard.export', [
-            'exportData' => $exportData,
+            'kegiatan' => $exportKegiatan,
             'total_rka' => $total_rka,
-            'total_serapan' => array_sum(array_column($exportData, 'serapan')),
         ]);
     }
 }

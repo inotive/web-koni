@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Tambah Laporan Kegiatan Lainnya'); ?>
+<?php $__env->startSection('mainSection', 'Laporan Pertanggungjawaban'); ?>
+<?php $__env->startSection('subSection', 'Kegiatan Lainnya'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index')); ?>
+<?php $__env->startSection('currentSection', 'Tambah Laporan'); ?>
 
-@section('pageTitle', 'Tambah Laporan Sekretariat')
-@section('mainSection', 'Laporan Pertanggungjawaban')
-@section('subSection', 'Sekretariat')
-@section('subSectionUrl', route('admin.laporan-lpj.sekretariat.index'))
-@section('currentSection', 'Tambah Laporan')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         body {
             background-color: #f5f5f5 !important;
@@ -215,10 +213,16 @@
             color: #6c757d;
             margin-top: 8px;
         }
+
+        .max-files-warning {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Laporan Sekretariat</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Tambah Laporan Kegiatan Lainnya</h3>
     </div>
 
     <div class="main-content">
@@ -228,11 +232,11 @@
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Tambah Laporan Baru</h3>
 
-                        <form action="{{ route('admin.laporan-lpj.sekretariat.store') }}"
+                        <form action="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.store')); ?>"
                               method="POST"
-                              id="sekretariatForm"
+                              id="kegiatanLainnyaForm"
                               enctype="multipart/form-data">
-                            @csrf
+                            <?php echo csrf_field(); ?>
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
@@ -242,12 +246,26 @@
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="nama_program_kegiatan" id="nama_program_kegiatan"
-                                        class="form-control @error('nama_program_kegiatan') is-invalid @enderror"
+                                        class="form-control <?php $__errorArgs = ['nama_program_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                         placeholder="Masukkan nama program & kegiatan"
-                                        value="{{ old('nama_program_kegiatan') }}" required>
-                                    @error('nama_program_kegiatan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        value="<?php echo e(old('nama_program_kegiatan')); ?>" required>
+                                    <?php $__errorArgs = ['nama_program_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
@@ -259,48 +277,87 @@
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="jenis_kegiatan" id="jenis_kegiatan"
-                                        class="form-control @error('jenis_kegiatan') is-invalid @enderror"
+                                        class="form-control <?php $__errorArgs = ['jenis_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                         placeholder="Masukkan nama kegiatan"
-                                        value="{{ old('jenis_kegiatan') }}" required>
-                                    @error('jenis_kegiatan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        value="<?php echo e(old('jenis_kegiatan')); ?>" required>
+                                    <?php $__errorArgs = ['jenis_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                            {{-- HIDDEN FIELDS --}}
-                            <div style="display: none;">
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-md-3">
-                                        <label for="volume" class="form-label">Volume</label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        <input type="text" name="volume" id="volume"
-                                            class="form-control @error('volume') is-invalid @enderror"
-                                            placeholder="Masukkan volume (misal: 5 unit,)"
-                                            value="{{ old('volume') }}">
-                                        @error('volume')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                            <div class="row align-items-center mb-3" style="display: none;">
+                                <div class="col-md-3">
+                                    <label for="volume" class="form-label">Volume</label>
                                 </div>
+                                <div class="col-md-9">
+                                    <input type="text" name="volume" id="volume"
+                                        class="form-control <?php $__errorArgs = ['volume'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                        placeholder="Masukkan volume (misal: 5 unit,)"
+                                        value="<?php echo e(old('volume')); ?>" disabled>
+                                    <?php $__errorArgs = ['volume'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                </div>
+                            </div>
 
-                                <div class="row align-items-center mb-3">
-                                    <div class="col-md-3">
-                                        <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
+                            <div class="row align-items-center mb-3" style="display: none;">
+                                <div class="col-md-3">
+                                    <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="currency-input">
+                                        <input type="tel" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                            inputmode="numeric"
+                                            class="form-control <?php $__errorArgs = ['jumlah_harga_satuan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                            placeholder="0"
+                                            value="<?php echo e(old('jumlah_harga_satuan')); ?>" disabled>
                                     </div>
-                                    <div class="col-md-9">
-                                        <div class="currency-input">
-                                            <input type="tel" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
-                                                inputmode="numeric"
-                                                class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
-                                                placeholder="0"
-                                                value="{{ old('jumlah_harga_satuan') }}">
-                                        </div>
-                                        @error('jumlah_harga_satuan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                                    <?php $__errorArgs = ['jumlah_harga_satuan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
@@ -312,25 +369,46 @@
                                     <div class="currency-input">
                                         <input type="tel" name="jumlah_harga" id="jumlah_harga"
                                             inputmode="numeric"
-                                            class="form-control @error('jumlah_harga') is-invalid @enderror"
+                                            class="form-control <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             placeholder="0"
-                                            value="{{ old('jumlah_harga') }}">
+                                            value="<?php echo e(old('jumlah_harga')); ?>">
                                     </div>
-                                    @error('jumlah_harga')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
                                                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Foto Jurnal</label>
-                                    <p class="file-upload-hint">Unggah foto tanpa batasan jumlah, masing-masing hingga 10 MB</p>
+                                    <p class="file-upload-hint">Unggah foto jurnal, masing-masing hingga 10 MB</p>
                                 </div>
                                 <div class="col-md-9">
                                     <label for="foto_jurnal" class="file-upload-wrapper">
                                         <input type="file" name="foto_jurnal[]" id="foto_jurnal"
-                                            class="@error('foto_jurnal.*') is-invalid @enderror"
+                                            class="<?php $__errorArgs = ['foto_jurnal.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             accept="image/*" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
@@ -347,14 +425,23 @@
 
                                     <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
                                     <div id="fotoCounter" class="file-counter"></div>
+                                    <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
+                                    </div>
 
-                                    @error('foto_jurnal.*')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['foto_jurnal.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger mt-2"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                            {{-- Enhanced Dokumen Pendukung Upload --}}
+                            
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Dokumen Pendukung</label>
@@ -363,7 +450,14 @@
                                 <div class="col-md-9">
                                     <label for="dokumen_lpj" class="file-upload-wrapper">
                                         <input type="file" name="dokumen_lpj[]" id="dokumen_lpj"
-                                            class="@error('dokumen_lpj.*') is-invalid @enderror"
+                                            class="<?php $__errorArgs = ['dokumen_lpj.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
@@ -384,23 +478,37 @@
                                         Maksimal 10 dokumen yang dapat diunggah.
                                     </div>
 
-                                    @error('dokumen_lpj.*')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['dokumen_lpj.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger mt-2"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                            {{-- Dokumen LPJ Upload (PDF Only) --}}
+                            
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Dokumen LPJ</label>
-                                    <p class="file-upload-hint">Unggah file PDF saja, maksimal 10MB</p>
+                                    <p class="file-upload-hint">Unggah file PDF, masing-masing hingga 10MB</p>
                                 </div>
                                 <div class="col-md-9">
                                     <label for="dokumen_lpj_pdf" class="file-upload-wrapper">
-                                        <input type="file" name="dokumen_lpj_pdf" id="dokumen_lpj_pdf"
-                                            class="@error('dokumen_lpj_pdf') is-invalid @enderror"
-                                            accept=".pdf">
+                                        <input type="file" name="dokumen_lpj_pdf[]" id="dokumen_lpj_pdf"
+                                            class="<?php $__errorArgs = ['dokumen_lpj_pdf.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                            accept=".pdf" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
                                             <div class="file-upload-icon-wrapper">
@@ -415,10 +523,18 @@
                                     </label>
 
                                     <div id="dokumenLpjPreviewContainer" class="preview-container" style="display: none;"></div>
+                                    <div id="dokumenLpjCounter" class="file-counter"></div>
 
-                                    @error('dokumen_lpj_pdf')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['dokumen_lpj_pdf.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger mt-2"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
@@ -428,12 +544,26 @@
                                 </div>
                                 <div class="col-md-9">
                                     <textarea name="keterangan_tambahan" id="keterangan_tambahan"
-                                        class="form-control @error('keterangan_tambahan') is-invalid @enderror"
+                                        class="form-control <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                         placeholder="Masukkan keterangan tambahan (opsional)"
-                                        rows="4">{{ old('keterangan_tambahan') }}</textarea>
-                                    @error('keterangan_tambahan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        rows="4"><?php echo e(old('keterangan_tambahan')); ?></textarea>
+                                    <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
                      <div class="row">
@@ -441,7 +571,7 @@
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-save me-2"></i>Simpan
                             </button>
-                            <a href="{{ route('admin.laporan-lpj.sekretariat.index') }}"
+                            <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.index')); ?>"
                                class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>
@@ -453,17 +583,18 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const MAX_FILES = 10;
             const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
             // File arrays to track selected files
             let selectedFotoFiles = [];
             let selectedDokumenFiles = [];
-            let selectedDokumenLpjFile = null;
+            let selectedDokumenLpjFiles = [];
 
             // Currency formatting
             const currencyInputs = ['jumlah_harga_satuan', 'jumlah_harga'];
@@ -492,6 +623,7 @@
             const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
             const fotoFileNameDisplay = document.getElementById('foto-file-name-display');
             const fotoCounter = document.getElementById('fotoCounter');
+            const fotoMaxWarning = document.getElementById('fotoMaxWarning');
 
             const dokumenInput = document.getElementById('dokumen_lpj');
             const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
@@ -500,8 +632,9 @@
             const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
 
             const dokumenLpjInput = document.getElementById('dokumen_lpj_pdf');
-            const dokumenLpjFileNameDisplay = document.getElementById('dokumen-lpj-file-name-display');
             const dokumenLpjPreviewContainer = document.getElementById('dokumenLpjPreviewContainer');
+            const dokumenLpjFileNameDisplay = document.getElementById('dokumen-lpj-file-name-display');
+            const dokumenLpjCounter = document.getElementById('dokumenLpjCounter');
 
             fotoInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'foto');
@@ -512,49 +645,23 @@
             });
 
             dokumenLpjInput.addEventListener('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    if (file.size > MAX_FILE_SIZE) {
-                        alert(`File "${file.name}" terlalu besar. Maksimal 10MB.`);
-                        this.value = '';
-                        return;
-                    }
-
-                    if (!file.name.toLowerCase().endsWith('.pdf')) {
-                        alert(`File "${file.name}" bukan file PDF yang valid.`);
-                        this.value = '';
-                        return;
-                    }
-
-                    selectedDokumenLpjFile = file;
-                    dokumenLpjFileNameDisplay.textContent = file.name;
-                    dokumenLpjPreviewContainer.style.display = 'block';
-
-                    // Tampilkan preview dokumen LPJ
-                    const previewHTML = `
-                        <div class="file-preview-item">
-                            <div class="file-icon">
-                                <i class="fas fa-file-pdf text-danger fs-4"></i>
-                            </div>
-                            <div class="file-info">
-                                <div class="file-name">${file.name}</div>
-                                <div class="file-size">${(file.size / 1024).toFixed(1)} KB</div>
-                            </div>
-                        </div>
-                    `;
-                    dokumenLpjPreviewContainer.innerHTML = previewHTML;
-                } else {
-                    selectedDokumenLpjFile = null;
-                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
-                    dokumenLpjPreviewContainer.style.display = 'none';
-                    dokumenLpjPreviewContainer.innerHTML = '';
-                }
+                handleFileSelection(this.files, 'dokumenLpj');
             });
 
             function handleFileSelection(files, type) {
                 const isPhoto = type === 'foto';
-                const currentFiles = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                const input = isPhoto ? fotoInput : dokumenInput;
+                const isDokumenLpj = type === 'dokumenLpj';
+                let currentFiles = [];
+                
+                if (isPhoto) {
+                    currentFiles = selectedFotoFiles;
+                } else if (isDokumenLpj) {
+                    currentFiles = selectedDokumenLpjFiles;
+                } else {
+                    currentFiles = selectedDokumenFiles;
+                }
+                
+                const input = isPhoto ? fotoInput : (isDokumenLpj ? dokumenLpjInput : dokumenInput);
 
                 // Convert FileList to Array and filter valid files
                 const newFiles = Array.from(files).filter(file => {
@@ -568,12 +675,25 @@
                         return false;
                     }
 
+                    if (isDokumenLpj && !file.name.toLowerCase().endsWith('.pdf')) {
+                        alert(`File "${file.name}" bukan file PDF yang valid.`);
+                        return false;
+                    }
+
                     return true;
                 });
+
+                // Check if adding new files would exceed the limit (only for dokumen pendukung)
+                if (!isPhoto && !isDokumenLpj && currentFiles.length + newFiles.length > MAX_FILES) {
+                    alert(`Maksimal ${MAX_FILES} file dapat diunggah. Anda sudah memiliki ${currentFiles.length} file.`);
+                    return;
+                }
 
                 // Add new files to the current files array
                 if (isPhoto) {
                     selectedFotoFiles = [...currentFiles, ...newFiles];
+                } else if (isDokumenLpj) {
+                    selectedDokumenLpjFiles = [...currentFiles, ...newFiles];
                 } else {
                     selectedDokumenFiles = [...currentFiles, ...newFiles];
                 }
@@ -584,23 +704,52 @@
 
             function updateFilePreview(type) {
                 const isPhoto = type === 'foto';
-                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
-                const counter = isPhoto ? fotoCounter : dokumenCounter;
-                const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
+                const isDokumenLpj = type === 'dokumenLpj';
+                let files = [];
+                
+                if (isPhoto) {
+                    files = selectedFotoFiles;
+                } else if (isDokumenLpj) {
+                    files = selectedDokumenLpjFiles;
+                } else {
+                    files = selectedDokumenFiles;
+                }
+                
+                const container = isPhoto ? fotoPreviewContainer : (isDokumenLpj ? dokumenLpjPreviewContainer : dokumenPreviewContainer);
+                const counter = isPhoto ? fotoCounter : (isDokumenLpj ? dokumenLpjCounter : dokumenCounter);
+                const maxWarning = isPhoto ? fotoMaxWarning : (isDokumenLpj ? null : dokumenMaxWarning);
+                const nameDisplay = isPhoto ? fotoFileNameDisplay : (isDokumenLpj ? dokumenLpjFileNameDisplay : dokumenFileNameDisplay);
 
                 if (files.length === 0) {
                     container.style.display = 'none';
                     counter.textContent = '';
+                    if (maxWarning) maxWarning.style.display = 'none';
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto di sini, atau klik untuk mengunggah.' :
-                        'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.';
+                        (isDokumenLpj ? 
+                            'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.' :
+                            'Seret dan lepas dokumen di sini, atau klik untuk mengunggah.');
                     return;
                 }
 
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file dipilih`;
-                counter.textContent = `${files.length} file`;
+                
+                if (!isPhoto) {
+                    if (isDokumenLpj) {
+                        counter.textContent = `${files.length} file`;
+                    } else {
+                        counter.textContent = `${files.length}/${MAX_FILES} file`;
+                        if (files.length >= MAX_FILES && maxWarning) {
+                            maxWarning.style.display = 'block';
+                        } else if (maxWarning) {
+                            maxWarning.style.display = 'none';
+                        }
+                    }
+                } else {
+                    // Hilangkan batasan jumlah upload foto jurnal
+                    counter.textContent = `${files.length} file`;
+                }
 
                 // Generate preview HTML
                 let previewHTML = '';
@@ -651,8 +800,18 @@
 
             function updateFileInput(type) {
                 const isPhoto = type === 'foto';
-                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
-                const input = isPhoto ? fotoInput : dokumenInput;
+                const isDokumenLpj = type === 'dokumenLpj';
+                let files = [];
+                
+                if (isPhoto) {
+                    files = selectedFotoFiles;
+                } else if (isDokumenLpj) {
+                    files = selectedDokumenLpjFiles;
+                } else {
+                    files = selectedDokumenFiles;
+                }
+                
+                const input = isPhoto ? fotoInput : (isDokumenLpj ? dokumenLpjInput : dokumenInput);
 
                 // Create new FileList using DataTransfer
                 const dt = new DataTransfer();
@@ -665,6 +824,7 @@
             // Global function to remove file
             window.removeFile = function(index, type) {
                 const isPhoto = type === 'foto';
+                const isDokumenLpj = type === 'dokumenLpj';
 
                 if (isPhoto) {
                     // Revoke object URL to prevent memory leaks for images
@@ -678,6 +838,8 @@
                         });
                     }
                     selectedFotoFiles.splice(index, 1);
+                } else if (isDokumenLpj) {
+                    selectedDokumenLpjFiles.splice(index, 1);
                 } else {
                     selectedDokumenFiles.splice(index, 1);
                 }
@@ -731,45 +893,29 @@
 
                     const input = wrapper.querySelector('input[type="file"]');
                     if (e.dataTransfer.files.length && input) {
-                        const type = input.id === 'foto_jurnal' ? 'foto' : 'dokumen';
+                        const type = input.id === 'foto_jurnal' ? 'foto' : (input.id === 'dokumen_lpj_pdf' ? 'dokumenLpj' : 'dokumen');
                         handleFileSelection(e.dataTransfer.files, type);
                     }
                 });
             });
 
             // Form submission
-            document.getElementById('sekretariatForm').addEventListener('submit', function(e) {
+            document.getElementById('kegiatanLainnyaForm').addEventListener('submit', function(e) {
                 // Convert currency values back to numbers
                 currencyInputs.forEach(inputId => {
                     const input = document.getElementById(inputId);
                     if (input && input.value) {
-                        // Remove all non-digit characters but preserve the actual value
-                        const numericValue = input.value.replace(/[^\d]/g, '');
-                        input.value = numericValue;
+                        input.value = input.value.replace(/[^\d]/g, '');
                     }
                 });
             });
-
-            // Volume and price calculation
-            const volumeInput = document.getElementById('volume');
-            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
-
-            if (volumeInput && unitPriceInput) {
-                volumeInput.addEventListener('input', calculateTotalPrice);
-                unitPriceInput.addEventListener('input', function() {
-                    setTimeout(calculateTotalPrice, 10);
-                });
-
-                volumeInput.addEventListener('blur', calculateTotalPrice);
-                unitPriceInput.addEventListener('blur', calculateTotalPrice);
-
-                calculateTotalPrice();
-            }
         });
 
-        function calculateTotalPrice() {
-            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
-            return;
-        }
+        // Field Total Anggaran diinput manual sesuai permintaan
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tidak ada kalkulasi otomatis karena field Total Anggaran diinput manual
+        });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/kegiatan-lainnya/create.blade.php ENDPATH**/ ?>
