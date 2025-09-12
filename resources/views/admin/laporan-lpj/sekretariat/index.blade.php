@@ -461,7 +461,7 @@
             @php
                 $percentage = ($target_anggaran > 0) ? ($current_budget / $target_anggaran) * 100 : 0;
             @endphp
-            <h1 class="fw-bold mb-1">Rp {{ number_format($current_budget, 0, ',', '.') }} / Rp {{ number_format($target_anggaran, 0, ',', '.') }}</h1>
+            <h1 class="fw-bold mb-1">Rp {{ number_format($current_budget, 0, ",", ".") }} / Rp {{ number_format($target_anggaran, 0, ",", ".") }}</h1>
             <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="{{ round($percentage, 2) }}% dari total anggaran">
                 {{ round($percentage) }}%
             </h3>
@@ -482,7 +482,8 @@
                 <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
                     {{ $kegiatan_count ?? 0 }} Kegiatan Berjalan
                 </span>
-                <span>/</span>
+                <span>/
+                </span>
                 <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
                     {{ $target_kegiatan ?? 0 }} Target Kegiatan
                 </span>
@@ -491,7 +492,7 @@
     </div>
     @endif
 
-    <div class="row col-12 mt-5">
+    <div class="col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
                 <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Sekretariat - 2025</h3>
@@ -923,10 +924,10 @@
         }[type] || 'alert-info';
 
         const notification = $(
-            `<div class="alert ${alertClass} alert-dismissible fade show notification-toast"
-                 role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+            `<div class=\"alert ${alertClass} alert-dismissible fade show notification-toast\"
+                 role=\"alert\" style=\"position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;\">
                 ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\"></button>
             </div>
         `);
 
@@ -995,7 +996,7 @@
                     <img src="/storage/${path}"
                          alt="Preview"
                          class="preview-image"
-                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>'">
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>">
                 `;
             } else {
                 if (fileExtension === 'pdf') {
@@ -1081,7 +1082,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.fire({
-                    title: 'Menghapus...',
+                    title: 'Menghapus...', 
                     text: 'Mohon tunggu',
                     allowOutsideClick: false,
                     showConfirmButton: false,
@@ -1203,7 +1204,7 @@
                                  class="w-100 h-100"
                                  style="object-fit: cover; cursor: pointer;"
                                  onclick="window.open('/storage/${path}', '_blank')"
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'d-flex align-items-center justify-content-center h-100 text-muted\'>Error loading image</div>'">
                             <div class="text-center small bg-light p-1">${name}</div>
                         </div>
                     </div>
@@ -1799,7 +1800,7 @@ $('#ajukanPerubahanBtn').on('click', function() {
                     <div>
                         <div class="fw-semibold required mb-3 text-gray-800">Target Anggaran</div>
                         <input type="text" name="target_anggaran" id="target_anggaran"
-                               value="Rp {{ number_format($target_anggaran ?? 0, 0, ',', '.') }}"
+                               value="Rp {{ number_format($target_anggaran ?? 0, 0, ",", ".") }}"
                                placeholder="Masukkan target anggaran"
                                class="form-control bg-light border border-gray-400" required />
                         <div class="invalid-feedback"></div>
