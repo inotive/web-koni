@@ -61,11 +61,24 @@ class SekretariatController extends Controller
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
+        // Get total budget and kegiatan count for sekretariat
+        $current_budget = Lpj::where('parent_id', $parentCategory->id)->sum('jumlah_harga');
+        $kegiatan_count = Lpj::where('parent_id', $parentCategory->id)->count();
+        $target_anggaran = $parentCategory->target_anggaran ?? 0;
+        $target_kegiatan = $parentCategory->target_kegiatan ?? 0;
+
         if ($request->ajax()) {
             return view('admin.laporan-lpj.sekretariat._table', compact('kegiatanLainnya'))->render();
         }
 
-        return view('admin.laporan-lpj.sekretariat.index', compact('kegiatanLainnya'));
+        return view('admin.laporan-lpj.sekretariat.index', compact(
+            'kegiatanLainnya', 
+            'current_budget', 
+            'kegiatan_count', 
+            'target_anggaran', 
+            'target_kegiatan',
+            'parentCategory'
+        ));
     }
 
     public function create()
@@ -522,6 +535,36 @@ class SekretariatController extends Controller
             
             // Return error response with redirect
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor laporan. Silakan coba lagi.');
+        }
+    }
+
+    /**
+     * Update target anggaran and kegiatan for sekretariat
+     */
+    public function updateTarget(Request $request)
+    {
+        $request->validate([
+            'target_anggaran' => 'required|numeric|min:0',
+            'target_kegiatan' => 'required|integer|min:0',
+        ]);
+
+        try {
+            $parentCategory = $this->getOrCreateParentCategory();
+            
+            $parentCategory->update([
+                'target_anggaran' => $request->target_anggaran,
+                'target_kegiatan' => $request->target_kegiatan,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Target berhasil diperbarui.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui target: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

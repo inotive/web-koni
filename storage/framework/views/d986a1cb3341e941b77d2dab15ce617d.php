@@ -400,12 +400,95 @@
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
         }
+
+        .top-progress-wrapper {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 20px 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
         <h1 class="text-dark fw-bold mb-1">Laporan Sekretariat</h1>
         
     </div>
+
+    <?php if(isset($current_budget) && isset($target_anggaran)): ?>
+    <div class="top-progress-wrapper mb-4">
+        <div class="d-flex justify-content-between mt-2">
+            <h1 class="text-muted mb-0">Total Anggaran</h1>
+            <span class="text-muted">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+            </span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <?php
+                $percentage = ($target_anggaran > 0) ? ($current_budget / $target_anggaran) * 100 : 0;
+            ?>
+            <h1 class="fw-bold mb-1">Rp <?php echo e(number_format($current_budget, 0, ',', '.')); ?> / Rp <?php echo e(number_format($target_anggaran, 0, ',', '.')); ?></h1>
+            <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="<?php echo e(round($percentage, 2)); ?>% dari total anggaran">
+                <?php echo e(round($percentage)); ?>%
+            </h3>
+        </div>
+
+        <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                role="progressbar"
+                style="width: <?php echo e($percentage); ?>%; background-color: #F8285A; border-radius: 12px;"
+                aria-valuenow="<?php echo e($percentage); ?>"
+                aria-valuemin="0"
+                aria-valuemax="100">
+            </div>
+        </div>
+
+        <div class="d-flex flex-row-reverse bd-highlight mt-2">
+            <div class="info-label mt-1 d-flex align-items-center gap-2">
+                <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
+                    <?php echo e($kegiatan_count ?? 0); ?> Kegiatan Berjalan
+                </span>
+                <span>/</span>
+                <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
+                    <?php echo e($target_kegiatan ?? 0); ?> Target Kegiatan
+                </span>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <div class="row col-12 mt-5">
         <div class="card">
@@ -1633,8 +1716,114 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 $('#pengajuan_lpj_id').val('');
             });
 
+            // Utility function to format rupiah
+            const formatRupiah = (angka, prefix = 'Rp ') => {
+                const number = String(angka).replace(/[^\d]/g, '');
+                const split = number.split(',');
+                const sisa = split[0].length % 3;
+                let rupiah = split[0].substr(0, sisa);
+                const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    const separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                return prefix + (split[1] ? rupiah + ',' + split[1] : rupiah);
+            };
+
+            const unformatRupiah = (rupiah) => parseInt(String(rupiah).replace(/[^0-9]/g, '')) || 0;
+
+            // Format rupiah input
+            $('#target_anggaran').on('keyup', function() {
+                $(this).val(formatRupiah($(this).val()));
+            });
+
+            // Save target button
+            $('#saveTargetBtn').on('click', function() {
+                const $submitBtn = $(this);
+                const $targetInput = $('#target_anggaran');
+                const unformattedValue = unformatRupiah($targetInput.val());
+
+                $targetInput.val(unformattedValue);
+                const formData = $('#editTargetForm').serialize();
+                $targetInput.val(formatRupiah(unformattedValue));
+
+                $submitBtn.addClass('btn-loading').prop('disabled', true);
+
+                $.ajax({
+                    url: "<?php echo e(route('admin.laporan-lpj.sekretariat.update-target')); ?>",
+                    type: 'POST',
+                    data: formData,
+                    headers: { 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>' },
+                    success: function(response) {
+                        $submitBtn.removeClass('btn-loading').prop('disabled', false);
+
+                        if (response.success) {
+                            $('#editTargetModal').modal('hide');
+                            showNotification('Target berhasil diperbarui.', 'success');
+                            setTimeout(() => window.location.reload(), 100);
+                        } else {
+                            showNotification(response.message || 'Gagal memperbarui target.', 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        $submitBtn.removeClass('btn-loading').prop('disabled', false);
+
+                        if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                            Object.entries(xhr.responseJSON.errors).forEach(([field, messages]) => {
+                                const $field = $('#editTargetForm').find(`[name="${field}"]`);
+                                $field.addClass('is-invalid');
+                                $field.siblings('.invalid-feedback').text(messages.join(', '));
+                            });
+                        } else {
+                            showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                        }
+                    }
+                });
+            });
+
         });
     </script>
+
+    
+    <div class="modal fade" id="editTargetModal" tabindex="-1" aria-labelledby="editTargetModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="fs-2 fw-bold leading-5">Edit Target Anggaran & Kegiatan</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="editTargetForm" class="d-grid gap-4">
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Target Anggaran</div>
+                        <input type="text" name="target_anggaran" id="target_anggaran"
+                               value="Rp <?php echo e(number_format($target_anggaran ?? 0, 0, ',', '.')); ?>"
+                               placeholder="Masukkan target anggaran"
+                               class="form-control bg-light border border-gray-400" required />
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Target Kegiatan</div>
+                        <input type="number" name="target_kegiatan" id="target_kegiatan"
+                               value="<?php echo e($target_kegiatan ?? 0); ?>"
+                               placeholder="Masukkan jumlah target kegiatan"
+                               class="form-control bg-light border border-gray-400" required />
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </form>
+
+                <div class="d-grid py-4">
+                    <button type="button" id="saveTargetBtn"
+                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                        <span class="btn-text">Simpan Target</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/laporan-lpj/sekretariat/index.blade.php ENDPATH**/ ?>
