@@ -440,40 +440,30 @@ class CabangOlahragaController extends Controller
                 // ✅ FIXED: Add UTF-8 BOM for proper Excel encoding
                 fwrite($handle, "\xEF\xBB\xBF");
 
-                // ✅ FIXED: Proper CSV Headers for Cabang Olahraga
+                // ✅ FIXED: Proper CSV Headers for Cabang Olahraga (without singkatan, total data, terakhir update, and tanggal dibuat)
                 $headers = [
                     'No',
                     'Nama Cabang Olahraga',
-                    'Singkatan',
                     'Ketua Penanggung Jawab',
                     'Status',
                     'Tanggal Pembentukan',
                     'Jumlah Atlet',
-                    'Jumlah Pelatih',
-                    'Total Data',
-                    'Terakhir Update',
-                    'Tanggal Dibuat'
+                    'Jumlah Pelatih'
                 ];
                 
                 fputcsv($handle, $headers);
 
-                // ✅ FIXED: Data rows with proper formatting
+                // ✅ FIXED: Data rows with proper formatting (without singkatan, total data, terakhir update, and tanggal dibuat)
                 foreach ($cabors as $index => $cabor) {
                     $row = [
                         $index + 1,
                         $cabor->nama_cabor ?? '-',
-                        $cabor->singkatan ?? '-',
                         $cabor->ketua_penanggung_jawab ?? '-',
                         $cabor->status ?? '-',
                         $cabor->tanggal_pembentukan ? 
                             \Carbon\Carbon::parse($cabor->tanggal_pembentukan)->format('d/m/Y') : '-',
                         $cabor->atlets_count ?? 0,
-                        $cabor->pelatihs_count ?? 0,
-                        ($cabor->atlets_count ?? 0) + ($cabor->pelatihs_count ?? 0),
-                        $cabor->terakhir_update ? 
-                            \Carbon\Carbon::parse($cabor->terakhir_update)->format('d/m/Y H:i:s') : '-',
-                        $cabor->created_at ? 
-                            \Carbon\Carbon::parse($cabor->created_at)->format('d/m/Y H:i:s') : '-'
+                        $cabor->pelatihs_count ?? 0
                     ];
                     
                     fputcsv($handle, $row);
