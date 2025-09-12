@@ -11,6 +11,11 @@ use Illuminate\Support\Str; // Tambahkan ini
 
 class KegiatanLainnyaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:laporan-lpj-kegiatan-lainnya');
+    }
+
     // Konstanta untuk mengidentifikasi jenis kegiatan kegiatan-lainnya
     const PARENT_CATEGORY = 'kegiatan-lainnya';
 

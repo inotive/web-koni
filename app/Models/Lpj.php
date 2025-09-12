@@ -30,7 +30,9 @@ class Lpj extends Model
         'is_approved',
         'approved_by',
         'approved_at',
-        'catatan_approval'
+        'catatan_approval',
+        'target_anggaran',
+        'target_kegiatan'
     ];
 
     protected $casts = [
@@ -40,6 +42,8 @@ class Lpj extends Model
         'foto_jurnal' => 'array',
         'is_approved' => 'boolean',
         'approved_at' => 'datetime',
+        'target_anggaran' => 'decimal:2',
+        'target_kegiatan' => 'integer'
     ];
 
     public function setJumlahHargaSatuanAttribute($value)

@@ -390,6 +390,27 @@
             box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
         }
 
+        #export-pdf-btn {
+            background-color: #e63946;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(230, 57, 70, 0.3);
+        }
+
+        #export-pdf-btn:hover {
+            background-color: #d62828;
+            box-shadow: 0 3px 8px rgba(214, 40, 40, 0.4);
+            transform: translateY(-1px);
+        }
+
         #ajukanPerubahanBtn:hover {
             background-color: #43a047; /* Slightly darker on hover */
             box-shadow: 0 3px 8px rgba(76, 175, 80, 0.4);
@@ -401,6 +422,45 @@
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
         }
+
+        .top-progress-wrapper {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 20px 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -408,7 +468,52 @@
         {{-- <div class="text-muted fw-semibold fs-6">Manajemen Laporan Sekretariat Anda Sekarang</div> --}}
     </div>
 
-    <div class="row col-12 mt-5">
+    @if(isset($current_budget) && isset($target_anggaran))
+    <div class="top-progress-wrapper mb-4">
+        <div class="d-flex justify-content-between mt-2">
+            <h1 class="text-muted mb-0">Total Anggaran</h1>
+            <span class="text-muted">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+            </span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            @php
+                $percentage = ($target_anggaran > 0) ? ($current_budget / $target_anggaran) * 100 : 0;
+            @endphp
+            <h1 class="fw-bold mb-1">Rp {{ number_format($current_budget, 0, ",", ".") }} / Rp {{ number_format($target_anggaran, 0, ",", ".") }}</h1>
+            <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="{{ round($percentage, 2) }}% dari total anggaran">
+                {{ round($percentage) }}%
+            </h3>
+        </div>
+
+        <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                role="progressbar"
+                style="width: {{ $percentage }}%; background-color: #F8285A; border-radius: 12px;"
+                aria-valuenow="{{ $percentage }}"
+                aria-valuemin="0"
+                aria-valuemax="100">
+            </div>
+        </div>
+
+        <div class="d-flex flex-row-reverse bd-highlight mt-2">
+            <div class="info-label mt-1 d-flex align-items-center gap-2">
+                <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
+                    {{ $kegiatan_count ?? 0 }} Kegiatan Berjalan
+                </span>
+                <span>/
+                </span>
+                <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
+                    {{ $target_kegiatan ?? 0 }} Target Kegiatan
+                </span>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <div class="col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
                 <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Sekretariat - 2025</h3>
@@ -501,20 +606,19 @@
             </div>
         </div>
     </div>
-        <!-- Modal Detail Card -->
+    <!-- Modal Detail Card -->
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header d-flex align-items-center" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
-                    <div class="d-flex align-items-center gap-3">
-                        <h5 class="modal-title mb-0" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
-                        <!-- Status Icon -->
-                        <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
-                    </div>
+                <div class="modal-header d-flex align-items-center"
+                    style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
+                    <h5 class="modal-title me-1" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
+                    <span id="statusIcon" class="ms-2 fs-6 gap-3"></span>
+
                     <div class="ms-auto d-flex align-items-center gap-2">
-                        <button type="button" id="exportBtn" class="btn btn-primary">
-                            <i class="fas fa-file-export"></i>
-                            <strong>Export</strong>
+                        <button type="button" id="export-pdf-btn" class="btn">
+                            <i class="fa-solid fa-file-export" style="color: white"></i>
+                            Export Data
                         </button>
                         <button type="button" id="ajukanPerubahanBtn" class="btn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i>
@@ -524,6 +628,7 @@
                     </div>
                 </div>
                 <div class="modal-body" id="detailModalBody">
+                    {{-- Populated by JS --}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -840,10 +945,10 @@
         }[type] || 'alert-info';
 
         const notification = $(
-            `<div class="alert ${alertClass} alert-dismissible fade show notification-toast"
-                 role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+            `<div class=\"alert ${alertClass} alert-dismissible fade show notification-toast\"
+                 role=\"alert\" style=\"position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;\">
                 ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"alert\"></button>
             </div>
         `);
 
@@ -912,7 +1017,7 @@
                     <img src="/storage/${path}"
                          alt="Preview"
                          class="preview-image"
-                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>'">
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>">
                 `;
             } else {
                 if (fileExtension === 'pdf') {
@@ -998,7 +1103,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.fire({
-                    title: 'Menghapus...',
+                    title: 'Menghapus...', 
                     text: 'Mohon tunggu',
                     allowOutsideClick: false,
                     showConfirmButton: false,
@@ -1067,256 +1172,163 @@
         });
     };
 
+    // REPLACED FUNCTION
     window.showDetailModal = function(data) {
-    const modalBody = document.getElementById('detailModalBody');
-    const statusIcon = document.getElementById('statusIcon');
+        const modalBody = document.getElementById('detailModalBody');
+        const statusIcon = document.getElementById('statusIcon');
+        const exportBtn = document.getElementById('export-pdf-btn');
+        const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
 
-    if (!modalBody) {
-        console.error('Modal body not found');
-        return;
-    }
-
-    // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id
-    if (statusIcon) {
-        // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
-        // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
-        const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
-        const hasApprovalPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
-        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
-
-        // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
-        if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
-            statusIcon.innerHTML = 'Terbuka';
-            statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
-        } else {
-            statusIcon.innerHTML = 'Terkunci';
-            statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+        if (exportBtn) {
+            exportBtn.setAttribute('data-lpj-id', data.id);
+            // exportBtn.style.backgroundColor = '#e63946'; // Red color
         }
-    }
 
-    // Simpan ID LPJ dalam data modal
-    if (data && data.id) {
+        // Status indicator & Button Logic
+        if (statusIcon && ajukanBtn) {
+            const pengajuan = data.pengajuan && data.pengajuan.length > 0 ? data.pengajuan.find(p => p.status === 'disetujui') : null;
+            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }} && pengajuan && pengajuan.token > 0;
+            const canModify = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }} || isModifiable;
+
+            if (canModify) {
+                statusIcon.innerHTML = 'Terbuka';
+                statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7';
+                ajukanBtn.style.display = 'none'; // Hide "Ajukan Perubahan"
+                exportBtn.style.display = ''; // Show "Export"
+            } else {
+                statusIcon.innerHTML = 'Terkunci';
+                statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7';
+                ajukanBtn.style.display = ''; // Show "Ajukan Perubahan"
+                exportBtn.style.display = ''; // Export is always visible
+            }
+        }
+
         $('#detailModal').data('lpj-id', data.id);
-    } else {
-        console.error('Data ID tidak ditemukan:', data);
-    }
 
-    const formatRupiah = (num) => {
-        if (!num) return 'Rp 0';
-        return 'Rp ' + parseInt(num).toLocaleString('id-ID');
-    };
+        const formatRupiah = (num) => 'Rp ' + (parseInt(num, 10) || 0).toLocaleString('id-ID');
 
-    let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-    if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
-        fotoJurnalHtml = `
-            <div class="row g-3">
-                ${data.foto_jurnal.map(f => {
-                    const path = typeof f === 'object' ? f.path : f;
-                    const name = typeof f === 'object' ? (f.original_name || path.split('/').pop()) : path.split('/').pop();
-                    return `
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded overflow-hidden" style="height: 120px;">
-                            <img src="/storage/${path}"
-                                 class="w-100 h-100"
-                                 style="object-fit: cover; cursor: pointer;"
-                                 onclick="window.open('/storage/${path}', '_blank')"
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
-                            <div class="text-center small bg-light p-1">${name}</div>
-                        </div>
-                    </div>
-                `}).join('')}
-            </div>
-        `;
-    }
-
-    let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-    if (data.dokumen_lpj && Array.isArray(data.dokumen_lpj) && data.dokumen_lpj.length > 0) {
-        dokumenHtml = `
-            <div class="d-flex flex-column gap-2">
-                ${data.dokumen_lpj.map(d => {
-                    const path = typeof d === 'object' ? d.path : d;
-                    const name = typeof d === 'object' ? (d.original_name || path.split('/').pop()) : path.split('/').pop();
-                    const extension = name.split('.').pop().toLowerCase();
-
-                    let iconClass = 'fas fa-file text-secondary';
-                    if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
-                    else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
-                    else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
-                    else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
-
-                    return `
-                        <div class="d-flex align-items-center p-2 border rounded bg-light">
-                            <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
-                            <div class="flex-grow-1">
-                                <div class="fw-medium text-dark">${name}</div>
-                                <small class="text-muted">${extension.toUpperCase()}</small>
+        let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+        if (data.foto_jurnal && data.foto_jurnal.length) {
+            fotoJurnalHtml = `
+                <div class="row g-3">
+                    ${data.foto_jurnal.map(f => {
+                        const path = typeof f === 'object' ? f.path : f;
+                        return `
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded overflow-hidden" style="height:120px">
+                                <img src="/storage/${path}" class="w-100 h-100"
+                                    style="object-fit:cover;cursor:pointer"
+                                    onclick="showPreviewModal(${JSON.stringify(data.foto_jurnal)}, 'image', 'Foto Kegiatan')">
                             </div>
-                            <a href="/storage/${path}"
-                               target="_blank"
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-download me-1"></i>Unduh
-                            </a>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-        `;
-    }
+                        </div>`
+                    }).join('')}
+                </div>`;
+        }
 
-    // Tampilkan dokumen LPJ PDF jika ada
-    let dokumenLpjPdfHtml = '';
-    if (data.dokumen_lpj_pdf) {
-        const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
-        const name = typeof data.dokumen_lpj_pdf === 'object' ?
-            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) :
-            path.split('/').pop();
-
-        dokumenLpjPdfHtml = `
+        let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+        if (data.dokumen_lpj && data.dokumen_lpj.length) {
+            dokumenHtml = `
+                <div class="d-flex flex-column gap-2">
+                    ${data.dokumen_lpj.map(d => {
+                        const path = typeof d === 'object' ? d.path : d;
+                        const name = path.split('/').pop();
+                        const ext = name.split('.').pop().toLowerCase();
+                        const icon = getFileIcon(ext);
+                        return `
+                            <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                <i class="${icon} me-3" style="font-size:1.2em"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-medium">${name}</div>
+                                    <small class="text-muted">${ext.toUpperCase()}</small>
+                                </div>
+                                <a href="/storage/${path}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                    <i class="fas fa-download me-1"></i>Unduh
+                                </a>
+                            </div>`;
+                    }).join('')}
+                </div>`;
+        }
+        
+        let dokumenLpjPdfHtml = '';
+        if (data.dokumen_lpj_pdf) {
+            const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
+            const name = path.split('/').pop();
+            dokumenLpjPdfHtml = `
             <div class="mb-3">
-                <label class="fw-semibold text-dark mb-2 d-block">
-                    <i class="fas fa-file-pdf text-danger me-1"></i>Dokumen LPJ (PDF):
-                </label>
+                <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-pdf text-danger me-1"></i>Dokumen LPJ (PDF):</label>
                 <div class="bg-light p-3 rounded">
                     <div class="d-flex align-items-center p-2 border rounded bg-white">
-                        <i class="fas fa-file-pdf text-danger me-3" style="font-size: 1.2em;"></i>
+                        <i class="fas fa-file-pdf text-danger me-3" style="font-size:1.2em"></i>
                         <div class="flex-grow-1">
-                            <div class="fw-medium text-dark">${name}</div>
+                            <div class="fw-medium">${name}</div>
                             <small class="text-muted">PDF</small>
                         </div>
-                        <a href="/storage/${path}"
-                           target="_blank"
-                           class="btn btn-outline-danger btn-sm">
+                        <a href="/storage/${path}" target="_blank" class="btn btn-outline-danger btn-sm">
                             <i class="fas fa-download me-1"></i>Unduh
                         </a>
                     </div>
                 </div>
-            </div>
-        `;
-    }
+            </div>`;
+        }
 
-    modalBody.innerHTML = `
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <div class="mb-4">
-                    <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Informasi Kegiatan
-                    </h6>
-                    <div class="bg-light p-3 rounded">
-                        <div class="mb-2">
-                            <label class="fw-semibold text-dark mb-1">Nama Program:</label>
-                            <p class="mb-0 text-dark">${data.nama_program || 'N/A'}</p>
-                        </div>
-                        ${data.nama_kegiatan ? `
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
-                                <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
-                            </div>
-                        ` : ''}
-                        ${data.volume ? `
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Volume:</label>
-                                <p class="mb-0 text-dark">${data.volume}</p>
-                            </div>
-                        ` : ''}
-                        ${data.tempat_kegiatan ? `
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
-                            </div>
-                        ` : ''}
-                        ${data.tanggal_kegiatan ? `
-                            <div>
-                                <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
 
-                ${data.jumlah_harga_satuan || data.jumlah_harga ? `
+        modalBody.innerHTML = `
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
                     <div class="mb-4">
-                        <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
-                            <i class="fas fa-calculator me-2"></i>
-                            Total Anggaran
-                        </h6>
+                        <h6 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Informasi Kegiatan</h6>
+                        <div class="bg-light p-3 rounded">
+                            <div class="mb-2">
+                                <label class="fw-semibold mb-1">Nama Program:</label>
+                                <p class="mb-0">${data.nama_program || 'N/A'}</p>
+                            </div>
+                            ${data.nama_kegiatan ? `
+                                <div class="mb-2">
+                                    <label class="fw-semibold mb-1">Nama Kegiatan:</label>
+                                    <p class="mb-0">${data.nama_kegiatan}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
                         <div class="bg-light p-3 rounded">
                             <div class="row g-3">
-                                ${data.jumlah_harga_satuan ? `
-                                    <div class="col-md-6">
-                                        <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
-                                        <p class="mb-0 text-success fs-6 fw-bold">${formatRupiah(data.jumlah_harga_satuan)}</p>
-                                    </div>
-                                ` : ''}
-                                ${data.jumlah_harga ? `
-                                    <div class="col-md-6">
-                                        <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
-                                    </div>
-                                ` : ''}
+                                <div class="col-md-12">
+                                    <label class="fw-semibold mb-1">Total Anggaran:</label>
+                                    <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                ` : ''}
 
-                ${data.sumber_dana ? `
                     <div class="mb-4">
-                        <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
-                            <i class="fas fa-money-bill me-2"></i>
-                            Sumber Dana
-                        </h6>
-                        <div class="bg-light p-3 rounded">
-                            <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                        <h6 class="fw-bold text-warning mb-3"><i class="fas fa-paperclip me-2"></i>Lampiran</h6>
+                        <div class="mb-3">
+                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-camera me-1"></i>Foto Jurnal:</label>
+                            <div class="bg-light p-3 rounded">${fotoJurnalHtml}</div>
                         </div>
-                    </div>
-                ` : ''}
-
-                <div class="mb-4">
-                    <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
-                        <i class="fas fa-paperclip me-2"></i>
-                        Lampiran
-                    </h6>
-
-                    <div class="mb-3">
-                        <label class="fw-semibold text-dark mb-2 d-block">
-                            <i class="fas fa-camera me-1"></i>Foto Jurnal:
-                        </label>
-                        <div class="bg-light p-3 rounded">
-                            ${fotoJurnalHtml}
+                        ${dokumenLpjPdfHtml}
+                        <div>
+                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
+                            <div class="bg-light p-3 rounded">${dokumenHtml}</div>
                         </div>
                     </div>
 
-                    ${dokumenLpjPdfHtml}
-
-                    <div>
-                        <label class="fw-semibold text-dark mb-2 d-block">
-                            <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
-                        </label>
-                        <div class="bg-light p-3 rounded">
-                            ${dokumenHtml}
+                    ${data.keterangan_tambahan ? `
+                        <div class="mb-2">
+                            <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
+                            <div class="bg-light p-3 rounded"><p class="mb-0" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p></div>
                         </div>
-
-                          ${data.keterangan_tambahan ? `
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
-                            <i class="fas fa-sticky-note me-2"></i>
-                            Keterangan Tambahan
-                        </h6>
-                        <div class="bg-light p-3 rounded">
-                            <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
-                        </div>
-                    </div>
-                    </div>
+                    ` : ''}
                 </div>
             </div>
-        </div>
+        `;
 
+        new bootstrap.Modal(document.getElementById('detailModal')).show();
+    };
 
-                ` : ''}
-    `;
-
-    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-    modal.show();
-};
 
     window.showPreviewModal = function(files, type, title) {
         if (!files || !Array.isArray(files) || files.length === 0) {
@@ -1565,33 +1577,15 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
             });
 
-            $('#exportBtn').on('click', function() {
+            $('#export-pdf-btn').on('click', function() {
                 const lpjId = $('#detailModal').data('lpj-id');
 
-                // Periksa apakah ID tersedia
                 if (!lpjId) {
-                    alert('Terjadi kesalahan: ID laporan tidak ditemukan. Silakan coba muat ulang halaman.');
-                    console.error('ID laporan tidak ditemukan di data modal');
+                    alert('Terjadi kesalahan: ID laporan tidak ditemukan.');
                     return;
                 }
-
-                // Validasi ID
-                if (isNaN(lpjId) || lpjId <= 0) {
-                    alert('Terjadi kesalahan: ID laporan tidak valid.');
-                    console.error('ID laporan tidak valid:', lpjId);
-                    return;
-                }
-
-                // Redirect to export route
                 const exportUrl = `/admin/laporan-lpj/sekretariat/${lpjId}/export`;
-                console.log('Membuka URL export:', exportUrl);
-
-                const exportWindow = window.open(exportUrl, '_blank');
-
-                // Periksa apakah window.open berhasil
-                if (!exportWindow) {
-                    alert('Popup blocker mencegah pembukaan jendela export. Silakan izinkan popup untuk situs ini.');
-                }
+                window.open(exportUrl, '_blank');
             });
 
             $('#submitPengajuanBtn').on('click', function() {
@@ -1633,6 +1627,112 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 $('#pengajuan_lpj_id').val('');
             });
 
+            // Utility function to format rupiah
+            const formatRupiah = (angka, prefix = 'Rp ') => {
+                const number = String(angka).replace(/[^\d]/g, '');
+                const split = number.split(',');
+                const sisa = split[0].length % 3;
+                let rupiah = split[0].substr(0, sisa);
+                const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    const separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                return prefix + (split[1] ? rupiah + ',' + split[1] : rupiah);
+            };
+
+            const unformatRupiah = (rupiah) => parseInt(String(rupiah).replace(/[^0-9]/g, '')) || 0;
+
+            // Format rupiah input
+            $('#target_anggaran').on('keyup', function() {
+                $(this).val(formatRupiah($(this).val()));
+            });
+
+            // Save target button
+            $('#saveTargetBtn').on('click', function() {
+                const $submitBtn = $(this);
+                const $targetInput = $('#target_anggaran');
+                const unformattedValue = unformatRupiah($targetInput.val());
+
+                $targetInput.val(unformattedValue);
+                const formData = $('#editTargetForm').serialize();
+                $targetInput.val(formatRupiah(unformattedValue));
+
+                $submitBtn.addClass('btn-loading').prop('disabled', true);
+
+                $.ajax({
+                    url: "{{ route('admin.laporan-lpj.sekretariat.update-target') }}",
+                    type: 'POST',
+                    data: formData,
+                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    success: function(response) {
+                        $submitBtn.removeClass('btn-loading').prop('disabled', false);
+
+                        if (response.success) {
+                            $('#editTargetModal').modal('hide');
+                            showNotification('Target berhasil diperbarui.', 'success');
+                            setTimeout(() => window.location.reload(), 100);
+                        } else {
+                            showNotification(response.message || 'Gagal memperbarui target.', 'error');
+                        }
+                    },
+                    error: function(xhr) {
+                        $submitBtn.removeClass('btn-loading').prop('disabled', false);
+
+                        if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                            Object.entries(xhr.responseJSON.errors).forEach(([field, messages]) => {
+                                const $field = $('#editTargetForm').find(`[name="${field}"]`);
+                                $field.addClass('is-invalid');
+                                $field.siblings('.invalid-feedback').text(messages.join(', '));
+                            });
+                        } else {
+                            showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                        }
+                    }
+                });
+            });
+
         });
     </script>
+
+    {{-- Edit Target Modal --}}
+    <div class="modal fade" id="editTargetModal" tabindex="-1" aria-labelledby="editTargetModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="fs-2 fw-bold leading-5">Edit Target Anggaran & Kegiatan</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="editTargetForm" class="d-grid gap-4">
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Target Anggaran</div>
+                        <input type="text" name="target_anggaran" id="target_anggaran"
+                               value="Rp {{ number_format($target_anggaran ?? 0, 0, ",", ".") }}"
+                               placeholder="Masukkan target anggaran"
+                               class="form-control bg-light border border-gray-400" required />
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Target Kegiatan</div>
+                        <input type="number" name="target_kegiatan" id="target_kegiatan"
+                               value="{{ $target_kegiatan ?? 0 }}"
+                               placeholder="Masukkan jumlah target kegiatan"
+                               class="form-control bg-light border border-gray-400" required />
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </form>
+
+                <div class="d-grid py-4">
+                    <button type="button" id="saveTargetBtn"
+                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                        <span class="btn-text">Simpan Target</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
