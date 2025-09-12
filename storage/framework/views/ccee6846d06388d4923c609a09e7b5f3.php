@@ -679,6 +679,15 @@
                     </span>
                 </div>
             </div>
+            <div class="flex-shrink-0 ms-3">
+                
+                <a href="<?php echo e(route('admin.konfigurasi.cabang-olahraga.export-gabungan', $cabor->id)); ?>" 
+                   class="btn btn-success" id="export-gabungan-btn" title="Export Data Atlet dan Pelatih ke Excel">
+                    <i class="fas fa-file-excel me-2"></i>
+                    <span class="d-none d-sm-inline">Export Data Lengkap</span>
+                    <span class="d-sm-none">Export</span>
+                </a>
+            </div>
         </div>
 
         
@@ -726,14 +735,6 @@
                                     </div>
                                     <div class="card-toolbar">
                                         <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
-                                            
-                                            <a href="<?php echo e(route('admin.konfigurasi.cabang-olahraga.export-gabungan', $cabor->id)); ?>" 
-                                               class="btn btn-primary" id="export-gabungan-btn" title="Export Data Atlet dan Pelatih ke Excel">
-                                                <i class="fas fa-file-excel me-1"></i>
-                                                <span class="d-none d-sm-inline">Export Gabungan</span>
-                                                <span class="d-sm-none">Export</span>
-                                            </a>
-                                            
                                             
                                             <div class="d-flex align-items-center position-relative">
                                                 <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
@@ -939,14 +940,6 @@
                                     </div>
                                     <div class="card-toolbar">
                                         <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
-                                            
-                                            <a href="<?php echo e(route('admin.konfigurasi.cabang-olahraga.export-gabungan', $cabor->id)); ?>" 
-                                               class="btn btn-primary" id="export-gabungan-btn" title="Export Data Atlet dan Pelatih ke Excel">
-                                                <i class="fas fa-file-excel me-1"></i>
-                                                <span class="d-none d-sm-inline">Export Gabungan</span>
-                                                <span class="d-sm-none">Export</span>
-                                            </a>
-                                            
                                             
                                             <div class="d-flex align-items-center position-relative">
                                                 <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
