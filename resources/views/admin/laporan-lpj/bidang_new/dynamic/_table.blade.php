@@ -95,7 +95,13 @@
                         </td>
                         {{-- <td>{{ $data->volume }}</td>
                         <td>Rp {{ number_format($data->jumlah_harga_satuan, 0, ',', '.') }}</td> --}}
-                        <td>Rp {{ number_format($data->jumlah_harga, 0, ',', '.') }}</td>
+                        <td>
+                            <div d-flex flex-column>
+                                <p class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="Rp. {{ number_format($data->jumlah_harga, 0, ',', '.') }}">
+                                    Rp {{ number_format($data->jumlah_harga, 0, ',', '.') }}
+                                </p>
+                            </div>
+                        </td>
                         <td>
                             @if ($data->foto_jurnal && count($data->foto_jurnal) > 0)
                                 <button type="button"

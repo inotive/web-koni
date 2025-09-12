@@ -12,11 +12,10 @@
                         $columns = [
                             ['key' => null, 'title' => 'No', 'sortable' => false],
                             ['key' => 'nama_program', 'title' => 'Nama Program & Kegiatan'],
-                            ['key' => 'volume', 'title' => 'Volume'],
-                            ['key' => 'jumlah_harga_satuan', 'title' => 'Jumlah Harga Satuan'],
-                            ['key' => 'jumlah_harga', 'title' => 'Jumlah Harga'],
+                            ['key' => 'jumlah_harga', 'title' => 'Total Anggaran'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
+                            ['key' => null, 'title' => 'Dokumen LPJ', 'sortable' => false],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
                     ?>
@@ -55,8 +54,6 @@
                                 <?php endif; ?>
                             </div>
                         </td>
-                        <td class="text-start"><?php echo e($kegiatan->volume); ?></td>
-                        <td class="text-start">Rp <?php echo e(number_format($kegiatan->jumlah_harga_satuan, 0, ',', '.')); ?></td>
                         <td class="text-start">Rp <?php echo e(number_format($kegiatan->jumlah_harga, 0, ',', '.')); ?></td>
                         <td class="text-start">
                             <?php if($kegiatan->foto_jurnal && count($kegiatan->foto_jurnal) > 0): ?>
@@ -79,6 +76,20 @@
                                     <i class="fas fa-file-alt me-1"></i><?php echo e(count($kegiatan->dokumen_lpj)); ?>
 
                                     Dokumen
+                                </button>
+                            <?php else: ?>
+                                <span class="text-muted">-</span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="text-start">
+                            <?php if($kegiatan->dokumen_lpj_pdf && count($kegiatan->dokumen_lpj_pdf) > 0): ?>
+                                <button type="button" class="btn btn-sm btn-light-danger preview-btn"
+                                    data-bs-toggle="modal" data-bs-target="#previewModal" data-type="document"
+                                    data-files="<?php echo e(json_encode($kegiatan->dokumen_lpj_pdf)); ?>"
+                                    data-title="Dokumen LPJ - <?php echo e($kegiatan->nama_program); ?>">
+                                    <i class="fas fa-file-pdf me-1"></i><?php echo e(count($kegiatan->dokumen_lpj_pdf)); ?>
+
+                                    PDF
                                 </button>
                             <?php else: ?>
                                 <span class="text-muted">-</span>
@@ -179,7 +190,7 @@
                     </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
-                        <td colspan="8" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                        <td colspan="6" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                     </tr>
                 <?php endif; ?>
             </tbody>

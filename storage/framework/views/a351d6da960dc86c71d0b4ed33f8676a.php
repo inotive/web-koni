@@ -372,6 +372,46 @@
         <div class="text-muted fw-semibold fs-6">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</div>
     </div>
 
+    <div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="flex-shrink-0 me-3">
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                        <i class="fas fa-list-alt fs-2 text-primary"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="text-muted mb-1 fw-normal">Total Kegiatan</h6>
+                     <h3 class="mb-0 fw-bold text-dark" id="total-kegiatan">
+                            <?php echo e($totalKegiatan ?? $kegiatanLainnya->total() ?? 0); ?>/10
+                        </h3>
+                    <small class="text-muted">Kegiatan terdaftar</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center">
+                <div class="flex-shrink-0 me-3">
+                    <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                        <i class="fas fa-money-bill-wave fs-2 text-success"></i>
+                    </div>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="text-muted mb-1 fw-normal">Total Anggaran</h6>
+                    <h3 class="mb-0 fw-bold text-dark" id="total-anggaran">
+                            <?php echo e(number_format($totalAnggaran ?? 0, 0, ',', '.')); ?>/200.000.000.000
+                        </h3>
+                    <small class="text-muted">Anggaran keseluruhan</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     <div class="row col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
@@ -476,6 +516,11 @@
                         <div id="statusIconContainer" class="d-flex align-items-center me-2">
                             <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
                         </div>
+                        
+                        <!-- Tombol Export -->
+                        <a href="#" id="exportBtn" class="btn btn-success btn-sm" target="_blank">
+                            <i class="fas fa-file-pdf me-1"></i> Export PDF
+                        </a>
                         
                         <button type="button" id="ajukanPerubahanBtn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i> <strong>Ajukan Perubahan</strong>
@@ -1030,10 +1075,16 @@
     window.showDetailModal = function(data) {
     const modalBody = document.getElementById('detailModalBody');
     const statusIcon = document.getElementById('statusIcon');
+    const exportBtn = document.getElementById('exportBtn');
 
     if (!modalBody) {
         console.error('Modal body not found');
         return;
+    }
+
+    // Set URL export berdasarkan ID kegiatan
+    if (exportBtn && data && data.id) {
+        exportBtn.href = `/admin/laporan-lpj/kegiatan-lainnya/${data.id}/export`;
     }
 
     // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id
@@ -1175,7 +1226,7 @@
                                 ` : ''}
                                 ${data.jumlah_harga ? `
                                     <div class="col-md-6">
-                                        <label class="fw-semibold text-dark mb-1">Total Harga:</label>
+                                        <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
                                         <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                     </div>
                                 ` : ''}
@@ -1329,6 +1380,25 @@
             'page': 1
         });
     });
+
+    function updateSummaryCards() {
+    const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(':contains("Data tidak ditemukan")');
+    const totalKegiatan = tableRows.length;
+    
+    let totalAnggaran = 0;
+    tableRows.each(function() {
+        const anggaranText = $(this).find('td').eq(2).text().trim();
+        if (anggaranText && anggaranText !== '-') {
+            const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
+            totalAnggaran += anggaranValue;
+        }
+    });
+    
+    $('#total-kegiatan').text(totalKegiatan);
+    $('#total-anggaran').text('Rp ' + totalAnggaran.toLocaleString('id-ID'));
+}
+
+// Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
 
     $(document).on('change', 'select[name="per_page"]', function() {
         const perPage = $(this).val();

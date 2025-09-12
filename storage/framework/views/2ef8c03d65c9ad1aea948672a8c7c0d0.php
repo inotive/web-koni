@@ -827,19 +827,28 @@ $(document).ready(function() {
 
         // Status indicator
         if (statusIcon) {
-            const canModify = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
-            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
+            const canPengajuanModifikasi = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
+            const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
+            const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
+            const hasToken = pengajuan && pengajuan.token > 0;
 
-            if (canModify || isModifiable) {
-                statusIcon.innerHTML = 'Terbuka';
-                statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7';
-                document.getElementById('ajukanPerubahanBtn').style.display = 'none';
-            } else {
-                statusIcon.innerHTML = 'Terkunci';
-                statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7';
-                document.getElementById('ajukanPerubahanBtn').style.display = '';
-            }
-        }
+                if (canPengajuanModifikasi || (isModifiable && hasToken)) {
+                    statusIcon.innerHTML = 'Terbuka';
+                    statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
+                } else {
+                    statusIcon.innerHTML = 'Terkunci';
+                    statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+                }
+
+                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn'); // ✅ target the button
+                        if (ajukanBtn) {
+                            if (canPengajuanModifikasi || (isModifiable && hasToken)) {
+                                ajukanBtn.style.display = 'none'; // hide button if user already owns modifiable
+                            } else {
+                                ajukanBtn.style.display = ''; // show otherwise
+                            }
+                        }
+                }
 
         $('#detailModal').data('lpj-id', data.id);
 
@@ -855,7 +864,7 @@ $(document).ready(function() {
                             <div class="border rounded overflow-hidden" style="height:120px">
                                 <img src="/storage/${f}" class="w-100 h-100"
                                     style="object-fit:cover;cursor:pointer"
-                                    onclick="showPreviewModal(['${data.foto_jurnal.join("','")}'], 'image', 'Foto Kegiatan')">
+                                    >
                             </div>
                         </div>`).join('')}
                 </div>
@@ -931,20 +940,15 @@ $(document).ready(function() {
                         </div>
                     </div>
 
-                    ${data.jumlah_anggaran || data.jumlah_realisasi ? `
+                    ${data.jumlah_harga ? `
                         <div class="mb-4">
                             <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
                             <div class="bg-light p-3 rounded">
                                 <div class="row g-3">
-                                    ${data.jumlah_anggaran ? `
+                                    ${data.jumlah_harga ? `
                                         <div class="col-md-6">
                                             <label class="fw-semibold mb-1">Total Anggaran:</label>
-                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_anggaran)}</p>
-                                        </div>` : ''}
-                                    ${data.jumlah_realisasi ? `
-                                        <div class="col-md-6">
-                                            <label class="fw-semibold mb-1">Realisasi:</label>
-                                            <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(data.jumlah_realisasi)}</p>
+                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                         </div>` : ''}
                                 </div>
                             </div>

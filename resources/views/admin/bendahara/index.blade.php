@@ -514,8 +514,8 @@
 @endsection
 
 @section('content')
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="padding:10px 30px">
-        <h2 class="fw-bold fs-2 mb-0 text-dark">Database Bendahara</h2>
+    <div class="flex-wrap mb-2 d-flex justify-content-between align-items-center" style="padding:10px 30px">
+        <h2 class="mb-0 fw-bold fs-2 text-dark">Database Bendahara</h2>
         <button id="tambahLaporanBtn" class="btn"
             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Laporan
@@ -527,16 +527,16 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="d-grid gap-5 border-0">
-                                <div class="d-flex justify-content-between align-items-center ">
+                            <div class="gap-5 border-0 d-grid">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-none d-md-block">
-                                        <h3 class="fw-bold fs-4 mb-0">Database Bendahara</h3>
+                                        <h3 class="mb-0 fw-bold fs-4">Database Bendahara</h3>
                                         <div class="text-muted small">Kelola laporan bendahara</div>
                                     </div>
 
-                                    <form id="filter" class="d-flex filter-container gap-3">
+                                    <form id="filter" class="gap-3 d-flex filter-container">
                                         {{-- <button type="button" id="tambahLaporanBtn"
-                                            class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                                            class="gap-2 px-4 py-2 text-white rounded border-0 btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold">
                                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
                                             <span>Tambah Laporan</span>
                                         </button> --}}
@@ -546,7 +546,7 @@
                                                 <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
                                                 <input type="text" name="search" value="{{ request('search') }}"
                                                     placeholder="Cari laporan..."
-                                                    class="form-control search-input border border-gray-500 py-2" />
+                                                    class="py-2 border border-gray-500 form-control search-input" />
                                             </div>
                                         </div>
 
@@ -707,32 +707,32 @@
     <!-- Add Modal -->
     <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 gap-5 px-10 py-8">
+            <div class="gap-5 px-10 py-8 modal-content rounded-4">
                 <div class="d-flex justify-content-between align-items-center">
-                    <div class="fs-2 fw-bold leading-5">Tambah Laporan Bendahara</div>
+                    <div class="leading-5 fs-2 fw-bold">Tambah Laporan Bendahara</div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <form id="formAdd" action="{{ route('admin.bendahara.store') }}" method="POST"
-                    enctype="multipart/form-data" class="d-grid gap-4">
+                    enctype="multipart/form-data" class="gap-4 d-grid">
                     @csrf
 
                     <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Judul Laporan</div>
+                        <div class="mb-3 text-gray-800 fw-semibold required">Judul Laporan</div>
                         <input type="text" name="judul" placeholder="Masukkan Judul Laporan"
-                            class="form-control bg-light border border-gray-400" required />
+                            class="border border-gray-400 form-control bg-light" required />
                         <div class="invalid-feedback"></div>
                     </div>
 
                     <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Tanggal Laporan</div>
+                        <div class="mb-3 text-gray-800 fw-semibold required">Tanggal Laporan</div>
                         <input type="date" name="tanggal" placeholder="Pilih Tanggal Laporan"
-                            class="form-control bg-light border border-gray-400" required />
+                            class="border border-gray-400 form-control bg-light" required />
                         <div class="invalid-feedback"></div>
                     </div>
 
                     <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Unggah Dokumen</div>
+                        <div class="mb-3 text-gray-800 fw-semibold required">Unggah Dokumen</div>
                         <div class="fv-row">
                             <div class="dropzone" id="dropzone-formAdd">
                                 <div class="dz-message needsclick">
@@ -740,8 +740,8 @@
                                         <span class="path1"></span><span class="path2"></span>
                                     </i>
                                     <div class="ms-4">
-                                        <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
-                                        <span class="fs-7 fw-semibold text-gray-500">Format: PDF, XLS, XLSX. Max. 10
+                                        <h3 class="mb-1 text-gray-900 fs-5 fw-bold">Seret atau pilih dokumen.</h3>
+                                        <span class="text-gray-500 fs-7 fw-semibold">Format: PDF, XLS, XLSX. Max. 10
                                             MB.</span>
                                     </div>
                                 </div>
@@ -751,9 +751,9 @@
                     </div>
                 </form>
 
-                <div class="d-grid py-4">
+                <div class="py-4 d-grid">
                     <button type="button" onclick="submitForm('formAdd')" id="submitBtnAdd"
-                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                        class="gap-2 p-4 text-white rounded border-0 bg-danger fw-bold d-flex align-items-center justify-content-center">
                         <span class="btn-text">Tambah Laporan</span>
                     </button>
                 </div>
@@ -770,7 +770,7 @@
                     <h5 class="modal-title text-truncate" id="filePreviewModalLabel">Preview Dokumen</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-0">
+                <div class="p-0 modal-body">
                     <div id="previewContainer" class="w-100 h-100">
                         <!-- Preview content will be loaded here -->
                     </div>

@@ -1,40 +1,35 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Cabor Akurasi'); ?>
+<?php $__env->startSection('mainSection', 'Laporan LPJ'); ?>
+<?php $__env->startSection('subSection', 'Bidang Bidang'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.bidang.index')); ?>
+<?php $__env->startSection('subSection2', 'Pembinaan Prestasi'); ?>
+<?php $__env->startSection('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index')); ?>
+<?php $__env->startSection('currentSection', 'Cabor Akurasi'); ?>
 
-@section('pageTitle', 'Cabor Beladiri')
-@section('mainSection', 'Laporan LPJ')
-@section('subSection', 'Bidang Bidang')
-@section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
-@section('subSection2', 'Pembinaan Prestasi')
-@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
-@section('currentSection', 'Cabor Beladiri')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="d-grid gap-5 border-0">
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
-                <h1>Cabor Beladiri</h1>
-                <span>Informasi Cabor Beladiri</span>
+                <h1>Cabor Akurasi</h1>
+                <span>Informasi Cabor Akurasi</span>
             </div>
             <form id="filter" class="d-flex gap-3">
                 <div class="position-relative bg-light" style="width: 180px">
                     <i class="ki-outline ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-3"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" data-kt-docs-table-filter="search"
+                    <input type="text" name="search" value="<?php echo e(request('search')); ?>" data-kt-docs-table-filter="search"
                         placeholder="Cari Teams" class="form-control border border-gray-500 py-2 ps-12" />
                 </div>
-                {{-- <select name="sortBy" id="sortBy" class="form-select border border-gray-500 py-2" style="width: 85px">
-                    <option value="ASC">A - Z</option>
-                    <option value="DESC">Z - A</option>
-                </select> --}}
+                
             </form>
         </div>
 
         <div id="table" class="container">
-            @include('admin.laporan-lpj.bidang.prestasi.Beladiri._table')
+            <?php echo $__env->make('admin.laporan-lpj.bidang.prestasi.Akurasi._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
         function filterAndSort() {
             const searchValue = $('input[name="search"]').val().toLowerCase();
@@ -116,4 +111,7 @@
             filterAndSort();
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang/prestasi/Akurasi/index.blade.php ENDPATH**/ ?>

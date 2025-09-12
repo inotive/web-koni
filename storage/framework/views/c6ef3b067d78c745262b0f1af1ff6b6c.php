@@ -1,221 +1,156 @@
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>CV - <?php echo e($pelatih->nama); ?></title>
+    <title>Detail pelatih - <?php echo e($pelatih->nama); ?></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
+            font-size: 12px;
+            line-height: 1.4;
             color: #333;
-            background: #fff;
-        }
-
-        .container {
-            max-width: 210mm;
-            margin: 0 auto;
-            padding: 30px;
-            min-height: 297mm;
         }
 
         .header {
             text-align: center;
-            padding: 30px 0;
-            background-color: #F8285A;
-            color: white;
-            margin: -30px -30px 30px -30px;
-        }
-
-        .photo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid white;
             margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
         }
 
-        .name {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .cabor {
+        .header h1 {
+            margin: 0;
             font-size: 18px;
-            margin-bottom: 20px;
-            opacity: 0.9;
-        }
-
-        .contact-info {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            font-size: 14px;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            color: #000;
         }
 
         .section {
-            margin-bottom: 30px;
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            border-left: 4px solid #F8285A;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 20px;
+            font-size: 14px;
             font-weight: bold;
-            color: #F8285A;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-bottom: 10px;
+            color: #000;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
         }
 
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .info-item {
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .info-item:last-child {
-            border-bottom: none;
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
         }
 
         .info-label {
+            width: 150px;
             font-weight: bold;
-            color: #555;
-            font-size: 14px;
-            margin-bottom: 5px;
         }
 
         .info-value {
-            color: #333;
-            font-size: 15px;
+            flex: 1;
         }
 
-        .highlight {
-            background-color: #F8285A;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 12px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
             font-weight: bold;
-            display: inline-block;
         }
 
-        @media print {
-            .container {
-                margin: 0;
-                padding: 20px;
-                max-width: none;
-                width: 100%;
-            }
-
-            .header {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
+        .text-center {
+            text-align: center;
         }
 
-        @media (max-width: 768px) {
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
+        .text-right {
+            text-align: right;
+        }
 
-            .contact-info {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .name {
-                font-size: 24px;
-            }
+        .footer {
+            margin-top: 30px;
+            text-align: right;
+            font-style: italic;
+            font-size: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <?php if($pelatih->foto): ?>
-                <img src="<?php echo e(public_path('storage/' . $pelatih->foto)); ?>" alt="Foto" class="photo">
-            <?php endif; ?>
-            <h1 class="name"><?php echo e($pelatih->nama); ?></h1>
-            <p class="cabor"><?php echo e($pelatih->cabangOlahraga->nama_cabor ?? 'Pelatih Olahraga'); ?></p>
+    <div class="header">
+        <h1>DATA DETAIL PELATIH</h1>
+    </div>
 
-            <div class="contact-info">
-                <?php if($pelatih->email): ?>
-                <div class="contact-item">
-                    <span><?php echo e($pelatih->email); ?></span>
-                </div>
-                <?php endif; ?>
-
-                <?php if($pelatih->no_telepon): ?>
-                <div class="contact-item">
-                    <span><?php echo e($pelatih->no_telepon); ?></span>
-                </div>
-                <?php endif; ?>
-            </div>
+    <div class="section">
+        <div class="section-title">INFORMASI PRIBADI</div>
+        <div class="info-row">
+            <div class="info-label">Nama</div>
+            <div class="info-value"><?php echo e($pelatih->nama); ?></div>
         </div>
-
-        <div class="section">
-            <h2 class="section-title">Informasi Pribadi</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label">Tempat, Tanggal Lahir</div>
-                    <div class="info-value"><?php echo e($pelatih->tempat_lahir); ?>, <?php echo e(\Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d F Y')); ?></div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Usia</div>
-                    <div class="info-value">
-                        <span class="highlight"><?php echo e(\Carbon\Carbon::parse($pelatih->tanggal_lahir)->age); ?> Tahun</span>
-                    </div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Jenis Kelamin</div>
-                    <div class="info-value"><?php echo e($pelatih->kelamin); ?></div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Cabang Olahraga</div>
-                    <div class="info-value"><?php echo e($pelatih->cabangOlahraga->nama_cabor ?? '-'); ?></div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Ketersediaan</div>
-                    <div class="info-value">
-                        <span class="highlight"><?php echo e($pelatih->ketersediaan); ?></span>
-                    </div>
-                </div>
-
-                <div class="info-item">
-                    <div class="info-label">Alamat</div>
-                    <div class="info-value"><?php echo e(collect([$pelatih->alamat, $pelatih->alamatkota, $pelatih->alamatprovinsi])->filter()->implode(', ')); ?></div>
-                </div>
-            </div>
+        <div class="info-row">
+            <div class="info-label">Cabang Olahraga</div>
+            <div class="info-value"><?php echo e($pelatih->cabangOlahraga->nama_cabor ?? '-'); ?></div>
         </div>
+        <div class="info-row">
+            <div class="info-label">Email</div>
+            <div class="info-value"><?php echo e($pelatih->email ?? '-'); ?></div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">No Telepon</div>
+            <div class="info-value"><?php echo e($pelatih->no_telepon ?? '-'); ?></div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Tempat Lahir</div>
+            <div class="info-value"><?php echo e($pelatih->tempat_lahir ?? '-'); ?></div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Tanggal Lahir</div>
+            <div class="info-value"><?php echo e($pelatih->tanggal_lahir ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d/m/Y') : '-'); ?></div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Jenis Kelamin</div>
+            <div class="info-value"><?php echo e($pelatih->jenis_kelamin); ?></div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Ketersediaan</div>
+            <div class="info-value"><?php echo e($pelatih->ketersediaan); ?></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">ALAMAT</div>
+        <div class="info-row">
+            <div class="info-label">Alamat</div>
+            <div class="info-value"><?php echo e($pelatih->alamat ?? '-'); ?></div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Kota</div>
+            <div class="info-value"><?php echo e($pelatih->alamatkota ?? '-'); ?></div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">Provinsi</div>
+            <div class="info-value"><?php echo e($pelatih->alamatprovinsi ?? '-'); ?></div>
+        </div>
+    </div>
+
+    
+
+    <div class="footer">
+        Dicetak pada: <?php echo e(\Carbon\Carbon::now()->format('d/m/Y H:i:s')); ?>
+
     </div>
 </body>
 </html>
+
 <?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/pelatih/pdf-export.blade.php ENDPATH**/ ?>

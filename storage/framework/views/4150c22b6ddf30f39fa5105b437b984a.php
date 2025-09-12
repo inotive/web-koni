@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Pembinaan Prestasi'); ?>
+<?php $__env->startSection('mainSection', 'Laporan LPJ'); ?>
+<?php $__env->startSection('subSection', 'Bidang Bidang'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.bidang.index')); ?>
+<?php $__env->startSection('currentSection', 'Pembinaan Prestasi'); ?>
 
-@section('pageTitle', 'Pembinaan Prestasi')
-@section('mainSection', 'Laporan LPJ')
-@section('subSection', 'Bidang Bidang')
-@section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
-@section('currentSection', 'Pembinaan Prestasi')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <style>
     body {
@@ -310,46 +308,10 @@
         <!-- Enhanced Search and Sort Controls -->
         <div class="controls-container">
             <!-- Search Container -->
-            {{-- <div class="search-container">
-                <input
-                    type="text"
-                    class="form-control search-input"
-                    placeholder="Search Cabor..."
-                    id="searchInput"
-                >
-                <i class="fas fa-search search-icon"></i>
-            </div> --}}
+            
 
             <!-- Sort Dropdown -->
-            {{-- <div class="sort-dropdown">
-                <div class="sort-btn" id="sortBtn">
-                    <i class="fas fa-sort"></i>
-                    <span>Sort by</span>
-                    <i class="fas fa-chevron-down ms-1" style="font-size: 0.8rem;"></i>
-                </div>
-                <div class="sort-menu" id="sortMenu">
-                    <div class="sort-option active" data-sort="default">
-                        <span>Default Order</span>
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <div class="sort-option" data-sort="name-asc">
-                        <span>Name (A-Z)</span>
-                        <i class="fas fa-sort-alpha-down"></i>
-                    </div>
-                    <div class="sort-option" data-sort="name-desc">
-                        <span>Name (Z-A)</span>
-                        <i class="fas fa-sort-alpha-up"></i>
-                    </div>
-                    <div class="sort-option" data-sort="docs-desc">
-                        <span>Most Documents</span>
-                        <i class="fas fa-sort-numeric-down"></i>
-                    </div>
-                    <div class="sort-option" data-sort="docs-asc">
-                        <span>Least Documents</span>
-                        <i class="fas fa-sort-numeric-up"></i>
-                    </div>
-                </div>
-            </div> --}}
+            
         </div>
     </div>
 
@@ -365,7 +327,7 @@
             <!-- Cabor Terukur -->
             <a href="prestasi/cabor-terukur" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="13">
                 <div class="bidang-icon icon-mobilisasi">
-                    <img src="{{ asset('assets2/media/misc/bidang/timer.png') }}" alt="">
+                    <img src="<?php echo e(asset('assets2/media/misc/bidang/timer.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Cabor Terukur</h4>
                 <p class="bidang-count">10 Olahraga</p>
@@ -374,7 +336,7 @@
             <!-- Cabor Akurasi -->
             <a href="prestasi/cabor-akurasi" class="bidang-card" data-title="hubungan antar lembaga" data-docs="5">
                 <div class="bidang-icon icon-hubungan">
-                    <img src="{{ asset('assets2/media/misc/bidang/focus.png') }}" alt="">
+                    <img src="<?php echo e(asset('assets2/media/misc/bidang/focus.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Cabor Akurasi</h4>
                 <p class="bidang-count">11 Olahraga</p>
@@ -384,7 +346,7 @@
             <!-- Cabor Permainan -->
             <a href="prestasi/cabor-permainan" class="bidang-card" data-title="kesehatan" data-docs="15">
                 <div class="bidang-icon icon-kesehatan">
-                    <img src="{{ asset('assets2/media/misc/bidang/cup.png') }}" alt="">
+                    <img src="<?php echo e(asset('assets2/media/misc/bidang/cup.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Cabor Permainan</h4>
                 <p class="bidang-count">12 Olahraga</p>
@@ -393,7 +355,7 @@
             <!-- Cabor Beladiri -->
             <a href="prestasi/cabor-beladiri" class="bidang-card" data-title="organisasi" data-docs="0">
                 <div class="bidang-icon icon-organisasi">
-                    <img src="{{ asset('assets2/media/misc/bidang/courier-express.png') }}" alt="">
+                    <img src="<?php echo e(asset('assets2/media/misc/bidang/courier-express.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Cabor Beladiri</h4>
                 <p class="bidang-count">13 Olahraga</p>
@@ -402,9 +364,9 @@
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
 <script>
 $(document).ready(function() {
     // let currentSort = 'default';
@@ -578,4 +540,6 @@ $(document).ready(function() {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang/prestasi/index.blade.php ENDPATH**/ ?>
