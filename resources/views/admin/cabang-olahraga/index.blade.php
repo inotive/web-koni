@@ -33,10 +33,19 @@
 
             $order = $currentSort === $field && $currentOrder === 'asc' ? 'desc' : 'asc';
 
-            return request()->fullUrlWithQuery([
-                'sort_by' => $field,
-                'order' => $order,
-            ]);
+            // Preserve all existing parameters
+            $params = request()->query();
+            
+            // Update sort parameters
+            $params['sort_by'] = $field;
+            $params['order'] = $order;
+            
+            // Remove empty parameters
+            $params = array_filter($params, function($value) {
+                return $value !== null && $value !== '';
+            });
+
+            return request()->fullUrlWithQuery($params);
         }
     }
 @endphp
@@ -753,8 +762,9 @@
 
                                         <div class="input-group" style="width: 250px;">
                                             <input type="search" name="search" id="search" class="form-control"
-                                                placeholder="Cari cabang olahraga..." value="{{ request('search') }}" autocomplete="off">
-                                            <button class="btn btn-outline-secondary" type="button">
+                                                placeholder="Cari cabang olahraga..." value="{{ request('search') }}"
+                                                autocomplete="off">
+                                            <button class="btn btn-outline-secondary" type="button" id="search-button">
                                                 <i class="fas fa-search"></i>
                                             </button>
                                         </div>
@@ -804,6 +814,18 @@
                                                 id="showing-count">{{ isset($cabors) ? $cabors->count() : 0 }}</span>
                                             dari <span id="total-count">{{ isset($cabors) ? $cabors->total() : 0 }}</span>
                                             cabang olahraga
+                                            @if(request('search') || request('status'))
+                                                <span class="text-info">
+                                                    (Hasil pencarian/filter:
+                                                    @if(request('search'))
+                                                        "{{ request('search') }}"
+                                                    @endif
+                                                    @if(request('status'))
+                                                        Status: {{ request('status') }}
+                                                    @endif
+                                                    )
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                 @endif
@@ -844,352 +866,44 @@
 @section('script')
     <script>
         $(document).ready(function() {
-            // ✅ Declare all variables at the top
             let isLoading = false;
             let searchTimeout;
-            let clickTimeout;
-
-            // Tambahkan check jQuery
-            if (typeof $ === 'undefined') {
-                console.error('jQuery not loaded!');
-                return;
-            }
-
-            console.log('🚀 AJAX System Loading...');
-            console.log('jQuery loaded:', typeof $ !== 'undefined');
-            console.log('Current URL:', window.location.href);
-            
-            // Check for other dependencies
-            console.log('jQuery version:', $.fn.jquery);
-            console.log('Window object available:', typeof window !== 'undefined');
-            console.log('Document object available:', typeof document !== 'undefined');
 
             // Base URL untuk AJAX requests
             const baseUrl = "{{ route('admin.konfigurasi.cabang-olahraga.index') }}";
 
-            // Initialize filters from URL on page load (like in pelatih page)
+            // Initialize filters from URL on page load
             function initializeFiltersFromURL() {
                 const urlParams = new URLSearchParams(window.location.search);
                 
-                // Set form values from URL parameters
+                // Set form values dari URL parameters
                 $('#search').val(urlParams.get('search') || '');
                 $('#filter-status').val(urlParams.get('status') || '');
                 
                 updateFilterCountBadge();
+                updateExportButtonUrl();
             }
-            
+
             // Initialize filters on page load
             initializeFiltersFromURL();
-            
-            // Debug: Cek elemen yang diperlukan
-            console.log('Search element (jQuery):', $('#search').length > 0 ? 'FOUND' : 'NOT FOUND');
-            console.log('Search element (native):', document.getElementById('search') ? 'FOUND' : 'NOT FOUND');
-            console.log('Filter element:', $('#filter-status').length > 0 ? 'FOUND' : 'NOT FOUND');
-            console.log('Table container:', $('#tableContainer').length > 0 ? 'FOUND' : 'NOT FOUND');
-            
-            // Tambahkan logging untuk memastikan event handler terdaftar
-            console.log('Registering event handlers...');
-            
-            // Test if search element exists
-            if ($('#search').length > 0) {
-                console.log('✅ Search element found, attaching event handlers');
-                
-                // Test event attachment
-                $('#search').on('test-event', function() {
-                    console.log('Test event triggered on search element');
-                });
-                
-                // Trigger test event
-                $('#search').trigger('test-event');
-            } else {
-                console.error('❌ Search element NOT found!');
-            }
-            
-            // Cek apakah semua elemen diperlukan ada
-            const requiredElements = {
-                'search': document.getElementById('search'),
-                'filter-status': document.getElementById('filter-status'),
-                'tableContainer': document.getElementById('tableContainer'),
-                'export-excel-btn': document.getElementById('export-excel-btn')
-            };
-            
-            Object.keys(requiredElements).forEach(key => {
-                console.log(`Element ${key}:`, requiredElements[key] ? 'FOUND' : 'NOT FOUND');
-            });
 
-            // ✅ FIXED AJAX Request Function with proper error handling (kept for backward compatibility)
-            function performAjaxRequest(params = {}, showLoading = true) {
-                if (isLoading) {
-                    console.log('⚠️ Request already in progress, skipping...');
-                    return Promise.reject('Request in progress');
-                }
-
-                // Show loading state
-                if (showLoading) {
-                    showTableLoading();
-                }
-
-                // Get current URL parameters
-                const currentParams = new URLSearchParams(window.location.search);
-                const newParams = new URLSearchParams();
-
-                // Preserve existing params first
-                for (let [key, value] of currentParams) {
-                    newParams.set(key, value);
-                }
-
-                // Override/add new params
-                for (let [key, value] of Object.entries(params)) {
-                    if (value !== null && value !== undefined && value !== '') {
-                        newParams.set(key, value);
-                    } else if (value === '' || value === null) {
-                        newParams.delete(key);
-                    }
-                }
-
-                const url = `${baseUrl}?${newParams.toString()}`;
-                console.log('🚀 Making AJAX request to:', url, 'with params:', params);
-
-                return $.ajax({
-                        url: url,
-                        type: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json, text/html',
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        timeout: 15000, // 15 second timeout
-                        cache: false
-                    })
-                    .done(function(response, textStatus, jqXHR) {
-                        console.log('📦 Response received:', response);
-                        console.log('📦 Response type:', typeof response);
-                        console.log('📦 Status code:', jqXHR.status);
-
-                        // Check if response is JSON
-                        let data = response;
-                        if (typeof response === 'string') {
-                            try {
-                                data = JSON.parse(response);
-                            } catch (e) {
-                                console.log('📦 Response is HTML, parsing...');
-                                // If it's HTML, we need to extract the table content
-                                handleHtmlResponse(response);
-                                return;
-                            }
-                        }
-
-                        // Handle JSON response
-                        if (data && typeof data === 'object') {
-                            updateTableContent(data);
-
-                            // Update URL without reload
-                            if (url !== window.location.href) {
-                                window.history.pushState({}, '', url);
-                                console.log('✅ URL updated:', url);
-                            }
-                        } else {
-                            console.warn('⚠️ Invalid response format');
-                            fallbackToPageReload(url);
-                        }
-                    })
-                    .fail(function(jqXHR, textStatus, errorThrown) {
-                        console.error('❌ AJAX error:', textStatus, errorThrown);
-                        console.error('❌ Response status:', jqXHR.status);
-                        console.error('❌ Response text:', jqXHR.responseText);
-                        console.error('❌ Response headers:', jqXHR.getAllResponseHeaders());
-
-                        showErrorToast('Gagal memuat data. Silakan coba lagi.');
-
-                        // Fallback to page reload after short delay
-                        setTimeout(() => {
-                            console.log('🔄 Falling back to page reload...');
-                            window.location.href = url;
-                        }, 1500);
-                    })
-                    .always(function() {
-                        if (showLoading) {
-                            hideTableLoading();
-                        }
-                        console.log('✅ AJAX request completed');
-                    });
-            }
-
-            // ✅ NEW: Handle HTML response (when server returns full page)
-            function handleHtmlResponse(htmlResponse) {
-                try {
-                    const $response = $(htmlResponse);
-
-                    // Extract table content
-                    const tableContent = $response.find('#tableContainer').html();
-                    if (tableContent) {
-                        $('#tableContainer').html(tableContent);
-                        console.log('✅ Table updated from HTML response');
-                    }
-
-                    // Extract pagination content
-                    const paginationContent = $response.find('.table-footer').html();
-                    if (paginationContent) {
-                        $('.table-footer').html(paginationContent);
-                        console.log('✅ Pagination updated from HTML response');
-                    }
-
-                } catch (error) {
-                    console.error('❌ Error parsing HTML response:', error);
-                    showErrorToast('Terjadi kesalahan saat memuat data.');
-                }
-            }
-
-            // ✅ NEW: Update table content from JSON response
-            function updateTableContent(data) {
-                if (data.html || data.table) {
-                    const tableContent = data.html || data.table;
-                    $('#tableContainer').html(tableContent);
-                    console.log('✅ Table content updated from JSON');
-                }
-
-                if (data.pagination) {
-                    $('.table-footer').html(data.pagination);
-                    console.log('✅ Pagination updated from JSON');
-                }
-
-                // Update other elements if provided
-                if (data.total_records) {
-                    $('.total-records').text(data.total_records);
-                }
-            }
-            
-            // ✅ Handle HTML response (when server returns full page) - Updated version
-            function handleHtmlResponse(htmlResponse) {
-                try {
-                    const $response = $(htmlResponse);
-
-                    // Extract table content
-                    const tableContent = $response.find('#tableContainer').html();
-                    if (tableContent) {
-                        $('#tableContainer').html(tableContent);
-                        console.log('✅ Table updated from HTML response');
-                    }
-
-                    // Extract pagination content
-                    const paginationContent = $response.find('.table-footer').html();
-                    if (paginationContent) {
-                        $('.table-footer').html(paginationContent);
-                        console.log('✅ Pagination updated from HTML response');
-                    }
-
-                } catch (error) {
-                    console.error('❌ Error parsing HTML response:', error);
-                    showErrorToast('Terjadi kesalahan saat memuat data.');
-                }
-            }
-
-            // ✅ NEW: Fallback to page reload
-            function fallbackToPageReload(url) {
-                console.log('🔄 Falling back to page reload...');
-                setTimeout(() => {
-                    window.location.href = url;
-                }, 1000);
-            }
-
-            // ✅ Update Export Button URL (like in pelatih page)
-    function updateExportButtonUrl() {
-        const baseUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}";
-        const url = new URL(baseUrl, window.location.origin);
-        
-        // Get all current parameters from the window URL
-        const currentParams = new URLSearchParams(window.location.search);
-        
-        // Append all current filter and search params to the export URL
-        currentParams.forEach((value, key) => {
-            if (key !== 'page') { // Don't include pagination in export
-                url.searchParams.append(key, value);
-            }
-        });
-        
-        // Also get values directly from form elements in case they haven't been applied yet
-        const search = $('#search').val();
-        const status = $('#filter-status').val();
-        
-        // Add form values to URL if they exist and aren't already in currentParams
-        if (search && !currentParams.has('search')) {
-            url.searchParams.set('search', search);
-        }
-        if (status && !currentParams.has('status')) {
-            url.searchParams.set('status', status);
-        }
-        
-        // Add current sorting parameters
-        const sortBy = new URLSearchParams(window.location.search).get('sort_by');
-        const order = new URLSearchParams(window.location.search).get('order');
-        
-        if (sortBy) {
-            url.searchParams.set('sort_by', sortBy);
-        }
-        if (order) {
-            url.searchParams.set('order', order);
-        }
-        
-        $('#export-excel-btn').attr('href', url.toString());
-        console.log('Export button URL updated:', url.toString());
-    }
-
-    // ✅ Initialize export functionality
-    updateExportButtonUrl();
-    
-    console.log('✅ Enhanced Export System initialized successfully');
-    
-    // Tambahkan event listener tambahan untuk debugging
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM fully loaded and parsed');
-        const searchElement = document.getElementById('search');
-        if (searchElement) {
-            console.log('Search element found in DOM');
-            searchElement.addEventListener('input', function(e) {
-                console.log('Native input event triggered:', e.target.value);
-            });
-        } else {
-            console.error('Search element NOT found in DOM');
-        }
-    });
-    
-    // Tambahkan pengecekan tambahan untuk memastikan semua script dijalankan dengan benar
-    console.log('Script initialization completed');
-    
-    // Cek apakah search element ada setelah inisialisasi
-    setTimeout(() => {
-        console.log('Delayed check - Search element:', document.getElementById('search') ? 'FOUND' : 'NOT FOUND');
-    }, 1000);
-});
-
-            // ✅ Enhanced Loading State Functions
+            // Enhanced Loading State Functions
             function showTableLoading() {
                 isLoading = true;
                 const tableContainer = $('#tableContainer');
-
+                
                 if (tableContainer.length && !tableContainer.find('.loading-overlay').length) {
                     const overlay = $(`
-                <div class="loading-overlay" style="
-                    position: absolute !important;
-                    top: 0; left: 0; right: 0; bottom: 0;
-                    background: rgba(255, 255, 255, 0.9);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 9999;
-                    border-radius: 8px;
-                    backdrop-filter: blur(2px);
-                ">
-                    <div class="d-flex align-items-center px-3 py-2 bg-white rounded shadow">
-                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                        <div class="loading-overlay">
+                            <div class="d-flex align-items-center px-3 py-2 bg-white rounded shadow">
+                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <span class="text-muted">Memuat data...</span>
+                            </div>
                         </div>
-                        <span class="text-muted">Memuat data...</span>
-                    </div>
-                </div>
-            `);
-
+                    `);
+                    
                     tableContainer.css('position', 'relative').append(overlay);
                 }
             }
@@ -1199,7 +913,7 @@
                 $('.loading-overlay').remove();
             }
 
-            // ✅ Enhanced Error Toast Function
+            // Enhanced Error Toast Function
             function showErrorToast(message) {
                 if (typeof toastr !== 'undefined') {
                     toastr.error(message, 'Error', {
@@ -1223,12 +937,12 @@
                 }
             }
 
-            // ✅ Update Filter Count Badge (like in pelatih page)
+            // Update Filter Count Badge
             function updateFilterCountBadge() {
                 const activeFilters = [
                     $('#filter-status').val()
                 ].filter(val => val && val.length > 0).length;
-
+                
                 const badge = $('#filter-count');
                 if (activeFilters > 0) {
                     badge.text(activeFilters).removeClass('d-none');
@@ -1237,93 +951,55 @@
                 }
             }
 
-            // ✅ Update Export Button URL
+            // Update Export Button URL
             function updateExportButtonUrl() {
-                // Get current filter values
-                const searchValue = $('#search').val();
-                const statusValue = $('#filter-status').val();
-
-                // Build URL with current filters
-                let exportUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}?";
-                const params = new URLSearchParams();
-
-                if (searchValue) {
-                    params.append('search', searchValue);
-                }
-
-                if (statusValue) {
-                    params.append('status', statusValue);
-                }
-
-                // Add current sorting parameters if they exist
-                const urlParams = new URLSearchParams(window.location.search);
-                if (urlParams.has('sort_by')) {
-                    params.append('sort_by', urlParams.get('sort_by'));
-                }
-                if (urlParams.has('order')) {
-                    params.append('order', urlParams.get('order'));
-                }
-
-                exportUrl += params.toString();
-                $('#export-excel-btn').attr('href', exportUrl);
-            }
-
-            // ✅ EVENT HANDLERS
-
-            // Search dengan debounce - Auto search seperti di halaman pelatih
-            let searchTimeout;
-            $(document).off('input.customFilter', '#search').on('input.customFilter', '#search', function() {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    applyFilters();
-                }, 300);
-            });
-            
-            // Handle Enter key press
-            $(document).off('keypress.customFilter', '#search').on('keypress.customFilter', '#search', function(e) {
-                if (e.which === 13) { // Enter key
-                    e.preventDefault();
-                    applyFilters();
-                    return false;
-                }
-            });
-            
-            // Function to apply filters (search and other filters)
-            function applyFilters() {
-                const url = buildURL();
+                const baseUrl = "{{ route('admin.konfigurasi.cabang-olahraga.export') }}";
+                const url = new URL(baseUrl, window.location.origin);
                 
-                // Get search value
-                const search = $('#search').val().trim();
+                // Get all current parameters from the window URL
+                const currentParams = new URLSearchParams(window.location.search);
                 
-                // Set or remove search parameter
-                if (search) {
-                    url.searchParams.set('search', search);
-                } else {
-                    url.searchParams.delete('search');
-                }
+                // Append all current filter and search params to the export URL
+                currentParams.forEach((value, key) => {
+                    if (key !== 'page') { // Don't include pagination in export
+                        url.searchParams.append(key, value);
+                    }
+                });
                 
-                // Get status filter value
+                // Also get values directly from form elements in case they haven't been applied yet
+                const search = $('#search').val();
                 const status = $('#filter-status').val();
                 
-                // Set or remove status parameter
-                if (status) {
+                // Add form values to URL if they exist and aren't already in currentParams
+                if (search && !currentParams.has('search')) {
+                    url.searchParams.set('search', search);
+                }
+                if (status && !currentParams.has('status')) {
                     url.searchParams.set('status', status);
-                } else {
-                    url.searchParams.delete('status');
                 }
                 
-                // Reset to first page when applying filters
-                url.searchParams.delete('page');
+                // Add current sorting parameters
+                const sortBy = new URLSearchParams(window.location.search).get('sort_by');
+                const order = new URLSearchParams(window.location.search).get('order');
                 
-                // Load filtered results
-                loadTable(url.toString());
+                if (sortBy) {
+                    url.searchParams.set('sort_by', sortBy);
+                }
+                if (order) {
+                    url.searchParams.set('order', order);
+                }
+                
+                $('#export-excel-btn').attr('href', url.toString());
             }
-            
+
+            // Initialize export functionality
+            updateExportButtonUrl();
+
             // Function to build URL with current parameters
             function buildURL() {
                 return new URL(window.location.href);
             }
-            
+
             // Function to load table with AJAX
             function loadTable(url) {
                 console.log('🔍 Loading table with URL:', url);
@@ -1381,7 +1057,55 @@
                 });
             }
 
-            // Apply Filters Button - FIXED: Better event handling (like in pelatih page)
+            // Function to apply filters (search and other filters)
+            function applyFilters() {
+                const url = buildURL();
+                
+                // Get search value
+                const search = $('#search').val().trim();
+                
+                // Set or remove search parameter
+                if (search) {
+                    url.searchParams.set('search', search);
+                } else {
+                    url.searchParams.delete('search');
+                }
+                
+                // Get status filter value
+                const status = $('#filter-status').val();
+                
+                // Set or remove status parameter
+                if (status) {
+                    url.searchParams.set('status', status);
+                } else {
+                    url.searchParams.delete('status');
+                }
+                
+                // Reset to first page when applying filters
+                url.searchParams.delete('page');
+                
+                // Load filtered results
+                loadTable(url.toString());
+            }
+
+            // Search dengan debounce - Auto search
+            $(document).off('input.customFilter', '#search').on('input.customFilter', '#search', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    applyFilters();
+                }, 300);
+            });
+
+            // Handle Enter key press
+            $(document).off('keypress.customFilter', '#search').on('keypress.customFilter', '#search', function(e) {
+                if (e.which === 13) { // Enter key
+                    e.preventDefault();
+                    applyFilters();
+                    return false;
+                }
+            });
+
+            // Apply Filters Button
             $(document).off('click.customFilter', '#apply-filters').on('click.customFilter', '#apply-filters', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1389,7 +1113,7 @@
                 return false;
             });
 
-            // Reset Filters Button - FIXED: Better reset handling (like in pelatih page)
+            // Reset Filters Button
             $(document).off('click.customFilter', '#reset-filters').on('click.customFilter', '#reset-filters', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1398,12 +1122,8 @@
                 $('#search').val('');
                 $('#filter-status').val('');
                 
-                // Build clean URL (preserve only per_page if different from default)
+                // Build clean URL
                 const url = new URL(window.location.origin + window.location.pathname);
-                const perPage = $('#ajax-per-page').val();
-                if (perPage && perPage !== '10') {
-                    url.searchParams.set('per_page', perPage);
-                }
                 
                 // Close dropdown
                 $('.dropdown-toggle').dropdown('hide');
@@ -1417,44 +1137,26 @@
                 return false;
             });
 
-            // Filter Status Change - FIXED: Prevent default (like in pelatih page)
+            // Filter Status Change
             $(document).off('change.customFilter', '#filter-status').on('change.customFilter', '#filter-status', function(e) {
                 e.preventDefault();
                 applyFilters();
                 return false;
             });
 
-            // FIXED: Per Page Change Handler - Use event delegation (like in pelatih page)
-            $(document).off('change.customFilter', '#ajax-per-page').on('change.customFilter', '#ajax-per-page', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-
-                const perPageValue = $(this).val();
-                console.log('📄 Per page changed:', perPageValue);
-
-                // Build URL with new per_page value
-                const url = buildURL();
-                url.searchParams.set('per_page', perPageValue);
-                url.searchParams.delete('page'); // Reset to first page
-                
-                loadTable(url.toString());
-
-                return false;
-            });
-
-            // FIXED: Pagination Click Handler - Better event handling (like in pelatih page)
+            // Pagination Click Handler
             $(document).off('click.customFilter', '.ajax-pagination').on('click.customFilter', '.ajax-pagination', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-
+                
                 const $this = $(this);
                 const page = $this.data('page');
-
+                
                 console.log('📄 Pagination clicked, page:', page);
-
+                
                 if (page && !$this.hasClass('processing')) {
                     $this.addClass('processing');
-
+                    
                     // Build URL with new page value
                     const url = buildURL();
                     url.searchParams.set('page', page);
@@ -1467,39 +1169,39 @@
                             }, 500);
                         });
                 }
-
+                
                 return false;
             });
 
-            // FIXED: Sorting Click Handler - Prevent any navigation (like in pelatih page)
+            // Sorting Click Handler
             $(document).off('click.customFilter', '.ajax-sort').on('click.customFilter', '.ajax-sort', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-
+                
                 const $this = $(this);
                 const sortBy = $this.data('sort');
-
+                
                 console.log('🔄 Sort button clicked, sort by:', sortBy);
-
+                
                 if (!sortBy || $this.hasClass('processing')) {
-                    console.log('⚠️ No sort data found or already processing');
+                    console.log('⚠ No sort data found or already processing');
                     return false;
                 }
-
+                
                 $this.addClass('processing');
-
+                
                 const url = buildURL();
                 const currentSortBy = url.searchParams.get('sort_by');
                 const currentOrder = url.searchParams.get('order');
-
+                
                 // Toggle order if same field, default to asc for new field
                 let newOrder = 'asc';
                 if (currentSortBy === sortBy && currentOrder === 'asc') {
                     newOrder = 'desc';
                 }
-
+                
                 console.log('🔄 Sorting:', sortBy, newOrder);
-
+                
                 // Set new sorting parameters
                 url.searchParams.set('sort_by', sortBy);
                 url.searchParams.set('order', newOrder);
@@ -1512,25 +1214,26 @@
                             updateExportButtonUrl(); // Update export button URL after sorting
                         }, 500);
                     });
-
+                
                 return false;
             });
 
-            // ✅ CRITICAL: Prevent ALL form submissions on this page
+            // CRITICAL: Prevent ALL form submissions on this page
             $(document).off('submit.customFilter', 'form').on('submit.customFilter', 'form', function(e) {
                 console.log('🛑 Form submission prevented');
                 e.preventDefault();
                 return false;
             });
 
-            // ✅ CRITICAL: Prevent default link behavior for any AJAX elements
-            $(document).off('click.customFilter', 'a[href*="sort_by"], a[href*="page"], .ajax-sort, .ajax-pagination').on('click.customFilter', 'a[href*="sort_by"], a[href*="page"], .ajax-sort, .ajax-pagination', function(
-                e) {
-                e.preventDefault();
-                return false;
-            });
+            // CRITICAL: Prevent default link behavior for any AJAX elements
+            $(document).off('click.customFilter', 'a[href*="sort_by"], a[href*="page"], .ajax-sort, .ajax-pagination').on(
+                'click.customFilter', 'a[href*="sort_by"], a[href*="page"], .ajax-sort, .ajax-pagination',
+                function(e) {
+                    e.preventDefault();
+                    return false;
+                });
 
-            // ✅ Handle browser back/forward - FIXED: Better handling (like in pelatih page)
+            // Handle browser back/forward
             window.addEventListener('popstate', function(event) {
                 console.log('🔙 Browser back/forward detected');
                 
@@ -1540,56 +1243,36 @@
                 // Load table with current URL
                 loadTable(window.location.href);
             });
-            
-            // ✅ Keyboard shortcuts (like in pelatih page)
+
+            // Keyboard shortcuts
             $(document).keydown(function(e) {
                 if ((e.ctrlKey || e.metaKey) && e.keyCode === 70) { // Ctrl+F
                     e.preventDefault();
                     $('#search').focus();
                 }
-
+                
                 if (e.keyCode === 27) { // Escape
                     $('#search').val('').trigger('input');
                 }
             });
 
-            // ✅ Cleanup on page unload
+            // Cleanup on page unload
             $(window).on('beforeunload', function() {
                 hideTableLoading();
                 clearTimeout(searchTimeout);
-                clearTimeout(clickTimeout);
                 isLoading = false;
             });
-
-            console.log('✅ FIXED Enhanced AJAX system initialized successfully');
-
-            // ✅ Add debugging function
-            window.testAjax = function() {
-                console.log('🧪 Testing AJAX manually...');
-                performAjaxRequest({
-                    page: 1
-                }, true);
-            };
-
-            // ✅ Final diagnostic
-            setTimeout(() => {
-                console.log('🔍 Final diagnostic:');
-                console.log('- Search element:', $('#search').length);
-                console.log('- Filter element:', $('#filter-status').length);
-                console.log('- Table container:', $('#tableContainer').length);
-                console.log('- Sort buttons:', $('.ajax-sort').length);
-                console.log('- Pagination buttons:', $('.ajax-pagination').length);
-                console.log('💡 Run testAjax() to test manually');
-            }, 1000);
+            
+            console.log('✅ Enhanced AJAX system initialized successfully');
         });
 
-        // ✅ Global functions for delete operations (outside document ready)
+        // Global functions for delete operations (outside document ready)
         window.showDeleteWarning = function(button, caborName, atletCount, pelatihCount) {
             // Build dependency list
             const dependencies = [];
             if (atletCount > 0) dependencies.push(`${atletCount} atlet`);
             if (pelatihCount > 0) dependencies.push(`${pelatihCount} pelatih`);
-
+            
             // Create HTML for dependency list
             let dependencyListHtml = '';
             if (dependencies.length > 0) {
@@ -1599,7 +1282,7 @@
                 });
                 dependencyListHtml += '</ul>';
             }
-
+            
             Swal.fire({
                 title: 'Tidak Dapat Menghapus Cabang Olahraga',
                 html: `Cabang olahraga <strong>${caborName}</strong> tidak dapat dihapus karena masih memiliki:${dependencyListHtml}
@@ -1615,7 +1298,7 @@
 
         window.confirmDelete = function(form) {
             const nama = form.querySelector('button[type="submit"]').title.replace('Hapus ', '');
-
+            
             Swal.fire({
                 title: "Apakah Anda Yakin?",
                 html: "<p style='text-align:center'>Setelah data cabang olahraga dihapus, Anda tidak bisa mengembalikannya!</p>",
@@ -1637,45 +1320,45 @@
                             Swal.showLoading();
                         }
                     });
-
+                    
                     // Submit via AJAX
                     const formData = new FormData(form);
                     fetch(form.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: data.message || 'Data cabang olahraga berhasil dihapus',
-                                    icon: 'success',
-                                    timer: 2000,
-                                    showConfirmButton: false
-                                });
-
-                                // Reload the table
-                                window.location.reload();
-                            } else {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: data.message || 'Gagal menghapus data cabang olahraga',
-                                    icon: 'error'
-                                });
-                            }
-                        })
-                        .catch(error => {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: data.message || 'Data cabang olahraga berhasil dihapus',
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                            
+                            // Reload the table
+                            window.location.reload();
+                        } else {
                             Swal.fire({
                                 title: 'Error!',
-                                text: 'Gagal menghapus data cabang olahraga',
+                                text: data.message || 'Gagal menghapus data cabang olahraga',
                                 icon: 'error'
                             });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Gagal menghapus data cabang olahraga',
+                            icon: 'error'
                         });
+                    });
                 }
             });
             // Return false to prevent default form submission
@@ -1684,7 +1367,7 @@
 
         window.destroyItem = function(button) {
             const route = button.dataset.route;
-
+            
             Swal.fire({
                 title: "Apakah Anda Yakin?",
                 html: "<p style='text-align:center'>Setelah data cabang olahraga dihapus, Anda tidak bisa mengembalikannya!</p>",
@@ -1706,7 +1389,7 @@
                             Swal.showLoading();
                         }
                     });
-
+                    
                     $.ajax({
                         url: route,
                         type: 'POST',
@@ -1723,16 +1406,16 @@
                                 timer: 2000,
                                 showConfirmButton: false
                             });
-
+                            
                             // Reload current page to refresh the table
                             window.location.reload();
                         },
                         error: function(xhr) {
                             Swal.close();
-
+                            
                             try {
                                 const response = JSON.parse(xhr.responseText);
-
+                                
                                 if (response.reason === 'has_dependencies') {
                                     Swal.fire({
                                         title: 'Tidak Dapat Menghapus Cabang Olahraga',
