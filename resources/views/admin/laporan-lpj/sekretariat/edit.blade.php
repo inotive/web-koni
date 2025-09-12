@@ -780,9 +780,9 @@
                 });
 
                 if (isPhoto) {
-                    selectedFotoFiles = newFiles;
+                    selectedFotoFiles.push(...newFiles);
                 } else {
-                    selectedDokumenFiles = newFiles;
+                    selectedDokumenFiles.push(...newFiles);
                 }
 
                 updateFilePreview(type);
