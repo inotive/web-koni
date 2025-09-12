@@ -1,30 +1,22 @@
 <?php
     $subSection3Url = '';
-
     if ($parent?->parent) {
-        if ($parent->parent->id == 9) {
-            $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-terukur', [
-                'parentId' => $parent->parent->id
-            ]);
-        }
-            elseif ($parent->parent->id == 10) {
-                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi', [
-                    'parentId' => $parent->parent->id
-                ]);
-        }
-            elseif ($parent->parent->id == 11) {
-                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-permainan', [
-                    'parentId' => $parent->parent->id
-                ]);
-        }
-            elseif ($parent->parent->id == 12) {
-                $subSection3Url = route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri', [
-                    'parentId' => $parent->parent->id
-                ]);
-        }
-          else {
-            // fallback if needed
-            $subSection3Url = route('admin.laporan-lpj.bidang.dynamic.index');
+        $routes = [
+            9 => 'admin.laporan-lpj.bidang.prestasi.cabor-terukur',
+            10 => 'admin.laporan-lpj.bidang.prestasi.cabor-akurasi',
+            11 => 'admin.laporan-lpj.bidang.prestasi.cabor-permainan',
+            12 => 'admin.laporan-lpj.bidang.prestasi.cabor-beladiri'
+        ];
+
+        $subSection3Url = isset($routes[$parent->parent->id])
+            ? route($routes[$parent->parent->id], ['parentId' => $parent->parent->id])
+            : route('admin.laporan-lpj.bidang.dynamic.index');
+    }
+
+    if (!function_exists('formatRupiah')) {
+        function formatRupiah($number, $prefix = 'Rp ')
+        {
+            return $prefix . number_format($number, 0, ',', '.');
         }
     }
 ?>
@@ -37,18 +29,11 @@
 <?php $__env->startSection('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index')); ?>
 <?php $__env->startSection('subSection3', $parent?->parent?->nama_program ?? ''); ?>
 <?php $__env->startSection('subSection3Url', $subSection3Url); ?>
-
 <?php $__env->startSection('currentSection', $currentParent ? $currentParent->nama_program : 'Root Level'); ?>
-
-<?php $__env->startSection('breadcrumb-title'); ?>
-<?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
     <style>
-        /* Include your existing styles */
-        body {
-            background-color: #f5f5f5;
-        }
+        body { background-color: #f5f5f5; }
 
         .main-content {
             background-color: #f5f5f5;
@@ -56,142 +41,23 @@
             padding: 20px 10px 40px;
         }
 
-        /* Navigation Styles */
-        .navigation-card {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 16px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: #495057;
-        }
-
-        .nav-item:hover {
-            background-color: #f8f9fa;
-            color: #0d6efd;
-            text-decoration: none;
-        }
-
-        .nav-item:last-child {
-            border-bottom: none;
-        }
-
-        .nav-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            margin-right: 12px;
-            font-size: 1.2rem;
-        }
-
-        .nav-content {
-            flex: 1;
-        }
-
-        .nav-title {
-            font-weight: 600;
-            margin-bottom: 2px;
-            color: #212529;
-        }
-
-        .nav-subtitle {
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-
-        .nav-meta {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.8rem;
-            color: #6c757d;
-        }
-
-        .category-badge {
-            background-color: #e3f2fd;
-            color: #1976d2;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-        }
-
-        .data-badge {
-            background-color: #e8f5e8;
-            color: #2e7d32;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-        }
-
-        .back-navigation {
-            margin-bottom: 20px;
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background-color: #6c757d;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-
-        .back-btn:hover {
-            background-color: #5a6268;
-            color: white;
-            text-decoration: none;
-        }
-
-        /* Table and existing styles */
-        table td,
-        table th {
-            vertical-align: middle;
-            word-wrap: break-word;
-            max-width: 200px;
-        }
-
-        .object-fit-cover {
-            object-fit: cover;
+        /* Table styles */
+        .table {
+            table-layout: fixed !important;
+            width: 100%;
         }
 
         .table th:nth-child(1) { width: 40px; }
         .table th:nth-child(2) { width: 250px; }
-        .table th:nth-child(3) { width: 100px; }
+        .table th:nth-child(3) { width: 200px; }
         .table th:nth-child(4) { width: 150px; }
-        .table th:nth-child(5) { width: 150px; }
+        .table th:nth-child(5) { width: 200px; }
         .table th:nth-child(6) { width: 150px; }
-        .table th:nth-child(7) { width: 80px; }
+        .table th:nth-child(7) { width: 210px; }
         .table th:nth-child(8) { width: 80px; }
 
-        .text-truncate-custom {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
         /* Dropdown styles */
-        .dropdown-action {
-            position: relative;
-            display: inline-block;
-        }
+        .dropdown-action { position: relative; display: inline-block; }
 
         .dropdown-toggle-custom {
             background: none;
@@ -202,9 +68,7 @@
             transition: all 0.2s ease;
         }
 
-        .dropdown-toggle-custom:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-        }
+        .dropdown-toggle-custom:hover { background-color: rgba(0, 0, 0, 0.05); }
 
         .dropdown-menu-custom {
             position: absolute;
@@ -221,10 +85,7 @@
             list-style: none;
         }
 
-        .dropdown-menu-custom.show {
-            display: block;
-            animation: fadeIn 0.2s ease;
-        }
+        .dropdown-menu-custom.show { display: block; }
 
         .dropdown-item-custom {
             padding: 8px 16px;
@@ -237,165 +98,142 @@
             font-size: 0.9rem;
         }
 
-        .dropdown-item-custom i {
-            margin-right: 8px;
-            width: 20px;
-            text-align: center;
-        }
-
         .dropdown-item-custom:hover {
             background-color: #f8f9fa;
             text-decoration: none;
             color: #495057;
         }
 
-        .dropdown-item-custom.edit:hover {
-            background-color: rgb(249, 245, 172) !important;
-        }
-
-        .dropdown-item-custom.delete:hover {
-            background-color: #ffcad7 !important;
-        }
-
-        .btn-restricted {
-            cursor: not-allowed !important;
-            opacity: 0.6 !important;
-            pointer-events: none;
-        }
-
-        /* Enhanced Preview Modal Styles */
-        .preview-slide {
-            display: none;
-            width: 100%;
-            height: 100%;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 20px;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .preview-slide.active {
-            display: flex;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 80%;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            background: white;
-            padding: 10px;
-        }
-
-        .preview-document {
-            width: 100%;
-            height: 80%;
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-        .document-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 80%;
-            background: white;
-            border: 2px dashed #dee2e6;
-            border-radius: 8px;
-            text-align: center;
-            padding: 40px;
-        }
-
-        .document-placeholder i {
-            font-size: 4rem;
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-
-        .document-placeholder h5 {
-            color: #495057;
-            margin-bottom: 0.5rem;
-        }
-
-        .document-placeholder p {
-            color: #6c757d;
-            margin-bottom: 1rem;
-        }
-
-        /* Custom tooltip styling */
-        .custom-tooltip {
-            --bs-tooltip-bg: #ffffff;
-            --bs-tooltip-border-color: #e0e0e0;
-            --bs-tooltip-color: #333333;
-            --bs-tooltip-padding-x: 12px;
-            --bs-tooltip-padding-y: 8px;
-            --bs-tooltip-border-radius: 8px;
-            --bs-tooltip-font-size: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border: 1px solid var(--bs-tooltip-border-color);
-        }
-
-        .custom-tooltip .tooltip-inner {
-            background-color: var(--bs-tooltip-bg);
-            color: var(--bs-tooltip-color);
-            border-radius: var(--bs-tooltip-border-radius);
-            padding: var(--bs-tooltip-padding-y) var(--bs-tooltip-padding-x);
-            text-align: left;
-            max-width: 200px;
-        }
-
-        .tooltip-content strong {
-            color: #333333;
-            font-weight: 600;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .filter-btn-custom {
-            border: 1px solid #dee2e6 !important;
-            background-color: white;
-        }
-
-        .filter-btn-custom:hover {
-            background-color: #f8f9fa;
-        }
-
-        /* Custom Ajukan Perubahan Button */
+        /* Button styles */
         #ajukanPerubahanBtn {
-            background-color: #4CAF50; /* Soft green like screenshot */
+            background-color: #4CAF50;
             color: white;
             font-weight: 600;
             border: none;
-            border-radius: 8px; /* Rounded corners */
+            border-radius: 8px;
             padding: 8px 14px;
             display: inline-flex;
             align-items: center;
-            gap: 6px; /* for icon if added */
+            gap: 6px;
             font-size: 0.9rem;
             transition: all 0.2s ease;
             box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
         }
 
         #ajukanPerubahanBtn:hover {
-            background-color: #43a047; /* Slightly darker on hover */
+            background-color: #43a047;
             box-shadow: 0 3px 8px rgba(76, 175, 80, 0.4);
             transform: translateY(-1px);
         }
 
-        #ajukanPerubahanBtn:active {
-            background-color: #388e3c;
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+        #export-pdf-btn {
+            background-color: #e63946;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(230, 57, 70, 0.3);
+        }
+
+        #export-pdf-btn:hover {
+            background-color: #d62828;
+            box-shadow: 0 3px 8px rgba(214, 40, 40, 0.4);
+            transform: translateY(-1px);
+        }
+
+        /* Modal styles */
+        .modal .form-control:focus {
+            border-color: #F8285A;
+            box-shadow: 0 0 0 0.25rem rgba(248, 40, 90, 0.1);
+        }
+
+        .text-truncate-custom {
+            display: block;
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .top-progress-wrapper {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 20px 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Hide edit modal content initially to prevent flash */
+        #editTargetModal .modal-content {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #editTargetModal.show .modal-content {
+            opacity: 1;
+        }
+
+        .tooltip-approved {
+            --bs-tooltip-bg: #ffffff;
+            --bs-tooltip-border-color: #e0e0e0;
+            --bs-tooltip-color: #333333;
+            --bs-tooltip-padding-x: 12px;
+            --bs-tooltip-padding-y: 10px;
+            --bs-tooltip-border-radius: 8px;
+            --bs-tooltip-font-size: 13px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--bs-tooltip-border-color);
+        }
+
+        .tooltip-approved .tooltip-inner {
+            background-color: var(--bs-tooltip-bg);
+            color: var(--bs-tooltip-color);
+            border-radius: var(--bs-tooltip-border-radius);
+            padding: var(--bs-tooltip-padding-y) var(--bs-tooltip-padding-x);
+            text-align: left;
+            max-width: 250px;
+            line-height: 1.4;
+        }
+
+        .tooltip-approved .tooltip-arrow::before {
+            border-top-color: var(--bs-tooltip-bg);
+            border-bottom-color: var(--bs-tooltip-bg);
         }
     </style>
 
@@ -409,68 +247,101 @@
         <?php endif; ?>
     </div>
 
-    
-    <div class="row col-12 mt-5">
-        <div class="card">
-            
-            <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">
-                    Daftar <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?>
+    <?php if($parentId): ?>
+    <div class="top-progress-wrapper mb-4">
+        <div class="d-flex justify-content-between mt-2">
+            <h1 class="text-muted mb-0">Total Anggaran</h1>
+            <span class="text-muted">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+            </span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <?php
+                $percentage = ($target && $target->target_anggaran > 0) ? ($current_budget / $target->target_anggaran) * 100 : 0;
+            ?>
+            <h1 class="fw-bold mb-1"><?php echo e(formatRupiah($current_budget)); ?> / <?php echo e(formatRupiah($target->target_anggaran ?? 0)); ?></h1>
+            <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="<?php echo e(round($percentage, 2)); ?>% dari total anggaran">
+                <?php echo e(round($percentage)); ?>%
+            </h3>
+        </div>
 
-                </h3>
+        <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                role="progressbar"
+                style="width: <?php echo e($percentage); ?>%; background-color: #F8285A; border-radius: 12px;"
+                aria-valuenow="<?php echo e($percentage); ?>"
+                aria-valuemin="0"
+                aria-valuemax="100">
+            </div>
+        </div>
+
+        <div class="d-flex flex-row-reverse bd-highlight mt-2">
+            <div class="info-label mt-1 d-flex align-items-center gap-2">
+                <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
+                    <?php echo e($kegiatan_count); ?> Kegiatan Berjalan
+                </span>
+                <span>/</span>
+                <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
+                    <?php echo e($target->target_kegiatan ?? 0); ?> Target Kegiatan
+                </span>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    
+    <div class="card mt-5">
+        
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
+            <h3 class="card-title fw-bold fs-4 mb-0">
+                Daftar <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?>
+
+            </h3>
+
+            
+            <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+                <a href="<?php echo e($parentId ? route('admin.laporan-lpj.bidang.dynamic.child.create', $parentId) : route('admin.laporan-lpj.bidang.dynamic.create')); ?>"
+                       class="btn custom-red-button"
+                       style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+                    </a>
 
                 
-                <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    <a href="<?php echo e($parentId ? route('admin.laporan-lpj.bidang.dynamic.child.create', $parentId) : route('admin.laporan-lpj.bidang.dynamic.create')); ?>"
-                           class="btn custom-red-button"
-                           style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-                            <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-                        </a>
+                <div class="input-group position-relative" style="width: 250px;">
+                    <input type="search" name="search" id="search" class="form-control"
+                        placeholder="Cari program/kegiatan..." value="<?php echo e(request('search')); ?>" autocomplete="off">
 
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-                            <i class="fas fa-file-export me-1" style="color: white !important;"></i>Export
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" id="export-excel-btn" href="#" style="font-weight: bold; background-color: #2e7d32; color: white;"> <i class="fa-solid fa-file-excel" style="color: white"></i> Export to Excel</a></li>
-                        </ul>
-                    </div>
+                    <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
+                        style="position: absolute; right: 45px; z-index: 10; border: none; background: transparent; padding: 8px;">
+                        <i class="fas fa-times text-muted"></i>
+                    </button>
 
-                    
-                    <div class="input-group position-relative" style="width: 250px;">
-                        <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari program/kegiatan..." value="<?php echo e(request('search')); ?>" autocomplete="off">
+                    <button class="btn btn-outline-secondary" type="button" id="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
 
-                        <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
-                            style="position: absolute; right: 45px; z-index: 10; border: none; background: transparent; padding: 8px;">
-                            <i class="fas fa-times text-muted"></i>
-                        </button>
-
-                        <button class="btn btn-outline-secondary" type="button" id="search-button">
-                            <i class="fas fa-search"></i>
-                        </button>
-
-                        <div class="search-loading-indicator d-none position-absolute"
-                            style="right: 50px; top: 50%; transform: translateY(-50%); z-index: 10;">
-                            <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                <span class="visually-hidden">Cari Kegiatan...</span>
-                            </div>
+                    <div class="search-loading-indicator d-none position-absolute"
+                        style="right: 50px; top: 50%; transform: translateY(-50%); z-index: 10;">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                            <span class="visually-hidden">Cari Kegiatan...</span>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            
-            <div class="card-body position-relative">
-                <div class="loading-overlay d-none" id="loading-overlay">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+        
+        <div class="card-body position-relative">
+            <div class="loading-overlay d-none" id="loading-overlay">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
+            </div>
 
-                <div id="table-container">
-                    <?php echo $__env->make('admin.laporan-lpj.bidang_new.dynamic._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                </div>
+            <div id="table-container">
+                <?php echo $__env->make('admin.laporan-lpj.bidang_new.dynamic._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
             </div>
         </div>
     </div>
@@ -518,9 +389,13 @@
                 <div class="modal-header d-flex align-items-center"
                     style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
                     <h5 class="modal-title me-1" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
-                    <span id="statusIcon"class="ms-2 fs-6 gap-3"></span>
+                    <span id="statusIcon" class="ms-2 fs-6 gap-3"></span>
 
                     <div class="ms-auto d-flex align-items-center gap-2">
+                        <button type="button" id="export-pdf-btn" class="btn">
+                            <i class="fa-solid fa-file-export" style="color: white"></i>
+                            Export Data
+                        </button>
                         <button type="button" id="ajukanPerubahanBtn" class="btn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i>
                             <strong>Ajukan Perubahan</strong>
@@ -566,697 +441,851 @@
     </div>
 <?php $__env->stopSection(); ?>
 
+<?php if($parentId): ?>
+
+<div class="modal fade" id="editTargetModal" tabindex="-1" aria-labelledby="editTargetModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 gap-5 px-10 py-8">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="fs-2 fw-bold leading-5">Edit Target Anggaran & Kegiatan</div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="editTargetForm" class="d-grid gap-4">
+                <input type="hidden" name="id_lpj" value="<?php echo e($parentId); ?>">
+
+                <div>
+                    <div class="fw-semibold required mb-3 text-gray-800">Target Anggaran</div>
+                    <input type="text" name="target_anggaran" id="target_anggaran"
+                           value="<?php echo e(formatRupiah($target->target_anggaran ?? 0)); ?>"
+                           placeholder="Masukkan target anggaran"
+                           class="form-control bg-light border border-gray-400" required />
+                    <div class="invalid-feedback"></div>
+                </div>
+
+                <div>
+                    <div class="fw-semibold required mb-3 text-gray-800">Target Kegiatan</div>
+                    <input type="number" name="target_kegiatan" id="target_kegiatan"
+                           value="<?php echo e($target->target_kegiatan ?? 0); ?>"
+                           placeholder="Masukkan jumlah target kegiatan"
+                           class="form-control bg-light border border-gray-400" required />
+                    <div class="invalid-feedback"></div>
+                </div>
+            </form>
+
+            <div class="d-grid py-4">
+                <button type="button" id="saveTargetBtn"
+                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                    <span class="btn-text">Simpan Target</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <?php $__env->startSection('script'); ?>
-    <script>
-        $(document).ready(function() {
-            let dataTable = null;
-            let searchTimeout;
-            let isSearching = false;
-            const parentId = <?php echo e($parentId ?? 'null'); ?>;
+<script>
+$(document).ready(function() {
+    let dataTable = null;
+    let searchTimeout;
+    const parentId = <?php echo e($parentId ?? 'null'); ?>;
 
-            function initializeDataTable() {
-                const table = $("#kt_datatable_dom_positioning_sumberdaya");
+    // Utility functions
+    const formatRupiah = (angka, prefix = 'Rp ') => {
+        const number = String(angka).replace(/[^\d]/g, '');
+        const split = number.split(',');
+        const sisa = split[0].length % 3;
+        let rupiah = split[0].substr(0, sisa);
+        const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
-                if (dataTable) {
-                    dataTable.destroy();
-                }
+        if (ribuan) {
+            const separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
 
-                if (table.length > 0) {
-                    dataTable = table.DataTable({
-                        paging: false,
-                        info: false,
-                        searching: false,
-                        ordering: false,
-                        responsive: false,
-                        autoWidth: false,
-                        scrollX: false,
-                        language: {
-                            emptyTable: "Data tidak ditemukan",
-                            zeroRecords: "Tidak ada data yang cocok dengan pencarian"
-                        },
-                        columnDefs: [{
-                            targets: -1,
-                            orderable: false,
-                            searchable: false
-                        }]
-                    });
-                }
-            }
+        return prefix + (split[1] ? rupiah + ',' + split[1] : rupiah);
+    };
 
-            initializeDataTable();
+    const unformatRupiah = (rupiah) => parseInt(String(rupiah).replace(/[^0-9]/g, '')) || 0;
 
-            function showLoading() {
-                $('#loading-overlay').removeClass('d-none');
-            }
+    const showNotification = (message, type = 'info') => {
+        const alertClass = {
+            'success': 'alert-success',
+            'error': 'alert-danger',
+            'warning': 'alert-warning',
+            'info': 'alert-info'
+        }[type] || 'alert-info';
 
-            function hideLoading() {
-                $('#loading-overlay').addClass('d-none');
-            }
+        const notification = $(`
+            <div class="alert ${alertClass} alert-dismissible fade show"
+                style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `);
 
-            function updateTable(params = {}) {
-                return new Promise((resolve, reject) => {
-                    if (params.search === undefined) {
-                        showLoading();
-                    }
+        $('body').append(notification);
+        setTimeout(() => notification.alert('close'), 5000);
+    };
 
-                    let baseUrl;
-                    if (parentId) {
-                        baseUrl = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ':parentId')); ?>".replace(':parentId', parentId);
-                    } else {
-                        baseUrl = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.index')); ?>";
-                    }
-
-                    const currentUrl = new URL(baseUrl, window.location.origin);
-
-                    for (const key in params) {
-                        if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
-                            currentUrl.searchParams.set(key, params[key]);
-                        } else {
-                            currentUrl.searchParams.delete(key);
-                        }
-                    }
-
-                    if (params.search !== undefined || params.jenis_kegiatan_filter !== undefined) {
-                        if (!params.page) {
-                            currentUrl.searchParams.set('page', 1);
-                        }
-                    }
-
-                    $.ajax({
-                        url: currentUrl.toString(),
-                        type: 'GET',
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        success: function(response) {
-                            $('#table-container').html(response);
-                            hideLoading();
-
-                            window.history.pushState(null, null, currentUrl.toString());
-
-                            initializeDataTable();
-                            initializeTooltips();
-                            initializeDropdownEvents();
-
-                            resolve(response);
-                        },
-                        error: function(xhr, status, error) {
-                            hideLoading();
-                            const errorMsg = xhr.status === 0 ?
-                                'Koneksi terputus. Silakan coba lagi.' :
-                                'Terjadi kesalahan saat memuat data.';
-                            showNotification(errorMsg, 'error');
-                            reject(error);
-                        }
-                    });
-                });
-            }
-
-            function initializeTooltips() {
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl, {
-                        trigger: 'hover focus'
-                    });
-                });
-            }
-
-            function initializeDropdownEvents() {
-                $(document).off('click', '.dropdown-toggle-custom');
-                $(document).off('mouseenter', '.dropdown-action');
-                $(document).off('mouseleave', '.dropdown-action');
-
-                $(document).on('click', '.dropdown-toggle-custom', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const $dropdownAction = $(this).closest('.dropdown-action');
-                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
-
-                    $('.dropdown-menu-custom').not($menu).removeClass('show');
-                    $menu.toggleClass('show');
-                });
-
-                $(document).on('click', function(e) {
-                    if (!$(e.target).closest('.dropdown-action').length) {
-                        $('.dropdown-menu-custom').removeClass('show');
-                    }
-                });
-            }
-
-            function showNotification(message, type = 'info') {
-                const alertClass = {
-                    'success': 'alert-success',
-                    'error': 'alert-danger',
-                    'warning': 'alert-warning',
-                    'info': 'alert-info'
-                }[type] || 'alert-info';
-
-                const notification = $(`
-                    <div class="alert ${alertClass} alert-dismissible fade show notification-toast"
-                         role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
-                        ${message}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                `);
-
-                $('body').append(notification);
-
-                setTimeout(() => {
-                    notification.alert('close');
-                }, 5000);
-            }
-
-            $('#search').on('input', function() {
-                const searchValue = $(this).val().trim();
-                if (searchTimeout) clearTimeout(searchTimeout);
-
-                searchTimeout = setTimeout(() => {
-                    updateTable({ 'search': searchValue });
-                }, 300);
+    // Reset form functions (enhanced from Document 2)
+    function resetFormAdd() {
+        const form = document.getElementById('formAdd');
+        if (form) {
+            form.reset();
+            // Clear validation errors
+            form.querySelectorAll('.invalid-feedback').forEach(el => {
+                el.textContent = '';
             });
-
-           // Pagination handling
-            $(document).on('click', '.pagination-link', function(e) {
-                e.preventDefault();
-                const url = new URL($(this).attr('href'));
-                const page = url.searchParams.get('page');
-                updateTable({
-                    'page': page
-                });
+            form.querySelectorAll('.is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
             });
+        }
 
-            $(document).on('change', 'select[name="per_page"]', function() {
-                const perPage = $(this).val();
-                updateTable({
-                    'per_page': perPage,
-                    'page': 1
-                });
-            });
+        // Reset dropzone if exists
+        if (typeof dropzones !== 'undefined' && dropzones['formAdd']) {
+            dropzones['formAdd'].removeAllFiles();
+        }
+    }
 
-            initializeTooltips();
-            initializeDropdownEvents();
+    function resetEditForm(formId) {
+        const form = document.getElementById(formId);
+        if (form) {
+            // Reset form fields to their original values
+            const modal = $(form).closest('.modal');
+            const originalData = modal.data('original-data');
 
-            window.deleteItemWithSwal = function(itemId, itemName = 'item ini') {
-                const url = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.destroy', ':id')); ?>".replace(':id', itemId);
-
-                Swal.fire({
-                    title: "Apakah Anda Yakin?",
-                    html: `<p style='text-align:center'>Setelah <strong>${itemName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
-                    icon: "warning",
-                    showCancelButton: true,
-                    reverseButtons: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Hapus!',
-                    cancelButtonText: 'Batalkan!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Menghapus...',
-                            text: 'Mohon tunggu',
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            willOpen: () => Swal.showLoading()
-                        });
-
-                        $.ajax({
-                            url: url,
-                            type: 'POST',
-                            data: {
-                                _token: '<?php echo e(csrf_token()); ?>',
-                                _method: 'DELETE'
-                            },
-                            success: function(response) {
-                                Swal.close();
-                                if (response.success) {
-                                    Swal.fire({
-                                        title: 'Berhasil!',
-                                        text: response.message || 'Data berhasil dihapus.',
-                                        icon: 'success',
-                                        timer: 2000,
-                                        showConfirmButton: false
-                                    });
-                                    updateTable();
-                                } else {
-                                    Swal.fire({
-                                        title: 'Gagal!',
-                                        text: response.message || 'Terjadi kesalahan saat menghapus',
-                                        icon: 'error'
-                                    });
-                                }
-                            },
-                            error: function(xhr) {
-                                Swal.close();
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: xhr.responseJSON?.message || 'Terjadi kesalahan jaringan.',
-                                    icon: 'error'
-                                });
-                            }
-                        });
+            if (originalData) {
+                form.querySelectorAll('input, select, textarea').forEach(input => {
+                    const name = input.getAttribute('name');
+                    if (input.type !== 'file' && originalData.hasOwnProperty(name)) {
+                        input.value = originalData[name];
                     }
                 });
-            };
+            }
 
-            window.showDetailModal = function (data) {
-                const modalBody = document.getElementById('detailModalBody');
-                const statusIcon  = document.getElementById('statusIcon');
-
-                if (!modalBody) return;
-
-                /* ---------- status indicator ---------- */
-                if (statusIcon) {
-                    const canPengajuanModifikasi = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
-                    const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
-                    const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
-                    const hasToken = pengajuan && pengajuan.token > 0;
-
-                    if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                        statusIcon.innerHTML = 'Terbuka';
-                        statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
-                    } else {
-                        statusIcon.innerHTML = 'Terkunci';
-                        statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
-                    }
-
-                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn'); // ✅ target the button
-                        if (ajukanBtn) {
-                            if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                                ajukanBtn.style.display = 'none'; // hide button if user already owns modifiable
-                            } else {
-                                ajukanBtn.style.display = ''; // show otherwise
-                            }
-                        }
-                }
-
-                /* ---------- store id for “Ajukan Perubahan” ---------- */
-                $('#detailModal').data('lpj-id', data.id);
-
-                /* ---------- populate body ---------- */
-                const formatRupiah = (num) => 'Rp ' + (parseInt(num, 10) || 0).toLocaleString('id-ID');
-
-                let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-                if (data.foto_jurnal && data.foto_jurnal.length) {
-                    fotoJurnalHtml = `
-                        <div class="row g-3">
-                            ${data.foto_jurnal.map(f => `
-                                <div class="col-6 col-md-4">
-                                    <div class="border rounded overflow-hidden" style="height:120px">
-                                        <img src="/storage/${f}" class="w-100 h-100"
-                                            style="object-fit:cover;cursor:pointer"
-                                            onclick="window.open('/storage/${f}','_blank')">
-                                    </div>
-                                </div>`).join('')}
-                        </div>`;
-                }
-
-                let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-                if (data.dokumen_lpj && data.dokumen_lpj.length) {
-                    dokumenHtml = `
-                        <div class="d-flex flex-column gap-2">
-                            ${data.dokumen_lpj.map(d => {
-                                const name = d.split('/').pop();
-                                const ext  = name.split('.').pop().toLowerCase();
-                                const icon = {
-                                    pdf:'fas fa-file-pdf text-danger',
-                                    doc:'fas fa-file-word text-primary',
-                                    docx:'fas fa-file-word text-primary',
-                                    xls:'fas fa-file-excel text-success',
-                                    xlsx:'fas fa-file-excel text-success',
-                                    jpg:'fas fa-file-image text-info',
-                                    jpeg:'fas fa-file-image text-info',
-                                    png:'fas fa-file-image text-info'
-                                }[ext] || 'fas fa-file text-secondary';
-                                return `
-                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                        <i class="${icon} me-3" style="font-size:1.2em"></i>
-                                        <div class="flex-grow-1">
-                                            <div class="fw-medium">${name}</div>
-                                            <small class="text-muted">${ext.toUpperCase()}</small>
-                                        </div>
-                                        <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-download me-1"></i>Unduh
-                                        </a>
-                                    </div>`;
-                            }).join('')}
-                        </div>`;
-                }
-
-                modalBody.innerHTML = `
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="mb-4">
-                                <h6 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Informasi Kegiatan</h6>
-                                <div class="bg-light p-3 rounded">
-                                    <div class="mb-2">
-                                        <label class="fw-semibold mb-1">Nama Kegiatan & Program:</label>
-                                        <p class="mb-0">${data.nama_program || data.nama_kegiatan || 'N/A'}</p>
-                                        ${data.nama_kegiatan && data.nama_program ? `<small class="text-muted">${data.nama_kegiatan}</small>` : ''}
-                                    </div>
-                                    ${data.tempat_kegiatan ? `
-                                        <div class="mb-2">
-                                            <label class="fw-semibold mb-1">Tempat Kegiatan:</label>
-                                            <p class="mb-0">${data.tempat_kegiatan}</p>
-                                        </div>` : ''}
-                                    ${data.tanggal_kegiatan ? `
-                                        <div>
-                                            <label class="fw-semibold mb-1">Tanggal Kegiatan:</label>
-                                            <p class="mb-0">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
-                                        </div>` : ''}
-                                </div>
-                            </div>
-
-                            ${data.jumlah_anggaran || data.jumlah_realisasi ? `
-                                <div class="mb-4">
-                                    <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
-                                    <div class="bg-light p-3 rounded">
-                                        <div class="row g-3">
-                                            ${data.jumlah_anggaran ? `
-                                                <div class="col-md-6">
-                                                    <label class="fw-semibold mb-1">Total Anggaran:</label>
-                                                    <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_anggaran)}</p>
-                                                </div>` : ''}
-                                            ${data.jumlah_realisasi ? `
-                                                <div class="col-md-6">
-                                                    <label class="fw-semibold mb-1">Realisasi:</label>
-                                                    <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(data.jumlah_realisasi)}</p>
-                                                </div>` : ''}
-                                        </div>
-                                    </div>
-                                </div>` : ''}
-
-                            <div class="mb-4">
-                                <h6 class="fw-bold text-warning mb-3"><i class="fas fa-paperclip me-2"></i>Lampiran</h6>
-                                <div class="mb-3">
-                                    <label class="fw-semibold mb-2 d-block"><i class="fas fa-camera me-1"></i>Foto Kegiatan:</label>
-                                    <div class="bg-light p-3 rounded">${fotoJurnalHtml}</div>
-                                </div>
-                                <div>
-                                    <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
-                                    <div class="bg-light p-3 rounded">${dokumenHtml}</div>
-                                </div>
-                            </div>
-
-                            ${data.keterangan ? `
-                                <div class="mb-2">
-                                    <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
-                                    <div class="bg-light p-3 rounded"><p class="mb-0">${data.keterangan}</p></div>
-                                </div>` : ''}
-                        </div>
-                    </div>`;
-
-                new bootstrap.Modal(document.getElementById('detailModal')).show();
-            };
-
-            $('#ajukanPerubahanBtn').on('click', function() {
-                const lpjId = $('#detailModal').data('lpj-id');
-                $('#pengajuan_lpj_id').val(lpjId);
-                $('#detailModal').modal('hide');
-                new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
+            // Clear validation errors
+            form.querySelectorAll('.invalid-feedback').forEach(el => {
+                el.textContent = '';
             });
+            form.querySelectorAll('.is-invalid').forEach(el => {
+                el.classList.remove('is-invalid');
+            });
+        }
 
-            $('#submitPengajuanBtn').on('click', function() {
-                const lpjId = $('#pengajuan_lpj_id').val();
-                const alasan = $('#alasan').val();
+        // Reset dropzone if exists
+        if (typeof dropzones !== 'undefined' && dropzones[formId]) {
+            dropzones[formId].removeAllFiles();
+        }
+    }
 
-                if (!alasan.trim()) {
-                    alert('Alasan harus diisi.');
-                    return;
+    // Initialize DataTable
+    function initializeDataTable() {
+        const table = $("#kt_datatable_dom_positioning_sumberdaya");
+        if (dataTable) dataTable.destroy();
+
+        if (table.length > 0) {
+            dataTable = table.DataTable({
+                paging: false,
+                info: false,
+                searching: false,
+                ordering: false,
+                responsive: false,
+                autoWidth: false,
+                scrollX: false,
+                language: {
+                    emptyTable: "Data tidak ditemukan",
+                    zeroRecords: "Tidak ada data yang cocok dengan pencarian"
                 }
+            });
+        }
+    }
 
+    // Update table with AJAX
+    function updateTable(params = {}) {
+        return new Promise((resolve, reject) => {
+            $('#loading-overlay').removeClass('d-none');
+
+            let baseUrl = parentId
+                ? "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ':parentId')); ?>".replace(':parentId', parentId)
+                : "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.index')); ?>";
+
+            const currentUrl = new URL(baseUrl, window.location.origin);
+            for (const key in params) {
+                if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                    currentUrl.searchParams.set(key, params[key]);
+                }
+            }
+
+            $.ajax({
+                url: currentUrl.toString(),
+                type: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function(response) {
+                    $('#table-container').html(response);
+                    $('#loading-overlay').addClass('d-none');
+                    window.history.pushState(null, null, currentUrl.toString());
+                    initializeDataTable();
+                    initializeDropdownEvents();
+                    resolve(response);
+                },
+                error: function(xhr) {
+                    $('#loading-overlay').addClass('d-none');
+                    showNotification('Terjadi kesalahan saat memuat data.', 'error');
+                    reject(xhr);
+                }
+            });
+        });
+    }
+
+    // Initialize dropdown events
+    function initializeDropdownEvents() {
+        $(document).off('click', '.dropdown-toggle-custom');
+
+        $(document).on('click', '.dropdown-toggle-custom', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const $menu = $(this).closest('.dropdown-action').find('.dropdown-menu-custom');
+            $('.dropdown-menu-custom').not($menu).removeClass('show');
+            $menu.toggleClass('show');
+        });
+
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.dropdown-action').length) {
+                $('.dropdown-menu-custom').removeClass('show');
+            }
+        });
+    }
+
+    // Search functionality
+    $('#search').on('input', function() {
+        const searchValue = $(this).val().trim();
+        if (searchTimeout) clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            updateTable({ 'search': searchValue });
+        }, 300);
+    });
+
+    // Pagination handling
+    $(document).on('click', '.pagination-link', function(e) {
+        e.preventDefault();
+        const url = new URL($(this).attr('href'));
+        const page = url.searchParams.get('page');
+        updateTable({ 'page': page });
+    });
+
+    // Per page dropdown handler
+    $(document).on('change', 'select[name="per_page"]', function() {
+        const perPage = $(this).val();
+        updateTable({
+            'per_page': perPage,
+            'page': 1
+        });
+    });
+
+    // Delete function
+    window.deleteItemWithSwal = function(itemId, itemName = 'item ini') {
+        const url = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.destroy', ':id')); ?>".replace(':id', itemId);
+
+        Swal.fire({
+            title: "Apakah Anda Yakin?",
+            html: `<p style='text-align:center'>Setelah <strong>${itemName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Hapus!',
+            cancelButtonText: 'Batalkan!'
+        }).then((result) => {
+            if (result.isConfirmed) {
                 $.ajax({
-                    url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
+                    url: url,
                     type: 'POST',
-                    data: {
-                        _token: '<?php echo e(csrf_token()); ?>',
-                        lpj_id: lpjId,
-                        alasan: alasan,
-                        user_id: <?php echo e(auth()->id()); ?>
-
-                    },
+                    data: { _token: '<?php echo e(csrf_token()); ?>', _method: 'DELETE' },
                     success: function(response) {
-                        if(response.success) {
-                            $('#alasan').val('');
-                            $('#pengajuan_lpj_id').val('');
-                            $('#pengajuanModal').modal('hide');
-                            showNotification('Pengajuan berhasil dikirim.', 'success');
+                        if (response.success) {
+                            Swal.fire('Berhasil!', 'Data berhasil dihapus.', 'success');
+                            updateTable();
                         } else {
-                            showNotification(response.message || 'Gagal mengirim pengajuan.', 'error');
+                            Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus', 'error');
                         }
                     },
                     error: function() {
-                        showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                        Swal.fire('Error!', 'Terjadi kesalahan jaringan.', 'error');
                     }
                 });
-            });
-
-            $('#pengajuanModal').on('hidden.bs.modal', function () {
-                $('#alasan').val('');
-                $('#pengajuan_lpj_id').val('');
-            });
-
-            // Export functionality
-            $('#export-excel-btn').on('click', function(e) {
-                e.preventDefault();
-
-                let exportUrl;
-                if (parentId) {
-                    exportUrl = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.export-csv', ':parentId')); ?>".replace(':parentId', parentId);
-                } else {
-                    exportUrl = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.export-csv')); ?>";
-                }
-
-                const search = $('#search').val();
-
-                const url = new URL(exportUrl, window.location.origin);
-                if (search) {
-                    url.searchParams.set('search', search);
-                }
-
-                window.location.href = url.toString();
-            });
-
-            // Enhanced Preview Modal functionality
-            let currentFiles = [];
-            let currentIndex = 0;
-            let currentType = '';
-
-            const previewModal = document.getElementById('previewModal');
-            const previewSlides = document.getElementById('previewSlides');
-            const currentFileName = document.getElementById('currentFileName');
-            const fileCounter = document.getElementById('fileCounter');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            const modalTitle = document.getElementById('previewModalLabel');
-
-            // Global preview function
-            window.showPreviewModal = function(files, type, title) {
-                currentFiles = files;
-                currentType = type;
-                currentIndex = 0;
-                modalTitle.textContent = title || 'Preview Files';
-
-                console.log('Preview modal data:', { files, type, title }); // Debug log
-
-                loadPreview();
-                $('#previewModal').modal('show');
-            };
-
-            $(document).on('click', '.preview-btn', function(e) {
-                e.preventDefault();
-                const btn = $(this);
-                try {
-                    const filesData = btn.attr('data-files');
-                    const type = btn.attr('data-type') || 'image';
-                    const title = btn.attr('data-title') || 'Preview Files';
-
-                    console.log('Button clicked:', { filesData, type, title }); // Debug log
-
-                    if (filesData) {
-                        const files = JSON.parse(filesData);
-                        showPreviewModal(files, type, title);
-                    } else {
-                        console.error('No files data found');
-                    }
-                } catch (error) {
-                    console.error('Error parsing preview data:', error);
-                }
-            });
-
-            function loadPreview() {
-                if (!previewSlides || !currentFiles || currentFiles.length === 0) {
-                    console.error('No preview slides container or files');
-                    return;
-                }
-
-                previewSlides.innerHTML = '';
-
-                currentFiles.forEach((file, index) => {
-                    const slide = document.createElement('div');
-                    slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
-
-                    console.log(`Loading file ${index}: ${file}, type: ${currentType}`); // Debug log
-
-                    if (currentType === 'image' || currentType === 'foto') {
-                        slide.innerHTML = `
-                            <img src="/storage/${file}"
-                                 alt="Preview"
-                                 class="preview-image"
-                                 onerror="console.error('Failed to load image: /storage/${file}')">
-                        `;
-                    } else if (currentType === 'document' || currentType === 'dokumen') {
-                        const fileName = file.split('/').pop();
-                        const fileExtension = fileName.split('.').pop().toLowerCase();
-
-                        if (fileExtension === 'pdf') {
-                            slide.innerHTML = `
-                                <iframe src="/storage/${file}"
-                                        class="preview-document"
-                                        onerror="console.error('Failed to load PDF: /storage/${file}')"></iframe>
-                            `;
-                        } else {
-                            const iconClass = getFileIcon(fileExtension);
-                            slide.innerHTML = `
-                                <div class="document-placeholder">
-                                    <i class="${iconClass}"></i>
-                                    <h5>${fileName}</h5>
-                                    <p>Click download to view this ${fileExtension.toUpperCase()} file</p>
-                                    <a href="/storage/${file}" class="btn btn-primary" target="_blank">
-                                        <i class="fas fa-external-link-alt me-2"></i>Open File
-                                    </a>
-                                </div>
-                            `;
-                        }
-                    } else {
-                        // Auto-detect based on file extension
-                        const fileName = file.split('/').pop();
-                        const fileExtension = fileName.split('.').pop().toLowerCase();
-                        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
-
-                        if (imageExtensions.includes(fileExtension)) {
-                            slide.innerHTML = `
-                                <img src="/storage/${file}"
-                                     alt="Preview"
-                                     class="preview-image"
-                                     onerror="console.error('Failed to load image: /storage/${file}')">
-                            `;
-                        } else {
-                            const iconClass = getFileIcon(fileExtension);
-                            slide.innerHTML = `
-                                <div class="document-placeholder">
-                                    <i class="${iconClass}"></i>
-                                    <h5>${fileName}</h5>
-                                    <p>Click download to view this ${fileExtension.toUpperCase()} file</p>
-                                    <a href="/storage/${file}" class="btn btn-primary" target="_blank">
-                                        <i class="fas fa-external-link-alt me-2"></i>Open File
-                                    </a>
-                                </div>
-                            `;
-                        }
-                    }
-
-                    previewSlides.appendChild(slide);
-                });
-
-                updatePreviewUI();
             }
-
-            function updatePreviewUI() {
-                if (!currentFiles || currentFiles.length === 0) return;
-
-                const fileName = currentFiles[currentIndex].split('/').pop();
-                if (currentFileName) currentFileName.textContent = fileName;
-                if (fileCounter) fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
-
-                if (currentFiles.length > 1) {
-                    if (prevBtn) prevBtn.style.display = 'block';
-                    if (nextBtn) nextBtn.style.display = 'block';
-                } else {
-                    if (prevBtn) prevBtn.style.display = 'none';
-                    if (nextBtn) nextBtn.style.display = 'none';
-                }
-
-                if (downloadBtn) {
-                    downloadBtn.onclick = function() {
-                        window.open('/storage/' + currentFiles[currentIndex], '_blank');
-                    };
-                }
-            }
-
-            function showSlide(index) {
-                if (!previewSlides) return;
-
-                document.querySelectorAll('.preview-slide').forEach((slide, i) => {
-                    slide.classList.toggle('active', i === index);
-                });
-                currentIndex = index;
-                updatePreviewUI();
-            }
-
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function() {
-                    const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
-                    showSlide(newIndex);
-                });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function() {
-                    const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
-                    showSlide(newIndex);
-                });
-            }
-
-            document.addEventListener('keydown', function(e) {
-                if (previewModal && previewModal.classList.contains('show')) {
-                    if (e.key === 'ArrowLeft' && prevBtn) {
-                        prevBtn.click();
-                    } else if (e.key === 'ArrowRight' && nextBtn) {
-                        nextBtn.click();
-                    }
-                }
-            });
-
-            function getFileIcon(extension) {
-                const icons = {
-                    'pdf': 'fas fa-file-pdf text-danger',
-                    'doc': 'fas fa-file-word text-primary',
-                    'docx': 'fas fa-file-word text-primary',
-                    'xls': 'fas fa-file-excel text-success',
-                    'xlsx': 'fas fa-file-excel text-success',
-                    'ppt': 'fas fa-file-powerpoint text-warning',
-                    'pptx': 'fas fa-file-powerpoint text-warning',
-                    'jpg': 'fas fa-file-image text-info',
-                    'jpeg': 'fas fa-file-image text-info',
-                    'png': 'fas fa-file-image text-info',
-                    'gif': 'fas fa-file-image text-info'
-                };
-                return icons[extension] || 'fas fa-file text-muted';
-            }
-
-            $('#previewModal').on('show.bs.modal', function() {
-                if (currentFiles && currentFiles.length > 0) {
-                    showSlide(0);
-                }
-            });
-
-            $('#previewModal').on('shown.bs.modal', function() {
-                // Ensure images are properly loaded after modal is fully shown
-                const activeSlide = document.querySelector('.preview-slide.active');
-                if (activeSlide) {
-                    const img = activeSlide.querySelector('img');
-                    if (img && !img.complete) {
-                        img.onload = function() {
-                            console.log('Image loaded successfully');
-                        };
-                    }
-                }
-            });
-
         });
-    </script>
+    };
+
+    // Enhanced form submission function (adapted from Document 2)
+    window.submitForm = function(formId) {
+        const formElement = document.getElementById(formId);
+        if (!formElement) {
+            showNotification("Form tidak ditemukan", "error");
+            return;
+        }
+
+        let formData = new FormData();
+        let actionUrl;
+
+        if (formId === 'formAdd') {
+            formData = new FormData(formElement);
+            actionUrl = formElement.action;
+        } else {
+            actionUrl = formElement.getAttribute('data-action');
+            formElement.querySelectorAll('input, select, textarea').forEach(input => {
+                if (input.type === 'file') return;
+                if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
+                    formData.append(input.name, input.value);
+                } else if (input.type !== 'checkbox' && input.type !== 'radio') {
+                    formData.append(input.name, input.value);
+                }
+            });
+        }
+
+        // Handle dropzone files if available
+        if (typeof dropzones !== 'undefined') {
+            const dz = dropzones[formId];
+            if (dz && dz.getAcceptedFiles().length > 0) {
+                dz.getAcceptedFiles().forEach(file => {
+                    formData.append('dokumen', file);
+                });
+            }
+        }
+
+        // Add loading state to button
+        const submitBtn = document.querySelector(
+            `#submitBtn${formId === 'formAdd' ? 'Add' : formId.replace('form-', '')}`);
+        if (submitBtn) {
+            submitBtn.classList.add('btn-loading');
+            submitBtn.disabled = true;
+        }
+
+        fetch(actionUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                        '<?php echo e(csrf_token()); ?>',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                body: formData,
+            })
+            .then(async response => {
+                const data = await response.json();
+
+                // Remove loading state
+                if (submitBtn) {
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.disabled = false;
+                }
+
+                if (!response.ok) {
+                    if (data.errors) {
+                        Object.entries(data.errors).forEach(([field, msgs]) => {
+                            showNotification(msgs.join(', '), "error");
+                        });
+                    } else {
+                        showNotification(data.message || "Gagal menyimpan data", "error");
+                    }
+                } else {
+                    // Reset form immediately after successful submission
+                    if (formId === 'formAdd') {
+                        resetFormAdd();
+                    } else {
+                        resetEditForm(formId);
+                    }
+
+                    $('.modal.show').addClass('submit-success');
+                    $('.modal.show').modal('hide');
+
+                    showNotification(data.message || "Data berhasil disimpan", "success");
+                    updateTable();
+                }
+            })
+            .catch(error => {
+                // Remove loading state
+                if (submitBtn) {
+                    submitBtn.classList.remove('btn-loading');
+                    submitBtn.disabled = false;
+                }
+
+                showNotification("Terjadi kesalahan. Silakan coba lagi.", "error");
+                console.error('Error:', error);
+            });
+    };
+
+    // Show detail modal
+    window.showDetailModal = function(data) {
+        const modalBody = document.getElementById('detailModalBody');
+        const statusIcon = document.getElementById('statusIcon');
+        const exportBtn = document.getElementById('export-pdf-btn');
+
+        if (exportBtn) exportBtn.setAttribute('data-lpj-id', data.id);
+
+        // Status indicator
+        if (statusIcon) {
+            const canPengajuanModifikasi = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
+            const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
+            const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
+            const hasToken = pengajuan && pengajuan.token > 0;
+
+                if (canPengajuanModifikasi || (isModifiable && hasToken)) {
+                    statusIcon.innerHTML = 'Terbuka';
+                    statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
+                } else {
+                    statusIcon.innerHTML = 'Terkunci';
+                    statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+                }
+
+                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
+                        if (ajukanBtn) {
+                            if (canPengajuanModifikasi || (isModifiable && hasToken)) {
+                                ajukanBtn.style.display = 'none';
+                            } else {
+                                ajukanBtn.style.display = ''; 
+                            }
+                        }
+                }
+
+        $('#detailModal').data('lpj-id', data.id);
+
+        // Populate modal content with full functionality
+        const formatRupiah = (num) => 'Rp ' + (parseInt(num, 10) || 0).toLocaleString('id-ID');
+
+        let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+        if (data.foto_jurnal && data.foto_jurnal.length) {
+            fotoJurnalHtml = `
+                <div class="row g-3">
+                    ${data.foto_jurnal.map(f => `
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded overflow-hidden" style="height:120px">
+                                <img src="/storage/${f}" class="w-100 h-100"
+                                    style="object-fit:cover;cursor:pointer"
+                                    >
+                            </div>
+                        </div>`).join('')}
+                </div>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm preview-btn"
+                            data-files='${JSON.stringify(data.foto_jurnal)}'
+                            data-type="image"
+                            data-title="Foto Kegiatan">
+                    </button>
+                </div>`;
+        }
+
+        let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+        if (data.dokumen_pendukung && data.dokumen_pendukung.length) {
+            dokumenHtml = `
+                <div class="d-flex flex-column gap-2">
+                    ${data.dokumen_pendukung.map(d => {
+                        const name = d.split('/').pop();
+                        const ext = name.split('.').pop().toLowerCase();
+                        const icon = {
+                            pdf: 'fas fa-file-pdf text-danger',
+                            doc: 'fas fa-file-word text-primary',
+                            docx: 'fas fa-file-word text-primary',
+                            xls: 'fas fa-file-excel text-success',
+                            xlsx: 'fas fa-file-excel text-success',
+                            jpg: 'fas fa-file-image text-info',
+                            jpeg: 'fas fa-file-image text-info',
+                            png: 'fas fa-file-image text-info'
+                        }[ext] || 'fas fa-file text-secondary';
+                        return `
+                            <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                <i class="${icon} me-3" style="font-size:1.2em"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-medium">${name}</div>
+                                    <small class="text-muted">${ext.toUpperCase()}</small>
+                                </div>
+                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                    <i class="fas fa-download me-1"></i>Unduh
+                                </a>
+                            </div>`;
+                    }).join('')}
+                </div>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm preview-btn"
+                            data-files='${JSON.stringify(data.dokumen_pendukung)}'
+                            data-type="document"
+                            data-title="Dokumen Pendukung">
+                    </button>
+                </div>`;
+        }
+
+        modalBody.innerHTML = `
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Informasi Kegiatan</h6>
+                        <div class="bg-light p-3 rounded">
+                            <div class="mb-2">
+                                <label class="fw-semibold mb-1">Nama Kegiatan & Program:</label>
+                                <p class="mb-0">${data.nama_program || data.nama_kegiatan || 'N/A'}</p>
+                                ${data.nama_kegiatan && data.nama_program ? `<small class="text-muted">${data.nama_kegiatan}</small>` : ''}
+                            </div>
+                            ${data.tempat_kegiatan ? `
+                                <div class="mb-2">
+                                    <label class="fw-semibold mb-1">Tempat Kegiatan:</label>
+                                    <p class="mb-0">${data.tempat_kegiatan}</p>
+                                </div>` : ''}
+                            ${data.tanggal_kegiatan ? `
+                                <div>
+                                    <label class="fw-semibold mb-1">Tanggal Kegiatan:</label>
+                                    <p class="mb-0">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                </div>` : ''}
+                        </div>
+                    </div>
+
+                    ${data.jumlah_harga ? `
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
+                            <div class="bg-light p-3 rounded">
+                                <div class="row g-3">
+                                    ${data.jumlah_harga ? `
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold mb-1">Total Anggaran:</label>
+                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
+                                        </div>` : ''}
+                                </div>
+                            </div>
+                        </div>` : ''}
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-warning mb-3"><i class="fas fa-paperclip me-2"></i>Lampiran</h6>
+                        <div class="mb-3">
+                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-camera me-1"></i>Foto Kegiatan:</label>
+                            <div class="bg-light p-3 rounded">${fotoJurnalHtml}</div>
+                        </div>
+                        <div>
+                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
+                            <div class="bg-light p-3 rounded">${dokumenHtml}</div>
+                        </div>
+                    </div>
+
+                    ${data.keterangan ? `
+                        <div class="mb-2">
+                            <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
+                            <div class="bg-light p-3 rounded"><p class="mb-0">${data.keterangan}</p></div>
+                        </div>` : ''}
+                </div>
+            </div>
+        `;
+
+        new bootstrap.Modal(document.getElementById('detailModal')).show();
+    };
+
+    // Pengajuan modal handlers
+    $('#ajukanPerubahanBtn').on('click', function() {
+        const lpjId = $('#detailModal').data('lpj-id');
+        $('#pengajuan_lpj_id').val(lpjId);
+        $('#detailModal').modal('hide');
+        new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
+    });
+
+    $('#submitPengajuanBtn').on('click', function() {
+        const lpjId = $('#pengajuan_lpj_id').val();
+        const alasan = $('#alasan').val();
+
+        if (!alasan.trim()) {
+            alert('Alasan harus diisi.');
+            return;
+        }
+
+        $.ajax({
+            url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
+            type: 'POST',
+            data: {
+                _token: '<?php echo e(csrf_token()); ?>',
+                lpj_id: lpjId,
+                alasan: alasan,
+                user_id: <?php echo e(auth()->id()); ?>
+
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#pengajuanModal').modal('hide');
+                    showNotification('Pengajuan berhasil dikirim.', 'success');
+                } else {
+                    showNotification(response.message || 'Gagal mengirim pengajuan.', 'error');
+                }
+            },
+            error: function() {
+                showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+            }
+        });
+    });
+
+    // Export PDF functionality
+    $('#export-pdf-btn').on('click', function(e) {
+        e.preventDefault();
+        const lpjId = $(this).attr('data-lpj-id');
+
+        if (lpjId) {
+            let exportUrl = "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.export-pdf', ':id')); ?>".replace(':id', lpjId);
+            window.location.href = exportUrl;
+        } else {
+            alert('Tidak dapat mengekspor PDF, ID laporan tidak ditemukan.');
+        }
+    });
+
+    // Preview modal functionality
+    let currentFiles = [];
+    let currentIndex = 0;
+
+    window.showPreviewModal = function(files, type, title) {
+        currentFiles = files;
+        currentIndex = 0;
+
+        const previewSlides = document.getElementById('previewSlides');
+        const modalTitle = document.getElementById('previewModalLabel');
+
+        modalTitle.textContent = title || 'Preview Files';
+        previewSlides.innerHTML = '';
+
+        currentFiles.forEach((file, index) => {
+            const slide = document.createElement('div');
+            slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
+            slide.style.cssText = `
+                display: ${index === currentIndex ? 'flex' : 'none'};
+                width: 100%;
+                height: 100%;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                top: 0;
+                left: 0;
+            `;
+
+            const fileName = file.split('/').pop();
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+
+            if (imageExtensions.includes(fileExtension)) {
+                slide.innerHTML = `<img src="/storage/${file}" alt="Preview" style="max-width: 100%; max-height: 80%; object-fit: contain; border-radius: 8px;">`;
+            } else if (fileExtension === 'pdf') {
+                slide.innerHTML = `<iframe src="/storage/${file}" style="width: 100%; height: 80%; border: none; border-radius: 8px;"></iframe>`;
+            } else {
+                slide.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; background: white; border: 2px dashed #dee2e6; border-radius: 8px;">
+                        <i class="fas fa-file" style="font-size: 4rem; color: #6c757d; margin-bottom: 1rem;"></i>
+                        <h5>${fileName}</h5>
+                        <a href="/storage/${file}" class="btn btn-primary" target="_blank">Open File</a>
+                    </div>
+                `;
+            }
+
+            previewSlides.appendChild(slide);
+        });
+
+        updatePreviewUI();
+        $('#previewModal').modal('show');
+    };
+
+    function updatePreviewUI() {
+        const fileName = currentFiles[currentIndex]?.split('/').pop() || '';
+        const fileCounter = document.getElementById('fileCounter');
+        const currentFileName = document.getElementById('currentFileName');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        if (currentFileName) currentFileName.textContent = fileName;
+        if (fileCounter) fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
+
+        if (currentFiles.length > 1) {
+            if (prevBtn) prevBtn.style.display = 'block';
+            if (nextBtn) nextBtn.style.display = 'block';
+        } else {
+            if (prevBtn) prevBtn.style.display = 'none';
+            if (nextBtn) nextBtn.style.display = 'none';
+        }
+
+        if (downloadBtn) {
+            downloadBtn.onclick = function() {
+                window.open('/storage/' + currentFiles[currentIndex], '_blank');
+            };
+        }
+    }
+
+    function showSlide(index) {
+        document.querySelectorAll('.preview-slide').forEach((slide, i) => {
+            slide.style.display = i === index ? 'flex' : 'none';
+        });
+        currentIndex = index;
+        updatePreviewUI();
+    }
+
+    $('#prevBtn').on('click', function() {
+        const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
+        showSlide(newIndex);
+    });
+
+    $('#nextBtn').on('click', function() {
+        const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
+        showSlide(newIndex);
+    });
+
+    $(document).on('click', '.preview-btn', function(e) {
+        e.preventDefault();
+        try {
+            const filesData = $(this).attr('data-files');
+            const type = $(this).attr('data-type') || 'image';
+            const title = $(this).attr('data-title') || 'Preview Files';
+
+            if (filesData) {
+                const files = JSON.parse(filesData);
+                showPreviewModal(files, type, title);
+            }
+        } catch (error) {
+            console.error('Error parsing preview data:', error);
+        }
+    });
+
+    // Edit Target Modal functionality
+    const $editModal = $('#editTargetModal');
+    const $editForm = $('#editTargetForm');
+
+    // Format rupiah input
+    $('#target_anggaran').on('keyup', function() {
+        $(this).val(formatRupiah($(this).val()));
+    });
+
+    // Fix modal flash issue by showing content only when modal is actually shown
+    $editModal.on('show.bs.modal', function() {
+        setTimeout(() => {
+            $(this).find('.modal-content').css('opacity', '1');
+        }, 50);
+    });
+
+    $editModal.on('hidden.bs.modal', function() {
+        $(this).find('.modal-content').css('opacity', '0');
+        $editForm.find('.invalid-feedback').text('');
+        $editForm.find('.is-invalid').removeClass('is-invalid');
+    });
+
+    // Save target button
+    $('#saveTargetBtn').on('click', function() {
+        const $submitBtn = $(this);
+        const $targetInput = $('#target_anggaran');
+        const unformattedValue = unformatRupiah($targetInput.val());
+
+        $targetInput.val(unformattedValue);
+        const formData = $editForm.serialize();
+        $targetInput.val(formatRupiah(unformattedValue));
+
+        $submitBtn.addClass('btn-loading').prop('disabled', true);
+
+        $.ajax({
+            url: "<?php echo e(route('admin.laporan-lpj.bidang.dynamic.target.store-or-update')); ?>",
+            type: 'POST',
+            data: formData,
+            headers: { 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>' },
+            success: function(response) {
+                $submitBtn.removeClass('btn-loading').prop('disabled', false);
+
+                if (response.success) {
+                    $editModal.modal('hide');
+                    showNotification('Target berhasil diperbarui.', 'success');
+                    setTimeout(() => window.location.reload(), 100);
+                } else {
+                    showNotification(response.message || 'Gagal memperbarui target.', 'error');
+                }
+            },
+            error: function(xhr) {
+                $submitBtn.removeClass('btn-loading').prop('disabled', false);
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    Object.entries(xhr.responseJSON.errors).forEach(([field, messages]) => {
+                        const $field = $editForm.find(`[name="${field}"]`);
+                        $field.addClass('is-invalid');
+                        $field.siblings('.invalid-feedback').text(messages.join(', '));
+                    });
+                } else {
+                    showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                }
+            }
+        });
+    });
+
+    // Enhanced Modal Event Handlers (from Document 2)
+    $(document).on('show.bs.modal', '.modal', function(e) {
+        const modalId = $(this).attr('id');
+        const modal = $(this);
+
+        modal.removeClass('has-changes submit-success');
+
+        // Store original form data for reset on cancel
+        setTimeout(() => {
+            const form = modal.find('form, [id^="form-"]').first();
+            if (form.length) {
+                const originalData = {};
+                form.find('input, select, textarea').each(function() {
+                    const input = $(this);
+                    if (input.attr('type') !== 'file') {
+                        originalData[input.attr('name')] = input.val();
+                    }
+                });
+                modal.data('original-data', originalData);
+            }
+        }, 100);
+    });
+
+    $(document).on('hidden.bs.modal', '.modal', function(e) {
+        const modalId = $(this).attr('id');
+        const modal = $(this);
+
+        // Only reset if the form was not successfully submitted
+        // (successful submissions are already reset in submitForm)
+        if (!modal.hasClass('submit-success')) {
+            const originalData = modal.data('original-data');
+            if (originalData) {
+                const form = modal.find('form, [id^="form-"]').first();
+                if (form.length) {
+                    form.find('input, select, textarea').each(function() {
+                        const input = $(this);
+                        const name = input.attr('name');
+                        if (input.attr('type') !== 'file' && originalData.hasOwnProperty(name)) {
+                            input.val(originalData[name]);
+                        }
+                    });
+                }
+            }
+
+            // Reset dropzone files
+            if (typeof dropzones !== 'undefined') {
+                if (modalId.startsWith('edit-')) {
+                    const itemId = modalId.split('-')[1];
+                    const formId = `form-${itemId}`;
+                    if (dropzones[formId]) {
+                        dropzones[formId].removeAllFiles();
+                    }
+                } else if (modalId === 'add') {
+                    if (dropzones['formAdd']) {
+                        dropzones['formAdd'].removeAllFiles();
+                    }
+                }
+            }
+        }
+
+        // Always clean up modal state
+        modal.removeClass('has-changes submit-success');
+        modal.removeData('original-data');
+    });
+
+    // Track form changes
+    $(document).on('input change', '.modal input, .modal select, .modal textarea', function() {
+        const modal = $(this).closest('.modal');
+        modal.addClass('has-changes');
+    });
+    // Initialize everything
+    initializeDataTable();
+    initializeDropdownEvents();
+});
+</script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang_new/dynamic/index.blade.php ENDPATH**/ ?>

@@ -44,6 +44,17 @@
                     <th>Foto Jurnal</th>
                     <th>Dokumen Pendukung</th>
                     <th>Dokumen LPJ</th>
+                    <th>
+                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'created_at', 'direction' => (request()->get('sort') == 'created_at' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
+                                class="text-dark text-decoration-none sortable-header">
+                                Tanggal Ditambahkan
+                                <?php if(request()->get('sort') == 'created_at'): ?>
+                                    <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                                <?php else: ?>
+                                    <i class="fas fa-sort"></i>
+                                <?php endif; ?>
+                            </a>
+                    </th>
                     <th style="text-align: center">Aksi</th>
                 </tr>
             </thead>
@@ -57,14 +68,21 @@
                         </td>
                         <td>
                             <div class="d-flex flex-column">
-                                <strong class="text-truncate-custom"><?php echo e($data->nama_program); ?></strong>
+                                <strong class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<?php echo e($data->nama_program); ?>"><?php echo e($data->nama_program); ?></strong>
                                 <?php if($data->nama_kegiatan): ?>
-                                    <small class="text-muted" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo e($data->nama_kegiatan); ?></small>
+                                    <small class="text-muted text-truncate-custom"><?php echo e($data->nama_kegiatan); ?></small>
                                 <?php endif; ?>
                             </div>
                         </td>
                         
-                        <td>Rp <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?></td>
+                        <td>
+                            <div d-flex flex-column>
+                                <p class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="Rp. <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?>">
+                                    Rp <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?>
+
+                                </p>
+                            </div>
+                        </td>
                         <td>
                             <?php if($data->foto_jurnal && count($data->foto_jurnal) > 0): ?>
                                 <button type="button"
@@ -112,6 +130,12 @@
                             <?php else: ?>
                                 <span class="text-muted">-</span>
                             <?php endif; ?>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold"><?php echo e($data->created_at->format('d M Y')); ?></span>
+                                <small class="text-muted"><?php echo e($data->created_at->format('H:i')); ?></small>
+                            </div>
                         </td>
                         <td class="text-center">
                             <div class="dropdown dropdown-action" data-row-id="<?php echo e($data->id); ?>">

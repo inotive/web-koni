@@ -367,6 +367,20 @@
             transform: translateY(0);
             box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
         }
+
+        /* Progress bar styling */
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -375,44 +389,75 @@
     </div>
 
     <div class="row g-3 mb-4">
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex align-items-center">
-                <div class="flex-shrink-0 me-3">
-                    <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                        <i class="fas fa-list-alt fs-2 text-primary"></i>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-list-alt fs-2 text-primary"></i>
+                        </div>
                     </div>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="text-muted mb-1 fw-normal">Total Kegiatan</h6>
-                     <h3 class="mb-0 fw-bold text-dark" id="total-kegiatan">
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 fw-normal">Total Kegiatan</h6>
+                        <h3 class="mb-0 fw-bold text-dark" id="total-kegiatan">
                             {{ $totalKegiatan ?? $kegiatanLainnya->total() ?? 0 }}/10
                         </h3>
-                    <small class="text-muted">Kegiatan terdaftar</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex align-items-center">
-                <div class="flex-shrink-0 me-3">
-                    <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                        <i class="fas fa-money-bill-wave fs-2 text-success"></i>
+                        <div class="d-flex align-items-center">
+                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                @php
+                                    $kegiatanCount = $totalKegiatan ?? $kegiatanLainnya->total() ?? 0;
+                                    $kegiatanPercentage = $kegiatanCount > 0 ? ($kegiatanCount / 10) * 100 : 0;
+                                    $kegiatanPercentage = min($kegiatanPercentage, 100);
+                                @endphp
+                                <div class="progress-bar bg-primary" 
+                                     id="kegiatan-progress"
+                                     role="progressbar" 
+                                     style="width: {{ $kegiatanPercentage }}%" 
+                                     aria-valuenow="{{ $kegiatanPercentage }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100"></div>
+                            </div>
+                            <small class="text-muted">/10</small>
+                        </div>
                     </div>
                 </div>
-                <div class="flex-grow-1">
-                    <h6 class="text-muted mb-1 fw-normal">Total Anggaran</h6>
-                    <h3 class="mb-0 fw-bold text-dark" id="total-anggaran">
-                            {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }}/200.000.000.000
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body d-flex align-items-center">
+                    <div class="flex-shrink-0 me-3">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                            <i class="fas fa-money-bill-wave fs-2 text-success"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="text-muted mb-1 fw-normal">Total Anggaran</h6>
+                        <h3 class="mb-0 fw-bold text-dark" id="total-anggaran">
+                            Rp {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }}
                         </h3>
-                    <small class="text-muted">Anggaran keseluruhan</small>
+                        <div class="d-flex align-items-center">
+                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                @php
+                                    $percentage = ($totalAnggaran ?? 0) > 0 ? (($totalAnggaran ?? 0) / 200000000000) * 100 : 0;
+                                    $percentage = min($percentage, 100);
+                                @endphp
+                                <div class="progress-bar bg-success" 
+                                     id="anggaran-progress"
+                                     role="progressbar" 
+                                     style="width: {{ $percentage }}%" 
+                                     aria-valuenow="{{ $percentage }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100"></div>
+                            </div>
+                            <small class="text-muted">100M<mall>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
     <div class="row col-12 mt-5">
         <div class="card">
@@ -786,6 +831,7 @@
             'page': 1
         }).finally(() => {
             hideSearchLoading();
+            updateSummaryCards(); // Ensure summary cards are updated after search
         });
     }
 
@@ -821,6 +867,7 @@
                     initializeTooltips();
                     initializeDropdownEvents();
                     updateFilterCount();
+                    updateSummaryCards(); // Update summary cards after table update
 
                     resolve(response);
                 },
@@ -1316,6 +1363,7 @@
     initializeDropdownEvents();
     updateFilterCount();
     toggleClearButton();
+    updateSummaryCards(); // Initialize summary cards on page load
 
     $('#search').on('input', function() {
         const searchValue = $(this).val().trim();
@@ -1384,23 +1432,34 @@
     });
 
     function updateSummaryCards() {
-    const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(':contains("Data tidak ditemukan")');
-    const totalKegiatan = tableRows.length;
-    
-    let totalAnggaran = 0;
-    tableRows.each(function() {
-        const anggaranText = $(this).find('td').eq(2).text().trim();
-        if (anggaranText && anggaranText !== '-') {
-            const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
-            totalAnggaran += anggaranValue;
-        }
-    });
-    
-    $('#total-kegiatan').text(totalKegiatan);
-    $('#total-anggaran').text('Rp ' + totalAnggaran.toLocaleString('id-ID'));
-}
+        const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(':contains("Data tidak ditemukan")');
+        const totalKegiatan = tableRows.length;
+        
+        let totalAnggaran = 0;
+        tableRows.each(function() {
+            const anggaranText = $(this).find('td').eq(2).text().trim();
+            if (anggaranText && anggaranText !== '-') {
+                const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
+                totalAnggaran += anggaranValue;
+            }
+        });
+        
+        // Update total kegiatan
+        $('#total-kegiatan').html(totalKegiatan + '/10');
+        
+        // Update kegiatan progress bar
+        const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / 10) * 100, 100) : 0;
+        $('#kegiatan-progress').css('width', kegiatanPercentage + '%').attr('aria-valuenow', kegiatanPercentage);
+        
+        // Update total anggaran dengan format Rupiah
+        $('#total-anggaran').html('Rp ' + totalAnggaran.toLocaleString('id-ID'));
+        
+        // Update anggaran progress bar
+        const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / 200000000000) * 100, 100) : 0;
+        $('#anggaran-progress').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
+    }
 
-// Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
+    // Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
 
     $(document).on('change', 'select[name="per_page"]', function() {
         const perPage = $(this).val();
