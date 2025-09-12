@@ -840,12 +840,12 @@ $(document).ready(function() {
                     statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
                 }
 
-                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn'); // ✅ target the button
+                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
                         if (ajukanBtn) {
                             if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                                ajukanBtn.style.display = 'none'; // hide button if user already owns modifiable
+                                ajukanBtn.style.display = 'none';
                             } else {
-                                ajukanBtn.style.display = ''; // show otherwise
+                                ajukanBtn.style.display = ''; 
                             }
                         }
                 }
