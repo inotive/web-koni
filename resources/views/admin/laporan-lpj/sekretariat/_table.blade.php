@@ -160,7 +160,7 @@
 
                                     <li>
                                         <a href="{{ $canEdit ? route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) : 'javascript:void(0)' }}"
-                                           class="dropdown-item-custom edit {{ !$canEdit ? 'restricted-action' : '' }}"
+                                           class="dropdown-item-custom e    dit {{ !$canEdit ? 'restricted-action' : '' }}"
                                            @if(!$canEdit)
                                                data-bs-toggle="tooltip"
                                                data-bs-placement="left"

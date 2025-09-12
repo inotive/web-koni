@@ -164,7 +164,7 @@
 
                                     <li>
                                         <a href="<?php echo e($canEdit ? route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) : 'javascript:void(0)'); ?>"
-                                           class="dropdown-item-custom edit <?php echo e(!$canEdit ? 'restricted-action' : ''); ?>"
+                                           class="dropdown-item-custom e    dit <?php echo e(!$canEdit ? 'restricted-action' : ''); ?>"
                                            <?php if(!$canEdit): ?>
                                                data-bs-toggle="tooltip"
                                                data-bs-placement="left"

@@ -389,6 +389,27 @@
             box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
         }
 
+        #export-pdf-btn {
+            background-color: #e63946;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(230, 57, 70, 0.3);
+        }
+
+        #export-pdf-btn:hover {
+            background-color: #d62828;
+            box-shadow: 0 3px 8px rgba(214, 40, 40, 0.4);
+            transform: translateY(-1px);
+        }
+
         #ajukanPerubahanBtn:hover {
             background-color: #43a047; /* Slightly darker on hover */
             box-shadow: 0 3px 8px rgba(76, 175, 80, 0.4);
@@ -584,20 +605,19 @@
             </div>
         </div>
     </div>
-        <!-- Modal Detail Card -->
+    <!-- Modal Detail Card -->
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header d-flex align-items-center" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
-                    <div class="d-flex align-items-center gap-3">
-                        <h5 class="modal-title mb-0" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
-                        <!-- Status Icon -->
-                        <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
-                    </div>
+                <div class="modal-header d-flex align-items-center"
+                    style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
+                    <h5 class="modal-title me-1" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
+                    <span id="statusIcon" class="ms-2 fs-6 gap-3"></span>
+
                     <div class="ms-auto d-flex align-items-center gap-2">
-                        <button type="button" id="exportBtn" class="btn btn-primary">
-                            <i class="fas fa-file-export"></i>
-                            <strong>Export</strong>
+                        <button type="button" id="export-pdf-btn" class="btn">
+                            <i class="fa-solid fa-file-export" style="color: white"></i>
+                            Export Data
                         </button>
                         <button type="button" id="ajukanPerubahanBtn" class="btn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i>
@@ -607,6 +627,7 @@
                     </div>
                 </div>
                 <div class="modal-body" id="detailModalBody">
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -1150,256 +1171,163 @@
         });
     };
 
+    // REPLACED FUNCTION
     window.showDetailModal = function(data) {
-    const modalBody = document.getElementById('detailModalBody');
-    const statusIcon = document.getElementById('statusIcon');
+        const modalBody = document.getElementById('detailModalBody');
+        const statusIcon = document.getElementById('statusIcon');
+        const exportBtn = document.getElementById('export-pdf-btn');
+        const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
 
-    if (!modalBody) {
-        console.error('Modal body not found');
-        return;
-    }
-
-    // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id
-    if (statusIcon) {
-        // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
-        // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
-        const isSuperAdmin = <?php echo e(auth()->user()->hasRole('superadmin') ? 'true' : 'false'); ?>;
-        const hasApprovalPermission = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
-        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
-
-        // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
-        if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
-            statusIcon.innerHTML = 'Terbuka';
-            statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
-        } else {
-            statusIcon.innerHTML = 'Terkunci';
-            statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+        if (exportBtn) {
+            exportBtn.setAttribute('data-lpj-id', data.id);
+            // exportBtn.style.backgroundColor = '#e63946'; // Red color
         }
-    }
 
-    // Simpan ID LPJ dalam data modal
-    if (data && data.id) {
+        // Status indicator & Button Logic
+        if (statusIcon && ajukanBtn) {
+            const pengajuan = data.pengajuan && data.pengajuan.length > 0 ? data.pengajuan.find(p => p.status === 'disetujui') : null;
+            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?> && pengajuan && pengajuan.token > 0;
+            const canModify = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?> || isModifiable;
+
+            if (canModify) {
+                statusIcon.innerHTML = 'Terbuka';
+                statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7';
+                ajukanBtn.style.display = 'none'; // Hide "Ajukan Perubahan"
+                exportBtn.style.display = ''; // Show "Export"
+            } else {
+                statusIcon.innerHTML = 'Terkunci';
+                statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7';
+                ajukanBtn.style.display = ''; // Show "Ajukan Perubahan"
+                exportBtn.style.display = ''; // Export is always visible
+            }
+        }
+
         $('#detailModal').data('lpj-id', data.id);
-    } else {
-        console.error('Data ID tidak ditemukan:', data);
-    }
 
-    const formatRupiah = (num) => {
-        if (!num) return 'Rp 0';
-        return 'Rp ' + parseInt(num).toLocaleString('id-ID');
-    };
+        const formatRupiah = (num) => 'Rp ' + (parseInt(num, 10) || 0).toLocaleString('id-ID');
 
-    let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-    if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
-        fotoJurnalHtml = `
-            <div class="row g-3">
-                ${data.foto_jurnal.map(f => {
-                    const path = typeof f === 'object' ? f.path : f;
-                    const name = typeof f === 'object' ? (f.original_name || path.split('/').pop()) : path.split('/').pop();
-                    return `
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded overflow-hidden" style="height: 120px;">
-                            <img src="/storage/${path}"
-                                 class="w-100 h-100"
-                                 style="object-fit: cover; cursor: pointer;"
-                                 onclick="window.open('/storage/${path}', '_blank')"
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'d-flex align-items-center justify-content-center h-100 text-muted\'>Error loading image</div>'">
-                            <div class="text-center small bg-light p-1">${name}</div>
-                        </div>
-                    </div>
-                `}).join('')}
-            </div>
-        `;
-    }
-
-    let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-    if (data.dokumen_lpj && Array.isArray(data.dokumen_lpj) && data.dokumen_lpj.length > 0) {
-        dokumenHtml = `
-            <div class="d-flex flex-column gap-2">
-                ${data.dokumen_lpj.map(d => {
-                    const path = typeof d === 'object' ? d.path : d;
-                    const name = typeof d === 'object' ? (d.original_name || path.split('/').pop()) : path.split('/').pop();
-                    const extension = name.split('.').pop().toLowerCase();
-
-                    let iconClass = 'fas fa-file text-secondary';
-                    if (extension === 'pdf') iconClass = 'fas fa-file-pdf text-danger';
-                    else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
-                    else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
-                    else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
-
-                    return `
-                        <div class="d-flex align-items-center p-2 border rounded bg-light">
-                            <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
-                            <div class="flex-grow-1">
-                                <div class="fw-medium text-dark">${name}</div>
-                                <small class="text-muted">${extension.toUpperCase()}</small>
+        let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+        if (data.foto_jurnal && data.foto_jurnal.length) {
+            fotoJurnalHtml = `
+                <div class="row g-3">
+                    ${data.foto_jurnal.map(f => {
+                        const path = typeof f === 'object' ? f.path : f;
+                        return `
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded overflow-hidden" style="height:120px">
+                                <img src="/storage/${path}" class="w-100 h-100"
+                                    style="object-fit:cover;cursor:pointer"
+                                    onclick="showPreviewModal(${JSON.stringify(data.foto_jurnal)}, 'image', 'Foto Kegiatan')">
                             </div>
-                            <a href="/storage/${path}"
-                               target="_blank"
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-download me-1"></i>Unduh
-                            </a>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-        `;
-    }
+                        </div>`
+                    }).join('')}
+                </div>`;
+        }
 
-    // Tampilkan dokumen LPJ PDF jika ada
-    let dokumenLpjPdfHtml = '';
-    if (data.dokumen_lpj_pdf) {
-        const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
-        const name = typeof data.dokumen_lpj_pdf === 'object' ?
-            (data.dokumen_lpj_pdf.original_name || path.split('/').pop()) :
-            path.split('/').pop();
-
-        dokumenLpjPdfHtml = `
+        let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+        if (data.dokumen_lpj && data.dokumen_lpj.length) {
+            dokumenHtml = `
+                <div class="d-flex flex-column gap-2">
+                    ${data.dokumen_lpj.map(d => {
+                        const path = typeof d === 'object' ? d.path : d;
+                        const name = path.split('/').pop();
+                        const ext = name.split('.').pop().toLowerCase();
+                        const icon = getFileIcon(ext);
+                        return `
+                            <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                <i class="${icon} me-3" style="font-size:1.2em"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-medium">${name}</div>
+                                    <small class="text-muted">${ext.toUpperCase()}</small>
+                                </div>
+                                <a href="/storage/${path}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                    <i class="fas fa-download me-1"></i>Unduh
+                                </a>
+                            </div>`;
+                    }).join('')}
+                </div>`;
+        }
+        
+        let dokumenLpjPdfHtml = '';
+        if (data.dokumen_lpj_pdf) {
+            const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
+            const name = path.split('/').pop();
+            dokumenLpjPdfHtml = `
             <div class="mb-3">
-                <label class="fw-semibold text-dark mb-2 d-block">
-                    <i class="fas fa-file-pdf text-danger me-1"></i>Dokumen LPJ (PDF):
-                </label>
+                <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-pdf text-danger me-1"></i>Dokumen LPJ (PDF):</label>
                 <div class="bg-light p-3 rounded">
                     <div class="d-flex align-items-center p-2 border rounded bg-white">
-                        <i class="fas fa-file-pdf text-danger me-3" style="font-size: 1.2em;"></i>
+                        <i class="fas fa-file-pdf text-danger me-3" style="font-size:1.2em"></i>
                         <div class="flex-grow-1">
-                            <div class="fw-medium text-dark">${name}</div>
+                            <div class="fw-medium">${name}</div>
                             <small class="text-muted">PDF</small>
                         </div>
-                        <a href="/storage/${path}"
-                           target="_blank"
-                           class="btn btn-outline-danger btn-sm">
+                        <a href="/storage/${path}" target="_blank" class="btn btn-outline-danger btn-sm">
                             <i class="fas fa-download me-1"></i>Unduh
                         </a>
                     </div>
                 </div>
-            </div>
-        `;
-    }
+            </div>`;
+        }
 
-    modalBody.innerHTML = `
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
-                <div class="mb-4">
-                    <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Informasi Kegiatan
-                    </h6>
-                    <div class="bg-light p-3 rounded">
-                        <div class="mb-2">
-                            <label class="fw-semibold text-dark mb-1">Nama Program:</label>
-                            <p class="mb-0 text-dark">${data.nama_program || 'N/A'}</p>
-                        </div>
-                        ${data.nama_kegiatan ? `
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
-                                <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
-                            </div>
-                        ` : ''}
-                        ${data.volume ? `
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Volume:</label>
-                                <p class="mb-0 text-dark">${data.volume}</p>
-                            </div>
-                        ` : ''}
-                        ${data.tempat_kegiatan ? `
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
-                            </div>
-                        ` : ''}
-                        ${data.tanggal_kegiatan ? `
-                            <div>
-                                <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
-                            </div>
-                        ` : ''}
-                    </div>
-                </div>
 
-                ${data.jumlah_harga_satuan || data.jumlah_harga ? `
+        modalBody.innerHTML = `
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
                     <div class="mb-4">
-                        <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
-                            <i class="fas fa-calculator me-2"></i>
-                            Total Anggaran
-                        </h6>
+                        <h6 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Informasi Kegiatan</h6>
+                        <div class="bg-light p-3 rounded">
+                            <div class="mb-2">
+                                <label class="fw-semibold mb-1">Nama Program:</label>
+                                <p class="mb-0">${data.nama_program || 'N/A'}</p>
+                            </div>
+                            ${data.nama_kegiatan ? `
+                                <div class="mb-2">
+                                    <label class="fw-semibold mb-1">Nama Kegiatan:</label>
+                                    <p class="mb-0">${data.nama_kegiatan}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
                         <div class="bg-light p-3 rounded">
                             <div class="row g-3">
-                                ${data.jumlah_harga_satuan ? `
-                                    <div class="col-md-6">
-                                        <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
-                                        <p class="mb-0 text-success fs-6 fw-bold">${formatRupiah(data.jumlah_harga_satuan)}</p>
-                                    </div>
-                                ` : ''}
-                                ${data.jumlah_harga ? `
-                                    <div class="col-md-6">
-                                        <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
-                                    </div>
-                                ` : ''}
+                                <div class="col-md-12">
+                                    <label class="fw-semibold mb-1">Total Anggaran:</label>
+                                    <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                ` : ''}
 
-                ${data.sumber_dana ? `
                     <div class="mb-4">
-                        <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
-                            <i class="fas fa-money-bill me-2"></i>
-                            Sumber Dana
-                        </h6>
-                        <div class="bg-light p-3 rounded">
-                            <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                        <h6 class="fw-bold text-warning mb-3"><i class="fas fa-paperclip me-2"></i>Lampiran</h6>
+                        <div class="mb-3">
+                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-camera me-1"></i>Foto Jurnal:</label>
+                            <div class="bg-light p-3 rounded">${fotoJurnalHtml}</div>
                         </div>
-                    </div>
-                ` : ''}
-
-                <div class="mb-4">
-                    <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
-                        <i class="fas fa-paperclip me-2"></i>
-                        Lampiran
-                    </h6>
-
-                    <div class="mb-3">
-                        <label class="fw-semibold text-dark mb-2 d-block">
-                            <i class="fas fa-camera me-1"></i>Foto Jurnal:
-                        </label>
-                        <div class="bg-light p-3 rounded">
-                            ${fotoJurnalHtml}
+                        ${dokumenLpjPdfHtml}
+                        <div>
+                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
+                            <div class="bg-light p-3 rounded">${dokumenHtml}</div>
                         </div>
                     </div>
 
-                    ${dokumenLpjPdfHtml}
-
-                    <div>
-                        <label class="fw-semibold text-dark mb-2 d-block">
-                            <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
-                        </label>
-                        <div class="bg-light p-3 rounded">
-                            ${dokumenHtml}
+                    ${data.keterangan_tambahan ? `
+                        <div class="mb-2">
+                            <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
+                            <div class="bg-light p-3 rounded"><p class="mb-0" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p></div>
                         </div>
-
-                          ${data.keterangan_tambahan ? `
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
-                            <i class="fas fa-sticky-note me-2"></i>
-                            Keterangan Tambahan
-                        </h6>
-                        <div class="bg-light p-3 rounded">
-                            <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
-                        </div>
-                    </div>
-                    </div>
+                    ` : ''}
                 </div>
             </div>
-        </div>
+        `;
 
+        new bootstrap.Modal(document.getElementById('detailModal')).show();
+    };
 
-                ` : ''}
-    `;
-
-    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-    modal.show();
-};
 
     window.showPreviewModal = function(files, type, title) {
         if (!files || !Array.isArray(files) || files.length === 0) {
@@ -1648,33 +1576,15 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
             });
 
-            $('#exportBtn').on('click', function() {
+            $('#export-pdf-btn').on('click', function() {
                 const lpjId = $('#detailModal').data('lpj-id');
 
-                // Periksa apakah ID tersedia
                 if (!lpjId) {
-                    alert('Terjadi kesalahan: ID laporan tidak ditemukan. Silakan coba muat ulang halaman.');
-                    console.error('ID laporan tidak ditemukan di data modal');
+                    alert('Terjadi kesalahan: ID laporan tidak ditemukan.');
                     return;
                 }
-
-                // Validasi ID
-                if (isNaN(lpjId) || lpjId <= 0) {
-                    alert('Terjadi kesalahan: ID laporan tidak valid.');
-                    console.error('ID laporan tidak valid:', lpjId);
-                    return;
-                }
-
-                // Redirect to export route
                 const exportUrl = `/admin/laporan-lpj/sekretariat/${lpjId}/export`;
-                console.log('Membuka URL export:', exportUrl);
-
-                const exportWindow = window.open(exportUrl, '_blank');
-
-                // Periksa apakah window.open berhasil
-                if (!exportWindow) {
-                    alert('Popup blocker mencegah pembukaan jendela export. Silakan izinkan popup untuk situs ini.');
-                }
+                window.open(exportUrl, '_blank');
             });
 
             $('#submitPengajuanBtn').on('click', function() {
