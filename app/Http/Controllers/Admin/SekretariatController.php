@@ -14,6 +14,11 @@ use setasign\Fpdi\PdfParser\StreamReader;
 
 class SekretariatController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:laporan-lpj-sekretariat');
+    }
+
     // Konstanta untuk mengidentifikasi jenis kegiatan Sekretariat
     const PARENT_CATEGORY = 'Sekretariat';
 
