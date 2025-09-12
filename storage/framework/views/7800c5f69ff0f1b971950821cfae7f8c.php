@@ -68,14 +68,21 @@
                         </td>
                         <td>
                             <div class="d-flex flex-column">
-                                <b class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<?php echo e($data->nama_program); ?>"><?php echo e($data->nama_program); ?></b>
+                                <strong class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<?php echo e($data->nama_program); ?>"><?php echo e($data->nama_program); ?></strong>
                                 <?php if($data->nama_kegiatan): ?>
                                     <small class="text-muted text-truncate-custom"><?php echo e($data->nama_kegiatan); ?></small>
                                 <?php endif; ?>
                             </div>
                         </td>
                         
-                        <td>Rp <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?></td>
+                        <td>
+                            <div d-flex flex-column>
+                                <p class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="Rp. <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?>">
+                                    Rp <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?>
+
+                                </p>
+                            </div>
+                        </td>
                         <td>
                             <?php if($data->foto_jurnal && count($data->foto_jurnal) > 0): ?>
                                 <button type="button"

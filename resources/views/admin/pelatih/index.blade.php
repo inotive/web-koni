@@ -12,7 +12,6 @@
         }
 
         .main-content {
-
             background-color: #f5f5f5;
             min-height: 100vh;
             padding: 20px 0;
@@ -598,8 +597,8 @@
         </div>
     @endif
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
-        <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
+    <div class="flex-wrap mb-2 d-flex justify-content-between align-items-center" style="padding:10px 30px">
+        <h2 class="mb-0 fw-bold fs-2 text-dark">Pelatih</h2>
         <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Pelatih
@@ -613,12 +612,12 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="py-1 card-body">
                             <div class="table-header" style="border-radius: 12px 12px 0px 0px">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>
 
-                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <div class="flex-wrap gap-2 d-flex align-items-center">
                                         <div class="input-group" style="width: 250px;">
                                             <input type="search" name="search" id="search" class="form-control"
                                                 placeholder="Cari pelatih...">
@@ -638,7 +637,7 @@
                                                 <span id="filter-count"
                                                     class="badge badge-circle badge-danger ms-1 d-none">0</span>
                                             </button>
-                                            <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
+                                            <div class="p-3 shadow dropdown-menu" style="min-width: 320px;">
                                                 <div class="mb-3">
                                                     <label class="form-label fw-semibold">Cabang Olahraga</label>
                                                     <select id="filter-cabor" class="form-select">
@@ -685,7 +684,7 @@
                                                 </select>
                                             </div> --}}
 
-                                                <div class="d-flex gap-2">
+                                                <div class="gap-2 d-flex">
                                                     <button type="button" id="apply-filters"
                                                         class="btn btn-primary btn-sm flex-fill">
                                                         <i class="fas fa-check"></i> Terapkan
@@ -700,7 +699,7 @@
                                     </div>
                                 </div>
                                 @if (!(isset($pelatih) && $pelatih->isEmpty()))
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="mb-3 d-flex justify-content-between align-items-center">
                                         <div id="filter-info" class="text-muted">
                                             Menampilkan <span
                                                 id="showing-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span>
@@ -737,7 +736,7 @@
                         type: 'GET',
                         beforeSend: function() {
                             $('.table-container').html(
-                                '<div class="text-center py-5">' +
+                                '<div class="py-5 text-center">' +
                                 '<div class="spinner-border text-primary" role="status">' +
                                 '<span class="visually-hidden">Loading...</span>' +
                                 '</div></div>'
@@ -1071,43 +1070,6 @@
                     }
                 }
 
-                // Export button handler
-                $(document).on('click', '#export-excel-btn', function(e) {
-                    e.preventDefault();
-
-                    const baseUrl = $(this).attr('href');
-                    const url = new URL(baseUrl, window.location.origin);
-
-                    // Get all current parameters
-                    const currentParams = new URLSearchParams(window.location.search);
-                    currentParams.forEach((value, key) => {
-                        if (key !== 'page') {
-                            url.searchParams.append(key, value);
-                        }
-                    });
-
-                    // Get current form values - SESUAIKAN DENGAN FILTER YANG ADA
-                    const search = $('#search').val();
-                    const status = $('#filter-status').val(); // Pastikan filter status ada di HTML
-
-                    // Add form values if they exist
-                    if (search && !currentParams.has('search')) {
-                        url.searchParams.set('search', search);
-                    }
-                    if (status && !currentParams.has('status')) {
-                        url.searchParams.set('status', status);
-                    }
-
-                    // Add sorting parameters
-                    const sortBy = new URLSearchParams(window.location.search).get('sort_by');
-                    const order = new URLSearchParams(window.location.search).get('order');
-
-                    if (sortBy) url.searchParams.set('sort_by', sortBy);
-                    if (order) url.searchParams.set('order', order);
-
-                    window.location.href = url.toString();
-                });
-
                 function updateURL(url) {
                     if (window.history && window.history.pushState) {
                         window.history.pushState({}, '', url);
@@ -1279,13 +1241,13 @@
                                             Swal.fire({
                                                 title: 'Tidak Dapat Menghapus Pelatih',
                                                 html: `Pelatih <strong>${response.pelatih_name}</strong> tidak dapat dihapus karena masih memiliki ${response.prestasi_count} prestasi terkait.<br><br>
-                                            <div class="text-start mt-3">
+                                            <div class="mt-3 text-start">
                                                 <strong>Prestasi yang terkait:</strong>
                                                 <ul class="mt-2">
                                                     ${response.prestasi_list.map(prestasi => `<li>${prestasi}</li>`).join('')}
                                                 </ul>
                                             </div>
-                                            <p class="text-muted mt-3">
+                                            <p class="mt-3 text-muted">
                                                 Silakan hapus semua prestasi yang terkait dengan pelatih ini terlebih dahulu,
                                                 atau nonaktifkan data pelatih ini jika diperlukan.
                                             </p>`,

@@ -675,4 +675,4 @@
             }
         }
     </style>
-<?php endif; ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/kegiatan-lainnya/_table.blade.php ENDPATH**/ ?>
+<?php endif; ?><?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/laporan-lpj/kegiatan-lainnya/_table.blade.php ENDPATH**/ ?>

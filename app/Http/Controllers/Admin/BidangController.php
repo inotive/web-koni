@@ -33,7 +33,11 @@ class BidangController extends Controller
         // Calculate counts and totals for each bidang
         $bidangInfo = [];
         foreach ($bidangParentIds as $key => $id) {
-            $info = $this->getDescendantsInfo($id);
+            if ($id == 6) { // Special handling for Pembinaan Prestasi
+                $info = $this->getPrestasiInfo($id);
+            } else {
+                $info = $this->getDescendantsInfo($id);
+            }
             $bidangInfo[$key . 'Count'] = $info['count'];
             $total_anggaran += $info['anggaran'];
             $total_kegiatan += $info['count'];
@@ -49,6 +53,26 @@ class BidangController extends Controller
             'target_anggaran' => $target_anggaran,
             'target_kegiatan' => $target_kegiatan,
         ]));
+    }
+
+    /**
+     * Get Prestasi info (great-grandchildren of Pembinaan Prestasi)
+     */
+    private function getPrestasiInfo($parentId)
+    {
+        $info = ['count' => 0, 'anggaran' => 0];
+        $children = Lpj::where('parent_id', $parentId)->get(); // Level 1
+
+        foreach ($children as $child) {
+            $grandchildren = Lpj::where('parent_id', $child->id)->get(); // Level 2
+            foreach ($grandchildren as $grandchild) {
+                $greatGrandchildren = Lpj::where('parent_id', $grandchild->id)->get(); // Level 3
+                $info['count'] += $greatGrandchildren->count();
+                $info['anggaran'] += $greatGrandchildren->sum('jumlah_harga');
+            }
+        }
+
+        return $info;
     }
 
     /**

@@ -11,26 +11,29 @@
             </tr>
         </thead>
         <tbody class="border-bottom">
-            @php
+            <?php
                 $number = ($laporan->currentPage() - 1) * $laporan->perPage() + 1;
-            @endphp
-            @forelse ($laporan as $item)
+            ?>
+            <?php $__empty_1 = true; $__currentLoopData = $laporan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                 <tr>
-                    <td class="text-center">{{ $number++ }}.</td>
+                    <td class="text-center"><?php echo e($number++); ?>.</td>
                     <td class="fw-bold px-6"
                         style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        <a href="{{ Storage::url($item->file_path) }}" target="_blank" title="{{ $item->name }}">
-                            {{ $item->name }}
+                        <a href="<?php echo e(Storage::url($item->file_path)); ?>" target="_blank" title="<?php echo e($item->name); ?>">
+                            <?php echo e($item->name); ?>
+
                         </a>
                     </td>
                     <td class="text-nowrap">
-                        Rp. {{ number_format($item->total_anggaran, 0, ',', '.') }}
+                        Rp. <?php echo e(number_format($item->total_anggaran, 0, ',', '.')); ?>
+
                     </td>
                     <td class="px-2 text-center">
-                        {{ number_format($item->file_size / 1048576, 2) }} MB
+                        <?php echo e(number_format($item->file_size / 1048576, 2)); ?> MB
                     </td>
                     <td class="px-2 text-center">
-                        {{ $item->updated_at->locale('id')->translatedFormat('d M Y') }}
+                        <?php echo e($item->updated_at->locale('id')->translatedFormat('d M Y')); ?>
+
                     </td>
                     <td class="px-2 text-center">
                         <div class="dropdown">
@@ -58,34 +61,35 @@
                             </button>
                             <ul class="dropdown-menu cursor-pointer">
                                 <li class="dropdown-item edit" data-bs-toggle="modal"
-                                    data-bs-target="#edit-{{ $item->id }}">
+                                    data-bs-target="#edit-<?php echo e($item->id); ?>">
                                     Edit Laporan
                                 </li>
                                 <li class="dropdown-item delete"
-                                    onclick="event.preventDefault(); event.stopPropagation(); confirmDelete('{{ route('admin.laporan-rka.destroy', $item->id) }}', '{{ $item->name }}')">
+                                    onclick="event.preventDefault(); event.stopPropagation(); confirmDelete('<?php echo e(route('admin.laporan-rka.destroy', $item->id)); ?>', '<?php echo e($item->name); ?>')">
                                     Hapus
                                 </li>
                             </ul>
                         </div>
                     </td>
                 </tr>
-                <div class="modal fade" id="edit-{{ $item->id }}" tabindex="-1"
-                    aria-labelledby="edit-{{ $item->id }}" aria-hidden="true">
+                <div class="modal fade" id="edit-<?php echo e($item->id); ?>" tabindex="-1"
+                    aria-labelledby="edit-<?php echo e($item->id); ?>" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content rounded-4 gap-5 px-10 py-8">
                             <div class="d-flex justify-content-between align-items-center gap-2">
-                                <div class="fs-2 fw-bold text-truncate leading-5">Edit {{ $item->name }}
+                                <div class="fs-2 fw-bold text-truncate leading-5">Edit <?php echo e($item->name); ?>
+
                                 </div>
 
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
 
-                            <form id="form-{{ $item->id }}" method="POST"
-                                action="{{ route('admin.laporan-rka.update', $item->id) }}"
+                            <form id="form-<?php echo e($item->id); ?>" method="POST"
+                                action="<?php echo e(route('admin.laporan-rka.update', $item->id)); ?>"
                                 enctype="multipart/form-data" class="d-grid gap-4">
-                                @csrf
-                                @method('PUT')
+                                <?php echo csrf_field(); ?>
+                                <?php echo method_field('PUT'); ?>
 
                                 <div>
                                     <div class="fw-semibold required mb-3 text-gray-800">Total Anggaran</div>
@@ -93,7 +97,7 @@
                                         <span class="input-group-text border border-gray-400 pe-0">Rp.</span>
                                         <input type="text" name="total_anggaran"
                                             placeholder="Masukkan total anggaran"
-                                            value="{{ number_format($item->total_anggaran, 0, ',', '.') }}"
+                                            value="<?php echo e(number_format($item->total_anggaran, 0, ',', '.')); ?>"
                                             class="rupiah border-start-0 form-control bg-light border border-gray-400" />
                                     </div>
                                 </div>
@@ -101,7 +105,7 @@
                                     <div class="fw-semibold required mb-3 text-gray-800">Unggah Dokumen Baru</div>
                                     <div class="fv-row">
                                         <!--begin::Dropzone-->
-                                        <div class="dropzone" id="dropzone-form-{{ $item->id }}">
+                                        <div class="dropzone" id="dropzone-form-<?php echo e($item->id); ?>">
                                             <!--begin::Message-->
                                             <div class="dz-message needsclick">
                                                 <i class="ki-duotone ki-file-up fs-3x text-primary">
@@ -123,13 +127,14 @@
 
                                 <div class="bg-light mt-2 rounded p-3">
                                     <small class="text-muted">File saat ini: </small>
-                                    <a href="{{ Storage::url($item->file_path) }}" target="_blank">
-                                        {{ $item->name }}
+                                    <a href="<?php echo e(Storage::url($item->file_path)); ?>" target="_blank">
+                                        <?php echo e($item->name); ?>
+
                                     </a>
                                 </div>
 
                                 <div class="d-grid py-4">
-                                    <button type="submit" onclick="submitForm('form-{{ $item->id }}')"
+                                    <button type="submit" onclick="submitForm('form-<?php echo e($item->id); ?>')"
                                         class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                                         Simpan
                                     </button>
@@ -138,13 +143,13 @@
                         </div>
                     </div>
                 </div>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <tr>
                     <td class="fw-bold p-6 text-center" colspan="6">
                         Tidak ada RKA ditemukan.
                     </td>
                 </tr>
-            @endforelse
+            <?php endif; ?>
         </tbody>
     </table>
 </div>
@@ -154,18 +159,20 @@
         <div class="d-flex align-items-center gap-2 text-gray-500">
             Show
             <select id="per_page" name="per_page" class="form-select w-75 border border-gray-200 p-2">
-                <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10
+                <option value="10" <?php echo e(request('per_page', 10) == 10 ? 'selected' : ''); ?>>10
                 </option>
-                <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25
+                <option value="25" <?php echo e(request('per_page', 10) == 25 ? 'selected' : ''); ?>>25
                 </option>
-                <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50
+                <option value="50" <?php echo e(request('per_page', 10) == 50 ? 'selected' : ''); ?>>50
                 </option>
-                <option value="100" {{ request('per_page', 10) == 100 ? 'selected' : '' }}>100
+                <option value="100" <?php echo e(request('per_page', 10) == 100 ? 'selected' : ''); ?>>100
                 </option>
             </select>
             per page
         </div>
         <!-- Paginate -->
-        {{ $laporan->links('pagination::bootstrap-5') }}
+        <?php echo e($laporan->links('pagination::bootstrap-5')); ?>
+
     </div>
 </div>
+<?php /**PATH D:\Inotive\KONI\web-koni\resources\views/admin/manajemen-rka/components/table-laporan.blade.php ENDPATH**/ ?>

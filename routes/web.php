@@ -102,6 +102,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::get('atlet/export', [AtletController::class, 'exportCsv'])->name('atlet.export');
         Route::resource('atlet', AtletController::class);
         Route::get('pelatih/export', [PelatihController::class, 'exportCsv'])->name('pelatih.export');
+        Route::get('pelatih/{id}/export-pdf', [PelatihController::class, 'exportSinglePdf'])->name('pelatih.export-single-pdf');
         Route::resource('pelatih', PelatihController::class);
         Route::patch('pelatih/{pelatih}/ketersediaan', [PelatihController::class, 'updateKetersediaan'])
             ->name('pelatih.updateKetersediaan');

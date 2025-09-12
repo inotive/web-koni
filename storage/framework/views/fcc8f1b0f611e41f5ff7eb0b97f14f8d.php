@@ -1,10 +1,17 @@
-@extends('layouts.app')
-
-@section('pageTitle', 'Rencana Kegiatan Anggaran')
-@section('mainSection', 'Menu Utama')
-@section('currentSection', 'Manajemen RKA')
-@section('style')
+<?php $__env->startSection('pageTitle', 'Rencana Kegiatan Anggaran'); ?>
+<?php $__env->startSection('mainSection', 'Menu Utama'); ?>
+<?php $__env->startSection('currentSection', 'Manajemen RKA'); ?>
+<?php $__env->startSection('style'); ?>
     <style>
+        /* Match page background with Bendahara/Surat/File Kesekretariat */
+        body {
+            background-color: #f5f5f5;
+        }
+
+        main.flex-grow-1 {
+            background-color: #f5f5f5 !important;
+        }
+
         .edit:hover {
             background-color: rgb(249, 245, 172) !important;
         }
@@ -13,9 +20,9 @@
             background-color: #ffcad7ff !important;
         }
     </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="main-content">
         <div class="container-fluid">
             <div class="row">
@@ -28,40 +35,45 @@
                             </div>
                         </div>
 
-        <div id="table" class="container">
-            @include('admin.manajemen-rka.components.table-grid', compact('data'))
-        </div>
+                        <div id="table" class="">
+                            <?php echo $__env->make('admin.manajemen-rka.components.table-grid', compact('data'), \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                        </div>
 
-        <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-4 gap-5 px-10 py-8">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="fs-2 fw-bold leading-5">Tambah Folder RKA</div>
+                        <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="fs-2 fw-bold leading-5">Tambah Folder RKA</div>
 
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
 
-                                    <form id="formAdd" action="{{ route('admin.manajemen-rka.store') }}" method="POST"
+                                    <form id="formAdd" action="<?php echo e(route('admin.manajemen-rka.store')); ?>" method="POST"
                                         class="d-grid gap-2">
-                                        @csrf
+                                        <?php echo csrf_field(); ?>
                                         <div class="fs-4 fw-bold">Tahun RKA</div>
                                         <input id="judul" name="judul" type="number" class="form-control border border-gray-600"
                                             placeholder="Masukkan tahun RKA" />
                                     </form>
 
-                    <div class="d-grid py-4">
-                        <button type="button" onclick="submitForm('formAdd')"
-                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                            Tambah Folder
-                        </button>
+                                    <div class="d-grid py-4">
+                                        <button type="button" onclick="submitForm('formAdd')"
+                                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                                            Tambah Folder
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
         function submitForm(formId) {
             let form = document.getElementById(formId);
@@ -70,7 +82,7 @@
             fetch(form.action, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
                     },
                     body: formData,
                 })
@@ -107,7 +119,7 @@
 
         function reloadTable(url = null) {
             let formData = $('#filter').serialize();
-            let target = url ?? "{{ route('admin.manajemen-rka.index') }}";
+            let target = url ?? "<?php echo e(route('admin.manajemen-rka.index')); ?>";
 
             $.ajax({
                 url: target,
@@ -153,7 +165,7 @@
                     fetch(url, {
                             method: 'DELETE',
                             headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
                                 'Accept': 'application/json'
                             }
                         })
@@ -187,4 +199,6 @@
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\Inotive\KONI\web-koni\resources\views/admin/manajemen-rka/index.blade.php ENDPATH**/ ?>
