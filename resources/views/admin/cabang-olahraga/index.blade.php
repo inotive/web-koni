@@ -814,18 +814,6 @@
                                                 id="showing-count">{{ isset($cabors) ? $cabors->count() : 0 }}</span>
                                             dari <span id="total-count">{{ isset($cabors) ? $cabors->total() : 0 }}</span>
                                             cabang olahraga
-                                            @if(request('search') || request('status'))
-                                                <span class="text-info">
-                                                    (Hasil pencarian/filter:
-                                                    @if(request('search'))
-                                                        "{{ request('search') }}"
-                                                    @endif
-                                                    @if(request('status'))
-                                                        Status: {{ request('status') }}
-                                                    @endif
-                                                    )
-                                                </span>
-                                            @endif
                                         </div>
                                     </div>
                                 @endif

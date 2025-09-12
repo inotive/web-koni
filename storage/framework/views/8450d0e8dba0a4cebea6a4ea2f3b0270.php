@@ -814,19 +814,6 @@
                                                 id="showing-count"><?php echo e(isset($cabors) ? $cabors->count() : 0); ?></span>
                                             dari <span id="total-count"><?php echo e(isset($cabors) ? $cabors->total() : 0); ?></span>
                                             cabang olahraga
-                                            <?php if(request('search') || request('status')): ?>
-                                                <span class="text-info">
-                                                    (Hasil pencarian/filter:
-                                                    <?php if(request('search')): ?>
-                                                        "<?php echo e(request('search')); ?>"
-                                                    <?php endif; ?>
-                                                    <?php if(request('status')): ?>
-                                                        Status: <?php echo e(request('status')); ?>
-
-                                                    <?php endif; ?>
-                                                    )
-                                                </span>
-                                            <?php endif; ?>
                                         </div>
                                     </div>
                                 <?php endif; ?>
