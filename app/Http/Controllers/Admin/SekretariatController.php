@@ -362,6 +362,22 @@ class SekretariatController extends Controller
 
         $sekretariat->update($data);
 
+        // Jika yang mengedit bukan superadmin/admin dengan permission, konsumsi token
+        if (!auth()->user()->hasRole('superadmin') && !auth()->user()->can('pengajuan-modifikasi-laporan')) {
+            $pengajuan = Pengajuan::where('lpj_id', $sekretariat->id)
+                ->where('status', 'disetujui')
+                ->where('token', '>', 0)
+                ->orderBy('approved_at', 'desc')
+                ->first();
+
+            if ($pengajuan) {
+                $pengajuan->update(['token' => 0]);
+            }
+            
+            // Set modifiable_by_user_id to null after editing
+            $sekretariat->update(['modifiable_by_user_id' => null]);
+        }
+
         return redirect()->route('admin.laporan-lpj.sekretariat.index')
                          ->with('OK', 'Kegiatan berhasil diperbarui.');
     }
