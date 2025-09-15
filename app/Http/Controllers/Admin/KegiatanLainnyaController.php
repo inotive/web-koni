@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lpj;
+use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -181,23 +182,59 @@ class KegiatanLainnyaController extends Controller
 
     public function edit($id)
     {
-        if (!auth()->user()->hasRole('superadmin')) {
-            abort(403, 'Akses ditolak. Hanya superadmin yang dapat mengedit data.');
-        }
-
         $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
+        
+        // Check if user is superadmin OR has been granted modification access
+        $isSuperAdmin = auth()->user()->hasRole('superadmin');
+        $hasModificationAccess = $kegiatanLainnya->modifiable_by_user_id && 
+                                  $kegiatanLainnya->modifiable_by_user_id == auth()->id();
+        
+        // If user has modification access, check token system
+        if ($hasModificationAccess) {
+            $pengajuan = Pengajuan::where('lpj_id', $kegiatanLainnya->id)
+                            ->where('user_id', auth()->id())
+                            ->where('status', 'disetujui')
+                            ->orderBy('approved_at', 'desc')
+                            ->first();
+
+            if (!$pengajuan || $pengajuan->token <= 0) {
+                return redirect()->route('admin.laporan-lpj.kegiatan-lainnya.index')
+                                 ->with('error', 'Anda tidak memiliki izin untuk mengedit laporan ini lagi.');
+            }
+        } elseif (!$isSuperAdmin) {
+            abort(403, 'Akses ditolak. Hanya superadmin atau pengguna yang telah diberi akses modifikasi yang dapat mengedit data.');
+        }
+
         return view('admin.laporan-lpj.kegiatan-lainnya.edit', compact('kegiatanLainnya'));
     }
 
     public function update(Request $request, $id)
     {
-        if (!auth()->user()->hasRole('superadmin')) {
-            abort(403, 'Akses ditolak. Hanya superadmin yang dapat memperbarui data.');
-        }
-
         $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
+        
+        // Check if user is superadmin OR has been granted modification access
+        $isSuperAdmin = auth()->user()->hasRole('superadmin');
+        $hasModificationAccess = $kegiatanLainnya->modifiable_by_user_id && 
+                                  $kegiatanLainnya->modifiable_by_user_id == auth()->id();
+        
+        // If user has modification access, check token system
+        $pengajuan = null;
+        if ($hasModificationAccess) {
+            $pengajuan = Pengajuan::where('lpj_id', $kegiatanLainnya->id)
+                            ->where('user_id', auth()->id())
+                            ->where('status', 'disetujui')
+                            ->orderBy('approved_at', 'desc')
+                            ->first();
+
+            if (!$pengajuan || $pengajuan->token <= 0) {
+                return redirect()->route('admin.laporan-lpj.kegiatan-lainnya.index')
+                                 ->with('error', 'Anda tidak memiliki izin untuk mengedit laporan ini lagi.');
+            }
+        } elseif (!$isSuperAdmin) {
+            abort(403, 'Akses ditolak. Hanya superadmin atau pengguna yang telah diberi akses modifikasi yang dapat memperbarui data.');
+        }
 
         // Custom validation for numeric fields
         $request->validate([
@@ -321,19 +358,48 @@ class KegiatanLainnyaController extends Controller
 
         $kegiatanLainnya->update($data);
 
+        // Decrement token if user has modification access
+        if ($hasModificationAccess && isset($pengajuan)) {
+            $pengajuan->token -= 1;
+            $pengajuan->save();
+            
+            // If token is now 0, reset modifiable_by_user_id to lock the record
+            if ($pengajuan->token <= 0) {
+                $kegiatanLainnya->update(['modifiable_by_user_id' => null]);
+            }
+        }
+
         return redirect()->route('admin.laporan-lpj.kegiatan-lainnya.index')
                          ->with('OK', 'Kegiatan berhasil diperbarui.');
     }
 
     public function destroy($id)
 {
-    if (!auth()->user()->hasRole('superadmin')) {
-        return response()->json(['error' => 'Akses ditolak'], 403);
+    $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                      ->findOrFail($id);
+    
+    // Check if user is superadmin OR has been granted modification access
+    $isSuperAdmin = auth()->user()->hasRole('superadmin');
+    $hasModificationAccess = $kegiatanLainnya->modifiable_by_user_id && 
+                              $kegiatanLainnya->modifiable_by_user_id == auth()->id();
+    
+    // If user has modification access, check token system
+    $pengajuan = null;
+    if ($hasModificationAccess) {
+        $pengajuan = Pengajuan::where('lpj_id', $kegiatanLainnya->id)
+                        ->where('user_id', auth()->id())
+                        ->where('status', 'disetujui')
+                        ->orderBy('approved_at', 'desc')
+                        ->first();
+
+        if (!$pengajuan || $pengajuan->token <= 0) {
+            return response()->json(['error' => 'Anda tidak memiliki izin untuk menghapus laporan ini lagi.'], 403);
+        }
+    } elseif (!$isSuperAdmin) {
+        return response()->json(['error' => 'Akses ditolak. Hanya superadmin atau pengguna yang telah diberi akses modifikasi yang dapat menghapus data.'], 403);
     }
 
     try {
-        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                          ->findOrFail($id);
 
         // Hapus file foto_jurnal
         if ($kegiatanLainnya->foto_jurnal) {
@@ -357,6 +423,17 @@ class KegiatanLainnyaController extends Controller
         }
 
         $kegiatanLainnya->delete();
+
+        // Decrement token if user has modification access
+        if ($hasModificationAccess && isset($pengajuan)) {
+            $pengajuan->token -= 1;
+            $pengajuan->save();
+            
+            // If token is now 0, reset modifiable_by_user_id to lock the record
+            if ($pengajuan->token <= 0) {
+                $kegiatanLainnya->update(['modifiable_by_user_id' => null]);
+            }
+        }
 
         // Return JSON response untuk AJAX
         if (request()->ajax()) {
@@ -383,12 +460,29 @@ class KegiatanLainnyaController extends Controller
 
     public function removeFile(Request $request, $id)
     {
-        if (!auth()->user()->hasRole('superadmin')) {
-            return response()->json(['error' => 'Akses ditolak'], 403);
-        }
-
         $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
+        
+        // Check if user is superadmin OR has been granted modification access
+        $isSuperAdmin = auth()->user()->hasRole('superadmin');
+        $hasModificationAccess = $kegiatanLainnya->modifiable_by_user_id && 
+                                  $kegiatanLainnya->modifiable_by_user_id == auth()->id();
+        
+        // If user has modification access, check token system
+        $pengajuan = null;
+        if ($hasModificationAccess) {
+            $pengajuan = Pengajuan::where('lpj_id', $kegiatanLainnya->id)
+                            ->where('user_id', auth()->id())
+                            ->where('status', 'disetujui')
+                            ->orderBy('approved_at', 'desc')
+                            ->first();
+
+            if (!$pengajuan || $pengajuan->token <= 0) {
+                return response()->json(['error' => 'Anda tidak memiliki izin untuk menghapus file ini lagi.'], 403);
+            }
+        } elseif (!$isSuperAdmin) {
+            return response()->json(['error' => 'Akses ditolak. Hanya superadmin atau pengguna yang telah diberi akses modifikasi yang dapat menghapus file.'], 403);
+        }
 
         $request->validate([
             'file_type' => 'required|in:foto_jurnal,dokumen_lpj,dokumen_lpj_pdf',
@@ -410,6 +504,23 @@ class KegiatanLainnyaController extends Controller
         $files = array_values($files);
 
         $kegiatanLainnya->update([$fileType => $files]);
+
+        // Decrement token if user has modification access
+        if ($hasModificationAccess && isset($pengajuan)) {
+            $pengajuan->token -= 1;
+            $pengajuan->save();
+            
+            // If token is now 0, reset modifiable_by_user_id to lock the record
+            if ($pengajuan->token <= 0) {
+                $kegiatanLainnya->update(['modifiable_by_user_id' => null]);
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'File berhasil dihapus. Sisa kuota modifikasi: ' . $pengajuan->token . ' kali.',
+                'remaining_files' => count($files)
+            ]);
+        }
 
         return response()->json([
             'success' => true,

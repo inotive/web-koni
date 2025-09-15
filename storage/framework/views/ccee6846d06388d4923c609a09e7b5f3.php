@@ -684,7 +684,7 @@
                 <a href="<?php echo e(route('admin.konfigurasi.cabang-olahraga.export-gabungan', $cabor->id)); ?>" 
                    class="btn btn-success" id="export-gabungan-btn" title="Export Data Atlet dan Pelatih ke Excel">
                     <i class="fas fa-file-excel me-2"></i>
-                    <span class="d-none d-sm-inline">Export Data Lengkap</span>
+                    <span class="d-none d-sm-inline">Export Data</span>
                     <span class="d-sm-none">Export</span>
                 </a>
             </div>

@@ -111,7 +111,6 @@
 </div>
 
 {{-- CSS Styling untuk Pagination --}}
-{{-- CSS Styling untuk Pagination --}}
 <style>
 .pagination-arrow,
 .pagination-number,
@@ -172,3 +171,30 @@
     pointer-events: none;
 }
 </style>
+
+<script>
+    // Handle per page selection change
+    $(document).ready(function() {
+        $('#ajax-per-page').on('change', function() {
+            const perPage = $(this).val();
+            
+            // Get current URL
+            const url = new URL(window.location.href);
+            
+            // Set per_page parameter
+            url.searchParams.set('per_page', perPage);
+            
+            // Reset to first page when changing per_page
+            url.searchParams.delete('page');
+            
+            // Use the existing AJAX system to load the table
+            // Find the main script in the parent page and call its loadTable function
+            if (typeof loadTable !== 'undefined') {
+                loadTable(url.toString());
+            } else {
+                // Fallback to page reload if AJAX system is not available
+                window.location.href = url.toString();
+            }
+        });
+    });
+</script>

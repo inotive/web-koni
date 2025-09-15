@@ -13,7 +13,13 @@
 @section('content')
     <style>
         body {
+            background-color: #f5f5f5 !important;
+        }
+
+        .main-content {
             background-color: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px 0;
         }
 
         table td,
@@ -342,22 +348,26 @@
         }
 
         #ajukanPerubahanBtn {
-            background-color: #4CAF50; /* Soft green like screenshot */
+            background-color: #4CAF50;
+            /* Soft green like screenshot */
             color: white;
             font-weight: 600;
             border: none;
-            border-radius: 8px; /* Rounded corners */
+            border-radius: 8px;
+            /* Rounded corners */
             padding: 8px 14px;
             display: inline-flex;
             align-items: center;
-            gap: 6px; /* for icon if added */
+            gap: 6px;
+            /* for icon if added */
             font-size: 0.9rem;
             transition: all 0.2s ease;
             box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
         }
 
         #ajukanPerubahanBtn:hover {
-            background-color: #43a047; /* Slightly darker on hover */
+            background-color: #43a047;
+            /* Slightly darker on hover */
             box-shadow: 0 3px 8px rgba(76, 175, 80, 0.4);
             transform: translateY(-1px);
         }
@@ -368,156 +378,160 @@
             box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
         }
 
-        /* Progress bar styling */
-        .progress {
-            height: 8px;
-            border-radius: 4px;
-            background-color: #e9ecef;
-            overflow: hidden;
+        /* Progress bar styling - matching bidang-bidang module */
+        .top-progress-wrapper {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 16px;
+            padding: 20px 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
-        .progress-bar {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
+        .info-label {
+            font-size: 14px;
+            color: #A3AED0;
+        }
+        
+        .badge.bg-success-subtle {
+            background-color: #dcfce7 !important;
+            color: #15803d !important;
+            border: 1px solid #bbf7d0 !important;
+        }
+        
+        .badge.bg-primary-subtle {
+            background-color: #dbeafe !important;
+            color: #1d4ed8 !important;
+            border: 1px solid #bfdbfe !important;
+        }
+        
+        .badge.fw-semibold {
+            font-weight: 600 !important;
+        }
+        
+        /* Styling untuk tombol edit (hanya ikon) */
+        #editAnggaranBtn {
+            border-color: #0d6efd;
+            color: #0d6efd;
+            padding: 5px 8px;
+        }
+        
+        #editAnggaranBtn:hover {
+            background-color: #0d6efd;
+            color: white;
         }
     </style>
 
-    <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">Kegiatan Lainnya</h1>
-        <div class="text-muted fw-semibold fs-6">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</div>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+        <strong>
+            <h1 class="fw-bold mb-1">Kegiatan Lainnya</h1>
+        </strong>
+        <h3 class="text-muted mb-0">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</h3>
     </div>
+    
+    <div class="d-flex align-items-center gap-2">
+        <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
+            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+            <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+        </a>
+    </div>
+</div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3">
-                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                            <i class="fas fa-list-alt fs-2 text-primary"></i>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1 fw-normal">Total Kegiatan</h6>
-                        <h3 class="mb-0 fw-bold text-dark" id="total-kegiatan">
-                            {{ $totalKegiatan ?? $kegiatanLainnya->total() ?? 0 }}/10
-                        </h3>
-                        <div class="d-flex align-items-center">
-                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
-                                @php
-                                    $kegiatanCount = $totalKegiatan ?? $kegiatanLainnya->total() ?? 0;
-                                    $kegiatanPercentage = $kegiatanCount > 0 ? ($kegiatanCount / 10) * 100 : 0;
-                                    $kegiatanPercentage = min($kegiatanPercentage, 100);
-                                @endphp
-                                <div class="progress-bar bg-primary" 
-                                     id="kegiatan-progress"
-                                     role="progressbar" 
-                                     style="width: {{ $kegiatanPercentage }}%" 
-                                     aria-valuenow="{{ $kegiatanPercentage }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100"></div>
-                            </div>
-                            <small class="text-muted">/10</small>
-                        </div>
-                    </div>
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="top-progress-wrapper">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="text-muted mb-0">Total Anggaran</h3>
+                <!-- Tombol Edit (hanya ikon) -->
+                <a href="#" class="btn btn-sm btn-outline-primary" id="editAnggaranBtn" title="Edit Target Anggaran">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </div>
+            
+            @php
+                $totalKegiatan = $totalKegiatan ?? ($kegiatanLainnya->total() ?? 0);
+                $targetKegiatan = 10;
+                $kegiatanPercentage = $totalKegiatan > 0 ? ($totalKegiatan / $targetKegiatan) * 100 : 0;
+                $kegiatanPercentage = min($kegiatanPercentage, 100);
+                
+                $targetAnggaran = 200000000000; // 200 miliar
+                $anggaranPercentage = ($totalAnggaran ?? 0) > 0 ? (($totalAnggaran ?? 0) / $targetAnggaran) * 100 : 0;
+                $anggaranPercentage = min($anggaranPercentage, 100);
+            @endphp
+            
+            <div class="d-flex justify-content-between mb-2">
+                <h1 id="anggaranDisplay" class="fw-bold mb-1">Rp. {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }} / Rp. {{ number_format($targetAnggaran, 0, ',', '.') }}</h1>
+                <h3 id="anggaranPercentage" class="text-muted mb-0" data-bs-toggle="tooltip" title="{{ round($anggaranPercentage, 2) }}% dari total anggaran">
+                    {{ round($anggaranPercentage) }}%
+                </h3>
+            </div>
+
+            <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                    role="progressbar"
+                    style="width: {{ $anggaranPercentage }}%; background-color: #F8285A; border-radius: 12px;"
+                    aria-valuenow="{{ $anggaranPercentage }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100">
                 </div>
             </div>
-        </div>
 
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex align-items-center">
-                    <div class="flex-shrink-0 me-3">
-                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                            <i class="fas fa-money-bill-wave fs-2 text-success"></i>
-                        </div>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="text-muted mb-1 fw-normal">Total Anggaran</h6>
-                        <h3 class="mb-0 fw-bold text-dark" id="total-anggaran">
-                            Rp {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }}
-                        </h3>
-                        <div class="d-flex align-items-center">
-                            <div class="progress flex-grow-1 me-2" style="height: 8px;">
-                                @php
-                                    $percentage = ($totalAnggaran ?? 0) > 0 ? (($totalAnggaran ?? 0) / 200000000000) * 100 : 0;
-                                    $percentage = min($percentage, 100);
-                                @endphp
-                                <div class="progress-bar bg-success" 
-                                     id="anggaran-progress"
-                                     role="progressbar" 
-                                     style="width: {{ $percentage }}%" 
-                                     aria-valuenow="{{ $percentage }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100"></div>
-                            </div>
-                            <small class="text-muted">100M<mall>
-                        </div>
-                    </div>
+            <div class="d-flex flex-row-reverse bd-highlight mt-2">
+                <div class="info-label mt-1 d-flex align-items-center gap-2">
+                    <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
+                        <span id="kegiatanBerjalan">{{ $totalKegiatan }}</span> Kegiatan Berjalan
+                    </span>
+                    <span>/</span>
+                    <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
+                        {{ $targetKegiatan }} Target Kegiatan
+                    </span>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="row col-12 mt-5">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Kegiatan Lainnya - 2025</h3>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
+        <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - 2025</h3>
 
-                <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
-    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-</a>
+        <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+            <div class="input-group position-relative" style="width: 250px;">
+                <input type="search" name="search" id="search" class="form-control"
+                    placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
 
-                    <div class="input-group position-relative" style="width: 250px;">
-                        <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
+                <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
+                    style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
+                    <i class="fas fa-times text-muted"></i>
+                </button>
 
-                        <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
-                            style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
-                            <i class="fas fa-times text-muted"></i>
-                        </button>
-
-                        <button class="btn btn-outline-secondary" type="button" id="search-button">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </div>
-
-                    <div class="dropdown" style="z-index: 1055">
-
-                        <div class="dropdown-menu p-3 shadow" style="min-width: 320px;">
-
-
-                            <div class="d-flex gap-2">
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-body position-relative">
-                <div class="loading-overlay d-none" id="loading-overlay">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-
-                <div id="table-container">
-                    @include('admin.laporan-lpj.kegiatan-lainnya._table')
-                </div>
+                <button class="btn btn-outline-secondary" type="button" id="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
         </div>
     </div>
+
+    <div class="card-body position-relative">
+        <div class="loading-overlay d-none" id="loading-overlay">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        <div id="table-container">
+            @include('admin.laporan-lpj.kegiatan-lainnya._table')
+        </div>
+    </div>
+</div>
 
     <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <div class="modal-header" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
+                <div class="modal-header"
+                    style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
                     <h5 class="modal-title" id="previewModalLabel" style="color: #333 !important;">Preview Files</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-0" style="height: 70vh;">
                     <div class="preview-container h-100 position-relative d-flex align-items-center justify-content-center"
@@ -552,23 +566,25 @@
             </div>
         </div>
     </div>
-        <!-- Modal Detail Card -->
+    <!-- Modal Detail Card -->
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header d-flex align-items-center" style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
+                <div class="modal-header d-flex align-items-center"
+                    style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
                     <h5 class="modal-title" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
                     <div class="ms-auto d-flex align-items-center gap-2">
                         <!-- Status Icon -->
                         <div id="statusIconContainer" class="d-flex align-items-center me-2">
-                            <span id="statusIcon" class="badge fs-7 d-flex align-items-center" style="padding: 6px 10px;"></span>
+                            <span id="statusIcon" class="badge fs-7 d-flex align-items-center"
+                                style="padding: 6px 10px;"></span>
                         </div>
-                        
+
                         <!-- Tombol Export -->
                         <a href="#" id="exportBtn" class="btn btn-success btn-sm" target="_blank">
                             <i class="fas fa-file-pdf me-1"></i> Export PDF
                         </a>
-                        
+
                         <button type="button" id="ajukanPerubahanBtn">
                             <i class="bi bi-arrow-repeat" style="color: white"></i> <strong>Ajukan Perubahan</strong>
                         </button>
@@ -585,11 +601,12 @@
     </div>
 
     {{-- Pengajuan Modal --}}
-    <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel" aria-hidden="true">
+    <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                                       <h5 class="modal-title" id="pengajuanModalLabel">Ajukan Perubahan</h5>
+                    <h5 class="modal-title" id="pengajuanModalLabel">Ajukan Perubahan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -608,376 +625,444 @@
             </div>
         </div>
     </div>
+    
+    {{-- Modal Edit Anggaran --}}
+    <div class="modal fade" id="editAnggaranModal" tabindex="-1" aria-labelledby="editAnggaranModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editAnggaranModalLabel">Edit Target Anggaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editAnggaranForm">
+                        <div class="mb-3">
+                            <label for="target_anggaran" class="form-label">Target Anggaran (Rp)</label>
+                            <input type="number" class="form-control" id="target_anggaran" name="target_anggaran" 
+                                   value="{{ number_format($targetAnggaran ?? 200000000000, 0, '', '') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="target_kegiatan" class="form-label">Target Kegiatan</label>
+                            <input type="number" class="form-control" id="target_kegiatan" name="target_kegiatan" 
+                                   value="{{ $targetKegiatan ?? 10 }}" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="simpanAnggaranBtn">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
     <script>
-       $(document).ready(function() {
-    let dataTable = null;
-    let searchTimeout;
-    let isSearching = false;
-    let currentFiles = [];
-    let currentIndex = 0;
-    let currentType = '';
+        $(document).ready(function() {
+            let dataTable = null;
+            let searchTimeout;
+            let isSearching = false;
+            let currentFiles = [];
+            let currentIndex = 0;
+            let currentType = '';
 
-    const previewModal = document.getElementById('previewModal');
-    const previewSlides = document.getElementById('previewSlides');
-    const currentFileName = document.getElementById('currentFileName');
-    const fileCounter = document.getElementById('fileCounter');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const modalTitle = document.getElementById('previewModalLabel');
+            const previewModal = document.getElementById('previewModal');
+            const previewSlides = document.getElementById('previewSlides');
+            const currentFileName = document.getElementById('currentFileName');
+            const fileCounter = document.getElementById('fileCounter');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const modalTitle = document.getElementById('previewModalLabel');
 
-    function initializeDataTable() {
-        const table = $("#kt_datatable_dom_positioning_kegiatan");
+            function initializeDataTable() {
+                const table = $("#kt_datatable_dom_positioning_kegiatan");
 
-        if (dataTable) {
-            dataTable.destroy();
-        }
+                if (dataTable) {
+                    dataTable.destroy();
+                }
 
-        if (table.length > 0) {
-            dataTable = table.DataTable({
-                paging: false,
-                info: false,
-                searching: false,
-                ordering: false,
-                responsive: false,
-                autoWidth: false,
-                scrollX: false,
-                language: {
-                    emptyTable: "Data tidak ditemukan",
-                    zeroRecords: "Tidak ada data yang cocok dengan pencarian"
-                },
-                columnDefs: [{
-                    targets: -1,
-                    orderable: false,
-                    searchable: false
-                }]
-            });
-        }
-    }
+                if (table.length > 0) {
+                    dataTable = table.DataTable({
+                        paging: false,
+                        info: false,
+                        searching: false,
+                        ordering: false,
+                        responsive: false,
+                        autoWidth: false,
+                        scrollX: false,
+                        language: {
+                            emptyTable: "Data tidak ditemukan",
+                            zeroRecords: "Tidak ada data yang cocok dengan pencarian"
+                        },
+                        columnDefs: [{
+                            targets: -1,
+                            orderable: false,
+                            searchable: false
+                        }]
+                    });
+                }
+            }
 
-    function initializeTooltips() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            var tooltip = new bootstrap.Tooltip(tooltipTriggerEl, {
-                trigger: 'hover',
-                html: true,
-                delay: { show: 0, hide: 300 },
-                fallbackPlacements: ['left', 'top', 'bottom']
-            });
+            function initializeTooltips() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    var tooltip = new bootstrap.Tooltip(tooltipTriggerEl, {
+                        trigger: 'hover',
+                        html: true,
+                        delay: {
+                            show: 0,
+                            hide: 300
+                        },
+                        fallbackPlacements: ['left', 'top', 'bottom']
+                    });
 
-            // Variabel untuk menyimpan timeout
-            var hideTimeout;
+                    // Variabel untuk menyimpan timeout
+                    var hideTimeout;
 
-            // Menangani event saat kursor masuk ke elemen trigger
-            tooltipTriggerEl.addEventListener('mouseenter', function () {
-                clearTimeout(hideTimeout);
-            });
-
-            // Menangani event saat kursor keluar dari elemen trigger
-            tooltipTriggerEl.addEventListener('mouseleave', function () {
-                hideTimeout = setTimeout(function() {
-                    tooltip.hide();
-                }, 300);
-            });
-
-            // Menangani event saat tooltip ditampilkan
-            tooltipTriggerEl.addEventListener('shown.bs.tooltip', function () {
-                var tooltipEl = document.querySelector('.tooltip');
-                if (tooltipEl) {
-                    // Menambahkan event listener untuk mencegah tooltip menghilang saat kursor di atasnya
-                    tooltipEl.addEventListener('mouseenter', function() {
+                    // Menangani event saat kursor masuk ke elemen trigger
+                    tooltipTriggerEl.addEventListener('mouseenter', function() {
                         clearTimeout(hideTimeout);
                     });
-                    
-                    tooltipEl.addEventListener('mouseleave', function() {
+
+                    // Menangani event saat kursor keluar dari elemen trigger
+                    tooltipTriggerEl.addEventListener('mouseleave', function() {
                         hideTimeout = setTimeout(function() {
                             tooltip.hide();
                         }, 300);
                     });
-                }
-            });
 
-            return tooltip;
-        });
-    }
+                    // Menangani event saat tooltip ditampilkan
+                    tooltipTriggerEl.addEventListener('shown.bs.tooltip', function() {
+                        var tooltipEl = document.querySelector('.tooltip');
+                        if (tooltipEl) {
+                            // Menambahkan event listener untuk mencegah tooltip menghilang saat kursor di atasnya
+                            tooltipEl.addEventListener('mouseenter', function() {
+                                clearTimeout(hideTimeout);
+                            });
 
-    function initializeDropdownEvents() {
-        $(document).off('click', '.dropdown-toggle-custom');
-        $(document).off('mouseenter', '.dropdown-action');
-        $(document).off('mouseleave', '.dropdown-action');
+                            tooltipEl.addEventListener('mouseleave', function() {
+                                hideTimeout = setTimeout(function() {
+                                    tooltip.hide();
+                                }, 300);
+                            });
+                        }
+                    });
 
-        $(document).on('click', '.dropdown-toggle-custom', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const $dropdownAction = $(this).closest('.dropdown-action');
-            const $menu = $dropdownAction.find('.dropdown-menu-custom');
-
-            $('.dropdown-menu-custom').not($menu).removeClass('show');
-
-            $menu.toggleClass('show');
-
-            checkDropdownPosition($dropdownAction);
-        });
-
-        function checkDropdownPosition($dropdownAction) {
-            const $menu = $dropdownAction.find('.dropdown-menu-custom');
-            if (!$menu.hasClass('show')) return;
-
-            $dropdownAction.removeClass('dropup');
-
-            const $row = $dropdownAction.closest('tr');
-            const $table = $row.closest('tbody');
-            const rowIndex = $table.find('tr').index($row);
-            const totalRows = $table.find('tr').length;
-
-            if (rowIndex === totalRows - 1) {
-                $dropdownAction.addClass('dropup');
+                    return tooltip;
+                });
             }
-        }
 
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.dropdown-action').length) {
-                $('.dropdown-menu-custom').removeClass('show');
-            }
-        });
+            function initializeDropdownEvents() {
+                $(document).off('click', '.dropdown-toggle-custom');
+                $(document).off('mouseenter', '.dropdown-action');
+                $(document).off('mouseleave', '.dropdown-action');
 
-        $(window).on('resize', function() {
-            $('.dropdown-action').each(function() {
-                if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
-                    checkDropdownPosition($(this));
-                }
-            });
-        });
+                $(document).on('click', '.dropdown-toggle-custom', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-        if (window.innerWidth > 768) {
-            $(document).on('mouseenter', '.dropdown-action', function() {
-                const $menu = $(this).find('.dropdown-menu-custom');
-                $menu.addClass('show');
-                checkDropdownPosition($(this));
-            }).on('mouseleave', '.dropdown-action', function() {
-                const $menu = $(this).find('.dropdown-menu-custom');
-                setTimeout(() => {
-                    if (!$menu.is(':hover')) {
-                        $menu.removeClass('show');
+                    const $dropdownAction = $(this).closest('.dropdown-action');
+                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
+
+                    $('.dropdown-menu-custom').not($menu).removeClass('show');
+
+                    $menu.toggleClass('show');
+
+                    checkDropdownPosition($dropdownAction);
+                });
+
+                function checkDropdownPosition($dropdownAction) {
+                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
+                    if (!$menu.hasClass('show')) return;
+
+                    $dropdownAction.removeClass('dropup');
+
+                    const $row = $dropdownAction.closest('tr');
+                    const $table = $row.closest('tbody');
+                    const rowIndex = $table.find('tr').index($row);
+                    const totalRows = $table.find('tr').length;
+
+                    if (rowIndex === totalRows - 1) {
+                        $dropdownAction.addClass('dropup');
                     }
-                }, 100);
-            });
+                }
 
-            $(document).on('mouseenter', '.dropdown-menu-custom', function() {
-                clearTimeout($(this).data('timeout'));
-            }).on('mouseleave', '.dropdown-menu-custom', function() {
-                const $menu = $(this);
-                $menu.data('timeout', setTimeout(() => {
-                    $menu.removeClass('show');
-                }, 200));
-            });
-        }
-    }
+                $(document).on('click', function(e) {
+                    if (!$(e.target).closest('.dropdown-action').length) {
+                        $('.dropdown-menu-custom').removeClass('show');
+                    }
+                });
 
-    function showLoading() {
-        $('#loading-overlay').removeClass('d-none');
-    }
+                $(window).on('resize', function() {
+                    $('.dropdown-action').each(function() {
+                        if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
+                            checkDropdownPosition($(this));
+                        }
+                    });
+                });
 
-    function hideLoading() {
-        $('#loading-overlay').addClass('d-none');
-    }
+                if (window.innerWidth > 768) {
+                    $(document).on('mouseenter', '.dropdown-action', function() {
+                        const $menu = $(this).find('.dropdown-menu-custom');
+                        $menu.addClass('show');
+                        checkDropdownPosition($(this));
+                    }).on('mouseleave', '.dropdown-action', function() {
+                        const $menu = $(this).find('.dropdown-menu-custom');
+                        setTimeout(() => {
+                            if (!$menu.is(':hover')) {
+                                $menu.removeClass('show');
+                            }
+                        }, 100);
+                    });
 
-    function showSearchLoading() {
-        if (!isSearching) {
-            isSearching = true;
-            showLoading();
-        }
-    }
-
-    function hideSearchLoading() {
-        isSearching = false;
-        hideLoading();
-    }
-
-    function toggleClearButton() {
-        const $searchInput = $('#search');
-        const $clearBtn = $('#clear-search');
-
-        if ($searchInput.val().length > 0) {
-            $clearBtn.removeClass('d-none');
-        } else {
-            $clearBtn.addClass('d-none');
-        }
-    }
-
-    function performSearch(searchValue, immediate = false) {
-        if (searchTimeout) {
-            clearTimeout(searchTimeout);
-        }
-
-        if (immediate || searchValue === '') {
-            doSearch(searchValue);
-        } else {
-            searchTimeout = setTimeout(() => {
-                doSearch(searchValue);
-            }, 300);
-        }
-    }
-
-    function doSearch(searchValue) {
-        showSearchLoading();
-
-        updateTable({
-            'search': searchValue,
-            'page': 1
-        }).finally(() => {
-            hideSearchLoading();
-            updateSummaryCards(); // Ensure summary cards are updated after search
-        });
-    }
-
-    function updateTable(params = {}) {
-        return new Promise((resolve, reject) => {
-            if (params.search === undefined) {
-                showLoading();
+                    $(document).on('mouseenter', '.dropdown-menu-custom', function() {
+                        clearTimeout($(this).data('timeout'));
+                    }).on('mouseleave', '.dropdown-menu-custom', function() {
+                        const $menu = $(this);
+                        $menu.data('timeout', setTimeout(() => {
+                            $menu.removeClass('show');
+                        }, 200));
+                    });
+                }
             }
 
-            const currentUrl = new URL(window.location.href);
+            function showLoading() {
+                $('#loading-overlay').removeClass('d-none');
+            }
 
-            for (const key in params) {
-                if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
-                    currentUrl.searchParams.set(key, params[key]);
+            function hideLoading() {
+                $('#loading-overlay').addClass('d-none');
+            }
+
+            function showSearchLoading() {
+                if (!isSearching) {
+                    isSearching = true;
+                    showLoading();
+                }
+            }
+
+            function hideSearchLoading() {
+                isSearching = false;
+                hideLoading();
+            }
+
+            function toggleClearButton() {
+                const $searchInput = $('#search');
+                const $clearBtn = $('#clear-search');
+
+                if ($searchInput.val().length > 0) {
+                    $clearBtn.removeClass('d-none');
                 } else {
-                    currentUrl.searchParams.delete(key);
+                    $clearBtn.addClass('d-none');
                 }
             }
 
-            $.ajax({
-                url: currentUrl.toString(),
-                type: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                success: function(response) {
-                    $('#table-container').html(response);
-                    hideLoading();
-
-                    window.history.pushState(null, null, currentUrl.toString());
-
-                    initializeDataTable();
-                    initializeTooltips();
-                    initializeDropdownEvents();
-                    updateFilterCount();
-                    updateSummaryCards(); // Update summary cards after table update
-
-                    resolve(response);
-                },
-                error: function(xhr, status, error) {
-                    hideLoading();
-
-                    const errorMsg = xhr.status === 0 ?
-                        'Koneksi terputus. Silakan coba lagi.' :
-                        'Terjadi kesalahan saat memuat data.';
-
-                    showNotification(errorMsg, 'error');
-                    reject(error);
+            function performSearch(searchValue, immediate = false) {
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
                 }
-            });
-        });
-    }
 
-    function showNotification(message, type = 'info') {
-        const alertClass = {
-            'success': 'alert-success',
-            'error': 'alert-danger',
-            'warning': 'alert-warning',
-            'info': 'alert-info'
-        }[type] || 'alert-info';
+                if (immediate || searchValue === '') {
+                    doSearch(searchValue);
+                } else {
+                    searchTimeout = setTimeout(() => {
+                        doSearch(searchValue);
+                    }, 300);
+                }
+            }
 
-        const notification = $(
-            `<div class="alert ${alertClass} alert-dismissible fade show notification-toast"
+            function doSearch(searchValue) {
+                showSearchLoading();
+
+                updateTable({
+                    'search': searchValue,
+                    'page': 1
+                }).finally(() => {
+                    hideSearchLoading();
+                    updateSummaryCards(); // Ensure summary cards are updated after search
+                });
+            }
+
+            function updateCombinedDisplay() {
+    const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(':contains("Data tidak ditemukan")');
+    const totalKegiatan = tableRows.length;
+
+    let totalAnggaran = 0;
+    tableRows.each(function() {
+        const anggaranText = $(this).find('td').eq(2).text().trim();
+        if (anggaranText && anggaranText !== '-') {
+            const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
+            totalAnggaran += anggaranValue;
+        }
+    });
+
+    // Update header display
+    const targetAnggaran = 200000000000; // 200 miliar
+    const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / targetAnggaran) * 100, 100) : 0;
+    
+    // Update anggaran display dengan ID yang unik
+    $('#anggaranDisplay').html(`Rp. ${totalAnggaran.toLocaleString('id-ID')} / Rp. ${targetAnggaran.toLocaleString('id-ID')}`);
+    $('#anggaranPercentage').html(`${Math.round(anggaranPercentage)}%`);
+    $('#anggaranPercentage').attr('data-bs-original-title', `${anggaranPercentage.toFixed(2)}% dari total anggaran`);
+    
+    // Update progress bar
+    $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
+
+    // Update kegiatan info dengan ID yang unik
+    const targetKegiatan = 10;
+    const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100, 100) : 0;
+    
+    $('#kegiatanBerjalan').html(`${totalKegiatan}`);
+}
+
+            function updateTable(params = {}) {
+                return new Promise((resolve, reject) => {
+                    if (params.search === undefined) {
+                        showLoading();
+                    }
+
+                    const currentUrl = new URL(window.location.href);
+
+                    for (const key in params) {
+                        if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                            currentUrl.searchParams.set(key, params[key]);
+                        } else {
+                            currentUrl.searchParams.delete(key);
+                        }
+                    }
+
+                    $.ajax({
+                        url: currentUrl.toString(),
+                        type: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function(response) {
+                            $('#table-container').html(response);
+                            hideLoading();
+
+                            window.history.pushState(null, null, currentUrl.toString());
+
+                            initializeDataTable();
+                            initializeTooltips();
+                            initializeDropdownEvents();
+                            updateFilterCount();
+                            updateSummaryCards(); // Update summary cards after table update
+                            updateGridLayout(); // Update grid layout after table update
+
+                            resolve(response);
+                        },
+                        error: function(xhr, status, error) {
+                            hideLoading();
+
+                            const errorMsg = xhr.status === 0 ?
+                                'Koneksi terputus. Silakan coba lagi.' :
+                                'Terjadi kesalahan saat memuat data.';
+
+                            showNotification(errorMsg, 'error');
+                            reject(error);
+                        }
+                    });
+                });
+            }
+
+            function showNotification(message, type = 'info') {
+                const alertClass = {
+                    'success': 'alert-success',
+                    'error': 'alert-danger',
+                    'warning': 'alert-warning',
+                    'info': 'alert-info'
+                } [type] || 'alert-info';
+
+                const notification = $(
+                    `<div class="alert ${alertClass} alert-dismissible fade show notification-toast"
                  role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
                 ${message}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         `);
 
-        $('body').append(notification);
+                $('body').append(notification);
 
-        setTimeout(() => {
-            notification.alert('close');
-        }, 5000);
-    }
+                setTimeout(() => {
+                    notification.alert('close');
+                }, 5000);
+            }
 
-    function updateFilterCount() {
-        const urlParams = new URLSearchParams(window.location.search);
-        let count = 0;
+            function updateFilterCount() {
+                const urlParams = new URLSearchParams(window.location.search);
+                let count = 0;
 
-        if (urlParams.get('jenis_kegiatan_filter')) count++;
-        if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
+                if (urlParams.get('jenis_kegiatan_filter')) count++;
+                if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
 
-        const badge = $('#filter-count');
-        if (count > 0) {
-            badge.text(count).removeClass('d-none');
-        } else {
-            badge.addClass('d-none');
-        }
-    }
+                const badge = $('#filter-count');
+                if (count > 0) {
+                    badge.text(count).removeClass('d-none');
+                } else {
+                    badge.addClass('d-none');
+                }
+            }
 
-    function getFileIcon(extension) {
-        const icons = {
-            'pdf': 'fas fa-file-pdf text-danger',
-            'doc': 'fas fa-file-word text-primary',
-            'docx': 'fas fa-file-word text-primary',
-            'xls': 'fas fa-file-excel text-success',
-            'xlsx': 'fas fa-file-excel text-success',
-            'ppt': 'fas fa-file-powerpoint text-warning',
-            'pptx': 'fas fa-file-powerpoint text-warning',
-            'jpg': 'fas fa-file-image text-info',
-            'jpeg': 'fas fa-file-image text-info',
-            'png': 'fas fa-file-image text-info',
-            'gif': 'fas fa-file-image text-info',
-            'webp': 'fas fa-file-image text-info',
-            'svg': 'fas fa-file-image text-info'
-        };
-        return icons[extension] || 'fas fa-file text-muted';
-    }
+            function getFileIcon(extension) {
+                const icons = {
+                    'pdf': 'fas fa-file-pdf text-danger',
+                    'doc': 'fas fa-file-word text-primary',
+                    'docx': 'fas fa-file-word text-primary',
+                    'xls': 'fas fa-file-excel text-success',
+                    'xlsx': 'fas fa-file-excel text-success',
+                    'ppt': 'fas fa-file-powerpoint text-warning',
+                    'pptx': 'fas fa-file-powerpoint text-warning',
+                    'jpg': 'fas fa-file-image text-info',
+                    'jpeg': 'fas fa-file-image text-info',
+                    'png': 'fas fa-file-image text-info',
+                    'gif': 'fas fa-file-image text-info',
+                    'webp': 'fas fa-file-image text-info',
+                    'svg': 'fas fa-file-image text-info'
+                };
+                return icons[extension] || 'fas fa-file text-muted';
+            }
 
-    function loadPreview() {
-        if (!previewSlides || !currentFiles || currentFiles.length === 0) {
-            console.error('No preview slides container or files');
-            return;
-        }
+            function loadPreview() {
+                if (!previewSlides || !currentFiles || currentFiles.length === 0) {
+                    console.error('No preview slides container or files');
+                    return;
+                }
 
-        previewSlides.innerHTML = '';
+                previewSlides.innerHTML = '';
 
-        currentFiles.forEach((file, index) => {
-            const slide = document.createElement('div');
-            slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
+                currentFiles.forEach((file, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
 
-            const path = typeof file === 'object' && file.path ? file.path : file;
-            const originalName = typeof file === 'object' && file.original_name ? file.original_name : path.split('/').pop();
+                    const path = typeof file === 'object' && file.path ? file.path : file;
+                    const originalName = typeof file === 'object' && file.original_name ? file
+                        .original_name : path.split('/').pop();
 
-            const fileExtension = originalName.split('.').pop().toLowerCase();
-            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+                    const fileExtension = originalName.split('.').pop().toLowerCase();
+                    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
 
-            if (currentType === 'image' || currentType === 'foto' ||
-                (currentType === 'auto' && imageExtensions.includes(fileExtension))) {
-                slide.innerHTML = `
+                    if (currentType === 'image' || currentType === 'foto' ||
+                        (currentType === 'auto' && imageExtensions.includes(fileExtension))) {
+                        slide.innerHTML = `
                     <img src="/storage/${path}"
                          alt="Preview"
                          class="preview-image"
                          onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'document-placeholder\'><i class=\'fas fa-exclamation-triangle text-warning\' style=\'font-size: 3rem;\'></i><h5>Gagal memuat gambar</h5></div>">
                 `;
-            } else {
-                if (fileExtension === 'pdf') {
-                    slide.innerHTML = `
+                    } else {
+                        if (fileExtension === 'pdf') {
+                            slide.innerHTML = `
                         <iframe src="/storage/${path}"
                                 class="preview-document"
                                 onerror="console.error('Failed to load PDF: /storage/${path}')"></iframe>
                     `;
-                } else {
-                    const iconClass = getFileIcon(fileExtension);
-                    slide.innerHTML = `
+                        } else {
+                            const iconClass = getFileIcon(fileExtension);
+                            slide.innerHTML = `
                         <div class="document-placeholder">
                             <i class="${iconClass}"></i>
                             <h5>${originalName}</h5>
@@ -987,207 +1072,212 @@
                             </a>
                         </div>
                     `;
+                        }
+                    }
+
+                    previewSlides.appendChild(slide);
+                });
+
+                updatePreviewUI();
+            }
+
+            function updatePreviewUI() {
+                if (!currentFiles || currentFiles.length === 0) return;
+
+                const file = currentFiles[currentIndex];
+                const path = typeof file === 'object' && file.path ? file.path : file;
+                const originalName = typeof file === 'object' && file.original_name ? file.original_name : path
+                    .split('/').pop();
+
+                if (currentFileName) currentFileName.textContent = originalName;
+                if (fileCounter) fileCounter.textContent = `${currentIndex + 1} dari ${currentFiles.length}`;
+
+                if (currentFiles.length > 1) {
+                    if (prevBtn) prevBtn.style.display = 'block';
+                    if (nextBtn) nextBtn.style.display = 'block';
+                } else {
+                    if (prevBtn) prevBtn.style.display = 'none';
+                    if (nextBtn) nextBtn.style.display = 'none';
+                }
+
+                if (downloadBtn) {
+                    downloadBtn.onclick = function() {
+                        const link = document.createElement('a');
+                        link.href = '/storage/' + path;
+                        link.setAttribute('download', originalName);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    };
                 }
             }
 
-            previewSlides.appendChild(slide);
-        });
+            function showSlide(index) {
+                if (!previewSlides) return;
 
-        updatePreviewUI();
-    }
-
-    function updatePreviewUI() {
-        if (!currentFiles || currentFiles.length === 0) return;
-
-        const file = currentFiles[currentIndex];
-        const path = typeof file === 'object' && file.path ? file.path : file;
-        const originalName = typeof file === 'object' && file.original_name ? file.original_name : path.split('/').pop();
-
-        if (currentFileName) currentFileName.textContent = originalName;
-        if (fileCounter) fileCounter.textContent = `${currentIndex + 1} dari ${currentFiles.length}`;
-
-        if (currentFiles.length > 1) {
-            if (prevBtn) prevBtn.style.display = 'block';
-            if (nextBtn) nextBtn.style.display = 'block';
-        } else {
-            if (prevBtn) prevBtn.style.display = 'none';
-            if (nextBtn) nextBtn.style.display = 'none';
-        }
-
-        if (downloadBtn) {
-            downloadBtn.onclick = function() {
-                const link = document.createElement('a');
-                link.href = '/storage/' + path;
-                link.setAttribute('download', originalName);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            };
-        }
-    }
-
-    function showSlide(index) {
-        if (!previewSlides) return;
-
-        document.querySelectorAll('.preview-slide').forEach((slide, i) => {
-            slide.classList.toggle('active', i === index);
-        });
-        currentIndex = index;
-        updatePreviewUI();
-    }
-
-    window.destroyItem = function(button) {
-        const route = button.dataset.route;
-
-        Swal.fire({
-            title: "Apakah Anda Yakin?",
-            html: "<p style='text-align:center'>Setelah data laporan kegiatan lainnya dihapus, Anda tidak bisa mengembalikannya!</p>",
-            icon: "warning",
-            showCancelButton: true,
-            reverseButtons: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Hapus!',
-            cancelButtonText: 'Batalkan!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Menghapus...',
-                    text: 'Mohon tunggu',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => {
-                        Swal.showLoading();
-                    }
+                document.querySelectorAll('.preview-slide').forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
                 });
+                currentIndex = index;
+                updatePreviewUI();
+            }
 
-                $.ajax({
-                    url: route,
-                    type: 'DELETE',
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
+            window.destroyItem = function(button) {
+                const route = button.dataset.route;
+
+                Swal.fire({
+                    title: "Apakah Anda Yakin?",
+                    html: "<p style='text-align:center'>Setelah data laporan kegiatan lainnya dihapus, Anda tidak bisa mengembalikannya!</p>",
+                    icon: "warning",
+                    showCancelButton: true,
+                    reverseButtons: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Hapus!',
+                    cancelButtonText: 'Batalkan!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         Swal.fire({
-                            title: 'Berhasil!',
-                            text: response.message || 'Data laporan kegiatan lainnya berhasil dihapus',
-                            icon: 'success',
-                            timer: 2000,
-                            showConfirmButton: false
+                            title: 'Menghapus...',
+                            text: 'Mohon tunggu',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            willOpen: () => {
+                                Swal.showLoading();
+                            }
                         });
 
-                        updateTable({});
-                    },
-                    error: function(xhr) {
-                        Swal.close();
-
-                        try {
-                            const response = JSON.parse(xhr.responseText);
-
-                            if (response.reason === 'has_dependencies') {
+                        $.ajax({
+                            url: route,
+                            type: 'DELETE',
+                            data: {
+                                _token: $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
                                 Swal.fire({
-                                    title: 'Tidak Dapat Menghapus Data',
-                                    html: `Data laporan <strong>${response.item_name}</strong> tidak dapat dihapus karena masih memiliki data terkait.<br><br>
+                                    title: 'Berhasil!',
+                                    text: response.message ||
+                                        'Data laporan kegiatan lainnya berhasil dihapus',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+
+                                updateTable({});
+                            },
+                            error: function(xhr) {
+                                Swal.close();
+
+                                try {
+                                    const response = JSON.parse(xhr.responseText);
+
+                                    if (response.reason === 'has_dependencies') {
+                                        Swal.fire({
+                                            title: 'Tidak Dapat Menghapus Data',
+                                            html: `Data laporan <strong>${response.item_name}</strong> tidak dapat dihapus karena masih memiliki data terkait.<br><br>
                                 <p class="text-muted">
                                     Silakan hapus atau ubah data yang terkait terlebih dahulu.
                                 </p>`,
-                                    icon: "warning",
-                                    confirmButtonText: 'Mengerti'
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: response.message || 'Gagal menghapus data laporan kegiatan lainnya',
-                                    icon: 'error'
-                                });
+                                            icon: "warning",
+                                            confirmButtonText: 'Mengerti'
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: response.message ||
+                                                'Gagal menghapus data laporan kegiatan lainnya',
+                                            icon: 'error'
+                                        });
+                                    }
+                                } catch (e) {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: 'Gagal menghapus data laporan kegiatan lainnya',
+                                        icon: 'error'
+                                    });
+                                }
                             }
-                        } catch (e) {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'Gagal menghapus data laporan kegiatan lainnya',
-                                icon: 'error'
-                            });
-                        }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Aksi Dibatalkan :)",
+                            icon: "info",
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
                     }
                 });
-            } else {
-                Swal.fire({
-                    title: "Aksi Dibatalkan :)",
-                    icon: "info",
-                    timer: 1500,
-                    showConfirmButton: false
-                });
-            }
-        });
-    };
+            };
 
-    window.showDetailModal = function(data) {
-    const modalBody = document.getElementById('detailModalBody');
-    const statusIcon = document.getElementById('statusIcon');
-    const exportBtn = document.getElementById('exportBtn');
+            window.showDetailModal = function(data) {
+                const modalBody = document.getElementById('detailModalBody');
+                const statusIcon = document.getElementById('statusIcon');
+                const exportBtn = document.getElementById('exportBtn');
 
-    if (!modalBody) {
-        console.error('Modal body not found');
-        return;
-    }
+                if (!modalBody) {
+                    console.error('Modal body not found');
+                    return;
+                }
 
-    // Set URL export berdasarkan ID kegiatan
-    if (exportBtn && data && data.id) {
-        exportBtn.href = `/admin/laporan-lpj/kegiatan-lainnya/${data.id}/export`;
-    }
+                // Set URL export berdasarkan ID kegiatan
+                if (exportBtn && data && data.id) {
+                    exportBtn.href = `/admin/laporan-lpj/kegiatan-lainnya/${data.id}/export`;
+                }
 
-    // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id
-    if (statusIcon) {
-        // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
-        // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
-        const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
-        const hasApprovalPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
-        const isModifiableByCurrentUser = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
-        
-        // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
-        if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
-            statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
-            statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
-        } else {
-            statusIcon.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
-            statusIcon.className = 'badge bg-danger fs-7 d-flex align-items-center';
-        }
-    }
+                // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id
+                if (statusIcon) {
+                    // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
+                    // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
+                    const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
+                    const hasApprovalPermission =
+                        {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
+                    const isModifiableByCurrentUser = data.modifiable_by_user_id && data
+                        .modifiable_by_user_id == {{ auth()->id() }};
 
-    // Simpan ID LPJ dalam data modal
-    $('#detailModal').data('lpj-id', data.id);
+                    // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
+                    if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
+                        statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
+                        statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
+                    } else {
+                        statusIcon.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
+                        statusIcon.className = 'badge bg-danger fs-7 d-flex align-items-center';
+                    }
+                }
 
-    const formatRupiah = (num) => {
-        if (!num) return 'Rp 0';
-        return 'Rp ' + parseInt(num).toLocaleString('id-ID');
-    };
+                // Simpan ID LPJ dalam data modal
+                $('#detailModal').data('lpj-id', data.id);
 
-    let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-    if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
-        fotoJurnalHtml = `
+                const formatRupiah = (num) => {
+                    if (!num) return 'Rp 0';
+                    return 'Rp ' + parseInt(num).toLocaleString('id-ID');
+                };
+
+                let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+                if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
+                    fotoJurnalHtml = `
             <div class="row g-3">
                 ${data.foto_jurnal.map(f => {
                     const path = typeof f === 'object' ? f.path : f;
                     const name = typeof f === 'object' ? (f.original_name || path.split('/').pop()) : path.split('/').pop();
                     return `
-                    <div class="col-6 col-md-4">
-                        <div class="border rounded overflow-hidden" style="height: 120px;">
-                            <img src="/storage/${path}"
-                                 class="w-100 h-100"
-                                 style="object-fit: cover; cursor: pointer;"
-                                 onclick="window.open('/storage/${path}', '_blank')"
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
-                            <div class="text-center small bg-light p-1">${name}</div>
+                        <div class="col-6 col-md-4">
+                            <div class="border rounded overflow-hidden" style="height: 120px;">
+                                <img src="/storage/${path}"
+                                     class="w-100 h-100"
+                                     style="object-fit: cover; cursor: pointer;"
+                                     onclick="window.open('/storage/${path}', '_blank')"
+                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
+                                <div class="text-center small bg-light p-1">${name}</div>
+                            </div>
                         </div>
-                    </div>
-                `}).join('')}
+                    `}).join('')}
             </div>
         `;
-    }
+                }
 
-    let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-    if (data.dokumen_lpj && Array.isArray(data.dokumen_lpj) && data.dokumen_lpj.length > 0) {
-        dokumenHtml = `
+                let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+                if (data.dokumen_lpj && Array.isArray(data.dokumen_lpj) && data.dokumen_lpj.length > 0) {
+                    dokumenHtml = `
             <div class="d-flex flex-column gap-2">
                 ${data.dokumen_lpj.map(d => {
                     const path = typeof d === 'object' ? d.path : d;
@@ -1201,25 +1291,25 @@
                     else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
 
                     return `
-                        <div class="d-flex align-items-center p-2 border rounded bg-light">
-                            <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
-                            <div class="flex-grow-1">
-                                <div class="fw-medium text-dark">${name}</div>
-                                <small class="text-muted">${extension.toUpperCase()}</small>
+                            <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-medium text-dark">${name}</div>
+                                    <small class="text-muted">${extension.toUpperCase()}</small>
+                                </div>
+                                <a href="/storage/${path}"
+                                   target="_blank"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-download me-1"></i>Unduh
+                                </a>
                             </div>
-                            <a href="/storage/${path}"
-                               target="_blank"
-                               class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-download me-1"></i>Unduh
-                            </a>
-                        </div>
-                    `;
+                        `;
                 }).join('')}
             </div>
         `;
-    }
+                }
 
-    modalBody.innerHTML = `
+                modalBody.innerHTML = `
         <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
                 <div class="mb-4">
@@ -1233,68 +1323,68 @@
                             <p class="mb-0 text-dark">${data.nama_program || 'N/A'}</p>
                         </div>
                         ${data.nama_kegiatan ? `
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
-                                <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
-                            </div>
-                        ` : ''}
+                                <div class="mb-2">
+                                    <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
+                                    <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
+                                </div>
+                            ` : ''}
                         ${data.volume ? `
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Volume:</label>
-                                <p class="mb-0 text-dark">${data.volume}</p>
-                            </div>
-                        ` : ''}
+                                <div class="mb-2">
+                                    <label class="fw-semibold text-dark mb-1">Volume:</label>
+                                    <p class="mb-0 text-dark">${data.volume}</p>
+                                </div>
+                            ` : ''}
                         ${data.tempat_kegiatan ? `
-                            <div class="mb-2">
-                                <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
-                            </div>
-                        ` : ''}
+                                <div class="mb-2">
+                                    <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
+                                    <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
+                                </div>
+                            ` : ''}
                         ${data.tanggal_kegiatan ? `
-                            <div>
-                                <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
-                            </div>
-                        ` : ''}
+                                <div>
+                                    <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
+                                    <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                </div>
+                            ` : ''}
                     </div>
                 </div>
 
                 ${data.jumlah_harga_satuan || data.jumlah_harga ? `
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
-                            <i class="fas fa-calculator me-2"></i>
-                            Rincian Anggaran
-                        </h6>
-                        <div class="bg-light p-3 rounded">
-                            <div class="row g-3">
-                                ${data.jumlah_harga_satuan ? `
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
+                                <i class="fas fa-calculator me-2"></i>
+                                Rincian Anggaran
+                            </h6>
+                            <div class="bg-light p-3 rounded">
+                                <div class="row g-3">
+                                    ${data.jumlah_harga_satuan ? `
                                     <div class="col-md-6">
                                         <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
                                         <p class="mb-0 text-success fs-6 fw-bold">${formatRupiah(data.jumlah_harga_satuan)}</p>
                                     </div>
                                 ` : ''}
-                                ${data.jumlah_harga ? `
+                                    ${data.jumlah_harga ? `
                                     <div class="col-md-6">
                                         <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
                                         <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                     </div>
                                 ` : ''}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ` : ''}
+                    ` : ''}
 
                 ${data.sumber_dana ? `
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
-                            <i class="fas fa-money-bill me-2"></i>
-                            Sumber Dana
-                        </h6>
-                        <div class="bg-light p-3 rounded">
-                            <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
+                                <i class="fas fa-money-bill me-2"></i>
+                                Sumber Dana
+                            </h6>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                            </div>
                         </div>
-                    </div>
-                ` : ''}
+                    ` : ''}
 
                 <div class="mb-4">
                     <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
@@ -1324,294 +1414,349 @@
         </div>
 
         ${data.keterangan_tambahan ? `
-                    <div class="mb-4">
-                        <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
-                            <i class="fas fa-sticky-note me-2"></i>
-                            Keterangan Tambahan
-                        </h6>
-                        <div class="bg-light p-3 rounded">
-                            <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                                <i class="fas fa-sticky-note me-2"></i>
+                                Keterangan Tambahan
+                            </h6>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
+                            </div>
                         </div>
-                    </div>
-                ` : ''}
+                    ` : ''}
     `;
 
-    const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-    modal.show();
-};
+                const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+                modal.show();
+            };
 
-    window.showPreviewModal = function(files, type, title) {
-        if (!files || !Array.isArray(files) || files.length === 0) {
-            console.error('Invalid files data for preview');
-            return;
-        }
+            window.showPreviewModal = function(files, type, title) {
+                if (!files || !Array.isArray(files) || files.length === 0) {
+                    console.error('Invalid files data for preview');
+                    return;
+                }
 
-        currentFiles = files;
-        currentType = type || 'auto';
-        currentIndex = 0;
+                currentFiles = files;
+                currentType = type || 'auto';
+                currentIndex = 0;
 
-        if (modalTitle) {
-            modalTitle.textContent = title || 'Preview Files';
-        }
+                if (modalTitle) {
+                    modalTitle.textContent = title || 'Preview Files';
+                }
 
-        loadPreview();
-        $('#previewModal').modal('show');
-    };
+                loadPreview();
+                $('#previewModal').modal('show');
+            };
 
-    initializeDataTable();
-    initializeTooltips();
-    initializeDropdownEvents();
-    updateFilterCount();
-    toggleClearButton();
-    updateSummaryCards(); // Initialize summary cards on page load
+            initializeDataTable();
+            initializeTooltips();
+            initializeDropdownEvents();
+            updateFilterCount();
+            toggleClearButton();
+            updateSummaryCards(); // Initialize summary cards on page load
 
-    $('#search').on('input', function() {
-        const searchValue = $(this).val().trim();
-        toggleClearButton();
-        performSearch(searchValue);
-    });
+            $('#search').on('input', function() {
+                const searchValue = $(this).val().trim();
+                toggleClearButton();
+                performSearch(searchValue);
+            });
 
-    $('#clear-search').on('click', function() {
-        $('#search').val('').focus();
-        toggleClearButton();
-        performSearch('', true);
-    });
-
-    $('#search-button').on('click', function() {
-        const searchValue = $('#search').val().trim();
-        performSearch(searchValue, true);
-    });
-
-    $('#search').on('keydown', function(e) {
-        switch (e.key) {
-            case 'Escape':
-                $(this).val('');
+            $('#clear-search').on('click', function() {
+                $('#search').val('').focus();
                 toggleClearButton();
                 performSearch('', true);
-                break;
+            });
 
-            case 'Enter':
-                e.preventDefault();
-                const searchValue = $(this).val().trim();
+            $('#search-button').on('click', function() {
+                const searchValue = $('#search').val().trim();
                 performSearch(searchValue, true);
-                break;
-        }
-    });
+            });
 
-    $('#search').on('focus', function() {
-        $(this).select();
-    });
+            $('#search').on('keydown', function(e) {
+                switch (e.key) {
+                    case 'Escape':
+                        $(this).val('');
+                        toggleClearButton();
+                        performSearch('', true);
+                        break;
 
-    $('#apply-filters').on('click', function() {
-        const jenisKegiatan = $('#filter-jenis-kegiatan').val();
-        const startDate = $('#filter-start-date').val();
-        const endDate = $('#filter-end-date').val();
+                    case 'Enter':
+                        e.preventDefault();
+                        const searchValue = $(this).val().trim();
+                        performSearch(searchValue, true);
+                        break;
+                }
+            });
 
-        updateTable({
-            'jenis_kegiatan_filter': jenisKegiatan,
-            'start_date': startDate,
-            'end_date': endDate,
-            'page': 1
-        });
-    });
+            $('#search').on('focus', function() {
+                $(this).select();
+            });
 
-    $('#reset-filters').on('click', function() {
-        $('#filter-jenis-kegiatan').val('');
-        $('#filter-start-date').val('');
-        $('#filter-end-date').val('');
-        $('#search').val('');
-        toggleClearButton();
+            // Fungsi untuk tombol edit anggaran
+            $('#editAnggaranBtn').on('click', function(e) {
+                e.preventDefault();
+                // Tampilkan modal edit anggaran
+                $('#editAnggaranModal').modal('show');
+            });
 
-        updateTable({
-            'search': '',
-            'jenis_kegiatan_filter': '',
-            'start_date': '',
-            'end_date': '',
-            'page': 1
-        });
-    });
+            // Fungsi untuk menyimpan perubahan anggaran
+            $('#simpanAnggaranBtn').on('click', function() {
+                const targetAnggaran = $('#target_anggaran').val();
+                const targetKegiatan = $('#target_kegiatan').val();
+                
+                // Validasi input
+                if (!targetAnggaran || !targetKegiatan) {
+                    alert('Harap isi semua field dengan benar.');
+                    return;
+                }
+                
+                // Format angka dengan pemisah ribuan
+                const formattedAnggaran = new Intl.NumberFormat('id-ID').format(targetAnggaran);
+                
+                // Update tampilan target anggaran
+                const currentAnggaranText = $('#anggaranDisplay').text();
+                const currentAnggaranParts = currentAnggaranText.split(' / Rp. ');
+                const currentAnggaran = currentAnggaranParts[0].replace('Rp. ', '').replace(/\./g, '');
+                
+                // Hitung persentase baru
+                const anggaranPercentage = (currentAnggaran / targetAnggaran) * 100;
+                const anggaranPercentageRounded = Math.min(anggaranPercentage, 100);
+                
+                // Update tampilan
+                $('#anggaranDisplay').html(`Rp. ${new Intl.NumberFormat('id-ID').format(currentAnggaran)} / Rp. ${formattedAnggaran}`);
+                $('#anggaranPercentage').html(`${Math.round(anggaranPercentageRounded)}%`);
+                $('#anggaranPercentage').attr('data-bs-original-title', `${anggaranPercentageRounded.toFixed(2)}% dari total anggaran`);
+                $('.progress-bar').css('width', anggaranPercentageRounded + '%').attr('aria-valuenow', anggaranPercentageRounded);
+                
+                // Update target kegiatan
+                const currentKegiatan = parseInt($('#kegiatanBerjalan').text());
+                const kegiatanPercentage = (currentKegiatan / targetKegiatan) * 100;
+                const kegiatanPercentageRounded = Math.min(kegiatanPercentage, 100);
+                
+                $('.badge.bg-primary-subtle').html(`${targetKegiatan} Target Kegiatan`);
+                
+                // Tutup modal
+                $('#editAnggaranModal').modal('hide');
+                
+                // Tampilkan notifikasi
+                showNotification('Target anggaran berhasil diperbarui.', 'success');
+            });
 
-    function updateSummaryCards() {
-        const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(':contains("Data tidak ditemukan")');
-        const totalKegiatan = tableRows.length;
-        
-        let totalAnggaran = 0;
-        tableRows.each(function() {
-            const anggaranText = $(this).find('td').eq(2).text().trim();
-            if (anggaranText && anggaranText !== '-') {
-                const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
-                totalAnggaran += anggaranValue;
-            }
-        });
-        
-        // Update total kegiatan
-        $('#total-kegiatan').html(totalKegiatan + '/10');
-        
-        // Update kegiatan progress bar
-        const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / 10) * 100, 100) : 0;
-        $('#kegiatan-progress').css('width', kegiatanPercentage + '%').attr('aria-valuenow', kegiatanPercentage);
-        
-        // Update total anggaran dengan format Rupiah
-        $('#total-anggaran').html('Rp ' + totalAnggaran.toLocaleString('id-ID'));
-        
-        // Update anggaran progress bar
-        const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / 200000000000) * 100, 100) : 0;
-        $('#anggaran-progress').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
-    }
+            $('#apply-filters').on('click', function() {
+                const jenisKegiatan = $('#filter-jenis-kegiatan').val();
+                const startDate = $('#filter-start-date').val();
+                const endDate = $('#filter-end-date').val();
 
-    // Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
-
-    $(document).on('change', 'select[name="per_page"]', function() {
-        const perPage = $(this).val();
-        updateTable({
-            'per_page': perPage,
-            'page': 1
-        });
-    });
-
-    $(document).on('click', '.pagination-link', function(e) {
-        e.preventDefault();
-        const href = $(this).attr('href');
-
-        if (href && href !== '#') {
-            const url = new URL(href);
-            const page = url.searchParams.get('page');
-
-            if (page) {
                 updateTable({
-                    'page': page
+                    'jenis_kegiatan_filter': jenisKegiatan,
+                    'start_date': startDate,
+                    'end_date': endDate,
+                    'page': 1
+                });
+            });
+
+            $('#reset-filters').on('click', function() {
+                $('#filter-jenis-kegiatan').val('');
+                $('#filter-start-date').val('');
+                $('#filter-end-date').val('');
+                $('#search').val('');
+                toggleClearButton();
+
+                updateTable({
+                    'search': '',
+                    'jenis_kegiatan_filter': '',
+                    'start_date': '',
+                    'end_date': '',
+                    'page': 1
+                });
+            });
+
+            function updateSummaryCards() {
+                const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(
+                    ':contains("Data tidak ditemukan")');
+                const totalKegiatan = tableRows.length;
+
+                let totalAnggaran = 0;
+                tableRows.each(function() {
+                    const anggaranText = $(this).find('td').eq(2).text().trim();
+                    if (anggaranText && anggaranText !== '-') {
+                        const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
+                        totalAnggaran += anggaranValue;
+                    }
+                });
+
+                // Update header display
+                const targetAnggaran = 200000000000; // 200 miliar
+                const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / targetAnggaran) * 100, 100) : 0;
+                
+                // Update anggaran display dengan ID yang unik
+                $('#anggaranDisplay').html(`Rp. ${totalAnggaran.toLocaleString('id-ID')} / Rp. ${targetAnggaran.toLocaleString('id-ID')}`);
+                $('#anggaranPercentage').html(`${Math.round(anggaranPercentage)}%`);
+                $('#anggaranPercentage').attr('data-bs-original-title', `${anggaranPercentage.toFixed(2)}% dari total anggaran`);
+                
+                // Update progress bar
+                $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
+
+                // Update kegiatan info dengan ID yang unik
+                const targetKegiatan = 10;
+                const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100, 100) : 0;
+                
+                $('#kegiatanBerjalan').html(`${totalKegiatan}`);
+            }
+
+            // Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
+
+            $(document).on('change', 'select[name="per_page"]', function() {
+                const perPage = $(this).val();
+                updateTable({
+                    'per_page': perPage,
+                    'page': 1
+                });
+            });
+
+            $(document).on('click', '.pagination-link', function(e) {
+                e.preventDefault();
+                const href = $(this).attr('href');
+
+                if (href && href !== '#') {
+                    const url = new URL(href);
+                    const page = url.searchParams.get('page');
+
+                    if (page) {
+                        updateTable({
+                            'page': page
+                        });
+                    }
+                }
+            });
+
+            $(document).on('click', '.sortable-header', function(e) {
+                e.preventDefault();
+                const url = new URL($(this).attr('href'));
+                const sort = url.searchParams.get('sort');
+                const direction = url.searchParams.get('direction');
+
+                updateTable({
+                    'sort': sort,
+                    'direction': direction,
+                    'page': 1
+                });
+            });
+
+            $(document).on('click', '.preview-btn', function(e) {
+                e.preventDefault();
+                const btn = $(this);
+
+                try {
+                    const filesData = btn.attr('data-files');
+                    const type = btn.attr('data-type') || 'auto';
+                    const title = btn.attr('data-title') || 'Preview Files';
+
+                    if (filesData) {
+                        const files = JSON.parse(filesData);
+                        showPreviewModal(files, type, title);
+                    } else {
+                        console.error('No files data found');
+                    }
+                } catch (error) {
+                    console.error('Error parsing preview data:', error);
+                }
+            });
+
+            // Fungsi untuk menjaga tooltip tetap terlihat
+            window.keepTooltipVisible = function(element) {
+                const tooltip = bootstrap.Tooltip.getInstance(element);
+                if (tooltip) {
+                    clearTimeout(element.tooltipHideTimeout);
+                }
+            };
+
+            // Fungsi untuk menyembunyikan tooltip dengan delay
+            window.hideTooltipWithDelay = function(element) {
+                const tooltip = bootstrap.Tooltip.getInstance(element);
+                if (tooltip) {
+                    element.tooltipHideTimeout = setTimeout(() => {
+                        tooltip.hide();
+                    }, 300); // 300ms delay
+                }
+            };
+
+            // Menangani interaksi dengan tooltip
+            $(document).on('mouseenter', '.tooltip', function() {
+                // Saat kursor masuk ke tooltip, batalkan penutupan
+                const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+                if (triggeringElement.length > 0) {
+                    clearTimeout(triggeringElement[0].tooltipHideTimeout);
+                }
+            });
+
+            $(document).on('mouseleave', '.tooltip', function() {
+                // Saat kursor keluar dari tooltip, sembunyikan tooltip dengan delay
+                const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+                if (triggeringElement.length > 0) {
+                    const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
+                    if (tooltip) {
+                        triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
+                            tooltip.hide();
+                        }, 300);
+                    }
+                }
+            });
+
+            $(document).on('mouseenter', '.tooltip-content a', function() {
+                // Saat kursor masuk ke tautan dalam tooltip, batalkan penutupan
+                const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+                if (triggeringElement.length > 0) {
+                    clearTimeout(triggeringElement[0].tooltipHideTimeout);
+                }
+            });
+
+            $(document).on('mouseleave', '.tooltip-content a', function() {
+                // Saat kursor keluar dari tautan dalam tooltip, sembunyikan tooltip dengan delay
+                const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+                if (triggeringElement.length > 0) {
+                    const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
+                    if (tooltip) {
+                        triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
+                            tooltip.hide();
+                        }, 300);
+                    }
+                }
+            });
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function() {
+                    const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
+                    showSlide(newIndex);
                 });
             }
-        }
-    });
 
-    $(document).on('click', '.sortable-header', function(e) {
-        e.preventDefault();
-        const url = new URL($(this).attr('href'));
-        const sort = url.searchParams.get('sort');
-        const direction = url.searchParams.get('direction');
-
-        updateTable({
-            'sort': sort,
-            'direction': direction,
-            'page': 1
-        });
-    });
-
-    $(document).on('click', '.preview-btn', function(e) {
-        e.preventDefault();
-        const btn = $(this);
-
-        try {
-            const filesData = btn.attr('data-files');
-            const type = btn.attr('data-type') || 'auto';
-            const title = btn.attr('data-title') || 'Preview Files';
-
-            if (filesData) {
-                const files = JSON.parse(filesData);
-                showPreviewModal(files, type, title);
-            } else {
-                console.error('No files data found');
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function() {
+                    const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
+                    showSlide(newIndex);
+                });
             }
-        } catch (error) {
-            console.error('Error parsing preview data:', error);
-        }
-    });
 
-    // Fungsi untuk menjaga tooltip tetap terlihat
-    window.keepTooltipVisible = function(element) {
-        const tooltip = bootstrap.Tooltip.getInstance(element);
-        if (tooltip) {
-            clearTimeout(element.tooltipHideTimeout);
-        }
-    };
+            document.addEventListener('keydown', function(e) {
+                if (previewModal && previewModal.classList.contains('show')) {
+                    if (e.key === 'ArrowLeft' && prevBtn) {
+                        prevBtn.click();
+                    } else if (e.key === 'ArrowRight' && nextBtn) {
+                        nextBtn.click();
+                    } else if (e.key === 'Escape') {
+                        $('#previewModal').modal('hide');
+                    }
+                }
+            });
 
-    // Fungsi untuk menyembunyikan tooltip dengan delay
-    window.hideTooltipWithDelay = function(element) {
-        const tooltip = bootstrap.Tooltip.getInstance(element);
-        if (tooltip) {
-            element.tooltipHideTimeout = setTimeout(() => {
-                tooltip.hide();
-            }, 300); // 300ms delay
-        }
-    };
+            $('#previewModal').on('show.bs.modal', function() {
+                if (currentFiles && currentFiles.length > 0) {
+                    showSlide(0);
+                }
+            });
 
-    // Menangani interaksi dengan tooltip
-    $(document).on('mouseenter', '.tooltip', function() {
-        // Saat kursor masuk ke tooltip, batalkan penutupan
-        const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
-        if (triggeringElement.length > 0) {
-            clearTimeout(triggeringElement[0].tooltipHideTimeout);
-        }
-    });
-
-    $(document).on('mouseleave', '.tooltip', function() {
-        // Saat kursor keluar dari tooltip, sembunyikan tooltip dengan delay
-        const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
-        if (triggeringElement.length > 0) {
-            const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
-            if (tooltip) {
-                triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
-                    tooltip.hide();
-                }, 300);
-            }
-        }
-    });
-
-    $(document).on('mouseenter', '.tooltip-content a', function() {
-        // Saat kursor masuk ke tautan dalam tooltip, batalkan penutupan
-        const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
-        if (triggeringElement.length > 0) {
-            clearTimeout(triggeringElement[0].tooltipHideTimeout);
-        }
-    });
-
-    $(document).on('mouseleave', '.tooltip-content a', function() {
-        // Saat kursor keluar dari tautan dalam tooltip, sembunyikan tooltip dengan delay
-        const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
-        if (triggeringElement.length > 0) {
-            const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
-            if (tooltip) {
-                triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
-                    tooltip.hide();
-                }, 300);
-            }
-        }
-    });
-
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function() {
-            const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
-            showSlide(newIndex);
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
-            const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
-            showSlide(newIndex);
-        });
-    }
-
-    document.addEventListener('keydown', function(e) {
-        if (previewModal && previewModal.classList.contains('show')) {
-            if (e.key === 'ArrowLeft' && prevBtn) {
-                prevBtn.click();
-            } else if (e.key === 'ArrowRight' && nextBtn) {
-                nextBtn.click();
-            } else if (e.key === 'Escape') {
-                $('#previewModal').modal('hide');
-            }
-        }
-    });
-
-    $('#previewModal').on('show.bs.modal', function() {
-        if (currentFiles && currentFiles.length > 0) {
-            showSlide(0);
-        }
-    });
-
-$('#ajukanPerubahanBtn').on('click', function() {
+            $('#ajukanPerubahanBtn').on('click', function() {
                 const lpjId = $('#detailModal').data('lpj-id');
                 $('#pengajuan_lpj_id').val(lpjId);
                 $('#detailModal').modal('hide');
@@ -1637,13 +1782,14 @@ $('#ajukanPerubahanBtn').on('click', function() {
                         user_id: {{ auth()->id() }}
                     },
                     success: function(response) {
-                        if(response.success) {
+                        if (response.success) {
                             $('#alasan').val('');
                             $('#pengajuan_lpj_id').val('');
                             $('#pengajuanModal').modal('hide');
                             showNotification('Pengajuan berhasil dikirim.', 'success');
                         } else {
-                            showNotification(response.message || 'Gagal mengirim pengajuan.', 'error');
+                            showNotification(response.message || 'Gagal mengirim pengajuan.',
+                                'error');
                         }
                     },
                     error: function() {
@@ -1652,7 +1798,7 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 });
             });
 
-            $('#pengajuanModal').on('hidden.bs.modal', function () {
+            $('#pengajuanModal').on('hidden.bs.modal', function() {
                 $('#alasan').val('');
                 $('#pengajuan_lpj_id').val('');
             });

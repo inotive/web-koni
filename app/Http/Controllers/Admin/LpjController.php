@@ -279,6 +279,11 @@ class LpjController extends Controller
         if ($lpj->modifiable_by_user_id === Auth::id()) {
             $pengajuan->token -= 1;
             $pengajuan->save();
+            
+            // If token is now 0, reset modifiable_by_user_id to lock the record
+            if ($pengajuan->token <= 0) {
+                $lpj->update(['modifiable_by_user_id' => null]);
+            }
         }
 
         $message = 'Data berhasil diperbarui';
@@ -335,6 +340,11 @@ class LpjController extends Controller
             if ($lpj->modifiable_by_user_id === Auth::id()) {
                 $pengajuan->token -= 1;
                 $pengajuan->save();
+                
+                // If token is now 0, reset modifiable_by_user_id to lock the record
+                if ($pengajuan->token <= 0) {
+                    $lpj->update(['modifiable_by_user_id' => null]);
+                }
             }
 
             return response()->json([

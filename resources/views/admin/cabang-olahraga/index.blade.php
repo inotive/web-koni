@@ -723,6 +723,8 @@
             justify-content: center;
             font-size: 0.7rem;
         }
+
+        
     </style>
 
     @if (session('success'))
@@ -867,6 +869,7 @@
                 // Set form values dari URL parameters
                 $('#search').val(urlParams.get('search') || '');
                 $('#filter-status').val(urlParams.get('status') || '');
+                $('#ajax-per-page').val(urlParams.get('per_page') || 10);
                 
                 updateFilterCountBadge();
                 updateExportButtonUrl();
@@ -987,9 +990,29 @@
             function buildURL() {
                 return new URL(window.location.href);
             }
+            
+            // Enhanced function to get current parameters including per_page
+            function getCurrentParams() {
+                const url = new URL(window.location.href);
+                const params = new URLSearchParams(url.search);
+                
+                // Ensure per_page is included if it exists in the current URL
+                if (!params.has('per_page')) {
+                    // Check if there's a per_page value in the dropdown
+                    const perPageSelect = $('#ajax-per-page');
+                    if (perPageSelect.length > 0) {
+                        const perPageValue = perPageSelect.val();
+                        if (perPageValue) {
+                            params.set('per_page', perPageValue);
+                        }
+                    }
+                }
+                
+                return params;
+            }
 
-            // Function to load table with AJAX
-            function loadTable(url) {
+            // Function to load table with AJAX - Make it globally accessible
+            window.loadTable = function(url) {
                 console.log('🔍 Loading table with URL:', url);
                 
                 $.ajax({
@@ -1069,6 +1092,12 @@
                     url.searchParams.delete('status');
                 }
                 
+                // Preserve per_page parameter
+                const perPage = $('#ajax-per-page').val();
+                if (perPage) {
+                    url.searchParams.set('per_page', perPage);
+                }
+                
                 // Reset to first page when applying filters
                 url.searchParams.delete('page');
                 
@@ -1113,6 +1142,10 @@
                 // Build clean URL
                 const url = new URL(window.location.origin + window.location.pathname);
                 
+                // Preserve per_page parameter (use default if not set)
+                const perPage = $('#ajax-per-page').val() || 10;
+                url.searchParams.set('per_page', perPage);
+                
                 // Close dropdown
                 $('.dropdown-toggle').dropdown('hide');
                 
@@ -1148,6 +1181,12 @@
                     // Build URL with new page value
                     const url = buildURL();
                     url.searchParams.set('page', page);
+                    
+                    // Preserve per_page parameter
+                    const perPage = $('#ajax-per-page').val();
+                    if (perPage) {
+                        url.searchParams.set('per_page', perPage);
+                    }
                     
                     loadTable(url.toString())
                         .always(() => {
@@ -1193,6 +1232,13 @@
                 // Set new sorting parameters
                 url.searchParams.set('sort_by', sortBy);
                 url.searchParams.set('order', newOrder);
+                
+                // Preserve per_page parameter
+                const perPage = $('#ajax-per-page').val();
+                if (perPage) {
+                    url.searchParams.set('per_page', perPage);
+                }
+                
                 url.searchParams.delete('page'); // Reset to first page
                 
                 loadTable(url.toString())
