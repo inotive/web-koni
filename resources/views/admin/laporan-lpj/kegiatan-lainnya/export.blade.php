@@ -338,12 +338,14 @@
             max-height: 100%; /* Larger size for PDF */
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            object-fit: cover;
+            object-fit: contain; /* Changed from cover to contain to preserve aspect ratio */
         }
 
         @media print {
             .photo-container img {
-                max-height: 400px !important; /* even larger on PDF */
+                max-height: none !important; /* Remove height restriction on PDF */
+                width: auto !important; /* Maintain original aspect ratio */
+                height: auto !important; /* Maintain original aspect ratio */
             }
         }
 
@@ -414,8 +416,8 @@
                             @if($path && file_exists(storage_path('app/public/' . $path)))
                                 <td class="photo-td">
                                     <div class="photo-container">
-                                        <img src="{{ storage_path('app/public/' . $path) }}" alt="Dokumentasi {{ $originalName }}">
-                                        <div class="photo-caption">Dokumentasi {{ $index + 1 }}</div>
+                                        <img src="{{ storage_path('app/public/' . $path) }}" alt="{{ $originalName }}">
+                                        <div class="photo-caption">{{ $originalName }}</div>
                                     </div>
                                 </td>
                                 @if(($index + 1) % 3 == 0)

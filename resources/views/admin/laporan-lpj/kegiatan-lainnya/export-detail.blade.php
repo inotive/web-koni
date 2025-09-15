@@ -113,8 +113,8 @@
 
         .foto-item img {
             max-width: 100%;
-            height: 100px;
-            object-fit: cover;
+            height: auto; /* Changed from fixed height to auto to maintain aspect ratio */
+            object-fit: contain; /* Changed from cover to contain to preserve aspect ratio */
             border: 1px solid #dee2e6;
             border-radius: 4px;
         }
@@ -169,8 +169,9 @@
 
         /* Gambar Full Width */
         .full-width-image {
-            width: 100%;
-            max-height: 500px;
+            width: auto; /* Changed from 100% to auto */
+            max-width: 100%;
+            height: auto; /* Changed from fixed height to auto */
             object-fit: contain;
             margin: 10px 0;
             border: 1px solid #dee2e6;
@@ -266,7 +267,7 @@
                         @endphp
                         @if(file_exists($fullPath))
                         <div class="foto-item">
-                            <img src="data:image/{{ pathinfo($fullPath, PATHINFO_EXTENSION) }};base64,{{ base64_encode(file_get_contents($fullPath)) }}" alt="Foto Jurnal {{ $index + 1 }}">
+                            <img src="data:image/{{ pathinfo($fullPath, PATHINFO_EXTENSION) }};base64,{{ base64_encode(file_get_contents($fullPath)) }}" alt="{{ $fileName }}">
                             <div class="foto-name">{{ $fileName }}</div>
                         </div>
                         @endif

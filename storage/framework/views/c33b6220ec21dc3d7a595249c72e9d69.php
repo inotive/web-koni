@@ -338,12 +338,14 @@
             max-height: 100%; /* Larger size for PDF */
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            object-fit: cover;
+            object-fit: contain; /* Changed from cover to contain to preserve aspect ratio */
         }
 
         @media print {
             .photo-container img {
-                max-height: 400px !important; /* even larger on PDF */
+                max-height: none !important; /* Remove height restriction on PDF */
+                width: auto !important; /* Maintain original aspect ratio */
+                height: auto !important; /* Maintain original aspect ratio */
             }
         }
 
@@ -414,8 +416,8 @@
                             <?php if($path && file_exists(storage_path('app/public/' . $path))): ?>
                                 <td class="photo-td">
                                     <div class="photo-container">
-                                        <img src="<?php echo e(storage_path('app/public/' . $path)); ?>" alt="Dokumentasi <?php echo e($originalName); ?>">
-                                        <div class="photo-caption">Dokumentasi <?php echo e($index + 1); ?></div>
+                                        <img src="<?php echo e(storage_path('app/public/' . $path)); ?>" alt="<?php echo e($originalName); ?>">
+                                        <div class="photo-caption"><?php echo e($originalName); ?></div>
                                     </div>
                                 </td>
                                 <?php if(($index + 1) % 3 == 0): ?>
