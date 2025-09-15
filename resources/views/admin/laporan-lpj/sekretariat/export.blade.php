@@ -21,7 +21,6 @@
         .letterhead {
             position: running(header);
             text-align: center;
-            margin-bottom: 10px; /* reduced from 20px */
         }
 
         .letterhead-img {
