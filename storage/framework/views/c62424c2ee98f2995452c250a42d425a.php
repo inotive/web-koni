@@ -25,7 +25,7 @@
                 <!-- Menu Utama Section -->
                 <?php if(auth()->user()->can('dashboard') ||
                         auth()->user()->can('manajemen-rka') ||
-                        auth()->user()->can('laporan-lpj') ||
+                        auth()->user()->canany(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya']) ||
                         auth()->user()->can('database-bendahara') ||
                         auth()->user()->can('file-kesekretariatan') ||
                         auth()->user()->can('surat-masuk-keluar')): ?>
@@ -63,7 +63,7 @@
                 <?php endif; ?>
 
                 <!-- Laporan LPJ -->
-                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('laporan-lpj')): ?>
+                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya', 'pengajuan-modifikasi-laporan'])): ?>
                     <?php
                         $isLaporanLPJActive =
                             request()->is('admin/laporan-lpj*') ||
@@ -93,6 +93,7 @@
                         </a>
                         <div class="collapse <?php echo e($isLaporanLPJActive ? 'show' : ''); ?>" id="submenu-laporan">
                             <ul class="menu flex-column ms-5">
+                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('laporan-lpj-sekretariat')): ?>
                                 <li class="menu-item">
                                     <a class="menu-link <?php echo e(request()->is('admin/laporan-lpj/sekretariat*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('admin.laporan-lpj.sekretariat.index')); ?>">
@@ -100,6 +101,8 @@
                                         <span class="menu-title">Sekretariat</span>
                                     </a>
                                 </li>
+                                <?php endif; ?>
+                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('laporan-lpj-bidang')): ?>
                                 <li class="menu-item">
                                     <a class="menu-link <?php echo e(request()->is('admin/laporan-lpj/bidang*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('admin.laporan-lpj.bidang.index')); ?>">
@@ -107,6 +110,8 @@
                                         <span class="menu-title">Bidang Bidang</span>
                                     </a>
                                 </li>
+                                <?php endif; ?>
+                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('laporan-lpj-kegiatan-lainnya')): ?>
                                 <li class="menu-item">
                                     <a class="menu-link <?php echo e(request()->is('admin/laporan-lpj/kegiatan-lainnya*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.index')); ?>">
@@ -114,6 +119,8 @@
                                         <span class="menu-title">Kegiatan Lainnya</span>
                                     </a>
                                 </li>
+                                <?php endif; ?>
+                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('pengajuan-modifikasi-laporan')): ?>
                                 <li class="menu-item">
                                     <a class="menu-link <?php echo e(request()->is('admin/laporan-lpj/pengajuan*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('admin.laporan-lpj.pengajuan.index')); ?>">
@@ -129,6 +136,7 @@
                                         </span>
                                     </a>
                                 </li>
+                                <?php endif; ?>
                             </ul>
                         </div>
                     </div>
@@ -321,4 +329,4 @@
     <!--end::Aside menu-->
 
 </div>
-<?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/layouts/sidebar.blade.php ENDPATH**/ ?>
+<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/layouts/sidebar.blade.php ENDPATH**/ ?>

@@ -827,28 +827,19 @@ $(document).ready(function() {
 
         // Status indicator
         if (statusIcon) {
-            const canPengajuanModifikasi = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
-            const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
-            const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
-            const hasToken = pengajuan && pengajuan.token > 0;
+            const canModify = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
+            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
 
-                if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                    statusIcon.innerHTML = 'Terbuka';
-                    statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
-                } else {
-                    statusIcon.innerHTML = 'Terkunci';
-                    statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
-                }
-
-                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
-                        if (ajukanBtn) {
-                            if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                                ajukanBtn.style.display = 'none';
-                            } else {
-                                ajukanBtn.style.display = ''; 
-                            }
-                        }
-                }
+            if (canModify || isModifiable) {
+                statusIcon.innerHTML = 'Terbuka';
+                statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7';
+                document.getElementById('ajukanPerubahanBtn').style.display = 'none';
+            } else {
+                statusIcon.innerHTML = 'Terkunci';
+                statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7';
+                document.getElementById('ajukanPerubahanBtn').style.display = '';
+            }
+        }
 
         $('#detailModal').data('lpj-id', data.id);
 
@@ -864,7 +855,7 @@ $(document).ready(function() {
                             <div class="border rounded overflow-hidden" style="height:120px">
                                 <img src="/storage/${f}" class="w-100 h-100"
                                     style="object-fit:cover;cursor:pointer"
-                                    >
+                                    onclick="showPreviewModal(['${data.foto_jurnal.join("','")}'], 'image', 'Foto Kegiatan')">
                             </div>
                         </div>`).join('')}
                 </div>
@@ -940,15 +931,20 @@ $(document).ready(function() {
                         </div>
                     </div>
 
-                    ${data.jumlah_harga ? `
+                    ${data.jumlah_anggaran || data.jumlah_realisasi ? `
                         <div class="mb-4">
                             <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
                             <div class="bg-light p-3 rounded">
                                 <div class="row g-3">
-                                    ${data.jumlah_harga ? `
+                                    ${data.jumlah_anggaran ? `
                                         <div class="col-md-6">
                                             <label class="fw-semibold mb-1">Total Anggaran:</label>
-                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
+                                            <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_anggaran)}</p>
+                                        </div>` : ''}
+                                    ${data.jumlah_realisasi ? `
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold mb-1">Realisasi:</label>
+                                            <p class="mb-0 text-info fs-5 fw-bold">${formatRupiah(data.jumlah_realisasi)}</p>
                                         </div>` : ''}
                                 </div>
                             </div>
@@ -1288,4 +1284,4 @@ $(document).ready(function() {
 </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang_new/dynamic/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/laporan-lpj/bidang_new/dynamic/index.blade.php ENDPATH**/ ?>

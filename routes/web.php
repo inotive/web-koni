@@ -233,6 +233,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::put('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'update'])->name('update');
             Route::delete('/{sekretariat}', [App\Http\Controllers\Admin\SekretariatController::class, 'destroy'])->name('destroy');
             Route::get('/{sekretariat}/export', [App\Http\Controllers\Admin\SekretariatController::class, 'export'])->name('export');
+            Route::post('/update-target', [App\Http\Controllers\Admin\SekretariatController::class, 'updateTarget'])->name('update-target');
         });
 
         // Route untuk Bidang

@@ -9,6 +9,11 @@ use App\Models\Target;
 
 class BidangController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:laporan-lpj-bidang');
+    }
+
     /**
      * Display the main bidang index page
      */

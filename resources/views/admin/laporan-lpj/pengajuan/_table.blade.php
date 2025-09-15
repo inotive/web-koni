@@ -87,7 +87,9 @@
 
                                     if ($pengajuan->lpj->parent_id == 59) {
                                         $routeName = 'admin.laporan-lpj.sekretariat.index';
-                                    } elseif ($pengajuan->lpj->parent_id == 90) {
+                                    } elseif ($pengajuan->lpj->parent_id == 88) {
+                                        $routeName = 'admin.laporan-lpj.kegiatan-lainnya.index';
+                                        } elseif ($pengajuan->lpj->parent_id == 90) {
                                         $routeName = 'admin.laporan-lpj.kegiatan-lainnya.index';
                                     } else {
                                         if ($pengajuan->lpj->parent_id) {

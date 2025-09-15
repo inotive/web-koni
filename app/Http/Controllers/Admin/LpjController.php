@@ -17,6 +17,11 @@ use setasign\Fpdi\PdfReader\PageBoundaries;
 
 class LpjController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:laporan-lpj-bidang');
+    }
+
     /**
      * DIPAKE BUAT BIDANG-BIDANG, BUKAN UNTUK SEMUA LPJ
      */

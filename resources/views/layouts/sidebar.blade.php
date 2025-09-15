@@ -25,7 +25,7 @@
                 <!-- Menu Utama Section -->
                 @if (auth()->user()->can('dashboard') ||
                         auth()->user()->can('manajemen-rka') ||
-                        auth()->user()->can('laporan-lpj') ||
+                        auth()->user()->canany(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya']) ||
                         auth()->user()->can('database-bendahara') ||
                         auth()->user()->can('file-kesekretariatan') ||
                         auth()->user()->can('surat-masuk-keluar'))
@@ -63,7 +63,7 @@
                 @endcan
 
                 <!-- Laporan LPJ -->
-                @can('laporan-lpj')
+                @canany(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya', 'pengajuan-modifikasi-laporan'])
                     @php
                         $isLaporanLPJActive =
                             request()->is('admin/laporan-lpj*') ||
@@ -92,6 +92,7 @@
                         </a>
                         <div class="collapse {{ $isLaporanLPJActive ? 'show' : '' }}" id="submenu-laporan">
                             <ul class="menu flex-column ms-5">
+                                @can('laporan-lpj-sekretariat')
                                 <li class="menu-item">
                                     <a class="menu-link {{ request()->is('admin/laporan-lpj/sekretariat*') ? 'active' : '' }}"
                                         href="{{ route('admin.laporan-lpj.sekretariat.index') }}">
@@ -99,6 +100,8 @@
                                         <span class="menu-title">Sekretariat</span>
                                     </a>
                                 </li>
+                                @endcan
+                                @can('laporan-lpj-bidang')
                                 <li class="menu-item">
                                     <a class="menu-link {{ request()->is('admin/laporan-lpj/bidang*') ? 'active' : '' }}"
                                         href="{{ route('admin.laporan-lpj.bidang.index') }}">
@@ -106,6 +109,8 @@
                                         <span class="menu-title">Bidang Bidang</span>
                                     </a>
                                 </li>
+                                @endcan
+                                @can('laporan-lpj-kegiatan-lainnya')
                                 <li class="menu-item">
                                     <a class="menu-link {{ request()->is('admin/laporan-lpj/kegiatan-lainnya*') ? 'active' : '' }}"
                                         href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}">
@@ -113,6 +118,8 @@
                                         <span class="menu-title">Kegiatan Lainnya</span>
                                     </a>
                                 </li>
+                                @endcan
+                                @can('pengajuan-modifikasi-laporan')
                                 <li class="menu-item">
                                     <a class="menu-link {{ request()->is('admin/laporan-lpj/pengajuan*') ? 'active' : '' }}"
                                         href="{{ route('admin.laporan-lpj.pengajuan.index') }}">
@@ -127,10 +134,11 @@
                                         </span>
                                     </a>
                                 </li>
+                                @endcan
                             </ul>
                         </div>
                     </div>
-                @endcan
+                @endcanany
                 @can('database-bendahara')
                     <div class="menu-item">
                         <a class="menu-link {{ request()->is('admin/bendahara*') ? 'active' : '' }}"
