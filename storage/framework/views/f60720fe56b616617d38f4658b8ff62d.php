@@ -80,11 +80,58 @@
                             <?php echo e(($pengajuans->currentPage() - 1) * $pengajuans->perPage() + $index + 1); ?>
 
                         </td>
-                        <td>
+                        <td class="text-truncate-custom">
                             <div class="d-flex flex-column">
-                                <strong class="text-truncate-custom"><?php echo e($pengajuan->lpj->nama_program ?? 'N/A'); ?></strong>
-                                <?php if($pengajuan->lpj && $pengajuan->lpj->nama_kegiatan): ?>
-                                    <small class="text-muted" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo e($pengajuan->lpj->nama_kegiatan); ?></small>
+                                <?php if($pengajuan->lpj): ?>
+                                    <?php
+                                    $lpjRouteParams = [];
+
+                                    if ($pengajuan->lpj->parent_id == 59) {
+                                        $routeName = 'admin.laporan-lpj.sekretariat.index';
+                                    } elseif ($pengajuan->lpj->parent_id == 88) {
+                                        $routeName = 'admin.laporan-lpj.kegiatan-lainnya.index';
+                                        } elseif ($pengajuan->lpj->parent_id == 90) {
+                                        $routeName = 'admin.laporan-lpj.kegiatan-lainnya.index';
+                                    } else {
+                                        if ($pengajuan->lpj->parent_id) {
+                                            $routeName = 'admin.laporan-lpj.bidang.dynamic.child.index';
+                                            $lpjRouteParams['parentId'] = $pengajuan->lpj->parent_id;
+                                        } else {
+                                            $hasChildren = \App\Models\Lpj::where('parent_id', $pengajuan->lpj->id)->exists();
+
+                                            if ($hasChildren) {
+                                                $routeName = 'admin.laporan-lpj.bidang.dynamic.child.index';
+                                                $lpjRouteParams['parentId'] = $pengajuan->lpj->id;
+                                            } else {
+                                                $routeName = 'admin.laporan-lpj.bidang.dynamic.index';
+                                            }
+                                        }
+                                    }
+                                ?>
+
+                                    <a href="<?php echo e(route($routeName, $lpjRouteParams)); ?>"
+                                       class="text-decoration-none lpj-link"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       title="Klik untuk melihat detail LPJ">
+                                        <strong class="text-truncate-custom text-primary">
+                                            <i class="fas fa-external-link-alt me-1 text-muted" style="font-size: 0.8em;"></i>
+                                            <?php echo e($pengajuan->lpj->nama_program ?? 'N/A'); ?>
+
+                                        </strong>
+                                    </a>
+
+                                    <?php if($pengajuan->lpj->nama_kegiatan): ?>
+                                        <small class="text-muted mt-1" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                            <?php echo e($pengajuan->lpj->nama_kegiatan); ?>
+
+                                        </small>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <strong class="text-truncate-custom text-danger">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        LPJ Tidak Ditemukan
+                                    </strong>
                                 <?php endif; ?>
                             </div>
                         </td>
@@ -285,6 +332,56 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+
+        /* Enhanced LPJ Link Styling */
+        .lpj-link {
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            padding: 2px 0;
+            display: inline-block;
+        }
+
+        .lpj-link:hover {
+            text-decoration: none !important;
+            transform: translateX(2px);
+        }
+
+        .lpj-link:hover strong {
+            color: #0d6efd !important;
+            text-shadow: 0 1px 3px rgba(13, 110, 253, 0.2);
+        }
+
+        .lpj-link:hover .fas.fa-external-link-alt {
+            color: #0d6efd !important;
+            transform: scale(1.1);
+        }
+
+        .lpj-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #0d6efd, #6c5ce7);
+            transition: width 0.3s ease;
+        }
+
+        /* .lpj-link:hover::after {
+            width: 100%;
+        } */
+
+        /* Link icon animation */
+        .lpj-link .fa-external-link-alt {
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        /* Additional styling for missing LPJ indicator */
+        .text-danger strong {
+            font-weight: 600;
         }
 
         .dropdown-action {
@@ -544,6 +641,21 @@
         .toast-error { background-color: #bd362f; color: white; }
         .toast-warning { background-color: #f89406; color: white; }
         .toast-info { background-color: #2f96b4; color: white; }
+
+        /* Responsive styles for links */
+        @media (max-width: 768px) {
+            .lpj-link:hover {
+                transform: none;
+            }
+
+            .lpj-link::after {
+                display: none;
+            }
+
+            .text-truncate-custom {
+                max-width: 150px;
+            }
+        }
     </style>
 <?php endif; ?>
 <?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/pengajuan/_table.blade.php ENDPATH**/ ?>

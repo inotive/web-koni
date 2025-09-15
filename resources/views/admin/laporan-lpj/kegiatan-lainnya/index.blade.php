@@ -391,139 +391,327 @@
             font-size: 14px;
             color: #A3AED0;
         }
-        
+
         .badge.bg-success-subtle {
             background-color: #dcfce7 !important;
             color: #15803d !important;
             border: 1px solid #bbf7d0 !important;
         }
-        
+
         .badge.bg-primary-subtle {
             background-color: #dbeafe !important;
             color: #1d4ed8 !important;
             border: 1px solid #bfdbfe !important;
         }
-        
+
         .badge.fw-semibold {
             font-weight: 600 !important;
         }
-        
+
         /* Styling untuk tombol edit (hanya ikon) */
         #editAnggaranBtn {
             border-color: #0d6efd;
             color: #0d6efd;
             padding: 5px 8px;
         }
-        
+
         #editAnggaranBtn:hover {
             background-color: #0d6efd;
             color: white;
         }
+
+        #pengajuanModal .modal-dialog {
+            max-width: 500px;
+            margin: 1.75rem auto;
+        }
+
+        #pengajuanModal .modal-content {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        #pengajuanModal .modal-header {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 24px 32px 20px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        #pengajuanModal .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        #pengajuanModal .btn-close {
+            padding: 0;
+            margin: 0;
+            width: 24px;
+            height: 24px;
+            background: none;
+            border: none;
+            opacity: 0.6;
+            transition: opacity 0.2s ease;
+        }
+
+        #pengajuanModal .btn-close:hover {
+            opacity: 1;
+        }
+
+        #pengajuanModal .modal-body {
+            padding: 32px;
+            background: white;
+        }
+
+        #pengajuanModal .form-label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        #pengajuanModal .form-control {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            background-color: #f9fafb;
+            transition: all 0.2s ease;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        #pengajuanModal .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background-color: white;
+            outline: none;
+        }
+
+        #pengajuanModal .form-control::placeholder {
+            color: #9ca3af;
+            opacity: 1;
+        }
+
+        #pengajuanModal .modal-footer {
+            padding: 24px 32px 32px;
+            background: white;
+            border-top: none;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        #pengajuanModal .btn-secondary {
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        #pengajuanModal .btn-secondary:hover {
+            background-color: #e5e7eb;
+            border-color: #9ca3af;
+            color: #1f2937;
+        }
+
+        #pengajuanModal .btn-primary {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #pengajuanModal .btn-primary:hover {
+            background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(34, 197, 94, 0.3);
+        }
+
+        #pengajuanModal .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+        }
+
+        /* Icon untuk tombol konfirmasi */
+        #pengajuanModal .btn-primary::before {
+            content: "✓";
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            #pengajuanModal .modal-dialog {
+                margin: 0.5rem;
+                max-width: calc(100% - 1rem);
+            }
+
+            #pengajuanModal .modal-header,
+            #pengajuanModal .modal-body,
+            #pengajuanModal .modal-footer {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            #pengajuanModal .btn-close {
+                right: 16px;
+                top: 16px;
+            }
+
+            #pengajuanModal .btn-primary {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        /* Loading state untuk tombol submit */
+        #pengajuanModal .btn-primary.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        #pengajuanModal .btn-primary.loading::before {
+            content: "";
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <div>
-        <strong>
-            <h1 class="fw-bold mb-1">Kegiatan Lainnya</h1>
-        </strong>
-        <h3 class="text-muted mb-0">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</h3>
-    </div>
-    
-    <div class="d-flex align-items-center gap-2">
-        <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
-            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-            <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-        </a>
-    </div>
-</div>
+        <div>
+            <strong>
+                <h1 class="fw-bold mb-1">Kegiatan Lainnya</h1>
+            </strong>
+            <h3 class="text-muted mb-0">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</h3>
+        </div>
 
-<div class="row g-3 mb-4">
-    <div class="col-12">
-        <div class="top-progress-wrapper">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="text-muted mb-0">Total Anggaran</h3>
-                <!-- Tombol Edit (hanya ikon) -->
-                <a href="#" class="btn btn-sm btn-outline-primary" id="editAnggaranBtn" title="Edit Target Anggaran">
-                    <i class="fas fa-edit"></i>
-                </a>
-            </div>
-            
-            @php
-                $totalKegiatan = $totalKegiatan ?? ($kegiatanLainnya->total() ?? 0);
-                $targetKegiatan = 10;
-                $kegiatanPercentage = $totalKegiatan > 0 ? ($totalKegiatan / $targetKegiatan) * 100 : 0;
-                $kegiatanPercentage = min($kegiatanPercentage, 100);
-                
-                $targetAnggaran = 200000000000; // 200 miliar
-                $anggaranPercentage = ($totalAnggaran ?? 0) > 0 ? (($totalAnggaran ?? 0) / $targetAnggaran) * 100 : 0;
-                $anggaranPercentage = min($anggaranPercentage, 100);
-            @endphp
-            
-            <div class="d-flex justify-content-between mb-2">
-                <h1 id="anggaranDisplay" class="fw-bold mb-1">Rp. {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }} / Rp. {{ number_format($targetAnggaran, 0, ',', '.') }}</h1>
-                <h3 id="anggaranPercentage" class="text-muted mb-0" data-bs-toggle="tooltip" title="{{ round($anggaranPercentage, 2) }}% dari total anggaran">
-                    {{ round($anggaranPercentage) }}%
-                </h3>
-            </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
+                style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+            </a>
+        </div>
+    </div>
 
-            <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
-                <div class="progress-bar progress-bar-striped progress-bar-animated"
-                    role="progressbar"
-                    style="width: {{ $anggaranPercentage }}%; background-color: #F8285A; border-radius: 12px;"
-                    aria-valuenow="{{ $anggaranPercentage }}"
-                    aria-valuemin="0"
-                    aria-valuemax="100">
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <div class="top-progress-wrapper">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="text-muted mb-0">Total Anggaran</h3>
+                    <!-- Tombol Edit (hanya ikon) -->
+                    <a href="#" class="btn btn-sm btn-outline-primary" id="editAnggaranBtn"
+                        title="Edit Target Anggaran">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+
+                @php
+                    $totalKegiatan = $totalKegiatan ?? ($kegiatanLainnya->total() ?? 0);
+                    $targetKegiatan = 10;
+                    $kegiatanPercentage = $totalKegiatan > 0 ? ($totalKegiatan / $targetKegiatan) * 100 : 0;
+                    $kegiatanPercentage = min($kegiatanPercentage, 100);
+
+                    $targetAnggaran = 200000000000; // 200 miliar
+                    $anggaranPercentage =
+                        ($totalAnggaran ?? 0) > 0 ? (($totalAnggaran ?? 0) / $targetAnggaran) * 100 : 0;
+                    $anggaranPercentage = min($anggaranPercentage, 100);
+                @endphp
+
+                <div class="d-flex justify-content-between mb-2">
+                    <h1 id="anggaranDisplay" class="fw-bold mb-1">Rp. {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }}
+                        / Rp. {{ number_format($targetAnggaran, 0, ',', '.') }}</h1>
+                    <h3 id="anggaranPercentage" class="text-muted mb-0" data-bs-toggle="tooltip"
+                        title="{{ round($anggaranPercentage, 2) }}% dari total anggaran">
+                        {{ round($anggaranPercentage) }}%
+                    </h3>
+                </div>
+
+                <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                        style="width: {{ $anggaranPercentage }}%; background-color: #F8285A; border-radius: 12px;"
+                        aria-valuenow="{{ $anggaranPercentage }}" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row-reverse bd-highlight mt-2">
+                    <div class="info-label mt-1 d-flex align-items-center gap-2">
+                        <span
+                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
+                            <span id="kegiatanBerjalan">{{ $totalKegiatan }}</span> Kegiatan Berjalan
+                        </span>
+                        <span>/</span>
+                        <span
+                            class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
+                            {{ $targetKegiatan }} Target Kegiatan
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
+            <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - 2025</h3>
+
+            <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+                <div class="input-group position-relative" style="width: 250px;">
+                    <input type="search" name="search" id="search" class="form-control" placeholder="Cari kegiatan..."
+                        value="{{ request('search') }}" autocomplete="off">
+
+                    <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
+                        style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
+                        <i class="fas fa-times text-muted"></i>
+                    </button>
+
+                    <button class="btn btn-outline-secondary" type="button" id="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body position-relative">
+            <div class="loading-overlay d-none" id="loading-overlay">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
 
-            <div class="d-flex flex-row-reverse bd-highlight mt-2">
-                <div class="info-label mt-1 d-flex align-items-center gap-2">
-                    <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
-                        <span id="kegiatanBerjalan">{{ $totalKegiatan }}</span> Kegiatan Berjalan
-                    </span>
-                    <span>/</span>
-                    <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
-                        {{ $targetKegiatan }} Target Kegiatan
-                    </span>
-                </div>
+            <div id="table-container">
+                @include('admin.laporan-lpj.kegiatan-lainnya._table')
             </div>
         </div>
     </div>
-</div>
-
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-        <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - 2025</h3>
-
-        <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-            <div class="input-group position-relative" style="width: 250px;">
-                <input type="search" name="search" id="search" class="form-control"
-                    placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
-
-                <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
-                    style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
-                    <i class="fas fa-times text-muted"></i>
-                </button>
-
-                <button class="btn btn-outline-secondary" type="button" id="search-button">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card-body position-relative">
-        <div class="loading-overlay d-none" id="loading-overlay">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-
-        <div id="table-container">
-            @include('admin.laporan-lpj.kegiatan-lainnya._table')
-        </div>
-    </div>
-</div>
 
     <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -573,14 +761,13 @@
                 <div class="modal-header d-flex align-items-center"
                     style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
                     <h5 class="modal-title" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
+                    <!-- Status Icon -->
+                    <div id="statusIconContainer" class="d-flex align-items-center ms-2">
+                        <span id="statusIcon" class="badge fs-7 d-flex align-items-center"
+                            style="padding: 6px 10px;"></span>
+                    </div>
+                    <!-- Tombol Export -->
                     <div class="ms-auto d-flex align-items-center gap-2">
-                        <!-- Status Icon -->
-                        <div id="statusIconContainer" class="d-flex align-items-center me-2">
-                            <span id="statusIcon" class="badge fs-7 d-flex align-items-center"
-                                style="padding: 6px 10px;"></span>
-                        </div>
-
-                        <!-- Tombol Export -->
                         <a href="#" id="exportBtn" class="btn btn-success btn-sm" target="_blank">
                             <i class="fas fa-file-pdf me-1"></i> Export PDF
                         </a>
@@ -606,52 +793,66 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="pengajuanModalLabel">Ajukan Perubahan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="pengajuanModalLabel">Pengajuan Perubahan</h5>
+                    <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal" aria-label="Close"
+                        style="border: none; background: transparent;">
+                        <i class="fas fa-times text-dark"></i>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <form id="pengajuanForm">
                         <input type="hidden" id="pengajuan_lpj_id" name="lpj_id">
-                        <div class="mb-3">
-                            <label for="alasan" class="form-label">Alasan Perubahan</label>
-                            <textarea class="form-control" id="alasan" name="alasan" rows="4" required></textarea>
+                        <div class="mb-2">
+                            <label for="alasan" class="form-label">Keterangan Perubahan</label>
+                            <textarea class="form-control" id="alasan" name="alasan" rows="2"
+                                placeholder="Silahkan mengisi keterangan perubahan dengan jelas" required></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="submitPengajuanBtn">Kirim Pengajuan</button>
+                    <button type="button" class="btn btn-primary w-100 d-flex justify-content-center align-items-center"
+                        id="submitPengajuanBtn">
+                        Kirim Pengajuan
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    
+
     {{-- Modal Edit Anggaran --}}
     <div class="modal fade" id="editAnggaranModal" tabindex="-1" aria-labelledby="editAnggaranModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editAnggaranModalLabel">Edit Target Anggaran</h5>
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="fs-2 fw-bold leading-5">Edit Target Anggaran & Kegiatan</div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <form id="editAnggaranForm">
-                        <div class="mb-3">
-                            <label for="target_anggaran" class="form-label">Target Anggaran (Rp)</label>
-                            <input type="number" class="form-control" id="target_anggaran" name="target_anggaran" 
-                                   value="{{ number_format($targetAnggaran ?? 200000000000, 0, '', '') }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="target_kegiatan" class="form-label">Target Kegiatan</label>
-                            <input type="number" class="form-control" id="target_kegiatan" name="target_kegiatan" 
-                                   value="{{ $targetKegiatan ?? 10 }}" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="simpanAnggaranBtn">Simpan</button>
+
+                <form id="editAnggaranForm" class="d-grid gap-4">
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Target Anggaran</div>
+                        <input type="text" name="target_anggaran" id="target_anggaran"
+                            value="{{ number_format($targetAnggaran ?? 200000000000, 0, ',', '.') }}"
+                            placeholder="Masukkan target anggaran" class="form-control bg-light border border-gray-400"
+                            required />
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Target Kegiatan</div>
+                        <input type="number" name="target_kegiatan" id="target_kegiatan"
+                            value="{{ $targetKegiatan ?? 10 }}" placeholder="Masukkan jumlah target kegiatan"
+                            class="form-control bg-light border border-gray-400" required />
+                        <div class="invalid-feedback"></div>
+                    </div>
+                </form>
+
+                <div class="d-grid py-4">
+                    <button type="button" id="simpanAnggaranBtn"
+                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                        <span class="btn-text">Simpan Target</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -667,6 +868,22 @@
             let currentFiles = [];
             let currentIndex = 0;
             let currentType = '';
+
+            // Utility function to format number as Rupiah
+            const formatRupiah = (angka, prefix = 'Rp ') => {
+                const number = String(angka).replace(/[^\d]/g, '');
+                const split = number.split(',');
+                const sisa = split[0].length % 3;
+                let rupiah = split[0].substr(0, sisa);
+                const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+                if (ribuan) {
+                    const separator = sisa ? '.' : '';
+                    rupiah += separator + ribuan.join('.');
+                }
+
+                return prefix + rupiah;
+            };
 
             const previewModal = document.getElementById('previewModal');
             const previewSlides = document.getElementById('previewSlides');
@@ -887,36 +1104,42 @@
             }
 
             function updateCombinedDisplay() {
-    const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(':contains("Data tidak ditemukan")');
-    const totalKegiatan = tableRows.length;
+                const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(
+                    ':contains("Data tidak ditemukan")');
+                const totalKegiatan = tableRows.length;
 
-    let totalAnggaran = 0;
-    tableRows.each(function() {
-        const anggaranText = $(this).find('td').eq(2).text().trim();
-        if (anggaranText && anggaranText !== '-') {
-            const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
-            totalAnggaran += anggaranValue;
-        }
-    });
+                let totalAnggaran = 0;
+                tableRows.each(function() {
+                    const anggaranText = $(this).find('td').eq(2).text().trim();
+                    if (anggaranText && anggaranText !== '-') {
+                        const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
+                        totalAnggaran += anggaranValue;
+                    }
+                });
 
-    // Update header display
-    const targetAnggaran = 200000000000; // 200 miliar
-    const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / targetAnggaran) * 100, 100) : 0;
-    
-    // Update anggaran display dengan ID yang unik
-    $('#anggaranDisplay').html(`Rp. ${totalAnggaran.toLocaleString('id-ID')} / Rp. ${targetAnggaran.toLocaleString('id-ID')}`);
-    $('#anggaranPercentage').html(`${Math.round(anggaranPercentage)}%`);
-    $('#anggaranPercentage').attr('data-bs-original-title', `${anggaranPercentage.toFixed(2)}% dari total anggaran`);
-    
-    // Update progress bar
-    $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
+                // Update header display
+                const targetAnggaran = 200000000000; // 200 miliar
+                const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / targetAnggaran) * 100,
+                    100) : 0;
 
-    // Update kegiatan info dengan ID yang unik
-    const targetKegiatan = 10;
-    const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100, 100) : 0;
-    
-    $('#kegiatanBerjalan').html(`${totalKegiatan}`);
-}
+                // Update anggaran display dengan ID yang unik
+                $('#anggaranDisplay').html(
+                    `Rp. ${totalAnggaran.toLocaleString('id-ID')} / Rp. ${targetAnggaran.toLocaleString('id-ID')}`
+                );
+                $('#anggaranPercentage').html(`${Math.round(anggaranPercentage)}%`);
+                $('#anggaranPercentage').attr('data-bs-original-title',
+                    `${anggaranPercentage.toFixed(2)}% dari total anggaran`);
+
+                // Update progress bar
+                $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
+
+                // Update kegiatan info dengan ID yang unik
+                const targetKegiatan = 10;
+                const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100,
+                    100) : 0;
+
+                $('#kegiatanBerjalan').html(`${totalKegiatan}`);
+            }
 
             function updateTable(params = {}) {
                 return new Promise((resolve, reject) => {
@@ -1213,6 +1436,7 @@
                 const modalBody = document.getElementById('detailModalBody');
                 const statusIcon = document.getElementById('statusIcon');
                 const exportBtn = document.getElementById('exportBtn');
+                const ajukanPerubahanBtn = document.getElementById('ajukanPerubahanBtn');
 
                 if (!modalBody) {
                     console.error('Modal body not found');
@@ -1222,6 +1446,8 @@
                 // Set URL export berdasarkan ID kegiatan
                 if (exportBtn && data && data.id) {
                     exportBtn.href = `/admin/laporan-lpj/kegiatan-lainnya/${data.id}/export`;
+                    // Ubah warna tombol export menjadi merah
+                    exportBtn.className = 'btn btn-danger btn-sm';
                 }
 
                 // Tampilkan status terkunci/terbuka berdasarkan modifiable_by_user_id
@@ -1234,13 +1460,29 @@
                     const isModifiableByCurrentUser = data.modifiable_by_user_id && data
                         .modifiable_by_user_id == {{ auth()->id() }};
 
+                    // Cek apakah token modifikasi sudah kadaluarsa atau sudah digunakan
+                    const isTokenExpiredOrUsed = data.modification_token_status === 'expired' || data
+                        .modification_token_status === 'used';
+
                     // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
-                    if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
+                    // Kecuali jika token sudah kadaluarsa atau sudah digunakan
+                    if ((isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) && !
+                        isTokenExpiredOrUsed) {
                         statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
                         statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
+
+                        // Sembunyikan tombol "Ajukan Perubahan" saat status Terbuka
+                        if (ajukanPerubahanBtn) {
+                            ajukanPerubahanBtn.style.display = 'none';
+                        }
                     } else {
                         statusIcon.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
                         statusIcon.className = 'badge bg-danger fs-7 d-flex align-items-center';
+
+                        // Tampilkan tombol "Ajukan Perubahan" saat status Terkunci
+                        if (ajukanPerubahanBtn) {
+                            ajukanPerubahanBtn.style.display = 'inline-flex';
+                        }
                     }
                 }
 
@@ -1260,17 +1502,17 @@
                     const path = typeof f === 'object' ? f.path : f;
                     const name = typeof f === 'object' ? (f.original_name || path.split('/').pop()) : path.split('/').pop();
                     return `
-                        <div class="col-6 col-md-4">
-                            <div class="border rounded overflow-hidden" style="height: 120px;">
-                                <img src="/storage/${path}"
-                                     class="w-100 h-100"
-                                     style="object-fit: cover; cursor: pointer;"
-                                     onclick="window.open('/storage/${path}', '_blank')"
-                                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
-                                <div class="text-center small bg-light p-1">${name}</div>
-                            </div>
-                        </div>
-                    `}).join('')}
+                                <div class="col-6 col-md-4">
+                                    <div class="border rounded overflow-hidden" style="height: 120px;">
+                                        <img src="/storage/${path}"
+                                             class="w-100 h-100"
+                                             style="object-fit: cover; cursor: pointer;"
+                                             onclick="window.open('/storage/${path}', '_blank')"
+                                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
+                                        <div class="text-center small bg-light p-1">${name}</div>
+                                    </div>
+                                </div>
+                            `}).join('')}
             </div>
         `;
                 }
@@ -1289,6 +1531,38 @@
                     else if (['doc', 'docx'].includes(extension)) iconClass = 'fas fa-file-word text-primary';
                     else if (['xls', 'xlsx'].includes(extension)) iconClass = 'fas fa-file-excel text-success';
                     else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
+
+                    return `
+                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                        <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-medium text-dark">${name}</div>
+                                            <small class="text-muted">${extension.toUpperCase()}</small>
+                                        </div>
+                                        <a href="/storage/${path}"
+                                           target="_blank"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-download me-1"></i>Unduh
+                                        </a>
+                                    </div>
+                                `;
+                }).join('')}
+            </div>
+        `;
+                }
+
+                // Tambahkan penanganan untuk Dokumen LPJ (PDF)
+                let dokumenLpjHtml = '<div class="text-muted fst-italic">Tidak ada dokumen LPJ tersedia</div>';
+                if (data.dokumen_lpj_pdf && Array.isArray(data.dokumen_lpj_pdf) && data.dokumen_lpj_pdf.length > 0) {
+                    dokumenLpjHtml = `
+            <div class="d-flex flex-column gap-2">
+                ${data.dokumen_lpj_pdf.map(d => {
+                    const path = typeof d === 'object' ? d.path : d;
+                    const name = typeof d === 'object' ? (d.original_name || path.split('/').pop()) : path.split('/').pop();
+                    const extension = name.split('.').pop().toLowerCase();
+
+                    // Untuk dokumen LPJ PDF, selalu gunakan ikon PDF
+                    const iconClass = 'fas fa-file-pdf text-danger';
 
                     return `
                             <div class="d-flex align-items-center p-2 border rounded bg-light">
@@ -1323,68 +1597,68 @@
                             <p class="mb-0 text-dark">${data.nama_program || 'N/A'}</p>
                         </div>
                         ${data.nama_kegiatan ? `
-                                <div class="mb-2">
-                                    <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
-                                    <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
-                                </div>
-                            ` : ''}
+                                        <div class="mb-2">
+                                            <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
+                                            <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
+                                        </div>
+                                    ` : ''}
                         ${data.volume ? `
-                                <div class="mb-2">
-                                    <label class="fw-semibold text-dark mb-1">Volume:</label>
-                                    <p class="mb-0 text-dark">${data.volume}</p>
-                                </div>
-                            ` : ''}
+                                        <div class="mb-2">
+                                            <label class="fw-semibold text-dark mb-1">Volume:</label>
+                                            <p class="mb-0 text-dark">${data.volume}</p>
+                                        </div>
+                                    ` : ''}
                         ${data.tempat_kegiatan ? `
-                                <div class="mb-2">
-                                    <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                    <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
-                                </div>
-                            ` : ''}
+                                        <div class="mb-2">
+                                            <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
+                                            <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
+                                        </div>
+                                    ` : ''}
                         ${data.tanggal_kegiatan ? `
-                                <div>
-                                    <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                    <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
-                                </div>
-                            ` : ''}
+                                        <div>
+                                            <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
+                                            <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                        </div>
+                                    ` : ''}
                     </div>
                 </div>
 
                 ${data.jumlah_harga_satuan || data.jumlah_harga ? `
-                        <div class="mb-4">
-                            <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
-                                <i class="fas fa-calculator me-2"></i>
-                                Rincian Anggaran
-                            </h6>
-                            <div class="bg-light p-3 rounded">
-                                <div class="row g-3">
-                                    ${data.jumlah_harga_satuan ? `
+                                <div class="mb-4">
+                                    <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
+                                        <i class="fas fa-calculator me-2"></i>
+                                        Rincian Anggaran
+                                    </h6>
+                                    <div class="bg-light p-3 rounded">
+                                        <div class="row g-3">
+                                            ${data.jumlah_harga_satuan ? `
                                     <div class="col-md-6">
                                         <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
                                         <p class="mb-0 text-success fs-6 fw-bold">${formatRupiah(data.jumlah_harga_satuan)}</p>
                                     </div>
                                 ` : ''}
-                                    ${data.jumlah_harga ? `
+                                            ${data.jumlah_harga ? `
                                     <div class="col-md-6">
                                         <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
                                         <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                     </div>
                                 ` : ''}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    ` : ''}
+                            ` : ''}
 
                 ${data.sumber_dana ? `
-                        <div class="mb-4">
-                            <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
-                                <i class="fas fa-money-bill me-2"></i>
-                                Sumber Dana
-                            </h6>
-                            <div class="bg-light p-3 rounded">
-                                <p class="mb-0 text-dark">${data.sumber_dana}</p>
-                            </div>
-                        </div>
-                    ` : ''}
+                                <div class="mb-4">
+                                    <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
+                                        <i class="fas fa-money-bill me-2"></i>
+                                        Sumber Dana
+                                    </h6>
+                                    <div class="bg-light p-3 rounded">
+                                        <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                                    </div>
+                                </div>
+                            ` : ''}
 
                 <div class="mb-4">
                     <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
@@ -1401,7 +1675,7 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div class="mb-3">
                         <label class="fw-semibold text-dark mb-2 d-block">
                             <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
                         </label>
@@ -1409,21 +1683,30 @@
                             ${dokumenHtml}
                         </div>
                     </div>
+
+                    <div>
+                        <label class="fw-semibold text-dark mb-2 d-block">
+                            <i class="fas fa-file-pdf me-1"></i>Dokumen LPJ:
+                        </label>
+                        <div class="bg-light p-3 rounded">
+                            ${dokumenLpjHtml}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         ${data.keterangan_tambahan ? `
-                        <div class="mb-4">
-                            <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
-                                <i class="fas fa-sticky-note me-2"></i>
-                                Keterangan Tambahan
-                            </h6>
-                            <div class="bg-light p-3 rounded">
-                                <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
-                            </div>
-                        </div>
-                    ` : ''}
+                                <div class="mb-4">
+                                    <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                                        <i class="fas fa-sticky-note me-2"></i>
+                                        Keterangan Tambahan
+                                    </h6>
+                                    <div class="bg-light p-3 rounded">
+                                        <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
+                                    </div>
+                                </div>
+                            ` : ''}
     `;
 
                 const modal = new bootstrap.Modal(document.getElementById('detailModal'));
@@ -1499,45 +1782,69 @@
                 $('#editAnggaranModal').modal('show');
             });
 
+            // Fungsi untuk memformat input anggaran secara real-time
+            $('#target_anggaran').on('input', function() {
+                let value = $(this).val();
+
+                // Hapus semua karakter non-digit
+                value = value.replace(/[^\d]/g, '');
+
+                // Format sebagai Rupiah jika ada nilai
+                if (value) {
+                    // Format dengan fungsi utilitas
+                    value = formatRupiah(value);
+                }
+
+                $(this).val(value);
+            });
+
             // Fungsi untuk menyimpan perubahan anggaran
             $('#simpanAnggaranBtn').on('click', function() {
-                const targetAnggaran = $('#target_anggaran').val();
+                // Ambil nilai dari input
+                let targetAnggaran = $('#target_anggaran').val();
                 const targetKegiatan = $('#target_kegiatan').val();
-                
+
                 // Validasi input
                 if (!targetAnggaran || !targetKegiatan) {
                     alert('Harap isi semua field dengan benar.');
                     return;
                 }
-                
+
+                // Hapus format Rupiah dari input anggaran
+                targetAnggaran = targetAnggaran.replace(/[Rp.\s]/g, '');
+
                 // Format angka dengan pemisah ribuan
-                const formattedAnggaran = new Intl.NumberFormat('id-ID').format(targetAnggaran);
-                
+                const formattedAnggaran = formatRupiah(targetAnggaran);
+
                 // Update tampilan target anggaran
                 const currentAnggaranText = $('#anggaranDisplay').text();
                 const currentAnggaranParts = currentAnggaranText.split(' / Rp. ');
                 const currentAnggaran = currentAnggaranParts[0].replace('Rp. ', '').replace(/\./g, '');
-                
+
                 // Hitung persentase baru
                 const anggaranPercentage = (currentAnggaran / targetAnggaran) * 100;
                 const anggaranPercentageRounded = Math.min(anggaranPercentage, 100);
-                
+
                 // Update tampilan
-                $('#anggaranDisplay').html(`Rp. ${new Intl.NumberFormat('id-ID').format(currentAnggaran)} / Rp. ${formattedAnggaran}`);
+                $('#anggaranDisplay').html(
+                    `Rp. ${formatRupiah(currentAnggaran, '')} / Rp. ${formatRupiah(targetAnggaran, '')}`
+                );
                 $('#anggaranPercentage').html(`${Math.round(anggaranPercentageRounded)}%`);
-                $('#anggaranPercentage').attr('data-bs-original-title', `${anggaranPercentageRounded.toFixed(2)}% dari total anggaran`);
-                $('.progress-bar').css('width', anggaranPercentageRounded + '%').attr('aria-valuenow', anggaranPercentageRounded);
-                
+                $('#anggaranPercentage').attr('data-bs-original-title',
+                    `${anggaranPercentageRounded.toFixed(2)}% dari total anggaran`);
+                $('.progress-bar').css('width', anggaranPercentageRounded + '%').attr('aria-valuenow',
+                    anggaranPercentageRounded);
+
                 // Update target kegiatan
                 const currentKegiatan = parseInt($('#kegiatanBerjalan').text());
                 const kegiatanPercentage = (currentKegiatan / targetKegiatan) * 100;
                 const kegiatanPercentageRounded = Math.min(kegiatanPercentage, 100);
-                
+
                 $('.badge.bg-primary-subtle').html(`${targetKegiatan} Target Kegiatan`);
-                
+
                 // Tutup modal
                 $('#editAnggaranModal').modal('hide');
-                
+
                 // Tampilkan notifikasi
                 showNotification('Target anggaran berhasil diperbarui.', 'success');
             });
@@ -1587,20 +1894,25 @@
 
                 // Update header display
                 const targetAnggaran = 200000000000; // 200 miliar
-                const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / targetAnggaran) * 100, 100) : 0;
-                
+                const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / targetAnggaran) * 100,
+                    100) : 0;
+
                 // Update anggaran display dengan ID yang unik
-                $('#anggaranDisplay').html(`Rp. ${totalAnggaran.toLocaleString('id-ID')} / Rp. ${targetAnggaran.toLocaleString('id-ID')}`);
+                $('#anggaranDisplay').html(
+                    `Rp. ${totalAnggaran.toLocaleString('id-ID')} / Rp. ${targetAnggaran.toLocaleString('id-ID')}`
+                );
                 $('#anggaranPercentage').html(`${Math.round(anggaranPercentage)}%`);
-                $('#anggaranPercentage').attr('data-bs-original-title', `${anggaranPercentage.toFixed(2)}% dari total anggaran`);
-                
+                $('#anggaranPercentage').attr('data-bs-original-title',
+                    `${anggaranPercentage.toFixed(2)}% dari total anggaran`);
+
                 // Update progress bar
                 $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
 
                 // Update kegiatan info dengan ID yang unik
                 const targetKegiatan = 10;
-                const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100, 100) : 0;
-                
+                const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100,
+                    100) : 0;
+
                 $('#kegiatanBerjalan').html(`${totalKegiatan}`);
             }
 
@@ -1786,6 +2098,23 @@
                             $('#alasan').val('');
                             $('#pengajuan_lpj_id').val('');
                             $('#pengajuanModal').modal('hide');
+
+                            // Setelah pengajuan berhasil, ubah status menjadi Terkunci
+                            const statusIcon = document.getElementById('statusIcon');
+                            const ajukanPerubahanBtn = document.getElementById(
+                                'ajukanPerubahanBtn');
+
+                            if (statusIcon) {
+                                statusIcon.innerHTML =
+                                    '<i class="fas fa-lock me-1"></i> Terkunci';
+                                statusIcon.className =
+                                    'badge bg-danger fs-7 d-flex align-items-center';
+                            }
+
+                            if (ajukanPerubahanBtn) {
+                                ajukanPerubahanBtn.style.display = 'inline-flex';
+                            }
+
                             showNotification('Pengajuan berhasil dikirim.', 'success');
                         } else {
                             showNotification(response.message || 'Gagal mengirim pengajuan.',

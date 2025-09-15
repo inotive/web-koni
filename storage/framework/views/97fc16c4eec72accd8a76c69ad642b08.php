@@ -37,9 +37,12 @@
                                 <?php elseif($permission->name === 'manajemen-rka'): ?>
                                     <p class="mb-3 desc">Memiliki wewenang penuh (Create, Read, Update, Delete) atas data
                                         Rencana Kerja dan Anggaran.</p>
-                                <?php elseif($permission->name === 'laporan-lpj'): ?>
-                                    <p class="mb-3 desc">Memegang kontrol penuh atas data Laporan Pertanggungjawaban untuk
-                                        keperluan teknis dan administratif.</p>
+                                <?php elseif($permission->name === 'laporan-lpj-sekretariat'): ?>
+                                    <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian kesekretariatan.</p>
+                                <?php elseif($permission->name === 'laporan-lpj-bidang'): ?>
+                                    <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian bidang-bidang.</p>
+                                <?php elseif($permission->name === 'laporan-lpj-kegiatan-lainnya'): ?>
+                                    <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian kegiatan lainnya.</p>
                                 <?php elseif($permission->name === 'pengajuan-modifikasi-laporan'): ?>
                                     <p class="mb-3 desc">Memberikan wewenang untuk menerima atau tidak menerima pengajuan modifikasi laporan pertanggung jawaban.</p>
                                 <?php elseif($permission->name === 'database-bendahara'): ?>

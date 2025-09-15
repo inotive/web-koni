@@ -12,11 +12,11 @@
                         $columns = [
                             ['key' => null, 'title' => 'No', 'sortable' => false],
                             ['key' => 'nama_program_kegiatan', 'title' => 'Nama Program & Kegiatan'],
-                            ['key' => 'volume', 'title' => 'Volume'],
-                            ['key' => 'jumlah_harga_satuan', 'title' => 'Jumlah Harga Satuan'],
-                            ['key' => 'jumlah_harga', 'title' => 'Jumlah Harga'],
+                            ['key' => 'jumlah_harga', 'title' => 'Total Anggaran'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
+                            ['key' => null, 'title' => 'Dokumen LPJ', 'sortable' => false],
+                            ['key' => 'created_at', 'title' => 'Tanggal Ditambahkan'],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
                     ?>
@@ -56,8 +56,6 @@
                                 <?php endif; ?>
                             </div>
                         </td>
-                        <td class="text-start"><?php echo e($kegiatan->volume); ?></td>
-                        <td class="text-start">Rp <?php echo e(number_format($kegiatan->jumlah_harga_satuan, 0, ',', '.')); ?></td>
                         <td class="text-start">Rp <?php echo e(number_format($kegiatan->jumlah_harga, 0, ',', '.')); ?></td>
                         <td class="text-start">
                             <?php if($kegiatan->foto_jurnal && count($kegiatan->foto_jurnal) > 0): ?>
@@ -87,6 +85,37 @@
                             <?php endif; ?>
                         </td>
                         <td class="text-start">
+                            <?php if($kegiatan->dokumen_lpj_pdf): ?>
+                                <?php
+                                    // Handle berbagai tipe data untuk dokumen LPJ PDF
+                                    $path = '';
+                                    $originalName = '';
+
+                                    if (is_object($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = $kegiatan->dokumen_lpj_pdf->path;
+                                        $originalName = $kegiatan->dokumen_lpj_pdf->original_name ?? basename($path);
+                                    } elseif (is_array($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = isset($kegiatan->dokumen_lpj_pdf['path']) ? $kegiatan->dokumen_lpj_pdf['path'] : '';
+                                        $originalName = isset($kegiatan->dokumen_lpj_pdf['original_name']) ? $kegiatan->dokumen_lpj_pdf['original_name'] : (is_string($path) ? basename($path) : '');
+                                    } elseif (is_string($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = $kegiatan->dokumen_lpj_pdf;
+                                        $originalName = basename($path);
+                                    }
+
+                                    // Pastikan kita punya nama file
+                                    if (empty($originalName) && is_string($path)) {
+                                        $originalName = basename($path);
+                                    }
+                                ?>
+                                <a href="<?php echo e(asset('storage/' . $path)); ?>" target="_blank" class="btn btn-sm btn-light-danger">
+                                    <i class="fas fa-file-pdf me-1"></i>PDF
+                                </a>
+                            <?php else: ?>
+                                <span class="text-muted">-</span>
+                            <?php endif; ?>
+                        </td>
+                        <td class="text-start"><?php echo e($kegiatan->created_at ? $kegiatan->created_at->format('d/m/Y') : '-'); ?></td>
+                        <td class="text-start">
                             <div class="dropdown dropdown-action" data-row-id="<?php echo e($kegiatan->id); ?>">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
@@ -111,70 +140,70 @@
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
-                                   <li>
+                                    <li>
                                         <a href="javascript:void(0)" class="dropdown-item-custom"
                                            onclick="showDetailModal(<?php echo e(json_encode($kegiatan)); ?>)">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail
                                         </a>
                                     </li>
 
-                                    
-                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
-                                        <li>
-                                            <a href="<?php echo e(route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id)); ?>"
-                                                class="dropdown-item-custom edit">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi
-                                            </a>
-                                        </li>
-                                    <?php else: ?>
-                                        <li>
-                                            <span class="dropdown-item-custom restricted-action"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="left"
-                                                data-bs-custom-class="custom-tooltip"
-                                                data-bs-html="true"
-                                                data-bs-delay='{"show":0,"hide":300}'
-                                                title="<div class='tooltip-content'>
-                                                            <strong>Informasi</strong><br>
-                                                            Ajukan approval untuk<br>
-                                                            modifikasi laporan<br>
-                                                            <a href='javascript:void(0)' onclick='showDetailModal(<?php echo e(json_encode($kegiatan)); ?>)' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
-                                                        </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;"
-                                                onmouseover="keepTooltipVisible(this)"
-                                                onmouseout="hideTooltipWithDelay(this)">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi
-                                            </span>
-                                        </li>
-                                    <?php endif; ?>
+                                    <?php
+                                        $pengajuan = null;
+                                        if (method_exists($kegiatan, 'pengajuan')) {
+                                            $pengajuan = $kegiatan->pengajuan()->where('status', 'disetujui')->orderBy('approved_at', 'desc')->first();
+                                        }
 
-                                    
-                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
-                                        <li class="dropdown-item-custom delete"
-                                            onclick="destroyItem(this)"
-                                            data-route="<?php echo e(route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id)); ?>">
+                                        $isModifiable = isset($kegiatan->modifiable_by_user_id) &&
+                                                        auth()->user()->id == $kegiatan->modifiable_by_user_id &&
+                                                        $pengajuan && $pengajuan->token > 0;
+
+                                        $canEdit = auth()->user()->hasRole('superadmin') ||
+                                                   auth()->user()->can('pengajuan-modifikasi-laporan') ||
+                                                   $isModifiable;
+                                    ?>
+
+                                    <li>
+                                        <a href="<?php echo e($canEdit ? route('admin.laporan-lpj.sekretariat.edit', $kegiatan->id) : 'javascript:void(0)'); ?>"
+                                           class="dropdown-item-custom e    dit <?php echo e(!$canEdit ? 'restricted-action' : ''); ?>"
+                                           <?php if(!$canEdit): ?>
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="left"
+                                               data-bs-custom-class="custom-tooltip"
+                                               data-bs-html="true"
+                                               title="<div class='tooltip-content'>
+                                                           <strong>Informasi</strong><br>
+                                                           Ajukan approval untuk<br>
+                                                           modifikasi laporan ini
+                                                           <a href='javascript:void(0)' onclick='showDetailModal(<?php echo e(json_encode($kegiatan)); ?>)' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                       </div>"
+                                           <?php endif; ?>
+                                           style="<?php echo e(!$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : ''); ?>">
+                                            <i class="fas fa-edit me-2"></i> Modifikasi
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="javascript:void(0)"
+                                           class="dropdown-item-custom delete <?php echo e(!$canEdit ? 'restricted-action' : ''); ?>"
+                                           <?php if($canEdit): ?>
+                                               onclick="destroyItem(this)"
+                                               data-route="<?php echo e(route('admin.laporan-lpj.sekretariat.destroy', $kegiatan->id)); ?>"
+                                           <?php else: ?>
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="left"
+                                               data-bs-custom-class="custom-tooltip"
+                                               data-bs-html="true"
+                                               title="<div class='tooltip-content'>
+                                                           <strong>Informasi</strong><br>
+                                                           Ajukan approval untuk<br>
+                                                           menghapus laporan ini
+                                                           <a href='javascript:void(0)' onclick='showDetailModal(<?php echo e(json_encode($kegiatan)); ?>)' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                       </div>"
+                                           <?php endif; ?>
+                                           style="<?php echo e(!$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : ''); ?>">
                                             <i class="fas fa-trash me-2"></i> Hapus
-                                        </li>
-                                    <?php else: ?>
-                                        <li>
-                                            <span class="dropdown-item-custom restricted-action"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="left"
-                                                data-bs-custom-class="custom-tooltip"
-                                                data-bs-html="true"
-                                                data-bs-delay='{"show":0,"hide":300}'
-                                                title="<div class='tooltip-content'>
-                                                            <strong>Informasi</strong><br>
-                                                            Ajukan approval untuk<br>
-                                                            modifikasi laporan
-                                                        </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;"
-                                                onmouseover="keepTooltipVisible(this)"
-                                                onmouseout="hideTooltipWithDelay(this)">
-                                                <i class="fas fa-trash me-2"></i> Hapus
-                                            </span>
-                                        </li>
-                                    <?php endif; ?>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </td>
