@@ -73,7 +73,7 @@
                 <div class="position-relative bg-light" style="width: 180px">
                     <i class="ki-outline ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-3"></i>
                     <input type="text" name="search" value="<?php echo e(request('search')); ?>" data-kt-docs-table-filter="search"
-                        placeholder="Cari Laporan" class="form-control border border-gray-500 py-2 ps-12" />
+                        placeholder="Cari RKA" class="form-control border border-gray-500 py-2 ps-12" />
                 </div>
             </form>
         </div>
@@ -86,7 +86,7 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 gap-5 px-10 py-8">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="fs-2 fw-bold leading-5">Tambah Laporan RKA</div>
+                        <div class="fs-2 fw-bold leading-5">Tambah RKA</div>
 
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -105,7 +105,7 @@
                             </div>
                         </div>
                         <div>
-                            <div class="fw-semibold required mb-3 text-gray-800">Unggah Laporan</div>
+                            <div class="fw-semibold required mb-3 text-gray-800">Unggah Dokumen</div>
                             <div class="fv-row">
                                 <!--begin::Dropzone-->
                                 <div class="dropzone" id="dropzone-formAdd">
@@ -116,7 +116,7 @@
                                         </i>
                                         <!--begin::Info-->
                                         <div class="ms-4">
-                                            <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih laporan.</h3>
+                                            <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
                                             <span class="fs-7 fw-semibold text-gray-500">Max. Ukuran File 10 MB.</span>
                                         </div>
                                         <!--end::Info-->
@@ -129,7 +129,7 @@
                         <div class="d-grid py-4">
                             <button id="submitBtnAdd" type="submit" onclick="submitForm('formAdd')"
                                 class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                                Tambah Laporan
+                                Simpan
                             </button>
                         </div>
                     </form>

@@ -39,8 +39,8 @@
                 </div>
             </div>
         </a>
-        <div class="modal fade" id="edit-<?php echo e($item->id); ?>" tabindex="-1"
-            aria-labelledby="edit-<?php echo e($item->id); ?>" aria-hidden="true">
+        <div class="modal fade" id="edit-<?php echo e($item->id); ?>" tabindex="-1" aria-labelledby="edit-<?php echo e($item->id); ?>"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content rounded-4 gap-5 px-10 py-8">
                     <div class="d-flex justify-content-between align-items-center">
@@ -54,8 +54,9 @@
                         <?php echo csrf_field(); ?>
                         <?php echo method_field('PUT'); ?>
 
-                        <div class="fs-4 fw-bold">Judul RKA</div>
-                        <textarea id="judul" name="judul" class="form-control border border-gray-600" placeholder="Masukkan judul RKA"><?php echo e($item->name); ?></textarea>
+                        <div class="fs-4 fw-bold">Tahun RKA</div>
+                        <input id="judul" name="judul" type="number" value="<?php echo e($item->name); ?>"
+                            class="form-control border border-gray-600" placeholder="Masukkan tahun RKA" />
                     </form>
 
                     <div class="d-grid py-4">

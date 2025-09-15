@@ -27,11 +27,20 @@ class DashboardController extends Controller
 
         // Mengambil kegiatan dari LPJ hanya sampai ID 8 (Perencanaan Program dan Anggaran)
         // Mengecualikan Sekretariat (ID 59) dan kegiatan lain setelah ID 8
-        $kegiatan = Lpj::whereNull('parent_id')
+        $kegiatan_utama = Lpj::whereNull('parent_id')
                       ->where('id', '<=', 8)
                       ->get();
+                      
+        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        $kegiatan_tambahan = Lpj::whereNull('parent_id')
+                              ->whereIn('id', [59, 88])
+                              ->get();
+                              
+        // Gabungkan data kegiatan tambahan di awal
+        $kegiatan = $kegiatan_tambahan->merge($kegiatan_utama);
         
         // Membagi total RKA secara merata ke setiap kegiatan yang sesuai untuk perhitungan persentase
+        // Termasuk Sekretariat dan Kegiatan Lainnya dalam perhitungan
         $jumlah_kegiatan = $kegiatan->count();
         $rka_per_kegiatan = ($jumlah_kegiatan > 0 && $total_rka > 0) ? $total_rka / $jumlah_kegiatan : 0;
         
@@ -181,9 +190,18 @@ class DashboardController extends Controller
         $total_rka = \App\Models\LaporanRKA::sum('total_anggaran');
 
         // Mengambil kegiatan dari LPJ hanya sampai ID 8 (Perencanaan Program dan Anggaran)
-        $kegiatan = Lpj::whereNull('parent_id')
+        // Menyertakan Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        $kegiatan_utama = Lpj::whereNull('parent_id')
                       ->where('id', '<=', 8)
                       ->get();
+                      
+        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        $kegiatan_tambahan = Lpj::whereNull('parent_id')
+                              ->whereIn('id', [59, 88])
+                              ->get();
+                              
+        // Gabungkan data kegiatan tambahan di awal
+        $kegiatan = $kegiatan_tambahan->merge($kegiatan_utama);
 
         // Membagi total RKA secara merata ke setiap kegiatan yang sesuai
         $jumlah_kegiatan = $kegiatan->count();

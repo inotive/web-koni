@@ -14,24 +14,17 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
-    <div class="d-grid gap-5 border-0">
-        <div class="d-flex justify-content-between align-items-center container">
-            <div class="d-none d-md-block">
-                <h1>Manajemen RKA</h1>
-                <span>Pemusatan Rencana Kegiatan Anggaran</span>
-            </div>
-            <form id="filter" class="d-flex gap-3">
-                <div class="position-relative bg-light" style="width: 180px">
-                    <i class="ki-outline ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-3"></i>
-                    <input type="text" name="search" value="<?php echo e(request('search')); ?>" data-kt-docs-table-filter="search"
-                        placeholder="Cari Lembaga" class="form-control border border-gray-500 py-2 ps-12" />
-                </div>
-                <select name="sortBy" id="sortBy" class="form-select border border-gray-500 py-2" style="width: 85px">
-                    <option value="ASC">A - Z</option>
-                    <option value="DESC">Z - A</option>
-                </select>
-            </form>
-        </div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-grid gap-5 border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-none d-md-block">
+                                <h1>Manajemen RKA</h1>
+                                <span>Pemusatan Rencana Kegiatan Anggaran</span>
+                            </div>
+                        </div>
 
         <div id="table" class="container">
             <?php echo $__env->make('admin.manajemen-rka.components.table-grid', compact('data'), \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
@@ -46,12 +39,13 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form id="formAdd" action="<?php echo e(route('admin.manajemen-rka.store')); ?>" method="POST"
-                        class="d-grid gap-2">
-                        <?php echo csrf_field(); ?>
-                        <div class="fs-4 fw-bold">Judul RKA</div>
-                        <textarea id="judul" name="judul" class="form-control border border-gray-600" placeholder="Masukkan judul RKA"></textarea>
-                    </form>
+                                    <form id="formAdd" action="<?php echo e(route('admin.manajemen-rka.store')); ?>" method="POST"
+                                        class="d-grid gap-2">
+                                        <?php echo csrf_field(); ?>
+                                        <div class="fs-4 fw-bold">Tahun RKA</div>
+                                        <input id="judul" name="judul" type="number" class="form-control border border-gray-600"
+                                            placeholder="Masukkan tahun RKA" />
+                                    </form>
 
                     <div class="d-grid py-4">
                         <button type="button" onclick="submitForm('formAdd')"
@@ -145,7 +139,7 @@
         function confirmDelete(url, name = 'item ini') {
             Swal.fire({
                 title: "Apakah Anda Yakin?",
-                html: `Hapus <strong>${name}</strong>?`,
+                html: `Hapus RKA <strong>${name}</strong>?`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: '#d33',

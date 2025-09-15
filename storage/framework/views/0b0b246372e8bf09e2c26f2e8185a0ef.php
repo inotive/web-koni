@@ -360,7 +360,7 @@
                 </div>
                 <div id="informasi-kegiatan-content">
 
-                <?php $__currentLoopData = $kegiatan->take(8); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php $__currentLoopData = $kegiatan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <?php
                         // Memastikan nilai serapan adalah numerik dan bukan null
                         $serapan = 0;
@@ -368,10 +368,11 @@
                             $serapan = (int)$item->serapan;
                         }
                         
-                        // Membagi RKA secara merata ke 8 kegiatan
+                        // Membagi RKA secara merata ke semua kegiatan
                         $rka_per_kegiatan = 0;
                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                            $rka_per_kegiatan = (int)($total_rka / 8);
+                            $jumlah_kegiatan = $kegiatan->count();
+                            $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                         }
                         
                         $total_budget = isset($item->total_budget) ? $item->total_budget : 0;
@@ -453,7 +454,8 @@
                                         // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
                                         $rka_per_kegiatan = 0;
                                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                                            $rka_per_kegiatan = (int)($total_rka / 8);
+                                            $jumlah_kegiatan = $kegiatan->count();
+                                            $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                                         }
                                         
                                         $jumlah_anak = $item->children->count();
@@ -528,7 +530,8 @@
                                             // Memastikan nilai RKA adalah numerik
                                             $rka_per_kegiatan = 0;
                                             if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                                                $rka_per_kegiatan = (int)($total_rka / 8);
+                                                $jumlah_kegiatan = $kegiatan->count();
+                                                $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                                             }
                                             
                                             // Perhitungan persentase total dengan pengecekan aman

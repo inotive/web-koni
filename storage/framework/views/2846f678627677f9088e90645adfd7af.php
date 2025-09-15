@@ -77,7 +77,7 @@
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content rounded-4 gap-5 px-10 py-8">
                             <div class="d-flex justify-content-between align-items-center gap-2">
-                                <div class="fs-2 fw-bold text-truncate leading-5">Edit Laporan <?php echo e($item->name); ?>
+                                <div class="fs-2 fw-bold text-truncate leading-5">Edit <?php echo e($item->name); ?>
 
                                 </div>
 
@@ -102,7 +102,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <div class="fw-semibold required mb-3 text-gray-800">Unggah Laporan Baru</div>
+                                    <div class="fw-semibold required mb-3 text-gray-800">Unggah Dokumen Baru</div>
                                     <div class="fv-row">
                                         <!--begin::Dropzone-->
                                         <div class="dropzone" id="dropzone-form-<?php echo e($item->id); ?>">
@@ -114,7 +114,7 @@
                                                 <!--begin::Info-->
                                                 <div class="ms-4">
                                                     <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih
-                                                        laporan.</h3>
+                                                        dokumen.</h3>
                                                     <span class="fs-7 fw-semibold text-gray-500">Max. Ukuran File 10
                                                         MB.</span>
                                                 </div>
@@ -136,7 +136,7 @@
                                 <div class="d-grid py-4">
                                     <button type="submit" onclick="submitForm('form-<?php echo e($item->id); ?>')"
                                         class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                                        Edit Laporan
+                                        Simpan
                                     </button>
                                 </div>
                             </form>
@@ -146,7 +146,7 @@
             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <tr>
                     <td class="fw-bold p-6 text-center" colspan="6">
-                        Tidak ada laporan ditemukan.
+                        Tidak ada RKA ditemukan.
                     </td>
                 </tr>
             <?php endif; ?>
