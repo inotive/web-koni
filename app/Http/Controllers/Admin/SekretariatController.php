@@ -98,7 +98,7 @@ class SekretariatController extends Controller
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array|max:10',
-            'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj.*' => 'file|mimes:pdf|max:10240',
         ], [
             'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
@@ -106,7 +106,7 @@ class SekretariatController extends Controller
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
             'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
-            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
 
@@ -217,7 +217,7 @@ class SekretariatController extends Controller
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array|max:10',
-            'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj.*' => 'file|mimes:pdf|max:10240',
             'existing_foto_jurnal' => 'nullable|array',
             'existing_dokumen_lpj' => 'nullable|array',
             'deleted_fotos' => 'nullable|array',
@@ -229,7 +229,7 @@ class SekretariatController extends Controller
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
             'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
-            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
 

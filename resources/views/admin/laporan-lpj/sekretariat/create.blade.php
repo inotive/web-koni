@@ -358,13 +358,13 @@
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Dokumen Pendukung</label>
-                                    <p class="file-upload-hint">Maksimal 10 file PDF/Office, masing-masing hingga 10MB</p>
+                                    <p class="file-upload-hint">Maksimal 10 file PDF, masing-masing hingga 10MB</p>
                                 </div>
                                 <div class="col-md-9">
                                     <label for="dokumen_lpj" class="file-upload-wrapper">
                                         <input type="file" name="dokumen_lpj[]" id="dokumen_lpj"
                                             class="@error('dokumen_lpj.*') is-invalid @enderror"
-                                            accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+                                            accept=".pdf" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
                                             <div class="file-upload-icon-wrapper">
@@ -372,7 +372,7 @@
                                             </div>
                                             <div>
                                                 <p class="file-upload-text" id="dokumen-file-name-display">
-                                                    Seret dan lepas dokumen di sini, atau klik untuk mengunggah.
+                                                    Seret dan lepas dokumen PDF di sini, atau klik untuk mengunggah.
                                                 </p>
                                             </div>
                                         </div>
