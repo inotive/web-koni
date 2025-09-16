@@ -65,8 +65,9 @@ class SekretariatController extends Controller
         // Get total budget and kegiatan count for sekretariat
         $current_budget = Lpj::where('parent_id', $parentCategory->id)->sum('jumlah_harga');
         $kegiatan_count = Lpj::where('parent_id', $parentCategory->id)->count();
-        $target_anggaran = $parentCategory->target_anggaran ?? 0;
-        $target_kegiatan = $parentCategory->target_kegiatan ?? 0;
+        $target = \App\Models\Target::where('id_lpj', $parentCategory->id)->first();
+        $target_anggaran = $target->target_anggaran ?? 0;
+        $target_kegiatan = $target->target_kegiatan ?? 0;
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.sekretariat._table', compact('kegiatanLainnya'))->render();
@@ -617,14 +618,18 @@ class SekretariatController extends Controller
         try {
             $parentCategory = $this->getOrCreateParentCategory();
             
-            $parentCategory->update([
-                'target_anggaran' => $request->target_anggaran,
-                'target_kegiatan' => $request->target_kegiatan,
-            ]);
+            $target = \App\Models\Target::updateOrCreate(
+                ['id_lpj' => $parentCategory->id],
+                [
+                    'target_anggaran' => $request->target_anggaran,
+                    'target_kegiatan' => $request->target_kegiatan,
+                ]
+            );
 
             return response()->json([
                 'success' => true,
-                'message' => 'Target berhasil diperbarui.'
+                'message' => 'Target berhasil diperbarui.',
+                'target' => $target
             ]);
         } catch (\Exception $e) {
             return response()->json([
