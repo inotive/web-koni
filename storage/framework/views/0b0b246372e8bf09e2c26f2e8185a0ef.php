@@ -288,12 +288,12 @@
 
                     <div class="info-label mt-1 d-flex align-items-center gap-2">
                         <span
-                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle"><?php echo e($kegiatan_berjalan_count); ?>
+                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle"><?php echo e($kegiatan_berjalan_all ?? $kegiatan_berjalan_count); ?>
 
                             Kegiatan Berjalan</span>
                         <span>/</span>
                         <span
-                            class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle"><?php echo e($kegiatan->count()); ?>
+                            class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle"><?php echo e($total_kegiatan_all ?? $kegiatan->count()); ?>
 
                             Total Kegiatan</span>
                     </div>

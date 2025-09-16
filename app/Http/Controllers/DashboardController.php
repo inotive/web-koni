@@ -115,6 +115,73 @@ class DashboardController extends Controller
 
         $cabor_chart_data = CabangOlahraga::withCount(['atlets', 'pelatihs'])->get();
 
+        // Mengambil total kegiatan dari semua halaman LPJ
+        // 1. Sekretariat (ID 59) - ambil target_kegiatan dari parent
+        $sekretariat_parent = Lpj::find(59);
+        $total_kegiatan_sekretariat = $sekretariat_parent ? ($sekretariat_parent->target_kegiatan ?? 0) : 0;
+        
+        // 2. Kegiatan Lainnya (ID 88) - ambil target_kegiatan dari parent
+        $kegiatan_lainnya_parent = Lpj::find(88);
+        $total_kegiatan_lainnya = $kegiatan_lainnya_parent ? ($kegiatan_lainnya_parent->target_kegiatan ?? 0) : 0;
+        
+        // 3. Bidang-bidang (ID 1-8) - ambil target_kegiatan dari masing-masing parent
+        $total_kegiatan_bidang = 0;
+        for ($i = 1; $i <= 8; $i++) {
+            $bidang_parent = Lpj::find($i);
+            if ($bidang_parent) {
+                // Untuk bidang dengan ID 6 (Pembinaan Prestasi), kita perlu menghitung target_kegiatan dari cucu-anaknya (great-grandchildren)
+                if ($i == 6) {
+                    $children = Lpj::where('parent_id', $i)->get(); // Level 1 (Cabor)
+                    foreach ($children as $child) {
+                        $grandchildren = Lpj::where('parent_id', $child->id)->get(); // Level 2 (Anak Cabor)
+                        foreach ($grandchildren as $grandchild) {
+                            // Level 3 (Kegiatan) - ini yang kita hitung
+                            $greatGrandchildrenCount = Lpj::where('parent_id', $grandchild->id)->count();
+                            $total_kegiatan_bidang += $greatGrandchildrenCount;
+                        }
+                    }
+                } else {
+                    // Untuk bidang lainnya, kita hitung anak-anak langsung
+                    $childrenCount = Lpj::where('parent_id', $i)->count();
+                    $total_kegiatan_bidang += $childrenCount;
+                }
+            }
+        }
+        
+        // Total kegiatan dari semua halaman LPJ
+        $total_kegiatan_all = $total_kegiatan_sekretariat + $total_kegiatan_lainnya + $total_kegiatan_bidang;
+
+        // Mengambil kegiatan berjalan dari semua halaman LPJ
+        // 1. Sekretariat (ID 59) - hitung anak-anak dengan jumlah_harga > 0
+        $kegiatan_berjalan_sekretariat = Lpj::where('parent_id', 59)->where('jumlah_harga', '>', 0)->count();
+        
+        // 2. Kegiatan Lainnya (ID 88) - hitung anak-anak dengan jumlah_harga > 0
+        $kegiatan_berjalan_lainnya = Lpj::where('parent_id', 88)->where('jumlah_harga', '>', 0)->count();
+        
+        // 3. Bidang-bidang (ID 1-8) - hitung anak-anak dengan jumlah_harga > 0
+        $kegiatan_berjalan_bidang = 0;
+        for ($i = 1; $i <= 8; $i++) {
+            // Untuk bidang dengan ID 6 (Pembinaan Prestasi), kita perlu menghitung kegiatan berjalan dari cucu-anaknya (great-grandchildren)
+            if ($i == 6) {
+                $children = Lpj::where('parent_id', $i)->get(); // Level 1 (Cabor)
+                foreach ($children as $child) {
+                    $grandchildren = Lpj::where('parent_id', $child->id)->get(); // Level 2 (Anak Cabor)
+                    foreach ($grandchildren as $grandchild) {
+                        // Level 3 (Kegiatan) - ini yang kita hitung jika jumlah_harga > 0
+                        $greatGrandchildrenCount = Lpj::where('parent_id', $grandchild->id)->where('jumlah_harga', '>', 0)->count();
+                        $kegiatan_berjalan_bidang += $greatGrandchildrenCount;
+                    }
+                }
+            } else {
+                // Untuk bidang lainnya, kita hitung anak-anak langsung jika jumlah_harga > 0
+                $childrenCount = Lpj::where('parent_id', $i)->where('jumlah_harga', '>', 0)->count();
+                $kegiatan_berjalan_bidang += $childrenCount;
+            }
+        }
+        
+        // Total kegiatan berjalan dari semua halaman LPJ
+        $kegiatan_berjalan_all = $kegiatan_berjalan_sekretariat + $kegiatan_berjalan_lainnya + $kegiatan_berjalan_bidang;
+
         return view('admin.dashboard.index', [
             'title' => 'Dashboard',
             'total_rka' => $total_rka,
@@ -128,6 +195,8 @@ class DashboardController extends Controller
             'latest_prestasi' => $latest_prestasi_atlet,
             'latest_prestasi_pelatih' => $latest_prestasi_pelatih,
             'cabor_chart_data' => $cabor_chart_data,
+            'total_kegiatan_all' => $total_kegiatan_all,
+            'kegiatan_berjalan_all' => $kegiatan_berjalan_all,
         ]);
     }
 

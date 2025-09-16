@@ -80,31 +80,34 @@
                             <?php echo e(($pengajuans->currentPage() - 1) * $pengajuans->perPage() + $index + 1); ?>
 
                         </td>
-                        <td>
+                        <td class="text-truncate-custom">
                             <div class="d-flex flex-column">
                                 <?php if($pengajuan->lpj): ?>
                                     <?php
-                                        // Determine the appropriate route based on LPJ structure
-                                        $lpjRouteParams = [];
+                                    $lpjRouteParams = [];
 
-                                        // If it has a parent, navigate to child view
+                                    if ($pengajuan->lpj->parent_id == 59) {
+                                        $routeName = 'admin.laporan-lpj.sekretariat.index';
+                                    } elseif ($pengajuan->lpj->parent_id == 88) {
+                                        $routeName = 'admin.laporan-lpj.kegiatan-lainnya.index';
+                                        } elseif ($pengajuan->lpj->parent_id == 90) {
+                                        $routeName = 'admin.laporan-lpj.kegiatan-lainnya.index';
+                                    } else {
                                         if ($pengajuan->lpj->parent_id) {
                                             $routeName = 'admin.laporan-lpj.bidang.dynamic.child.index';
                                             $lpjRouteParams['parentId'] = $pengajuan->lpj->parent_id;
                                         } else {
-                                            // Check if it has children (is a parent/category)
                                             $hasChildren = \App\Models\Lpj::where('parent_id', $pengajuan->lpj->id)->exists();
 
                                             if ($hasChildren) {
-                                                // Navigate to child view
                                                 $routeName = 'admin.laporan-lpj.bidang.dynamic.child.index';
                                                 $lpjRouteParams['parentId'] = $pengajuan->lpj->id;
                                             } else {
-                                                // Navigate to main index (root level)
                                                 $routeName = 'admin.laporan-lpj.bidang.dynamic.index';
                                             }
                                         }
-                                    ?>
+                                    }
+                                ?>
 
                                     <a href="<?php echo e(route($routeName, $lpjRouteParams)); ?>"
                                        class="text-decoration-none lpj-link"
