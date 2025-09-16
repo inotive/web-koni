@@ -1187,7 +1187,7 @@
         if (statusIcon && ajukanBtn) {
             const pengajuan = data.pengajuan && data.pengajuan.length > 0 ? data.pengajuan.find(p => p.status === 'disetujui') : null;
             const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?> && pengajuan && pengajuan.token > 0;
-            const canModify = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?> || isModifiable;
+            const canModify = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false'); ?> || isModifiable;
 
             if (canModify) {
                 statusIcon.innerHTML = 'Terbuka';

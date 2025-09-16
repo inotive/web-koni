@@ -827,7 +827,7 @@ $(document).ready(function() {
 
         // Status indicator
         if (statusIcon) {
-            const canPengajuanModifikasi = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
+            const canPengajuanModifikasi = {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }};
             const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
             const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
             const hasToken = pengajuan && pengajuan.token > 0;

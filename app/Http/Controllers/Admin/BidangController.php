@@ -49,8 +49,8 @@ class BidangController extends Controller
         }
 
         // Get target values
-        $target_anggaran = Target::sum('target_anggaran');
-        $target_kegiatan = Target::sum('target_kegiatan');
+        $target_anggaran = Target::whereIn('id_lpj', array_values($bidangParentIds))->sum('target_anggaran');
+        $target_kegiatan = Target::whereIn('id_lpj', array_values($bidangParentIds))->sum('target_kegiatan');
 
         return view('admin.laporan-lpj.bidang.index', array_merge($bidangInfo, [
             'total_anggaran' => $total_anggaran,

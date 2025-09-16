@@ -290,11 +290,11 @@
 
                     <div class="info-label mt-1 d-flex align-items-center gap-2">
                         <span
-                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">{{ $kegiatan_berjalan_count }}
+                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">{{ $kegiatan_berjalan_all ?? $kegiatan_berjalan_count }}
                             Kegiatan Berjalan</span>
                         <span>/</span>
                         <span
-                            class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">{{ $kegiatan->count() }}
+                            class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">{{ $total_kegiatan_all ?? $kegiatan->count() }}
                             Total Kegiatan</span>
                     </div>
                 </div>
@@ -360,7 +360,7 @@
                 </div>
                 <div id="informasi-kegiatan-content">
 
-                @foreach ($kegiatan->take(8) as $i => $item)
+                @foreach ($kegiatan as $i => $item)
                     @php
                         // Memastikan nilai serapan adalah numerik dan bukan null
                         $serapan = 0;
@@ -368,10 +368,11 @@
                             $serapan = (int)$item->serapan;
                         }
                         
-                        // Membagi RKA secara merata ke 8 kegiatan
+                        // Membagi RKA secara merata ke semua kegiatan
                         $rka_per_kegiatan = 0;
                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                            $rka_per_kegiatan = (int)($total_rka / 8);
+                            $jumlah_kegiatan = $kegiatan->count();
+                            $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                         }
                         
                         $total_budget = isset($item->total_budget) ? $item->total_budget : 0;
@@ -452,7 +453,8 @@
                                         // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
                                         $rka_per_kegiatan = 0;
                                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                                            $rka_per_kegiatan = (int)($total_rka / 8);
+                                            $jumlah_kegiatan = $kegiatan->count();
+                                            $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                                         }
                                         
                                         $jumlah_anak = $item->children->count();
@@ -526,7 +528,8 @@
                                             // Memastikan nilai RKA adalah numerik
                                             $rka_per_kegiatan = 0;
                                             if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                                                $rka_per_kegiatan = (int)($total_rka / 8);
+                                                $jumlah_kegiatan = $kegiatan->count();
+                                                $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                                             }
                                             
                                             // Perhitungan persentase total dengan pengecekan aman
