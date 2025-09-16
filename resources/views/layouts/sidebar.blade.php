@@ -63,7 +63,7 @@
                 @endcan
 
                 <!-- Laporan LPJ -->
-                @canany(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya', 'pengajuan-modifikasi-laporan'])
+                @canany(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya', 'pengajuan-modifikasi-laporan-view', 'pengajuan-modifikasi-laporan-manage'])
                     @php
                         $isLaporanLPJActive =
                             request()->is('admin/laporan-lpj*') ||
@@ -119,7 +119,7 @@
                                     </a>
                                 </li>
                                 @endcan
-                                @can('pengajuan-modifikasi-laporan')
+                                @can('pengajuan-modifikasi-laporan-view')
                                 <li class="menu-item">
                                     <a class="menu-link {{ request()->is('admin/laporan-lpj/pengajuan*') ? 'active' : '' }}"
                                         href="{{ route('admin.laporan-lpj.pengajuan.index') }}">

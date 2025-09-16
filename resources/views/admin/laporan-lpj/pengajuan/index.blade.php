@@ -901,7 +901,7 @@
                 `;
                 modalBody.html(content);
 
-                @can('pengajuan-modifikasi-laporan')
+                @can('pengajuan-modifikasi-laporan-manage')
                     if (data.status === 'menunggu persetujuan') {
                         const actionButtons = $(`
                             <div class="action-buttons">

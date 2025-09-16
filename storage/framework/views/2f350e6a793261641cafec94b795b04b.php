@@ -128,7 +128,7 @@
                                     </li>
 
                                     
-                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
+                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan-manage') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
                                         <li>
                                             <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.edit', $kegiatan->id)); ?>"
                                                 class="dropdown-item-custom edit">
@@ -158,7 +158,7 @@
                                     <?php endif; ?>
 
                                     
-                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
+                                    <?php if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan-manage') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id)): ?>
                                         <li class="dropdown-item-custom delete"
                                             onclick="destroyItem(this)"
                                             data-route="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.destroy', $kegiatan->id)); ?>">

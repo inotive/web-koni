@@ -43,8 +43,10 @@
                                     <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian bidang-bidang.</p>
                                 <?php elseif($permission->name === 'laporan-lpj-kegiatan-lainnya'): ?>
                                     <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian kegiatan lainnya.</p>
-                                <?php elseif($permission->name === 'pengajuan-modifikasi-laporan'): ?>
-                                    <p class="mb-3 desc">Memberikan wewenang untuk menerima atau tidak menerima pengajuan modifikasi laporan pertanggung jawaban.</p>
+                                <?php elseif($permission->name === 'pengajuan-modifikasi-laporan-view'): ?>
+                                    <p class="mb-3 desc">Memberikan hak akses untuk hanya melihat halaman pengajuan modifikasi laporan.</p>
+                                <?php elseif($permission->name === 'pengajuan-modifikasi-laporan-manage'): ?>
+                                    <p class="mb-3 desc">Memberikan wewenang untuk menyetujui atau menolak pengajuan modifikasi laporan pertanggung jawaban.</p>
                                 <?php elseif($permission->name === 'database-bendahara'): ?>
                                     <p class="mb-3 desc">Mengelola seluruh data master yang berkaitan dengan keuangan dan
                                         perbendaharaan KONI.</p>
