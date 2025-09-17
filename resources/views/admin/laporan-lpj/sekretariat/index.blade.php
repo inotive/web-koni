@@ -19,6 +19,13 @@
     @endif
 
     <style>
+        #detailModal .btn-outline-primary:hover,
+        #detailModal .btn-outline-danger:hover {
+            color: #212529 !important;
+            background-color: #e9ecef !important;
+            border-color: #dee2e6 !important;
+        }
+
         body {
             background-color: #f5f5f5;
         }
@@ -1287,16 +1294,16 @@
                             <label class="fw-semibold mb-2 d-block"><i class="fas fa-camera me-1"></i>Foto Jurnal:</label>
                             <div class="bg-light p-3 rounded">${fotoJurnalHtml}</div>
                         </div>
-                        ${dokumenLpjPdfHtml}
                         <div>
                             <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
                             <div class="bg-light p-3 rounded">${dokumenHtml}</div>
                         </div>
+                        ${dokumenLpjPdfHtml}
                     </div>
 
                     ${data.keterangan_tambahan ? `
                         <div class="mb-2">
-                            <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
+                            <h6 class="fw-bold mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
                             <div class="bg-light p-3 rounded"><p class="mb-0" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p></div>
                         </div>
                     ` : ''}
