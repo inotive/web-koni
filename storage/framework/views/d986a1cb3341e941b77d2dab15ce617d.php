@@ -757,9 +757,11 @@
     }
 
     function initializeDropdownEvents() {
+        // Explicitly turn off any hover events that might be attached by other scripts or cached versions
+        $(document).off('mouseenter mouseleave', '.dropdown-action');
+        $(document).off('mouseenter mouseleave', '.dropdown-menu-custom');
+
         $(document).off('click', '.dropdown-toggle-custom');
-        $(document).off('mouseenter', '.dropdown-action');
-        $(document).off('mouseleave', '.dropdown-action');
 
         $(document).on('click', '.dropdown-toggle-custom', function(e) {
             e.preventDefault();
@@ -804,30 +806,6 @@
                 }
             });
         });
-
-        if (window.innerWidth > 768) {
-            $(document).on('mouseenter', '.dropdown-action', function() {
-                const $menu = $(this).find('.dropdown-menu-custom');
-                $menu.addClass('show');
-                checkDropdownPosition($(this));
-            }).on('mouseleave', '.dropdown-action', function() {
-                const $menu = $(this).find('.dropdown-menu-custom');
-                setTimeout(() => {
-                    if (!$menu.is(':hover')) {
-                        $menu.removeClass('show');
-                    }
-                }, 100);
-            });
-
-            $(document).on('mouseenter', '.dropdown-menu-custom', function() {
-                clearTimeout($(this).data('timeout'));
-            }).on('mouseleave', '.dropdown-menu-custom', function() {
-                const $menu = $(this);
-                $menu.data('timeout', setTimeout(() => {
-                    $menu.removeClass('show');
-                }, 200));
-            });
-        }
     }
 
     function showLoading() {

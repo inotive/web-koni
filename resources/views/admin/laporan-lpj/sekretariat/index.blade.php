@@ -758,6 +758,10 @@
     }
 
     function initializeDropdownEvents() {
+        // Explicitly turn off any hover events that might be attached by other scripts or cached versions
+        $(document).off('mouseenter mouseleave', '.dropdown-action');
+        $(document).off('mouseenter mouseleave', '.dropdown-menu-custom');
+
         $(document).off('click', '.dropdown-toggle-custom');
 
         $(document).on('click', '.dropdown-toggle-custom', function(e) {
