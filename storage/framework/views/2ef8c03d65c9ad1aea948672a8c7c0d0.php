@@ -235,6 +235,7 @@
             border-top-color: var(--bs-tooltip-bg);
             border-bottom-color: var(--bs-tooltip-bg);
         }
+
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -579,7 +580,7 @@ $(document).ready(function() {
                                 timer: 1500,
                                 showConfirmButton: false
                             }).then(() => {
-                                window.location.reload(); 
+                                window.location.reload();
                             });
                         } else {
                             Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus', 'error');
@@ -774,7 +775,7 @@ $(document).ready(function() {
                                     <div class="fw-medium">${name}</div>
                                     <small class="text-muted">${ext.toUpperCase()}</small>
                                 </div>
-                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
                                     <i class="fas fa-download me-1"></i>Unduh
                                 </a>
                             </div>`;
@@ -813,7 +814,7 @@ $(document).ready(function() {
                                     <div class="fw-medium">${name}</div>
                                     <small class="text-muted">${ext.toUpperCase()}</small>
                                 </div>
-                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
                                     <i class="fas fa-download me-1"></i>Unduh
                                 </a>
                             </div>`;
