@@ -789,15 +789,29 @@
             const $menu = $dropdownAction.find('.dropdown-menu-custom');
             if (!$menu.hasClass('show')) return;
 
+            // Selalu hapus class dropup agar dropdown selalu muncul ke bawah
             $dropdownAction.removeClass('dropup');
-
-            const $row = $dropdownAction.closest('tr');
-            const $table = $row.closest('tbody');
-            const rowIndex = $table.find('tr').index($row);
-            const totalRows = $table.find('tr').length;
-
-            if (rowIndex === totalRows - 1) {
-                $dropdownAction.addClass('dropup');
+            
+            // Tambahkan pemeriksaan untuk memastikan dropdown tidak keluar dari viewport
+            const dropdownRect = $dropdownAction[0].getBoundingClientRect();
+            const menuRect = $menu[0].getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            
+            // Jika dropdown akan keluar dari viewport bagian bawah, tetap paksa ke bawah
+            // dengan menyesuaikan posisi maksimal
+            if (dropdownRect.bottom + menuRect.height > viewportHeight) {
+                // Tetap paksa dropdown ke bawah
+                $dropdownAction.removeClass('dropup');
+                // Sesuaikan posisi jika perlu
+                const overflow = dropdownRect.bottom + menuRect.height - viewportHeight;
+                if (overflow > 0) {
+                    $menu.css('max-height', menuRect.height - overflow - 10);
+                    $menu.css('overflow-y', 'auto');
+                }
+            } else {
+                // Reset styling jika tidak diperlukan
+                $menu.css('max-height', '');
+                $menu.css('overflow-y', '');
             }
         }
 
@@ -1108,11 +1122,11 @@
                             title: 'Berhasil!',
                             text: response.message || 'Data laporan sekretariat berhasil dihapus',
                             icon: 'success',
-                            timer: 2000,
+                            timer: 1500,
                             showConfirmButton: false
+                        }).then(function () {
+                            window.location.reload();
                         });
-
-                        updateTable({});
                     },
                     error: function(xhr) {
                         Swal.close();
