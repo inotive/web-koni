@@ -151,8 +151,6 @@
 
     <!-- MAIN CONTENT -->
     <div class="content">
-        <div class="document-title">Laporan LPJ</div>
-
         <h3 class="section-title">Detail Program dan Kegiatan</h3>
         <table class="info-table">
             <tr>
@@ -196,7 +194,7 @@
                             <td class="photo-td">
                                 <div class="photo-container">
                                     <img src="{{ storage_path('app/public/' . $foto) }}" alt="Dokumentasi {{ $index + 1 }}">
-                                    <div class="photo-caption">Dokumentasi {{ $index + 1 }}</div>
+                                    <div class="photo-caption">{{ pathinfo($foto, PATHINFO_FILENAME) }}</div>
                                 </div>
                             </td>
                             @if(($index + 1) % 3 == 0)
