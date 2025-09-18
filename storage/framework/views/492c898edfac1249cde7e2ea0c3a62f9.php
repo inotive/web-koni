@@ -4,7 +4,7 @@
         <h4>Tidak ada data kegiatan lainnya.</h4>
     </div>
 <?php else: ?>
-    <div class="table-responsive">
+    <div class="table-responsive position-relative">
         <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning_kegiatan">
             <thead class="bg-light">
                 <tr>
@@ -97,7 +97,7 @@
                         </td>
                         <td class="text-start">
                             <div class="dropdown dropdown-action" data-row-id="<?php echo e($kegiatan->id); ?>">
-                                <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
+                                <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button" onclick="toggleDropdown(this)">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <rect width="32" height="32" rx="6" fill="#EFF6FF" />
@@ -114,7 +114,7 @@
                                         <defs>
                                             <clipPath id="clip0_2223_4269">
                                                 <rect width="18" height="18" fill="white"
-                                                    transform="translate(7 7)" />
+                                                    transform="translate(7 7)"/>
                                             </clipPath>
                                         </defs>
                                     </svg>
@@ -299,6 +299,11 @@
             margin-top: 5px;
             display: none;
             list-style: none;
+            /* Ensure dropdown doesn't go outside viewport */
+            max-height: 300px;
+            overflow-y: auto;
+            /* Additional positioning constraints */
+            max-width: 90vw;
         }
 
         .dropdown-menu-custom.show {

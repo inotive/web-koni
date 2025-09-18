@@ -101,6 +101,11 @@
             margin-top: 5px;
             display: none;
             list-style: none;
+            /* Ensure dropdown doesn't go outside viewport */
+            max-height: 300px;
+            overflow-y: auto;
+            /* Additional positioning constraints */
+            max-width: 90vw;
         }
 
         .dropdown-menu-custom.show {
@@ -613,10 +618,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-            <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.create')); ?>" class="btn btn-primary"
-                style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-                <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-            </a>
+            <!-- Button moved to next to search input -->
         </div>
     </div>
 
@@ -633,15 +635,25 @@
                 </div>
 
                 <?php
+                    // Default values - these will be overridden by JavaScript if saved values exist
+                    $defaultTargetAnggaran = 200000000000; // 200 miliar
+                    $defaultTargetKegiatan = 10;
+                    
+                    $targetAnggaran = $targetAnggaran ?? $defaultTargetAnggaran;
+                    $targetKegiatan = $targetKegiatan ?? $defaultTargetKegiatan;
+                    
                     $totalKegiatan = $totalKegiatan ?? ($kegiatanLainnya->total() ?? 0);
-                    $targetKegiatan = 10;
-                    $kegiatanPercentage = $totalKegiatan > 0 ? ($totalKegiatan / $targetKegiatan) * 100 : 0;
-                    $kegiatanPercentage = min($kegiatanPercentage, 100);
+                    $kegiatanPercentage = $totalKegiatan > 0 ? min(($totalKegiatan / $targetKegiatan) * 100, 100) : 0;
 
-                    $targetAnggaran = 200000000000; // 200 miliar
-                    $anggaranPercentage =
-                        ($totalAnggaran ?? 0) > 0 ? (($totalAnggaran ?? 0) / $targetAnggaran) * 100 : 0;
-                    $anggaranPercentage = min($anggaranPercentage, 100);
+                    $anggaranPercentage = ($totalAnggaran ?? 0) > 0 ? min((($totalAnggaran ?? 0) / $targetAnggaran) * 100, 100) : 0;
+                    
+                    // Format percentage display to match bidang-bidang module
+                    $anggaranPercentageDisplay = 0;
+                    if ($anggaranPercentage > 0 && $anggaranPercentage < 1) {
+                        $anggaranPercentageDisplay = number_format($anggaranPercentage, 1, '.', '');
+                    } else {
+                        $anggaranPercentageDisplay = round($anggaranPercentage);
+                    }
                 ?>
 
                 <div class="d-flex justify-content-between mb-2">
@@ -649,10 +661,14 @@
 
                         / Rp. <?php echo e(number_format($targetAnggaran, 0, ',', '.')); ?></h1>
                     <h3 id="anggaranPercentage" class="text-muted mb-0" data-bs-toggle="tooltip"
-                        title="<?php echo e(round($anggaranPercentage, 2)); ?>% dari total anggaran">
-                        <?php echo e(round($anggaranPercentage)); ?>%
+                        title="<?php echo e(number_format($anggaranPercentage, 2, '.', '')); ?>% dari total anggaran">
+                        <?php echo e($anggaranPercentageDisplay); ?>%
                     </h3>
                 </div>
+
+                <!-- Hidden inputs to store default values for JavaScript -->
+                <input type="hidden" id="defaultTargetAnggaran" value="<?php echo e($defaultTargetAnggaran); ?>">
+                <input type="hidden" id="defaultTargetKegiatan" value="<?php echo e($defaultTargetKegiatan); ?>">
 
                 <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
@@ -682,7 +698,12 @@
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
             <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - 2025</h3>
 
-            <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.create')); ?>" class="btn btn-primary"
+                    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+                </a>
+                
                 <div class="input-group position-relative" style="width: 250px;">
                     <input type="search" name="search" id="search" class="form-control" placeholder="Cari kegiatan..."
                         value="<?php echo e(request('search')); ?>" autocomplete="off">
@@ -834,7 +855,7 @@
                         <input type="text" name="target_anggaran" id="target_anggaran"
                             value="<?php echo e(number_format($targetAnggaran ?? 200000000000, 0, ',', '.')); ?>"
                             placeholder="Masukkan target anggaran" class="form-control bg-light border border-gray-400"
-                            required />
+                            required data-original-value="<?php echo e($targetAnggaran ?? 200000000000); ?>" />
                         <div class="invalid-feedback"></div>
                     </div>
 
@@ -842,7 +863,8 @@
                         <div class="fw-semibold required mb-3 text-gray-800">Target Kegiatan</div>
                         <input type="number" name="target_kegiatan" id="target_kegiatan"
                             value="<?php echo e($targetKegiatan ?? 10); ?>" placeholder="Masukkan jumlah target kegiatan"
-                            class="form-control bg-light border border-gray-400" required />
+                            class="form-control bg-light border border-gray-400" required 
+                            data-original-value="<?php echo e($targetKegiatan ?? 10); ?>" />
                         <div class="invalid-feedback"></div>
                     </div>
                 </form>
@@ -867,6 +889,74 @@
             let currentFiles = [];
             let currentIndex = 0;
             let currentType = '';
+
+            // Load saved target values from localStorage and update the UI
+            function loadSavedTargets() {
+                try {
+                    const savedTargetAnggaran = localStorage.getItem('kegiatanLainnya_targetAnggaran');
+                    const savedTargetKegiatan = localStorage.getItem('kegiatanLainnya_targetKegiatan');
+                    
+                    if (savedTargetAnggaran) {
+                        const targetAnggaranInput = document.getElementById('target_anggaran');
+                        if (targetAnggaranInput) {
+                            // Format the saved value for display
+                            const formattedValue = new Intl.NumberFormat('id-ID').format(savedTargetAnggaran);
+                            targetAnggaranInput.value = formattedValue;
+                        }
+                        
+                        // Update the display immediately if we're on the page
+                        updateDisplayWithSavedTargets(parseInt(savedTargetAnggaran), parseInt(savedTargetKegiatan) || 10);
+                    }
+                    
+                    if (savedTargetKegiatan) {
+                        const targetKegiatanInput = document.getElementById('target_kegiatan');
+                        if (targetKegiatanInput) {
+                            targetKegiatanInput.value = savedTargetKegiatan;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Could not load saved targets from localStorage:', e);
+                }
+            }
+
+            // Update the display with saved target values
+            function updateDisplayWithSavedTargets(targetAnggaran, targetKegiatan) {
+                // Update the anggaran display if elements exist
+                const anggaranDisplay = document.getElementById('anggaranDisplay');
+                const anggaranPercentage = document.getElementById('anggaranPercentage');
+                
+                if (anggaranDisplay && anggaranPercentage) {
+                    // Get current anggaran value from display
+                    const currentDisplay = anggaranDisplay.textContent;
+                    const currentAnggaranMatch = currentDisplay.match(/Rp\.\s*([0-9.]+)/);
+                    if (currentAnggaranMatch) {
+                        const currentAnggaran = parseInt(currentAnggaranMatch[1].replace(/\./g, '')) || 0;
+                        
+                        // Calculate new percentage
+                        const percentage = targetAnggaran > 0 ? Math.min((currentAnggaran / targetAnggaran) * 100, 100) : 0;
+                        
+                        // Format percentage display
+                        let percentageDisplay;
+                        if (percentage > 0 && percentage < 1) {
+                            percentageDisplay = percentage.toFixed(1);
+                        } else {
+                            percentageDisplay = Math.round(percentage);
+                        }
+                        
+                        // Update displays
+                        anggaranDisplay.innerHTML = `Rp. ${currentAnggaran.toLocaleString('id-ID')} / Rp. ${targetAnggaran.toLocaleString('id-ID')}`;
+                        anggaranPercentage.innerHTML = `${percentageDisplay}%`;
+                        anggaranPercentage.setAttribute('data-bs-original-title', `${percentage.toFixed(2)}% dari total anggaran`);
+                        
+                        // Update progress bar
+                        const progressBar = document.querySelector('.progress-bar');
+                        if (progressBar) {
+                            progressBar.style.width = percentage + '%';
+                            progressBar.setAttribute('aria-valuenow', percentage);
+                        }
+                    }
+                }
+            }
 
             // Utility function to format number as Rupiah
             const formatRupiah = (angka, prefix = 'Rp ') => {
@@ -900,6 +990,18 @@
                     dataTable.destroy();
                 }
 
+                // Adjust padding based on number of rows
+                const rowCount = table.find('tbody tr').length;
+                const tableContainer = table.closest('.table-responsive');
+                if (rowCount === 1) {
+                    tableContainer.css('padding-bottom', '60px');
+                    // Also add top padding to ensure dropdown menu has space
+                    tableContainer.css('padding-top', '60px');
+                } else {
+                    tableContainer.css('padding-bottom', '');
+                    tableContainer.css('padding-top', '');
+                }
+
                 if (table.length > 0) {
                     dataTable = table.DataTable({
                         paging: false,
@@ -918,6 +1020,25 @@
                             orderable: false,
                             searchable: false
                         }]
+                    });
+                }
+                
+                // Observe table changes to re-adjust padding
+                const observer = new MutationObserver(function(mutations) {
+                    const currentRowCount = table.find('tbody tr').length;
+                    if (currentRowCount === 1) {
+                        tableContainer.css('padding-bottom', '60px');
+                        tableContainer.css('padding-top', '60px');
+                    } else {
+                        tableContainer.css('padding-bottom', '');
+                        tableContainer.css('padding-top', '');
+                    }
+                });
+                
+                if (tableContainer.length) {
+                    observer.observe(tableContainer[0], {
+                        childList: true,
+                        subtree: true
                     });
                 }
             }
@@ -972,77 +1093,30 @@
             }
 
             function initializeDropdownEvents() {
+                // Hapus semua event listener lama
                 $(document).off('click', '.dropdown-toggle-custom');
                 $(document).off('mouseenter', '.dropdown-action');
                 $(document).off('mouseleave', '.dropdown-action');
+                $(document).off('mouseenter', '.dropdown-menu-custom');
+                $(document).off('mouseleave', '.dropdown-menu-custom');
 
-                $(document).on('click', '.dropdown-toggle-custom', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const $dropdownAction = $(this).closest('.dropdown-action');
-                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
-
-                    $('.dropdown-menu-custom').not($menu).removeClass('show');
-
-                    $menu.toggleClass('show');
-
-                    checkDropdownPosition($dropdownAction);
-                });
-
-                function checkDropdownPosition($dropdownAction) {
-                    const $menu = $dropdownAction.find('.dropdown-menu-custom');
-                    if (!$menu.hasClass('show')) return;
-
-                    $dropdownAction.removeClass('dropup');
-
-                    const $row = $dropdownAction.closest('tr');
-                    const $table = $row.closest('tbody');
-                    const rowIndex = $table.find('tr').index($row);
-                    const totalRows = $table.find('tr').length;
-
-                    if (rowIndex === totalRows - 1) {
-                        $dropdownAction.addClass('dropup');
-                    }
-                }
-
+                // Tambahkan event listener untuk menutup dropdown saat klik di luar
                 $(document).on('click', function(e) {
                     if (!$(e.target).closest('.dropdown-action').length) {
                         $('.dropdown-menu-custom').removeClass('show');
                     }
                 });
 
+                // Tambahkan event listener untuk menutup dropdown saat resize window
                 $(window).on('resize', function() {
                     $('.dropdown-action').each(function() {
-                        if ($(this).find('.dropdown-menu-custom').hasClass('show')) {
-                            checkDropdownPosition($(this));
+                        const dropdownActionElement = this;
+                        const $menu = $(dropdownActionElement).find('.dropdown-menu-custom');
+                        if ($menu.hasClass('show')) {
+                            checkDropdownPositionJQuery(dropdownActionElement);
                         }
                     });
                 });
-
-                if (window.innerWidth > 768) {
-                    $(document).on('mouseenter', '.dropdown-action', function() {
-                        const $menu = $(this).find('.dropdown-menu-custom');
-                        $menu.addClass('show');
-                        checkDropdownPosition($(this));
-                    }).on('mouseleave', '.dropdown-action', function() {
-                        const $menu = $(this).find('.dropdown-menu-custom');
-                        setTimeout(() => {
-                            if (!$menu.is(':hover')) {
-                                $menu.removeClass('show');
-                            }
-                        }, 100);
-                    });
-
-                    $(document).on('mouseenter', '.dropdown-menu-custom', function() {
-                        clearTimeout($(this).data('timeout'));
-                    }).on('mouseleave', '.dropdown-menu-custom', function() {
-                        const $menu = $(this);
-                        $menu.data('timeout', setTimeout(() => {
-                            $menu.removeClass('show');
-                        }, 200));
-                    });
-                }
             }
 
             function showLoading() {
@@ -1102,44 +1176,6 @@
                 });
             }
 
-            function updateCombinedDisplay() {
-                const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(
-                    ':contains("Data tidak ditemukan")');
-                const totalKegiatan = tableRows.length;
-
-                let totalAnggaran = 0;
-                tableRows.each(function() {
-                    const anggaranText = $(this).find('td').eq(2).text().trim();
-                    if (anggaranText && anggaranText !== '-') {
-                        const anggaranValue = parseInt(anggaranText.replace(/[Rp\s\.,]/g, '')) || 0;
-                        totalAnggaran += anggaranValue;
-                    }
-                });
-
-                // Update header display
-                const targetAnggaran = 200000000000; // 200 miliar
-                const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / targetAnggaran) * 100,
-                    100) : 0;
-
-                // Update anggaran display dengan ID yang unik
-                $('#anggaranDisplay').html(
-                    `Rp. ${totalAnggaran.toLocaleString('id-ID')} / Rp. ${targetAnggaran.toLocaleString('id-ID')}`
-                );
-                $('#anggaranPercentage').html(`${Math.round(anggaranPercentage)}%`);
-                $('#anggaranPercentage').attr('data-bs-original-title',
-                    `${anggaranPercentage.toFixed(2)}% dari total anggaran`);
-
-                // Update progress bar
-                $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
-
-                // Update kegiatan info dengan ID yang unik
-                const targetKegiatan = 10;
-                const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100,
-                    100) : 0;
-
-                $('#kegiatanBerjalan').html(`${totalKegiatan}`);
-            }
-
             function updateTable(params = {}) {
                 return new Promise((resolve, reject) => {
                     if (params.search === undefined) {
@@ -1173,7 +1209,6 @@
                             initializeDropdownEvents();
                             updateFilterCount();
                             updateSummaryCards(); // Update summary cards after table update
-                            updateGridLayout(); // Update grid layout after table update
 
                             resolve(response);
                         },
@@ -1385,7 +1420,11 @@
                                     showConfirmButton: false
                                 });
 
-                                updateTable({});
+                                // Update table and summary cards after a short delay to ensure DOM is ready
+                                setTimeout(function() {
+                                    updateTable({});
+                                    updateSummaryCards(); // Refresh the progress card and summary cards
+                                }, 100);
                             },
                             error: function(xhr) {
                                 Swal.close();
@@ -1467,16 +1506,18 @@
                     // Kecuali jika token sudah kadaluarsa atau sudah digunakan
                     if ((isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) && !
                         isTokenExpiredOrUsed) {
-                        statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
-                        statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
+                        statusIcon.innerHTML = 'Terbuka';
+                        statusIcon.className = 'badge bg-success-subtle text-success fw-semibold fs-7 d-flex align-items-center';
+                        statusIcon.style.cssText = 'padding: 6px 10px; border: 1px solid #bbf7d0;';
 
                         // Sembunyikan tombol "Ajukan Perubahan" saat status Terbuka
                         if (ajukanPerubahanBtn) {
                             ajukanPerubahanBtn.style.display = 'none';
                         }
                     } else {
-                        statusIcon.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
-                        statusIcon.className = 'badge bg-danger fs-7 d-flex align-items-center';
+                        statusIcon.innerHTML = 'Terkunci';
+                        statusIcon.className = 'badge bg-danger fw-semibold fs-7 d-flex align-items-center';
+                        statusIcon.style.cssText = 'padding: 6px 10px;';
 
                         // Tampilkan tombol "Ajukan Perubahan" saat status Terkunci
                         if (ajukanPerubahanBtn) {
@@ -1692,10 +1733,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        ${data.keterangan_tambahan ? `
+                ${data.keterangan_tambahan ? `
                                 <div class="mb-4">
                                     <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
                                         <i class="fas fa-sticky-note me-2"></i>
@@ -1706,6 +1745,8 @@
                                     </div>
                                 </div>
                             ` : ''}
+            </div>
+        </div>
     `;
 
                 const modal = new bootstrap.Modal(document.getElementById('detailModal'));
@@ -1730,6 +1771,8 @@
                 $('#previewModal').modal('show');
             };
 
+            // Initialize the page
+            loadSavedTargets();
             initializeDataTable();
             initializeTooltips();
             initializeDropdownEvents();
@@ -1812,6 +1855,23 @@
                 // Hapus format Rupiah dari input anggaran
                 targetAnggaran = targetAnggaran.replace(/[Rp.\s]/g, '');
 
+                // Pastikan targetAnggaran adalah angka yang valid
+                targetAnggaran = parseInt(targetAnggaran) || 0;
+
+                // Simpan ke localStorage agar persisten setelah refresh
+                try {
+                    if (targetAnggaran === 200000000000 && targetKegiatan == 10) {
+                        // If resetting to default values, remove from localStorage
+                        localStorage.removeItem('kegiatanLainnya_targetAnggaran');
+                        localStorage.removeItem('kegiatanLainnya_targetKegiatan');
+                    } else {
+                        localStorage.setItem('kegiatanLainnya_targetAnggaran', targetAnggaran);
+                        localStorage.setItem('kegiatanLainnya_targetKegiatan', targetKegiatan);
+                    }
+                } catch (e) {
+                    console.warn('Could not save targets to localStorage:', e);
+                }
+
                 // Format angka dengan pemisah ribuan
                 const formattedAnggaran = formatRupiah(targetAnggaran);
 
@@ -1819,25 +1879,34 @@
                 const currentAnggaranText = $('#anggaranDisplay').text();
                 const currentAnggaranParts = currentAnggaranText.split(' / Rp. ');
                 const currentAnggaran = currentAnggaranParts[0].replace('Rp. ', '').replace(/\./g, '');
+                const currentAnggaranValue = parseInt(currentAnggaran) || 0;
 
-                // Hitung persentase baru
-                const anggaranPercentage = (currentAnggaran / targetAnggaran) * 100;
-                const anggaranPercentageRounded = Math.min(anggaranPercentage, 100);
+                // Hitung persentase baru dengan pembatasan maksimal 100%
+                const anggaranPercentage = targetAnggaran > 0 ? Math.min((currentAnggaranValue / targetAnggaran) * 100, 100) : 0;
+                
+                // Use consistent rounding method - show 1 decimal place when percentage is small
+                let anggaranPercentageDisplay;
+                if (anggaranPercentage > 0 && anggaranPercentage < 1) {
+                    anggaranPercentageDisplay = anggaranPercentage.toFixed(1);
+                } else {
+                    anggaranPercentageDisplay = Math.round(anggaranPercentage);
+                }
 
                 // Update tampilan
                 $('#anggaranDisplay').html(
                     `Rp. ${formatRupiah(currentAnggaran, '')} / Rp. ${formatRupiah(targetAnggaran, '')}`
                 );
-                $('#anggaranPercentage').html(`${Math.round(anggaranPercentageRounded)}%`);
+                $('#anggaranPercentage').html(`${anggaranPercentageDisplay}%`);
                 $('#anggaranPercentage').attr('data-bs-original-title',
-                    `${anggaranPercentageRounded.toFixed(2)}% dari total anggaran`);
-                $('.progress-bar').css('width', anggaranPercentageRounded + '%').attr('aria-valuenow',
-                    anggaranPercentageRounded);
+                    `${anggaranPercentage.toFixed(2)}% dari total anggaran`);
+                $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow',
+                    anggaranPercentage);
 
                 // Update target kegiatan
-                const currentKegiatan = parseInt($('#kegiatanBerjalan').text());
-                const kegiatanPercentage = (currentKegiatan / targetKegiatan) * 100;
-                const kegiatanPercentageRounded = Math.min(kegiatanPercentage, 100);
+                const currentKegiatanText = $('#kegiatanBerjalan').text();
+                const currentKegiatan = parseInt(currentKegiatanText) || 0;
+                const kegiatanPercentage = targetKegiatan > 0 ? Math.min((currentKegiatan / targetKegiatan) * 100, 100) : 0;
+                const kegiatanPercentageRounded = Math.round(kegiatanPercentage);
 
                 $('.badge.bg-primary-subtle').html(`${targetKegiatan} Target Kegiatan`);
 
@@ -1858,6 +1927,8 @@
                     'start_date': startDate,
                     'end_date': endDate,
                     'page': 1
+                }).then(() => {
+                    updateSummaryCards(); // Ensure summary cards are updated after filter
                 });
             });
 
@@ -1874,12 +1945,15 @@
                     'start_date': '',
                     'end_date': '',
                     'page': 1
+                }).then(() => {
+                    updateSummaryCards(); // Ensure summary cards are updated after reset
                 });
             });
 
             function updateSummaryCards() {
-                const tableRows = $('#kt_datatable_dom_positioning_kegiatan tbody tr').not(
-                    ':contains("Data tidak ditemukan")');
+                // Get the updated table data after deletion
+                const table = $("#kt_datatable_dom_positioning_kegiatan");
+                const tableRows = table.find('tbody tr').not(':contains("Data tidak ditemukan")');
                 const totalKegiatan = tableRows.length;
 
                 let totalAnggaran = 0;
@@ -1891,28 +1965,64 @@
                     }
                 });
 
+                // Get target values from localStorage or use defaults
+                let targetAnggaran = 200000000000; // 200 miliar default
+                let targetKegiatan = 10; // default target kegiatan
+                
+                try {
+                    const savedTargetAnggaran = localStorage.getItem('kegiatanLainnya_targetAnggaran');
+                    const savedTargetKegiatan = localStorage.getItem('kegiatanLainnya_targetKegiatan');
+                    
+                    if (savedTargetAnggaran) {
+                        targetAnggaran = parseInt(savedTargetAnggaran) || targetAnggaran;
+                    }
+                    
+                    if (savedTargetKegiatan) {
+                        targetKegiatan = parseInt(savedTargetKegiatan) || targetKegiatan;
+                    }
+                } catch (e) {
+                    console.warn('Could not load saved targets from localStorage:', e);
+                }
+
                 // Update header display
-                const targetAnggaran = 200000000000; // 200 miliar
-                const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / targetAnggaran) * 100,
-                    100) : 0;
+                const anggaranPercentage = totalAnggaran > 0 ? Math.min((totalAnggaran / targetAnggaran) * 100, 100) : 0;
+
+                // Use consistent rounding method - show 1 decimal place when percentage is small
+                let anggaranPercentageDisplay;
+                if (anggaranPercentage > 0 && anggaranPercentage < 1) {
+                    anggaranPercentageDisplay = anggaranPercentage.toFixed(1);
+                } else {
+                    anggaranPercentageDisplay = Math.round(anggaranPercentage);
+                }
 
                 // Update anggaran display dengan ID yang unik
                 $('#anggaranDisplay').html(
                     `Rp. ${totalAnggaran.toLocaleString('id-ID')} / Rp. ${targetAnggaran.toLocaleString('id-ID')}`
                 );
-                $('#anggaranPercentage').html(`${Math.round(anggaranPercentage)}%`);
+                $('#anggaranPercentage').html(`${anggaranPercentageDisplay}%`);
                 $('#anggaranPercentage').attr('data-bs-original-title',
                     `${anggaranPercentage.toFixed(2)}% dari total anggaran`);
+                
+                // Reinitialize tooltip with updated content
+                const tooltipElement = document.getElementById('anggaranPercentage');
+                if (tooltipElement) {
+                    const tooltip = bootstrap.Tooltip.getInstance(tooltipElement);
+                    if (tooltip) {
+                        tooltip.dispose();
+                    }
+                    new bootstrap.Tooltip(tooltipElement);
+                }
 
                 // Update progress bar
                 $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
 
                 // Update kegiatan info dengan ID yang unik
-                const targetKegiatan = 10;
-                const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100,
-                    100) : 0;
+                const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100, 100) : 0;
 
                 $('#kegiatanBerjalan').html(`${totalKegiatan}`);
+                
+                // Update target kegiatan badge
+                $('.badge.bg-primary-subtle').html(`${targetKegiatan} Target Kegiatan`);
             }
 
             // Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
@@ -1922,6 +2032,8 @@
                 updateTable({
                     'per_page': perPage,
                     'page': 1
+                }).then(() => {
+                    updateSummaryCards(); // Ensure summary cards are updated after page size change
                 });
             });
 
@@ -1936,6 +2048,8 @@
                     if (page) {
                         updateTable({
                             'page': page
+                        }).then(() => {
+                            updateSummaryCards(); // Ensure summary cards are updated after page change
                         });
                     }
                 }
@@ -1951,6 +2065,8 @@
                     'sort': sort,
                     'direction': direction,
                     'page': 1
+                }).then(() => {
+                    updateSummaryCards(); // Ensure summary cards are updated after sort
                 });
             });
 
@@ -2047,6 +2163,129 @@
                     const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
                     showSlide(newIndex);
                 });
+            }
+
+            // Fungsi untuk toggle dropdown menu dengan onclick
+            window.toggleDropdown = function(button) {
+                const $dropdownAction = $(button).closest('.dropdown-action');
+                const $menu = $dropdownAction.find('.dropdown-menu-custom');
+
+                // Tutup semua dropdown yang terbuka kecuali yang sedang di-toggle
+                $('.dropdown-menu-custom').not($menu).removeClass('show');
+
+                // Toggle dropdown yang diklik
+                $menu.toggleClass('show');
+
+                // Periksa posisi dropdown setelah a short delay to ensure proper rendering
+                setTimeout(function() {
+                    checkDropdownPositionJQuery($dropdownAction[0]);
+                }, 10);
+            };
+            
+            // Fungsi untuk memeriksa posisi dropdown
+            function checkDropdownPosition(dropdownAction) {
+                const menu = dropdownAction.querySelector('.dropdown-menu-custom');
+                if (!menu.classList.contains('show')) return;
+                
+                dropdownAction.classList.remove('dropup');
+                
+                const row = dropdownAction.closest('tr');
+                const table = row.closest('tbody');
+                const rowIndex = Array.from(table.querySelectorAll('tr')).indexOf(row);
+                const totalRows = table.querySelectorAll('tr').length;
+                
+                if (rowIndex === totalRows - 1) {
+                    dropdownAction.classList.add('dropup');
+                }
+            }
+
+            // Fungsi untuk memeriksa posisi dropdown (versi jQuery untuk kompatibilitas)
+            function checkDropdownPositionJQuery(dropdownActionElement) {
+                const $menu = $(dropdownActionElement).find('.dropdown-menu-custom');
+                if (!$menu.hasClass('show')) return;
+
+                // Reset classes and styles
+                $(dropdownActionElement).removeClass('dropup');
+                $menu.css({
+                    'top': '',
+                    'bottom': '',
+                    'left': '',
+                    'right': '0'
+                });
+
+                const $row = $(dropdownActionElement).closest('tr');
+                const $table = $row.closest('tbody');
+                const rowIndex = $table.find('tr').index($row);
+                const totalRows = $table.find('tr').length;
+
+                // Get positions
+                const dropdownRect = dropdownActionElement.getBoundingClientRect();
+                const menuHeight = $menu.outerHeight();
+                const menuWidth = $menu.outerWidth();
+                
+                // Calculate available space
+                const spaceBelow = window.innerHeight - dropdownRect.bottom;
+                const spaceAbove = dropdownRect.top;
+                const spaceRight = window.innerWidth - dropdownRect.left;
+
+                // Determine if we should use dropup
+                // Only use dropup if there's significantly more space above than below
+                const needsDropup = spaceBelow < menuHeight && spaceAbove > spaceBelow + 50;
+                    
+                if (needsDropup) {
+                    $(dropdownActionElement).addClass('dropup');
+                }
+                
+                // Additional viewport constraint adjustments
+                const isDropup = $(dropdownActionElement).hasClass('dropup');
+                
+                // Adjust for horizontal viewport constraints
+                if (dropdownRect.right + menuWidth > window.innerWidth) {
+                    // Menu would go off right edge
+                    $menu.css({
+                        'left': 'auto',
+                        'right': '0'
+                    });
+                }
+                
+                // Adjust for vertical viewport constraints
+                if (isDropup) {
+                    // For dropup, check if it goes above the viewport
+                    if (dropdownRect.top - menuHeight < 0) {
+                        // Not enough space above, force normal dropdown
+                        $(dropdownActionElement).removeClass('dropup');
+                        // Position menu at the top of the viewport with a small buffer
+                        const topPosition = Math.max(5, Math.abs(dropdownRect.top - menuHeight));
+                        $menu.css('top', topPosition + 'px');
+                    }
+                } else {
+                    // For dropdown, check if it goes below the viewport
+                    if (dropdownRect.bottom + menuHeight > window.innerHeight) {
+                        // Check if we have more space above
+                        if (spaceAbove > spaceBelow && menuHeight <= spaceAbove) {
+                            // Switch to dropup
+                            $(dropdownActionElement).addClass('dropup');
+                        } else {
+                            // Adjust position to keep menu within viewport
+                            const adjustment = window.innerHeight - (dropdownRect.bottom + menuHeight) - 5; // 5px buffer
+                            if (adjustment < 0) {
+                                $menu.css('top', adjustment + 'px');
+                            }
+                        }
+                    }
+                }
+                
+                // Ensure the dropdown menu is fully visible by scrolling if necessary
+                setTimeout(function() {
+                    const menuRect = $menu[0].getBoundingClientRect();
+                    if (menuRect.bottom > window.innerHeight) {
+                        const scrollTop = menuRect.bottom - window.innerHeight + 10;
+                        window.scrollBy(0, scrollTop);
+                    } else if (menuRect.top < 0) {
+                        const scrollTop = menuRect.top - 10;
+                        window.scrollBy(0, scrollTop);
+                    }
+                }, 50);
             }
 
             document.addEventListener('keydown', function(e) {
