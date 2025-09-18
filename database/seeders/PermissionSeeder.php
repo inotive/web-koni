@@ -15,8 +15,13 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
+            // Reset cached roles and permissions
+            app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-            $permission = [
+            // Old permission to be removed
+            Permission::where('name', 'pengajuan-modifikasi-laporan')->delete();
+
+            $permissions = [
                 ['name' => 'dashboard', 'group' => 'Sistem', 'display_name' => 'Dashboard'],
                 ['name' => 'manajemen-rka', 'group' => 'Keuangan', 'display_name' => 'Manajemen RKA'],
                 ['name' => 'laporan-lpj-sekretariat', 'group' => 'Keuangan', 'display_name' => 'Laporan LPJ Sekretariat'],
@@ -25,7 +30,8 @@ class PermissionSeeder extends Seeder
                 ['name' => 'database-bendahara', 'group' => 'Keuangan', 'display_name' => 'Database Bendahara'],
                 ['name' => 'file-kesekretariatan', 'group' => 'Kesekretariatan', 'display_name' => 'File Kesekretariatan'],
                 ['name' => 'surat-masuk-keluar', 'group' => 'Kesekretariatan', 'display_name' => 'Surat Masuk & Keluar'],
-                ['name' => 'pengajuan-modifikasi-laporan', 'group' => 'Sistem', 'display_name' => 'Pengajuan Modifikasi Laporan'],
+                ['name' => 'pengajuan-modifikasi-laporan-view', 'group' => 'Sistem', 'display_name' => 'Lihat Pengajuan Modifikasi Laporan'],
+                ['name' => 'pengajuan-modifikasi-laporan-manage', 'group' => 'Sistem', 'display_name' => 'Kelola Pengajuan Modifikasi Laporan'],
 
                 // Konfigurasi
                 ['name' => 'pelatih', 'group' => 'Konfigurasi', 'display_name' => 'Pelatih'],
@@ -37,19 +43,24 @@ class PermissionSeeder extends Seeder
                 ['name' => 'kejuaraan', 'group' => 'Konfigurasi', 'display_name' => 'Kejuaraan'],
             ];
 
-            foreach ($permission as $value) {
-                $data = Permission::create([
-                    'name' => $value['name'],
-                    'guard_name' => 'web',
-                    'group' => $value['group'],
-                    'display_name' => $value['display_name'],
-                ]);
-
-                $role = Role::where('id', 1)->first();
-                $role->givePermissionTo($data->id);
+            foreach ($permissions as $permissionData) {
+                $permission = Permission::updateOrCreate(
+                    ['name' => $permissionData['name']],
+                    [
+                        'guard_name' => 'web',
+                        'group' => $permissionData['group'],
+                        'display_name' => $permissionData['display_name'],
+                    ]
+                );
+                
+                // Assign all permissions to superadmin role (ID 1)
+                $role = Role::find(1);
+                if ($role) {
+                    $role->givePermissionTo($permission);
+                }
             }
 
-            $this->command->info('Seeding telah selesai!');
+            $this->command->info('Seeding permissions has been completed!');
         });
     }
 }

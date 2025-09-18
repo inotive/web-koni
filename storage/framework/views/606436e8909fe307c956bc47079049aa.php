@@ -899,7 +899,7 @@
                 `;
                 modalBody.html(content);
 
-                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('pengajuan-modifikasi-laporan')): ?>
+                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('pengajuan-modifikasi-laporan-manage')): ?>
                     if (data.status === 'menunggu persetujuan') {
                         const actionButtons = $(`
                             <div class="action-buttons">

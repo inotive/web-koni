@@ -21,7 +21,6 @@
         .letterhead {
             position: running(header);
             text-align: center;
-            margin-bottom: 10px; /* reduced from 20px */
         }
 
         .letterhead-img {
@@ -212,7 +211,7 @@
 
         .photos img {
             max-width: 100%;
-            max-height: 200px;
+            height: auto; /* Maintain aspect ratio */
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             transition: transform 0.3s ease;
@@ -330,20 +329,62 @@
             text-align: center;
         }
 
+        .documents-container {
+            margin: 20px 0;
+        }
+
+        .document-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .document-icon {
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-name {
+            font-weight: bold;
+            color: #212529;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+
+        .document-type {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 3px;
+        }
+
+        .document-status {
+            font-size: 0.85em;
+            color: #28a745;
+            font-style: italic;
+        }
+
         .photos img,
         .photo-container img {
             display: block;
             margin: 0 auto;
             max-width: 100%;
-            max-height: 100%; /* Larger size for PDF */
+            height: auto; /* Maintain aspect ratio */
             border-radius: 6px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            object-fit: cover;
         }
 
         @media print {
             .photo-container img {
-                max-height: 400px !important; /* even larger on PDF */
+                max-height: none !important; /* Remove height restrictions for print */
+                height: auto;
             }
         }
 
@@ -419,8 +460,8 @@
                             @if($path && file_exists(storage_path('app/public/' . $path)))
                                 <td class="photo-td">
                                     <div class="photo-container">
-                                        <img src="{{ storage_path('app/public/' . $path) }}" alt="Dokumentasi {{ $originalName }}">
-                                        <div class="photo-caption">Dokumentasi {{ $index + 1 }}</div>
+                                        <img src="{{ storage_path('app/public/' . $path) }}" alt="{{ $originalName }}">
+                                        <div class="photo-caption">{{ $originalName }}</div>
                                     </div>
                                 </td>
                                 @if(($index + 1) % 3 == 0)
@@ -430,6 +471,106 @@
                         @endforeach
                     </tr>
                 </table>
+            @endif
+
+            @if(($sekretariat->dokumen_lpj && count($sekretariat->dokumen_lpj) > 0) || ($sekretariat->dokumen_lpj_pdf))
+                <h3 class="section-title">Dokumen Pendukung</h3>
+                <div class="documents-container">
+                    @if($sekretariat->dokumen_lpj_pdf)
+                        @php
+                            if (is_object($sekretariat->dokumen_lpj_pdf)) {
+                                $pdfPath = $sekretariat->dokumen_lpj_pdf->path;
+                                $pdfOriginalName = $sekretariat->dokumen_lpj_pdf->original_name ?? basename($pdfPath);
+                            } elseif (is_array($sekretariat->dokumen_lpj_pdf)) {
+                                $pdfPath = isset($sekretariat->dokumen_lpj_pdf['path']) ? $sekretariat->dokumen_lpj_pdf['path'] : '';
+                                $pdfOriginalName = isset($sekretariat->dokumen_lpj_pdf['original_name']) ? $sekretariat->dokumen_lpj_pdf['original_name'] : (is_string($pdfPath) ? basename($pdfPath) : '');
+                            } elseif (is_string($sekretariat->dokumen_lpj_pdf)) {
+                                $pdfPath = $sekretariat->dokumen_lpj_pdf;
+                                $pdfOriginalName = basename($pdfPath);
+                            }
+                        @endphp
+                        @if($pdfPath && file_exists(storage_path('app/public/' . $pdfPath)))
+                            <div class="document-item">
+                                <div class="document-icon pdf">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="#d32f2f">
+                                        <path d="M8.267 14.68c-.184 0-.308.018-.372.036v1.178c.076.018.171.023.302.023.479 0 .774-.242.774-.651 0-.366-.254-.586-.704-.586zm3.487.012c-.2 0-.33.018-.407.036v2.61c.077.018.201.018.313.018.817.006 1.349-.444 1.349-1.396.006-.83-.479-1.268-1.255-1.268z"/>
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM9.498 16.19c-.309.29-.765.42-1.296.42a2.23 2.23 0 0 1-.308-.018v1.426H7v-3.936A7.558 7.558 0 0 1 8.219 14c.557 0 .953.106 1.22.319.254.202.426.533.426.923-.001.392-.131.723-.367.948zm3.807 1.355c-.42.349-1.059.515-1.84.515-.468 0-.799-.03-1.024-.06v-3.917A7.947 7.947 0 0 1 11.66 14c.757 0 1.249.136 1.633.426.415.308.675.799.675 1.504 0 .763-.279 1.29-.663 1.615zM17 14.77h-1.532v.911H16.9v.734h-1.432v1.604h-.906V14.03H17v.74zM14 9h-1V4l5 5h-4z"/>
+                                    </svg>
+                                </div>
+                                <div class="document-info">
+                                    <div class="document-name">{{ $pdfOriginalName }}</div>
+                                    <div class="document-type">Dokumen PDF</div>
+                                    <div class="document-status">Tersedia dalam sistem</div>
+                                </div>
+                            </div>
+                        @endif
+                    @endif
+
+                    @if($sekretariat->dokumen_lpj && count($sekretariat->dokumen_lpj) > 0)
+                        @foreach($sekretariat->dokumen_lpj as $dokumen)
+                            @if(is_array($dokumen))
+                                @php
+                                    $path = $dokumen['path'] ?? '';
+                                    $originalName = $dokumen['original_name'] ?? basename($path);
+                                @endphp
+                            @else
+                                @php
+                                    $path = $dokumen;
+                                    $originalName = basename($path);
+                                @endphp
+                            @endif
+                            
+                            @if($path && file_exists(storage_path('app/public/' . $path)))
+                                <div class="document-item">
+                                    @php
+                                        $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+                                        $iconColor = '#6c757d';
+                                        switch($extension) {
+                                            case 'pdf':
+                                                $iconColor = '#d32f2f';
+                                                break;
+                                            case 'doc':
+                                            case 'docx':
+                                                $iconColor = '#1976d2';
+                                                break;
+                                            case 'xls':
+                                            case 'xlsx':
+                                                $iconColor = '#388e3c';
+                                                break;
+                                            default:
+                                                $iconColor = '#6c757d';
+                                        }
+                                    @endphp
+                                    <div class="document-icon {{ $extension }}">
+                                        @if(in_array($extension, ['pdf']))
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="{{ $iconColor }}">
+                                                <path d="M8.267 14.68c-.184 0-.308.018-.372.036v1.178c.076.018.171.023.302.023.479 0 .774-.242.774-.651 0-.366-.254-.586-.704-.586zm3.487.012c-.2 0-.33.018-.407.036v2.61c.077.018.201.018.313.018.817.006 1.349-.444 1.349-1.396.006-.83-.479-1.268-1.255-1.268z"/>
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM9.498 16.19c-.309.29-.765.42-1.296.42a2.23 2.23 0 0 1-.308-.018v1.426H7v-3.936A7.558 7.558 0 0 1 8.219 14c.557 0 .953.106 1.22.319.254.202.426.533.426.923-.001.392-.131.723-.367.948zm3.807 1.355c-.42.349-1.059.515-1.84.515-.468 0-.799-.03-1.024-.06v-3.917A7.947 7.947 0 0 1 11.66 14c.757 0 1.249.136 1.633.426.415.308.675.799.675 1.504 0 .763-.279 1.29-.663 1.615zM17 14.77h-1.532v.911H16.9v.734h-1.432v1.604h-.906V14.03H17v.74zM14 9h-1V4l5 5h-4z"/>
+                                            </svg>
+                                        @elseif(in_array($extension, ['doc', 'docx']))
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="{{ $iconColor }}">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM7 18v-2h3v-1H7v-2h5v1h-3v1h3v2H7zm7-8V4.5L19.5 10H14z"/>
+                                            </svg>
+                                        @elseif(in_array($extension, ['xls', 'xlsx']))
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="{{ $iconColor }}">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM7 18v-2h3v-1H7v-2h5v1h-3v1h3v2H7zm7-8V4.5L19.5 10H14z"/>
+                                            </svg>
+                                        @else
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="{{ $iconColor }}">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM7 18v-2h3v-1H7v-2h5v1h-3v1h3v2H7zm7-8V4.5L19.5 10H14z"/>
+                                            </svg>
+                                        @endif
+                                    </div>
+                                    <div class="document-info">
+                                        <div class="document-name">{{ $originalName }}</div>
+                                        <div class="document-type">Dokumen {{ strtoupper($extension) }}</div>
+                                        <div class="document-status">Tersedia dalam sistem</div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endif
+                </div>
             @endif
         </div>
     </div>

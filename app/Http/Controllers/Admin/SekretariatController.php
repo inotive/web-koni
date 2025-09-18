@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use setasign\Fpdi\Fpdi;
 use setasign\Fpdi\PdfParser\StreamReader;
+use setasign\Fpdi\PdfReader\PageBoundaries;
 
 class SekretariatController extends Controller
 {
@@ -64,8 +65,9 @@ class SekretariatController extends Controller
         // Get total budget and kegiatan count for sekretariat
         $current_budget = Lpj::where('parent_id', $parentCategory->id)->sum('jumlah_harga');
         $kegiatan_count = Lpj::where('parent_id', $parentCategory->id)->count();
-        $target_anggaran = $parentCategory->target_anggaran ?? 0;
-        $target_kegiatan = $parentCategory->target_kegiatan ?? 0;
+        $target = \App\Models\Target::where('id_lpj', $parentCategory->id)->first();
+        $target_anggaran = $target->target_anggaran ?? 0;
+        $target_kegiatan = $target->target_kegiatan ?? 0;
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.sekretariat._table', compact('kegiatanLainnya'))->render();
@@ -98,7 +100,7 @@ class SekretariatController extends Controller
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array|max:10',
-            'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj.*' => 'file|mimes:pdf|max:10240',
         ], [
             'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
@@ -106,7 +108,7 @@ class SekretariatController extends Controller
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
             'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
-            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
 
@@ -217,7 +219,7 @@ class SekretariatController extends Controller
             'foto_jurnal' => 'nullable|array|max:10',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array|max:10',
-            'dokumen_lpj.*' => 'file|mimes:pdf,doc,docx,xls,xlsx|max:10240',
+            'dokumen_lpj.*' => 'file|mimes:pdf|max:10240',
             'existing_foto_jurnal' => 'nullable|array',
             'existing_dokumen_lpj' => 'nullable|array',
             'deleted_fotos' => 'nullable|array',
@@ -229,7 +231,7 @@ class SekretariatController extends Controller
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
             'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
-            'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
+            'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
         ]);
 
@@ -526,31 +528,80 @@ class SekretariatController extends Controller
     public function export($id)
     {
         try {
-            \Log::info('Exporting sekretariat LPJ with ID: ' . $id);
-            
             $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                               ->findOrFail($id);
 
-            // Data untuk ditampilkan di PDF
-            $data = [
-                'sekretariat' => $sekretariat,
-            ];
+            // Create initial PDF with letterhead and content
+            $pdf = Pdf::loadView('admin.laporan-lpj.sekretariat.export', compact('sekretariat'));
+            $pdf->setPaper('A4', 'portrait');
 
-            // Generate PDF menggunakan DomPDF
-            $pdf = Pdf::loadView('admin.laporan-lpj.sekretariat.export', $data)
-                      ->setPaper('a4', 'portrait');
+            // Generate initial PDF content
+            $tempMainFile = tempnam(sys_get_temp_dir(), 'main_pdf_');
+            file_put_contents($tempMainFile, $pdf->output());
 
-            // Nama file PDF
-            $fileName = 'Laporan_Sekretariat_' . Str::slug($sekretariat->nama_program) . '.pdf';
+            // Initialize FPDI for PDF merging
+            $fpdi = new Fpdi();
 
-            \Log::info('Successfully generated PDF for sekretariat LPJ: ' . $fileName);
-            return $pdf->download($fileName);
-        } catch (\Exception $e) {
-            // Log error
-            \Log::error('Error exporting PDF: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+            // Add main content pages
+            $pageCount = $fpdi->setSourceFile($tempMainFile);
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                $fpdi->AddPage();
+                $fpdi->useTemplate($templateId);
+            }
+
+            // Collect all PDF documents
+            $pdfFiles = [];
+            if ($sekretariat->dokumen_lpj && is_array($sekretariat->dokumen_lpj)) {
+                foreach ($sekretariat->dokumen_lpj as $dokumen) {
+                    $path = is_array($dokumen) ? ($dokumen['path'] ?? null) : (is_string($dokumen) ? $dokumen : null);
+                    if ($path && strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'pdf') {
+                        $pdfFiles[] = $path;
+                    }
+                }
+            }
+            if ($sekretariat->dokumen_lpj_pdf) {
+                 $path = is_array($sekretariat->dokumen_lpj_pdf) ? ($sekretariat->dokumen_lpj_pdf['path'] ?? null) : (is_string($sekretariat->dokumen_lpj_pdf) ? $sekretariat->dokumen_lpj_pdf : null);
+                if ($path) {
+                    $pdfFiles[] = $path;
+                }
+            }
             
-            // Return error response with redirect
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor laporan. Silakan coba lagi.');
+            // Merge PDF attachments
+            foreach ($pdfFiles as $pdfFile) {
+                $filePath = storage_path('app/public/' . $pdfFile);
+
+                if (file_exists($filePath)) {
+                    try {
+                        $attachmentPageCount = $fpdi->setSourceFile($filePath);
+                        for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
+                            $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                            $fpdi->AddPage();
+                            $fpdi->useTemplate($templateId);
+                        }
+                    } catch (\Exception $e) {
+                        \Log::warning("Could not merge PDF file: {$pdfFile}. Error: " . $e->getMessage());
+                    }
+                }
+            }
+
+            // Clean up temporary file
+            unlink($tempMainFile);
+
+            // Generate final PDF
+            $finalPdf = $fpdi->Output('S');
+
+            // Generate filename
+            $filename = 'Laporan_Sekretariat_' . Str::slug($sekretariat->nama_program) . '_' . date('Y-m-d') . '.pdf';
+
+            return response($finalPdf, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error exporting PDF for Sekretariat: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal membuat laporan PDF. Terjadi kesalahan.');
         }
     }
 
@@ -567,14 +618,18 @@ class SekretariatController extends Controller
         try {
             $parentCategory = $this->getOrCreateParentCategory();
             
-            $parentCategory->update([
-                'target_anggaran' => $request->target_anggaran,
-                'target_kegiatan' => $request->target_kegiatan,
-            ]);
+            $target = \App\Models\Target::updateOrCreate(
+                ['id_lpj' => $parentCategory->id],
+                [
+                    'target_anggaran' => $request->target_anggaran,
+                    'target_kegiatan' => $request->target_kegiatan,
+                ]
+            );
 
             return response()->json([
                 'success' => true,
-                'message' => 'Target berhasil diperbarui.'
+                'message' => 'Target berhasil diperbarui.',
+                'target' => $target
             ]);
         } catch (\Exception $e) {
             return response()->json([

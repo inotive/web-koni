@@ -63,7 +63,7 @@
                 <?php endif; ?>
 
                 <!-- Laporan LPJ -->
-                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya', 'pengajuan-modifikasi-laporan'])): ?>
+                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->any(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya', 'pengajuan-modifikasi-laporan-view', 'pengajuan-modifikasi-laporan-manage'])): ?>
                     <?php
                         $isLaporanLPJActive =
                             request()->is('admin/laporan-lpj*') ||
@@ -120,7 +120,7 @@
                                     </a>
                                 </li>
                                 <?php endif; ?>
-                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('pengajuan-modifikasi-laporan')): ?>
+                                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('pengajuan-modifikasi-laporan-view')): ?>
                                 <li class="menu-item">
                                     <a class="menu-link <?php echo e(request()->is('admin/laporan-lpj/pengajuan*') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('admin.laporan-lpj.pengajuan.index')); ?>">

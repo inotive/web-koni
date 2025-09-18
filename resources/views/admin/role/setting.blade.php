@@ -27,7 +27,16 @@
             </div>
             <div class="card-body">
                 <div class="d-flex flex-wrap">
+                    @php
+                        $pengajuanView = $permissions->firstWhere('name', 'pengajuan-modifikasi-laporan-view');
+                        $pengajuanManage = $permissions->firstWhere('name', 'pengajuan-modifikasi-laporan-manage');
+                    @endphp
+
                     @foreach ($permissions as $permission)
+                        @if(in_array($permission->name, ['pengajuan-modifikasi-laporan-view', 'pengajuan-modifikasi-laporan-manage']))
+                            @continue
+                        @endif
+
                         @php
                             $hasPermission = $role->permissions->contains('id', $permission->id);
                         @endphp
@@ -46,8 +55,6 @@
                                     <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian bidang-bidang.</p>
                                 @elseif ($permission->name === 'laporan-lpj-kegiatan-lainnya')
                                     <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian kegiatan lainnya.</p>
-                                @elseif ($permission->name === 'pengajuan-modifikasi-laporan')
-                                    <p class="mb-3 desc">Memberikan wewenang untuk menerima atau tidak menerima pengajuan modifikasi laporan pertanggung jawaban.</p>
                                 @elseif ($permission->name === 'database-bendahara')
                                     <p class="mb-3 desc">Mengelola seluruh data master yang berkaitan dengan keuangan dan
                                         perbendaharaan KONI.</p>
@@ -89,6 +96,31 @@
                             </div>
                         </div>
                     @endforeach
+
+                    {{-- Custom block for Pengajuan --}}
+                    <div class="col-4 mb-5">
+                        <div class="p-3">
+                            <h6 class="fw-medium mb-5">Pengajuan Modifikasi Laporan</h6>
+                            
+                            @if ($pengajuanView)
+                                <p class="mb-3 desc">Memberikan hak akses untuk hanya melihat halaman pengajuan modifikasi laporan.</p>
+                                <div class="form-check form-switch form-check-custom form-check-solid mb-3">
+                                    <input class="form-check-input statusSwitch" name="permissions[]" type="checkbox"
+                                        value="{{ $pengajuanView->id }}" {{ $role->permissions->contains('id', $pengajuanView->id) ? 'checked' : '' }} />
+                                    <label class="form-check-label">Lihat Data</label>
+                                </div>
+                            @endif
+
+                            @if ($pengajuanManage)
+                                <p class="mb-3 desc">Memberikan wewenang untuk menyetujui atau menolak pengajuan.</p>
+                                <div class="form-check form-switch form-check-custom form-check-solid">
+                                    <input class="form-check-input statusSwitch" name="permissions[]" type="checkbox"
+                                        value="{{ $pengajuanManage->id }}" {{ $role->permissions->contains('id', $pengajuanManage->id) ? 'checked' : '' }} />
+                                    <label class="form-check-label">Kelola Data</label>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
