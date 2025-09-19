@@ -235,6 +235,7 @@
             border-top-color: var(--bs-tooltip-bg);
             border-bottom-color: var(--bs-tooltip-bg);
         }
+
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -579,7 +580,7 @@ $(document).ready(function() {
                                 timer: 1500,
                                 showConfirmButton: false
                             }).then(() => {
-                                window.location.reload(); 
+                                window.location.reload();
                             });
                         } else {
                             Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus', 'error');
@@ -701,27 +702,37 @@ $(document).ready(function() {
         // Status indicator
         if (statusIcon) {
             const canPengajuanModifikasi = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
-            const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
-            const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
-            const hasToken = pengajuan && pengajuan.token > 0;
+            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
 
-                if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                    statusIcon.innerHTML = 'Terbuka';
-                    statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
+            // Handle the pengajuan data - it should be a single object, not an array
+            const pengajuan = data.pengajuan; // This is the hasOne relationship
+            const hasToken = pengajuan && pengajuan.status === 'disetujui' && pengajuan.token > 0;
+
+            let isModifiableStatus = false;
+            if (canPengajuanModifikasi) {
+                isModifiableStatus = true;
+            } else if (isModifiable && hasToken) {
+                isModifiableStatus = true;
+            }
+
+            if (isModifiableStatus) {
+                statusIcon.innerHTML = 'Terbuka';
+                statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
+            } else {
+                statusIcon.innerHTML = 'Terkunci';
+                statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+            }
+
+            const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
+            if (ajukanBtn) {
+                // Show the pengajuan button only if the user cannot modify (no permission and no valid token)
+                if (isModifiableStatus) {
+                    ajukanBtn.style.display = 'none';
                 } else {
-                    statusIcon.innerHTML = 'Terkunci';
-                    statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+                    ajukanBtn.style.display = '';
                 }
-
-                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
-                        if (ajukanBtn) {
-                            if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                                ajukanBtn.style.display = 'none';
-                            } else {
-                                ajukanBtn.style.display = '';
-                            }
-                        }
-                }
+            }
+        }
 
         $('#detailModal').data('lpj-id', data.id);
 
@@ -774,7 +785,7 @@ $(document).ready(function() {
                                     <div class="fw-medium">${name}</div>
                                     <small class="text-muted">${ext.toUpperCase()}</small>
                                 </div>
-                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
                                     <i class="fas fa-download me-1"></i>Unduh
                                 </a>
                             </div>`;
@@ -813,7 +824,7 @@ $(document).ready(function() {
                                     <div class="fw-medium">${name}</div>
                                     <small class="text-muted">${ext.toUpperCase()}</small>
                                 </div>
-                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
                                     <i class="fas fa-download me-1"></i>Unduh
                                 </a>
                             </div>`;
