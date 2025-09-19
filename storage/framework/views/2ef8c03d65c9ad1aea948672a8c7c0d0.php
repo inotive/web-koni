@@ -865,12 +865,12 @@ $(document).ready(function() {
 
                     ${data.jumlah_harga ? `
                         <div class="mb-4">
-                            <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
+                            <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Total Anggaran</h6>
                             <div class="bg-light p-3 rounded">
                                 <div class="row g-3">
                                     ${data.jumlah_harga ? `
                                         <div class="col-md-6">
-                                            <label class="fw-semibold mb-1">Total Anggaran:</label>
+                                            
                                             <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                         </div>` : ''}
                                 </div>
