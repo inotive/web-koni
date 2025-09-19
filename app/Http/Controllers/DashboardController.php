@@ -70,21 +70,43 @@ class DashboardController extends Controller
             }
             
             // Menghitung serapan untuk setiap kegiatan
-            // Menghitung total serapan (induk + anak-anak)
-            $serapan_induk = $item->jumlah_harga;
-            $serapan_anak = $item->children->sum('jumlah_harga');
-            $serapan = $serapan_induk + $serapan_anak;
-            
-            // Untuk perhitungan dashboard, hanya nilai > 1 yang dihitung sebagai serapan aktif
-            // Kecualikan nilai 2 yang merupakan data default/test
-            $serapan_aktif_induk = ($item->jumlah_harga > 1 && $item->jumlah_harga != 2) ? $item->jumlah_harga : 0;
-            $serapan_aktif_anak = $item->children->sum(function($child) {
-                return ($child->jumlah_harga > 1 && $child->jumlah_harga != 2) ? $child->jumlah_harga : 0;
-            });
-            $serapan_aktif = $serapan_aktif_induk + $serapan_aktif_anak;
-            
+            $serapan_aktif = 0;
+
+            if ($item->id == 6) {
+                // Special handling for "Pembinaan Prestasi" (ID 6)
+                $total_serapan_pembinaan = 0;
+
+                // Loop through each Cabor (child) to calculate its specific absorption
+                foreach ($item->children as $child) {
+                    $grandchild_ids = Lpj::where('parent_id', $child->id)->pluck('id');
+                    
+                    $serapan_cabor = Lpj::whereIn('parent_id', $grandchild_ids)
+                        ->get()
+                        ->sum(function($greatGrandchild) {
+                            $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                            return ($harga > 1 && $harga != 2) ? $harga : 0;
+                        });
+                    
+                    // Attach the calculated absorption to the Cabor object for the view
+                    $child->serapan_cabor = $serapan_cabor;
+                    
+                    // Add to the total for "Pembinaan Prestasi"
+                    $total_serapan_pembinaan += $serapan_cabor;
+                }
+                $serapan_aktif = $total_serapan_pembinaan;
+
+            } else {
+                // Original logic for other activities
+                $serapan_aktif_induk = ($item->jumlah_harga > 1 && $item->jumlah_harga != 2) ? $item->jumlah_harga : 0;
+                $serapan_aktif_anak = $item->children->sum(function($child) {
+                    $harga = (int)($child->jumlah_harga ?? 0);
+                    return ($harga > 1 && $harga != 2) ? $harga : 0;
+                });
+                $serapan_aktif = $serapan_aktif_induk + $serapan_aktif_anak;
+            }
+
             $item->serapan = $serapan_aktif;
-            $item->total_serapan = $serapan; // Total serapan termasuk default
+            $item->total_serapan = $serapan_aktif; // Set total_serapan to the active absorption
             
             // Menambahkan ke total serapan
             $total_serapan += $serapan_aktif;

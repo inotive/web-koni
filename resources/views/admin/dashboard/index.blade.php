@@ -444,11 +444,8 @@
                                 <h6 class="mb-3">Detail Kegiatan Pembinaan Prestasi</h6>
                                 @foreach($item->children as $j => $child)
                                     @php
-                                        // Memastikan nilai serapan adalah numerik dan bukan null
-                                        $child_serapan = 0;
-                                        if (isset($child->jumlah_harga) && is_numeric($child->jumlah_harga)) {
-                                            $child_serapan = (int)$child->jumlah_harga;
-                                        }
+                                        // Serapan untuk setiap cabor sudah dihitung di controller
+                                        $child_serapan = $child->serapan_cabor ?? 0;
                                         
                                         // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
                                         $rka_per_kegiatan = 0;
@@ -519,10 +516,10 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         @php
-                                            // Memastikan total serapan adalah numerik
+                                            // Total serapan dihitung dari nilai `serapan_cabor` yang sudah ada
                                             $total_serapan_anak = 0;
                                             if (isset($item->children)) {
-                                                $total_serapan_anak = (int)$item->children->sum('jumlah_harga');
+                                                $total_serapan_anak = $item->children->sum('serapan_cabor');
                                             }
                                             
                                             // Memastikan nilai RKA adalah numerik

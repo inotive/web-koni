@@ -314,6 +314,8 @@
             margin-top: 5px;
             display: none;
             list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .dropdown-menu-custom.show {

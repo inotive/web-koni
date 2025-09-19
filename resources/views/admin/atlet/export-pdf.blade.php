@@ -153,13 +153,13 @@
             <thead>
                 <tr>
                     <th width="5%" class="text-center">No</th>
-                    <th width="25%">Nama Prestasi</th>
-                    <th width="15%">Kejuaraan</th>
+                    <th width="20%">Nama Prestasi</th>
+                    <th width="20%">Kejuaraan</th>
                     <th width="15%">Cabang Olahraga</th>
                     <th width="10%">Tingkat</th>
                     <th width="15%">Tempat</th>
-                    <th width="10%">Tahun</th>
-                    <th width="10%">Medali</th>
+                    <th width="8%">Tahun</th>
+                    <th width="7%">Medali</th>
                 </tr>
             </thead>
             <tbody>
@@ -168,7 +168,7 @@
                     <td class="text-center">{{ $index + 1 }}</td>
                     <td>{{ $prestasi->nama_prestasi ?? '-' }}</td>
                     <td>{{ $prestasi->kejuaraan ?? '-' }}</td>
-                    <td>{{ $prestasi->cabangOlahraga->nama_cabor ?? '-' }}</td>
+                    <td>{{ $atlet->cabangOlahraga->nama_cabor ?? '-' }}</td>
                     <td>{{ $prestasi->tingkat ?? '-' }}</td>
                     <td>{{ $prestasi->tempat ?? '-' }}</td>
                     <td>{{ $prestasi->tahun ?? '-' }}</td>
