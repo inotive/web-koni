@@ -1668,7 +1668,7 @@
                         ${data.tanggal_kegiatan ? `
                                             <div>
                                                 <label class="mb-1 fw-semibold text-dark">Tanggal Kegiatan:</label>
-                                                <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                                <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID').split('/').join('/')}</p>
                                             </div>
                                         ` : ''}
                     </div>

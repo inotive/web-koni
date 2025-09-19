@@ -609,12 +609,12 @@
         }
     </style>
 
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div class="flex-wrap gap-3 mb-4 d-flex justify-content-between align-items-center">
         <div>
             <strong>
-                <h1 class="fw-bold mb-1">Kegiatan Lainnya</h1>
+                <h1 class="mb-1 fw-bold">Kegiatan Lainnya</h1>
             </strong>
-            <h3 class="text-muted mb-0">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</h3>
+            <h3 class="mb-0 text-muted">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</h3>
         </div>
 
         <div class="d-flex align-items-center gap-2">
@@ -622,11 +622,11 @@
         </div>
     </div>
 
-    <div class="row g-3 mb-4">
+    <div class="mb-4 row g-3">
         <div class="col-12">
             <div class="top-progress-wrapper">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="text-muted mb-0">Total Anggaran</h3>
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0 text-muted">Total Anggaran</h3>
                     <!-- Tombol Edit (hanya ikon) -->
                     <a href="#" class="btn btn-sm btn-outline-primary" id="editAnggaranBtn"
                         title="Edit Target Anggaran">
@@ -656,8 +656,8 @@
                     }
                 ?>
 
-                <div class="d-flex justify-content-between mb-2">
-                    <h1 id="anggaranDisplay" class="fw-bold mb-1">Rp. <?php echo e(number_format($totalAnggaran ?? 0, 0, ',', '.')); ?>
+                <div class="mb-2 d-flex justify-content-between">
+                    <h1 id="anggaranDisplay" class="mb-1 fw-bold">Rp. <?php echo e(number_format($totalAnggaran ?? 0, 0, ',', '.')); ?>
 
                         / Rp. <?php echo e(number_format($targetAnggaran, 0, ',', '.')); ?></h1>
                     <h3 id="anggaranPercentage" class="text-muted mb-0" data-bs-toggle="tooltip"
@@ -677,15 +677,15 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-row-reverse bd-highlight mt-2">
-                    <div class="info-label mt-1 d-flex align-items-center gap-2">
+                <div class="flex-row-reverse mt-2 d-flex bd-highlight">
+                    <div class="gap-2 mt-1 info-label d-flex align-items-center">
                         <span
-                            class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
+                            class="px-3 py-1 border badge bg-success-subtle text-success fw-semibold border-success-subtle">
                             <span id="kegiatanBerjalan"><?php echo e($totalKegiatan); ?></span> Kegiatan Berjalan
                         </span>
                         <span>/</span>
                         <span
-                            class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
+                            class="px-3 py-1 border badge bg-primary-subtle text-primary fw-semibold border-primary-subtle">
                             <?php echo e($targetKegiatan); ?> Target Kegiatan
                         </span>
                     </div>
@@ -695,8 +695,8 @@
     </div>
 
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-            <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - 2025</h3>
+        <div class="flex-wrap py-5 card-header d-flex justify-content-between align-items-center">
+            <h3 class="mb-0 card-title fw-bold fs-4">Daftar Kegiatan Lainnya - 2025</h3>
 
             <div class="d-flex align-items-center gap-2 flex-wrap">
                 <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.create')); ?>" class="btn btn-primary"
@@ -741,7 +741,7 @@
                     <h5 class="modal-title" id="previewModalLabel" style="color: #333 !important;">Preview Files</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-0" style="height: 70vh;">
+                <div class="p-0 modal-body" style="height: 70vh;">
                     <div class="preview-container h-100 position-relative d-flex align-items-center justify-content-center"
                         style="background: #f8f9fa;">
                         <div id="previewSlides" class="w-100 h-100"></div>
@@ -787,7 +787,7 @@
                             style="padding: 6px 10px;"></span>
                     </div>
                     <!-- Tombol Export -->
-                    <div class="ms-auto d-flex align-items-center gap-2">
+                    <div class="gap-2 ms-auto d-flex align-items-center">
                         <a href="#" id="exportBtn" class="btn btn-success btn-sm" target="_blank">
                             <i class="fas fa-file-pdf me-1"></i> Export PDF
                         </a>
@@ -843,15 +843,15 @@
     <div class="modal fade" id="editAnggaranModal" tabindex="-1" aria-labelledby="editAnggaranModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 gap-5 px-10 py-8">
+            <div class="gap-5 px-10 py-8 modal-content rounded-4">
                 <div class="d-flex justify-content-between align-items-center">
-                    <div class="fs-2 fw-bold leading-5">Edit Target Anggaran & Kegiatan</div>
+                    <div class="leading-5 fs-2 fw-bold">Edit Target Anggaran & Kegiatan</div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="editAnggaranForm" class="d-grid gap-4">
+                <form id="editAnggaranForm" class="gap-4 d-grid">
                     <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Target Anggaran</div>
+                        <div class="mb-3 text-gray-800 fw-semibold required">Target Anggaran</div>
                         <input type="text" name="target_anggaran" id="target_anggaran"
                             value="<?php echo e(number_format($targetAnggaran ?? 200000000000, 0, ',', '.')); ?>"
                             placeholder="Masukkan target anggaran" class="form-control bg-light border border-gray-400"
@@ -860,7 +860,7 @@
                     </div>
 
                     <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Target Kegiatan</div>
+                        <div class="mb-3 text-gray-800 fw-semibold required">Target Kegiatan</div>
                         <input type="number" name="target_kegiatan" id="target_kegiatan"
                             value="<?php echo e($targetKegiatan ?? 10); ?>" placeholder="Masukkan jumlah target kegiatan"
                             class="form-control bg-light border border-gray-400" required 
@@ -869,9 +869,9 @@
                     </div>
                 </form>
 
-                <div class="d-grid py-4">
+                <div class="py-4 d-grid">
                     <button type="button" id="simpanAnggaranBtn"
-                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                        class="gap-2 p-4 text-white rounded border-0 bg-danger fw-bold d-flex align-items-center justify-content-center">
                         <span class="btn-text">Simpan Target</span>
                     </button>
                 </div>
@@ -1494,13 +1494,23 @@
                     // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
                     const isSuperAdmin = <?php echo e(auth()->user()->hasRole('superadmin') ? 'true' : 'false'); ?>;
                     const hasApprovalPermission =
-                        <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
+                        <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false'); ?>;
                     const isModifiableByCurrentUser = data.modifiable_by_user_id && data
                         .modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
 
-                    // Cek apakah token modifikasi sudah kadaluarsa atau sudah digunakan
-                    const isTokenExpiredOrUsed = data.modification_token_status === 'expired' || data
-                        .modification_token_status === 'used';
+                    // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
+                    if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
+                        statusIcon.innerHTML = '<i class="fas fa-lock-open me-1"></i> Terbuka';
+                        statusIcon.className = 'badge bg-success fs-7 d-flex align-items-center';
+                    } else {
+                        statusIcon.innerHTML = '<i class="fas fa-lock me-1"></i> Terkunci';
+                        statusIcon.className = 'badge bg-danger fs-7 d-flex align-items-center';
+                    }
+                }
+
+                // Cek apakah token modifikasi sudah kadaluarsa atau sudah digunakan
+                const isTokenExpiredOrUsed = data.modification_token_status === 'expired' || data
+                    .modification_token_status === 'used';
 
                     // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
                     // Kecuali jika token sudah kadaluarsa atau sudah digunakan
@@ -1519,48 +1529,48 @@
                         statusIcon.className = 'badge bg-danger fw-semibold fs-7 d-flex align-items-center';
                         statusIcon.style.cssText = 'padding: 6px 10px;';
 
-                        // Tampilkan tombol "Ajukan Perubahan" saat status Terkunci
-                        if (ajukanPerubahanBtn) {
-                            ajukanPerubahanBtn.style.display = 'inline-flex';
-                        }
+                    // Tampilkan tombol "Ajukan Perubahan" saat status Terkunci
+                    if (ajukanPerubahanBtn) {
+                        ajukanPerubahanBtn.style.display = 'inline-flex';
                     }
                 }
+            }
 
-                // Simpan ID LPJ dalam data modal
-                $('#detailModal').data('lpj-id', data.id);
+            // Simpan ID LPJ dalam data modal
+            $('#detailModal').data('lpj-id', data.id);
 
-                const formatRupiah = (num) => {
-                    if (!num) return 'Rp 0';
-                    return 'Rp ' + parseInt(num).toLocaleString('id-ID');
-                };
+            const formatRupiah = (num) => {
+                if (!num) return 'Rp 0';
+                return 'Rp ' + parseInt(num).toLocaleString('id-ID');
+            };
 
-                let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-                if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
-                    fotoJurnalHtml = `
+            let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+            if (data.foto_jurnal && Array.isArray(data.foto_jurnal) && data.foto_jurnal.length > 0) {
+                fotoJurnalHtml = `
             <div class="row g-3">
                 ${data.foto_jurnal.map(f => {
                     const path = typeof f === 'object' ? f.path : f;
                     const name = typeof f === 'object' ? (f.original_name || path.split('/').pop()) : path.split('/').pop();
                     return `
-                                <div class="col-6 col-md-4">
-                                    <div class="border rounded overflow-hidden" style="height: 120px;">
-                                        <img src="/storage/${path}"
-                                             class="w-100 h-100"
-                                             style="object-fit: cover; cursor: pointer;"
-                                             onclick="window.open('/storage/${path}', '_blank')"
-                                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
-                                        <div class="text-center small bg-light p-1">${name}</div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="overflow-hidden rounded border" style="height: 120px;">
+                                            <img src="/storage/${path}"
+                                                 class="w-100 h-100"
+                                                 style="object-fit: cover; cursor: pointer;"
+                                                 onclick="window.open('/storage/${path}', '_blank')"
+                                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center h-100 text-muted\\'>Error loading image</div>'">
+                                            <div class="p-1 text-center small bg-light">${name}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            `}).join('')}
+                                `}).join('')}
             </div>
         `;
-                }
+            }
 
-                let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-                if (data.dokumen_lpj && Array.isArray(data.dokumen_lpj) && data.dokumen_lpj.length > 0) {
-                    dokumenHtml = `
-            <div class="d-flex flex-column gap-2">
+            let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+            if (data.dokumen_lpj && Array.isArray(data.dokumen_lpj) && data.dokumen_lpj.length > 0) {
+                dokumenHtml = `
+            <div class="gap-2 d-flex flex-column">
                 ${data.dokumen_lpj.map(d => {
                     const path = typeof d === 'object' ? d.path : d;
                     const name = typeof d === 'object' ? (d.original_name || path.split('/').pop()) : path.split('/').pop();
@@ -1573,29 +1583,29 @@
                     else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) iconClass = 'fas fa-file-image text-info';
 
                     return `
-                                    <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                        <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
-                                        <div class="flex-grow-1">
-                                            <div class="fw-medium text-dark">${name}</div>
-                                            <small class="text-muted">${extension.toUpperCase()}</small>
+                                        <div class="p-2 rounded border d-flex align-items-center bg-light">
+                                            <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-medium text-dark">${name}</div>
+                                                <small class="text-muted">${extension.toUpperCase()}</small>
+                                            </div>
+                                            <a href="/storage/${path}"
+                                               target="_blank"
+                                               class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-download me-1"></i>Unduh
+                                            </a>
                                         </div>
-                                        <a href="/storage/${path}"
-                                           target="_blank"
-                                           class="btn btn-outline-primary btn-sm">
-                                            <i class="fas fa-download me-1"></i>Unduh
-                                        </a>
-                                    </div>
-                                `;
+                                    `;
                 }).join('')}
             </div>
         `;
-                }
+            }
 
-                // Tambahkan penanganan untuk Dokumen LPJ (PDF)
-                let dokumenLpjHtml = '<div class="text-muted fst-italic">Tidak ada dokumen LPJ tersedia</div>';
-                if (data.dokumen_lpj_pdf && Array.isArray(data.dokumen_lpj_pdf) && data.dokumen_lpj_pdf.length > 0) {
-                    dokumenLpjHtml = `
-            <div class="d-flex flex-column gap-2">
+            // Tambahkan penanganan untuk Dokumen LPJ (PDF)
+            let dokumenLpjHtml = '<div class="text-muted fst-italic">Tidak ada dokumen LPJ tersedia</div>';
+            if (data.dokumen_lpj_pdf && Array.isArray(data.dokumen_lpj_pdf) && data.dokumen_lpj_pdf.length > 0) {
+                dokumenLpjHtml = `
+            <div class="gap-2 d-flex flex-column">
                 ${data.dokumen_lpj_pdf.map(d => {
                     const path = typeof d === 'object' ? d.path : d;
                     const name = typeof d === 'object' ? (d.original_name || path.split('/').pop()) : path.split('/').pop();
@@ -1605,130 +1615,130 @@
                     const iconClass = 'fas fa-file-pdf text-danger';
 
                     return `
-                            <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
-                                <div class="flex-grow-1">
-                                    <div class="fw-medium text-dark">${name}</div>
-                                    <small class="text-muted">${extension.toUpperCase()}</small>
+                                <div class="p-2 rounded border d-flex align-items-center bg-light">
+                                    <i class="${iconClass} me-3" style="font-size: 1.2em;"></i>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-medium text-dark">${name}</div>
+                                        <small class="text-muted">${extension.toUpperCase()}</small>
+                                    </div>
+                                    <a href="/storage/${path}"
+                                       target="_blank"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-download me-1"></i>Unduh
+                                    </a>
                                 </div>
-                                <a href="/storage/${path}"
-                                   target="_blank"
-                                   class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-download me-1"></i>Unduh
-                                </a>
-                            </div>
-                        `;
+                            `;
                 }).join('')}
             </div>
         `;
-                }
+            }
 
-                modalBody.innerHTML = `
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-4">
+            modalBody.innerHTML = `
+        <div class="border-0 shadow-sm card">
+            <div class="p-4 card-body">
                 <div class="mb-4">
-                    <h6 class="fw-bold text-primary mb-3 d-flex align-items-center">
+                    <h6 class="mb-3 fw-bold text-primary d-flex align-items-center">
                         <i class="fas fa-info-circle me-2"></i>
                         Informasi Kegiatan
                     </h6>
-                    <div class="bg-light p-3 rounded">
+                    <div class="p-3 rounded bg-light">
                         <div class="mb-2">
-                            <label class="fw-semibold text-dark mb-1">Nama Program:</label>
+                            <label class="mb-1 fw-semibold text-dark">Nama Program:</label>
                             <p class="mb-0 text-dark">${data.nama_program || 'N/A'}</p>
                         </div>
                         ${data.nama_kegiatan ? `
-                                        <div class="mb-2">
-                                            <label class="fw-semibold text-dark mb-1">Nama Kegiatan:</label>
-                                            <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
-                                        </div>
-                                    ` : ''}
+                                            <div class="mb-2">
+                                                <label class="mb-1 fw-semibold text-dark">Nama Kegiatan:</label>
+                                                <p class="mb-0 text-dark">${data.nama_kegiatan}</p>
+                                            </div>
+                                        ` : ''}
                         ${data.volume ? `
-                                        <div class="mb-2">
-                                            <label class="fw-semibold text-dark mb-1">Volume:</label>
-                                            <p class="mb-0 text-dark">${data.volume}</p>
-                                        </div>
-                                    ` : ''}
+                                            <div class="mb-2">
+                                                <label class="mb-1 fw-semibold text-dark">Volume:</label>
+                                                <p class="mb-0 text-dark">${data.volume}</p>
+                                            </div>
+                                        ` : ''}
                         ${data.tempat_kegiatan ? `
-                                        <div class="mb-2">
-                                            <label class="fw-semibold text-dark mb-1">Tempat Kegiatan:</label>
-                                            <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
-                                        </div>
-                                    ` : ''}
+                                            <div class="mb-2">
+                                                <label class="mb-1 fw-semibold text-dark">Tempat Kegiatan:</label>
+                                                <p class="mb-0 text-dark">${data.tempat_kegiatan}</p>
+                                            </div>
+                                        ` : ''}
                         ${data.tanggal_kegiatan ? `
-                                        <div>
-                                            <label class="fw-semibold text-dark mb-1">Tanggal Kegiatan:</label>
-                                            <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
-                                        </div>
-                                    ` : ''}
+                                            <div>
+                                                <label class="mb-1 fw-semibold text-dark">Tanggal Kegiatan:</label>
+                                                <p class="mb-0 text-dark">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID').split('/').join('/')}</p>
+                                            </div>
+                                        ` : ''}
                     </div>
                 </div>
 
                 ${data.jumlah_harga_satuan || data.jumlah_harga ? `
-                                <div class="mb-4">
-                                    <h6 class="fw-bold text-success mb-3 d-flex align-items-center">
-                                        <i class="fas fa-calculator me-2"></i>
-                                        Rincian Anggaran
-                                    </h6>
-                                    <div class="bg-light p-3 rounded">
-                                        <div class="row g-3">
-                                            ${data.jumlah_harga_satuan ? `
+                                    <div class="mb-4">
+                                        <h6 class="mb-3 fw-bold text-success d-flex align-items-center">
+                                            <i class="fas fa-calculator me-2"></i>
+                                            Rincian Anggaran
+                                        </h6>
+                                        <div class="p-3 rounded bg-light">
+                                            <div class="row g-3">
+                                                ${data.jumlah_harga_satuan ? `
                                     <div class="col-md-6">
-                                        <label class="fw-semibold text-dark mb-1">Harga Satuan:</label>
+                                        <label class="mb-1 fw-semibold text-dark">Harga Satuan:</label>
                                         <p class="mb-0 text-success fs-6 fw-bold">${formatRupiah(data.jumlah_harga_satuan)}</p>
                                     </div>
                                 ` : ''}
-                                            ${data.jumlah_harga ? `
+                                                ${data.jumlah_harga ? `
                                     <div class="col-md-6">
-                                        <label class="fw-semibold text-dark mb-1">Total Anggaran:</label>
+                                        <label class="mb-1 fw-semibold text-dark">Total Anggaran:</label>
                                         <p class="mb-0 text-info fs-6 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                     </div>
                                 ` : ''}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ` : ''}
+                                ` : ''}
 
                 ${data.sumber_dana ? `
-                                <div class="mb-4">
-                                    <h6 class="fw-bold text-info mb-3 d-flex align-items-center">
-                                        <i class="fas fa-money-bill me-2"></i>
-                                        Sumber Dana
-                                    </h6>
-                                    <div class="bg-light p-3 rounded">
-                                        <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                                    <div class="mb-4">
+                                        <h6 class="mb-3 fw-bold text-info d-flex align-items-center">
+                                            <i class="fas fa-money-bill me-2"></i>
+                                            Sumber Dana
+                                        </h6>
+                                        <div class="p-3 rounded bg-light">
+                                            <p class="mb-0 text-dark">${data.sumber_dana}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            ` : ''}
+                                ` : ''}
 
                 <div class="mb-4">
-                    <h6 class="fw-bold text-warning mb-3 d-flex align-items-center">
+                    <h6 class="mb-3 fw-bold text-warning d-flex align-items-center">
                         <i class="fas fa-paperclip me-2"></i>
                         Lampiran
                     </h6>
 
                     <div class="mb-3">
-                        <label class="fw-semibold text-dark mb-2 d-block">
+                        <label class="mb-2 fw-semibold text-dark d-block">
                             <i class="fas fa-camera me-1"></i>Foto Jurnal:
                         </label>
-                        <div class="bg-light p-3 rounded">
+                        <div class="p-3 rounded bg-light">
                             ${fotoJurnalHtml}
                         </div>
                     </div>
 
                     <div class="mb-3">
-                        <label class="fw-semibold text-dark mb-2 d-block">
+                        <label class="mb-2 fw-semibold text-dark d-block">
                             <i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:
                         </label>
-                        <div class="bg-light p-3 rounded">
+                        <div class="p-3 rounded bg-light">
                             ${dokumenHtml}
                         </div>
                     </div>
 
                     <div>
-                        <label class="fw-semibold text-dark mb-2 d-block">
+                        <label class="mb-2 fw-semibold text-dark d-block">
                             <i class="fas fa-file-pdf me-1"></i>Dokumen LPJ:
                         </label>
-                        <div class="bg-light p-3 rounded">
+                        <div class="p-3 rounded bg-light">
                             ${dokumenLpjHtml}
                         </div>
                     </div>
@@ -1749,27 +1759,27 @@
         </div>
     `;
 
-                const modal = new bootstrap.Modal(document.getElementById('detailModal'));
-                modal.show();
-            };
+            const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+            modal.show();
+        };
 
-            window.showPreviewModal = function(files, type, title) {
-                if (!files || !Array.isArray(files) || files.length === 0) {
-                    console.error('Invalid files data for preview');
-                    return;
-                }
+        window.showPreviewModal = function(files, type, title) {
+            if (!files || !Array.isArray(files) || files.length === 0) {
+                console.error('Invalid files data for preview');
+                return;
+            }
 
-                currentFiles = files;
-                currentType = type || 'auto';
-                currentIndex = 0;
+            currentFiles = files;
+            currentType = type || 'auto';
+            currentIndex = 0;
 
-                if (modalTitle) {
-                    modalTitle.textContent = title || 'Preview Files';
-                }
+            if (modalTitle) {
+                modalTitle.textContent = title || 'Preview Files';
+            }
 
-                loadPreview();
-                $('#previewModal').modal('show');
-            };
+            loadPreview();
+            $('#previewModal').modal('show');
+        };
 
             // Initialize the page
             loadSavedTargets();
@@ -1780,77 +1790,77 @@
             toggleClearButton();
             updateSummaryCards(); // Initialize summary cards on page load
 
-            $('#search').on('input', function() {
-                const searchValue = $(this).val().trim();
-                toggleClearButton();
-                performSearch(searchValue);
-            });
+        $('#search').on('input', function() {
+            const searchValue = $(this).val().trim();
+            toggleClearButton();
+            performSearch(searchValue);
+        });
 
-            $('#clear-search').on('click', function() {
-                $('#search').val('').focus();
-                toggleClearButton();
-                performSearch('', true);
-            });
+        $('#clear-search').on('click', function() {
+            $('#search').val('').focus();
+            toggleClearButton();
+            performSearch('', true);
+        });
 
-            $('#search-button').on('click', function() {
-                const searchValue = $('#search').val().trim();
-                performSearch(searchValue, true);
-            });
+        $('#search-button').on('click', function() {
+            const searchValue = $('#search').val().trim();
+            performSearch(searchValue, true);
+        });
 
-            $('#search').on('keydown', function(e) {
-                switch (e.key) {
-                    case 'Escape':
-                        $(this).val('');
-                        toggleClearButton();
-                        performSearch('', true);
-                        break;
+        $('#search').on('keydown', function(e) {
+            switch (e.key) {
+                case 'Escape':
+                    $(this).val('');
+                    toggleClearButton();
+                    performSearch('', true);
+                    break;
 
-                    case 'Enter':
-                        e.preventDefault();
-                        const searchValue = $(this).val().trim();
-                        performSearch(searchValue, true);
-                        break;
-                }
-            });
+                case 'Enter':
+                    e.preventDefault();
+                    const searchValue = $(this).val().trim();
+                    performSearch(searchValue, true);
+                    break;
+            }
+        });
 
-            $('#search').on('focus', function() {
-                $(this).select();
-            });
+        $('#search').on('focus', function() {
+            $(this).select();
+        });
 
-            // Fungsi untuk tombol edit anggaran
-            $('#editAnggaranBtn').on('click', function(e) {
-                e.preventDefault();
-                // Tampilkan modal edit anggaran
-                $('#editAnggaranModal').modal('show');
-            });
+        // Fungsi untuk tombol edit anggaran
+        $('#editAnggaranBtn').on('click', function(e) {
+            e.preventDefault();
+            // Tampilkan modal edit anggaran
+            $('#editAnggaranModal').modal('show');
+        });
 
-            // Fungsi untuk memformat input anggaran secara real-time
-            $('#target_anggaran').on('input', function() {
-                let value = $(this).val();
+        // Fungsi untuk memformat input anggaran secara real-time
+        $('#target_anggaran').on('input', function() {
+            let value = $(this).val();
 
-                // Hapus semua karakter non-digit
-                value = value.replace(/[^\d]/g, '');
+            // Hapus semua karakter non-digit
+            value = value.replace(/[^\d]/g, '');
 
-                // Format sebagai Rupiah jika ada nilai
-                if (value) {
-                    // Format dengan fungsi utilitas
-                    value = formatRupiah(value);
-                }
+            // Format sebagai Rupiah jika ada nilai
+            if (value) {
+                // Format dengan fungsi utilitas
+                value = formatRupiah(value);
+            }
 
-                $(this).val(value);
-            });
+            $(this).val(value);
+        });
 
-            // Fungsi untuk menyimpan perubahan anggaran
-            $('#simpanAnggaranBtn').on('click', function() {
-                // Ambil nilai dari input
-                let targetAnggaran = $('#target_anggaran').val();
-                const targetKegiatan = $('#target_kegiatan').val();
+        // Fungsi untuk menyimpan perubahan anggaran
+        $('#simpanAnggaranBtn').on('click', function() {
+            // Ambil nilai dari input
+            let targetAnggaran = $('#target_anggaran').val();
+            const targetKegiatan = $('#target_kegiatan').val();
 
-                // Validasi input
-                if (!targetAnggaran || !targetKegiatan) {
-                    alert('Harap isi semua field dengan benar.');
-                    return;
-                }
+            // Validasi input
+            if (!targetAnggaran || !targetKegiatan) {
+                alert('Harap isi semua field dengan benar.');
+                return;
+            }
 
                 // Hapus format Rupiah dari input anggaran
                 targetAnggaran = targetAnggaran.replace(/[Rp.\s]/g, '');
@@ -1872,8 +1882,8 @@
                     console.warn('Could not save targets to localStorage:', e);
                 }
 
-                // Format angka dengan pemisah ribuan
-                const formattedAnggaran = formatRupiah(targetAnggaran);
+            // Format angka dengan pemisah ribuan
+            const formattedAnggaran = formatRupiah(targetAnggaran);
 
                 // Update tampilan target anggaran
                 const currentAnggaranText = $('#anggaranDisplay').text();
@@ -1908,19 +1918,19 @@
                 const kegiatanPercentage = targetKegiatan > 0 ? Math.min((currentKegiatan / targetKegiatan) * 100, 100) : 0;
                 const kegiatanPercentageRounded = Math.round(kegiatanPercentage);
 
-                $('.badge.bg-primary-subtle').html(`${targetKegiatan} Target Kegiatan`);
+            $('.badge.bg-primary-subtle').html(`${targetKegiatan} Target Kegiatan`);
 
-                // Tutup modal
-                $('#editAnggaranModal').modal('hide');
+            // Tutup modal
+            $('#editAnggaranModal').modal('hide');
 
-                // Tampilkan notifikasi
-                showNotification('Target anggaran berhasil diperbarui.', 'success');
-            });
+            // Tampilkan notifikasi
+            showNotification('Target anggaran berhasil diperbarui.', 'success');
+        });
 
-            $('#apply-filters').on('click', function() {
-                const jenisKegiatan = $('#filter-jenis-kegiatan').val();
-                const startDate = $('#filter-start-date').val();
-                const endDate = $('#filter-end-date').val();
+        $('#apply-filters').on('click', function() {
+            const jenisKegiatan = $('#filter-jenis-kegiatan').val();
+            const startDate = $('#filter-start-date').val();
+            const endDate = $('#filter-end-date').val();
 
                 updateTable({
                     'jenis_kegiatan_filter': jenisKegiatan,
@@ -1932,12 +1942,12 @@
                 });
             });
 
-            $('#reset-filters').on('click', function() {
-                $('#filter-jenis-kegiatan').val('');
-                $('#filter-start-date').val('');
-                $('#filter-end-date').val('');
-                $('#search').val('');
-                toggleClearButton();
+        $('#reset-filters').on('click', function() {
+            $('#filter-jenis-kegiatan').val('');
+            $('#filter-start-date').val('');
+            $('#filter-end-date').val('');
+            $('#search').val('');
+            toggleClearButton();
 
                 updateTable({
                     'search': '',
@@ -2013,8 +2023,8 @@
                     new bootstrap.Tooltip(tooltipElement);
                 }
 
-                // Update progress bar
-                $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
+            // Update progress bar
+            $('.progress-bar').css('width', anggaranPercentage + '%').attr('aria-valuenow', anggaranPercentage);
 
                 // Update kegiatan info dengan ID yang unik
                 const kegiatanPercentage = totalKegiatan > 0 ? Math.min((totalKegiatan / targetKegiatan) * 100, 100) : 0;
@@ -2025,7 +2035,7 @@
                 $('.badge.bg-primary-subtle').html(`${targetKegiatan} Target Kegiatan`);
             }
 
-            // Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
+        // Modifikasi fungsi updateTable yang sudah ada, tambahkan updateSummaryCards() di success callback
 
             $(document).on('change', 'select[name="per_page"]', function() {
                 const perPage = $(this).val();
@@ -2037,13 +2047,13 @@
                 });
             });
 
-            $(document).on('click', '.pagination-link', function(e) {
-                e.preventDefault();
-                const href = $(this).attr('href');
+        $(document).on('click', '.pagination-link', function(e) {
+            e.preventDefault();
+            const href = $(this).attr('href');
 
-                if (href && href !== '#') {
-                    const url = new URL(href);
-                    const page = url.searchParams.get('page');
+            if (href && href !== '#') {
+                const url = new URL(href);
+                const page = url.searchParams.get('page');
 
                     if (page) {
                         updateTable({
@@ -2055,11 +2065,11 @@
                 }
             });
 
-            $(document).on('click', '.sortable-header', function(e) {
-                e.preventDefault();
-                const url = new URL($(this).attr('href'));
-                const sort = url.searchParams.get('sort');
-                const direction = url.searchParams.get('direction');
+        $(document).on('click', '.sortable-header', function(e) {
+            e.preventDefault();
+            const url = new URL($(this).attr('href'));
+            const sort = url.searchParams.get('sort');
+            const direction = url.searchParams.get('direction');
 
                 updateTable({
                     'sort': sort,
@@ -2070,93 +2080,93 @@
                 });
             });
 
-            $(document).on('click', '.preview-btn', function(e) {
-                e.preventDefault();
-                const btn = $(this);
+        $(document).on('click', '.preview-btn', function(e) {
+            e.preventDefault();
+            const btn = $(this);
 
-                try {
-                    const filesData = btn.attr('data-files');
-                    const type = btn.attr('data-type') || 'auto';
-                    const title = btn.attr('data-title') || 'Preview Files';
+            try {
+                const filesData = btn.attr('data-files');
+                const type = btn.attr('data-type') || 'auto';
+                const title = btn.attr('data-title') || 'Preview Files';
 
-                    if (filesData) {
-                        const files = JSON.parse(filesData);
-                        showPreviewModal(files, type, title);
-                    } else {
-                        console.error('No files data found');
-                    }
-                } catch (error) {
-                    console.error('Error parsing preview data:', error);
+                if (filesData) {
+                    const files = JSON.parse(filesData);
+                    showPreviewModal(files, type, title);
+                } else {
+                    console.error('No files data found');
                 }
-            });
-
-            // Fungsi untuk menjaga tooltip tetap terlihat
-            window.keepTooltipVisible = function(element) {
-                const tooltip = bootstrap.Tooltip.getInstance(element);
-                if (tooltip) {
-                    clearTimeout(element.tooltipHideTimeout);
-                }
-            };
-
-            // Fungsi untuk menyembunyikan tooltip dengan delay
-            window.hideTooltipWithDelay = function(element) {
-                const tooltip = bootstrap.Tooltip.getInstance(element);
-                if (tooltip) {
-                    element.tooltipHideTimeout = setTimeout(() => {
-                        tooltip.hide();
-                    }, 300); // 300ms delay
-                }
-            };
-
-            // Menangani interaksi dengan tooltip
-            $(document).on('mouseenter', '.tooltip', function() {
-                // Saat kursor masuk ke tooltip, batalkan penutupan
-                const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
-                if (triggeringElement.length > 0) {
-                    clearTimeout(triggeringElement[0].tooltipHideTimeout);
-                }
-            });
-
-            $(document).on('mouseleave', '.tooltip', function() {
-                // Saat kursor keluar dari tooltip, sembunyikan tooltip dengan delay
-                const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
-                if (triggeringElement.length > 0) {
-                    const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
-                    if (tooltip) {
-                        triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
-                            tooltip.hide();
-                        }, 300);
-                    }
-                }
-            });
-
-            $(document).on('mouseenter', '.tooltip-content a', function() {
-                // Saat kursor masuk ke tautan dalam tooltip, batalkan penutupan
-                const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
-                if (triggeringElement.length > 0) {
-                    clearTimeout(triggeringElement[0].tooltipHideTimeout);
-                }
-            });
-
-            $(document).on('mouseleave', '.tooltip-content a', function() {
-                // Saat kursor keluar dari tautan dalam tooltip, sembunyikan tooltip dengan delay
-                const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
-                if (triggeringElement.length > 0) {
-                    const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
-                    if (tooltip) {
-                        triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
-                            tooltip.hide();
-                        }, 300);
-                    }
-                }
-            });
-
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function() {
-                    const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
-                    showSlide(newIndex);
-                });
+            } catch (error) {
+                console.error('Error parsing preview data:', error);
             }
+        });
+
+        // Fungsi untuk menjaga tooltip tetap terlihat
+        window.keepTooltipVisible = function(element) {
+            const tooltip = bootstrap.Tooltip.getInstance(element);
+            if (tooltip) {
+                clearTimeout(element.tooltipHideTimeout);
+            }
+        };
+
+        // Fungsi untuk menyembunyikan tooltip dengan delay
+        window.hideTooltipWithDelay = function(element) {
+            const tooltip = bootstrap.Tooltip.getInstance(element);
+            if (tooltip) {
+                element.tooltipHideTimeout = setTimeout(() => {
+                    tooltip.hide();
+                }, 300); // 300ms delay
+            }
+        };
+
+        // Menangani interaksi dengan tooltip
+        $(document).on('mouseenter', '.tooltip', function() {
+            // Saat kursor masuk ke tooltip, batalkan penutupan
+            const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+            if (triggeringElement.length > 0) {
+                clearTimeout(triggeringElement[0].tooltipHideTimeout);
+            }
+        });
+
+        $(document).on('mouseleave', '.tooltip', function() {
+            // Saat kursor keluar dari tooltip, sembunyikan tooltip dengan delay
+            const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+            if (triggeringElement.length > 0) {
+                const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
+                if (tooltip) {
+                    triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
+                        tooltip.hide();
+                    }, 300);
+                }
+            }
+        });
+
+        $(document).on('mouseenter', '.tooltip-content a', function() {
+            // Saat kursor masuk ke tautan dalam tooltip, batalkan penutupan
+            const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+            if (triggeringElement.length > 0) {
+                clearTimeout(triggeringElement[0].tooltipHideTimeout);
+            }
+        });
+
+        $(document).on('mouseleave', '.tooltip-content a', function() {
+            // Saat kursor keluar dari tautan dalam tooltip, sembunyikan tooltip dengan delay
+            const triggeringElement = $('.restricted-action[data-bs-toggle="tooltip"]');
+            if (triggeringElement.length > 0) {
+                const tooltip = bootstrap.Tooltip.getInstance(triggeringElement[0]);
+                if (tooltip) {
+                    triggeringElement[0].tooltipHideTimeout = setTimeout(() => {
+                        tooltip.hide();
+                    }, 300);
+                }
+            }
+        });
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function() {
+                const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
+                showSlide(newIndex);
+            });
+        }
 
             if (nextBtn) {
                 nextBtn.addEventListener('click', function() {
@@ -2288,88 +2298,88 @@
                 }, 50);
             }
 
-            document.addEventListener('keydown', function(e) {
-                if (previewModal && previewModal.classList.contains('show')) {
-                    if (e.key === 'ArrowLeft' && prevBtn) {
-                        prevBtn.click();
-                    } else if (e.key === 'ArrowRight' && nextBtn) {
-                        nextBtn.click();
-                    } else if (e.key === 'Escape') {
-                        $('#previewModal').modal('hide');
-                    }
+        document.addEventListener('keydown', function(e) {
+            if (previewModal && previewModal.classList.contains('show')) {
+                if (e.key === 'ArrowLeft' && prevBtn) {
+                    prevBtn.click();
+                } else if (e.key === 'ArrowRight' && nextBtn) {
+                    nextBtn.click();
+                } else if (e.key === 'Escape') {
+                    $('#previewModal').modal('hide');
                 }
-            });
+            }
+        });
 
-            $('#previewModal').on('show.bs.modal', function() {
-                if (currentFiles && currentFiles.length > 0) {
-                    showSlide(0);
-                }
-            });
+        $('#previewModal').on('show.bs.modal', function() {
+            if (currentFiles && currentFiles.length > 0) {
+                showSlide(0);
+            }
+        });
 
-            $('#ajukanPerubahanBtn').on('click', function() {
-                const lpjId = $('#detailModal').data('lpj-id');
-                $('#pengajuan_lpj_id').val(lpjId);
-                $('#detailModal').modal('hide');
-                new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
-            });
+        $('#ajukanPerubahanBtn').on('click', function() {
+            const lpjId = $('#detailModal').data('lpj-id');
+            $('#pengajuan_lpj_id').val(lpjId);
+            $('#detailModal').modal('hide');
+            new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
+        });
 
-            $('#submitPengajuanBtn').on('click', function() {
-                const lpjId = $('#pengajuan_lpj_id').val();
-                const alasan = $('#alasan').val();
+        $('#submitPengajuanBtn').on('click', function() {
+            const lpjId = $('#pengajuan_lpj_id').val();
+            const alasan = $('#alasan').val();
 
-                if (!alasan.trim()) {
-                    alert('Alasan harus diisi.');
-                    return;
-                }
+            if (!alasan.trim()) {
+                alert('Alasan harus diisi.');
+                return;
+            }
 
-                $.ajax({
-                    url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
-                    type: 'POST',
-                    data: {
-                        _token: '<?php echo e(csrf_token()); ?>',
-                        lpj_id: lpjId,
-                        alasan: alasan,
-                        user_id: <?php echo e(auth()->id()); ?>
+            $.ajax({
+                url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
+                type: 'POST',
+                data: {
+                    _token: '<?php echo e(csrf_token()); ?>',
+                    lpj_id: lpjId,
+                    alasan: alasan,
+                    user_id: <?php echo e(auth()->id()); ?>
 
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            $('#alasan').val('');
-                            $('#pengajuan_lpj_id').val('');
-                            $('#pengajuanModal').modal('hide');
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#alasan').val('');
+                        $('#pengajuan_lpj_id').val('');
+                        $('#pengajuanModal').modal('hide');
 
-                            // Setelah pengajuan berhasil, ubah status menjadi Terkunci
-                            const statusIcon = document.getElementById('statusIcon');
-                            const ajukanPerubahanBtn = document.getElementById(
-                                'ajukanPerubahanBtn');
+                        // Setelah pengajuan berhasil, ubah status menjadi Terkunci
+                        const statusIcon = document.getElementById('statusIcon');
+                        const ajukanPerubahanBtn = document.getElementById(
+                            'ajukanPerubahanBtn');
 
-                            if (statusIcon) {
-                                statusIcon.innerHTML =
-                                    '<i class="fas fa-lock me-1"></i> Terkunci';
-                                statusIcon.className =
-                                    'badge bg-danger fs-7 d-flex align-items-center';
-                            }
-
-                            if (ajukanPerubahanBtn) {
-                                ajukanPerubahanBtn.style.display = 'inline-flex';
-                            }
-
-                            showNotification('Pengajuan berhasil dikirim.', 'success');
-                        } else {
-                            showNotification(response.message || 'Gagal mengirim pengajuan.',
-                                'error');
+                        if (statusIcon) {
+                            statusIcon.innerHTML =
+                                '<i class="fas fa-lock me-1"></i> Terkunci';
+                            statusIcon.className =
+                                'badge bg-danger fs-7 d-flex align-items-center';
                         }
-                    },
-                    error: function() {
-                        showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
-                    }
-                });
-            });
 
-            $('#pengajuanModal').on('hidden.bs.modal', function() {
-                $('#alasan').val('');
-                $('#pengajuan_lpj_id').val('');
+                        if (ajukanPerubahanBtn) {
+                            ajukanPerubahanBtn.style.display = 'inline-flex';
+                        }
+
+                        showNotification('Pengajuan berhasil dikirim.', 'success');
+                    } else {
+                        showNotification(response.message || 'Gagal mengirim pengajuan.',
+                            'error');
+                    }
+                },
+                error: function() {
+                    showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                }
             });
+        });
+
+        $('#pengajuanModal').on('hidden.bs.modal', function() {
+            $('#alasan').val('');
+            $('#pengajuan_lpj_id').val('');
+        });
 
         });
     </script>
