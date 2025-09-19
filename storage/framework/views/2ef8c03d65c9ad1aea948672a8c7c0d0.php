@@ -888,7 +888,7 @@ $(document).ready(function() {
                             <div class="bg-light p-3 rounded">${dokumenHtml}</div>
                         </div>
                         <div>
-                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
+                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen LPJ:</label>
                             <div class="bg-light p-3 rounded">${dokumenLpj}</div>
                         </div>
                     </div>
