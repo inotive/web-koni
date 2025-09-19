@@ -72,6 +72,9 @@ class LpjController extends Controller
             $query->orderBy($sortField, $sortDirection);
         }
 
+        // Load the pengajuan relationship for the modifiable check
+        $query->with('pengajuan');
+
         // Pagination
         $perPage = $request->get('per_page', 10);
         $lpjData = $query->paginate($perPage)->withQueryString();
