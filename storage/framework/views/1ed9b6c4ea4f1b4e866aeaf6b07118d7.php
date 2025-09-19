@@ -151,8 +151,6 @@
 
     <!-- MAIN CONTENT -->
     <div class="content">
-        <div class="document-title">Laporan LPJ</div>
-
         <h3 class="section-title">Detail Program dan Kegiatan</h3>
         <table class="info-table">
             <tr>
@@ -170,7 +168,7 @@
             <?php if($lpj->created_at): ?>
             <tr>
                 <th>Tanggal Ditambahkan</th>
-                <td class="fw-bold"><?php echo e(\Carbon\Carbon::parse($lpj->created_at)->format('d F Y')); ?></td>
+                <td><?php echo e(\Carbon\Carbon::parse($lpj->created_at)->format('d F Y')); ?></td>
             </tr>
             <?php endif; ?>
             <?php if($lpj->lokasi_kegiatan): ?>
@@ -196,7 +194,7 @@
                             <td class="photo-td">
                                 <div class="photo-container">
                                     <img src="<?php echo e(storage_path('app/public/' . $foto)); ?>" alt="Dokumentasi <?php echo e($index + 1); ?>">
-                                    <div class="photo-caption">Dokumentasi <?php echo e($index + 1); ?></div>
+                                    <div class="photo-caption"><?php echo e(pathinfo($foto, PATHINFO_FILENAME)); ?></div>
                                 </div>
                             </td>
                             <?php if(($index + 1) % 3 == 0): ?>
