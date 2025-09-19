@@ -791,12 +791,12 @@
 
             // Selalu hapus class dropup agar dropdown selalu muncul ke bawah
             $dropdownAction.removeClass('dropup');
-            
+
             // Tambahkan pemeriksaan untuk memastikan dropdown tidak keluar dari viewport
             const dropdownRect = $dropdownAction[0].getBoundingClientRect();
             const menuRect = $menu[0].getBoundingClientRect();
             const viewportHeight = window.innerHeight;
-            
+
             // Jika dropdown akan keluar dari viewport bagian bawah, tetap paksa ke bawah
             // dengan menyesuaikan posisi maksimal
             if (dropdownRect.bottom + menuRect.height > viewportHeight) {
@@ -1102,7 +1102,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 Swal.fire({
-                    title: 'Menghapus...', 
+                    title: 'Menghapus...',
                     text: 'Mohon tunggu',
                     allowOutsideClick: false,
                     showConfirmButton: false,
@@ -1247,7 +1247,7 @@
                     }).join('')}
                 </div>`;
         }
-        
+
         let dokumenLpjPdfHtml = '';
         if (data.dokumen_lpj_pdf) {
             const path = typeof data.dokumen_lpj_pdf === 'object' ? data.dokumen_lpj_pdf.path : data.dokumen_lpj_pdf;
@@ -1291,11 +1291,10 @@
                     </div>
 
                     <div class="mb-4">
-                        <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
+                        <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Total Anggaran</h6>
                         <div class="bg-light p-3 rounded">
                             <div class="row g-3">
                                 <div class="col-md-12">
-                                    <label class="fw-semibold mb-1">Total Anggaran:</label>
                                     <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                 </div>
                             </div>
