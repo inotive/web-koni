@@ -308,8 +308,8 @@
                 <div class="info-card text-start position-relative">
                     
                     <div class="position-absolute top-0 end-0 mt-7 me-4 d-flex flex-column align-items-end">
-                        <span class="text-success fw-semibold small"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Berjalan</span>
-                        <div class="progress bg-light mt-1" style="width: 80px; height: 5px;">
+                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Berjalan</span>
+                        <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
                             <div class="progress-bar bg-success" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
                         </div>
                     </div>
@@ -483,7 +483,7 @@
                     
                     <?php if($item->id == 6 && $item->children->count() > 0): ?>
                         <div class="collapse" id="collapsePembinaanPrestasi">
-                            <div class="card card-body mt-2" style="padding: 12px; border-radius: 8px;">
+                            <div class="card card-body mt-2 mb-4" style="padding: 12px; border-radius: 8px;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="mb-0">Detail Kegiatan Pembinaan Prestasi</h6>
                                 </div>
