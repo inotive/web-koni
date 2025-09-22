@@ -262,11 +262,11 @@
             <div class="mb-4">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div>
-                        <h2 class="fs-2 mb-1">Selamat Datang, <span class="text-danger"><?php echo e(auth()->user()->name); ?></span></h2>
+                        <h2 class="fs-2 mb-1">Selamat Datang, <span class="text-danger"><?php echo e(auth()->user()->username); ?></span></h2>
                         <p class="text-muted fs-4 mb-0">Platform Digital Terpusat KONI Tabalong dan Cabang Olahraga</p>
                     </div>
                     <div>
-                        <select class="form-select form-select-md" style="min-width: 150px; background-color: transparent; border: 1px solid black; color: black;">
+                        <select class="form-select form-select-md" style="min-width: 150px; background-color: transparent; border: none; color: black;">
                             <option value="2025" selected>Periode 2025</option>
                             <option value="2024">Periode 2024</option>
                             <option value="2023">Periode 2023</option>
@@ -457,7 +457,7 @@
                     
                     <?php if($item->id == 6 && $item->children->count() > 0): ?>
                         <div class="collapse" id="collapsePembinaanPrestasi">
-                            <div class="card card-body mt-2 p-3">
+                            <div class="card card-body mt-2" style="padding: 12px; border-radius: 8px;">
                                 <h6 class="mb-3">Detail Kegiatan Pembinaan Prestasi</h6>
                                 <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
@@ -569,7 +569,7 @@
         </div>
 
         <div class="card shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body" style="padding: 24px;">
                 <h5 class="card-title">Informasi Pelatih & Peserta Cabor</h5>
                 <div class="text-end mt-2 d-flex justify-content-end gap-3 align-items-center">
                     <div class="d-flex align-items-center gap-2">
@@ -592,7 +592,7 @@
 
         <!-- Prestasi Terbaru -->
         <div class="card shadow-sm mb-4">
-            <div class="card-body p-6">
+            <div class="card-body" style="padding: 24px;">
                 <div class="d-flex align-items-center justify-content-between mb-6">
                     <h5 class="mb-0">Prestasi Terbaru</h5>
                 </div>

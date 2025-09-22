@@ -264,11 +264,11 @@
             <div class="mb-4">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div>
-                        <h2 class="fs-2 mb-1">Selamat Datang, <span class="text-danger">{{ auth()->user()->name }}</span></h2>
+                        <h2 class="fs-2 mb-1">Selamat Datang, <span class="text-danger">{{ auth()->user()->username }}</span></h2>
                         <p class="text-muted fs-4 mb-0">Platform Digital Terpusat KONI Tabalong dan Cabang Olahraga</p>
                     </div>
                     <div>
-                        <select class="form-select form-select-md" style="min-width: 150px; background-color: transparent; border: 1px solid black; color: black;">
+                        <select class="form-select form-select-md" style="min-width: 150px; background-color: transparent; border: none; color: black;">
                             <option value="2025" selected>Periode 2025</option>
                             <option value="2024">Periode 2024</option>
                             <option value="2023">Periode 2023</option>
