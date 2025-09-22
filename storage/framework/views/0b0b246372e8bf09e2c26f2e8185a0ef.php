@@ -251,7 +251,7 @@
             font-size: 12px;
             font-weight: 600;
         }
-        
+
         /* Hide export button during screenshot */
         .hide-for-screenshot {
             visibility: hidden;
@@ -370,7 +370,10 @@
             <div class="card-body" style="padding: 24px;">
                 <div class="">
                     <div class="d-flex justify-content-between align-items-center mb-10">
-                        <h5 class="card-title mb-0 f-3">Informasi Kegiatan</h5>
+                        <div>
+                            <h5 class="card-title mb-0 f-3">Informasi Serapan Kegiatan Koni Kab.</h5>
+                            <h5 class="text-danger mb-0">Tabalong 2025</h5>
+                        </div>
 
                         <div class="d-flex gap-2">
                             <button type="button" id="export-screenshot" class="btn btn-light-primary">
@@ -682,10 +685,10 @@
         document.getElementById('export-screenshot').addEventListener('click', function() {
             const targetElement = this.closest('.card'); // Capture the entire card
             const exportButton = this; // Reference to the export button
-            
+
             // Hide the export button temporarily using CSS class
             exportButton.classList.add('hide-for-screenshot');
-            
+
             html2canvas(targetElement, {
                 scale: 2, // Higher scale for better quality
                 useCORS: true,
@@ -693,7 +696,7 @@
             }).then(canvas => {
                 // Restore the export button visibility
                 exportButton.classList.remove('hide-for-screenshot');
-                
+
                 // Convert canvas to blob
                 canvas.toBlob(function(blob) {
                     // Create download link
