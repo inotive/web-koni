@@ -487,7 +487,6 @@
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="mb-0">Detail Kegiatan Pembinaan Prestasi</h6>
                                 </div>
-                                <p class="text-muted small mb-3">Berikut adalah rincian serapan anggaran untuk masing-masing cabang olahraga (Cabor) dalam program Pembinaan Prestasi. Setiap Cabor memiliki folder-folder kegiatan yang terkait.</p>
                                 <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
                                         // Serapan untuk setiap cabor sudah dihitung di controller
@@ -586,12 +585,19 @@
                                                     <?php
                                                         // Menghitung serapan untuk setiap folder
                                                         $grandchild_serapan = 0;
+
+                                                        // Ambil dokumen langsung di bawah parent ini
                                                         $grandchild_ids = \App\Models\Lpj::where('parent_id', $grandchild->id)->pluck('id');
-                                                        if ($grandchild_ids->count() > 0) {
-                                                            $grandchild_serapan = \App\Models\Lpj::whereIn('parent_id', $grandchild_ids)
+
+                                                        // Juga ambil dokumen dari subfolder-subfolder (anak langsung dari grandchild)
+                                                        $subfolder_ids = \App\Models\Lpj::where('parent_id', $grandchild->id)->pluck('id');
+                                                        $all_ids = $grandchild_ids->merge($subfolder_ids);
+
+                                                        if ($all_ids->count() > 0) {
+                                                            $grandchild_serapan = \App\Models\Lpj::whereIn('id', $all_ids)
                                                                 ->get()
-                                                                ->sum(function($greatGrandchild) {
-                                                                    $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                                                                ->sum(function($item) {
+                                                                    $harga = (int)($item->jumlah_harga ?? 0);
                                                                     return ($harga > 1 && $harga != 2) ? $harga : 0;
                                                                 });
                                                         }
