@@ -253,7 +253,7 @@
             font-size: 12px;
             font-weight: 600;
         }
-        
+
         /* Tooltip styles */
         .tooltip-inner {
             background-color: #007bff;
@@ -261,12 +261,12 @@
             font-size: 0.8rem;
             padding: 0.25rem 0.5rem;
         }
-        
+
         .tooltip.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before,
         .tooltip.bs-tooltip-top .tooltip-arrow::before {
             border-top-color: #007bff;
         }
-        
+
         /* Hide export button during screenshot */
         .hide-for-screenshot {
             visibility: hidden;
@@ -448,7 +448,7 @@
                     <div class="d-flex align-items-center mb-3 gap-3">
                         <div style="min-width: 220px; max-width: 220px;">
                             <div class="d-flex align-items-center justify-content-between">
-                                <span class="title-kegiatan">{{ $i + 1 }}. {{ $item->nama_program }} 
+                                <span class="title-kegiatan">{{ $i + 1 }}. {{ $item->nama_program }}
                                     @if($item->id == 6 && $item->children->count() > 0)
                                         <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail Cabor"></i>
                                     @endif
@@ -569,67 +569,74 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     {{-- Menampilkan folder-folder di dalam setiap Cabor --}}
                                     @if($child->children->count() > 0)
                                         <div class="ms-4 mb-3">
-                                            <h6 class="small text-muted mb-2">Folder dalam {{ $child->nama_program }}:</h6>
-                                            @foreach($child->children as $k => $grandchild)
-                                                @php
-                                                    // Menghitung serapan untuk setiap folder
-                                                    $grandchild_serapan = 0;
-                                                    $grandchild_ids = \App\Models\Lpj::where('parent_id', $grandchild->id)->pluck('id');
-                                                    if ($grandchild_ids->count() > 0) {
-                                                        $grandchild_serapan = \App\Models\Lpj::whereIn('parent_id', $grandchild_ids)
-                                                            ->get()
-                                                            ->sum(function($greatGrandchild) {
-                                                                $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
-                                                                return ($harga > 1 && $harga != 2) ? $harga : 0;
-                                                            });
-                                                    }
-                                                    
-                                                    // Menghitung budget per folder
-                                                    $grandchild_budget = 0;
-                                                    if ($child_budget > 0 && $child->children->count() > 0) {
-                                                        $grandchild_budget = (int)($child_budget / $child->children->count());
-                                                    }
-                                                    
-                                                    // Perhitungan persentase untuk folder
-                                                    $grandchild_persen = 0;
-                                                    if ($grandchild_budget > 0) {
-                                                        $grandchild_persen = round(($grandchild_serapan / $grandchild_budget) * 100);
-                                                        $grandchild_persen = min(100, $grandchild_persen);
-                                                    }
-                                                    
-                                                    $grandchildBarClass = 'bar-success';
-                                                    if ($grandchild_persen <= 30) {
-                                                        $grandchildBarClass = 'bar-danger';
-                                                    } elseif ($grandchild_persen <= 60) {
-                                                        $grandchildBarClass = 'bar-warning';
-                                                    }
-                                                @endphp
-                                                
-                                                <div class="d-flex align-items-center mb-2 gap-3">
-                                                    <div style="min-width: 200px; max-width: 200px;">
-                                                        <span class="small title-kegiatan">{{ chr(65 + $k) }}. {{ $grandchild->nama_program }}</span>
-                                                    </div>
-                                                    <div class="flex-grow-1 position-relative">
-                                                        <div class="progress w-100" style="border-radius: 6px; height: 35px;">
-                                                            <div class="progress-bar {{ $grandchildBarClass }}"
-                                                                role="progressbar"
-                                                                style="width: {{ $grandchild_persen }}%; border-radius: 6px; opacity: 0.8;"
-                                                                aria-valuenow="{{ $grandchild_persen }}" aria-valuemin="0" aria-valuemax="100">
-                                                            </div>
-                                                            <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-2" style="top: 0; left: 0; pointer-events: none;">
-                                                                <span class="small fw-bold" style="color: #151D48; text-shadow: 0 0 1px rgba(255,255,255,0.3);">
-                                                                    Rp {{ number_format($grandchild_serapan, 0, ',', '.') }} / Rp {{ number_format($grandchild_budget, 0, ',', '.') }}
-                                                                </span>
-                                                                <span class="small fw-bold" style="color: #151D48; text-shadow: 0 0 1px rgba(255,255,255,0.3);">{{ $grandchild_persen }}%</span>
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="small text-muted mb-0">Folder dalam {{ $child->nama_program }}:</h6>
+                                                <button class="btn btn-sm p-0 border-0 dropdown-icon" type="button" data-bs-toggle="collapse" data-bs-target="#folderCollapse{{ $j }}" aria-expanded="false" aria-controls="folderCollapse{{ $j }}">
+                                                    <i class="fas fa-chevron-down text-primary"></i>
+                                                </button>
+                                            </div>
+                                            <div class="collapse" id="folderCollapse{{ $j }}">
+                                                @foreach($child->children as $k => $grandchild)
+                                                    @php
+                                                        // Menghitung serapan untuk setiap folder
+                                                        $grandchild_serapan = 0;
+                                                        $grandchild_ids = \App\Models\Lpj::where('parent_id', $grandchild->id)->pluck('id');
+                                                        if ($grandchild_ids->count() > 0) {
+                                                            $grandchild_serapan = \App\Models\Lpj::whereIn('parent_id', $grandchild_ids)
+                                                                ->get()
+                                                                ->sum(function($greatGrandchild) {
+                                                                    $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                                                                    return ($harga > 1 && $harga != 2) ? $harga : 0;
+                                                                });
+                                                        }
+
+                                                        // Menghitung budget per folder
+                                                        $grandchild_budget = 0;
+                                                        if ($child_budget > 0 && $child->children->count() > 0) {
+                                                            $grandchild_budget = (int)($child_budget / $child->children->count());
+                                                        }
+
+                                                        // Perhitungan persentase untuk folder
+                                                        $grandchild_persen = 0;
+                                                        if ($grandchild_budget > 0) {
+                                                            $grandchild_persen = round(($grandchild_serapan / $grandchild_budget) * 100);
+                                                            $grandchild_persen = min(100, $grandchild_persen);
+                                                        }
+
+                                                        $grandchildBarClass = 'bar-success';
+                                                        if ($grandchild_persen <= 30) {
+                                                            $grandchildBarClass = 'bar-danger';
+                                                        } elseif ($grandchild_persen <= 60) {
+                                                            $grandchildBarClass = 'bar-warning';
+                                                        }
+                                                    @endphp
+
+                                                    <div class="d-flex align-items-center mb-2 gap-3">
+                                                        <div style="min-width: 200px; max-width: 200px;">
+                                                            <span class="small title-kegiatan">{{ chr(65 + $k) }}. {{ $grandchild->nama_program }}</span>
+                                                        </div>
+                                                        <div class="flex-grow-1 position-relative">
+                                                            <div class="progress w-100" style="border-radius: 6px; height: 35px;">
+                                                                <div class="progress-bar {{ $grandchildBarClass }}"
+                                                                    role="progressbar"
+                                                                    style="width: {{ $grandchild_persen }}%; border-radius: 6px; opacity: 0.8;"
+                                                                    aria-valuenow="{{ $grandchild_persen }}" aria-valuemin="0" aria-valuemax="100">
+                                                                </div>
+                                                                <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-2" style="top: 0; left: 0; pointer-events: none;">
+                                                                    <span class="small fw-bold" style="color: #151D48; text-shadow: 0 0 1px rgba(255,255,255,0.3);">
+                                                                        Rp {{ number_format($grandchild_serapan, 0, ',', '.') }} / Rp {{ number_format($grandchild_budget, 0, ',', '.') }}
+                                                                    </span>
+                                                                    <span class="small fw-bold" style="color: #151D48; text-shadow: 0 0 1px rgba(255,255,255,0.3);">{{ $grandchild_persen }}%</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @endforeach
+                                                @endforeach
+                                            </div>
                                         </div>
                                     @endif
                                 @endforeach
@@ -660,7 +667,7 @@
                                                 // Batasi maksimal 100%
                                                 $total_persen_anak = min(100, $total_persen_anak);
                                             }
-                                            
+
                                             // Menampilkan total budget yang dialokasikan untuk Pembinaan Prestasi
                                             $total_budget_prestasi = $rka_per_kegiatan;
                                         @endphp
@@ -669,11 +676,11 @@
                                         </span>
                                         <div class="mt-1">
                                             <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar {{ $total_persen_anak <= 30 ? 'bg-danger' : ($total_persen_anak <= 60 ? 'bg-warning' : 'bg-success') }}" 
-                                                     role="progressbar" 
-                                                     style="width: {{ $total_persen_anak }}%" 
-                                                     aria-valuenow="{{ $total_persen_anak }}" 
-                                                     aria-valuemin="0" 
+                                                <div class="progress-bar {{ $total_persen_anak <= 30 ? 'bg-danger' : ($total_persen_anak <= 60 ? 'bg-warning' : 'bg-success') }}"
+                                                     role="progressbar"
+                                                     style="width: {{ $total_persen_anak }}%"
+                                                     aria-valuenow="{{ $total_persen_anak }}"
+                                                     aria-valuemin="0"
                                                      aria-valuemax="100">
                                                 </div>
                                             </div>
