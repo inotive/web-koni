@@ -251,7 +251,7 @@
             font-size: 12px;
             font-weight: 600;
         }
-        
+
         /* Tooltip styles */
         .tooltip-inner {
             background-color: #007bff;
@@ -259,12 +259,12 @@
             font-size: 0.8rem;
             padding: 0.25rem 0.5rem;
         }
-        
+
         .tooltip.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before,
         .tooltip.bs-tooltip-top .tooltip-arrow::before {
             border-top-color: #007bff;
         }
-        
+
         /* Hide export button during screenshot */
         .hide-for-screenshot {
             visibility: hidden;
@@ -448,7 +448,8 @@
                     <div class="d-flex align-items-center mb-3 gap-3">
                         <div style="min-width: 220px; max-width: 220px;">
                             <div class="d-flex align-items-center justify-content-between">
-                                <span class="title-kegiatan"><?php echo e($i + 1); ?>. <?php echo e($item->nama_program); ?> 
+                                <span class="title-kegiatan"><?php echo e($i + 1); ?>. <?php echo e($item->nama_program); ?>
+
                                     <?php if($item->id == 6 && $item->children->count() > 0): ?>
                                         <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail Cabor"></i>
                                     <?php endif; ?>
@@ -485,7 +486,6 @@
                             <div class="card card-body mt-2" style="padding: 12px; border-radius: 8px;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="mb-0">Detail Kegiatan Pembinaan Prestasi</h6>
-                                    <span class="badge bg-primary"><?php echo e($item->children->count()); ?> Cabor</span>
                                 </div>
                                 <p class="text-muted small mb-3">Berikut adalah rincian serapan anggaran untuk masing-masing cabang olahraga (Cabor) dalam program Pembinaan Prestasi. Setiap Cabor memiliki folder-folder kegiatan yang terkait.</p>
                                 <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -571,7 +571,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     
                                     <?php if($child->children->count() > 0): ?>
                                         <div class="ms-4 mb-3">
@@ -595,20 +595,20 @@
                                                                     return ($harga > 1 && $harga != 2) ? $harga : 0;
                                                                 });
                                                         }
-                                                        
+
                                                         // Menghitung budget per folder
                                                         $grandchild_budget = 0;
                                                         if ($child_budget > 0 && $child->children->count() > 0) {
                                                             $grandchild_budget = (int)($child_budget / $child->children->count());
                                                         }
-                                                        
+
                                                         // Perhitungan persentase untuk folder
                                                         $grandchild_persen = 0;
                                                         if ($grandchild_budget > 0) {
                                                             $grandchild_persen = round(($grandchild_serapan / $grandchild_budget) * 100);
                                                             $grandchild_persen = min(100, $grandchild_persen);
                                                         }
-                                                        
+
                                                         $grandchildBarClass = 'bar-success';
                                                         if ($grandchild_persen <= 30) {
                                                             $grandchildBarClass = 'bar-danger';
@@ -616,7 +616,7 @@
                                                             $grandchildBarClass = 'bar-warning';
                                                         }
                                                     ?>
-                                                    
+
                                                     <div class="d-flex align-items-center mb-2 gap-3">
                                                         <div style="min-width: 200px; max-width: 200px;">
                                                             <span class="small title-kegiatan"><?php echo e(chr(65 + $k)); ?>. <?php echo e($grandchild->nama_program); ?></span>
@@ -643,57 +643,7 @@
                                         </div>
                                     <?php endif; ?>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                
-                                <div class="d-flex align-items-center mt-3 pt-3 border-top">
-                                    <div style="min-width: 220px; max-width: 220px;">
-                                        <span class="fw-bold">Total Serapan (<?php echo e($item->children->count()); ?> Cabor):</span>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <?php
-                                            // Total serapan dihitung dari nilai `serapan_cabor` yang sudah ada
-                                            $total_serapan_anak = 0;
-                                            if (isset($item->children)) {
-                                                $total_serapan_anak = $item->children->sum('serapan_cabor');
-                                            }
 
-                                            // Memastikan nilai RKA adalah numerik
-                                            $rka_per_kegiatan = 0;
-                                            if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                                                $jumlah_kegiatan = $kegiatan->count();
-                                                $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
-                                            }
-
-                                            // Perhitungan persentase total dengan pengecekan aman
-                                            $total_persen_anak = 0;
-                                            if ($rka_per_kegiatan > 0) {
-                                                $total_persen_anak = round(($total_serapan_anak / $rka_per_kegiatan) * 100);
-                                                // Batasi maksimal 100%
-                                                $total_persen_anak = min(100, $total_persen_anak);
-                                            }
-                                            
-                                            // Menampilkan total budget yang dialokasikan untuk Pembinaan Prestasi
-                                            $total_budget_prestasi = $rka_per_kegiatan;
-                                        ?>
-                                        <span class="fw-bold">
-                                            Rp <?php echo e(number_format($total_serapan_anak, 0, ',', '.')); ?> / Rp <?php echo e(number_format($total_budget_prestasi, 0, ',', '.')); ?> (<?php echo e($total_persen_anak); ?>%)
-                                        </span>
-                                        <div class="mt-1">
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar <?php echo e($total_persen_anak <= 30 ? 'bg-danger' : ($total_persen_anak <= 60 ? 'bg-warning' : 'bg-success')); ?>" 
-                                                     role="progressbar" 
-                                                     style="width: <?php echo e($total_persen_anak); ?>%" 
-                                                     aria-valuenow="<?php echo e($total_persen_anak); ?>" 
-                                                     aria-valuemin="0" 
-                                                     aria-valuemax="100">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="small text-muted mt-1">
-                                            Rata-rata serapan per Cabor: Rp <?php echo e(number_format($item->children->count() > 0 ? $total_serapan_anak / $item->children->count() : 0, 0, ',', '.')); ?>
-
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     <?php endif; ?>

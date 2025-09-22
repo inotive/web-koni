@@ -484,7 +484,6 @@
                             <div class="card card-body mt-2" style="padding: 12px; border-radius: 8px;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="mb-0">Detail Kegiatan Pembinaan Prestasi</h6>
-                                    <span class="badge bg-primary">{{ $item->children->count() }} Cabor</span>
                                 </div>
                                 <p class="text-muted small mb-3">Berikut adalah rincian serapan anggaran untuk masing-masing cabang olahraga (Cabor) dalam program Pembinaan Prestasi. Setiap Cabor memiliki folder-folder kegiatan yang terkait.</p>
                                 @foreach($item->children as $j => $child)
@@ -640,56 +639,7 @@
                                         </div>
                                     @endif
                                 @endforeach
-                                {{-- Total untuk Pembinaan Prestasi --}}
-                                <div class="d-flex align-items-center mt-3 pt-3 border-top">
-                                    <div style="min-width: 220px; max-width: 220px;">
-                                        <span class="fw-bold">Total Serapan ({{ $item->children->count() }} Cabor):</span>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        @php
-                                            // Total serapan dihitung dari nilai `serapan_cabor` yang sudah ada
-                                            $total_serapan_anak = 0;
-                                            if (isset($item->children)) {
-                                                $total_serapan_anak = $item->children->sum('serapan_cabor');
-                                            }
 
-                                            // Memastikan nilai RKA adalah numerik
-                                            $rka_per_kegiatan = 0;
-                                            if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                                                $jumlah_kegiatan = $kegiatan->count();
-                                                $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
-                                            }
-
-                                            // Perhitungan persentase total dengan pengecekan aman
-                                            $total_persen_anak = 0;
-                                            if ($rka_per_kegiatan > 0) {
-                                                $total_persen_anak = round(($total_serapan_anak / $rka_per_kegiatan) * 100);
-                                                // Batasi maksimal 100%
-                                                $total_persen_anak = min(100, $total_persen_anak);
-                                            }
-
-                                            // Menampilkan total budget yang dialokasikan untuk Pembinaan Prestasi
-                                            $total_budget_prestasi = $rka_per_kegiatan;
-                                        @endphp
-                                        <span class="fw-bold">
-                                            Rp {{ number_format($total_serapan_anak, 0, ',', '.') }} / Rp {{ number_format($total_budget_prestasi, 0, ',', '.') }} ({{ $total_persen_anak }}%)
-                                        </span>
-                                        <div class="mt-1">
-                                            <div class="progress" style="height: 8px;">
-                                                <div class="progress-bar {{ $total_persen_anak <= 30 ? 'bg-danger' : ($total_persen_anak <= 60 ? 'bg-warning' : 'bg-success') }}"
-                                                     role="progressbar"
-                                                     style="width: {{ $total_persen_anak }}%"
-                                                     aria-valuenow="{{ $total_persen_anak }}"
-                                                     aria-valuemin="0"
-                                                     aria-valuemax="100">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="small text-muted mt-1">
-                                            Rata-rata serapan per Cabor: Rp {{ number_format($item->children->count() > 0 ? $total_serapan_anak / $item->children->count() : 0, 0, ',', '.') }}
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     @endif
