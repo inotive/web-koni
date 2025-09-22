@@ -57,7 +57,7 @@
                             <span class="menu-icon">
                                 <i class="fs-1 ki-solid ki-tablet-text-up"></i>
                             </span>
-                            <span class="menu-title">Manajemen RKA</span>
+                            <span class="menu-title">Rencana Kerja Dan Anggaran</span>
                         </a>
                     </div>
                 @endcan
