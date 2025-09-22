@@ -721,6 +721,8 @@
             justify-content: center;
             font-size: 0.7rem;
         }
+
+        
     </style>
 
     <?php if(session('success')): ?>

@@ -218,7 +218,7 @@
                 @if(!empty($data['tanggal_kegiatan']))
                 <div class="info-item">
                     <div class="info-label">Tanggal Kegiatan</div>
-                    <div class="info-value">{{ \Carbon\Carbon::parse($data['tanggal_kegiatan'])->format('d F Y') }}</div>
+                    <div class="info-value">{{ \Carbon\Carbon::parse($data['tanggal_kegiatan'])->format('d/m/Y') }}</div>
                 </div>
                 @endif
             </div>
