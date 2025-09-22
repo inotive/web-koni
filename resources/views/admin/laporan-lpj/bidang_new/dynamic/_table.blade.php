@@ -137,14 +137,14 @@
                         <td>
                             @if ($data->dokumen_lpj && count($data->dokumen_lpj) > 0)
                                 <button type="button"
-                                        class="btn btn-sm btn-light-primary preview-btn"
+                                        class="btn btn-sm btn-light-danger preview-btn"
                                         data-bs-toggle="modal"
                                         data-bs-target="#previewModal"
                                         data-type="document"
                                         data-files="{{ json_encode(array_map(fn($file) => ($file), $data->dokumen_lpj)) }}"
                                         data-title="Dokumen LPJ - {{ $data->nama_program }}">
                                     <i class="fas fa-file-alt me-1"></i>
-                                    {{ count($data->dokumen_lpj) }} Dokumen
+                                    {{ count($data->dokumen_lpj) }} PDF
                                 </button>
                             @else
                                 <span class="text-muted">-</span>
