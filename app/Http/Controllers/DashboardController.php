@@ -9,6 +9,7 @@ use App\Models\ManajemenRKA;
 use App\Models\Pelatih;
 use App\Models\User;
 use App\Models\Prestasi;
+use App\Models\Target;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\View;
@@ -27,11 +28,20 @@ class DashboardController extends Controller
 
         // Mengambil kegiatan dari LPJ hanya sampai ID 8 (Perencanaan Program dan Anggaran)
         // Mengecualikan Sekretariat (ID 59) dan kegiatan lain setelah ID 8
-        $kegiatan = Lpj::whereNull('parent_id')
+        $kegiatan_utama = Lpj::whereNull('parent_id')
                       ->where('id', '<=', 8)
                       ->get();
+                      
+        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        $kegiatan_tambahan = Lpj::whereNull('parent_id')
+                              ->whereIn('id', [59, 88])
+                              ->get();
+                              
+        // Gabungkan data kegiatan tambahan di awal
+        $kegiatan = $kegiatan_tambahan->merge($kegiatan_utama);
         
         // Membagi total RKA secara merata ke setiap kegiatan yang sesuai untuk perhitungan persentase
+        // Termasuk Sekretariat dan Kegiatan Lainnya dalam perhitungan
         $jumlah_kegiatan = $kegiatan->count();
         $rka_per_kegiatan = ($jumlah_kegiatan > 0 && $total_rka > 0) ? $total_rka / $jumlah_kegiatan : 0;
         
@@ -60,21 +70,43 @@ class DashboardController extends Controller
             }
             
             // Menghitung serapan untuk setiap kegiatan
-            // Menghitung total serapan (induk + anak-anak)
-            $serapan_induk = $item->jumlah_harga;
-            $serapan_anak = $item->children->sum('jumlah_harga');
-            $serapan = $serapan_induk + $serapan_anak;
-            
-            // Untuk perhitungan dashboard, hanya nilai > 1 yang dihitung sebagai serapan aktif
-            // Kecualikan nilai 2 yang merupakan data default/test
-            $serapan_aktif_induk = ($item->jumlah_harga > 1 && $item->jumlah_harga != 2) ? $item->jumlah_harga : 0;
-            $serapan_aktif_anak = $item->children->sum(function($child) {
-                return ($child->jumlah_harga > 1 && $child->jumlah_harga != 2) ? $child->jumlah_harga : 0;
-            });
-            $serapan_aktif = $serapan_aktif_induk + $serapan_aktif_anak;
-            
+            $serapan_aktif = 0;
+
+            if ($item->id == 6) {
+                // Special handling for "Pembinaan Prestasi" (ID 6)
+                $total_serapan_pembinaan = 0;
+
+                // Loop through each Cabor (child) to calculate its specific absorption
+                foreach ($item->children as $child) {
+                    $grandchild_ids = Lpj::where('parent_id', $child->id)->pluck('id');
+                    
+                    $serapan_cabor = Lpj::whereIn('parent_id', $grandchild_ids)
+                        ->get()
+                        ->sum(function($greatGrandchild) {
+                            $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                            return ($harga > 1 && $harga != 2) ? $harga : 0;
+                        });
+                    
+                    // Attach the calculated absorption to the Cabor object for the view
+                    $child->serapan_cabor = $serapan_cabor;
+                    
+                    // Add to the total for "Pembinaan Prestasi"
+                    $total_serapan_pembinaan += $serapan_cabor;
+                }
+                $serapan_aktif = $total_serapan_pembinaan;
+
+            } else {
+                // Original logic for other activities
+                $serapan_aktif_induk = ($item->jumlah_harga > 1 && $item->jumlah_harga != 2) ? $item->jumlah_harga : 0;
+                $serapan_aktif_anak = $item->children->sum(function($child) {
+                    $harga = (int)($child->jumlah_harga ?? 0);
+                    return ($harga > 1 && $harga != 2) ? $harga : 0;
+                });
+                $serapan_aktif = $serapan_aktif_induk + $serapan_aktif_anak;
+            }
+
             $item->serapan = $serapan_aktif;
-            $item->total_serapan = $serapan; // Total serapan termasuk default
+            $item->total_serapan = $serapan_aktif; // Set total_serapan to the active absorption
             
             // Menambahkan ke total serapan
             $total_serapan += $serapan_aktif;
@@ -106,6 +138,39 @@ class DashboardController extends Controller
 
         $cabor_chart_data = CabangOlahraga::withCount(['atlets', 'pelatihs'])->get();
 
+        $total_kegiatan_all = Target::sum('target_kegiatan');
+
+        // Mengambil kegiatan berjalan dari semua halaman LPJ
+        // 1. Sekretariat (ID 59) - hitung anak-anak dengan jumlah_harga > 0
+        $kegiatan_berjalan_sekretariat = Lpj::where('parent_id', 59)->where('jumlah_harga', '>', 0)->count();
+        
+        // 2. Kegiatan Lainnya (ID 88) - hitung anak-anak dengan jumlah_harga > 0
+        $kegiatan_berjalan_lainnya = Lpj::where('parent_id', 88)->where('jumlah_harga', '>', 0)->count();
+        
+        // 3. Bidang-bidang (ID 1-8) - hitung anak-anak dengan jumlah_harga > 0
+        $kegiatan_berjalan_bidang = 0;
+        for ($i = 1; $i <= 8; $i++) {
+            // Untuk bidang dengan ID 6 (Pembinaan Prestasi), kita perlu menghitung kegiatan berjalan dari cucu-anaknya (great-grandchildren)
+            if ($i == 6) {
+                $children = Lpj::where('parent_id', $i)->get(); // Level 1 (Cabor)
+                foreach ($children as $child) {
+                    $grandchildren = Lpj::where('parent_id', $child->id)->get(); // Level 2 (Anak Cabor)
+                    foreach ($grandchildren as $grandchild) {
+                        // Level 3 (Kegiatan) - ini yang kita hitung jika jumlah_harga > 0
+                        $greatGrandchildrenCount = Lpj::where('parent_id', $grandchild->id)->where('jumlah_harga', '>', 0)->count();
+                        $kegiatan_berjalan_bidang += $greatGrandchildrenCount;
+                    }
+                }
+            } else {
+                // Untuk bidang lainnya, kita hitung anak-anak langsung jika jumlah_harga > 0
+                $childrenCount = Lpj::where('parent_id', $i)->where('jumlah_harga', '>', 0)->count();
+                $kegiatan_berjalan_bidang += $childrenCount;
+            }
+        }
+        
+        // Total kegiatan berjalan dari semua halaman LPJ
+        $kegiatan_berjalan_all = $kegiatan_berjalan_sekretariat + $kegiatan_berjalan_lainnya + $kegiatan_berjalan_bidang;
+
         return view('admin.dashboard.index', [
             'title' => 'Dashboard',
             'total_rka' => $total_rka,
@@ -119,6 +184,8 @@ class DashboardController extends Controller
             'latest_prestasi' => $latest_prestasi_atlet,
             'latest_prestasi_pelatih' => $latest_prestasi_pelatih,
             'cabor_chart_data' => $cabor_chart_data,
+            'total_kegiatan_all' => $total_kegiatan_all,
+            'kegiatan_berjalan_all' => $kegiatan_berjalan_all,
         ]);
     }
 
@@ -181,9 +248,18 @@ class DashboardController extends Controller
         $total_rka = \App\Models\LaporanRKA::sum('total_anggaran');
 
         // Mengambil kegiatan dari LPJ hanya sampai ID 8 (Perencanaan Program dan Anggaran)
-        $kegiatan = Lpj::whereNull('parent_id')
+        // Menyertakan Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        $kegiatan_utama = Lpj::whereNull('parent_id')
                       ->where('id', '<=', 8)
                       ->get();
+                      
+        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        $kegiatan_tambahan = Lpj::whereNull('parent_id')
+                              ->whereIn('id', [59, 88])
+                              ->get();
+                              
+        // Gabungkan data kegiatan tambahan di awal
+        $kegiatan = $kegiatan_tambahan->merge($kegiatan_utama);
 
         // Membagi total RKA secara merata ke setiap kegiatan yang sesuai
         $jumlah_kegiatan = $kegiatan->count();

@@ -11,6 +11,11 @@ use Carbon\Carbon;
 
 class PengajuanController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('can:pengajuan-modifikasi-laporan-view');
+    }
+
     public function index(Request $request)
     {
         $query = Pengajuan::with(['lpj', 'user']);
@@ -115,7 +120,7 @@ class PengajuanController extends Controller
             'status' => 'required|in:disetujui,ditolak',
         ]);
 
-        if (!Auth::user()->can('pengajuan-modifikasi-laporan')) {
+        if (!Auth::user()->can('pengajuan-modifikasi-laporan-manage')) {
             return response()->json(['success' => false, 'message' => 'Anda tidak memiliki izin.'], 403);
         }
 

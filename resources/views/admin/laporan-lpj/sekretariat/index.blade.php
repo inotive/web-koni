@@ -19,6 +19,13 @@
     @endif
 
     <style>
+        #detailModal .btn-outline-primary:hover,
+        #detailModal .btn-outline-danger:hover {
+            color: #212529 !important;
+            background-color: #e9ecef !important;
+            border-color: #dee2e6 !important;
+        }
+
         body {
             background-color: #f5f5f5;
         }
@@ -758,9 +765,11 @@
     }
 
     function initializeDropdownEvents() {
+        // Explicitly turn off any hover events that might be attached by other scripts or cached versions
+        $(document).off('mouseenter mouseleave', '.dropdown-action');
+        $(document).off('mouseenter mouseleave', '.dropdown-menu-custom');
+
         $(document).off('click', '.dropdown-toggle-custom');
-        $(document).off('mouseenter', '.dropdown-action');
-        $(document).off('mouseleave', '.dropdown-action');
 
         $(document).on('click', '.dropdown-toggle-custom', function(e) {
             e.preventDefault();
@@ -780,15 +789,29 @@
             const $menu = $dropdownAction.find('.dropdown-menu-custom');
             if (!$menu.hasClass('show')) return;
 
+            // Selalu hapus class dropup agar dropdown selalu muncul ke bawah
             $dropdownAction.removeClass('dropup');
-
-            const $row = $dropdownAction.closest('tr');
-            const $table = $row.closest('tbody');
-            const rowIndex = $table.find('tr').index($row);
-            const totalRows = $table.find('tr').length;
-
-            if (rowIndex === totalRows - 1) {
-                $dropdownAction.addClass('dropup');
+            
+            // Tambahkan pemeriksaan untuk memastikan dropdown tidak keluar dari viewport
+            const dropdownRect = $dropdownAction[0].getBoundingClientRect();
+            const menuRect = $menu[0].getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            
+            // Jika dropdown akan keluar dari viewport bagian bawah, tetap paksa ke bawah
+            // dengan menyesuaikan posisi maksimal
+            if (dropdownRect.bottom + menuRect.height > viewportHeight) {
+                // Tetap paksa dropdown ke bawah
+                $dropdownAction.removeClass('dropup');
+                // Sesuaikan posisi jika perlu
+                const overflow = dropdownRect.bottom + menuRect.height - viewportHeight;
+                if (overflow > 0) {
+                    $menu.css('max-height', menuRect.height - overflow - 10);
+                    $menu.css('overflow-y', 'auto');
+                }
+            } else {
+                // Reset styling jika tidak diperlukan
+                $menu.css('max-height', '');
+                $menu.css('overflow-y', '');
             }
         }
 
@@ -805,30 +828,6 @@
                 }
             });
         });
-
-        if (window.innerWidth > 768) {
-            $(document).on('mouseenter', '.dropdown-action', function() {
-                const $menu = $(this).find('.dropdown-menu-custom');
-                $menu.addClass('show');
-                checkDropdownPosition($(this));
-            }).on('mouseleave', '.dropdown-action', function() {
-                const $menu = $(this).find('.dropdown-menu-custom');
-                setTimeout(() => {
-                    if (!$menu.is(':hover')) {
-                        $menu.removeClass('show');
-                    }
-                }, 100);
-            });
-
-            $(document).on('mouseenter', '.dropdown-menu-custom', function() {
-                clearTimeout($(this).data('timeout'));
-            }).on('mouseleave', '.dropdown-menu-custom', function() {
-                const $menu = $(this);
-                $menu.data('timeout', setTimeout(() => {
-                    $menu.removeClass('show');
-                }, 200));
-            });
-        }
     }
 
     function showLoading() {
@@ -1123,11 +1122,11 @@
                             title: 'Berhasil!',
                             text: response.message || 'Data laporan sekretariat berhasil dihapus',
                             icon: 'success',
-                            timer: 2000,
+                            timer: 1500,
                             showConfirmButton: false
+                        }).then(function () {
+                            window.location.reload();
                         });
-
-                        updateTable({});
                     },
                     error: function(xhr) {
                         Swal.close();
@@ -1188,7 +1187,7 @@
         if (statusIcon && ajukanBtn) {
             const pengajuan = data.pengajuan && data.pengajuan.length > 0 ? data.pengajuan.find(p => p.status === 'disetujui') : null;
             const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }} && pengajuan && pengajuan.token > 0;
-            const canModify = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }} || isModifiable;
+            const canModify = {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }} || isModifiable;
 
             if (canModify) {
                 statusIcon.innerHTML = 'Terbuka';
@@ -1309,16 +1308,16 @@
                             <label class="fw-semibold mb-2 d-block"><i class="fas fa-camera me-1"></i>Foto Jurnal:</label>
                             <div class="bg-light p-3 rounded">${fotoJurnalHtml}</div>
                         </div>
-                        ${dokumenLpjPdfHtml}
                         <div>
                             <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
                             <div class="bg-light p-3 rounded">${dokumenHtml}</div>
                         </div>
+                        ${dokumenLpjPdfHtml}
                     </div>
 
                     ${data.keterangan_tambahan ? `
                         <div class="mb-2">
-                            <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
+                            <h6 class="fw-bold mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
                             <div class="bg-light p-3 rounded"><p class="mb-0" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p></div>
                         </div>
                     ` : ''}

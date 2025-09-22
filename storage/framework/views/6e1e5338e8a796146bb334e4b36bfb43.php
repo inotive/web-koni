@@ -158,7 +158,7 @@
                                                         $pengajuan && $pengajuan->token > 0;
 
                                         $canEdit = auth()->user()->hasRole('superadmin') ||
-                                                   auth()->user()->can('pengajuan-modifikasi-laporan') ||
+                                                   auth()->user()->can('pengajuan-modifikasi-laporan-manage') ||
                                                    $isModifiable;
                                     ?>
 
@@ -319,6 +319,8 @@
             margin-top: 5px;
             display: none;
             list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .dropdown-menu-custom.show {

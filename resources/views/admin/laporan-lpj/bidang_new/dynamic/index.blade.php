@@ -7,7 +7,7 @@
             9 => 'admin.laporan-lpj.bidang.prestasi.cabor-terukur',
             10 => 'admin.laporan-lpj.bidang.prestasi.cabor-akurasi',
             11 => 'admin.laporan-lpj.bidang.prestasi.cabor-permainan',
-            12 => 'admin.laporan-lpj.bidang.prestasi.cabor-beladiri'
+            12 => 'admin.laporan-lpj.bidang.prestasi.cabor-beladiri',
         ];
 
         $subSection3Url = isset($routes[$parent->parent->id])
@@ -35,7 +35,9 @@
 
 @section('content')
     <style>
-        body { background-color: #f5f5f5; }
+        body {
+            background-color: #f5f5f5;
+        }
 
         .main-content {
             background-color: #f5f5f5;
@@ -49,17 +51,43 @@
             width: 100%;
         }
 
-        .table th:nth-child(1) { width: 40px; }
-        .table th:nth-child(2) { width: 250px; }
-        .table th:nth-child(3) { width: 200px; }
-        .table th:nth-child(4) { width: 150px; }
-        .table th:nth-child(5) { width: 200px; }
-        .table th:nth-child(6) { width: 150px; }
-        .table th:nth-child(7) { width: 210px; }
-        .table th:nth-child(8) { width: 80px; }
+        .table th:nth-child(1) {
+            width: 40px;
+        }
+
+        .table th:nth-child(2) {
+            width: 250px;
+        }
+
+        .table th:nth-child(3) {
+            width: 200px;
+        }
+
+        .table th:nth-child(4) {
+            width: 150px;
+        }
+
+        .table th:nth-child(5) {
+            width: 200px;
+        }
+
+        .table th:nth-child(6) {
+            width: 150px;
+        }
+
+        .table th:nth-child(7) {
+            width: 210px;
+        }
+
+        .table th:nth-child(8) {
+            width: 80px;
+        }
 
         /* Dropdown styles */
-        .dropdown-action { position: relative; display: inline-block; }
+        .dropdown-action {
+            position: relative;
+            display: inline-block;
+        }
 
         .dropdown-toggle-custom {
             background: none;
@@ -70,7 +98,9 @@
             transition: all 0.2s ease;
         }
 
-        .dropdown-toggle-custom:hover { background-color: rgba(0, 0, 0, 0.05); }
+        .dropdown-toggle-custom:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
 
         .dropdown-menu-custom {
             position: absolute;
@@ -87,7 +117,9 @@
             list-style: none;
         }
 
-        .dropdown-menu-custom.show { display: block; }
+        .dropdown-menu-custom.show {
+            display: block;
+        }
 
         .dropdown-item-custom {
             padding: 8px 16px;
@@ -162,6 +194,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .required::after {
             content: " *";
             color: #dc3545;
@@ -189,8 +222,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .top-progress-wrapper {
@@ -239,74 +277,76 @@
         }
     </style>
 
-    <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">
+    <div class="mb-8 d-flex flex-column">
+        <h1 class="mb-1 text-dark fw-bold">
             Laporan {{ $currentParent ? $currentParent->nama_program : 'Root Level' }}
         </h1>
-        @if($currentParent)
+        @if ($currentParent)
             <p class="text-muted">{{ $currentParent->breadcrumb }}</p>
         @endif
     </div>
 
-    @if($parentId)
-    <div class="top-progress-wrapper mb-4">
-        <div class="d-flex justify-content-between mt-2">
-            <h1 class="text-muted mb-0">Total Anggaran</h1>
-            <span class="text-muted">
-                <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </a>
-            </span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-            @php
-                $percentage = ($target && $target->target_anggaran > 0) ? ($current_budget / $target->target_anggaran) * 100 : 0;
-            @endphp
-            <h1 class="fw-bold mb-1">{{ formatRupiah($current_budget) }} / {{ formatRupiah($target->target_anggaran ?? 0) }}</h1>
-            <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="{{ round($percentage, 2) }}% dari total anggaran">
-                {{ round($percentage) }}%
-            </h3>
-        </div>
-
-        <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
-            <div class="progress-bar progress-bar-striped progress-bar-animated"
-                role="progressbar"
-                style="width: {{ $percentage }}%; background-color: #F8285A; border-radius: 12px;"
-                aria-valuenow="{{ $percentage }}"
-                aria-valuemin="0"
-                aria-valuemax="100">
-            </div>
-        </div>
-
-        <div class="d-flex flex-row-reverse bd-highlight mt-2">
-            <div class="info-label mt-1 d-flex align-items-center gap-2">
-                <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
-                    {{ $kegiatan_count }} Kegiatan Berjalan
-                </span>
-                <span>/</span>
-                <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
-                    {{ $target->target_kegiatan ?? 0 }} Target Kegiatan
+    @if ($parentId)
+        <div class="mb-4 top-progress-wrapper">
+            <div class="mt-2 d-flex justify-content-between">
+                <h1 class="mb-0 text-muted">Total Anggaran</h1>
+                <span class="text-muted">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
                 </span>
             </div>
+            <div class="mb-2 d-flex justify-content-between">
+                @php
+                    $percentage =
+                        $target && $target->target_anggaran > 0
+                            ? ($current_budget / $target->target_anggaran) * 100
+                            : 0;
+                @endphp
+                <h1 class="mb-1 fw-bold">{{ formatRupiah($current_budget) }} /
+                    {{ formatRupiah($target->target_anggaran ?? 0) }}</h1>
+                <h3 class="mb-0 text-muted" data-bs-toggle="tooltip"
+                    title="{{ round($percentage, 2) }}% dari total anggaran">
+                    {{ round($percentage) }}%
+                </h3>
+            </div>
+
+            <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                    style="width: {{ $percentage }}%; background-color: #F8285A; border-radius: 12px;"
+                    aria-valuenow="{{ $percentage }}" aria-valuemin="0" aria-valuemax="100">
+                </div>
+            </div>
+
+            <div class="flex-row-reverse mt-2 d-flex bd-highlight">
+                <div class="gap-2 mt-1 info-label d-flex align-items-center">
+                    <span class="px-3 py-1 border badge bg-success-subtle text-success fw-semibold border-success-subtle">
+                        {{ $kegiatan_count }} Kegiatan Berjalan
+                    </span>
+                    <span>/</span>
+                    <span class="px-3 py-1 border badge bg-primary-subtle text-primary fw-semibold border-primary-subtle">
+                        {{ $target->target_kegiatan ?? 0 }} Target Kegiatan
+                    </span>
+                </div>
+            </div>
         </div>
-    </div>
     @endif
 
     {{-- Main Content Card --}}
-    <div class="card mt-5">
+    <div class="mt-5 card">
         {{-- Card Header --}}
-        <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-            <h3 class="card-title fw-bold fs-4 mb-0">
+        <div class="flex-wrap py-5 card-header d-flex justify-content-between align-items-center">
+            <h3 class="mb-0 card-title fw-bold fs-4">
                 Daftar {{ $currentParent ? $currentParent->nama_program : 'Root Level' }}
             </h3>
 
             {{-- Action Buttons --}}
-            <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
+            <div class="flex-wrap gap-2 d-flex align-items-center ms-auto">
                 <a href="{{ $parentId ? route('admin.laporan-lpj.bidang.dynamic.child.create', $parentId) : route('admin.laporan-lpj.bidang.dynamic.create') }}"
-                       class="btn custom-red-button"
-                       style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
-                    </a>
+                    class="btn custom-red-button"
+                    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+                </a>
 
                 {{-- Search Input --}}
                 <div class="input-group position-relative" style="width: 250px;">
@@ -346,178 +386,44 @@
         </div>
     </div>
 
-    {{-- Preview Modal --}}
-    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header" style="background: white; color: rgb(0, 0, 0);">
-                    <h5 class="modal-title text-black" id="previewModalLabel">Preview Files</h5>
-                    <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-0" style="height: 70vh;">
-                    <div class="preview-container h-100 position-relative d-flex align-items-center justify-content-center" style="background: #f8f9fa;">
-                        <div id="previewSlides" class="w-100 h-100"></div>
-                        <button type="button" id="prevBtn" class="btn btn-primary position-absolute start-0 top-50 translate-middle-y ms-3" style="z-index: 10; display: none;">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button type="button" id="nextBtn" class="btn btn-primary position-absolute end-0 top-50 translate-middle-y me-3" style="z-index: 10; display: none;">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <div class="d-flex justify-content-between align-items-center w-100">
-                        <div>
-                            <strong id="currentFileName">File Name</strong>
-                            <div class="text-muted small" id="fileCounter">1 of 1</div>
-                        </div>
-                        <div>
-                            <button type="button" id="downloadBtn" class="btn btn-success btn-sm me-2">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Detail Modal --}}
-    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header d-flex align-items-center"
-                    style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
-                    <h5 class="modal-title me-1" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
-                    <span id="statusIcon" class="ms-2 fs-6 gap-3"></span>
-
-                    <div class="ms-auto d-flex align-items-center gap-2">
-                        <button type="button" id="export-pdf-btn" class="btn">
-                            <i class="fa-solid fa-file-export" style="color: white"></i>
-                            Export Data
-                        </button>
-                        <button type="button" id="ajukanPerubahanBtn" class="btn">
-                            <i class="bi bi-arrow-repeat" style="color: white"></i>
-                            <strong>Ajukan Perubahan</strong>
-                        </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                </div>
-
-                <div class="modal-body" id="detailModalBody">
-                    {{-- Populated by JS --}}
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- Pengajuan Modal --}}
-    <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="pengajuanModalLabel">Ajukan Perubahan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="pengajuanForm">
-                        <input type="hidden" id="pengajuan_lpj_id" name="lpj_id">
-                        <div class="mb-3">
-                            <label for="alasan" class="form-label">Alasan Perubahan</label>
-                            <textarea class="form-control" id="alasan" name="alasan" rows="4" required></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="submitPengajuanBtn">Kirim Pengajuan</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {{-- Include Modals --}}
+    @include('admin.laporan-lpj.bidang_new.dynamic.modals')
 @endsection
 
-@if($parentId)
-{{-- Edit Target Modal - Hidden by default --}}
-<div class="modal fade" id="editTargetModal" tabindex="-1" aria-labelledby="editTargetModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 gap-5 px-10 py-8">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="fs-2 fw-bold leading-5">Edit Target Anggaran & Kegiatan</div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <form id="editTargetForm" class="d-grid gap-4">
-                <input type="hidden" name="id_lpj" value="{{ $parentId }}">
-
-                <div>
-                    <div class="fw-semibold required mb-3 text-gray-800">Target Anggaran</div>
-                    <input type="text" name="target_anggaran" id="target_anggaran"
-                           value="{{ formatRupiah($target->target_anggaran ?? 0) }}"
-                           placeholder="Masukkan target anggaran"
-                           class="form-control bg-light border border-gray-400" required />
-                    <div class="invalid-feedback"></div>
-                </div>
-
-                <div>
-                    <div class="fw-semibold required mb-3 text-gray-800">Target Kegiatan</div>
-                    <input type="number" name="target_kegiatan" id="target_kegiatan"
-                           value="{{ $target->target_kegiatan ?? 0 }}"
-                           placeholder="Masukkan jumlah target kegiatan"
-                           class="form-control bg-light border border-gray-400" required />
-                    <div class="invalid-feedback"></div>
-                </div>
-            </form>
-
-            <div class="d-grid py-4">
-                <button type="button" id="saveTargetBtn"
-                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                    <span class="btn-text">Simpan Target</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
-
 @section('script')
-<script>
-$(document).ready(function() {
-    let dataTable = null;
-    let searchTimeout;
-    const parentId = {{ $parentId ?? 'null' }};
+    <script>
+        $(document).ready(function() {
+                let dataTable = null;
+                let searchTimeout;
+                const parentId = {{ $parentId ?? 'null' }};
 
-    // Utility functions
-    const formatRupiah = (angka, prefix = 'Rp ') => {
-        const number = String(angka).replace(/[^\d]/g, '');
-        const split = number.split(',');
-        const sisa = split[0].length % 3;
-        let rupiah = split[0].substr(0, sisa);
-        const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+                // Utility functions
+                const formatRupiah = (angka, prefix = 'Rp ') => {
+                    const number = String(angka).replace(/[^\d]/g, '');
+                    const split = number.split(',');
+                    const sisa = split[0].length % 3;
+                    let rupiah = split[0].substr(0, sisa);
+                    const ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
-        if (ribuan) {
-            const separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
-        }
+                    if (ribuan) {
+                        const separator = sisa ? '.' : '';
+                        rupiah += separator + ribuan.join('.');
+                    }
 
-        return prefix + (split[1] ? rupiah + ',' + split[1] : rupiah);
-    };
+                    return prefix + (split[1] ? rupiah + ',' + split[1] : rupiah);
+                };
 
-    const unformatRupiah = (rupiah) => parseInt(String(rupiah).replace(/[^0-9]/g, '')) || 0;
+                const unformatRupiah = (rupiah) => parseInt(String(rupiah).replace(/[^0-9]/g, '')) || 0;
 
-    const showNotification = (message, type = 'info') => {
-        const alertClass = {
-            'success': 'alert-success',
-            'error': 'alert-danger',
-            'warning': 'alert-warning',
-            'info': 'alert-info'
-        }[type] || 'alert-info';
+                const showNotification = (message, type = 'info') => {
+                    const alertClass = {
+                        'success': 'alert-success',
+                        'error': 'alert-danger',
+                        'warning': 'alert-warning',
+                        'info': 'alert-info'
+                    } [type] || 'alert-info';
 
-        const notification = $(`
+                    const notification = $(`
             <div class="alert ${alertClass} alert-dismissible fade show"
                 style="position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
                 ${message}
@@ -525,348 +431,385 @@ $(document).ready(function() {
             </div>
         `);
 
-        $('body').append(notification);
-        setTimeout(() => notification.alert('close'), 5000);
-    };
+                    $('body').append(notification);
+                    setTimeout(() => notification.alert('close'), 5000);
+                };
 
-    // Reset form functions (enhanced from Document 2)
-    function resetFormAdd() {
-        const form = document.getElementById('formAdd');
-        if (form) {
-            form.reset();
-            // Clear validation errors
-            form.querySelectorAll('.invalid-feedback').forEach(el => {
-                el.textContent = '';
-            });
-            form.querySelectorAll('.is-invalid').forEach(el => {
-                el.classList.remove('is-invalid');
-            });
-        }
-
-        // Reset dropzone if exists
-        if (typeof dropzones !== 'undefined' && dropzones['formAdd']) {
-            dropzones['formAdd'].removeAllFiles();
-        }
-    }
-
-    function resetEditForm(formId) {
-        const form = document.getElementById(formId);
-        if (form) {
-            // Reset form fields to their original values
-            const modal = $(form).closest('.modal');
-            const originalData = modal.data('original-data');
-
-            if (originalData) {
-                form.querySelectorAll('input, select, textarea').forEach(input => {
-                    const name = input.getAttribute('name');
-                    if (input.type !== 'file' && originalData.hasOwnProperty(name)) {
-                        input.value = originalData[name];
-                    }
-                });
-            }
-
-            // Clear validation errors
-            form.querySelectorAll('.invalid-feedback').forEach(el => {
-                el.textContent = '';
-            });
-            form.querySelectorAll('.is-invalid').forEach(el => {
-                el.classList.remove('is-invalid');
-            });
-        }
-
-        // Reset dropzone if exists
-        if (typeof dropzones !== 'undefined' && dropzones[formId]) {
-            dropzones[formId].removeAllFiles();
-        }
-    }
-
-    // Initialize DataTable
-    function initializeDataTable() {
-        const table = $("#kt_datatable_dom_positioning_sumberdaya");
-        if (dataTable) dataTable.destroy();
-
-        if (table.length > 0) {
-            dataTable = table.DataTable({
-                paging: false,
-                info: false,
-                searching: false,
-                ordering: false,
-                responsive: false,
-                autoWidth: false,
-                scrollX: false,
-                language: {
-                    emptyTable: "Data tidak ditemukan",
-                    zeroRecords: "Tidak ada data yang cocok dengan pencarian"
-                }
-            });
-        }
-    }
-
-    // Update table with AJAX
-    function updateTable(params = {}) {
-        return new Promise((resolve, reject) => {
-            $('#loading-overlay').removeClass('d-none');
-
-            let baseUrl = parentId
-                ? "{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ':parentId') }}".replace(':parentId', parentId)
-                : "{{ route('admin.laporan-lpj.bidang.dynamic.index') }}";
-
-            const currentUrl = new URL(baseUrl, window.location.origin);
-            for (const key in params) {
-                if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
-                    currentUrl.searchParams.set(key, params[key]);
-                }
-            }
-
-            $.ajax({
-                url: currentUrl.toString(),
-                type: 'GET',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                success: function(response) {
-                    $('#table-container').html(response);
-                    $('#loading-overlay').addClass('d-none');
-                    window.history.pushState(null, null, currentUrl.toString());
-                    initializeDataTable();
-                    initializeDropdownEvents();
-                    resolve(response);
-                },
-                error: function(xhr) {
-                    $('#loading-overlay').addClass('d-none');
-                    showNotification('Terjadi kesalahan saat memuat data.', 'error');
-                    reject(xhr);
-                }
-            });
-        });
-    }
-
-    // Initialize dropdown events
-    function initializeDropdownEvents() {
-        $(document).off('click', '.dropdown-toggle-custom');
-
-        $(document).on('click', '.dropdown-toggle-custom', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const $menu = $(this).closest('.dropdown-action').find('.dropdown-menu-custom');
-            $('.dropdown-menu-custom').not($menu).removeClass('show');
-            $menu.toggleClass('show');
-        });
-
-        $(document).on('click', function(e) {
-            if (!$(e.target).closest('.dropdown-action').length) {
-                $('.dropdown-menu-custom').removeClass('show');
-            }
-        });
-    }
-
-    // Search functionality
-    $('#search').on('input', function() {
-        const searchValue = $(this).val().trim();
-        if (searchTimeout) clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            updateTable({ 'search': searchValue });
-        }, 300);
-    });
-
-    // Pagination handling
-    $(document).on('click', '.pagination-link', function(e) {
-        e.preventDefault();
-        const url = new URL($(this).attr('href'));
-        const page = url.searchParams.get('page');
-        updateTable({ 'page': page });
-    });
-
-    // Per page dropdown handler
-    $(document).on('change', 'select[name="per_page"]', function() {
-        const perPage = $(this).val();
-        updateTable({
-            'per_page': perPage,
-            'page': 1
-        });
-    });
-
-    // Delete function
-    window.deleteItemWithSwal = function(itemId, itemName = 'item ini') {
-        const url = "{{ route('admin.laporan-lpj.bidang.dynamic.destroy', ':id') }}".replace(':id', itemId);
-
-        Swal.fire({
-            title: "Apakah Anda Yakin?",
-            html: `<p style='text-align:center'>Setelah <strong>${itemName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Hapus!',
-            cancelButtonText: 'Batalkan!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: { _token: '{{ csrf_token() }}', _method: 'DELETE' },
-                    success: function(response) {
-                        if (response.success) {
-                            Swal.fire('Berhasil!', 'Data berhasil dihapus.', 'success');
-                            updateTable();
-                        } else {
-                            Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus', 'error');
-                        }
-                    },
-                    error: function() {
-                        Swal.fire('Error!', 'Terjadi kesalahan jaringan.', 'error');
-                    }
-                });
-            }
-        });
-    };
-
-    // Enhanced form submission function (adapted from Document 2)
-    window.submitForm = function(formId) {
-        const formElement = document.getElementById(formId);
-        if (!formElement) {
-            showNotification("Form tidak ditemukan", "error");
-            return;
-        }
-
-        let formData = new FormData();
-        let actionUrl;
-
-        if (formId === 'formAdd') {
-            formData = new FormData(formElement);
-            actionUrl = formElement.action;
-        } else {
-            actionUrl = formElement.getAttribute('data-action');
-            formElement.querySelectorAll('input, select, textarea').forEach(input => {
-                if (input.type === 'file') return;
-                if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
-                    formData.append(input.name, input.value);
-                } else if (input.type !== 'checkbox' && input.type !== 'radio') {
-                    formData.append(input.name, input.value);
-                }
-            });
-        }
-
-        // Handle dropzone files if available
-        if (typeof dropzones !== 'undefined') {
-            const dz = dropzones[formId];
-            if (dz && dz.getAcceptedFiles().length > 0) {
-                dz.getAcceptedFiles().forEach(file => {
-                    formData.append('dokumen', file);
-                });
-            }
-        }
-
-        // Add loading state to button
-        const submitBtn = document.querySelector(
-            `#submitBtn${formId === 'formAdd' ? 'Add' : formId.replace('form-', '')}`);
-        if (submitBtn) {
-            submitBtn.classList.add('btn-loading');
-            submitBtn.disabled = true;
-        }
-
-        fetch(actionUrl, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-                        '{{ csrf_token() }}',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: formData,
-            })
-            .then(async response => {
-                const data = await response.json();
-
-                // Remove loading state
-                if (submitBtn) {
-                    submitBtn.classList.remove('btn-loading');
-                    submitBtn.disabled = false;
-                }
-
-                if (!response.ok) {
-                    if (data.errors) {
-                        Object.entries(data.errors).forEach(([field, msgs]) => {
-                            showNotification(msgs.join(', '), "error");
+                // Reset form functions (enhanced from Document 2)
+                function resetFormAdd() {
+                    const form = document.getElementById('formAdd');
+                    if (form) {
+                        form.reset();
+                        // Clear validation errors
+                        form.querySelectorAll('.invalid-feedback').forEach(el => {
+                            el.textContent = '';
                         });
-                    } else {
-                        showNotification(data.message || "Gagal menyimpan data", "error");
-                    }
-                } else {
-                    // Reset form immediately after successful submission
-                    if (formId === 'formAdd') {
-                        resetFormAdd();
-                    } else {
-                        resetEditForm(formId);
+                        form.querySelectorAll('.is-invalid').forEach(el => {
+                            el.classList.remove('is-invalid');
+                        });
                     }
 
-                    $('.modal.show').addClass('submit-success');
-                    $('.modal.show').modal('hide');
-
-                    showNotification(data.message || "Data berhasil disimpan", "success");
-                    updateTable();
-                }
-            })
-            .catch(error => {
-                // Remove loading state
-                if (submitBtn) {
-                    submitBtn.classList.remove('btn-loading');
-                    submitBtn.disabled = false;
+                    // Reset dropzone if exists
+                    if (typeof dropzones !== 'undefined' && dropzones['formAdd']) {
+                        dropzones['formAdd'].removeAllFiles();
+                    }
                 }
 
-                showNotification("Terjadi kesalahan. Silakan coba lagi.", "error");
-                console.error('Error:', error);
-            });
-    };
+                function resetEditForm(formId) {
+                    const form = document.getElementById(formId);
+                    if (form) {
+                        // Reset form fields to their original values
+                        const modal = $(form).closest('.modal');
+                        const originalData = modal.data('original-data');
 
-    // Show detail modal
-    window.showDetailModal = function(data) {
-        const modalBody = document.getElementById('detailModalBody');
-        const statusIcon = document.getElementById('statusIcon');
-        const exportBtn = document.getElementById('export-pdf-btn');
+                        if (originalData) {
+                            form.querySelectorAll('input, select, textarea').forEach(input => {
+                                const name = input.getAttribute('name');
+                                if (input.type !== 'file' && originalData.hasOwnProperty(name)) {
+                                    input.value = originalData[name];
+                                }
+                            });
+                        }
 
-        if (exportBtn) exportBtn.setAttribute('data-lpj-id', data.id);
+                        // Clear validation errors
+                        form.querySelectorAll('.invalid-feedback').forEach(el => {
+                            el.textContent = '';
+                        });
+                        form.querySelectorAll('.is-invalid').forEach(el => {
+                            el.classList.remove('is-invalid');
+                        });
+                    }
 
-        // Status indicator
-        if (statusIcon) {
-            const canPengajuanModifikasi = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
-            const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
-            const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
-            const hasToken = pengajuan && pengajuan.token > 0;
-
-                if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                    statusIcon.innerHTML = 'Terbuka';
-                    statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
-                } else {
-                    statusIcon.innerHTML = 'Terkunci';
-                    statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+                    // Reset dropzone if exists
+                    if (typeof dropzones !== 'undefined' && dropzones[formId]) {
+                        dropzones[formId].removeAllFiles();
+                    }
                 }
 
-                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
-                        if (ajukanBtn) {
-                            if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                                ajukanBtn.style.display = 'none';
-                            } else {
-                                ajukanBtn.style.display = ''; 
+                // Initialize DataTable
+                function initializeDataTable() {
+                    const table = $("#kt_datatable_dom_positioning_sumberdaya");
+                    if (dataTable) dataTable.destroy();
+
+                    if (table.length > 0) {
+                        dataTable = table.DataTable({
+                            paging: false,
+                            info: false,
+                            searching: false,
+                            ordering: false,
+                            responsive: false,
+                            autoWidth: false,
+                            scrollX: false,
+                            language: {
+                                emptyTable: "Data tidak ditemukan",
+                                zeroRecords: "Tidak ada data yang cocok dengan pencarian"
+                            }
+                        });
+                    }
+                }
+
+                // Update table with AJAX
+                function updateTable(params = {}) {
+                    return new Promise((resolve, reject) => {
+                        $('#loading-overlay').removeClass('d-none');
+
+                        let baseUrl = parentId ?
+                            "{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ':parentId') }}".replace(
+                                ':parentId', parentId) :
+                            "{{ route('admin.laporan-lpj.bidang.dynamic.index') }}";
+
+                        const currentUrl = new URL(baseUrl, window.location.origin);
+                        for (const key in params) {
+                            if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
+                                currentUrl.searchParams.set(key, params[key]);
                             }
                         }
+
+                        $.ajax({
+                            url: currentUrl.toString(),
+                            type: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            success: function(response) {
+                                $('#table-container').html(response);
+                                $('#loading-overlay').addClass('d-none');
+                                window.history.pushState(null, null, currentUrl.toString());
+                                initializeDataTable();
+                                initializeDropdownEvents();
+                                resolve(response);
+                            },
+                            error: function(xhr) {
+                                $('#loading-overlay').addClass('d-none');
+                                showNotification('Terjadi kesalahan saat memuat data.', 'error');
+                                reject(xhr);
+                            }
+                        });
+                    });
                 }
 
-        $('#detailModal').data('lpj-id', data.id);
+                // Initialize dropdown events
+                function initializeDropdownEvents() {
+                    $(document).off('click', '.dropdown-toggle-custom');
 
-        // Populate modal content with full functionality
-        const formatRupiah = (num) => 'Rp ' + (parseInt(num, 10) || 0).toLocaleString('id-ID');
+                    $(document).on('click', '.dropdown-toggle-custom', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
 
-        let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
-        if (data.foto_jurnal && data.foto_jurnal.length) {
-            fotoJurnalHtml = `
+                        const $menu = $(this).closest('.dropdown-action').find('.dropdown-menu-custom');
+                        $('.dropdown-menu-custom').not($menu).removeClass('show');
+                        $menu.toggleClass('show');
+                    });
+
+                    $(document).on('click', function(e) {
+                        if (!$(e.target).closest('.dropdown-action').length) {
+                            $('.dropdown-menu-custom').removeClass('show');
+                        }
+                    });
+                }
+
+                // Search functionality
+                $('#search').on('input', function() {
+                    const searchValue = $(this).val().trim();
+                    if (searchTimeout) clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        updateTable({
+                            'search': searchValue
+                        });
+                    }, 300);
+                });
+
+                // Pagination handling
+                $(document).on('click', '.pagination-link', function(e) {
+                    e.preventDefault();
+                    const url = new URL($(this).attr('href'));
+                    const page = url.searchParams.get('page');
+                    updateTable({
+                        'page': page
+                    });
+                });
+
+                // Per page dropdown handler
+                $(document).on('change', 'select[name="per_page"]', function() {
+                    const perPage = $(this).val();
+                    updateTable({
+                        'per_page': perPage,
+                        'page': 1
+                    });
+                });
+
+                // Delete function
+                window.deleteItemWithSwal = function(itemId, itemName = 'item ini') {
+                    const url = "{{ route('admin.laporan-lpj.bidang.dynamic.destroy', ':id') }}".replace(':id',
+                        itemId);
+
+                    Swal.fire({
+                        title: "Apakah Anda Yakin?",
+                        html: `<p style='text-align:center'>Setelah <strong>${itemName}</strong> dihapus, Anda tidak bisa mengembalikannya!</p>`,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Hapus!',
+                        cancelButtonText: 'Batalkan!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: url,
+                                type: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    _method: 'DELETE'
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire({
+                                            title: 'Berhasil!',
+                                            text: 'Data berhasil dihapus.',
+                                            icon: 'success',
+                                            timer: 1500,
+                                            showConfirmButton: false
+                                        }).then(() => {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus',
+                                            'error');
+                                    }
+                                },
+                                error: function() {
+                                    Swal.fire('Error!', 'Terjadi kesalahan jaringan.', 'error');
+                                }
+                            });
+                        }
+                    });
+                };
+
+                // Enhanced form submission function (adapted from Document 2)
+                window.submitForm = function(formId) {
+                    const formElement = document.getElementById(formId);
+                    if (!formElement) {
+                        showNotification("Form tidak ditemukan", "error");
+                        return;
+                    }
+
+                    let formData = new FormData();
+                    let actionUrl;
+
+                    if (formId === 'formAdd') {
+                        formData = new FormData(formElement);
+                        actionUrl = formElement.action;
+                    } else {
+                        actionUrl = formElement.getAttribute('data-action');
+                        formElement.querySelectorAll('input, select, textarea').forEach(input => {
+                            if (input.type === 'file') return;
+                            if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
+                                formData.append(input.name, input.value);
+                            } else if (input.type !== 'checkbox' && input.type !== 'radio') {
+                                formData.append(input.name, input.value);
+                            }
+                        });
+                    }
+
+                    // Handle dropzone files if available
+                    if (typeof dropzones !== 'undefined') {
+                        const dz = dropzones[formId];
+                        if (dz && dz.getAcceptedFiles().length > 0) {
+                            dz.getAcceptedFiles().forEach(file => {
+                                formData.append('dokumen', file);
+                            });
+                        }
+                    }
+
+                    // Add loading state to button
+                    const submitBtn = document.querySelector(
+                        `#submitBtn${formId === 'formAdd' ? 'Add' : formId.replace('form-', '')}`);
+                    if (submitBtn) {
+                        submitBtn.classList.add('btn-loading');
+                        submitBtn.disabled = true;
+                    }
+
+                    fetch(actionUrl, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute(
+                                        'content') ||
+                                    '{{ csrf_token() }}',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: formData,
+                        })
+                        .then(async response => {
+                            const data = await response.json();
+
+                            // Remove loading state
+                            if (submitBtn) {
+                                submitBtn.classList.remove('btn-loading');
+                                submitBtn.disabled = false;
+                            }
+
+                            if (!response.ok) {
+                                if (data.errors) {
+                                    Object.entries(data.errors).forEach(([field, msgs]) => {
+                                        showNotification(msgs.join(', '), "error");
+                                    });
+                                } else {
+                                    showNotification(data.message || "Gagal menyimpan data", "error");
+                                }
+                            } else {
+                                // Reset form immediately after successful submission
+                                if (formId === 'formAdd') {
+                                    resetFormAdd();
+                                } else {
+                                    resetEditForm(formId);
+                                }
+
+                                $('.modal.show').addClass('submit-success');
+                                $('.modal.show').modal('hide');
+
+                                showNotification(data.message || "Data berhasil disimpan", "success");
+                                updateTable();
+                            }
+                        })
+                        .catch(error => {
+                            // Remove loading state
+                            if (submitBtn) {
+                                submitBtn.classList.remove('btn-loading');
+                                submitBtn.disabled = false;
+                            }
+
+                            showNotification("Terjadi kesalahan. Silakan coba lagi.", "error");
+                            console.error('Error:', error);
+                        });
+                };
+
+                // Show detail modal
+                window.showDetailModal = function(data) {
+                    const modalBody = document.getElementById('detailModalBody');
+                    const statusIcon = document.getElementById('statusIcon');
+                    const exportBtn = document.getElementById('export-pdf-btn');
+
+                    if (exportBtn) exportBtn.setAttribute('data-lpj-id', data.id);
+
+                    // Status indicator
+                    if (statusIcon) {
+                        const canPengajuanModifikasi =
+                            {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }};
+                        const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id ==
+                            {{ auth()->id() }};
+                        const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui')
+                            .sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
+                        const hasToken = pengajuan && pengajuan.token > 0;
+
+                        // Handle the pengajuan data - it should be a single object, not an array
+                        const pengajuan = data.pengajuan; // This is the hasOne relationship
+                        const hasToken = pengajuan && pengajuan.status === 'disetujui' && pengajuan.token > 0;
+
+                        let isModifiableStatus = false;
+                        if (canPengajuanModifikasi) {
+                            isModifiableStatus = true;
+                        } else if (isModifiable && hasToken) {
+                            isModifiableStatus = true;
+                        }
+
+                        if (isModifiableStatus) {
+                            statusIcon.innerHTML = 'Terbuka';
+                            statusIcon.className =
+                                'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
+                        } else {
+                            statusIcon.innerHTML = 'Terkunci';
+                            statusIcon.className =
+                                'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+                        }
+
+                        const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
+                        if (ajukanBtn) {
+                            // Show the pengajuan button only if the user cannot modify (no permission and no valid token)
+                            if (isModifiableStatus) {
+                                ajukanBtn.style.display = 'none';
+                            } else {
+                                ajukanBtn.style.display = '';
+                            }
+                        }
+                    }
+
+                    $('#detailModal').data('lpj-id', data.id);
+
+                    // Populate modal content with full functionality
+                    const formatRupiah = (num) => 'Rp ' + (parseInt(num, 10) || 0).toLocaleString('id-ID');
+
+                    let fotoJurnalHtml = '<div class="text-muted fst-italic">Tidak ada foto tersedia</div>';
+                    if (data.foto_jurnal && data.foto_jurnal.length) {
+                        fotoJurnalHtml = `
                 <div class="row g-3">
                     ${data.foto_jurnal.map(f => `
-                        <div class="col-6 col-md-4">
-                            <div class="border rounded overflow-hidden" style="height:120px">
-                                <img src="/storage/${f}" class="w-100 h-100"
-                                    style="object-fit:cover;cursor:pointer"
-                                    >
-                            </div>
-                        </div>`).join('')}
+                            <div class="col-6 col-md-4">
+                                <div class="overflow-hidden rounded border" style="height:120px">
+                                    <img src="/storage/${f}" class="w-100 h-100"
+                                        style="object-fit:cover;cursor:pointer"
+                                        >
+                                </div>
+                            </div>`).join('')}
                 </div>
                 <div class="mt-2">
                     <button type="button" class="btn btn-outline-primary btn-sm preview-btn"
@@ -875,12 +818,12 @@ $(document).ready(function() {
                             data-title="Foto Kegiatan">
                     </button>
                 </div>`;
-        }
+                    }
 
-        let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
-        if (data.dokumen_pendukung && data.dokumen_pendukung.length) {
-            dokumenHtml = `
-                <div class="d-flex flex-column gap-2">
+                    let dokumenHtml = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+                    if (data.dokumen_pendukung && data.dokumen_pendukung.length) {
+                        dokumenHtml = `
+                <div class="gap-2 d-flex flex-column">
                     ${data.dokumen_pendukung.map(d => {
                         const name = d.split('/').pop();
                         const ext = name.split('.').pop().toLowerCase();
@@ -894,161 +837,238 @@ $(document).ready(function() {
                             jpeg: 'fas fa-file-image text-info',
                             png: 'fas fa-file-image text-info'
                         }[ext] || 'fas fa-file text-secondary';
-                        return `
-                            <div class="d-flex align-items-center p-2 border rounded bg-light">
-                                <i class="${icon} me-3" style="font-size:1.2em"></i>
-                                <div class="flex-grow-1">
-                                    <div class="fw-medium">${name}</div>
-                                    <small class="text-muted">${ext.toUpperCase()}</small>
-                                </div>
-                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
-                                    <i class="fas fa-download me-1"></i>Unduh
-                                </a>
-                            </div>`;
-                    }).join('')}
-                </div>
-                <div class="mt-2">
-                    <button type="button" class="btn btn-outline-secondary btn-sm preview-btn"
-                            data-files='${JSON.stringify(data.dokumen_pendukung)}'
-                            data-type="document"
-                            data-title="Dokumen Pendukung">
-                    </button>
-                </div>`;
+                        return ` <
+                            div class = "p-2 rounded border d-flex align-items-center bg-light" >
+                            <
+                            i class = "${icon} me-3"
+                        style = "font-size:1.2em" > < /i> <
+                            div class = "flex-grow-1" >
+                            <
+                            div class = "fw-medium" > $ {
+                                name
+                            } < /div> <
+                            small class = "text-muted" > $ {
+                                ext.toUpperCase()
+                            } < /small> <
+                            /div> <
+                            a href = "/storage/${d}"
+                        target = "_blank"
+                        class = "btn btn-outline-secondary btn-sm me-2" >
+                        <
+                        i class = "fas fa-download me-1" > < /i>Unduh <
+                        /a> <
+                        /div>`;
+                }).join('')
+        } <
+        /div> <
+        div class = "mt-2" >
+        <
+        button type = "button"
+        class = "btn btn-outline-secondary btn-sm preview-btn"
+        data - files = '${JSON.stringify(data.dokumen_pendukung)}'
+        data - type = "document"
+        data - title = "Dokumen Pendukung" >
+        <
+        /button> <
+        /div>`;
+        }
+
+        let dokumenLpj = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+        if (data.dokumen_lpj && data.dokumen_lpj.length) {
+            dokumenLpj = `
+                <div class="gap-2 d-flex flex-column">
+                    ${data.dokumen_lpj.map(d => {
+                        const name = d.split('/').pop();
+                        const ext = name.split('.').pop().toLowerCase();
+                        const icon = {
+                            pdf: 'fas fa-file-pdf text-danger',
+                            doc: 'fas fa-file-word text-primary',
+                            docx: 'fas fa-file-word text-primary',
+                            xls: 'fas fa-file-excel text-success',
+                            xlsx: 'fas fa-file-excel text-success',
+                            jpg: 'fas fa-file-image text-info',
+                            jpeg: 'fas fa-file-image text-info',
+                            png: 'fas fa-file-image text-info'
+                        }[ext] || 'fas fa-file text-secondary';
+                        return ` <
+                div class = "p-2 rounded border d-flex align-items-center bg-light" >
+                <
+                i class = "${icon} me-3"
+            style = "font-size:1.2em" > < /i> <
+                div class = "flex-grow-1" >
+                <
+                div class = "fw-medium" > $ {
+                    name
+                } < /div> <
+                small class = "text-muted" > $ {
+                    ext.toUpperCase()
+                } < /small> <
+                /div> <
+                a href = "/storage/${d}"
+            target = "_blank"
+            class = "btn btn-outline-secondary btn-sm me-2" >
+            <
+            i class = "fas fa-download me-1" > < /i>Unduh <
+            /a> <
+            /div>`;
+    }).join('')
+    } <
+    /div> <
+    div class = "mt-2" >
+    <
+    button type = "button"
+    class = "btn btn-outline-secondary btn-sm preview-btn"
+    data - files = '${JSON.stringify(data.dokumen_lpj)}'
+    data - type = "document"
+    data - title = "Dokumen LPJ" >
+        <
+        /button> <
+        /div>`;
         }
 
         modalBody.innerHTML = `
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
+            <div class="border-0 shadow-sm card">
+                <div class="p-4 card-body">
                     <div class="mb-4">
-                        <h6 class="fw-bold text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Informasi Kegiatan</h6>
-                        <div class="bg-light p-3 rounded">
+                        <h6 class="mb-3 fw-bold text-primary"><i class="fas fa-info-circle me-2"></i>Informasi Kegiatan</h6>
+                        <div class="p-3 rounded bg-light">
                             <div class="mb-2">
-                                <label class="fw-semibold mb-1">Nama Kegiatan & Program:</label>
+                                <label class="mb-1 fw-semibold">Nama Kegiatan & Program:</label>
                                 <p class="mb-0">${data.nama_program || data.nama_kegiatan || 'N/A'}</p>
                                 ${data.nama_kegiatan && data.nama_program ? `<small class="text-muted">${data.nama_kegiatan}</small>` : ''}
                             </div>
                             ${data.tempat_kegiatan ? `
-                                <div class="mb-2">
-                                    <label class="fw-semibold mb-1">Tempat Kegiatan:</label>
-                                    <p class="mb-0">${data.tempat_kegiatan}</p>
-                                </div>` : ''}
+                                    <div class="mb-2">
+                                        <label class="mb-1 fw-semibold">Tempat Kegiatan:</label>
+                                        <p class="mb-0">${data.tempat_kegiatan}</p>
+                                    </div>` : ''}
                             ${data.tanggal_kegiatan ? `
-                                <div>
-                                    <label class="fw-semibold mb-1">Tanggal Kegiatan:</label>
-                                    <p class="mb-0">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
-                                </div>` : ''}
+                                    <div>
+                                        <label class="mb-1 fw-semibold">Tanggal Kegiatan:</label>
+                                        <p class="mb-0">${new Date(data.tanggal_kegiatan).toLocaleDateString('id-ID')}</p>
+                                    </div>` : ''}
                         </div>
                     </div>
 
                     ${data.jumlah_harga ? `
-                        <div class="mb-4">
-                            <h6 class="fw-bold text-success mb-3"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
-                            <div class="bg-light p-3 rounded">
-                                <div class="row g-3">
-                                    ${data.jumlah_harga ? `
+                            <div class="mb-4">
+                                <h6 class="mb-3 fw-bold text-success"><i class="fas fa-calculator me-2"></i>Rincian Anggaran</h6>
+                                <div class="p-3 rounded bg-light">
+                                    <div class="row g-3">
+                                        ${data.jumlah_harga ? `
                                         <div class="col-md-6">
-                                            <label class="fw-semibold mb-1">Total Anggaran:</label>
+                                            <label class="mb-1 fw-semibold">Total Anggaran:</label>
                                             <p class="mb-0 text-success fs-5 fw-bold">${formatRupiah(data.jumlah_harga)}</p>
                                         </div>` : ''}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>` : ''}
+                            </div>` : ''}
 
                     <div class="mb-4">
-                        <h6 class="fw-bold text-warning mb-3"><i class="fas fa-paperclip me-2"></i>Lampiran</h6>
+                        <h6 class="mb-3 fw-bold text-warning"><i class="fas fa-paperclip me-2"></i>Lampiran</h6>
                         <div class="mb-3">
-                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-camera me-1"></i>Foto Kegiatan:</label>
-                            <div class="bg-light p-3 rounded">${fotoJurnalHtml}</div>
+                            <label class="mb-2 fw-semibold d-block"><i class="fas fa-camera me-1"></i>Foto Kegiatan:</label>
+                            <div class="p-3 rounded bg-light">${fotoJurnalHtml}</div>
                         </div>
                         <div>
-                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
-                            <div class="bg-light p-3 rounded">${dokumenHtml}</div>
+                            <label class="mb-2 fw-semibold d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
+                            <div class="p-3 rounded bg-light">${dokumenHtml}</div>
+                        </div>
+                        <div>
+                            <label class="mb-2 fw-semibold d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
+                            <div class="p-3 rounded bg-light">${dokumenLpj}</div>
                         </div>
                     </div>
 
-                    ${data.keterangan ? `
-                        <div class="mb-2">
-                            <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
-                            <div class="bg-light p-3 rounded"><p class="mb-0">${data.keterangan}</p></div>
+                    ${data.keterangan_tambahan ? `
+                        <div class="mb-4">
+                            <h6 class="mb-3 fw-bold text-dark d-flex align-items-center">
+                                <i class="fas fa-sticky-note me-2"></i>
+                                Keterangan Tambahan
+                            </h6>
+                            <div class="p-3 rounded bg-light">
+                                <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
+                            </div>
                         </div>` : ''}
                 </div>
             </div>
         `;
 
         new bootstrap.Modal(document.getElementById('detailModal')).show();
-    };
+        };
 
-    // Pengajuan modal handlers
-    $('#ajukanPerubahanBtn').on('click', function() {
-        const lpjId = $('#detailModal').data('lpj-id');
-        $('#pengajuan_lpj_id').val(lpjId);
-        $('#detailModal').modal('hide');
-        new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
-    });
+        // Pengajuan modal handlers
+        $('#ajukanPerubahanBtn').on('click', function() {
+            const lpjId = $('#detailModal').data('lpj-id');
+            $('#pengajuan_lpj_id').val(lpjId);
+            $('#detailModal').modal('hide');
+            new bootstrap.Modal(document.getElementById('pengajuanModal')).show();
+        });
 
-    $('#submitPengajuanBtn').on('click', function() {
-        const lpjId = $('#pengajuan_lpj_id').val();
-        const alasan = $('#alasan').val();
+        $('#submitPengajuanBtn').on('click', function() {
+            const lpjId = $('#pengajuan_lpj_id').val();
+            const alasan = $('#alasan').val();
 
-        if (!alasan.trim()) {
-            alert('Alasan harus diisi.');
-            return;
-        }
+            if (!alasan.trim()) {
+                alert('Alasan harus diisi.');
+                return;
+            }
 
-        $.ajax({
-            url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
-            type: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                lpj_id: lpjId,
-                alasan: alasan,
-                user_id: {{ auth()->id() }}
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#pengajuanModal').modal('hide');
-                    showNotification('Pengajuan berhasil dikirim.', 'success');
-                } else {
-                    showNotification(response.message || 'Gagal mengirim pengajuan.', 'error');
+            $.ajax({
+                url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    lpj_id: lpjId,
+                    alasan: alasan,
+                    user_id: {{ auth()->id() }}
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#pengajuanModal').modal('hide');
+                        showNotification('Pengajuan berhasil dikirim.', 'success');
+                    } else {
+                        showNotification(response.message || 'Gagal mengirim pengajuan.', 'error');
+                    }
+                },
+                error: function() {
+                    showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
                 }
-            },
-            error: function() {
-                showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+            });
+        });
+
+        // Export PDF functionality
+        $('#export-pdf-btn').on('click', function(e) {
+            e.preventDefault();
+            const lpjId = $(this).attr('data-lpj-id');
+
+            if (lpjId) {
+                let exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.export-pdf', ':id') }}".replace(':id',
+                    lpjId);
+                window.location.href = exportUrl;
+            } else {
+                alert('Tidak dapat mengekspor PDF, ID laporan tidak ditemukan.');
             }
         });
-    });
 
-    // Export PDF functionality
-    $('#export-pdf-btn').on('click', function(e) {
-        e.preventDefault();
-        const lpjId = $(this).attr('data-lpj-id');
+        // Preview modal functionality
+        let currentFiles = [];
+        let currentIndex = 0;
 
-        if (lpjId) {
-            let exportUrl = "{{ route('admin.laporan-lpj.bidang.dynamic.export-pdf', ':id') }}".replace(':id', lpjId);
-            window.location.href = exportUrl;
-        } else {
-            alert('Tidak dapat mengekspor PDF, ID laporan tidak ditemukan.');
-        }
-    });
+        window.showPreviewModal = function(files, type, title) {
+            currentFiles = files;
+            currentIndex = 0;
 
-    // Preview modal functionality
-    let currentFiles = [];
-    let currentIndex = 0;
+            const previewSlides = document.getElementById('previewSlides');
+            const modalTitle = document.getElementById('previewModalLabel');
 
-    window.showPreviewModal = function(files, type, title) {
-        currentFiles = files;
-        currentIndex = 0;
+            modalTitle.textContent = title || 'Preview Files';
+            previewSlides.innerHTML = '';
 
-        const previewSlides = document.getElementById('previewSlides');
-        const modalTitle = document.getElementById('previewModalLabel');
-
-        modalTitle.textContent = title || 'Preview Files';
-        previewSlides.innerHTML = '';
-
-        currentFiles.forEach((file, index) => {
-            const slide = document.createElement('div');
-            slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
-            slide.style.cssText = `
+            currentFiles.forEach((file, index) => {
+                const slide = document.createElement('div');
+                slide.className = `preview-slide ${index === currentIndex ? 'active' : ''}`;
+                slide.style.cssText = `
                 display: ${index === currentIndex ? 'flex' : 'none'};
                 width: 100%;
                 height: 100%;
@@ -1059,230 +1079,235 @@ $(document).ready(function() {
                 left: 0;
             `;
 
-            const fileName = file.split('/').pop();
-            const fileExtension = fileName.split('.').pop().toLowerCase();
-            const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                const fileName = file.split('/').pop();
+                const fileExtension = fileName.split('.').pop().toLowerCase();
+                const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
-            if (imageExtensions.includes(fileExtension)) {
-                slide.innerHTML = `<img src="/storage/${file}" alt="Preview" style="max-width: 100%; max-height: 80%; object-fit: contain; border-radius: 8px;">`;
-            } else if (fileExtension === 'pdf') {
-                slide.innerHTML = `<iframe src="/storage/${file}" style="width: 100%; height: 80%; border: none; border-radius: 8px;"></iframe>`;
-            } else {
-                slide.innerHTML = `
+                if (imageExtensions.includes(fileExtension)) {
+                    slide.innerHTML =
+                        `<img src="/storage/${file}" alt="Preview" style="max-width: 100%; max-height: 80%; object-fit: contain; border-radius: 8px;">`;
+                } else if (fileExtension === 'pdf') {
+                    slide.innerHTML =
+                        `<iframe src="/storage/${file}" style="width: 100%; height: 80%; border: none; border-radius: 8px;"></iframe>`;
+                } else {
+                    slide.innerHTML = `
                     <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; background: white; border: 2px dashed #dee2e6; border-radius: 8px;">
                         <i class="fas fa-file" style="font-size: 4rem; color: #6c757d; margin-bottom: 1rem;"></i>
                         <h5>${fileName}</h5>
                         <a href="/storage/${file}" class="btn btn-primary" target="_blank">Open File</a>
                     </div>
                 `;
-            }
-
-            previewSlides.appendChild(slide);
-        });
-
-        updatePreviewUI();
-        $('#previewModal').modal('show');
-    };
-
-    function updatePreviewUI() {
-        const fileName = currentFiles[currentIndex]?.split('/').pop() || '';
-        const fileCounter = document.getElementById('fileCounter');
-        const currentFileName = document.getElementById('currentFileName');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-
-        if (currentFileName) currentFileName.textContent = fileName;
-        if (fileCounter) fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
-
-        if (currentFiles.length > 1) {
-            if (prevBtn) prevBtn.style.display = 'block';
-            if (nextBtn) nextBtn.style.display = 'block';
-        } else {
-            if (prevBtn) prevBtn.style.display = 'none';
-            if (nextBtn) nextBtn.style.display = 'none';
-        }
-
-        if (downloadBtn) {
-            downloadBtn.onclick = function() {
-                window.open('/storage/' + currentFiles[currentIndex], '_blank');
-            };
-        }
-    }
-
-    function showSlide(index) {
-        document.querySelectorAll('.preview-slide').forEach((slide, i) => {
-            slide.style.display = i === index ? 'flex' : 'none';
-        });
-        currentIndex = index;
-        updatePreviewUI();
-    }
-
-    $('#prevBtn').on('click', function() {
-        const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
-        showSlide(newIndex);
-    });
-
-    $('#nextBtn').on('click', function() {
-        const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
-        showSlide(newIndex);
-    });
-
-    $(document).on('click', '.preview-btn', function(e) {
-        e.preventDefault();
-        try {
-            const filesData = $(this).attr('data-files');
-            const type = $(this).attr('data-type') || 'image';
-            const title = $(this).attr('data-title') || 'Preview Files';
-
-            if (filesData) {
-                const files = JSON.parse(filesData);
-                showPreviewModal(files, type, title);
-            }
-        } catch (error) {
-            console.error('Error parsing preview data:', error);
-        }
-    });
-
-    // Edit Target Modal functionality
-    const $editModal = $('#editTargetModal');
-    const $editForm = $('#editTargetForm');
-
-    // Format rupiah input
-    $('#target_anggaran').on('keyup', function() {
-        $(this).val(formatRupiah($(this).val()));
-    });
-
-    // Fix modal flash issue by showing content only when modal is actually shown
-    $editModal.on('show.bs.modal', function() {
-        setTimeout(() => {
-            $(this).find('.modal-content').css('opacity', '1');
-        }, 50);
-    });
-
-    $editModal.on('hidden.bs.modal', function() {
-        $(this).find('.modal-content').css('opacity', '0');
-        $editForm.find('.invalid-feedback').text('');
-        $editForm.find('.is-invalid').removeClass('is-invalid');
-    });
-
-    // Save target button
-    $('#saveTargetBtn').on('click', function() {
-        const $submitBtn = $(this);
-        const $targetInput = $('#target_anggaran');
-        const unformattedValue = unformatRupiah($targetInput.val());
-
-        $targetInput.val(unformattedValue);
-        const formData = $editForm.serialize();
-        $targetInput.val(formatRupiah(unformattedValue));
-
-        $submitBtn.addClass('btn-loading').prop('disabled', true);
-
-        $.ajax({
-            url: "{{ route('admin.laporan-lpj.bidang.dynamic.target.store-or-update') }}",
-            type: 'POST',
-            data: formData,
-            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            success: function(response) {
-                $submitBtn.removeClass('btn-loading').prop('disabled', false);
-
-                if (response.success) {
-                    $editModal.modal('hide');
-                    showNotification('Target berhasil diperbarui.', 'success');
-                    setTimeout(() => window.location.reload(), 100);
-                } else {
-                    showNotification(response.message || 'Gagal memperbarui target.', 'error');
                 }
-            },
-            error: function(xhr) {
-                $submitBtn.removeClass('btn-loading').prop('disabled', false);
 
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    Object.entries(xhr.responseJSON.errors).forEach(([field, messages]) => {
-                        const $field = $editForm.find(`[name="${field}"]`);
-                        $field.addClass('is-invalid');
-                        $field.siblings('.invalid-feedback').text(messages.join(', '));
-                    });
-                } else {
-                    showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                previewSlides.appendChild(slide);
+            });
+
+            updatePreviewUI();
+            $('#previewModal').modal('show');
+        };
+
+        function updatePreviewUI() {
+            const fileName = currentFiles[currentIndex]?.split('/').pop() || '';
+            const fileCounter = document.getElementById('fileCounter');
+            const currentFileName = document.getElementById('currentFileName');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (currentFileName) currentFileName.textContent = fileName;
+            if (fileCounter) fileCounter.textContent = `${currentIndex + 1} of ${currentFiles.length}`;
+
+            if (currentFiles.length > 1) {
+                if (prevBtn) prevBtn.style.display = 'block';
+                if (nextBtn) nextBtn.style.display = 'block';
+            } else {
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+            }
+
+            if (downloadBtn) {
+                downloadBtn.onclick = function() {
+                    window.open('/storage/' + currentFiles[currentIndex], '_blank');
+                };
+            }
+        }
+
+        function showSlide(index) {
+            document.querySelectorAll('.preview-slide').forEach((slide, i) => {
+                slide.style.display = i === index ? 'flex' : 'none';
+            });
+            currentIndex = index;
+            updatePreviewUI();
+        }
+
+        $('#prevBtn').on('click', function() {
+            const newIndex = currentIndex > 0 ? currentIndex - 1 : currentFiles.length - 1;
+            showSlide(newIndex);
+        });
+
+        $('#nextBtn').on('click', function() {
+            const newIndex = currentIndex < currentFiles.length - 1 ? currentIndex + 1 : 0;
+            showSlide(newIndex);
+        });
+
+        $(document).on('click', '.preview-btn', function(e) {
+            e.preventDefault();
+            try {
+                const filesData = $(this).attr('data-files');
+                const type = $(this).attr('data-type') || 'image';
+                const title = $(this).attr('data-title') || 'Preview Files';
+
+                if (filesData) {
+                    const files = JSON.parse(filesData);
+                    showPreviewModal(files, type, title);
                 }
+            } catch (error) {
+                console.error('Error parsing preview data:', error);
             }
         });
-    });
 
-    // Enhanced Modal Event Handlers (from Document 2)
-    $(document).on('show.bs.modal', '.modal', function(e) {
-        const modalId = $(this).attr('id');
-        const modal = $(this);
+        // Edit Target Modal functionality
+        const $editModal = $('#editTargetModal');
+        const $editForm = $('#editTargetForm');
 
-        modal.removeClass('has-changes submit-success');
+        // Format rupiah input
+        $('#target_anggaran').on('keyup', function() {
+            $(this).val(formatRupiah($(this).val()));
+        });
 
-        // Store original form data for reset on cancel
-        setTimeout(() => {
-            const form = modal.find('form, [id^="form-"]').first();
-            if (form.length) {
-                const originalData = {};
-                form.find('input, select, textarea').each(function() {
-                    const input = $(this);
-                    if (input.attr('type') !== 'file') {
-                        originalData[input.attr('name')] = input.val();
+        // Fix modal flash issue by showing content only when modal is actually shown
+        $editModal.on('show.bs.modal', function() {
+            setTimeout(() => {
+                $(this).find('.modal-content').css('opacity', '1');
+            }, 50);
+        });
+
+        $editModal.on('hidden.bs.modal', function() {
+            $(this).find('.modal-content').css('opacity', '0');
+            $editForm.find('.invalid-feedback').text('');
+            $editForm.find('.is-invalid').removeClass('is-invalid');
+        });
+
+        // Save target button
+        $('#saveTargetBtn').on('click', function() {
+            const $submitBtn = $(this);
+            const $targetInput = $('#target_anggaran');
+            const unformattedValue = unformatRupiah($targetInput.val());
+
+            $targetInput.val(unformattedValue);
+            const formData = $editForm.serialize();
+            $targetInput.val(formatRupiah(unformattedValue));
+
+            $submitBtn.addClass('btn-loading').prop('disabled', true);
+
+            $.ajax({
+                url: "{{ route('admin.laporan-lpj.bidang.dynamic.target.store-or-update') }}",
+                type: 'POST',
+                data: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    $submitBtn.removeClass('btn-loading').prop('disabled', false);
+
+                    if (response.success) {
+                        $editModal.modal('hide');
+                        showNotification('Target berhasil diperbarui.', 'success');
+                        setTimeout(() => window.location.reload(), 100);
+                    } else {
+                        showNotification(response.message || 'Gagal memperbarui target.', 'error');
                     }
-                });
-                modal.data('original-data', originalData);
-            }
-        }, 100);
-    });
+                },
+                error: function(xhr) {
+                    $submitBtn.removeClass('btn-loading').prop('disabled', false);
 
-    $(document).on('hidden.bs.modal', '.modal', function(e) {
-        const modalId = $(this).attr('id');
-        const modal = $(this);
+                    if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                        Object.entries(xhr.responseJSON.errors).forEach(([field, messages]) => {
+                            const $field = $editForm.find(`[name="${field}"]`);
+                            $field.addClass('is-invalid');
+                            $field.siblings('.invalid-feedback').text(messages.join(', '));
+                        });
+                    } else {
+                        showNotification('Terjadi kesalahan. Silakan coba lagi.', 'error');
+                    }
+                }
+            });
+        });
 
-        // Only reset if the form was not successfully submitted
-        // (successful submissions are already reset in submitForm)
-        if (!modal.hasClass('submit-success')) {
-            const originalData = modal.data('original-data');
-            if (originalData) {
+        // Enhanced Modal Event Handlers (from Document 2)
+        $(document).on('show.bs.modal', '.modal', function(e) {
+            const modalId = $(this).attr('id');
+            const modal = $(this);
+
+            modal.removeClass('has-changes submit-success');
+
+            // Store original form data for reset on cancel
+            setTimeout(() => {
                 const form = modal.find('form, [id^="form-"]').first();
                 if (form.length) {
+                    const originalData = {};
                     form.find('input, select, textarea').each(function() {
                         const input = $(this);
-                        const name = input.attr('name');
-                        if (input.attr('type') !== 'file' && originalData.hasOwnProperty(name)) {
-                            input.val(originalData[name]);
+                        if (input.attr('type') !== 'file') {
+                            originalData[input.attr('name')] = input.val();
                         }
                     });
+                    modal.data('original-data', originalData);
+                }
+            }, 100);
+        });
+
+        $(document).on('hidden.bs.modal', '.modal', function(e) {
+            const modalId = $(this).attr('id');
+            const modal = $(this);
+
+            // Only reset if the form was not successfully submitted
+            // (successful submissions are already reset in submitForm)
+            if (!modal.hasClass('submit-success')) {
+                const originalData = modal.data('original-data');
+                if (originalData) {
+                    const form = modal.find('form, [id^="form-"]').first();
+                    if (form.length) {
+                        form.find('input, select, textarea').each(function() {
+                            const input = $(this);
+                            const name = input.attr('name');
+                            if (input.attr('type') !== 'file' && originalData.hasOwnProperty(name)) {
+                                input.val(originalData[name]);
+                            }
+                        });
+                    }
+                }
+
+                // Reset dropzone files
+                if (typeof dropzones !== 'undefined') {
+                    if (modalId.startsWith('edit-')) {
+                        const itemId = modalId.split('-')[1];
+                        const formId = `form-${itemId}`;
+                        if (dropzones[formId]) {
+                            dropzones[formId].removeAllFiles();
+                        }
+                    } else if (modalId === 'add') {
+                        if (dropzones['formAdd']) {
+                            dropzones['formAdd'].removeAllFiles();
+                        }
+                    }
                 }
             }
 
-            // Reset dropzone files
-            if (typeof dropzones !== 'undefined') {
-                if (modalId.startsWith('edit-')) {
-                    const itemId = modalId.split('-')[1];
-                    const formId = `form-${itemId}`;
-                    if (dropzones[formId]) {
-                        dropzones[formId].removeAllFiles();
-                    }
-                } else if (modalId === 'add') {
-                    if (dropzones['formAdd']) {
-                        dropzones['formAdd'].removeAllFiles();
-                    }
-                }
-            }
-        }
+            // Always clean up modal state
+            modal.removeClass('has-changes submit-success');
+            modal.removeData('original-data');
+        });
 
-        // Always clean up modal state
-        modal.removeClass('has-changes submit-success');
-        modal.removeData('original-data');
-    });
+        // Track form changes
+        $(document).on('input change', '.modal input, .modal select, .modal textarea', function() {
+            const modal = $(this).closest('.modal');
+            modal.addClass('has-changes');
+        });
 
-    // Track form changes
-    $(document).on('input change', '.modal input, .modal select, .modal textarea', function() {
-        const modal = $(this).closest('.modal');
-        modal.addClass('has-changes');
-    });
-    // Initialize everything
-    initializeDataTable();
-    initializeDropdownEvents();
-});
-</script>
+        // Initialize everything
+        initializeDataTable();
+        initializeDropdownEvents();
+        });
+    </script>
 @endsection

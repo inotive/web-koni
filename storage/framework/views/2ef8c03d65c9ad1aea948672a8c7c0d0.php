@@ -235,6 +235,7 @@
             border-top-color: var(--bs-tooltip-bg);
             border-bottom-color: var(--bs-tooltip-bg);
         }
+
     </style>
 
     <div class="d-flex flex-column mb-8">
@@ -347,142 +348,8 @@
     </div>
 
     
-    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header" style="background: white; color: rgb(0, 0, 0);">
-                    <h5 class="modal-title text-black" id="previewModalLabel">Preview Files</h5>
-                    <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-0" style="height: 70vh;">
-                    <div class="preview-container h-100 position-relative d-flex align-items-center justify-content-center" style="background: #f8f9fa;">
-                        <div id="previewSlides" class="w-100 h-100"></div>
-                        <button type="button" id="prevBtn" class="btn btn-primary position-absolute start-0 top-50 translate-middle-y ms-3" style="z-index: 10; display: none;">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button type="button" id="nextBtn" class="btn btn-primary position-absolute end-0 top-50 translate-middle-y me-3" style="z-index: 10; display: none;">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <div class="d-flex justify-content-between align-items-center w-100">
-                        <div>
-                            <strong id="currentFileName">File Name</strong>
-                            <div class="text-muted small" id="fileCounter">1 of 1</div>
-                        </div>
-                        <div>
-                            <button type="button" id="downloadBtn" class="btn btn-success btn-sm me-2">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
-    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header d-flex align-items-center"
-                    style="background: white; color: #333; border-bottom: 1px solid #dee2e6 !important;">
-                    <h5 class="modal-title me-1" id="detailModalLabel" style="color: #333 !important;">Detail Kegiatan</h5>
-                    <span id="statusIcon" class="ms-2 fs-6 gap-3"></span>
-
-                    <div class="ms-auto d-flex align-items-center gap-2">
-                        <button type="button" id="export-pdf-btn" class="btn">
-                            <i class="fa-solid fa-file-export" style="color: white"></i>
-                            Export Data
-                        </button>
-                        <button type="button" id="ajukanPerubahanBtn" class="btn">
-                            <i class="bi bi-arrow-repeat" style="color: white"></i>
-                            <strong>Ajukan Perubahan</strong>
-                        </button>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                </div>
-
-                <div class="modal-body" id="detailModalBody">
-                    
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
-    <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="pengajuanModalLabel">Ajukan Perubahan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="pengajuanForm">
-                        <input type="hidden" id="pengajuan_lpj_id" name="lpj_id">
-                        <div class="mb-3">
-                            <label for="alasan" class="form-label">Alasan Perubahan</label>
-                            <textarea class="form-control" id="alasan" name="alasan" rows="4" required></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="submitPengajuanBtn">Kirim Pengajuan</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php echo $__env->make('admin.laporan-lpj.bidang_new.dynamic.modals', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php $__env->stopSection(); ?>
-
-<?php if($parentId): ?>
-
-<div class="modal fade" id="editTargetModal" tabindex="-1" aria-labelledby="editTargetModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 gap-5 px-10 py-8">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="fs-2 fw-bold leading-5">Edit Target Anggaran & Kegiatan</div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <form id="editTargetForm" class="d-grid gap-4">
-                <input type="hidden" name="id_lpj" value="<?php echo e($parentId); ?>">
-
-                <div>
-                    <div class="fw-semibold required mb-3 text-gray-800">Target Anggaran</div>
-                    <input type="text" name="target_anggaran" id="target_anggaran"
-                           value="<?php echo e(formatRupiah($target->target_anggaran ?? 0)); ?>"
-                           placeholder="Masukkan target anggaran"
-                           class="form-control bg-light border border-gray-400" required />
-                    <div class="invalid-feedback"></div>
-                </div>
-
-                <div>
-                    <div class="fw-semibold required mb-3 text-gray-800">Target Kegiatan</div>
-                    <input type="number" name="target_kegiatan" id="target_kegiatan"
-                           value="<?php echo e($target->target_kegiatan ?? 0); ?>"
-                           placeholder="Masukkan jumlah target kegiatan"
-                           class="form-control bg-light border border-gray-400" required />
-                    <div class="invalid-feedback"></div>
-                </div>
-            </form>
-
-            <div class="d-grid py-4">
-                <button type="button" id="saveTargetBtn"
-                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                    <span class="btn-text">Simpan Target</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<?php endif; ?>
 
 <?php $__env->startSection('script'); ?>
 <script>
@@ -706,8 +573,15 @@ $(document).ready(function() {
                     data: { _token: '<?php echo e(csrf_token()); ?>', _method: 'DELETE' },
                     success: function(response) {
                         if (response.success) {
-                            Swal.fire('Berhasil!', 'Data berhasil dihapus.', 'success');
-                            updateTable();
+                            Swal.fire({
+                                title: 'Berhasil!',
+                                text: 'Data berhasil dihapus.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.reload();
+                            });
                         } else {
                             Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus', 'error');
                         }
@@ -828,27 +702,37 @@ $(document).ready(function() {
         // Status indicator
         if (statusIcon) {
             const canPengajuanModifikasi = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false'); ?>;
-            const isModifiable   = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
-            const pengajuan = data.pengajuan ? data.pengajuan.filter(p => p.status === 'disetujui').sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))[0] : null;
-            const hasToken = pengajuan && pengajuan.token > 0;
+            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
 
-                if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                    statusIcon.innerHTML = 'Terbuka';
-                    statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
+            // Handle the pengajuan data - it should be a single object, not an array
+            const pengajuan = data.pengajuan; // This is the hasOne relationship
+            const hasToken = pengajuan && pengajuan.status === 'disetujui' && pengajuan.token > 0;
+
+            let isModifiableStatus = false;
+            if (canPengajuanModifikasi) {
+                isModifiableStatus = true;
+            } else if (isModifiable && hasToken) {
+                isModifiableStatus = true;
+            }
+
+            if (isModifiableStatus) {
+                statusIcon.innerHTML = 'Terbuka';
+                statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
+            } else {
+                statusIcon.innerHTML = 'Terkunci';
+                statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+            }
+
+            const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
+            if (ajukanBtn) {
+                // Show the pengajuan button only if the user cannot modify (no permission and no valid token)
+                if (isModifiableStatus) {
+                    ajukanBtn.style.display = 'none';
                 } else {
-                    statusIcon.innerHTML = 'Terkunci';
-                    statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+                    ajukanBtn.style.display = '';
                 }
-
-                    const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
-                        if (ajukanBtn) {
-                            if (canPengajuanModifikasi || (isModifiable && hasToken)) {
-                                ajukanBtn.style.display = 'none';
-                            } else {
-                                ajukanBtn.style.display = ''; 
-                            }
-                        }
-                }
+            }
+        }
 
         $('#detailModal').data('lpj-id', data.id);
 
@@ -901,7 +785,7 @@ $(document).ready(function() {
                                     <div class="fw-medium">${name}</div>
                                     <small class="text-muted">${ext.toUpperCase()}</small>
                                 </div>
-                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-primary btn-sm me-2">
+                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
                                     <i class="fas fa-download me-1"></i>Unduh
                                 </a>
                             </div>`;
@@ -912,6 +796,45 @@ $(document).ready(function() {
                             data-files='${JSON.stringify(data.dokumen_pendukung)}'
                             data-type="document"
                             data-title="Dokumen Pendukung">
+                    </button>
+                </div>`;
+        }
+
+        let dokumenLpj = '<div class="text-muted fst-italic">Tidak ada dokumen tersedia</div>';
+        if (data.dokumen_lpj && data.dokumen_lpj.length) {
+            dokumenLpj = `
+                <div class="d-flex flex-column gap-2">
+                    ${data.dokumen_lpj.map(d => {
+                        const name = d.split('/').pop();
+                        const ext = name.split('.').pop().toLowerCase();
+                        const icon = {
+                            pdf: 'fas fa-file-pdf text-danger',
+                            doc: 'fas fa-file-word text-primary',
+                            docx: 'fas fa-file-word text-primary',
+                            xls: 'fas fa-file-excel text-success',
+                            xlsx: 'fas fa-file-excel text-success',
+                            jpg: 'fas fa-file-image text-info',
+                            jpeg: 'fas fa-file-image text-info',
+                            png: 'fas fa-file-image text-info'
+                        }[ext] || 'fas fa-file text-secondary';
+                        return `
+                            <div class="d-flex align-items-center p-2 border rounded bg-light">
+                                <i class="${icon} me-3" style="font-size:1.2em"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-medium">${name}</div>
+                                    <small class="text-muted">${ext.toUpperCase()}</small>
+                                </div>
+                                <a href="/storage/${d}" target="_blank" class="btn btn-outline-secondary btn-sm me-2">
+                                    <i class="fas fa-download me-1"></i>Unduh
+                                </a>
+                            </div>`;
+                    }).join('')}
+                </div>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm preview-btn"
+                            data-files='${JSON.stringify(data.dokumen_lpj)}'
+                            data-type="document"
+                            data-title="Dokumen LPJ">
                     </button>
                 </div>`;
         }
@@ -964,13 +887,22 @@ $(document).ready(function() {
                             <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
                             <div class="bg-light p-3 rounded">${dokumenHtml}</div>
                         </div>
+                        <div>
+                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen Pendukung:</label>
+                            <div class="bg-light p-3 rounded">${dokumenLpj}</div>
+                        </div>
                     </div>
 
-                    ${data.keterangan ? `
-                        <div class="mb-2">
-                            <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-sticky-note me-2"></i>Keterangan</h6>
-                            <div class="bg-light p-3 rounded"><p class="mb-0">${data.keterangan}</p></div>
-                        </div>` : ''}
+                    ${data.keterangan_tambahan ? `
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-dark mb-3 d-flex align-items-center">
+                            <i class="fas fa-sticky-note me-2"></i>
+                            Keterangan Tambahan
+                        </h6>
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-0 text-dark" style="white-space: pre-wrap;">${data.keterangan_tambahan}</p>
+                        </div>
+                    </div>` : ''}
                 </div>
             </div>
         `;
@@ -1281,6 +1213,7 @@ $(document).ready(function() {
         const modal = $(this).closest('.modal');
         modal.addClass('has-changes');
     });
+
     // Initialize everything
     initializeDataTable();
     initializeDropdownEvents();
