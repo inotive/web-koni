@@ -2,6 +2,10 @@
 
 @push('stack-css')
     <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
         .progress-bar span {
             font-size: 14px;
             white-space: nowrap;
@@ -19,6 +23,7 @@
         .bar-success {
             background-color: #17C653;
         }
+Bahasa Indonesia  Apps Learn Data Tentang
 
         .progress {
             height: 45px;
@@ -27,9 +32,10 @@
         .info-card {
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175);
             padding: 24px;
             transition: all 0.2s ease-in-out;
+            margin-bottom: 1rem;
         }
 
         .info-icon {
@@ -367,16 +373,16 @@
                         if (isset($item->serapan) && is_numeric($item->serapan)) {
                             $serapan = (int)$item->serapan;
                         }
-                        
+
                         // Membagi RKA secara merata ke semua kegiatan
                         $rka_per_kegiatan = 0;
                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
                             $jumlah_kegiatan = $kegiatan->count();
                             $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                         }
-                        
+
                         $total_budget = isset($item->total_budget) ? $item->total_budget : 0;
-                        
+
                         // Perhitungan persentase dengan pengecekan aman
                         $persen = 0;
                         if ($rka_per_kegiatan > 0) {
@@ -384,11 +390,11 @@
                             // Batasi maksimal 100%
                             $persen = min(100, $persen);
                         }
-                        
+
                         // Menampilkan serapan per kegiatan
                         $display_serapan = $serapan;
                         $display_budget = $rka_per_kegiatan;
-                        
+
                         // Debugging - Hapus komentar untuk debugging
                         /*
                         if ($i == 0) { // Hanya untuk kegiatan pertama
@@ -446,20 +452,20 @@
                                     @php
                                         // Serapan untuk setiap cabor sudah dihitung di controller
                                         $child_serapan = $child->serapan_cabor ?? 0;
-                                        
+
                                         // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
                                         $rka_per_kegiatan = 0;
                                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
                                             $jumlah_kegiatan = $kegiatan->count();
                                             $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                                         }
-                                        
+
                                         $jumlah_anak = $item->children->count();
                                         $child_budget = 0;
                                         if ($jumlah_anak > 0 && $rka_per_kegiatan > 0) {
                                             $child_budget = (int)($rka_per_kegiatan / $jumlah_anak);
                                         }
-                                        
+
                                         // Perhitungan persentase dengan pengecekan aman
                                         $child_persen = 0;
                                         if ($child_budget > 0) {
@@ -467,7 +473,7 @@
                                             // Batasi maksimal 100%
                                             $child_persen = min(100, $child_persen);
                                         }
-                                        
+
                                         // Debugging - Hapus komentar untuk debugging
                                         /*
                                         if ($j == 0) { // Hanya untuk anak pertama
@@ -521,14 +527,14 @@
                                             if (isset($item->children)) {
                                                 $total_serapan_anak = $item->children->sum('serapan_cabor');
                                             }
-                                            
+
                                             // Memastikan nilai RKA adalah numerik
                                             $rka_per_kegiatan = 0;
                                             if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
                                                 $jumlah_kegiatan = $kegiatan->count();
                                                 $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                                             }
-                                            
+
                                             // Perhitungan persentase total dengan pengecekan aman
                                             $total_persen_anak = 0;
                                             if ($rka_per_kegiatan > 0) {
@@ -579,7 +585,7 @@
                     <h5 class="mb-0">Prestasi Terbaru</h5>
                 </div>
 
-                
+
 
                                 <!-- Prestasi Atlet -->
                 <div>
