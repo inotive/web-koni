@@ -522,7 +522,7 @@
         </div>
     @endif
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
         <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
@@ -537,7 +537,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-body">
+                        <div class="card-body py-1">
                         <div class="table-header" style="border-radius: 12px 12px 0px 0px">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h3 class="mb-0 fw-semibold text-dark">Informasi Pelatih</h3>

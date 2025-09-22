@@ -244,6 +244,15 @@
             transition: color 0.3s ease;
         }
 
+        .bidang-progress {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-top: 10px;
+            line-height: 1.3;
+            transition: color 0.3s ease;
+        }
+
         .bidang-count {
             color: #6c757d;
             font-size: 0.95rem;
@@ -415,6 +424,36 @@
                 </div>
                 <h4 class="bidang-title">Mobilisasi Sumberdaya</h4>
                 <p class="bidang-count">{{ $mobilisasiCount ?? 0 }} Dokumen</p>
+
+                @php
+                    $mobilisasi_anggaran = $bidangDetails['mobilisasi']['anggaran'] ?? 0;
+                    $mobilisasi_kegiatan = $bidangDetails['mobilisasi']['kegiatan'] ?? 0;
+                    $mobilisasi_target_kegiatan = $bidangDetails['mobilisasi']['target_kegiatan'] ?? 0;
+                    $mobilisasi_target_anggaran = $bidangDetails['mobilisasi']['target_anggaran'] ?? 0;
+                    $mobilisasi_percentage = $mobilisasi_target_anggaran > 0 ? ($mobilisasi_anggaran / $mobilisasi_target_anggaran) * 100 : 0;
+                @endphp
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="fw-bold mb-1">Rp. {{ number_format($mobilisasi_anggaran, 0, ',', '.') }} / Rp. {{ number_format($mobilisasi_target_anggaran, 0, ',', '.') }}</small>
+                        <small></small>
+                    </div>
+                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar"
+                            style="width: {{ $mobilisasi_percentage }}%; background-color: #F8285A;"
+                            aria-valuenow="{{ $mobilisasi_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="'d-flex justify-content-start mt-1">
+                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $mobilisasi_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $mobilisasi_target_kegiatan}} Target</small>
+                        </div>
+                        <small class="text-muted">{{ round($mobilisasi_percentage) }}%</small>
+                    </div>
+                </div>
             </a>
 
             <!-- Hubungan Antar Lembaga -->
@@ -424,6 +463,36 @@
                 </div>
                 <h4 class="bidang-title">Hubungan Antar Lembaga</h4>
                 <p class="bidang-count">{{ $hubungan_lembagaCount ?? 0 }} Dokumen</p>
+
+                @php
+                    $hubungan_anggaran = $bidangDetails['hubungan_lembaga']['anggaran'] ?? 0;
+                    $hubugan_kegiatan = $bidangDetails['hubungan_lembaga']['kegiatan'] ?? 0;
+                    $hubungan_target_kegiatan = $bidangDetails['hubungan_lembaga']['target_kegiatan'] ?? 0;
+                    $hubungan_target_anggaran = $bidangDetails['hubungan_lembaga']['target_anggaran'] ?? 0;
+                    $hubungan_percentage = $hubungan_target_anggaran > 0 ? ($hubungan_anggaran / $hubungan_target_anggaran) * 100 : 0;
+                @endphp
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="fw-bold mb-1">Rp. {{ number_format($hubungan_anggaran, 0, ',', '.') }} / Rp. {{ number_format($hubungan_target_anggaran, 0, ',', '.') }}</small>
+                        <small></small>
+                    </div>
+                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar"
+                            style="width: {{ $hubungan_percentage }}%; background-color: #F8285A;"
+                            aria-valuenow="{{ $hubungan_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="'d-flex justify-content-start mt-1">
+                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $hubugan_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $hubungan_target_kegiatan}} Target</small>
+                        </div>
+                        <small class="text-muted">{{ round($hubungan_percentage) }}%</small>
+                    </div>
+                </div>
             </a>
 
             <!-- Continue for other cards... -->
@@ -434,6 +503,36 @@
                 </div>
                 <h4 class="bidang-title">Kesehatan</h4>
                 <p class="bidang-count">{{ $kesehatanCount ?? 0 }} Dokumen</p>
+
+                @php
+                    $kesehatan_anggaran = $bidangDetails['kesehatan']['anggaran'] ?? 0;
+                    $kesehatan_target_anggaran = $bidangDetails['kesehatan']['target_anggaran'] ?? 0;
+                    $kesehatan_kegiatan = $bidangDetails['kesehatan']['kegiatan'] ?? 0;
+                    $kesehatan_target_kegiatan = $bidangDetails['kesehatan']['target_kegiatan'] ?? 0;
+                    $kesehatan_percentage = $kesehatan_target_anggaran > 0 ? ($kesehatan_anggaran / $kesehatan_target_anggaran) * 100 : 0;
+                @endphp
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="fw-bold mb-1">Rp. {{ number_format($kesehatan_anggaran, 0, ',', '.') }} / Rp. {{ number_format($kesehatan_target_anggaran, 0, ',', '.') }}</small>
+                        <small></small>
+                    </div>
+                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar"
+                            style="width: {{ $kesehatan_percentage }}%; background-color: #F8285A;"
+                            aria-valuenow="{{ $kesehatan_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="'d-flex justify-content-start mt-1">
+                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $kesehatan_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $kesehatan_target_kegiatan}} Target</small>
+                        </div>
+                        <small class="text-muted">{{ round($kesehatan_percentage) }}%</small>
+                    </div>
+                </div>
             </a>
 
             <!-- Organisasi -->
@@ -443,6 +542,36 @@
                 </div>
                 <h4 class="bidang-title">Organisasi</h4>
                 <p class="bidang-count">{{ $organisasiCount ?? 0 }} Dokumen</p>
+
+                @php
+                    $organisasi_anggaran = $bidangDetails['organisasi']['anggaran'] ?? 0;
+                    $organisasi_kegiatan = $bidangDetails['organisasi']['kegiatan'] ?? 0;
+                    $organisasi_target_kegiatan = $bidangDetails['organisasi']['target_kegiatan'] ?? 0;
+                    $organisasi_target_anggaran = $bidangDetails['organisasi']['target_anggaran'] ?? 0;
+                    $organisasi_percentage = $organisasi_target_anggaran > 0 ? ($organisasi_anggaran / $organisasi_target_anggaran) * 100 : 0;
+                @endphp
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="fw-bold mb-1">Rp. {{ number_format($organisasi_anggaran, 0, ',', '.') }} / Rp. {{ number_format($organisasi_target_anggaran, 0, ',', '.') }}</small>
+                        <small></small>
+                    </div>
+                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar"
+                            style="width: {{ $organisasi_percentage }}%; background-color: #F8285A;"
+                            aria-valuenow="{{ $organisasi_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="'d-flex justify-content-start mt-1">
+                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $organisasi_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $organisasi_target_kegiatan}} Target</small>
+                        </div>
+                        <small class="text-muted">{{ round($organisasi_percentage) }}%</small>
+                    </div>
+                </div>
             </a>
 
             <!-- Pembinaan Hukum Olahraga -->
@@ -452,16 +581,71 @@
                 </div>
                 <h4 class="bidang-title">Pembinaan Hukum Olahraga</h4>
                 <p class="bidang-count">{{ $pembinaan_hukumCount ?? 0 }} Dokumen</p>
+
+                @php
+                    $hukum_anggaran = $bidangDetails['pembinaan_hukum']['anggaran'] ?? 0;
+                    $hukum_anggaran_kegiatan = $bidangDetails['pembinaan_hukum']['kegiatan'] ?? 0;
+                    $hukum_target_kegiatan = $bidangDetails['pembinaan_hukum']['target_kegiatan'] ?? 0;
+                    $hukum_target_anggaran = $bidangDetails['pembinaan_hukum']['target_anggaran'] ?? 0;
+                    $hukum_percentage = $hukum_target_anggaran > 0 ? ($hukum_anggaran / $hukum_target_anggaran) * 100 : 0;
+                @endphp
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="fw-bold mb-1">Rp. {{ number_format($hukum_anggaran, 0, ',', '.') }} / Rp. {{ number_format($hukum_target_anggaran, 0, ',', '.') }}</small>
+                        <small></small>
+                    </div>
+                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar"
+                            style="width: {{ $hukum_percentage }}%; background-color: #F8285A;"
+                            aria-valuenow="{{ $hukum_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="'d-flex justify-content-start mt-1">
+                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $hukum_anggaran_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $hukum_target_kegiatan}} Target</small>
+                        </div>
+                        <small class="text-muted">{{ round($hukum_percentage) }}%</small>
+                    </div>
+                </div>
             </a>
 
                 <!-- Pembinaan Prestasi -->
                 <a href="{{ route('admin.laporan-lpj.bidang.prestasi.index') }}" class="bidang-card"
-                    data-title="pembinaan prestasi" data-docs="{{ $prestasiCount ?? 0 }}">
+                    data-title="pembinaan prestasi">
                     <div class="bidang-icon icon-prestasi">
                         <img src="{{ asset('assets2/media/misc/bidang/dribbble.png') }}" alt="">
                     </div>
                     <h4 class="bidang-title">Pembinaan Prestasi</h4>
                     <p class="bidang-count">4 Cabang Olahraga</p>
+
+                    @php
+                        $prestasi_anggaran = $bidangDetails['prestasi']['anggaran'] ?? 0;
+                        $prestasi_target_anggaran = $bidangDetails['prestasi']['target_anggaran'] ?? 0;
+                        $prestasi_percentage = $prestasi_target_anggaran > 0 ? ($prestasi_anggaran / $prestasi_target_anggaran) * 100 : 0;
+                    @endphp
+
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small>Rp. {{ number_format($prestasi_anggaran, 0, ',', '.') }}</small>
+                            <small>Rp. {{ number_format($prestasi_target_anggaran, 0, ',', '.') }}</small>
+                        </div>
+                        <div class="progress" style="height: 8px; border-radius: 4px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                role="progressbar"
+                                style="width: {{ $prestasi_percentage }}%; background-color: #F8285A;"
+                                aria-valuenow="{{ $prestasi_percentage }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-1">
+                            <small class="text-muted">{{ round($prestasi_percentage) }}%</small>
+                        </div>
+                    </div>
                 </a>
 
             <!-- Sport Science & Iptek -->
@@ -471,6 +655,36 @@
                 </div>
                 <h4 class="bidang-title">Sport Science & Iptek</h4>
                 <p class="bidang-count">{{ $scienceCount ?? 0 }} Dokumen</p>
+
+                @php
+                    $science_anggaran = $bidangDetails['science']['anggaran'] ?? 0;
+                    $science_kegiatan = $bidangDetails['science']['kegiatan'] ?? 0;
+                    $science_target_kegiatan = $bidangDetails['science']['target_kegiatan'] ?? 0;
+                    $science_target_anggaran = $bidangDetails['science']['target_anggaran'] ?? 0;
+                    $science_percentage = $science_target_anggaran > 0 ? ($science_anggaran / $science_target_anggaran) * 100 : 0;
+                @endphp
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="fw-bold mb-1">Rp. {{ number_format($science_anggaran, 0, ',', '.') }} / Rp. {{ number_format($science_target_anggaran, 0, ',', '.') }}</small>
+                        <small></small>
+                    </div>
+                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar"
+                            style="width: {{ $science_percentage }}%; background-color: #F8285A;"
+                            aria-valuenow="{{ $science_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="'d-flex justify-content-start mt-1">
+                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $science_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $science_target_kegiatan}} Target</small>
+                        </div>
+                        <small class="text-muted">{{ round($science_percentage) }}%</small>
+                    </div>
+                </div>
             </a>
 
             <!-- Perencanaan Program dan Anggaran -->
@@ -478,8 +692,37 @@
                 <div class="bidang-icon icon-perencanaan">
                     <img src="{{ asset('assets2/media/misc/bidang/tab-tablet.png') }}" alt="">
                 </div>
-                <h4 class="bidang-title">Perencanaan Program dan Anggaran</h4>
+                <h4 class="bidang-title">Perencanaan Program</h4>
                 <p class="bidang-count">{{ $perencanaan_programCount ?? 0 }} Dokumen</p>
+
+                @php
+                    $perencanaan_anggaran = $bidangDetails['perencanaan_program']['anggaran'] ?? 0;
+                    $perencanaan_kegiatan = $bidangDetails['perencanaan_program']['kegiatan'] ?? 0;
+                    $perencanaan_target_kegiatan = $bidangDetails['perencanaan_program']['target_kegiatan'] ?? 0;
+                    $perencanaan_target_anggaran = $bidangDetails['perencanaan_program']['target_anggaran'] ?? 0;
+                    $perencanaan_percentage = $perencanaan_target_anggaran > 0 ? ($perencanaan_anggaran / $perencanaan_target_anggaran) * 100 : 0;
+                @endphp
+
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small class="fw-bold mb-1">Rp. {{ number_format($perencanaan_anggaran, 0, ',', '.') }} / Rp. {{ number_format($perencanaan_target_anggaran, 0, ',', '.') }}</small>
+                    </div>
+                    <div class="progress" style="height: 8px; border-radius: 4px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar"
+                            style="width: {{ $perencanaan_percentage }}%; background-color: #F8285A;"
+                            aria-valuenow="{{ $perencanaan_percentage }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <div class="'d-flex justify-content-start mt-1">
+                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $perencanaan_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $perencanaan_target_kegiatan}} Target</small>
+                        </div>
+                        <small class="text-muted">{{ round($perencanaan_percentage) }}%</small>
+                    </div>
+                </div>
             </a>
         </div>
     </div>

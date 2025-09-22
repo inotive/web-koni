@@ -37,6 +37,8 @@ class BidangController extends Controller
 
         // Calculate counts and totals for each bidang
         $bidangInfo = [];
+        $bidangDetails = [];
+        
         foreach ($bidangParentIds as $key => $id) {
             if ($id == 6) { // Special handling for Pembinaan Prestasi
                 $info = $this->getPrestasiInfo($id);
@@ -46,9 +48,17 @@ class BidangController extends Controller
             $bidangInfo[$key . 'Count'] = $info['count'];
             $total_anggaran += $info['anggaran'];
             $total_kegiatan += $info['count'];
+            
+            // Get target values for this specific bidang
+            $target = Target::where('id_lpj', $id)->first();
+            $bidangDetails[$key] = [
+                'anggaran' => $info['anggaran'],
+                'target_anggaran' => $target->target_anggaran ?? 0,
+                'target_kegiatan' => $target->target_kegiatan ?? 0
+            ];
         }
 
-        // Get target values
+        // Get target values for overall
         $target_anggaran = Target::whereIn('id_lpj', array_values($bidangParentIds))->sum('target_anggaran');
         $target_kegiatan = Target::whereIn('id_lpj', array_values($bidangParentIds))->sum('target_kegiatan');
 
@@ -57,6 +67,7 @@ class BidangController extends Controller
             'total_kegiatan' => $total_kegiatan,
             'target_anggaran' => $target_anggaran,
             'target_kegiatan' => $target_kegiatan,
+            'bidangDetails' => $bidangDetails
         ]));
     }
 
@@ -153,8 +164,38 @@ class BidangController extends Controller
                        ->withCount('children')
                        ->orderBy('nama_program', 'asc')
                        ->get();
+        
+        // Calculate totals for prestasi
+        $total_anggaran = 0;
+        $total_kegiatan = 0;
+        
+        // Add individual budget information to each child
+        foreach($children as $child) {
+            $total_kegiatan += $child->children_count;
+            
+            // Get grand children to calculate anggaran
+            $grandchildren = $child->children;
+            $child_anggaran = 0;
+            foreach($grandchildren as $grandchild) {
+                // Get great grandchildren to calculate anggaran
+                $greatGrandchildren = $grandchild->children;
+                foreach($greatGrandchildren as $greatGrandchild) {
+                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
+                }
+            }
+            
+            // Add anggaran to child object
+            $child->anggaran = $child_anggaran;
+            $total_anggaran += $child_anggaran;
+        }
+        
+        // Get target values
+        $target = Target::where('id_lpj', $prestasiParentId)->first();
+        $target_anggaran = $target->target_anggaran ?? 1000000000; // Example target
+        $target_kegiatan = $target->target_kegiatan ?? 100; // Example target
+        $anggaran_percentage = $target_anggaran > 0 ? ($total_anggaran / $target_anggaran) * 100 : 0;
 
-        return view('admin.laporan-lpj.bidang.prestasi.index', compact('children', 'parent'));
+        return view('admin.laporan-lpj.bidang.prestasi.index', compact('children', 'parent', 'total_anggaran', 'total_kegiatan', 'target_anggaran', 'target_kegiatan', 'anggaran_percentage'));
     }
 
     /**
@@ -171,6 +212,26 @@ class BidangController extends Controller
                         ->withCount('children') // Counts sub-items (dokumen)
                         ->orderBy('nama_program', 'asc')
                         ->get();
+        
+        // Add individual budget information to each child
+        foreach($children as $child) {
+            // Get grand children to calculate anggaran
+            $grandchildren = $child->children;
+            $child_anggaran = 0;
+            $child_kegiatan = 0;
+            foreach($grandchildren as $grandchild) {
+                // Get great grandchildren to calculate anggaran
+                $greatGrandchildren = $grandchild->children;
+                foreach($greatGrandchildren as $greatGrandchild) {
+                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
+                }
+                $child_kegiatan += $greatGrandchildren->count();
+            }
+            
+            // Add anggaran and kegiatan to child object
+            $child->anggaran = $child_anggaran;
+            $child->kegiatan = $child_kegiatan;
+        }
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.bidang.prestasi.Akurasi._table', compact('children'))->render();
@@ -188,6 +249,26 @@ class BidangController extends Controller
                         ->withCount('children')
                         ->orderBy('nama_program', 'asc')
                         ->get();
+        
+        // Add individual budget information to each child
+        foreach($children as $child) {
+            // Get grand children to calculate anggaran
+            $grandchildren = $child->children;
+            $child_anggaran = 0;
+            $child_kegiatan = 0;
+            foreach($grandchildren as $grandchild) {
+                // Get great grandchildren to calculate anggaran
+                $greatGrandchildren = $grandchild->children;
+                foreach($greatGrandchildren as $greatGrandchild) {
+                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
+                }
+                $child_kegiatan += $greatGrandchildren->count();
+            }
+            
+            // Add anggaran and kegiatan to child object
+            $child->anggaran = $child_anggaran;
+            $child->kegiatan = $child_kegiatan;
+        }
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.bidang.prestasi.Beladiri._table', compact('children'))->render();
@@ -205,6 +286,26 @@ class BidangController extends Controller
                         ->withCount('children')
                         ->orderBy('nama_program', 'asc')
                         ->get();
+        
+        // Add individual budget information to each child
+        foreach($children as $child) {
+            // Get grand children to calculate anggaran
+            $grandchildren = $child->children;
+            $child_anggaran = 0;
+            $child_kegiatan = 0;
+            foreach($grandchildren as $grandchild) {
+                // Get great grandchildren to calculate anggaran
+                $greatGrandchildren = $grandchild->children;
+                foreach($greatGrandchildren as $greatGrandchild) {
+                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
+                }
+                $child_kegiatan += $greatGrandchildren->count();
+            }
+            
+            // Add anggaran and kegiatan to child object
+            $child->anggaran = $child_anggaran;
+            $child->kegiatan = $child_kegiatan;
+        }
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.bidang.prestasi.Permainan._table', compact('children'))->render();
@@ -222,6 +323,26 @@ class BidangController extends Controller
                         ->withCount('children')
                         ->orderBy('nama_program', 'asc')
                         ->get();
+        
+        // Add individual budget information to each child
+        foreach($children as $child) {
+            // Get grand children to calculate anggaran
+            $grandchildren = $child->children;
+            $child_anggaran = 0;
+            $child_kegiatan = 0;
+            foreach($grandchildren as $grandchild) {
+                // Get great grandchildren to calculate anggaran
+                $greatGrandchildren = $grandchild->children;
+                foreach($greatGrandchildren as $greatGrandchild) {
+                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
+                }
+                $child_kegiatan += $greatGrandchildren->count();
+            }
+            
+            // Add anggaran and kegiatan to child object
+            $child->anggaran = $child_anggaran;
+            $child->kegiatan = $child_kegiatan;
+        }
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.bidang.prestasi.Terukur._table', compact('children'))->render();

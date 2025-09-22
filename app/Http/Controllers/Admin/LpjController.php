@@ -17,11 +17,6 @@ use setasign\Fpdi\PdfReader\PageBoundaries;
 
 class LpjController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('can:laporan-lpj-bidang');
-    }
-
     /**
      * DIPAKE BUAT BIDANG-BIDANG, BUKAN UNTUK SEMUA LPJ
      */
@@ -52,6 +47,26 @@ class LpjController extends Controller
             $query->whereNull('parent_id');
         }
 
+        // Year filter and available years (use 'year' column)
+        $selectedYear = $request->get('year');
+        if ($selectedYear) {
+            $query->where('year', $selectedYear);
+        }
+
+        // Build available years list based on current scope (children of parent or root)
+        $yearsBase = Lpj::query();
+        if ($parentId) {
+            $yearsBase->where('parent_id', $parentId);
+        } else {
+            $yearsBase->whereNull('parent_id');
+        }
+        $availableYears = $yearsBase
+            ->whereNotNull('year')
+            ->select('year')
+            ->distinct()
+            ->orderByDesc('year')
+            ->pluck('year');
+
         // Apply search filter
         if ($request->filled('search')) {
             $searchTerm = $request->get('search');
@@ -76,9 +91,6 @@ class LpjController extends Controller
         if (in_array($sortField, $allowedSorts)) {
             $query->orderBy($sortField, $sortDirection);
         }
-
-        // Load the pengajuan relationship for the modifiable check
-        $query->with('pengajuan');
 
         // Pagination
         $perPage = $request->get('per_page', 10);
@@ -110,7 +122,9 @@ class LpjController extends Controller
             'parentId',
             'target',
             'current_budget',
-            'kegiatan_count'
+            'kegiatan_count',
+            'availableYears',
+            'selectedYear'
         ));
     }
 
@@ -139,6 +153,7 @@ class LpjController extends Controller
             'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
+            'year' => 'nullable|integer|min:2000|max:2100',
             'foto_jurnal.*' => 'nullable|image|max:10240', // 10MB
             'dokumen_pendukung.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
             'dokumen_lpj.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240'
@@ -157,6 +172,7 @@ class LpjController extends Controller
             'jumlah_harga_satuan' => $validated['jumlah_harga_satuan'] ?? 0,
             'jumlah_harga' => $validated['jumlah_harga'] ?? 0,
             'keterangan_tambahan' => $validated['keterangan_tambahan'],
+            'year' => $validated['year'] ?? now()->year,
             'foto_jurnal' => $fotoJurnal,
             'dokumen_pendukung' => $dokumenPendukung,
             'dokumen_lpj' => $dokumenLpj,
@@ -224,6 +240,7 @@ class LpjController extends Controller
             'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
+            'year' => 'nullable|integer|min:2000|max:2100',
             'foto_jurnal.*' => 'nullable|image|max:10240',
             'dokumen_pendukung.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
             'dokumen_lpj.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
@@ -279,6 +296,7 @@ class LpjController extends Controller
             'jumlah_harga_satuan' => $validated['jumlah_harga_satuan'] ?? 0,
             'jumlah_harga' => $validated['jumlah_harga'] ?? 0,
             'keterangan_tambahan' => $validated['keterangan_tambahan'],
+            'year' => $validated['year'] ?? $lpj->year ?? now()->year,
             'foto_jurnal' => $allFotoJurnal,
             'dokumen_pendukung' => $allDokumenPendukung,
             'dokumen_lpj' => $allDokumenLpj,
@@ -287,11 +305,6 @@ class LpjController extends Controller
         if ($lpj->modifiable_by_user_id === Auth::id()) {
             $pengajuan->token -= 1;
             $pengajuan->save();
-            
-            // If token is now 0, reset modifiable_by_user_id to lock the record
-            if ($pengajuan->token <= 0) {
-                $lpj->update(['modifiable_by_user_id' => null]);
-            }
         }
 
         $message = 'Data berhasil diperbarui';
@@ -348,11 +361,6 @@ class LpjController extends Controller
             if ($lpj->modifiable_by_user_id === Auth::id()) {
                 $pengajuan->token -= 1;
                 $pengajuan->save();
-                
-                // If token is now 0, reset modifiable_by_user_id to lock the record
-                if ($pengajuan->token <= 0) {
-                    $lpj->update(['modifiable_by_user_id' => null]);
-                }
             }
 
             return response()->json([

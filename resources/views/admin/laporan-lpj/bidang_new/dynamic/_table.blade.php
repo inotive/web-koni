@@ -143,7 +143,7 @@
                                         data-type="document"
                                         data-files="{{ json_encode(array_map(fn($file) => ($file), $data->dokumen_lpj)) }}"
                                         data-title="Dokumen LPJ - {{ $data->nama_program }}">
-                                    <i class="fas fa-file-alt me-1"></i>
+                                    <i class="bi bi-filetype-pdf me-1"></i>
                                     {{ count($data->dokumen_lpj) }} PDF
                                 </button>
                             @else

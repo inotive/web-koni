@@ -28,6 +28,61 @@
             </form>
         </div>
 
+        {{-- @php
+            // Calculate totals for this cabor
+            $total_anggaran = 0;
+            $total_kegiatan = 0;
+
+            // Loop through children to calculate totals
+            foreach($children as $child) {
+                $total_kegiatan += $child->children_count;
+
+                // Get great grandchildren to calculate anggaran
+                $grandchildren = $child->children;
+                foreach($grandchildren as $grandchild) {
+                    $total_anggaran += $grandchild->jumlah_harga ?? 0;
+                }
+            }
+
+            $target_anggaran = 200000000; // Example target, replace with actual target
+            $target_kegiatan = 20; // Example target, replace with actual target
+            $anggaran_percentage = $target_anggaran > 0 ? ($total_anggaran / $target_anggaran) * 100 : 0;
+        @endphp
+
+        <div class="container">
+            <div class="top-progress-wrapper mb-4">
+                <h3 class="text-muted mb-0">Total Anggaran</h3>
+                <div class="d-flex justify-content-between mb-2">
+                    <h1 class="fw-bold mb-1">Rp. {{ number_format($total_anggaran, 0, ',', '.') }} / Rp. {{ number_format($target_anggaran, 0, ',', '.') }}</h1>
+                    <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="{{ round($anggaran_percentage, 2) }}% dari total anggaran">
+                        {{ round($anggaran_percentage) }}%
+                    </h3>
+                </div>
+
+                <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated"
+                        role="progressbar"
+                        style="width: {{ $anggaran_percentage }}%; background-color: #F8285A; border-radius: 12px;"
+                        aria-valuenow="{{ $anggaran_percentage }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100">
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row-reverse bd-highlight mt-2">
+                    <div class="info-label mt-1 d-flex align-items-center gap-2">
+                        <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
+                            {{ $total_kegiatan }} Kegiatan Berjalan
+                        </span>
+                        <span>/</span>
+                        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
+                            {{ $target_kegiatan }} Target Kegiatan
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+
         <div id="table" class="container">
             @include('admin.laporan-lpj.bidang.prestasi.Permainan._table')
         </div>

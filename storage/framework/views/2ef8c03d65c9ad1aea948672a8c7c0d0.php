@@ -238,14 +238,33 @@
 
     </style>
 
-    <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">
-            Laporan <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?>
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-8">
+        <div>
+            <h1 class="text-dark fw-bold mb-1">
+                Laporan <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?>
 
-        </h1>
-        <?php if($currentParent): ?>
-            <p class="text-muted"><?php echo e($currentParent->breadcrumb); ?></p>
-        <?php endif; ?>
+            </h1>
+            <?php if($currentParent): ?>
+                <p class="text-muted mb-0"><?php echo e($currentParent->breadcrumb); ?></p>
+            <?php endif; ?>
+        </div>
+        <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
+            <?php $__currentLoopData = request()->except('year'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k => $v): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <input type="hidden" name="<?php echo e($k); ?>" value="<?php echo e($v); ?>">
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <select name="year" class="form-select" style="width: 120px"
+                onchange="document.getElementById('yearFilterForm').submit()">
+                <?php if(isset($availableYears) && count($availableYears)): ?>
+                    <?php $__currentLoopData = $availableYears; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($year); ?>"
+                            <?php echo e((string) $year === (string) ($selectedYear ?? now()->year) ? 'selected' : ''); ?>>
+                            <?php echo e($year); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php else: ?>
+                    <option value="<?php echo e(now()->year); ?>" selected><?php echo e(now()->year); ?></option>
+                <?php endif; ?>
+            </select>
+        </form>
     </div>
 
     <?php if($parentId): ?>
@@ -297,7 +316,7 @@
         
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
             <h3 class="card-title fw-bold fs-4 mb-0">
-                Daftar <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?>
+                Daftar <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?> - <?php echo e($selectedYear ?? now()->year); ?>
 
             </h3>
 
