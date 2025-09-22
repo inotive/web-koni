@@ -23,7 +23,6 @@
         .bar-success {
             background-color: #17C653;
         }
-Bahasa Indonesia  Apps Learn Data Tentang
 
         .progress {
             height: 45px;
@@ -36,6 +35,17 @@ Bahasa Indonesia  Apps Learn Data Tentang
             padding: 24px;
             transition: all 0.2s ease-in-out;
             margin-bottom: 1rem;
+        }
+
+        /* Apply info-card styling to all Bootstrap cards */
+        .card {
+            border-radius: 12px !important;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175) !important;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .card.shadow-sm {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175) !important;
         }
 
         .info-icon {
@@ -258,7 +268,7 @@ Bahasa Indonesia  Apps Learn Data Tentang
                         <p class="text-muted fs-4 mb-0">Platform Digital Terpusat KONI Tabalong dan Cabang Olahraga</p>
                     </div>
                     <div>
-                        <select class="form-select form-select-md border-0 shadow-none px-0" style="min-width: 150px;">
+                        <select class="form-select form-select-md" style="min-width: 150px; background-color: transparent; border: 1px solid black; color: black;">
                             <option value="2025" selected>Periode 2025</option>
                             <option value="2024">Periode 2024</option>
                             <option value="2023">Periode 2023</option>
@@ -352,7 +362,7 @@ Bahasa Indonesia  Apps Learn Data Tentang
 
 
         <div class="card shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body" style="padding: 24px;">
                 <div class="">
                     <div class="d-flex justify-content-between align-items-center mb-10">
                         <h5 class="card-title mb-0 f-3">Informasi Kegiatan</h5>
@@ -446,7 +456,7 @@ Bahasa Indonesia  Apps Learn Data Tentang
                     {{-- Collapse untuk Pembinaan Prestasi --}}
                     @if($item->id == 6 && $item->children->count() > 0)
                         <div class="collapse" id="collapsePembinaanPrestasi">
-                            <div class="card card-body mt-2 p-3">
+                            <div class="card card-body mt-2" style="padding: 12px; border-radius: 8px;">
                                 <h6 class="mb-3">Detail Kegiatan Pembinaan Prestasi</h6>
                                 @foreach($item->children as $j => $child)
                                     @php
@@ -557,7 +567,7 @@ Bahasa Indonesia  Apps Learn Data Tentang
         </div>
 
         <div class="card shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body" style="padding: 24px;">
                 <h5 class="card-title">Informasi Pelatih & Peserta Cabor</h5>
                 <div class="text-end mt-2 d-flex justify-content-end gap-3 align-items-center">
                     <div class="d-flex align-items-center gap-2">
@@ -579,8 +589,8 @@ Bahasa Indonesia  Apps Learn Data Tentang
 
 
         <!-- Prestasi Terbaru -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body" style="padding: 24px;">
                 <div class="d-flex align-items-center justify-content-between mb-6">
                     <h5 class="mb-0">Prestasi Terbaru</h5>
                 </div>

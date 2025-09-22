@@ -1,5 +1,9 @@
 <?php $__env->startPush('stack-css'); ?>
     <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
         .progress-bar span {
             font-size: 14px;
             white-space: nowrap;
@@ -25,9 +29,21 @@
         .info-card {
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175);
             padding: 24px;
             transition: all 0.2s ease-in-out;
+            margin-bottom: 1rem;
+        }
+
+        /* Apply info-card styling to all Bootstrap cards */
+        .card {
+            border-radius: 12px !important;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175) !important;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .card.shadow-sm {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175) !important;
         }
 
         .info-icon {
@@ -250,7 +266,7 @@
                         <p class="text-muted fs-4 mb-0">Platform Digital Terpusat KONI Tabalong dan Cabang Olahraga</p>
                     </div>
                     <div>
-                        <select class="form-select form-select-md border-0 shadow-none px-0" style="min-width: 150px;">
+                        <select class="form-select form-select-md" style="min-width: 150px; background-color: transparent; border: 1px solid black; color: black;">
                             <option value="2025" selected>Periode 2025</option>
                             <option value="2024">Periode 2024</option>
                             <option value="2023">Periode 2023</option>
@@ -346,7 +362,7 @@
 
 
         <div class="card shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body" style="padding: 24px;">
                 <div class="">
                     <div class="d-flex justify-content-between align-items-center mb-10">
                         <h5 class="card-title mb-0 f-3">Informasi Kegiatan</h5>
@@ -367,16 +383,16 @@
                         if (isset($item->serapan) && is_numeric($item->serapan)) {
                             $serapan = (int)$item->serapan;
                         }
-                        
+
                         // Membagi RKA secara merata ke semua kegiatan
                         $rka_per_kegiatan = 0;
                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
                             $jumlah_kegiatan = $kegiatan->count();
                             $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                         }
-                        
+
                         $total_budget = isset($item->total_budget) ? $item->total_budget : 0;
-                        
+
                         // Perhitungan persentase dengan pengecekan aman
                         $persen = 0;
                         if ($rka_per_kegiatan > 0) {
@@ -384,11 +400,11 @@
                             // Batasi maksimal 100%
                             $persen = min(100, $persen);
                         }
-                        
+
                         // Menampilkan serapan per kegiatan
                         $display_serapan = $serapan;
                         $display_budget = $rka_per_kegiatan;
-                        
+
                         // Debugging - Hapus komentar untuk debugging
                         /*
                         if ($i == 0) { // Hanya untuk kegiatan pertama
@@ -445,25 +461,22 @@
                                 <h6 class="mb-3">Detail Kegiatan Pembinaan Prestasi</h6>
                                 <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                        // Memastikan nilai serapan adalah numerik dan bukan null
-                                        $child_serapan = 0;
-                                        if (isset($child->jumlah_harga) && is_numeric($child->jumlah_harga)) {
-                                            $child_serapan = (int)$child->jumlah_harga;
-                                        }
-                                        
+                                        // Serapan untuk setiap cabor sudah dihitung di controller
+                                        $child_serapan = $child->serapan_cabor ?? 0;
+
                                         // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
                                         $rka_per_kegiatan = 0;
                                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
                                             $jumlah_kegiatan = $kegiatan->count();
                                             $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                                         }
-                                        
+
                                         $jumlah_anak = $item->children->count();
                                         $child_budget = 0;
                                         if ($jumlah_anak > 0 && $rka_per_kegiatan > 0) {
                                             $child_budget = (int)($rka_per_kegiatan / $jumlah_anak);
                                         }
-                                        
+
                                         // Perhitungan persentase dengan pengecekan aman
                                         $child_persen = 0;
                                         if ($child_budget > 0) {
@@ -471,7 +484,7 @@
                                             // Batasi maksimal 100%
                                             $child_persen = min(100, $child_persen);
                                         }
-                                        
+
                                         // Debugging - Hapus komentar untuk debugging
                                         /*
                                         if ($j == 0) { // Hanya untuk anak pertama
@@ -521,19 +534,19 @@
                                     </div>
                                     <div class="flex-grow-1 ms-3">
                                         <?php
-                                            // Memastikan total serapan adalah numerik
+                                            // Total serapan dihitung dari nilai `serapan_cabor` yang sudah ada
                                             $total_serapan_anak = 0;
                                             if (isset($item->children)) {
-                                                $total_serapan_anak = (int)$item->children->sum('jumlah_harga');
+                                                $total_serapan_anak = $item->children->sum('serapan_cabor');
                                             }
-                                            
+
                                             // Memastikan nilai RKA adalah numerik
                                             $rka_per_kegiatan = 0;
                                             if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
                                                 $jumlah_kegiatan = $kegiatan->count();
                                                 $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                                             }
-                                            
+
                                             // Perhitungan persentase total dengan pengecekan aman
                                             $total_persen_anak = 0;
                                             if ($rka_per_kegiatan > 0) {
@@ -578,13 +591,13 @@
 
 
         <!-- Prestasi Terbaru -->
-        <div class="card border-0 shadow-sm">
+        <div class="card shadow-sm mb-4">
             <div class="card-body p-6">
                 <div class="d-flex align-items-center justify-content-between mb-6">
                     <h5 class="mb-0">Prestasi Terbaru</h5>
                 </div>
 
-                
+
 
                                 <!-- Prestasi Atlet -->
                 <div>
