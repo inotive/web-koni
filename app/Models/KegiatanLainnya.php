@@ -15,6 +15,7 @@ class KegiatanLainnya extends Model
     protected $fillable = [
         'nama_program_kegiatan',
         'jenis_kegiatan',
+        'tanggal_kegiatan',
         'volume',
         'jumlah_harga_satuan',
         'jumlah_harga',
@@ -31,6 +32,7 @@ class KegiatanLainnya extends Model
     protected $casts = [
         'jumlah_harga_satuan' => 'decimal:2',
         'jumlah_harga' => 'decimal:2',
+        'tanggal_kegiatan' => 'date',
         'approved_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',

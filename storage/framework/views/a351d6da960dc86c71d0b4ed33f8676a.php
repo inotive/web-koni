@@ -1,16 +1,14 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Manajemen Kegiatan Lainnya'); ?>
+<?php $__env->startSection('mainSection', 'Laporan Pertanggungjawaban'); ?>
+<?php $__env->startSection('currentSection', 'Kegiatan Lainnya'); ?>
 
-@section('pageTitle', 'Manajemen Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
-@section('currentSection', 'Kegiatan Lainnya')
+<?php $__env->startSection('breadcrumb-title'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-title')
-@endsection
+<?php $__env->startSection('breadcrumb-items'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-items')
-@endsection
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         body {
             background-color: #f5f5f5 !important;
@@ -636,7 +634,7 @@
                     </a>
                 </div>
 
-                @php
+                <?php
                     // Default values - these will be overridden by JavaScript if saved values exist
                     $defaultTargetAnggaran = 200000000000; // 200 miliar
                     $defaultTargetKegiatan = 10;
@@ -656,25 +654,26 @@
                     } else {
                         $anggaranPercentageDisplay = round($anggaranPercentage);
                     }
-                @endphp
+                ?>
 
                 <div class="mb-2 d-flex justify-content-between">
-                    <h1 id="anggaranDisplay" class="mb-1 fw-bold">Rp. {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }}
-                        / Rp. {{ number_format($targetAnggaran, 0, ',', '.') }}</h1>
+                    <h1 id="anggaranDisplay" class="mb-1 fw-bold">Rp. <?php echo e(number_format($totalAnggaran ?? 0, 0, ',', '.')); ?>
+
+                        / Rp. <?php echo e(number_format($targetAnggaran, 0, ',', '.')); ?></h1>
                     <h3 id="anggaranPercentage" class="text-muted mb-0" data-bs-toggle="tooltip"
-                        title="{{ number_format($anggaranPercentage, 2, '.', '') }}% dari total anggaran">
-                        {{ $anggaranPercentageDisplay }}%
+                        title="<?php echo e(number_format($anggaranPercentage, 2, '.', '')); ?>% dari total anggaran">
+                        <?php echo e($anggaranPercentageDisplay); ?>%
                     </h3>
                 </div>
 
                 <!-- Hidden inputs to store default values for JavaScript -->
-                <input type="hidden" id="defaultTargetAnggaran" value="{{ $defaultTargetAnggaran }}">
-                <input type="hidden" id="defaultTargetKegiatan" value="{{ $defaultTargetKegiatan }}">
+                <input type="hidden" id="defaultTargetAnggaran" value="<?php echo e($defaultTargetAnggaran); ?>">
+                <input type="hidden" id="defaultTargetKegiatan" value="<?php echo e($defaultTargetKegiatan); ?>">
 
                 <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                        style="width: {{ $anggaranPercentage }}%; background-color: #F8285A; border-radius: 12px;"
-                        aria-valuenow="{{ $anggaranPercentage }}" aria-valuemin="0" aria-valuemax="100">
+                        style="width: <?php echo e($anggaranPercentage); ?>%; background-color: #F8285A; border-radius: 12px;"
+                        aria-valuenow="<?php echo e($anggaranPercentage); ?>" aria-valuemin="0" aria-valuemax="100">
                     </div>
                 </div>
 
@@ -682,12 +681,12 @@
                     <div class="gap-2 mt-1 info-label d-flex align-items-center">
                         <span
                             class="px-3 py-1 border badge bg-success-subtle text-success fw-semibold border-success-subtle">
-                            <span id="kegiatanBerjalan">{{ $totalKegiatan }}</span> Kegiatan Berjalan
+                            <span id="kegiatanBerjalan"><?php echo e($totalKegiatan); ?></span> Kegiatan Berjalan
                         </span>
                         <span>/</span>
                         <span
                             class="px-3 py-1 border badge bg-primary-subtle text-primary fw-semibold border-primary-subtle">
-                            {{ $targetKegiatan }} Target Kegiatan
+                            <?php echo e($targetKegiatan); ?> Target Kegiatan
                         </span>
                     </div>
                 </div>
@@ -700,14 +699,14 @@
             <h3 class="mb-0 card-title fw-bold fs-4">Daftar Kegiatan Lainnya - 2025</h3>
 
             <div class="d-flex align-items-center gap-2 flex-wrap">
-                <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
+                <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.create')); ?>" class="btn btn-primary"
                     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
                 </a>
                 
                 <div class="input-group position-relative" style="width: 250px;">
                     <input type="search" name="search" id="search" class="form-control" placeholder="Cari kegiatan..."
-                        value="{{ request('search') }}" autocomplete="off">
+                        value="<?php echo e(request('search')); ?>" autocomplete="off">
 
                     <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
                         style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
@@ -729,7 +728,7 @@
             </div>
 
             <div id="table-container">
-                @include('admin.laporan-lpj.kegiatan-lainnya._table')
+                <?php echo $__env->make('admin.laporan-lpj.kegiatan-lainnya._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
             </div>
         </div>
     </div>
@@ -808,7 +807,7 @@
         </div>
     </div>
 
-    {{-- Pengajuan Modal --}}
+    
     <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -840,7 +839,7 @@
         </div>
     </div>
 
-    {{-- Modal Edit Anggaran --}}
+    
     <div class="modal fade" id="editAnggaranModal" tabindex="-1" aria-labelledby="editAnggaranModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -854,18 +853,18 @@
                     <div>
                         <div class="mb-3 text-gray-800 fw-semibold required">Target Anggaran</div>
                         <input type="text" name="target_anggaran" id="target_anggaran"
-                            value="{{ number_format($targetAnggaran ?? 200000000000, 0, ',', '.') }}"
+                            value="<?php echo e(number_format($targetAnggaran ?? 200000000000, 0, ',', '.')); ?>"
                             placeholder="Masukkan target anggaran" class="form-control bg-light border border-gray-400"
-                            required data-original-value="{{ $targetAnggaran ?? 200000000000 }}" />
+                            required data-original-value="<?php echo e($targetAnggaran ?? 200000000000); ?>" />
                         <div class="invalid-feedback"></div>
                     </div>
 
                     <div>
                         <div class="mb-3 text-gray-800 fw-semibold required">Target Kegiatan</div>
                         <input type="number" name="target_kegiatan" id="target_kegiatan"
-                            value="{{ $targetKegiatan ?? 10 }}" placeholder="Masukkan jumlah target kegiatan"
+                            value="<?php echo e($targetKegiatan ?? 10); ?>" placeholder="Masukkan jumlah target kegiatan"
                             class="form-control bg-light border border-gray-400" required 
-                            data-original-value="{{ $targetKegiatan ?? 10 }}" />
+                            data-original-value="<?php echo e($targetKegiatan ?? 10); ?>" />
                         <div class="invalid-feedback"></div>
                     </div>
                 </form>
@@ -879,9 +878,9 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
         $(document).ready(function() {
             let dataTable = null;
@@ -1493,11 +1492,11 @@
                 if (statusIcon) {
                     // Cek apakah laporan bisa dimodifikasi (terbuka) atau terkunci
                     // Kita perlu memeriksa dari sisi PHP apakah user saat ini adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi
-                    const isSuperAdmin = {{ auth()->user()->hasRole('superadmin') ? 'true' : 'false' }};
+                    const isSuperAdmin = <?php echo e(auth()->user()->hasRole('superadmin') ? 'true' : 'false'); ?>;
                     const hasApprovalPermission =
-                        {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }};
+                        <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false'); ?>;
                     const isModifiableByCurrentUser = data.modifiable_by_user_id && data
-                        .modifiable_by_user_id == {{ auth()->id() }};
+                        .modifiable_by_user_id == <?php echo e(auth()->id()); ?>;
 
                     // Jika user adalah superadmin, memiliki permission pengajuan-modifikasi-laporan, atau memiliki akses modifikasi, maka status terbuka
                     if (isSuperAdmin || hasApprovalPermission || isModifiableByCurrentUser) {
@@ -2334,13 +2333,14 @@
             }
 
             $.ajax({
-                url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
+                url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
                 type: 'POST',
                 data: {
-                    _token: '{{ csrf_token() }}',
+                    _token: '<?php echo e(csrf_token()); ?>',
                     lpj_id: lpjId,
                     alasan: alasan,
-                    user_id: {{ auth()->id() }}
+                    user_id: <?php echo e(auth()->id()); ?>
+
                 },
                 success: function(response) {
                     if (response.success) {
@@ -2383,4 +2383,6 @@
 
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/kegiatan-lainnya/index.blade.php ENDPATH**/ ?>

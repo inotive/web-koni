@@ -1,10 +1,8 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Manajemen Pelatih'); ?>
+<?php $__env->startSection('mainSection', 'Konfigurasi'); ?>
+<?php $__env->startSection('currentSection', 'Pelatih'); ?>
 
-@section('pageTitle', 'Manajemen Pelatih')
-@section('mainSection', 'Konfigurasi')
-@section('currentSection', 'Pelatih')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <style>
         body {
@@ -512,19 +510,20 @@
         }
     </style>
 
-    @if (session('success'))
-        <div class="alert alert-{{ session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger') }} alert-dismissible fade show"
+    <?php if(session('success')): ?>
+        <div class="alert alert-<?php echo e(session('action') === 'store' ? 'success' : (session('action') === 'update' ? 'warning' : 'danger')); ?> alert-dismissible fade show"
             role="alert">
             <i
-                class="fas {{ session('action') === 'store' ? 'fa-check-circle' : (session('action') === 'update' ? 'fa-exclamation-circle' : 'fa-trash-alt') }} me-2"></i>
-            {{ session('success') }}
+                class="fas <?php echo e(session('action') === 'store' ? 'fa-check-circle' : (session('action') === 'update' ? 'fa-exclamation-circle' : 'fa-trash-alt')); ?> me-2"></i>
+            <?php echo e(session('success')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
-        <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
+        <a href="<?php echo e(route('admin.konfigurasi.pelatih.create')); ?>" class="btn"
             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Pelatih
         </a>
@@ -551,7 +550,7 @@
                                         </button>
                                     </div>
 
-                                    <a href="{{ route('admin.konfigurasi.pelatih.export') }}" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
+                                    <a href="<?php echo e(route('admin.konfigurasi.pelatih.export')); ?>" id="export-csv" class="btn btn-outline-secondary filter-btn-custom">
                                         <i class="fas fa-file-csv me-1"></i> Export
                                     </a>
                                     <div class="dropdown">
@@ -565,11 +564,11 @@
                                                 <label class="form-label fw-semibold">Cabang Olahraga</label>
                                                 <select id="filter-cabor" class="form-select">
                                                     <option value="">Semua Cabor</option>
-                                                    @if (isset($allCabor))
-                                                        @foreach ($allCabor as $id => $nama)
-                                                            <option value="{{ $nama }}">{{ $nama }}</option>
-                                                        @endforeach
-                                                    @endif
+                                                    <?php if(isset($allCabor)): ?>
+                                                        <?php $__currentLoopData = $allCabor; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $nama): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option value="<?php echo e($nama); ?>"><?php echo e($nama); ?></option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php endif; ?>
                                                 </select>
                                             </div>
 
@@ -594,17 +593,7 @@
                                                 </select>
                                             </div>
 
-                                            {{-- <div class="mb-3">
-                                                <label class="form-label fw-semibold">Status Prestasi</label>
-                                                <select id="filter-prestasi" class="form-select">
-                                                    <option value="">Semua</option>
-                                                    <option value="ada">Ada Prestasi</option>
-                                                    <option value="tidak">Tidak Ada Prestasi</option>
-                                                    <option value="emas">Medali Emas</option>
-                                                    <option value="perak">Medali Perak</option>
-                                                    <option value="perunggu">Medali Perunggu</option>
-                                                </select>
-                                            </div> --}}
+                                            
 
                                             <div class="d-flex gap-2">
                                                 <button type="button" id="apply-filters"
@@ -620,17 +609,17 @@
                                     </div>
                                 </div>
                             </div>
-                            @if (!(isset($pelatih) && $pelatih->isEmpty()))
+                            <?php if(!(isset($pelatih) && $pelatih->isEmpty())): ?>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div id="filter-info" class="text-muted">
-                                        Menampilkan <span id="showing-count">{{ isset($pelatih) ? $pelatih->count() : 0 }}</span>
-                                        dari <span id="total-count">{{ isset($pelatih) ? $pelatih->total() : 0 }}</span> pelatih
+                                        Menampilkan <span id="showing-count"><?php echo e(isset($pelatih) ? $pelatih->count() : 0); ?></span>
+                                        dari <span id="total-count"><?php echo e(isset($pelatih) ? $pelatih->total() : 0); ?></span> pelatih
                                     </div>
                                 </div>
-                            @endif
+                            <?php endif; ?>
                         </div>
                         <div class="table-container">
-                            @include('admin.pelatih._table')
+                            <?php echo $__env->make('admin.pelatih._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                         </div>
                     </div>
                 </div>
@@ -640,10 +629,10 @@
 </div>
 
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
-    @if (isset($pelatih) && $pelatih->isNotEmpty())
+<?php $__env->startSection('script'); ?>
+    <?php if(isset($pelatih) && $pelatih->isNotEmpty()): ?>
         <script>
         $(document).ready(function() {
             // Initialize filters from URL on page load
@@ -1134,7 +1123,7 @@
                             url: route,
                             type: 'DELETE',
                             data: {
-                                _token: $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}'
+                                _token: $('meta[name="csrf-token"]').attr('content') || '<?php echo e(csrf_token()); ?>'
                             },
                             success: function(response) {
                                 Swal.fire({
@@ -1211,5 +1200,7 @@
             };
         });
         </script>
-    @endif
-@endsection
+    <?php endif; ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/pelatih/index.blade.php ENDPATH**/ ?>
