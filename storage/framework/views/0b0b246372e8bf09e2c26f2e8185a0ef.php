@@ -251,6 +251,11 @@
             font-size: 12px;
             font-weight: 600;
         }
+        
+        /* Hide export button during screenshot */
+        .hide-for-screenshot {
+            visibility: hidden;
+        }
     </style>
 <?php $__env->stopPush(); ?>
 
@@ -675,13 +680,20 @@
 
         // Screenshot functionality for exporting "Informasi Kegiatan" section
         document.getElementById('export-screenshot').addEventListener('click', function() {
-            const targetElement = document.getElementById('informasi-kegiatan-content'); // The Informasi Kegiatan section
-
+            const targetElement = this.closest('.card'); // Capture the entire card
+            const exportButton = this; // Reference to the export button
+            
+            // Hide the export button temporarily using CSS class
+            exportButton.classList.add('hide-for-screenshot');
+            
             html2canvas(targetElement, {
                 scale: 2, // Higher scale for better quality
                 useCORS: true,
                 backgroundColor: '#ffffff'
             }).then(canvas => {
+                // Restore the export button visibility
+                exportButton.classList.remove('hide-for-screenshot');
+                
                 // Convert canvas to blob
                 canvas.toBlob(function(blob) {
                     // Create download link
@@ -691,6 +703,8 @@
                     link.click();
                 });
             }).catch(error => {
+                // Restore the export button visibility in case of error
+                exportButton.classList.remove('hide-for-screenshot');
                 console.error('Error capturing screenshot:', error);
                 alert('Gagal mengekspor data. Silakan coba lagi.');
             });
