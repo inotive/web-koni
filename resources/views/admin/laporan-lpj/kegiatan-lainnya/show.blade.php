@@ -8,14 +8,14 @@
 <div class="container-fluid">
     <div class="d-flex flex-column mb-8">
         <h1 class="text-dark fw-bold mb-1">Detail Kegiatan Lainnya</h1>
-        <div class="text-muted fw-semibold fs-6">Informasi lengkap tentang kegiatan</div>
+        <div class="text-muted fw-semibold fs-6">Informasi lengkap tentang kegiatan lainnya</div>
     </div>
 
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title fw-bold fs-4 mb-0">Informasi Kegiatan</h3>
+                    <h3 class="card-title fw-bold fs-4 mb-0">Informasi Kegiatan Lainnya</h3>
                     <div class="card-toolbar">
                         <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}" class="btn btn-light-primary">
                             <i class="ki-duotone ki-arrow-left fs-2"></i>
@@ -77,7 +77,7 @@
                     <div class="mb-8">
                         <h4 class="fw-bold text-primary mb-5 d-flex align-items-center">
                             <i class="fas fa-camera me-2"></i>
-                            Dokumentasi Kegiatan
+                            Dokumentasi Kegiatan Lainnya
                         </h4>
                         <div class="row g-5">
                             @foreach($kegiatanLainnya->foto_jurnal as $index => $foto)
@@ -115,7 +115,7 @@
                     <div>
                         <h4 class="fw-bold text-info mb-5 d-flex align-items-center">
                             <i class="fas fa-file-alt me-2"></i>
-                            Dokumen Pendukung
+                            Dokumen Pendukung Kegiatan Lainnya
                         </h4>
                         
                         <div class="row g-4">

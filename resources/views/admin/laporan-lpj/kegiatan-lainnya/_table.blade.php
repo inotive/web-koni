@@ -4,18 +4,19 @@
         <h4>Tidak ada data kegiatan lainnya.</h4>
     </div>
 @else
-    <div class="table-responsive position-relative">
+    <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning_kegiatan">
             <thead class="bg-light">
                 <tr>
                     @php
                         $columns = [
                             ['key' => null, 'title' => 'No', 'sortable' => false],
-                            ['key' => 'nama_program', 'title' => 'Nama Program & Kegiatan'],
+                            ['key' => 'nama_program_kegiatan', 'title' => 'Nama Program & Kegiatan'],
                             ['key' => 'jumlah_harga', 'title' => 'Total Anggaran'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen LPJ', 'sortable' => false],
+                            ['key' => 'created_at', 'title' => 'Tanggal Ditambahkan'],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
                     @endphp
@@ -43,6 +44,7 @@
                         <td class="text-start">
                             {{ ($kegiatanLainnya->currentPage() - 1) * $kegiatanLainnya->perPage() + $index + 1 }}
                         </td>
+                        {{-- PERBAIKAN: Ubah dari nama_program_kegiatan ke nama_program dan jenis_kegiatan ke nama_kegiatan --}}
                         <td class="text-start">
                             <div class="d-flex flex-column">
                                 <strong class="text-truncate-custom">{{ $kegiatan->nama_program }}</strong>
@@ -64,6 +66,7 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
+                        {{-- PERBAIKAN: Ubah dari dokumen_pendukung ke dokumen_lpj --}}
                         <td class="text-start">
                             @if ($kegiatan->dokumen_lpj && count($kegiatan->dokumen_lpj) > 0)
                                 <button type="button" class="btn btn-sm btn-light-primary preview-btn"
@@ -78,21 +81,39 @@
                             @endif
                         </td>
                         <td class="text-start">
-                            @if ($kegiatan->dokumen_lpj_pdf && count($kegiatan->dokumen_lpj_pdf) > 0)
-                                <button type="button" class="btn btn-sm btn-light-danger preview-btn"
-                                    data-bs-toggle="modal" data-bs-target="#previewModal" data-type="document"
-                                    data-files="{{ json_encode($kegiatan->dokumen_lpj_pdf) }}"
-                                    data-title="Dokumen LPJ - {{ $kegiatan->nama_program }}">
-                                    <i class="fas fa-file-pdf me-1"></i>{{ count($kegiatan->dokumen_lpj_pdf) }}
-                                    PDF
-                                </button>
+                            @if ($kegiatan->dokumen_lpj_pdf)
+                                @php
+                                    // Handle berbagai tipe data untuk dokumen LPJ PDF
+                                    $path = '';
+                                    $originalName = '';
+
+                                    if (is_object($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = $kegiatan->dokumen_lpj_pdf->path;
+                                        $originalName = $kegiatan->dokumen_lpj_pdf->original_name ?? basename($path);
+                                    } elseif (is_array($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = isset($kegiatan->dokumen_lpj_pdf['path']) ? $kegiatan->dokumen_lpj_pdf['path'] : '';
+                                        $originalName = isset($kegiatan->dokumen_lpj_pdf['original_name']) ? $kegiatan->dokumen_lpj_pdf['original_name'] : (is_string($path) ? basename($path) : '');
+                                    } elseif (is_string($kegiatan->dokumen_lpj_pdf)) {
+                                        $path = $kegiatan->dokumen_lpj_pdf;
+                                        $originalName = basename($path);
+                                    }
+
+                                    // Pastikan kita punya nama file
+                                    if (empty($originalName) && is_string($path)) {
+                                        $originalName = basename($path);
+                                    }
+                                @endphp
+                                <a href="{{ asset('storage/' . $path) }}" target="_blank" class="btn btn-sm btn-light-danger">
+                                    <i class="fas fa-file-pdf me-1"></i>PDF
+                                </a>
                             @else
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
+                        <td class="text-start">{{ $kegiatan->created_at ? $kegiatan->created_at->format('d/m/Y') : '-' }}</td>
                         <td class="text-start">
                             <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
-                                <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button" onclick="toggleDropdown(this)">
+                                <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <rect width="32" height="32" rx="6" fill="#EFF6FF" />
@@ -109,83 +130,83 @@
                                         <defs>
                                             <clipPath id="clip0_2223_4269">
                                                 <rect width="18" height="18" fill="white"
-                                                    transform="translate(7 7)"/>
+                                                    transform="translate(7 7)" />
                                             </clipPath>
                                         </defs>
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
-                                   <li>
+                                    <li>
                                         <a href="javascript:void(0)" class="dropdown-item-custom"
                                            onclick="showDetailModal({{ json_encode($kegiatan) }})">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail
                                         </a>
                                     </li>
 
-                                    {{-- Check if user is superadmin, has pengajuan-modifikasi-laporan permission, or has modification permission for Edit button --}}
-                                    @if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan-manage') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
-                                        <li>
-                                            <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.edit', $kegiatan->id) }}"
-                                                class="dropdown-item-custom edit">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi
-                                            </a>
-                                        </li>
-                                    @else
-                                        <li>
-                                            <span class="dropdown-item-custom restricted-action"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="left"
-                                                data-bs-custom-class="custom-tooltip"
-                                                data-bs-html="true"
-                                                data-bs-delay='{"show":0,"hide":300}'
-                                                title="<div class='tooltip-content'>
-                                                            <strong>Informasi</strong><br>
-                                                            Ajukan approval untuk<br>
-                                                            modifikasi laporan<br>
-                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
-                                                        </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;"
-                                                onmouseover="keepTooltipVisible(this)"
-                                                onmouseout="hideTooltipWithDelay(this)">
-                                                <i class="fas fa-edit me-2"></i> Modifikasi
-                                            </span>
-                                        </li>
-                                    @endif
+                                    @php
+                                        $pengajuan = null;
+                                        if (method_exists($kegiatan, 'pengajuan')) {
+                                            $pengajuan = $kegiatan->pengajuan()->where('status', 'disetujui')->orderBy('approved_at', 'desc')->first();
+                                        }
 
-                                    {{-- Check if user is superadmin, has pengajuan-modifikasi-laporan permission, or has modification permission for Delete button --}}
-                                    @if(auth()->user()->hasRole('superadmin') || auth()->user()->can('pengajuan-modifikasi-laporan-manage') || (isset($kegiatan->modifiable_by_user_id) && auth()->user()->id == $kegiatan->modifiable_by_user_id))
-                                        <li class="dropdown-item-custom delete"
-                                            onclick="destroyItem(this)"
-                                            data-route="{{ route('admin.laporan-lpj.kegiatan-lainnya.destroy', $kegiatan->id) }}">
+                                        $isModifiable = isset($kegiatan->modifiable_by_user_id) &&
+                                                        auth()->user()->id == $kegiatan->modifiable_by_user_id &&
+                                                        $pengajuan && $pengajuan->token > 0;
+
+                                        $canEdit = auth()->user()->hasRole('superadmin') ||
+                                                   auth()->user()->can('pengajuan-modifikasi-laporan-manage') ||
+                                                   $isModifiable;
+                                    @endphp
+
+                                    <li>
+                                        <a href="{{ $canEdit ? route('admin.laporan-lpj.kegiatan-lainnya.edit', $kegiatan->id) : 'javascript:void(0)' }}"
+                                           class="dropdown-item-custom e    dit {{ !$canEdit ? 'restricted-action' : '' }}"
+                                           @if(!$canEdit)
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="left"
+                                               data-bs-custom-class="custom-tooltip"
+                                               data-bs-html="true"
+                                               title="<div class='tooltip-content'>
+                                                           <strong>Informasi</strong><br>
+                                                           Ajukan approval untuk<br>
+                                                           modifikasi laporan ini
+                                                           <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                       </div>"
+                                           @endif
+                                           style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
+                                            <i class="fas fa-edit me-2"></i> Modifikasi
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="javascript:void(0)"
+                                           class="dropdown-item-custom delete {{ !$canEdit ? 'restricted-action' : '' }}"
+                                           @if($canEdit)
+                                               onclick="destroyItem(this)"
+                                               data-route="{{ route('admin.laporan-lpj.kegiatan-lainnya.destroy', $kegiatan->id) }}"
+                                           @else
+                                               data-bs-toggle="tooltip"
+                                               data-bs-placement="left"
+                                               data-bs-custom-class="custom-tooltip"
+                                               data-bs-html="true"
+                                               title="<div class='tooltip-content'>
+                                                           <strong>Informasi</strong><br>
+                                                           Ajukan approval untuk<br>
+                                                           menghapus laporan ini
+                                                           <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                       </div>"
+                                           @endif
+                                           style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
                                             <i class="fas fa-trash me-2"></i> Hapus
-                                        </li>
-                                    @else
-                                        <li>
-                                            <span class="dropdown-item-custom restricted-action"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="left"
-                                                data-bs-custom-class="custom-tooltip"
-                                                data-bs-html="true"
-                                                data-bs-delay='{"show":0,"hide":300}'
-                                                title="<div class='tooltip-content'>
-                                                            <strong>Informasi</strong><br>
-                                                            Ajukan approval untuk<br>
-                                                            modifikasi laporan
-                                                        </div>"
-                                                style="cursor: not-allowed; opacity: 0.6;"
-                                                onmouseover="keepTooltipVisible(this)"
-                                                onmouseout="hideTooltipWithDelay(this)">
-                                                <i class="fas fa-trash me-2"></i> Hapus
-                                            </span>
-                                        </li>
-                                    @endif
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">Data tidak ditemukan</td>
+                        <td colspan="8" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -293,11 +314,8 @@
             margin-top: 5px;
             display: none;
             list-style: none;
-            /* Ensure dropdown doesn't go outside viewport */
             max-height: 300px;
             overflow-y: auto;
-            /* Additional positioning constraints */
-            max-width: 90vw;
         }
 
         .dropdown-menu-custom.show {

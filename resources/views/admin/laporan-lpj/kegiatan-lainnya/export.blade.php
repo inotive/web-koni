@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan LPJ - {{ $kegiatanLainnya->nama_program }}</title>
+    <title>Laporan LPJ - {{ $kegiatanLainnya->nama_program }} - Kegiatan Lainnya</title>
     <meta charset="UTF-8">
     <style>
        @page {
@@ -367,7 +367,7 @@
     <!-- Main content starts here -->
     <div class="content">
         <div class="lpj-item no-break">
-            <h3 class="section-title">Detail Program dan Kegiatan</h3>
+            <h3 class="section-title">Detail Program dan Kegiatan Lainnya</h3>
             <table class="info-table">
                 <tr>
                     <th>Program</th>
@@ -402,7 +402,7 @@
             </table>
 
             @if($kegiatanLainnya->foto_jurnal && count($kegiatanLainnya->foto_jurnal) > 0)
-                <h3 class="section-title">Dokumentasi Kegiatan</h3>
+                <h3 class="section-title">Dokumentasi Kegiatan Lainnya</h3>
                 <table class="photo-table">
                     <tr>
                         @foreach($kegiatanLainnya->foto_jurnal as $index => $foto)
@@ -431,7 +431,7 @@
 
             @if(($kegiatanLainnya->dokumen_lpj && count($kegiatanLainnya->dokumen_lpj) > 0) || 
                 ($kegiatanLainnya->dokumen_lpj_pdf))
-                <h3 class="section-title">Dokumen Pendukung</h3>
+                <h3 class="section-title">Dokumen Pendukung Kegiatan Lainnya</h3>
                 
                 @if($kegiatanLainnya->dokumen_lpj_pdf)
                     @php

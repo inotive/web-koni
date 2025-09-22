@@ -260,6 +260,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::get('/', [KegiatanLainnyaController::class, 'index'])->name('index');
             Route::get('/create', [KegiatanLainnyaController::class, 'create'])->name('create');
             Route::post('/', [KegiatanLainnyaController::class, 'store'])->name('store');
+            Route::post('/update-target', [KegiatanLainnyaController::class, 'updateTarget'])->name('update-target');
 
             // Export route - generates: admin.laporan-lpj.kegiatan-lainnya.export
             Route::post('/export', [KegiatanLainnyaController::class, 'export'])->name('export');
