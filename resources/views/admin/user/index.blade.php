@@ -5,6 +5,11 @@
     <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
 
     <style>
+
+        body {
+            background-color: #f5f5f5;
+        }
+
         /* Style dasar tabel */
         table.table th,
         table.table td {
