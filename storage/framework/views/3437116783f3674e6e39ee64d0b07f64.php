@@ -1,10 +1,8 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Database Bendahara'); ?>
+<?php $__env->startSection('mainSection', 'Menu Utama'); ?>
+<?php $__env->startSection('currentSection', 'Database Bendahara'); ?>
 
-@section('pageTitle', 'Database Bendahara')
-@section('mainSection', 'Menu Utama')
-@section('currentSection', 'Database Bendahara')
-
-@section('style')
+<?php $__env->startSection('style'); ?>
     <style>
 
         .filter-container {
@@ -506,9 +504,9 @@
             color: white !important;
         }
     </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="flex-wrap mb-2 d-flex justify-content-between align-items-center" style="padding:10px 30px">
         <h2 class="mb-0 fw-bold fs-2 text-dark">Database Bendahara</h2>
         <button id="tambahLaporanBtn" class="btn"
@@ -530,40 +528,39 @@
                                     </div>
 
                                     <form id="filter" class="gap-3 d-flex filter-container">
-                                        {{-- <button type="button" id="tambahLaporanBtn"
-                                            class="gap-2 px-4 py-2 text-white rounded border-0 btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold">
-                                            <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
-                                            <span>Tambah Laporan</span>
-                                        </button> --}}
+                                        
 
                                         <div class="search-container">
                                             <div class="position-relative bg-light">
                                                 <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
-                                                <input type="text" name="search" value="{{ request('search') }}"
+                                                <input type="text" name="search" value="<?php echo e(request('search')); ?>"
                                                     placeholder="Cari laporan..."
                                                     class="py-2 border border-gray-500 form-control search-input" />
                                             </div>
                                         </div>
 
                 <div class="date-filter-container">
-                    <div class="date-filter-btn {{ request('date_from') || request('date_to') ? 'date-filter-active' : '' }}"
+                    <div class="date-filter-btn <?php echo e(request('date_from') || request('date_to') ? 'date-filter-active' : ''); ?>"
                         id="dateFilterBtn">
-                        @if (request('date_from') || request('date_to'))
+                        <?php if(request('date_from') || request('date_to')): ?>
                             <i class="fas fa-calendar-check"></i>
-                        @else
+                        <?php else: ?>
                             <i class="fas fa-calendar"></i>
-                        @endif
+                        <?php endif; ?>
                         <span class="filter-text">
-                            @if (request('date_from') || request('date_to'))
-                                @if (request('date_from') && request('date_to'))
-                                    {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }} -
-                                    {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
-                                @elseif(request('date_from'))
-                                    Dari {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }}
-                                @else
-                                    Sampai {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}
-                                @endif
-                            @endif
+                            <?php if(request('date_from') || request('date_to')): ?>
+                                <?php if(request('date_from') && request('date_to')): ?>
+                                    <?php echo e(\Carbon\Carbon::parse(request('date_from'))->format('d/m/Y')); ?> -
+                                    <?php echo e(\Carbon\Carbon::parse(request('date_to'))->format('d/m/Y')); ?>
+
+                                <?php elseif(request('date_from')): ?>
+                                    Dari <?php echo e(\Carbon\Carbon::parse(request('date_from'))->format('d/m/Y')); ?>
+
+                                <?php else: ?>
+                                    Sampai <?php echo e(\Carbon\Carbon::parse(request('date_to'))->format('d/m/Y')); ?>
+
+                                <?php endif; ?>
+                            <?php endif; ?>
                         </span>
                     </div>
 
@@ -583,12 +580,12 @@
                         <div class="date-input-group">
                             <div class="date-input-wrapper">
                                 <label class="date-input-label">Dari Tanggal</label>
-                                <input type="date" name="date_from" value="{{ request('date_from') }}" class="date-input"
+                                <input type="date" name="date_from" value="<?php echo e(request('date_from')); ?>" class="date-input"
                                     id="dateFromInput">
                             </div>
                             <div class="date-input-wrapper">
                                 <label class="date-input-label">Sampai Tanggal</label>
-                                <input type="date" name="date_to" value="{{ request('date_to') }}" class="date-input"
+                                <input type="date" name="date_to" value="<?php echo e(request('date_to')); ?>" class="date-input"
                                     id="dateToInput">
                             </div>
                         </div>
@@ -601,74 +598,74 @@
                 </div>
 
                 <div class="filter-dropdown">
-                    <div class="filter-btn {{ request('filter_type') && request('filter_type') != 'all' ? 'filter-active' : '' }}"
+                    <div class="filter-btn <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'filter-active' : ''); ?>"
                         id="filterBtn">
                         <span>
-                            @if (request('filter_type') == 'pdf')
+                            <?php if(request('filter_type') == 'pdf'): ?>
                                 <i class="fas fa-file-pdf me-2"
-                                    style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#dc3545' }};"></i>File
+                                    style="color: <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'white' : '#dc3545'); ?>;"></i>File
                                 PDF
-                            @elseif(request('filter_type') == 'excel')
+                            <?php elseif(request('filter_type') == 'excel'): ?>
                                 <i class="fas fa-file-excel me-2"
-                                    style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#198754' }};"></i>File
+                                    style="color: <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'white' : '#198754'); ?>;"></i>File
                                 Excel
-                            @elseif(request('filter_type') == 'other')
+                            <?php elseif(request('filter_type') == 'other'): ?>
                                 <i class="fas fa-file me-2"
-                                    style="color: {{ request('filter_type') && request('filter_type') != 'all' ? 'white' : '#6c757d' }};"></i>File
+                                    style="color: <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'white' : '#6c757d'); ?>;"></i>File
                                 Lain
-                            @else
+                            <?php else: ?>
                                 <i class="fas fa-filter me-2"></i>Filter Tipe File
-                            @endif
+                            <?php endif; ?>
                         </span>
                         <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
                     </div>
 
                     <div class="filter-menu" id="filterMenu">
-                        <div class="filter-option {{ request('filter_type', 'all') == 'all' ? 'active' : '' }}"
+                        <div class="filter-option <?php echo e(request('filter_type', 'all') == 'all' ? 'active' : ''); ?>"
                             data-filter="all">
                             <span>
                                 <i class="fas fa-list file-type-icon"></i>
                                 Semua File
                             </span>
-                            <span class="filter-count">{{ $fileCounts['all'] ?? 0 }}</span>
+                            <span class="filter-count"><?php echo e($fileCounts['all'] ?? 0); ?></span>
                         </div>
-                        <div class="filter-option {{ request('filter_type') == 'pdf' ? 'active' : '' }}" data-filter="pdf">
+                        <div class="filter-option <?php echo e(request('filter_type') == 'pdf' ? 'active' : ''); ?>" data-filter="pdf">
                             <span>
                                 <i class="fas fa-file-pdf file-type-icon" style="color: #dc3545;"></i>
                                 File PDF
                             </span>
-                            <span class="filter-count">{{ $fileCounts['pdf'] ?? 0 }}</span>
+                            <span class="filter-count"><?php echo e($fileCounts['pdf'] ?? 0); ?></span>
                         </div>
-                        <div class="filter-option {{ request('filter_type') == 'excel' ? 'active' : '' }}"
+                        <div class="filter-option <?php echo e(request('filter_type') == 'excel' ? 'active' : ''); ?>"
                             data-filter="excel">
                             <span>
                                 <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
                                 File Excel
                             </span>
-                            <span class="filter-count">{{ $fileCounts['excel'] ?? 0 }}</span>
+                            <span class="filter-count"><?php echo e($fileCounts['excel'] ?? 0); ?></span>
                         </div>
-                        <div class="filter-option {{ request('filter_type') == 'other' ? 'active' : '' }}"
+                        <div class="filter-option <?php echo e(request('filter_type') == 'other' ? 'active' : ''); ?>"
                             data-filter="other">
                             <span>
                                 <i class="fas fa-file file-type-icon" style="color: #6c757d;"></i>
                                 File Lain
                             </span>
-                            <span class="filter-count">{{ $fileCounts['other'] ?? 0 }}</span>
+                            <span class="filter-count"><?php echo e($fileCounts['other'] ?? 0); ?></span>
                         </div>
                     </div>
                 </div>
 
                 <input type="hidden" name="filter_type" id="filter_type_input"
-                    value="{{ request('filter_type', 'all') }}">
-                <input type="hidden" name="date_from" id="date_from_input" value="{{ request('date_from') }}">
-                <input type="hidden" name="date_to" id="date_to_input" value="{{ request('date_to') }}">
-                <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
-                <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
+                    value="<?php echo e(request('filter_type', 'all')); ?>">
+                <input type="hidden" name="date_from" id="date_from_input" value="<?php echo e(request('date_from')); ?>">
+                <input type="hidden" name="date_to" id="date_to_input" value="<?php echo e(request('date_to')); ?>">
+                <input type="hidden" name="sort_by" id="sort_by_input" value="<?php echo e(request('sort_by', 'created_at')); ?>">
+                <input type="hidden" name="order" id="order_input" value="<?php echo e(request('order', 'desc')); ?>">
             </form>
         </div>
 
         <div id="table" class="container">
-            @include('admin.bendahara._table', compact('laporanBendahara', 'fileCounts', 'currentSort'))
+            <?php echo $__env->make('admin.bendahara._table', compact('laporanBendahara', 'fileCounts', 'currentSort'), \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
     </div>
 
@@ -681,9 +678,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form id="formAdd" action="{{ route('admin.bendahara.store') }}" method="POST"
+                <form id="formAdd" action="<?php echo e(route('admin.bendahara.store')); ?>" method="POST"
                     enctype="multipart/form-data" class="gap-4 d-grid">
-                    @csrf
+                    <?php echo csrf_field(); ?>
 
                     <div>
                         <div class="mb-3 text-gray-800 fw-semibold required">Judul Laporan</div>
@@ -752,13 +749,13 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
-        let currentFilter = '{{ request('filter_type', 'all') }}';
-        let currentSort = '{{ request('sort_by', 'created_at') }}';
-        let currentOrder = '{{ request('order', 'desc') }}';
+        let currentFilter = '<?php echo e(request('filter_type', 'all')); ?>';
+        let currentSort = '<?php echo e(request('sort_by', 'created_at')); ?>';
+        let currentOrder = '<?php echo e(request('order', 'desc')); ?>';
         Dropzone.autoDiscover = false;
         const dropzones = {};
 
@@ -832,7 +829,7 @@
 
         function reloadTable(url = null) {
             let formData = $('#filter').serialize();
-            let target = url || "{{ route('admin.bendahara.index') }}";
+            let target = url || "<?php echo e(route('admin.bendahara.index')); ?>";
 
             $.ajax({
                 url: target,
@@ -998,7 +995,7 @@
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-                            '{{ csrf_token() }}',
+                            '<?php echo e(csrf_token()); ?>',
                         'X-Requested-With': 'XMLHttpRequest',
                     },
                     body: formData,
@@ -1130,7 +1127,7 @@
                     fetch(route, {
                             method: 'POST',
                             headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
                                 'X-Requested-With': 'XMLHttpRequest'
                             },
                             body: new FormData(form)
@@ -1430,7 +1427,7 @@
                 const formData = $('#filter').serialize() + '&per_page=' + newPerPage;
 
                 $.ajax({
-                    url: "{{ route('admin.bendahara.index') }}",
+                    url: "<?php echo e(route('admin.bendahara.index')); ?>",
                     data: formData,
                     beforeSend: function() {
                         $('#table').addClass('table-loading');
@@ -1464,7 +1461,7 @@
                     const formData = $('#filter').serialize() + '&page=' + page;
 
                     $.ajax({
-                        url: "{{ route('admin.bendahara.index') }}",
+                        url: "<?php echo e(route('admin.bendahara.index')); ?>",
                         data: formData,
                         beforeSend: function() {
                             $('#table').addClass('table-loading');
@@ -1568,4 +1565,6 @@
             }
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/bendahara/index.blade.php ENDPATH**/ ?>

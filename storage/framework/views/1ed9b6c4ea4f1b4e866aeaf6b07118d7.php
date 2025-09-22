@@ -4,8 +4,11 @@
     <title>Laporan LPJ - <?php echo e($lpj->nama_program); ?></title>
     <meta charset="UTF-8">
     <style>
-       @page {
-            margin: 1cm 1.5cm 1.5cm 1.5cm;
+        @page {
+            margin-top: 160px;   /* reserve space for letterhead */
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-bottom: 40px;
         }
 
         body {
@@ -19,14 +22,24 @@
 
         /* --- HEADER IMAGE --- */
         .letterhead {
+            position: fixed;
+            top: -160px;   /* move into the reserved top margin */
+            left: 0;
+            right: 0;
             text-align: center;
-            margin-bottom: 20px;
+            height: 151px; /* actual header image height */
         }
 
         .letterhead img {
             width: 100%;
-            max-height: 200px;  /* adjust for PDF */
+            height: auto;
+            max-height: 151px; /* match your letterhead (810x151) */
             object-fit: contain;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .content {
+            margin-top: 0;   /* no need for padding-top anymore */
         }
 
         /* --- DOCUMENT TITLE --- */
@@ -118,7 +131,6 @@
             display: flex;
             justify-content: space-between;
         }
-
         .signature-box {
             text-align: center;
             width: 220px;
@@ -141,6 +153,8 @@
                 print-color-adjust: exact;
             }
         }
+
+
     </style>
 </head>
 <body>
