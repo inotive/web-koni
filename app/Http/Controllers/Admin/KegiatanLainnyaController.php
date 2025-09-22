@@ -256,7 +256,7 @@ class KegiatanLainnyaController extends Controller
             'dokumen_lpj_pdf' => 'nullable|file|mimes:pdf|max:10240',
             'existing_foto_jurnal' => 'nullable|array',
             'existing_dokumen_lpj' => 'nullable|array',
-            'existing_dokumen_lpj_pdf' => 'nullable|array',
+            'existing_dokumen_lpj_pdf' => 'nullable|string',
         ], [
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
             'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
@@ -290,7 +290,7 @@ class KegiatanLainnyaController extends Controller
         $existingFotoJurnal = $request->input('existing_foto_jurnal', []);
         $existingDokumenLpj = $request->input('existing_dokumen_lpj', []);
         // For dokumen_lpj_pdf, it's a single file, not an array
-        $existingDokumenLpjPdfPaths = $request->input('existing_dokumen_lpj_pdf', []);
+        $existingDokumenLpjPdfPath = $request->input('existing_dokumen_lpj_pdf');
         
         // Delete removed foto_jurnal files
         if ($kegiatanLainnya->foto_jurnal) {
@@ -314,7 +314,7 @@ class KegiatanLainnyaController extends Controller
         // For dokumen_lpj_pdf, check if it should be deleted (if it's not in existing list)
         if ($kegiatanLainnya->dokumen_lpj_pdf) {
             // If existing_dokumen_lpj_pdf is empty, it means the file should be deleted
-            if (empty($existingDokumenLpjPdfPaths)) {
+            if (empty($existingDokumenLpjPdfPath)) {
                 if (isset($kegiatanLainnya->dokumen_lpj_pdf['path'])) {
                     Storage::disk('public')->delete($kegiatanLainnya->dokumen_lpj_pdf['path']);
                 }
@@ -353,7 +353,7 @@ class KegiatanLainnyaController extends Controller
         $allFotoJurnal = array_merge($existingFotoJurnal, $newFotoJurnal);
         $allDokumenLpj = array_merge($existingDokumenLpj, $newDokumenLpj);
         // For dokumen_lpj_pdf, use the new file if provided, otherwise keep existing
-        $allDokumenLpjPdf = $newDokumenLpjPdf ?? $kegiatanLainnya->dokumen_lpj_pdf;
+        $allDokumenLpjPdf = $newDokumenLpjPdf ?? (!empty($existingDokumenLpjPdfPath) ? $kegiatanLainnya->dokumen_lpj_pdf : null);
 
         $data = [
             'nama_program' => $request->nama_program_kegiatan,

@@ -994,39 +994,45 @@
             window.removeExistingFile = function(button, type, filePath) {
                 if (confirm('Apakah Anda yakin ingin menghapus file ini? File akan dihapus permanen setelah disimpan.')) {
                     const item = button.closest('.file-preview-item');
-                    // Change input name to mark for deletion
-                    const hiddenInput = item.querySelector('input[type=hidden]');
-                    if (hiddenInput) {
-                        hiddenInput.name = `deleted_${type}s`;
-                    }
-                    item.style.display = 'none';
-
-                    const isPhoto = type === 'foto';
-                    const isDokumenLpj = type === 'dokumenLpj';
-
-                    if (isPhoto) {
-                        const index = existingFotoFiles.findIndex(f => {
-                            if (typeof f === 'string') return f === filePath;
-                            if (typeof f === 'object' && f !== null) return f.path === filePath;
-                            return false;
-                        });
-                        if (index > -1) {
-                            existingFotoFiles.splice(index, 1);
+                    // For dokumenLpj, we need to handle it differently since it's a single file
+                    if (type === 'dokumenLpj') {
+                        // Remove the hidden input for dokumenLpj
+                        const hiddenInput = item.querySelector('input[type=hidden]');
+                        if (hiddenInput) {
+                            hiddenInput.remove();
                         }
-                    } else if (isDokumenLpj) {
-                        // For dokumen_lpj_pdf, it's a single file, not an array
+                        // Set existingDokumenLpjFiles to null to indicate deletion
                         existingDokumenLpjFiles = null;
                     } else {
-                        const index = existingDokumenFiles.findIndex(d => {
-                            if (typeof d === 'string') return d === filePath;
-                            if (typeof d === 'object' && d !== null) return d.path === filePath;
-                            return false;
-                        });
-                        if (index > -1) {
-                            existingDokumenFiles.splice(index, 1);
+                        // Change input name to mark for deletion for other file types
+                        const hiddenInput = item.querySelector('input[type=hidden]');
+                        if (hiddenInput) {
+                            hiddenInput.name = `deleted_${type}s`;
+                        }
+                        
+                        const isPhoto = type === 'foto';
+                        
+                        if (isPhoto) {
+                            const index = existingFotoFiles.findIndex(f => {
+                                if (typeof f === 'string') return f === filePath;
+                                if (typeof f === 'object' && f !== null) return f.path === filePath;
+                                return false;
+                            });
+                            if (index > -1) {
+                                existingFotoFiles.splice(index, 1);
+                            }
+                        } else {
+                            const index = existingDokumenFiles.findIndex(d => {
+                                if (typeof d === 'string') return d === filePath;
+                                if (typeof d === 'object' && d !== null) return d.path === filePath;
+                                return false;
+                            });
+                            if (index > -1) {
+                                existingDokumenFiles.splice(index, 1);
+                            }
                         }
                     }
-
+                    item.style.display = 'none';
                     updateFileCounters();
                 }
             };
