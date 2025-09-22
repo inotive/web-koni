@@ -201,7 +201,7 @@
                             </div>
                             <div class="col-md-9">
                                 <label for="dokumen_pendukung" class="file-upload-wrapper">
-                                    <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+                                    <input type="file" name="dokumen_pendukung[]" id="dokumen_pendukung" accept=".pdf,.doc,.docx" multiple>
                                     <div class="d-flex align-items-center gap-12">
                                         <div class="file-upload-icon-wrapper">
                                             <i class="fas fa-upload file-upload-icon"></i>
@@ -226,7 +226,7 @@
                             </div>
                             <div class="col-md-9">
                                 <label for="dokumen_lpj" class="file-upload-wrapper">
-                                    <input type="file" name="dokumen_lpj[]" id="dokumen_lpj" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+                                    <input type="file" name="dokumen_lpj[]" id="dokumen_lpj" accept=".pdf,.doc,.docx" multiple>
                                     <div class="d-flex align-items-center gap-12">
                                         <div class="file-upload-icon-wrapper">
                                             <i class="fas fa-upload file-upload-icon"></i>

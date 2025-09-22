@@ -164,7 +164,7 @@
 
                                     <?php
                                         $pengajuan = $data->pengajuan()->where('status', 'disetujui')->orderBy('approved_at', 'desc')->first();
-                                        $canEdit = auth()->user()->can('pengajuan-modifikasi-laporan-manage') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id && $pengajuan && $pengajuan->token > 0);
+                                        $canEdit = auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id && $pengajuan && $pengajuan->token > 0);
                                     ?>
 
                                     <li>
