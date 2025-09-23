@@ -300,6 +300,22 @@
                                 </div>
                             </div>
 
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="tanggal_kegiatan" class="form-label">
+                                        Tanggal Kegiatan
+                                    </label>
+                                </div>
+                                <div class="col-md-9">
+                                    <input type="date" name="tanggal_kegiatan" id="tanggal_kegiatan"
+                                        class="form-control @error('tanggal_kegiatan') is-invalid @enderror"
+                                        value="{{ old('tanggal_kegiatan', $kegiatanLainnya->tanggal_kegiatan ? $kegiatanLainnya->tanggal_kegiatan->format('Y-m-d') : '') }}">
+                                    @error('tanggal_kegiatan')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="row align-items-center mb-3" style="display: none;">
                                 <div class="col-md-3">
                                     <label for="volume" class="form-label">Volume</label>

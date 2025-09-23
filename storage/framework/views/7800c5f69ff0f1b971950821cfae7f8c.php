@@ -1,78 +1,58 @@
-@if ($lpjData->isEmpty())
-    {{-- Empty State --}}
+<?php if($lpjData->isEmpty()): ?>
+    
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
         <h4>Tidak ada data pada laporan ini.</h4>
-        @if($currentParent)
-            <p>Belum ada data untuk {{ $currentParent->nama_program }}</p>
-        @else
+        <?php if($currentParent): ?>
+            <p>Belum ada data untuk <?php echo e($currentParent->nama_program); ?></p>
+        <?php else: ?>
             <p>Belum ada data pada root level.</p>
-        @endif
+        <?php endif; ?>
     </div>
-@else
-    {{-- Data Table --}}
+<?php else: ?>
+    
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning_sumberdaya">
-            {{-- Table Header --}}
+            
             <thead class="bg-light">
                 <tr>
                     <th style="text-align: left">No</th>
                     <th>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'nama_program', 'direction' => (request()->get('sort') == 'nama_program' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
+                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'nama_program', 'direction' => (request()->get('sort') == 'nama_program' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
                             class="text-dark text-decoration-none sortable-header">
                             Nama Program & Kegiatan
-                            @if(request()->get('sort') == 'nama_program')
-                                <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                            @else
+                            <?php if(request()->get('sort') == 'nama_program'): ?>
+                                <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                            <?php else: ?>
                                 <i class="fas fa-sort"></i>
-                            @endif
+                            <?php endif; ?>
                         </a>
                     </th>
-                    {{-- <th>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'volume', 'direction' => (request()->get('sort') == 'volume' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
-                            class="text-dark text-decoration-none sortable-header">
-                            Volume
-                            @if(request()->get('sort') == 'volume')
-                                <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                            @else
-                                <i class="fas fa-sort"></i>
-                            @endif
-                        </a>
-                    </th> --}}
-                    {{-- <th>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'jumlah_harga_satuan', 'direction' => (request()->get('sort') == 'jumlah_harga_satuan' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
-                            class="text-dark text-decoration-none sortable-header">
-                            Jumlah Harga Satuan
-                            @if(request()->get('sort') == 'jumlah_harga_satuan')
-                                <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                            @else
-                                <i class="fas fa-sort"></i>
-                            @endif
-                        </a>
-                    </th> --}}
+                    
+                    
                     <th>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'jumlah_harga', 'direction' => (request()->get('sort') == 'jumlah_harga' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
+                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'jumlah_harga', 'direction' => (request()->get('sort') == 'jumlah_harga' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
                             class="text-dark text-decoration-none sortable-header">
                             Total Anggaran
-                            @if(request()->get('sort') == 'jumlah_harga')
-                                <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                            @else
+                            <?php if(request()->get('sort') == 'jumlah_harga'): ?>
+                                <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                            <?php else: ?>
                                 <i class="fas fa-sort"></i>
-                            @endif
+                            <?php endif; ?>
                         </a>
                     </th>
                     <th>Foto Jurnal</th>
                     <th>Dokumen Pendukung</th>
                     <th>Dokumen LPJ</th>
                     <th>
-                        <a href="{{ request()->fullUrlWithQuery(['sort' => 'created_at', 'direction' => (request()->get('sort') == 'created_at' && request()->get('direction') == 'asc') ? 'desc' : 'asc']) }}"
+                        <a href="<?php echo e(request()->fullUrlWithQuery(['sort' => 'created_at', 'direction' => (request()->get('sort') == 'created_at' && request()->get('direction') == 'asc') ? 'desc' : 'asc'])); ?>"
                                 class="text-dark text-decoration-none sortable-header">
                                 Tanggal Ditambahkan
-                                @if(request()->get('sort') == 'created_at')
-                                    <i class="fas fa-sort-{{ request()->get('direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                @else
+                                <?php if(request()->get('sort') == 'created_at'): ?>
+                                    <i class="fas fa-sort-<?php echo e(request()->get('direction') == 'asc' ? 'up' : 'down'); ?>"></i>
+                                <?php else: ?>
                                     <i class="fas fa-sort"></i>
-                                @endif
+                                <?php endif; ?>
                             </a>
                     </th>
                     <th style="text-align: center">Aksi</th>
@@ -80,84 +60,85 @@
             </thead>
 
             <tbody>
-                @forelse ($lpjData as $index => $data)
+                <?php $__empty_1 = true; $__currentLoopData = $lpjData; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $data): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <tr>
                         <td class="text-center">
-                            {{ ($lpjData->currentPage() - 1) * $lpjData->perPage() + $index + 1 }}
+                            <?php echo e(($lpjData->currentPage() - 1) * $lpjData->perPage() + $index + 1); ?>
+
                         </td>
                         <td>
                             <div class="d-flex flex-column">
-                                <strong class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="{{ $data->nama_program }}">{{ $data->nama_program }}</strong>
-                                @if ($data->nama_kegiatan)
-                                    <small class="text-muted text-truncate-custom">{{ $data->nama_kegiatan }}</small>
-                                @endif
+                                <strong class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<?php echo e($data->nama_program); ?>"><?php echo e($data->nama_program); ?></strong>
+                                <?php if($data->nama_kegiatan): ?>
+                                    <small class="text-muted text-truncate-custom"><?php echo e($data->nama_kegiatan); ?></small>
+                                <?php endif; ?>
                             </div>
                         </td>
-                        {{-- <td>{{ $data->volume }}</td>
-                        <td>Rp {{ number_format($data->jumlah_harga_satuan, 0, ',', '.') }}</td> --}}
+                        
                         <td>
                             <div d-flex flex-column>
-                                <p class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="Rp. {{ number_format($data->jumlah_harga, 0, ',', '.') }}">
-                                    Rp {{ number_format($data->jumlah_harga, 0, ',', '.') }}
+                                <p class="text-truncate-custom" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="Rp. <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?>">
+                                    Rp <?php echo e(number_format($data->jumlah_harga, 0, ',', '.')); ?>
+
                                 </p>
                             </div>
                         </td>
                         <td>
-                            @if ($data->foto_jurnal && count($data->foto_jurnal) > 0)
+                            <?php if($data->foto_jurnal && count($data->foto_jurnal) > 0): ?>
                                 <button type="button"
                                         class="btn btn-sm btn-light-info preview-btn"
                                         data-bs-toggle="modal"
                                         data-bs-target="#previewModal"
                                         data-type="image"
-                                        data-files="{{ json_encode(array_map(fn($file) => ($file), $data->foto_jurnal)) }}"
-                                        data-title="Foto Jurnal - {{ $data->nama_program }}">
+                                        data-files="<?php echo e(json_encode(array_map(fn($file) => ($file), $data->foto_jurnal))); ?>"
+                                        data-title="Foto Jurnal - <?php echo e($data->nama_program); ?>">
                                     <i class="fas fa-images me-1"></i>
-                                    {{ count($data->foto_jurnal) }} Foto
+                                    <?php echo e(count($data->foto_jurnal)); ?> Foto
                                 </button>
-                            @else
+                            <?php else: ?>
                                 <span class="text-muted">-</span>
-                            @endif
+                            <?php endif; ?>
                         </td>
                         <td>
-                            @if ($data->dokumen_pendukung && count($data->dokumen_pendukung) > 0)
+                            <?php if($data->dokumen_pendukung && count($data->dokumen_pendukung) > 0): ?>
                                 <button type="button"
                                         class="btn btn-sm btn-light-primary preview-btn"
                                         data-bs-toggle="modal"
                                         data-bs-target="#previewModal"
                                         data-type="document"
-                                        data-files="{{ json_encode(array_map(fn($file) => ($file), $data->dokumen_pendukung)) }}"
-                                        data-title="Dokumen Pendukung - {{ $data->nama_program }}">
+                                        data-files="<?php echo e(json_encode(array_map(fn($file) => ($file), $data->dokumen_pendukung))); ?>"
+                                        data-title="Dokumen Pendukung - <?php echo e($data->nama_program); ?>">
                                     <i class="fas fa-file-alt me-1"></i>
-                                    {{ count($data->dokumen_pendukung) }} Dokumen
+                                    <?php echo e(count($data->dokumen_pendukung)); ?> Dokumen
                                 </button>
-                            @else
+                            <?php else: ?>
                                 <span class="text-muted">-</span>
-                            @endif
+                            <?php endif; ?>
                         </td>
                         <td>
-                            @if ($data->dokumen_lpj && count($data->dokumen_lpj) > 0)
+                            <?php if($data->dokumen_lpj && count($data->dokumen_lpj) > 0): ?>
                                 <button type="button"
                                         class="btn btn-sm btn-light-danger preview-btn"
                                         data-bs-toggle="modal"
                                         data-bs-target="#previewModal"
                                         data-type="document"
-                                        data-files="{{ json_encode(array_map(fn($file) => ($file), $data->dokumen_lpj)) }}"
-                                        data-title="Dokumen LPJ - {{ $data->nama_program }}">
+                                        data-files="<?php echo e(json_encode(array_map(fn($file) => ($file), $data->dokumen_lpj))); ?>"
+                                        data-title="Dokumen LPJ - <?php echo e($data->nama_program); ?>">
                                     <i class="fas fa-file-alt me-1"></i>
-                                    {{ count($data->dokumen_lpj) }} PDF
+                                    <?php echo e(count($data->dokumen_lpj)); ?> PDF
                                 </button>
-                            @else
+                            <?php else: ?>
                                 <span class="text-muted">-</span>
-                            @endif
+                            <?php endif; ?>
                         </td>
                         <td>
                             <div class="d-flex flex-column">
-                                <span class="fw-bold">{{ $data->created_at->format('d M Y') }}</span>
-                                <small class="text-muted">{{ $data->created_at->format('H:i') }}</small>
+                                <span class="fw-bold"><?php echo e($data->created_at->format('d M Y')); ?></span>
+                                <small class="text-muted"><?php echo e($data->created_at->format('H:i')); ?></small>
                             </div>
                         </td>
                         <td class="text-center">
-                            <div class="dropdown dropdown-action" data-row-id="{{ $data->id }}">
+                            <div class="dropdown dropdown-action" data-row-id="<?php echo e($data->id); ?>">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <rect width="32" height="32" rx="6" fill="#EFF6FF" />
@@ -176,20 +157,20 @@
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li>
                                         <a href="javascript:void(0)" class="dropdown-item-custom"
-                                           onclick="showDetailModal({{ json_encode($data) }})">
+                                           onclick="showDetailModal(<?php echo e(json_encode($data)); ?>)">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail
                                         </a>
                                     </li>
 
-                                    @php
+                                    <?php
                                         $pengajuan = $data->pengajuan()->where('status', 'disetujui')->orderBy('approved_at', 'desc')->first();
                                         $canEdit = auth()->user()->can('pengajuan-modifikasi-laporan') || (isset($data->modifiable_by_user_id) && auth()->user()->id == $data->modifiable_by_user_id && $pengajuan && $pengajuan->token > 0);
-                                    @endphp
+                                    ?>
 
                                     <li>
-                                        <a href="{{ $canEdit ? route('admin.laporan-lpj.bidang.dynamic.edit', $data->id) : 'javascript:void(0)' }}"
-                                            class="dropdown-item-custom edit {{ !$canEdit ? 'restricted-action' : '' }}"
-                                            @if(!$canEdit)
+                                        <a href="<?php echo e($canEdit ? route('admin.laporan-lpj.bidang.dynamic.edit', $data->id) : 'javascript:void(0)'); ?>"
+                                            class="dropdown-item-custom edit <?php echo e(!$canEdit ? 'restricted-action' : ''); ?>"
+                                            <?php if(!$canEdit): ?>
                                                 data-bs-toggle="tooltip"
                                                 data-bs-placement="left"
                                                 data-bs-custom-class="custom-tooltip"
@@ -198,19 +179,19 @@
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
                                                             modifikasi laporan ini
-                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($data) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                            <a href='javascript:void(0)' onclick='showDetailModal(<?php echo e(json_encode($data)); ?>)' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
                                                         </div>"
-                                            @endif
-                                            style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
+                                            <?php endif; ?>
+                                            style="<?php echo e(!$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : ''); ?>">
                                             <i class="fas fa-edit me-2"></i> Modifikasi
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="javascript:void(0)" class="dropdown-item-custom delete {{ !$canEdit ? 'restricted-action' : '' }}"
-                                            @if($canEdit)
-                                                onclick="deleteItemWithSwal({{ $data->id }}, '{{ addslashes($data->nama_program ?? $data->nama_kegiatan ?? 'laporan ini') }}')"
-                                            @else
+                                        <a href="javascript:void(0)" class="dropdown-item-custom delete <?php echo e(!$canEdit ? 'restricted-action' : ''); ?>"
+                                            <?php if($canEdit): ?>
+                                                onclick="deleteItemWithSwal(<?php echo e($data->id); ?>, '<?php echo e(addslashes($data->nama_program ?? $data->nama_kegiatan ?? 'laporan ini')); ?>')"
+                                            <?php else: ?>
                                                 data-bs-toggle="tooltip"
                                                 data-bs-placement="left"
                                                 data-bs-custom-class="custom-tooltip"
@@ -219,10 +200,10 @@
                                                             <strong>Informasi</strong><br>
                                                             Ajukan approval untuk<br>
                                                             menghapus laporan ini
-                                                            <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($data) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                            <a href='javascript:void(0)' onclick='showDetailModal(<?php echo e(json_encode($data)); ?>)' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
                                                         </div>"
-                                            @endif
-                                            style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
+                                            <?php endif; ?>
+                                            style="<?php echo e(!$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : ''); ?>">
                                             <i class="ki-outline ki-trash me-2"></i>Hapus Laporan
                                         </a>
                                     </li>
@@ -230,50 +211,52 @@
                             </div>
                         </td>
                     </tr>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
                         <td colspan="8" class="text-center py-5 text-muted">Data tidak ditemukan</td>
                     </tr>
-                @endforelse
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
 
-    {{-- Enhanced Pagination Section --}}
+    
     <div class="table-footer">
         <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap">
             <div class="mb-2 mb-md-0">
                 <div class="d-flex align-items-center">
                     <span class="me-2">Show</span>
                     <select name="per_page" class="form-select form-select-sm w-auto">
-                        @foreach ([10, 25, 50, 100] as $limit)
-                            <option value="{{ $limit }}"
-                                {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
-                                {{ $limit }}
+                        <?php $__currentLoopData = [10, 25, 50, 100]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $limit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($limit); ?>"
+                                <?php echo e(request('per_page', 10) == $limit ? 'selected' : ''); ?>>
+                                <?php echo e($limit); ?>
+
                             </option>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </select>
                     <span class="ms-2">per page</span>
                 </div>
             </div>
 
-            @if (isset($lpjData) && method_exists($lpjData, 'hasPages') && $lpjData->hasPages())
+            <?php if(isset($lpjData) && method_exists($lpjData, 'hasPages') && $lpjData->hasPages()): ?>
                 <div class="d-flex align-items-center gap-3">
                     <div class="text-muted small">
-                        {{ $lpjData->firstItem() }}-{{ $lpjData->lastItem() }} of
-                        {{ $lpjData->total() }}
+                        <?php echo e($lpjData->firstItem()); ?>-<?php echo e($lpjData->lastItem()); ?> of
+                        <?php echo e($lpjData->total()); ?>
+
                     </div>
 
                     <div class="d-flex align-items-center gap-2">
-                        @if ($lpjData->onFirstPage())
+                        <?php if($lpjData->onFirstPage()): ?>
                             <span class="pagination-arrow disabled">←</span>
-                        @else
-                            <a href="{{ $lpjData->appends(request()->query())->previousPageUrl() }}"
+                        <?php else: ?>
+                            <a href="<?php echo e($lpjData->appends(request()->query())->previousPageUrl()); ?>"
                                class="pagination-arrow pagination-link"
                                aria-label="Previous">←</a>
-                        @endif
+                        <?php endif; ?>
 
-                        @php
+                        <?php
                             $current = $lpjData->currentPage();
                             $total = $lpjData->lastPage();
                             $start = max(1, $current - 2);
@@ -286,37 +269,38 @@
                                     $start = max(1, $end - 4);
                                 }
                             }
-                        @endphp
+                        ?>
 
                         <div class="d-flex align-items-center">
-                            @for ($i = $start; $i <= $end; $i++)
-                                @if ($i == $current)
-                                    <span class="pagination-number active">{{ $i }}</span>
-                                @else
-                                    <a href="{{ $lpjData->appends(request()->query())->url($i) }}"
-                                       class="pagination-number pagination-link">{{ $i }}</a>
-                                @endif
-                            @endfor
+                            <?php for($i = $start; $i <= $end; $i++): ?>
+                                <?php if($i == $current): ?>
+                                    <span class="pagination-number active"><?php echo e($i); ?></span>
+                                <?php else: ?>
+                                    <a href="<?php echo e($lpjData->appends(request()->query())->url($i)); ?>"
+                                       class="pagination-number pagination-link"><?php echo e($i); ?></a>
+                                <?php endif; ?>
+                            <?php endfor; ?>
                         </div>
 
-                        @if ($lpjData->hasMorePages())
-                            <a href="{{ $lpjData->appends(request()->query())->nextPageUrl() }}"
+                        <?php if($lpjData->hasMorePages()): ?>
+                            <a href="<?php echo e($lpjData->appends(request()->query())->nextPageUrl()); ?>"
                                class="pagination-arrow pagination-link"
                                aria-label="Next">→</a>
-                        @else
+                        <?php else: ?>
                             <span class="pagination-arrow disabled">→</span>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
-            @elseif(isset($lpjData) && method_exists($lpjData, 'hasPages'))
+            <?php elseif(isset($lpjData) && method_exists($lpjData, 'hasPages')): ?>
                 <div class="text-muted small">
-                    1-{{ $lpjData->count() }} of {{ $lpjData->total() }}
+                    1-<?php echo e($lpjData->count()); ?> of <?php echo e($lpjData->total()); ?>
+
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
-    {{-- Complete Custom CSS from both files --}}
+    
     <style>
         .search-highlight {
             background-color: #fff3cd;
@@ -719,4 +703,5 @@
             box-shadow: 0 0 0 2px rgba(27, 132, 255, 0.25);
         }
     </style>
-@endif
+<?php endif; ?>
+<?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang_new/dynamic/_table.blade.php ENDPATH**/ ?>

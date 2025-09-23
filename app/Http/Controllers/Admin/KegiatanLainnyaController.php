@@ -102,6 +102,7 @@ class KegiatanLainnyaController extends Controller
         $request->validate([
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
+            'tanggal_kegiatan' => 'nullable|date',
             'keterangan_tambahan' => 'nullable|string',
             'volume' => 'nullable|string|max:255',
             'jumlah_harga_satuan' => 'nullable|string',
@@ -146,6 +147,7 @@ class KegiatanLainnyaController extends Controller
             'parent_id' => $parentCategory->id,
             'nama_program' => $request->nama_program_kegiatan, // Map ke nama_program
             'nama_kegiatan' => $request->jenis_kegiatan, // Map ke nama_kegiatan
+            'tanggal_kegiatan' => $request->tanggal_kegiatan,
             'volume' => $request->volume ?? '', // Default ke string kosong jika null
             'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
             'jumlah_harga' => $jumlahHarga,
@@ -258,6 +260,7 @@ class KegiatanLainnyaController extends Controller
         $request->validate([
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
+            'tanggal_kegiatan' => 'nullable|date',
             'keterangan_tambahan' => 'nullable|string',
             'volume' => 'nullable|string|max:255',
             'jumlah_harga_satuan' => 'nullable|string',
@@ -371,6 +374,7 @@ class KegiatanLainnyaController extends Controller
         $data = [
             'nama_program' => $request->nama_program_kegiatan,
             'nama_kegiatan' => $request->jenis_kegiatan,
+            'tanggal_kegiatan' => $request->tanggal_kegiatan,
             'volume' => $request->volume ?? '', // Default ke string kosong jika null
             'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
             'jumlah_harga' => $jumlahHarga,

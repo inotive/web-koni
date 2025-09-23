@@ -204,7 +204,7 @@
             padding-right: 12px !important;
         }
 
-        /* Specific column widths for 10 columns */
+        /* Specific column widths for pelatih table (9 columns now) */
         .table th:nth-child(1), .table td:nth-child(1) { width: 40px; text-align: center !important; }
         .table th:nth-child(2), .table td:nth-child(2) { width: 80px; text-align: center !important; }
         .table th:nth-child(3), .table td:nth-child(3) { width: 150px; text-align: left !important; }
@@ -212,16 +212,15 @@
         .table th:nth-child(5), .table td:nth-child(5) { width: 200px; text-align: left !important; }
         .table th:nth-child(6), .table td:nth-child(6) { width: 120px; text-align: center !important; }
         .table th:nth-child(7), .table td:nth-child(7) { width: 80px; text-align: center !important; }
-        .table th:nth-child(8), .table td:nth-child(8) { width: 180px; text-align: left !important; }
-        .table th:nth-child(9), .table td:nth-child(9) { width: 150px; text-align: left !important; }
-        .table th:nth-child(10), .table td:nth-child(10) { width: 100px; text-align: center !important; }
+        .table th:nth-child(8), .table td:nth-child(8) { width: 150px; text-align: left !important; }
+        .table th:nth-child(9), .table td:nth-child(9) { width: 100px; text-align: center !important; }
 
         /* Center alignment for specific columns */
         .table td:nth-child(1),
         .table td:nth-child(2),
         .table td:nth-child(6),
         .table td:nth-child(7),
-        .table td:nth-child(10) {
+        .table td:nth-child(9) {
             text-align: center !important;
         }
 
@@ -237,8 +236,7 @@
         .table td:nth-child(3) span,
         .table td:nth-child(4) div,
         .table td:nth-child(5) span,
-        .table td:nth-child(8) span,
-        .table td:nth-child(9) div {
+        .table td:nth-child(8) div {
             display: block;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -249,8 +247,7 @@
         .table td:nth-child(3) span { max-width: 140px; } /* Nama */
         .table td:nth-child(4) div { max-width: 180px; } /* Tempat Lahir */
         .table td:nth-child(5) span { max-width: 180px; } /* Alamat */
-        .table td:nth-child(8) span { max-width: 160px; } /* Prestasi */
-        .table td:nth-child(9) .text-gray-600 { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } /* Email */
+        .table td:nth-child(8) .text-gray-600 { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } /* Email */
 
         .text-bronze {
             color: #CD7F32 !important;
@@ -1003,7 +1000,6 @@
                                                 <th class="min-w-200px">Alamat Domisili</th>
                                                 <th class="min-w-120px">Jenis Kelamin</th>
                                                 <th class="min-w-80px">Usia</th>
-                                                <th class="min-w-180px">Prestasi</th>
                                                 <th class="min-w-150px">Kontak</th>
                                                 <th class="min-w-100px text-end pe-6">Aksi</th>
                                             </tr>
@@ -1067,9 +1063,6 @@
                                                             <?php echo e(isset($pelatih->tanggal_lahir) ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->age . ' th' : '-'); ?>
 
                                                         </span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-gray-600 text-ellipsis"><?php echo e($pelatih->prestasi_terbaru ?? '-'); ?></span>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex flex-column">
