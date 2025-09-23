@@ -4,6 +4,10 @@
 
 <?php $__env->startSection('style'); ?>
     <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
         .is-invalid {
             border-color: #dc3545 !important;
         }
@@ -255,40 +259,42 @@
         </div>
 
         <div class="container">
-            <div class="card-header border-bottom-0 pb-0">
-                <ul class="nav nav-tabs nav-tabs-custom" id="suratTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content"
-                            type="button" role="tab" aria-controls="masuk-content" aria-selected="true">
-                            <i class="fas fa-inbox me-2"></i>Surat Masuk
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="keluar-tab" data-bs-toggle="tab" data-bs-target="#keluar-content"
-                            type="button" role="tab" aria-controls="keluar-content" aria-selected="false">
-                            <i class="fas fa-paper-plane me-2"></i>Surat Keluar
-                        </button>
-                    </li>
-                </ul>
-            </div>
+            <div class="card">
+                <div class="card-header border-bottom-0 pb-0">
+                    <ul class="nav nav-tabs nav-tabs-custom" id="suratTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="masuk-tab" data-bs-toggle="tab" data-bs-target="#masuk-content"
+                                type="button" role="tab" aria-controls="masuk-content" aria-selected="true">
+                                <i class="fas fa-inbox me-2"></i>Surat Masuk
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="keluar-tab" data-bs-toggle="tab" data-bs-target="#keluar-content"
+                                type="button" role="tab" aria-controls="keluar-content" aria-selected="false">
+                                <i class="fas fa-paper-plane me-2"></i>Surat Keluar
+                            </button>
+                        </li>
+                    </ul>
+                </div>
 
-            <div class="card-body">
-                <div class="tab-content tab-content-custom" id="suratTabContent">
-                    <div class="tab-pane fade show active" id="masuk-content" role="tabpanel" aria-labelledby="masuk-tab">
-                        <div id="table-masuk">
-                            <?php echo $__env->make('admin.surat._table', [
-                                'suratData' => $suratMasuk,
-                                'tableId' => 'masuk',
-                            ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                <div class="card-body">
+                    <div class="tab-content tab-content-custom" id="suratTabContent">
+                        <div class="tab-pane fade show active" id="masuk-content" role="tabpanel" aria-labelledby="masuk-tab">
+                            <div id="table-masuk">
+                                <?php echo $__env->make('admin.surat._table', [
+                                    'suratData' => $suratMasuk,
+                                    'tableId' => 'masuk',
+                                ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="tab-pane fade" id="keluar-content" role="tabpanel" aria-labelledby="keluar-tab">
-                        <div id="table-keluar">
-                            <?php echo $__env->make('admin.surat._table', [
-                                'suratData' => $suratKeluar,
-                                'tableId' => 'keluar',
-                            ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                        <div class="tab-pane fade" id="keluar-content" role="tabpanel" aria-labelledby="keluar-tab">
+                            <div id="table-keluar">
+                                <?php echo $__env->make('admin.surat._table', [
+                                    'suratData' => $suratKeluar,
+                                    'tableId' => 'keluar',
+                                ], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                            </div>
                         </div>
                     </div>
                 </div>
