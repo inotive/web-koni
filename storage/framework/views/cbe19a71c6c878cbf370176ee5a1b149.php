@@ -579,7 +579,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <div class="p-0 modal-body" style="height: 70vh;">
+                <div class="modal-body p-0" style="height: 70vh;">
                     <div class="preview-container h-100 position-relative d-flex align-items-center justify-content-center"
                         style="background: #f8f9fa;">
                         <div id="previewSlides" class="w-100 h-100"></div>
@@ -1596,23 +1596,23 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 window.open(exportUrl, '_blank');
             });
 
-        $('#submitPengajuanBtn').on('click', function() {
-            const lpjId = $('#pengajuan_lpj_id').val();
-            const alasan = $('#alasan').val();
+            $('#submitPengajuanBtn').on('click', function() {
+                const lpjId = $('#pengajuan_lpj_id').val();
+                const alasan = $('#alasan').val();
 
-            if (!alasan.trim()) {
-                alert('Alasan harus diisi.');
-                return;
-            }
+                if (!alasan.trim()) {
+                    alert('Alasan harus diisi.');
+                    return;
+                }
 
-            $.ajax({
-                url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
-                type: 'POST',
-                data: {
-                    _token: '<?php echo e(csrf_token()); ?>',
-                    lpj_id: lpjId,
-                    alasan: alasan,
-                    user_id: <?php echo e(auth()->id()); ?>
+                $.ajax({
+                    url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
+                    type: 'POST',
+                    data: {
+                        _token: '<?php echo e(csrf_token()); ?>',
+                        lpj_id: lpjId,
+                        alasan: alasan,
+                        user_id: <?php echo e(auth()->id()); ?>
 
                     },
                     success: function(response) {
