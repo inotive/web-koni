@@ -52,6 +52,13 @@ class KegiatanLainnyaController extends Controller
     $totalKegiatan = (clone $query)->count();
     $totalAnggaran = (clone $query)->sum('jumlah_harga');
 
+    // Get target budget and kegiatan count for kegiatan-lainnya
+    $current_budget = Lpj::where('parent_id', $parentCategory->id)->sum('jumlah_harga');
+    $kegiatan_count = Lpj::where('parent_id', $parentCategory->id)->count();
+    $target = \App\Models\Target::where('id_lpj', $parentCategory->id)->first();
+    $target_anggaran = $target->target_anggaran ?? 0;
+    $target_kegiatan = $target->target_kegiatan ?? 0;
+
     // Sorting
     $allowedSorts = ['nama_program', 'nama_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga', 'created_at'];
     $sort = $request->get('sort_by', 'created_at');
@@ -75,7 +82,13 @@ class KegiatanLainnyaController extends Controller
     }
 
     // Untuk request biasa, return full view dengan data summary
-    return view('admin.laporan-lpj.kegiatan-lainnya.index', compact('kegiatanLainnya', 'totalKegiatan', 'totalAnggaran'));
+    return view('admin.laporan-lpj.kegiatan-lainnya.index', compact(
+        'kegiatanLainnya', 
+        'current_budget', 
+        'kegiatan_count', 
+        'target_anggaran', 
+        'target_kegiatan'
+    ));
 }
 
     public function create()

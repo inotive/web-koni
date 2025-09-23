@@ -470,14 +470,14 @@
     </style>
 
     <div class="d-flex flex-column mb-8">
-        <h1 class="text-dark fw-bold mb-1">Laporan Kegiatan Lainnya</h1>
+        <h1 class="text-dark fw-bold mb-1">Kegiatan Lainnya</h1>
         
     </div>
 
     <?php if(isset($current_budget) && isset($target_anggaran)): ?>
     <div class="top-progress-wrapper mb-4">
         <div class="d-flex justify-content-between mt-2">
-            <h1 class="text-muted mb-0">Total Anggaran</h1>
+            <h3 class="text-muted mb-4">Total Anggaran</h3>
             <span class="text-muted">
                 <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal">
                     <i class="fa-solid fa-pen-to-square"></i>
@@ -522,12 +522,12 @@
     <div class="col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Table Kegiatan Lainnya - 2025</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - 2025</h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.create')); ?>" class="btn btn-primary"
     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
+    <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
 </a>
 
                     <div class="input-group position-relative" style="width: 250px;">
