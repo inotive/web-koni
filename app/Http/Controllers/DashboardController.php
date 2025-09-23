@@ -49,12 +49,19 @@ class DashboardController extends Controller
         // Hanya menghitung data yang benar-benar ditambahkan oleh user (bukan default)
         $total_serapan = 0;
         $kegiatan_berjalan_count = 0;
+
+        // Mengambil semua target dan mengindeksnya berdasarkan id_lpj untuk pencarian efisien
+        $targets = Target::all()->keyBy('id_lpj');
         
-        $kegiatan = $kegiatan->map(function ($item) use ($rka_per_kegiatan, $total_rka, &$total_serapan, &$kegiatan_berjalan_count) {
+        $kegiatan = $kegiatan->map(function ($item) use ($rka_per_kegiatan, $total_rka, &$total_serapan, &$kegiatan_berjalan_count, $targets) {
             // Menetapkan total budget untuk setiap kegiatan (untuk perhitungan persentase per kegiatan)
             $item->total_budget = $rka_per_kegiatan;
             // Menetapkan total RKA keseluruhan (untuk ditampilkan di dashboard)
             $item->total_rka_keseluruhan = $total_rka;
+
+            // Cari dan lampirkan target untuk item saat ini
+            $target = $targets->get($item->id);
+            $item->target_kegiatan = $target ? $target->target_kegiatan : 0;
             
             // Untuk Pembinaan Prestasi (ID 6), kita perlu membagi anggarannya ke anak-anak
             if ($item->id == 6 && $rka_per_kegiatan > 0) {
