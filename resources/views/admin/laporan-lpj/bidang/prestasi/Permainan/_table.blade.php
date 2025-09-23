@@ -9,12 +9,12 @@
                         {{ $child->nama_program }}
                     </h5>
                     <p>{{ $child->children_count }} Dokumen</p>
-                    
+
                     @php
-                        $anggaran = $child->anggaran ?? 0;
-                        $kegiatan = $child->kegiatan ?? 0;
-                        $target_anggaran = 50000000; // Example target
-                        $target_kegiatan = 10; // Example target
+                        $anggaran = $child->realisasi_anggaran;
+                        $kegiatan = $child->children_count ?? 0;
+                        $target_anggaran = $child->target_anggaran_value;
+                        $target_kegiatan = $child->target_kegiatan_value;
                         $percentage = $target_anggaran > 0 ? ($anggaran / $target_anggaran) * 100 : 0;
                     @endphp
 
@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-between mt-1">
-                            <div class="d-flex justify-content-start mt-1">
+                            <div class="'d-flex justify-content-start mt-1">
                                 <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $target_kegiatan}} Target</small>
                             </div>
                             <small class="text-muted">{{ round($percentage) }}%</small>

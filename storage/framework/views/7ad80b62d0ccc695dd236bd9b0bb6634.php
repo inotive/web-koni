@@ -51,4 +51,4 @@
         </div>
     <?php endif; ?>
 </div>
-<?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang/prestasi/Akurasi/_table.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang/prestasi/Permainan/_table.blade.php ENDPATH**/ ?>

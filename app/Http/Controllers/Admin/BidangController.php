@@ -40,22 +40,40 @@ class BidangController extends Controller
         $bidangDetails = [];
         
         foreach ($bidangParentIds as $key => $id) {
+            $target = Target::where('id_lpj', $id)->first(); // Fetch target first
+
             if ($id == 6) { // Special handling for Pembinaan Prestasi
                 $info = $this->getPrestasiInfo($id);
+                
+                // Get children of Prestasi (the 4 cabors)
+                $prestasi_children_ids = Lpj::where('parent_id', $id)->pluck('id');
+                // Get grandchildren of Prestasi (Pordasi, etc.)
+                $prestasi_grandchildren_ids = Lpj::whereIn('parent_id', $prestasi_children_ids)->pluck('id');
+
+                // Calculate target kegiatan and anggaran by summing targets of the grandchildren
+                $prestasi_target_kegiatan = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->sum('target_kegiatan');
+                $prestasi_target_anggaran = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->sum('target_anggaran');
+
+                $bidangDetails[$key] = [
+                    'anggaran' => $info['anggaran'],
+                    'target_anggaran' => $prestasi_target_anggaran,
+                    'kegiatan' => $info['count'],
+                    'target_kegiatan' => $prestasi_target_kegiatan
+                ];
+
             } else {
                 $info = $this->getDescendantsInfo($id);
+                $bidangDetails[$key] = [
+                    'anggaran' => $info['anggaran'],
+                    'target_anggaran' => $target->target_anggaran ?? 0,
+                    'kegiatan' => $info['count'],
+                    'target_kegiatan' => $target->target_kegiatan ?? 0
+                ];
             }
+            
             $bidangInfo[$key . 'Count'] = $info['count'];
             $total_anggaran += $info['anggaran'];
             $total_kegiatan += $info['count'];
-            
-            // Get target values for this specific bidang
-            $target = Target::where('id_lpj', $id)->first();
-            $bidangDetails[$key] = [
-                'anggaran' => $info['anggaran'],
-                'target_anggaran' => $target->target_anggaran ?? 0,
-                'target_kegiatan' => $target->target_kegiatan ?? 0
-            ];
         }
 
         // Get target values for overall
@@ -209,28 +227,16 @@ class BidangController extends Controller
         // Eager load children count for performance
         $parent = Lpj::findOrFail($caborAkurasiParentId);
         $children = Lpj::where('parent_id', $caborAkurasiParentId)
+                        ->with(['children', 'target']) // Eager load
                         ->withCount('children') // Counts sub-items (dokumen)
                         ->orderBy('nama_program', 'asc')
                         ->get();
         
-        // Add individual budget information to each child
-        foreach($children as $child) {
-            // Get grand children to calculate anggaran
-            $grandchildren = $child->children;
-            $child_anggaran = 0;
-            $child_kegiatan = 0;
-            foreach($grandchildren as $grandchild) {
-                // Get great grandchildren to calculate anggaran
-                $greatGrandchildren = $grandchild->children;
-                foreach($greatGrandchildren as $greatGrandchild) {
-                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
-                }
-                $child_kegiatan += $greatGrandchildren->count();
-            }
-            
-            // Add anggaran and kegiatan to child object
-            $child->anggaran = $child_anggaran;
-            $child->kegiatan = $child_kegiatan;
+        foreach ($children as $child) {
+            $anggaran = $child->children->sum('jumlah_harga');
+            $child->realisasi_anggaran = $anggaran;
+            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
+            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
         }
 
         if ($request->ajax()) {
@@ -246,28 +252,16 @@ class BidangController extends Controller
 
         $parent = Lpj::findOrFail($caborBeladiriParentId);
         $children = Lpj::where('parent_id', $caborBeladiriParentId)
+                        ->with(['children', 'target']) // Eager load
                         ->withCount('children')
                         ->orderBy('nama_program', 'asc')
                         ->get();
         
-        // Add individual budget information to each child
-        foreach($children as $child) {
-            // Get grand children to calculate anggaran
-            $grandchildren = $child->children;
-            $child_anggaran = 0;
-            $child_kegiatan = 0;
-            foreach($grandchildren as $grandchild) {
-                // Get great grandchildren to calculate anggaran
-                $greatGrandchildren = $grandchild->children;
-                foreach($greatGrandchildren as $greatGrandchild) {
-                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
-                }
-                $child_kegiatan += $greatGrandchildren->count();
-            }
-            
-            // Add anggaran and kegiatan to child object
-            $child->anggaran = $child_anggaran;
-            $child->kegiatan = $child_kegiatan;
+        foreach ($children as $child) {
+            $anggaran = $child->children->sum('jumlah_harga');
+            $child->realisasi_anggaran = $anggaran;
+            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
+            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
         }
 
         if ($request->ajax()) {
@@ -283,28 +277,16 @@ class BidangController extends Controller
 
         $parent = Lpj::findOrFail($caborPermainanParentId);
         $children = Lpj::where('parent_id', $caborPermainanParentId)
+                        ->with(['children', 'target']) // Eager load
                         ->withCount('children')
                         ->orderBy('nama_program', 'asc')
                         ->get();
         
-        // Add individual budget information to each child
-        foreach($children as $child) {
-            // Get grand children to calculate anggaran
-            $grandchildren = $child->children;
-            $child_anggaran = 0;
-            $child_kegiatan = 0;
-            foreach($grandchildren as $grandchild) {
-                // Get great grandchildren to calculate anggaran
-                $greatGrandchildren = $grandchild->children;
-                foreach($greatGrandchildren as $greatGrandchild) {
-                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
-                }
-                $child_kegiatan += $greatGrandchildren->count();
-            }
-            
-            // Add anggaran and kegiatan to child object
-            $child->anggaran = $child_anggaran;
-            $child->kegiatan = $child_kegiatan;
+        foreach ($children as $child) {
+            $anggaran = $child->children->sum('jumlah_harga');
+            $child->realisasi_anggaran = $anggaran;
+            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
+            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
         }
 
         if ($request->ajax()) {
@@ -320,28 +302,16 @@ class BidangController extends Controller
 
         $parent = Lpj::findOrFail($caborTerukurParentId);
         $children = Lpj::where('parent_id', $caborTerukurParentId)
+                        ->with(['children', 'target']) // Eager load
                         ->withCount('children')
                         ->orderBy('nama_program', 'asc')
                         ->get();
         
-        // Add individual budget information to each child
-        foreach($children as $child) {
-            // Get grand children to calculate anggaran
-            $grandchildren = $child->children;
-            $child_anggaran = 0;
-            $child_kegiatan = 0;
-            foreach($grandchildren as $grandchild) {
-                // Get great grandchildren to calculate anggaran
-                $greatGrandchildren = $grandchild->children;
-                foreach($greatGrandchildren as $greatGrandchild) {
-                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
-                }
-                $child_kegiatan += $greatGrandchildren->count();
-            }
-            
-            // Add anggaran and kegiatan to child object
-            $child->anggaran = $child_anggaran;
-            $child->kegiatan = $child_kegiatan;
+        foreach ($children as $child) {
+            $anggaran = $child->children->sum('jumlah_harga');
+            $child->realisasi_anggaran = $anggaran;
+            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
+            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
         }
 
         if ($request->ajax()) {

@@ -624,14 +624,15 @@
 
                     @php
                         $prestasi_anggaran = $bidangDetails['prestasi']['anggaran'] ?? 0;
+                        $prestasi_kegiatan = $bidangDetails['prestasi']['kegiatan'] ?? 0;
+                        $prestasi_target_kegiatan = $bidangDetails['prestasi']['target_kegiatan'] ?? 0;
                         $prestasi_target_anggaran = $bidangDetails['prestasi']['target_anggaran'] ?? 0;
                         $prestasi_percentage = $prestasi_target_anggaran > 0 ? ($prestasi_anggaran / $prestasi_target_anggaran) * 100 : 0;
                     @endphp
 
                     <div class="mt-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <small>Rp. {{ number_format($prestasi_anggaran, 0, ',', '.') }}</small>
-                            <small>Rp. {{ number_format($prestasi_target_anggaran, 0, ',', '.') }}</small>
+                            <small class="fw-bold mb-1">Rp. {{ number_format($prestasi_anggaran, 0, ',', '.') }} / Rp. {{ number_format($prestasi_target_anggaran, 0, ',', '.') }}</small>
                         </div>
                         <div class="progress" style="height: 8px; border-radius: 4px;">
                             <div class="progress-bar progress-bar-striped progress-bar-animated"
@@ -642,7 +643,10 @@
                                 aria-valuemax="100">
                             </div>
                         </div>
-                        <div class="d-flex justify-content-end mt-1">
+                        <div class="d-flex justify-content-between mt-1">
+                            <div class="'d-flex justify-content-start mt-1">
+                                <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $prestasi_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $prestasi_target_kegiatan}} Target</small>
+                            </div>
                             <small class="text-muted">{{ round($prestasi_percentage) }}%</small>
                         </div>
                     </div>

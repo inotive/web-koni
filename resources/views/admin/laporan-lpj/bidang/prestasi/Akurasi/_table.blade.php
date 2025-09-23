@@ -11,10 +11,10 @@
                     <p>{{ $child->children_count }} Dokumen</p>
 
                     @php
-                        $anggaran = $child->anggaran ?? 0;
+                        $anggaran = $child->realisasi_anggaran;
                         $kegiatan = $child->children_count ?? 0;
-                        $target_anggaran = 50000000; // Example target
-                        $target_kegiatan = 10; // Example target
+                        $target_anggaran = $child->target_anggaran_value;
+                        $target_kegiatan = $child->target_kegiatan_value;
                         $percentage = $target_anggaran > 0 ? ($anggaran / $target_anggaran) * 100 : 0;
                     @endphp
 
