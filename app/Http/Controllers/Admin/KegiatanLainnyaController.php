@@ -8,7 +8,10 @@ use App\Models\Pengajuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Str; // Tambahkan ini
+use Illuminate\Support\Str;
+use setasign\Fpdi\Fpdi;
+use setasign\Fpdi\PdfParser\StreamReader;
+use setasign\Fpdi\PdfReader\PageBoundaries;
 
 class KegiatanLainnyaController extends Controller
 {
@@ -635,34 +638,86 @@ class KegiatanLainnyaController extends Controller
     }
 }
 
+/**
+ * Export laporan kegiatan lainnya ke PDF dengan kop surat
+ */
 public function exportDetail($id)
 {
     try {
-        \Log::info('Exporting kegiatan lainnya LPJ with ID: ' . $id);
-        
         $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
                               ->findOrFail($id);
 
-        // Data untuk ditampilkan di PDF
-        $data = [
-            'kegiatanLainnya' => $kegiatanLainnya,
-        ];
+        // Create initial PDF with letterhead and content
+        $pdf = Pdf::loadView('admin.laporan-lpj.kegiatan-lainnya.export', compact('kegiatanLainnya'));
+        $pdf->setPaper('A4', 'portrait');
 
-        // Generate PDF menggunakan DomPDF
-        $pdf = Pdf::loadView('admin.laporan-lpj.kegiatan-lainnya.export', $data)
-                  ->setPaper('a4', 'portrait');
+        // Generate initial PDF content
+        $tempMainFile = tempnam(sys_get_temp_dir(), 'main_pdf_');
+        file_put_contents($tempMainFile, $pdf->output());
 
-        // Nama file PDF
-        $fileName = 'Laporan_Kegiatan_Lainnya_' . Str::slug($kegiatanLainnya->nama_program) . '.pdf';
+        // Initialize FPDI for PDF merging
+        $fpdi = new Fpdi();
 
-        \Log::info('Successfully generated PDF for kegiatan lainnya LPJ: ' . $fileName);
-        return $pdf->download($fileName);
-    } catch (\Exception $e) {
-        // Log error
-        \Log::error('Error exporting PDF: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+        // Add main content pages
+        $pageCount = $fpdi->setSourceFile($tempMainFile);
+        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+            $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+            $fpdi->AddPage();
+            $fpdi->useTemplate($templateId);
+        }
+
+        // Collect all PDF documents
+        $pdfFiles = [];
+        if ($kegiatanLainnya->dokumen_lpj && is_array($kegiatanLainnya->dokumen_lpj)) {
+            foreach ($kegiatanLainnya->dokumen_lpj as $dokumen) {
+                $path = is_array($dokumen) ? ($dokumen['path'] ?? null) : (is_string($dokumen) ? $dokumen : null);
+                if ($path && strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'pdf') {
+                    $pdfFiles[] = $path;
+                }
+            }
+        }
+        if ($kegiatanLainnya->dokumen_lpj_pdf) {
+             $path = is_array($kegiatanLainnya->dokumen_lpj_pdf) ? ($kegiatanLainnya->dokumen_lpj_pdf['path'] ?? null) : (is_string($kegiatanLainnya->dokumen_lpj_pdf) ? $kegiatanLainnya->dokumen_lpj_pdf : null);
+            if ($path) {
+                $pdfFiles[] = $path;
+            }
+        }
         
-        // Return error response with redirect
-        return redirect()->back()->with('error', 'Terjadi kesalahan saat mengekspor laporan. Silakan coba lagi.');
+        // Merge PDF attachments
+        foreach ($pdfFiles as $pdfFile) {
+            $filePath = storage_path('app/public/' . $pdfFile);
+
+            if (file_exists($filePath)) {
+                try {
+                    $attachmentPageCount = $fpdi->setSourceFile($filePath);
+                    for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
+                        $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                        $fpdi->AddPage();
+                        $fpdi->useTemplate($templateId);
+                    }
+                } catch (\Exception $e) {
+                    \Log::warning("Could not merge PDF file: {$pdfFile}. Error: " . $e->getMessage());
+                }
+            }
+        }
+
+        // Clean up temporary file
+        unlink($tempMainFile);
+
+        // Generate final PDF
+        $finalPdf = $fpdi->Output('S');
+
+        // Generate filename
+        $filename = 'Laporan_Kegiatan_Lainnya_' . Str::slug($kegiatanLainnya->nama_program) . '_' . date('Y-m-d') . '.pdf';
+
+        return response($finalPdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Error exporting PDF for Kegiatan Lainnya: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Gagal membuat laporan PDF. Terjadi kesalahan.');
     }
 }
 

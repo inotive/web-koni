@@ -4,7 +4,7 @@
         <h4>Tidak ada data kegiatan lainnya.</h4>
     </div>
 <?php else: ?>
-    <div class="table-responsive position-relative">
+    <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle" id="kt_datatable_dom_positioning_kegiatan">
             <thead class="bg-light">
                 <tr>
@@ -117,7 +117,7 @@
                         <td class="text-start"><?php echo e($kegiatan->created_at ? $kegiatan->created_at->format('d/m/Y') : '-'); ?></td>
                         <td class="text-start">
                             <div class="dropdown dropdown-action" data-row-id="<?php echo e($kegiatan->id); ?>">
-                                <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button" onclick="toggleDropdown(this)">
+                                <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <rect width="32" height="32" rx="6" fill="#EFF6FF" />
@@ -134,7 +134,7 @@
                                         <defs>
                                             <clipPath id="clip0_2223_4269">
                                                 <rect width="18" height="18" fill="white"
-                                                    transform="translate(7 7)"/>
+                                                    transform="translate(7 7)" />
                                             </clipPath>
                                         </defs>
                                     </svg>
