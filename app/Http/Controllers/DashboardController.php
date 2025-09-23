@@ -30,11 +30,13 @@ class DashboardController extends Controller
         // Mengecualikan Sekretariat (ID 59) dan kegiatan lain setelah ID 8
         $kegiatan_utama = Lpj::whereNull('parent_id')
                       ->where('id', '<=', 8)
+                      ->with('children.children.children') // Eager load
                       ->get();
                       
         // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
         $kegiatan_tambahan = Lpj::whereNull('parent_id')
                               ->whereIn('id', [59, 88])
+                              ->with('children') // Eager load
                               ->get();
                               
         // Gabungkan data kegiatan tambahan di awal
@@ -59,9 +61,35 @@ class DashboardController extends Controller
             // Menetapkan total RKA keseluruhan (untuk ditampilkan di dashboard)
             $item->total_rka_keseluruhan = $total_rka;
 
-            // Cari dan lampirkan target untuk item saat ini
-            $target = $targets->get($item->id);
-            $item->target_kegiatan = $target ? $target->target_kegiatan : 0;
+            // Hitung target kegiatan secara khusus untuk Pembinaan Prestasi
+            if ($item->id == 6) {
+                $total_target_pembinaan = 0;
+                foreach ($item->children as $child) { // Cabor
+                    foreach ($child->children as $grandchild) { // Folders
+                        $grandchild_target = $targets->get((string)$grandchild->id);
+                        if ($grandchild_target) {
+                            $total_target_pembinaan += (int)$grandchild_target->target_kegiatan;
+                        }
+                    }
+                }
+                $item->target_kegiatan = $total_target_pembinaan;
+            } else {
+                $target = $targets->get($item->id);
+                $item->target_kegiatan = $target ? $target->target_kegiatan : 0;
+            }
+
+            // Hitung kegiatan berjalan
+            if ($item->id == 6) {
+                $kegiatan_berjalan_pembinaan = 0;
+                foreach ($item->children as $child) { // Cabor
+                    foreach ($child->children as $grandchild) { // Folders
+                        $kegiatan_berjalan_pembinaan += $grandchild->children->where('jumlah_harga', '>', 0)->count();
+                    }
+                }
+                $item->kegiatan_berjalan_count = $kegiatan_berjalan_pembinaan;
+            } else {
+                $item->kegiatan_berjalan_count = $item->children->where('jumlah_harga', '>', 0)->count();
+            }
             
             // Untuk Pembinaan Prestasi (ID 6), kita perlu membagi anggarannya ke anak-anak
             if ($item->id == 6 && $rka_per_kegiatan > 0) {
