@@ -23,7 +23,7 @@
                     <div class="d-grid gap-5 border-0">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-none d-md-block">
-                                <h1>Manajemen RKA</h1>
+                                <h1>Rencana Kerja Dan Anggaran</h1>
                                 <span>Pemusatan Rencana Kegiatan Anggaran</span>
                             </div>
                         </div>

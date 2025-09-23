@@ -1,5 +1,9 @@
 <?php $__env->startPush('stack-css'); ?>
     <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
         .progress-bar span {
             font-size: 14px;
             white-space: nowrap;
@@ -25,9 +29,21 @@
         .info-card {
             background: #fff;
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175);
             padding: 24px;
             transition: all 0.2s ease-in-out;
+            margin-bottom: 1rem;
+        }
+
+        /* Apply info-card styling to all Bootstrap cards */
+        .card {
+            border-radius: 12px !important;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175) !important;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .card.shadow-sm {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175) !important;
         }
 
         .info-icon {
@@ -235,6 +251,24 @@
             font-size: 12px;
             font-weight: 600;
         }
+
+        /* Tooltip styles */
+        .tooltip-inner {
+            background-color: #007bff;
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .tooltip.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before,
+        .tooltip.bs-tooltip-top .tooltip-arrow::before {
+            border-top-color: #007bff;
+        }
+
+        /* Hide export button during screenshot */
+        .hide-for-screenshot {
+            visibility: hidden;
+        }
     </style>
 <?php $__env->stopPush(); ?>
 
@@ -246,11 +280,11 @@
             <div class="mb-4">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div>
-                        <h2 class="fs-2 mb-1">Selamat Datang, <span class="text-danger"><?php echo e(auth()->user()->name); ?></span></h2>
+                        <h2 class="fs-2 mb-1">Selamat Datang, <span class="text-danger"><?php echo e(auth()->user()->username); ?></span></h2>
                         <p class="text-muted fs-4 mb-0">Platform Digital Terpusat KONI Tabalong dan Cabang Olahraga</p>
                     </div>
                     <div>
-                        <select class="form-select form-select-md border-0 shadow-none px-0" style="min-width: 150px;">
+                        <select class="form-select form-select-md" style="min-width: 150px; background-color: transparent; border: none; color: black;">
                             <option value="2025" selected>Periode 2025</option>
                             <option value="2024">Periode 2024</option>
                             <option value="2023">Periode 2023</option>
@@ -274,8 +308,8 @@
                 <div class="info-card text-start position-relative">
                     
                     <div class="position-absolute top-0 end-0 mt-7 me-4 d-flex flex-column align-items-end">
-                        <span class="text-success fw-semibold small"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Berjalan</span>
-                        <div class="progress bg-light mt-1" style="width: 80px; height: 5px;">
+                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Berjalan</span>
+                        <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
                             <div class="progress-bar bg-success" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
                         </div>
                     </div>
@@ -346,10 +380,13 @@
 
 
         <div class="card shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body" style="padding: 24px;">
                 <div class="">
                     <div class="d-flex justify-content-between align-items-center mb-10">
-                        <h5 class="card-title mb-0 f-3">Informasi Kegiatan</h5>
+                        <div>
+                            <h5 class="card-title mb-0 f-3">Informasi Serapan Kegiatan Koni Kab.</h5>
+                            <h5 class="text-danger mb-0">Tabalong 2025</h5>
+                        </div>
 
                         <div class="d-flex gap-2">
                             <button type="button" id="export-screenshot" class="btn btn-light-primary">
@@ -367,16 +404,16 @@
                         if (isset($item->serapan) && is_numeric($item->serapan)) {
                             $serapan = (int)$item->serapan;
                         }
-                        
+
                         // Membagi RKA secara merata ke semua kegiatan
                         $rka_per_kegiatan = 0;
                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
                             $jumlah_kegiatan = $kegiatan->count();
                             $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                         }
-                        
+
                         $total_budget = isset($item->total_budget) ? $item->total_budget : 0;
-                        
+
                         // Perhitungan persentase dengan pengecekan aman
                         $persen = 0;
                         if ($rka_per_kegiatan > 0) {
@@ -384,11 +421,11 @@
                             // Batasi maksimal 100%
                             $persen = min(100, $persen);
                         }
-                        
+
                         // Menampilkan serapan per kegiatan
                         $display_serapan = $serapan;
                         $display_budget = $rka_per_kegiatan;
-                        
+
                         // Debugging - Hapus komentar untuk debugging
                         /*
                         if ($i == 0) { // Hanya untuk kegiatan pertama
@@ -411,7 +448,12 @@
                     <div class="d-flex align-items-center mb-3 gap-3">
                         <div style="min-width: 220px; max-width: 220px;">
                             <div class="d-flex align-items-center justify-content-between">
-                                <span class="title-kegiatan"><?php echo e($i + 1); ?>. <?php echo e($item->nama_program); ?></span>
+                                <span class="title-kegiatan"><?php echo e($i + 1); ?>. <?php echo e($item->nama_program); ?>
+
+                                    <?php if($item->id == 6 && $item->children->count() > 0): ?>
+                                        <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail Cabor"></i>
+                                    <?php endif; ?>
+                                </span>
                                 
                                 <?php if($item->id == 6 && $item->children->count() > 0): ?>
                                     <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePembinaanPrestasi" aria-expanded="false" aria-controls="collapsePembinaanPrestasi">
@@ -441,29 +483,44 @@
                     
                     <?php if($item->id == 6 && $item->children->count() > 0): ?>
                         <div class="collapse" id="collapsePembinaanPrestasi">
-                            <div class="card card-body mt-2 p-3">
-                                <h6 class="mb-3">Detail Kegiatan Pembinaan Prestasi</h6>
+                            <div class="card card-body mt-2 mb-4" style="padding: 12px; border-radius: 8px;">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0">Detail Kegiatan Pembinaan Prestasi</h6>
+                                </div>
                                 <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                        // Memastikan nilai serapan adalah numerik dan bukan null
-                                        $child_serapan = 0;
-                                        if (isset($child->jumlah_harga) && is_numeric($child->jumlah_harga)) {
-                                            $child_serapan = (int)$child->jumlah_harga;
-                                        }
-                                        
+                                        // Serapan untuk setiap cabor sudah dihitung di controller
+                                        $child_serapan = $child->serapan_cabor ?? 0;
+
                                         // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
                                         $rka_per_kegiatan = 0;
                                         if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
                                             $jumlah_kegiatan = $kegiatan->count();
                                             $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
                                         }
-                                        
+
+                                        // Menghitung budget per child berdasarkan jumlah dokumen jika tersedia
                                         $jumlah_anak = $item->children->count();
                                         $child_budget = 0;
                                         if ($jumlah_anak > 0 && $rka_per_kegiatan > 0) {
-                                            $child_budget = (int)($rka_per_kegiatan / $jumlah_anak);
+                                            // Jika child memiliki informasi jumlah dokumen, gunakan proporsional
+                                            if (isset($child->children_count) && $child->children_count > 0) {
+                                                // Hitung total dokumen semua child
+                                                $total_dokumen = $item->children->sum('children_count');
+                                                if ($total_dokumen > 0) {
+                                                    // Proporsional berdasarkan jumlah dokumen
+                                                    $proporsi = $child->children_count / $total_dokumen;
+                                                    $child_budget = (int)($rka_per_kegiatan * $proporsi);
+                                                } else {
+                                                    // Rata rata jika tidak ada informasi dokumen
+                                                    $child_budget = (int)($rka_per_kegiatan / $jumlah_anak);
+                                                }
+                                            } else {
+                                                // Rata rata jika tidak ada informasi dokumen
+                                                $child_budget = (int)($rka_per_kegiatan / $jumlah_anak);
+                                            }
                                         }
-                                        
+
                                         // Perhitungan persentase dengan pengecekan aman
                                         $child_persen = 0;
                                         if ($child_budget > 0) {
@@ -471,7 +528,7 @@
                                             // Batasi maksimal 100%
                                             $child_persen = min(100, $child_persen);
                                         }
-                                        
+
                                         // Debugging - Hapus komentar untuk debugging
                                         /*
                                         if ($j == 0) { // Hanya untuk anak pertama
@@ -513,40 +570,86 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    
+                                    <?php if($child->children->count() > 0): ?>
+                                        <div class="ms-4 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="small text-muted mb-0">Folder dalam <?php echo e($child->nama_program); ?>:</h6>
+                                                <button class="btn btn-sm p-0 border-0 dropdown-icon" type="button" data-bs-toggle="collapse" data-bs-target="#folderCollapse<?php echo e($j); ?>" aria-expanded="false" aria-controls="folderCollapse<?php echo e($j); ?>">
+                                                    <i class="fas fa-chevron-down text-primary"></i>
+                                                </button>
+                                            </div>
+                                            <div class="collapse" id="folderCollapse<?php echo e($j); ?>">
+                                                <?php $__currentLoopData = $child->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k => $grandchild): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php
+                                                        // Menghitung serapan untuk setiap folder
+                                                        $grandchild_serapan = 0;
+
+                                                        // Ambil dokumen langsung di bawah parent ini
+                                                        $grandchild_ids = \App\Models\Lpj::where('parent_id', $grandchild->id)->pluck('id');
+
+                                                        // Juga ambil dokumen dari subfolder-subfolder (anak langsung dari grandchild)
+                                                        $subfolder_ids = \App\Models\Lpj::where('parent_id', $grandchild->id)->pluck('id');
+                                                        $all_ids = $grandchild_ids->merge($subfolder_ids);
+
+                                                        if ($all_ids->count() > 0) {
+                                                            $grandchild_serapan = \App\Models\Lpj::whereIn('id', $all_ids)
+                                                                ->get()
+                                                                ->sum(function($item) {
+                                                                    $harga = (int)($item->jumlah_harga ?? 0);
+                                                                    return ($harga > 1 && $harga != 2) ? $harga : 0;
+                                                                });
+                                                        }
+
+                                                        // Menghitung budget per folder
+                                                        $grandchild_budget = 0;
+                                                        if ($child_budget > 0 && $child->children->count() > 0) {
+                                                            $grandchild_budget = (int)($child_budget / $child->children->count());
+                                                        }
+
+                                                        // Perhitungan persentase untuk folder
+                                                        $grandchild_persen = 0;
+                                                        if ($grandchild_budget > 0) {
+                                                            $grandchild_persen = round(($grandchild_serapan / $grandchild_budget) * 100);
+                                                            $grandchild_persen = min(100, $grandchild_persen);
+                                                        }
+
+                                                        $grandchildBarClass = 'bar-success';
+                                                        if ($grandchild_persen <= 30) {
+                                                            $grandchildBarClass = 'bar-danger';
+                                                        } elseif ($grandchild_persen <= 60) {
+                                                            $grandchildBarClass = 'bar-warning';
+                                                        }
+                                                    ?>
+
+                                                    <div class="d-flex align-items-center mb-2 gap-3">
+                                                        <div style="min-width: 200px; max-width: 200px;">
+                                                            <span class="small title-kegiatan"><?php echo e(chr(65 + $k)); ?>. <?php echo e($grandchild->nama_program); ?></span>
+                                                        </div>
+                                                        <div class="flex-grow-1 position-relative">
+                                                            <div class="progress w-100" style="border-radius: 6px; height: 35px;">
+                                                                <div class="progress-bar <?php echo e($grandchildBarClass); ?>"
+                                                                    role="progressbar"
+                                                                    style="width: <?php echo e($grandchild_persen); ?>%; border-radius: 6px; opacity: 0.8;"
+                                                                    aria-valuenow="<?php echo e($grandchild_persen); ?>" aria-valuemin="0" aria-valuemax="100">
+                                                                </div>
+                                                                <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-2" style="top: 0; left: 0; pointer-events: none;">
+                                                                    <span class="small fw-bold" style="color: #151D48; text-shadow: 0 0 1px rgba(255,255,255,0.3);">
+                                                                        Rp <?php echo e(number_format($grandchild_serapan, 0, ',', '.')); ?> / Rp <?php echo e(number_format($grandchild_budget, 0, ',', '.')); ?>
+
+                                                                    </span>
+                                                                    <span class="small fw-bold" style="color: #151D48; text-shadow: 0 0 1px rgba(255,255,255,0.3);"><?php echo e($grandchild_persen); ?>%</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                
-                                <div class="d-flex align-items-center mt-3 pt-3 border-top">
-                                    <div style="min-width: 220px; max-width: 220px;">
-                                        <span class="fw-bold">Total Serapan:</span>
-                                    </div>
-                                    <div class="flex-grow-1 ms-3">
-                                        <?php
-                                            // Memastikan total serapan adalah numerik
-                                            $total_serapan_anak = 0;
-                                            if (isset($item->children)) {
-                                                $total_serapan_anak = (int)$item->children->sum('jumlah_harga');
-                                            }
-                                            
-                                            // Memastikan nilai RKA adalah numerik
-                                            $rka_per_kegiatan = 0;
-                                            if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                                                $jumlah_kegiatan = $kegiatan->count();
-                                                $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
-                                            }
-                                            
-                                            // Perhitungan persentase total dengan pengecekan aman
-                                            $total_persen_anak = 0;
-                                            if ($rka_per_kegiatan > 0) {
-                                                $total_persen_anak = round(($total_serapan_anak / $rka_per_kegiatan) * 100);
-                                                // Batasi maksimal 100%
-                                                $total_persen_anak = min(100, $total_persen_anak);
-                                            }
-                                        ?>
-                                        <span class="fw-bold">
-                                            Rp <?php echo e(number_format($total_serapan_anak, 0, ',', '.')); ?> / Rp <?php echo e(number_format($rka_per_kegiatan, 0, ',', '.')); ?> (<?php echo e($total_persen_anak); ?>%)
-                                        </span>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                     <?php endif; ?>
@@ -556,7 +659,7 @@
         </div>
 
         <div class="card shadow-sm mb-4">
-            <div class="card-body">
+            <div class="card-body" style="padding: 24px;">
                 <h5 class="card-title">Informasi Pelatih & Peserta Cabor</h5>
                 <div class="text-end mt-2 d-flex justify-content-end gap-3 align-items-center">
                     <div class="d-flex align-items-center gap-2">
@@ -578,13 +681,13 @@
 
 
         <!-- Prestasi Terbaru -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-body p-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body" style="padding: 24px;">
                 <div class="d-flex align-items-center justify-content-between mb-6">
                     <h5 class="mb-0">Prestasi Terbaru</h5>
                 </div>
 
-                
+
 
                                 <!-- Prestasi Atlet -->
                 <div>
@@ -660,15 +763,28 @@
             }
         });
 
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+
         // Screenshot functionality for exporting "Informasi Kegiatan" section
         document.getElementById('export-screenshot').addEventListener('click', function() {
-            const targetElement = document.getElementById('informasi-kegiatan-content'); // The Informasi Kegiatan section
+            const targetElement = this.closest('.card'); // Capture the entire card
+            const exportButton = this; // Reference to the export button
+
+            // Hide the export button temporarily using CSS class
+            exportButton.classList.add('hide-for-screenshot');
 
             html2canvas(targetElement, {
                 scale: 2, // Higher scale for better quality
                 useCORS: true,
                 backgroundColor: '#ffffff'
             }).then(canvas => {
+                // Restore the export button visibility
+                exportButton.classList.remove('hide-for-screenshot');
+
                 // Convert canvas to blob
                 canvas.toBlob(function(blob) {
                     // Create download link
@@ -678,6 +794,8 @@
                     link.click();
                 });
             }).catch(error => {
+                // Restore the export button visibility in case of error
+                exportButton.classList.remove('hide-for-screenshot');
                 console.error('Error capturing screenshot:', error);
                 alert('Gagal mengekspor data. Silakan coba lagi.');
             });
