@@ -37,18 +37,46 @@ class BidangController extends Controller
 
         // Calculate counts and totals for each bidang
         $bidangInfo = [];
+        $bidangDetails = [];
+        
         foreach ($bidangParentIds as $key => $id) {
+            $target = Target::where('id_lpj', $id)->first(); // Fetch target first
+
             if ($id == 6) { // Special handling for Pembinaan Prestasi
                 $info = $this->getPrestasiInfo($id);
+                
+                // Get children of Prestasi (the 4 cabors)
+                $prestasi_children_ids = Lpj::where('parent_id', $id)->pluck('id');
+                // Get grandchildren of Prestasi (Pordasi, etc.)
+                $prestasi_grandchildren_ids = Lpj::whereIn('parent_id', $prestasi_children_ids)->pluck('id');
+
+                // Calculate target kegiatan and anggaran by summing targets of the grandchildren
+                $prestasi_target_kegiatan = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->sum('target_kegiatan');
+                $prestasi_target_anggaran = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->sum('target_anggaran');
+
+                $bidangDetails[$key] = [
+                    'anggaran' => $info['anggaran'],
+                    'target_anggaran' => $prestasi_target_anggaran,
+                    'kegiatan' => $info['count'],
+                    'target_kegiatan' => $prestasi_target_kegiatan
+                ];
+
             } else {
                 $info = $this->getDescendantsInfo($id);
+                $bidangDetails[$key] = [
+                    'anggaran' => $info['anggaran'],
+                    'target_anggaran' => $target->target_anggaran ?? 0,
+                    'kegiatan' => $info['count'],
+                    'target_kegiatan' => $target->target_kegiatan ?? 0
+                ];
             }
+            
             $bidangInfo[$key . 'Count'] = $info['count'];
             $total_anggaran += $info['anggaran'];
             $total_kegiatan += $info['count'];
         }
 
-        // Get target values
+        // Get target values for overall
         $target_anggaran = Target::whereIn('id_lpj', array_values($bidangParentIds))->sum('target_anggaran');
         $target_kegiatan = Target::whereIn('id_lpj', array_values($bidangParentIds))->sum('target_kegiatan');
 
@@ -57,6 +85,7 @@ class BidangController extends Controller
             'total_kegiatan' => $total_kegiatan,
             'target_anggaran' => $target_anggaran,
             'target_kegiatan' => $target_kegiatan,
+            'bidangDetails' => $bidangDetails
         ]));
     }
 
@@ -153,8 +182,38 @@ class BidangController extends Controller
                        ->withCount('children')
                        ->orderBy('nama_program', 'asc')
                        ->get();
+        
+        // Calculate totals for prestasi
+        $total_anggaran = 0;
+        $total_kegiatan = 0;
+        
+        // Add individual budget information to each child
+        foreach($children as $child) {
+            $total_kegiatan += $child->children_count;
+            
+            // Get grand children to calculate anggaran
+            $grandchildren = $child->children;
+            $child_anggaran = 0;
+            foreach($grandchildren as $grandchild) {
+                // Get great grandchildren to calculate anggaran
+                $greatGrandchildren = $grandchild->children;
+                foreach($greatGrandchildren as $greatGrandchild) {
+                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
+                }
+            }
+            
+            // Add anggaran to child object
+            $child->anggaran = $child_anggaran;
+            $total_anggaran += $child_anggaran;
+        }
+        
+        // Get target values
+        $target = Target::where('id_lpj', $prestasiParentId)->first();
+        $target_anggaran = $target->target_anggaran ?? 1000000000; // Example target
+        $target_kegiatan = $target->target_kegiatan ?? 100; // Example target
+        $anggaran_percentage = $target_anggaran > 0 ? ($total_anggaran / $target_anggaran) * 100 : 0;
 
-        return view('admin.laporan-lpj.bidang.prestasi.index', compact('children', 'parent'));
+        return view('admin.laporan-lpj.bidang.prestasi.index', compact('children', 'parent', 'total_anggaran', 'total_kegiatan', 'target_anggaran', 'target_kegiatan', 'anggaran_percentage'));
     }
 
     /**
@@ -168,9 +227,17 @@ class BidangController extends Controller
         // Eager load children count for performance
         $parent = Lpj::findOrFail($caborAkurasiParentId);
         $children = Lpj::where('parent_id', $caborAkurasiParentId)
+                        ->with(['children', 'target']) // Eager load
                         ->withCount('children') // Counts sub-items (dokumen)
                         ->orderBy('nama_program', 'asc')
                         ->get();
+        
+        foreach ($children as $child) {
+            $anggaran = $child->children->sum('jumlah_harga');
+            $child->realisasi_anggaran = $anggaran;
+            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
+            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
+        }
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.bidang.prestasi.Akurasi._table', compact('children'))->render();
@@ -185,9 +252,17 @@ class BidangController extends Controller
 
         $parent = Lpj::findOrFail($caborBeladiriParentId);
         $children = Lpj::where('parent_id', $caborBeladiriParentId)
+                        ->with(['children', 'target']) // Eager load
                         ->withCount('children')
                         ->orderBy('nama_program', 'asc')
                         ->get();
+        
+        foreach ($children as $child) {
+            $anggaran = $child->children->sum('jumlah_harga');
+            $child->realisasi_anggaran = $anggaran;
+            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
+            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
+        }
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.bidang.prestasi.Beladiri._table', compact('children'))->render();
@@ -202,9 +277,17 @@ class BidangController extends Controller
 
         $parent = Lpj::findOrFail($caborPermainanParentId);
         $children = Lpj::where('parent_id', $caborPermainanParentId)
+                        ->with(['children', 'target']) // Eager load
                         ->withCount('children')
                         ->orderBy('nama_program', 'asc')
                         ->get();
+        
+        foreach ($children as $child) {
+            $anggaran = $child->children->sum('jumlah_harga');
+            $child->realisasi_anggaran = $anggaran;
+            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
+            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
+        }
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.bidang.prestasi.Permainan._table', compact('children'))->render();
@@ -219,9 +302,17 @@ class BidangController extends Controller
 
         $parent = Lpj::findOrFail($caborTerukurParentId);
         $children = Lpj::where('parent_id', $caborTerukurParentId)
+                        ->with(['children', 'target']) // Eager load
                         ->withCount('children')
                         ->orderBy('nama_program', 'asc')
                         ->get();
+        
+        foreach ($children as $child) {
+            $anggaran = $child->children->sum('jumlah_harga');
+            $child->realisasi_anggaran = $anggaran;
+            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
+            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
+        }
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.bidang.prestasi.Terukur._table', compact('children'))->render();

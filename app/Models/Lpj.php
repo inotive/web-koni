@@ -289,4 +289,9 @@ class Lpj extends Model
             return $baseName . '.sub.index';
         }
     }
+
+    public function target()
+    {
+        return $this->hasOne(Target::class, 'id_lpj');
+    }
 }

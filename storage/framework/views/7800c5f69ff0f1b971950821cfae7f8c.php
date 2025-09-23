@@ -124,7 +124,7 @@
                                         data-type="document"
                                         data-files="<?php echo e(json_encode(array_map(fn($file) => ($file), $data->dokumen_lpj))); ?>"
                                         data-title="Dokumen LPJ - <?php echo e($data->nama_program); ?>">
-                                    <i class="fas fa-file-alt me-1"></i>
+                                    <i class="bi bi-filetype-pdf me-1"></i>
                                     <?php echo e(count($data->dokumen_lpj)); ?> PDF
                                 </button>
                             <?php else: ?>
