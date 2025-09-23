@@ -471,7 +471,7 @@
 
     <div class="d-flex flex-column mb-8">
         <h1 class="text-dark fw-bold mb-1">Kegiatan Lainnya</h1>
-        
+        <div class="text-muted fw-semibold fs-6">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</div>
     </div>
 
     <?php if(isset($current_budget) && isset($target_anggaran)): ?>
