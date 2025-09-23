@@ -3,13 +3,9 @@
 <?php $__env->startSection('currentSection', 'File Kesekretariat'); ?>
 
 <?php $__env->startSection('style'); ?>
-    <style>
-        /* =================================
-                                                                                                                                                                               BASIC LAYOUT & COLORS - UPDATED
-                                                                                                                                                                            ================================= */
+    <style>                                                                                                                                                                                                                                                                                                                                  ================================= */
         body {
-            background-color: #ffffff;
-            /* Changed from #f5f5f5 to white like file 1 */
+            background-color: #f5f5f5;
         }
 
         .card {
@@ -26,10 +22,6 @@
             background-color: #ffffff;
             /* Ensure card body background is white */
         }
-
-        /* =================================
-                                                                                                                                                                               FILTER & SEARCH CONTAINER
-                                                                                                                                                                            ================================= */
         .filter-container {
             display: flex;
             align-items: center;
@@ -368,7 +360,7 @@
             text-align: left;
         }
 
-        
+
 
         /* =================================
                                                                                                                                                                                DROPDOWN ACTION MENU
@@ -472,15 +464,10 @@
                                                                                                                                                                                MAIN CONTAINER WHITE BACKGROUND
                                                                                                                                                                             ================================= */
         .container {
-            background-color: #ffffff;
-            /* White background for main container */
-            border-radius: 8px;
             padding: 1.5rem;
         }
 
         .d-grid {
-            background-color: #ffffff;
-            /* White background for grid container */
         }
 
         /* =================================
@@ -789,8 +776,8 @@
         body,
         .app,
         .main-content {
-            background-color: #ffffff !important;
-            /* Force white background for entire page */
+            background-color: #f5f5f5 !important;
+            /* Force gray background for entire page */
         }
 
         /* =================================
@@ -913,33 +900,33 @@
                 margin: 10px;
                 max-width: calc(100% - 20px);
             }
-            
+
             .modal-content {
                 padding: 15px !important;
             }
-            
+
             .modal-content .d-flex {
                 flex-wrap: wrap;
             }
-            
+
             .document-link-container {
                 max-width: 200px;
             }
-            
+
             .document-link-text {
                 max-width: 180px;
             }
-            
+
             .dz-message .ms-4 {
                 margin-left: 0 !important;
                 margin-top: 1rem;
                 text-align: center;
             }
-            
+
             .dz-message h3 {
                 font-size: 1rem;
             }
-            
+
             .dz-message span {
                 font-size: 0.75rem;
             }
@@ -1084,9 +1071,15 @@
 
         <!-- Main Content -->
         <div class="container">
-            <h3 class="fw-bold fs-4 mb-3">Daftar File Kesekretariat</h3>
-            <div id="tableContainer">
-                <?php echo $__env->make('admin.file-kesekretariat._table', ['files' => $files], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title fw-bold fs-4 mb-0">Daftar File Kesekretariat</h3>
+                </div>
+                <div class="card-body">
+                    <div id="tableContainer">
+                        <?php echo $__env->make('admin.file-kesekretariat._table', ['files' => $files], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1157,9 +1150,9 @@
             </div>
         </div>
 
-        
 
-        
+
+
 
         <!-- Edit File Modal - IMPROVED VERSION -->
         <div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel"
@@ -1255,7 +1248,7 @@
 
 <?php $__env->startSection('script'); ?>
     <script>
-        
+
         function deleteFile(fileId, fileName, deleteUrl) {
     Swal.fire({
         title: "Apakah Anda Yakin?",
@@ -1303,7 +1296,7 @@
                         // Remove the row from DOM immediately
                         $(`#file-row-${fileId}`).fadeOut(300, function() {
                             $(this).remove();
-                            
+
                             // Check if table is now empty
                             const remainingRows = $('#tableBody tr:visible').length;
                             if (remainingRows === 0) {
@@ -1365,7 +1358,7 @@
             `);
         }
 
-        
+
 
         // Get file icon based on extension
         function getFileIcon(extension) {
@@ -1425,12 +1418,12 @@
             $('[title]').each(function() {
                 const $this = $(this);
                 const title = $this.attr('title');
-                
+
                 // Hapus title default dan tambahkan atribut data untuk tooltip custom
                 if (title && title.length > 0) {
                     $this.removeAttr('title');
                     $this.attr('data-tooltip', title);
-                    
+
                     // Tambahkan event hover untuk menampilkan tooltip
                     $this.hover(
                         function() {
@@ -1450,19 +1443,19 @@
                                     white-space: nowrap;
                                     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
                                 ">${tooltipText}</div>`);
-                                
+
                                 $('body').append(tooltip);
-                                
+
                                 // Posisikan tooltip
                                 const offset = $(this).offset();
                                 const tooltipWidth = tooltip.outerWidth();
                                 const elementWidth = $(this).outerWidth();
-                                
+
                                 tooltip.css({
                                     top: offset.top - tooltip.outerHeight() - 8,
                                     left: offset.left + (elementWidth / 2) - (tooltipWidth / 2)
                                 });
-                                
+
                                 // Simpan referensi tooltip
                                 $(this).data('tooltip-id', tooltipId);
                             }
@@ -1488,7 +1481,7 @@
             }, 300);
 
             $(document).on('input', 'input[name="search"]', debouncedSearch);
-            
+
             // Also trigger search on Enter key
             $(document).on('keypress', 'input[name="search"]', function(e) {
                 if (e.which === 13) { // Enter key
@@ -1496,7 +1489,7 @@
                     performSearch({ page: 1 }, true);
                 }
             });
-            
+
             // Tangani resize window untuk memastikan modal tidak melebar
             $(window).on('resize', function() {
                 if ($('#editFileModal').hasClass('show')) {
@@ -1505,7 +1498,7 @@
                         'max-width': '600px',
                         'margin': '1rem auto'
                     });
-                    
+
                     $('#editFileModal .document-link-container').css({
                         'width': 'calc(100% - 50px)',
                         'max-width': 'calc(100% - 50px)'
@@ -1522,7 +1515,7 @@
         });
     }
 });
-            
+
             // Tambahkan event listener untuk memastikan styling tetap diterapkan
             $('#editFileModal').on('shown.bs.modal', function() {
                 // Terapkan styling khusus saat modal ditampilkan
@@ -1530,13 +1523,13 @@
                     'max-width': '600px',
                     'margin': '1rem auto'
                 });
-                
+
                 $('#editFileModal .document-link-container').css({
                     'width': 'calc(100% - 50px)',
                     'max-width': 'calc(100% - 50px)',
                     'overflow': 'hidden'
                 });
-                
+
                 $('#currentFileName').css({
                     'display': 'block',
                     'width': '100%',
@@ -1546,7 +1539,7 @@
                     'white-space': 'nowrap'
                 });
             });
-            
+
             let isLoading = false;
             let searchTimeout;
             let editDropzoneInitialized = false;
@@ -1794,7 +1787,7 @@
     const fileExtension = file.name.split('.').pop().toLowerCase();
     const fileIcon = getFileIconForPreview(fileExtension);
     const fileSize = (file.size / (1024 * 1024)).toFixed(2);
-    
+
     // Buat nama file dengan elipsis untuk tampilan (sama seperti modal edit)
     const displayFileName = createEllipsisText(file.name, 35);
 
@@ -1843,7 +1836,7 @@
                     errorDiv.textContent = '';
                     errorDiv.classList.remove('d-block');
                 }
-                
+
                 // Hanya menghapus kelas error jika tidak ada error validasi lain
                 if (!errorDiv || !errorDiv.textContent) {
                     dropzoneElement.classList.remove('error');
@@ -1980,10 +1973,10 @@
                 fileInput.files = dt.files;
 
                 showEditFilePreview(file, dropzoneElement);
-                
+
                 // Inisialisasi tooltip untuk file yang baru dipilih
                 setTimeout(initializeTooltips, 100);
-                
+
                 return true;
             }
 
@@ -1991,7 +1984,7 @@
     const fileExtension = file.name.split('.').pop().toLowerCase();
     const fileIcon = getFileIconForPreview(fileExtension);
     const fileSize = (file.size / (1024 * 1024)).toFixed(2);
-    
+
     // Buat nama file dengan elipsis untuk tampilan (sama seperti modal edit yang sudah diperbaiki)
     const displayFileName = createEllipsisText(file.name, 35);
 
@@ -2058,10 +2051,10 @@
         success: function(response) {
             if (response.success) {
                 const data = response.data;
-                
+
                 $('#edit_file_id').val(data.id);
                 $('#edit_nama_dokumen').val(data.nama_dokumen || '');
-                
+
                 // Format date for input
                 let formattedDate = '';
                 if (data.tanggal_dokumen) {
@@ -2074,15 +2067,15 @@
                     }
                 }
                 $('#edit_tanggal_dokumen').val(formattedDate);
-                
+
                 // Update current file display dengan elipsis yang konsisten
                 if (data.dokumen_file) {
                     const fileExtension = data.dokumen_file.split('.').pop().toLowerCase();
                     const fileIcon = getFileIconForCurrentFile(fileExtension);
-                    
+
                     // Buat nama file dengan elipsis untuk tampilan
                     const displayFileName = createEllipsisText(data.dokumen_file, 35);
-                    
+
                     // Atur text yang terlihat dengan elipsis dan title untuk tooltip dengan nama lengkap
                     $('#currentFileName').text(displayFileName).attr('title', data.dokumen_file);
                     $('#currentFileIcon').attr('class', `${fileIcon} fa-2x me-3`);
@@ -2092,10 +2085,10 @@
                     $('#currentFileIcon').attr('class', 'fas fa-file fa-2x me-3 text-secondary');
                     $('#currentFileLink').attr('href', '#');
                 }
-                
+
                 $('#editFileForm').attr('action', `/admin/file-kesekretariat/${id}`);
                 $('#editFileModal').modal('show');
-                
+
                 // Terapkan styling khusus setelah modal ditampilkan
                 setTimeout(function() {
                     // Pastikan modal dialog memiliki lebar maksimum tetap
@@ -2103,20 +2096,20 @@
                         'max-width': '600px',
                         'margin': '1rem auto'
                     });
-                    
+
                     // Pastikan konten modal tidak melebihi lebar container
                     $('#editFileModal .modal-content').css({
                         'max-width': '100%',
                         'overflow': 'hidden'
                     });
-                    
+
                     // Pastikan kontainer file saat ini memiliki lebar tetap
                     $('#editFileModal .document-link-container').css({
                         'width': 'calc(100% - 50px)',
                         'max-width': 'calc(100% - 50px)',
                         'overflow': 'hidden'
                     });
-                    
+
                     // Pastikan text nama file menggunakan elipsis
                     $('#currentFileName').css({
                         'display': 'block',
@@ -2150,7 +2143,7 @@
 
     // Manual validation
     let isValid = true;
-    
+
     // Clear previous errors
     $('.is-invalid').removeClass('is-invalid');
     $('.invalid-feedback').empty();
@@ -2194,7 +2187,7 @@
         success: function(response) {
             $('#editFileModal').modal('hide');
             toastr.success(response.message || 'File berhasil diperbarui', 'Berhasil!');
-            
+
             // PERBAIKAN: Force refresh table dengan parameter saat ini
             setTimeout(function() {
                 const currentSearch = $('input[name="search"]').val();
@@ -2202,17 +2195,17 @@
                 const currentPage = currentUrl.get('page') || 1;
                 const currentSortBy = currentUrl.get('sort_by') || 'created_at';
                 const currentOrder = currentUrl.get('order') || 'desc';
-                
+
                 const searchParams = {
                     page: currentPage,
                     sort_by: currentSortBy,
                     order: currentOrder
                 };
-                
+
                 if (currentSearch && currentSearch.trim()) {
                     searchParams.search = currentSearch;
                 }
-                
+
                 performSearch(searchParams, true);
             }, 300);
         },
@@ -2258,18 +2251,18 @@
     $(document).on('click.sorting', 'th.sortable', function(e) {
         e.preventDefault();
         const sortBy = $(this).data('sort');
-        
+
         // Get current order from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const currentSortBy = urlParams.get('sort_by');
         const currentOrder = urlParams.get('order') || 'desc';
-        
+
         // If clicking on the same column, toggle order; otherwise start with asc
         let newOrder = 'asc';
         if (currentSortBy === sortBy) {
             newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
         }
-        
+
         performSearch({
             page: 1,
             sort_by: sortBy,
@@ -2290,34 +2283,34 @@
                $(document).on('click.pagination', '.pagination-link', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const url = $(this).attr('href');
         console.log('Pagination clicked:', url); // Debug log
-        
+
         if (url && url !== '#' && !$(this).hasClass('disabled')) {
             const urlParams = new URLSearchParams(url.split('?')[1]);
             const page = urlParams.get('page');
-            
+
             if (page) {
                 console.log('Going to page:', page); // Debug log
-                
+
                 // Get current search and sort parameters
                 const currentSearch = $('input[name="search"]').val();
                 const currentSortBy = getUrlParameter('sort_by') || 'created_at';
                 const currentOrder = getUrlParameter('order') || 'desc';
                 const currentPerPage = getUrlParameter('per_page') || '10';
-                
+
                 const searchParams = {
                     page: page,
                     sort_by: currentSortBy,
                     order: currentOrder,
                     per_page: currentPerPage
                 };
-                
+
                 if (currentSearch && currentSearch.trim()) {
-                    searchParams.search = currentSearch;    
+                    searchParams.search = currentSearch;
                 }
-                
+
                 performSearch(searchParams, true);
             }
         }
@@ -2331,7 +2324,7 @@
 
     const searchParams = new URLSearchParams();
     const search = $('#filter input[name="search"]').val().trim();
-    
+
     // Get current URL parameters to maintain state
     const currentUrl = new URLSearchParams(window.location.search);
 
@@ -2348,7 +2341,7 @@
         searchParams.set('sort_by', sortBy);
         searchParams.set('order', order);
     }
-    
+
     // Keep per_page if not specified
     if (!params.per_page) {
         const perPage = currentUrl.get('per_page') || '10';
@@ -2371,13 +2364,13 @@
         success: function(response) {
             $('#tableContainer').removeClass('table-loading');
             $('#tableContainer').html(response);
-            
+
             initializeEventHandlers();
             addFileIcons();
 
             // Update URL without refreshing page
             window.history.pushState({}, '', url);
-            
+
             // Scroll to top of table if it's a new search
             if (params.page === 1 || params.search !== undefined) {
                 $('html, body').animate({
@@ -2477,11 +2470,11 @@ function hideLoading() {
         success: function(response) {
             $('#tambahFileModal').modal('hide');
             toastr.success(response.message || 'File berhasil ditambahkan', 'Berhasil!');
-            
+
             form.trigger('reset');
             clearFormErrors();
             removeSelectedFile();
-            
+
             // PERBAIKAN: Force refresh table dengan sorting yang tepat
             setTimeout(function() {
                 // Get current search parameters
@@ -2491,15 +2484,15 @@ function hideLoading() {
                     sort_by: 'created_at',
                     order: 'desc'
                 };
-                
+
                 // Add search if exists
                 if (currentSearch && currentSearch.trim()) {
                     searchParams.search = currentSearch;
                 }
-                
+
                 // Force refresh the entire table
                 performSearch(searchParams, true);
-                
+
                 // Remove empty state if exists
                 $('#emptyStateMessage').remove();
             }, 300);
@@ -2552,7 +2545,7 @@ function hideLoading() {
 </td>
                         <td class="text-center">
                             <div class="dropdown dropdown-action">
-                                <button class="btn btn-icon btn-sm btn-preview" 
+                                <button class="btn btn-icon btn-sm btn-preview"
                                         onclick="previewFile('${fileData.file_url}', '${fileData.dokumen_file}', '${fileData.extension}')"
                                         title="Preview ${fileData.dokumen_file}">
                                     <i class="fas fa-eye text-primary"></i>
@@ -2573,11 +2566,11 @@ function hideLoading() {
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-action">
-                                    <li class="dropdown-item edit" 
+                                    <li class="dropdown-item edit"
                                         onclick="openEditModal(${fileData.id}, '${fileData.nama_dokumen}', '${fileData.tanggal_dokumen}', '${fileData.dokumen_file}')">
                                         <i class="ki-outline ki-pencil me-2"></i>Edit File
                                     </li>
-                                    <li class="dropdown-item delete" 
+                                    <li class="dropdown-item delete"
                                         onclick="deleteFile(${fileData.id}, '${fileData.nama_dokumen}', '/admin/file-kesekretariat/${fileData.id}')">
                                         <i class="ki-outline ki-trash me-2"></i>Hapus
                                     </li>
@@ -2586,7 +2579,7 @@ function hideLoading() {
                         </td>
                     </tr>
                 `;
-                
+
                 tableBody.prepend(newRow);
                 $(`#file-row-${fileData.id}`).hide().fadeIn(300);
                 renumberTableRows();
@@ -2624,14 +2617,14 @@ function hideLoading() {
                                     </svg>
                                 </button>
                                 <div class="dropdown-menu-action">
-                                    <button class="dropdown-item-action btn-edit" 
+                                    <button class="dropdown-item-action btn-edit"
                                             data-id="${fileData.id}"
                                             data-nama="${fileData.nama_dokumen}"
                                             data-tanggal="${fileData.tanggal_dokumen}"
                                             data-filename="${fileData.dokumen_file}">
                                         <i class="fas fa-edit"></i> Edit
                                     </button>
-                                    <button class="dropdown-item-action text-danger" 
+                                    <button class="dropdown-item-action text-danger"
                                             onclick="deleteFile(${fileData.id}, '${fileData.nama_dokumen}', '/admin/file-kesekretariat/${fileData.id}')">
                                         <i class="fas fa-trash"></i> Hapus
                                     </button>
@@ -2749,6 +2742,6 @@ function hideLoading() {
     </script>
 <?php $__env->stopSection(); ?>
 
- 
+
 
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/file-kesekretariat/index.blade.php ENDPATH**/ ?>

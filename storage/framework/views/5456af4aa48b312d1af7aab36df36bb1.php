@@ -27,8 +27,8 @@
         </div>
     </div>
 <?php else: ?>
-    <div style="overflow-x:auto;">
-        <table class="table-row-bordered gy-4 table align-middle">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
             <thead>
                 <tr class="fw-bold text-uppercase text-muted">
                     <th class="bg-light px-6 text-center" style="width: 60px;">No</th>
