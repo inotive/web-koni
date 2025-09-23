@@ -4,6 +4,10 @@
 
 <?php $__env->startSection('style'); ?>
     <style>
+
+        body {
+            background-color: #f5f5f5;
+        }
         .filter-container {
             display: flex;
             align-items: center;
