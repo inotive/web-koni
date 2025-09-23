@@ -2,6 +2,10 @@
     <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
 
     <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
         table.table th,
         table.table td {
             border: 0.5px solid #F1F1F4 !important;

@@ -471,7 +471,7 @@
                                 </div>
                                 <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
                                     <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
-                                        Serapan : Rp <?php echo e(number_format($display_serapan, 0, ',', '.')); ?> / Rp <?php echo e(number_format($display_budget, 0, ',', '.')); ?> | <?php echo e($item->children->where('jumlah_harga', '>', 0)->count()); ?>/<?php echo e($item->children->count()); ?>
+                                        Serapan : Rp <?php echo e(number_format($display_serapan, 0, ',', '.')); ?> / Rp <?php echo e(number_format($display_budget, 0, ',', '.')); ?> | <?php echo e($item->kegiatan_berjalan_count); ?>/<?php echo e($item->target_kegiatan ?? 0); ?>
 
                                     </span>
                                     <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);"><?php echo e($persen); ?>%</span>
