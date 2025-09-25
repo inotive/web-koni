@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Edit Laporan Sekretariat'); ?>
+<?php $__env->startSection('mainSection', 'Laporan Pertanggungjawaban'); ?>
+<?php $__env->startSection('subSection', 'Sekretariat'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.sekretariat.index')); ?>
+<?php $__env->startSection('currentSection', 'Edit Laporan'); ?>
 
-@section('pageTitle', 'Edit Laporan Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
-@section('subSection', 'Kegiatan Lainnya')
-@section('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index'))
-@section('currentSection', 'Edit Laporan')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         body {
             background-color: #f5f5f5 !important;
@@ -73,7 +71,6 @@
             padding-left: 35px;
         }
 
-        /* Enhanced File Upload Styling */
         .file-upload-wrapper {
             display: flex;
             align-items: center;
@@ -221,12 +218,6 @@
             margin-top: 8px;
         }
 
-        .max-files-warning {
-            color: #e74c3c;
-            font-size: 0.85rem;
-            margin-top: 8px;
-        }
-
         .existing-files-section {
             background-color: #f8f9fa;
             border-radius: 8px;
@@ -249,7 +240,7 @@
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-        <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Laporan Kegiatan Lainnya</h3>
+        <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Laporan Sekretariat</h3>
     </div>
 
     <div class="main-content">
@@ -257,14 +248,14 @@
             <div class="row">
                 <div class="card card-form">
                     <div class="card-body p-4 p-md-5">
-                        <h3 class="fw-bold mb-4">Edit Laporan: {{ $kegiatanLainnya->nama_program }}</h3>
+                        <h3 class="fw-bold mb-4">Edit Laporan: <?php echo e($sekretariat->nama_program); ?></h3>
 
-                        <form action="{{ route('admin.laporan-lpj.kegiatan-lainnya.update', $kegiatanLainnya->id) }}"
+                        <form action="<?php echo e(route('admin.laporan-lpj.sekretariat.update', $sekretariat->id)); ?>"
                               method="POST"
-                              id="kegiatanLainnyaForm"
+                              id="lpjForm"
                               enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT')
+                            <?php echo csrf_field(); ?>
+                            <?php echo method_field('PUT'); ?>
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
@@ -274,12 +265,26 @@
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="nama_program_kegiatan" id="nama_program_kegiatan"
-                                        class="form-control @error('nama_program_kegiatan') is-invalid @enderror"
+                                        class="form-control <?php $__errorArgs = ['nama_program_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                         placeholder="Masukkan nama program"
-                                        value="{{ old('nama_program_kegiatan', $kegiatanLainnya->nama_program) }}" required>
-                                    @error('nama_program_kegiatan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        value="<?php echo e(old('nama_program_kegiatan', $sekretariat->nama_program)); ?>" required>
+                                    <?php $__errorArgs = ['nama_program_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
@@ -291,46 +296,89 @@
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="jenis_kegiatan" id="jenis_kegiatan"
-                                        class="form-control @error('jenis_kegiatan') is-invalid @enderror"
+                                        class="form-control <?php $__errorArgs = ['jenis_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                         placeholder="Masukkan nama kegiatan"
-                                        value="{{ old('jenis_kegiatan', $kegiatanLainnya->nama_kegiatan) }}" required>
-                                    @error('jenis_kegiatan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        value="<?php echo e(old('jenis_kegiatan', $sekretariat->nama_kegiatan)); ?>" required>
+                                    <?php $__errorArgs = ['jenis_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                           
-
-                            <div class="row align-items-center mb-3" style="display: none;">
-                                <div class="col-md-3">
-                                    <label for="volume" class="form-label">Volume</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <input type="text" name="volume" id="volume"
-                                        class="form-control @error('volume') is-invalid @enderror"
-                                        placeholder="Masukkan volume (misal: 100 orang, 5 unit, dll)"
-                                        value="{{ old('volume', $kegiatanLainnya->volume) }}" disabled>
-                                    @error('volume')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="row align-items-center mb-3" style="display: none;">
-                                <div class="col-md-3">
-                                    <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <div class="currency-input">
-                                        <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
-                                            class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
-                                            placeholder="0"
-                                            value="{{ old('jumlah_harga_satuan', $kegiatanLainnya->jumlah_harga_satuan) }}" disabled>
+                            
+                            <div style="display: none;">
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-md-3">
+                                        <label for="volume" class="form-label">Volume</label>
                                     </div>
-                                    @error('jumlah_harga_satuan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <div class="col-md-9">
+                                        <input type="text" name="volume" id="volume"
+                                            class="form-control <?php $__errorArgs = ['volume'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                            placeholder="Masukkan volume (misal: 100 orang, 5 unit, dll)"
+                                            value="<?php echo e(old('volume', $sekretariat->volume)); ?>">
+                                        <?php $__errorArgs = ['volume'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    </div>
+                                </div>
+
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-md-3">
+                                        <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="currency-input">
+                                            <input type="text" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
+                                                class="form-control <?php $__errorArgs = ['jumlah_harga_satuan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                                placeholder="0"
+                                                value="<?php echo e(old('jumlah_harga_satuan', $sekretariat->jumlah_harga_satuan)); ?>">
+                                        </div>
+                                        <?php $__errorArgs = ['jumlah_harga_satuan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    </div>
                                 </div>
                             </div>
 
@@ -341,31 +389,45 @@
                                 <div class="col-md-9">
                                     <div class="currency-input">
                                         <input type="text" name="jumlah_harga" id="jumlah_harga"
-                                            class="form-control @error('jumlah_harga') is-invalid @enderror"
+                                            class="form-control <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             placeholder="0"
-                                            value="{{ old('jumlah_harga', $kegiatanLainnya->jumlah_harga) }}">
+                                            value="<?php echo e(old('jumlah_harga', $sekretariat->jumlah_harga)); ?>">
                                     </div>
-                                    @error('jumlah_harga')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Foto Jurnal</label>
-                                    <p class="file-upload-hint">Unggah foto jurnal, masing-masing hingga 10 MB</p>
+                                    <p class="file-upload-hint">Unggah foto tanpa batasan jumlah, masing-masing hingga 10 MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    @php
-                                        $foto_jurnals = $kegiatanLainnya->foto_jurnal ? (is_array($kegiatanLainnya->foto_jurnal) ? $kegiatanLainnya->foto_jurnal : [$kegiatanLainnya->foto_jurnal]) : [];
-                                    @endphp
-                                    @if(count($foto_jurnals) > 0)
+                                    <?php
+                                        $foto_jurnals = $sekretariat->foto_jurnal ? (is_array($sekretariat->foto_jurnal) ? $sekretariat->foto_jurnal : [$sekretariat->foto_jurnal]) : [];
+                                    ?>
+                                    <?php if(count($foto_jurnals) > 0): ?>
                                         <div class="existing-files-section">
                                             <h6><i class="fas fa-images me-2"></i>Foto yang sudah ada:</h6>
                                             <div id="existing-foto-preview">
-                                                @foreach($foto_jurnals as $index => $foto)
-                                                    @php
+                                                <?php $__currentLoopData = $foto_jurnals; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php
                                                         // Handle berbagai tipe data untuk foto
                                                         $path = '';
                                                         $originalName = '';
@@ -385,27 +447,34 @@
                                                         if (empty($originalName) && is_string($path)) {
                                                             $originalName = basename($path);
                                                         }
-                                                    @endphp
-                                                    <div class="file-preview-item existing" data-file-path="{{ $path }}">
-                                                        <img src="{{ asset('storage/' . $path) }}" alt="Foto {{ $originalName }}" class="preview-image">
+                                                    ?>
+                                                    <div class="file-preview-item existing" data-file-path="<?php echo e($path); ?>">
+                                                        <img src="<?php echo e(asset('storage/' . $path)); ?>" alt="Foto <?php echo e($originalName); ?>" class="preview-image">
                                                         <div class="file-info">
-                                                            <div class="file-name">{{ $originalName }}</div>
+                                                            <div class="file-name"><?php echo e($originalName); ?></div>
                                                             <div class="file-size">File yang ada</div>
                                                         </div>
                                                         <button type="button" class="remove-file"
-                                                                onclick="removeExistingFile(this, 'foto', '{{ $path }}')">
+                                                                onclick="removeExistingFile(this, 'foto', '<?php echo e($path); ?>')">
                                                             <i class="fas fa-times"></i>
                                                         </button>
-                                                        <input type="hidden" name="existing_foto_jurnal[]" value="{{ $path }}">
+                                                        <input type="hidden" name="existing_foto_jurnal[]" value="<?php echo e($path); ?>">
                                                     </div>
-                                                @endforeach
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </div>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
 
                                     <label for="foto_jurnal" class="file-upload-wrapper">
                                         <input type="file" name="foto_jurnal[]" id="foto_jurnal"
-                                               class="@error('foto_jurnal.*') is-invalid @enderror"
+                                               class="<?php $__errorArgs = ['foto_jurnal.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                                accept="image/*" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
@@ -422,30 +491,35 @@
 
                                     <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
                                     <div id="fotoCounter" class="file-counter"></div>
-                                    <div id="fotoMaxWarning" class="max-files-warning" style="display: none;">
-                                    </div>
 
-                                    @error('foto_jurnal.*')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['foto_jurnal.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger mt-2"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Dokumen Pendukung</label>
-                                    <p class="file-upload-hint">Unggah dokumen tanpa batasan jumlah, masing-masing hingga 10 MB</p>
+                                    <p class="file-upload-hint">Maksimal 10 file PDF, masing-masing hingga 10MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    @php
-                                        $dokumens = $kegiatanLainnya->dokumen_lpj ? (is_array($kegiatanLainnya->dokumen_lpj) ? $kegiatanLainnya->dokumen_lpj : [$kegiatanLainnya->dokumen_lpj]) : [];
-                                    @endphp
-                                    @if(count($dokumens) > 0)
+                                    <?php
+                                        $dokumens = $sekretariat->dokumen_lpj ? (is_array($sekretariat->dokumen_lpj) ? $sekretariat->dokumen_lpj : [$sekretariat->dokumen_lpj]) : [];
+                                    ?>
+                                    <?php if(count($dokumens) > 0): ?>
                                         <div class="existing-files-section">
                                             <h6><i class="fas fa-file-alt me-2"></i>Dokumen yang sudah ada:</h6>
                                             <div id="existing-dokumen-preview">
-                                                @foreach($dokumens as $index => $dokumen)
-                                                    @php
+                                                <?php $__currentLoopData = $dokumens; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $dokumen): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php
                                                         // Handle berbagai tipe data untuk dokumen
                                                         $path = '';
                                                         $originalName = '';
@@ -480,30 +554,37 @@
                                                                 default => 'fas fa-file text-secondary'
                                                             };
                                                         }
-                                                    @endphp
-                                                    <div class="file-preview-item existing" data-file-path="{{ $path }}">
+                                                    ?>
+                                                    <div class="file-preview-item existing" data-file-path="<?php echo e($path); ?>">
                                                         <div class="file-icon">
-                                                            <i class="{{ $icon }} fs-4"></i>
+                                                            <i class="<?php echo e($icon); ?> fs-4"></i>
                                                         </div>
                                                         <div class="file-info">
-                                                            <div class="file-name">{{ $originalName }}</div>
+                                                            <div class="file-name"><?php echo e($originalName); ?></div>
                                                             <div class="file-size">File yang ada</div>
                                                         </div>
                                                         <button type="button" class="remove-file"
-                                                                onclick="removeExistingFile(this, 'dokumen', '{{ $path }}')">
+                                                                onclick="removeExistingFile(this, 'dokumen', '<?php echo e($path); ?>')">
                                                             <i class="fas fa-times"></i>
                                                         </button>
-                                                        <input type="hidden" name="existing_dokumen_lpj[]" value="{{ $path }}">
+                                                        <input type="hidden" name="existing_dokumen_lpj[]" value="<?php echo e($path); ?>">
                                                     </div>
-                                                @endforeach
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </div>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
 
                                     <label for="dokumen_lpj" class="file-upload-wrapper">
                                         <input type="file" name="dokumen_lpj[]" id="dokumen_lpj"
-                                               class="@error('dokumen_lpj.*') is-invalid @enderror"
-                                               accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
+                                               class="<?php $__errorArgs = ['dokumen_lpj.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                               accept=".pdf" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
                                             <div class="file-upload-icon-wrapper">
@@ -511,7 +592,7 @@
                                             </div>
                                             <div>
                                                 <p class="file-upload-text" id="dokumen-file-name-display">
-                                                    Seret dan lepas dokumen baru di sini, atau klik untuk mengunggah.
+                                                    Seret dan lepas dokumen PDF baru di sini, atau klik untuk mengunggah.
                                                 </p>
                                             </div>
                                         </div>
@@ -520,79 +601,85 @@
                                     <div id="dokumenPreviewContainer" class="preview-container" style="display: none;"></div>
                                     <div id="dokumenCounter" class="file-counter"></div>
                                     <div id="dokumenMaxWarning" class="max-files-warning" style="display: none;">
+                                        Maksimal 10 dokumen yang dapat diunggah.
                                     </div>
 
-                                    @error('dokumen_lpj.*')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['dokumen_lpj.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger mt-2"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                            {{-- Dokumen LPJ with PDF-only restrictions --}}
+                            
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Dokumen LPJ</label>
-                                    <p class="file-upload-hint">Unggah file PDF, masing-masing hingga 10MB</p>
+                                    <p class="file-upload-hint">Unggah file PDF saja, maksimal 10MB</p>
                                 </div>
                                 <div class="col-md-9">
-                                    @php
-                                        $dokumenLpjs = $kegiatanLainnya->dokumen_lpj_pdf ? [$kegiatanLainnya->dokumen_lpj_pdf] : [];
-                                    @endphp
-                                    @if(count($dokumenLpjs) > 0)
+                                    <?php
+                                        $dokumenLpj = $sekretariat->dokumen_lpj_pdf ?? null;
+                                    ?>
+                                    <?php if($dokumenLpj): ?>
                                         <div class="existing-files-section">
-                                            <h6><i class="fas fa-file-pdf me-2"></i>Dokumen LPJ yang sudah ada:</h6>
+                                            <h6><i class="fas fa-file-pdf me-2 text-danger"></i>Dokumen LPJ yang sudah ada:</h6>
                                             <div id="existing-dokumen-lpj-preview">
-                                                @if($kegiatanLainnya->dokumen_lpj_pdf)
-                                                    @php
-                                                        // Handle berbagai tipe data untuk dokumen
-                                                        $path = '';
-                                                        $originalName = '';
+                                                <?php
+                                                    // Handle berbagai tipe data untuk dokumen LPJ
+                                                    $path = '';
+                                                    $originalName = '';
 
-                                                        if (is_object($kegiatanLainnya->dokumen_lpj_pdf)) {
-                                                            $path = $kegiatanLainnya->dokumen_lpj_pdf->path;
-                                                            $originalName = $kegiatanLainnya->dokumen_lpj_pdf->original_name;
-                                                        } elseif (is_array($kegiatanLainnya->dokumen_lpj_pdf)) {
-                                                            $path = isset($kegiatanLainnya->dokumen_lpj_pdf['path']) ? $kegiatanLainnya->dokumen_lpj_pdf['path'] : '';
-                                                            $originalName = isset($kegiatanLainnya->dokumen_lpj_pdf['original_name']) ? $kegiatanLainnya->dokumen_lpj_pdf['original_name'] : (is_string($path) ? basename($path) : '');
-                                                        } elseif (is_string($kegiatanLainnya->dokumen_lpj_pdf)) {
-                                                            $path = $kegiatanLainnya->dokumen_lpj_pdf;
-                                                            $originalName = basename($path);
-                                                        }
+                                                    if (is_object($dokumenLpj)) {
+                                                        $path = $dokumenLpj->path;
+                                                        $originalName = $dokumenLpj->original_name ?? basename($path);
+                                                    } elseif (is_array($dokumenLpj)) {
+                                                        $path = isset($dokumenLpj['path']) ? $dokumenLpj['path'] : '';
+                                                        $originalName = isset($dokumenLpj['original_name']) ? $dokumenLpj['original_name'] : (is_string($path) ? basename($path) : '');
+                                                    } elseif (is_string($dokumenLpj)) {
+                                                        $path = $dokumenLpj;
+                                                        $originalName = basename($path);
+                                                    }
 
-                                                        // Pastikan kita punya nama file
-                                                        if (empty($originalName) && is_string($path)) {
-                                                            $originalName = basename($path);
-                                                        }
-
-                                                        $extension = '';
-                                                        if (!empty($originalName)) {
-                                                            $extension = pathinfo($originalName, PATHINFO_EXTENSION);
-                                                        }
-
-                                                        $icon = 'fas fa-file-pdf text-danger';
-                                                    @endphp
-                                                    <div class="file-preview-item existing" data-file-path="{{ $path }}">
-                                                        <div class="file-icon">
-                                                            <i class="{{ $icon }} fs-4"></i>
-                                                        </div>
-                                                        <div class="file-info">
-                                                            <div class="file-name">{{ $originalName }}</div>
-                                                            <div class="file-size">File yang ada</div>
-                                                        </div>
-                                                        <button type="button" class="remove-file"
-                                                                onclick="removeExistingFile(this, 'dokumenLpj', '{{ $path }}')">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                        <input type="hidden" name="existing_dokumen_lpj_pdf" value="{{ $path }}">
+                                                    // Pastikan kita punya nama file
+                                                    if (empty($originalName) && is_string($path)) {
+                                                        $originalName = basename($path);
+                                                    }
+                                                ?>
+                                                <div class="file-preview-item existing" data-file-path="<?php echo e($path); ?>">
+                                                    <div class="file-icon">
+                                                        <i class="fas fa-file-pdf text-danger fs-4"></i>
                                                     </div>
-                                                @endif
+                                                    <div class="file-info">
+                                                        <div class="file-name"><?php echo e($originalName); ?></div>
+                                                        <div class="file-size">File yang ada</div>
+                                                    </div>
+                                                    <button type="button" class="remove-file"
+                                                            onclick="removeExistingDokumenLpj(this, '<?php echo e($path); ?>')">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                    <input type="hidden" name="existing_dokumen_lpj_pdf" value="<?php echo e($path); ?>">
+                                                </div>
                                             </div>
                                         </div>
-                                    @endif
+                                    <?php endif; ?>
 
                                     <label for="dokumen_lpj_pdf" class="file-upload-wrapper">
                                         <input type="file" name="dokumen_lpj_pdf" id="dokumen_lpj_pdf"
-                                               class="@error('dokumen_lpj_pdf') is-invalid @enderror"
+                                               class="<?php $__errorArgs = ['dokumen_lpj_pdf'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                                accept=".pdf">
 
                                         <div class="d-flex align-items-center gap-12">
@@ -608,11 +695,17 @@
                                     </label>
 
                                     <div id="dokumenLpjPreviewContainer" class="preview-container" style="display: none;"></div>
-                                    <div id="dokumenLpjCounter" class="file-counter"></div>
 
-                                    @error('dokumen_lpj_pdf.*')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['dokumen_lpj_pdf'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger mt-2"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
@@ -622,12 +715,26 @@
                                 </div>
                                 <div class="col-md-9">
                                     <textarea name="keterangan_tambahan" id="keterangan_tambahan"
-                                        class="form-control @error('keterangan_tambahan') is-invalid @enderror"
+                                        class="form-control <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                         placeholder="Masukkan keterangan tambahan (opsional)"
-                                        rows="4">{{ old('keterangan_tambahan', $kegiatanLainnya->keterangan_tambahan) }}</textarea>
-                                    @error('keterangan_tambahan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        rows="4"><?php echo e(old('keterangan_tambahan', $sekretariat->keterangan_tambahan)); ?></textarea>
+                                    <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
@@ -636,7 +743,7 @@
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-save me-2"></i>Simpan
                             </button>
-                            <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}"
+                            <a href="<?php echo e(route('admin.laporan-lpj.sekretariat.index')); ?>"
                                class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>
@@ -655,23 +762,20 @@
 
             let selectedFotoFiles = [];
             let selectedDokumenFiles = [];
-            let selectedDokumenLpjFiles = [];
+            let selectedDokumenLpjFile = null;
 
             // Initialize existing files from PHP
             let existingFotoFiles = [];
             let existingDokumenFiles = [];
-            let existingDokumenLpjFiles = [];
 
             // Safely parse existing files
             try {
-                existingFotoFiles = @json($kegiatanLainnya->foto_jurnal ? (is_array($kegiatanLainnya->foto_jurnal) ? $kegiatanLainnya->foto_jurnal : [$kegiatanLainnya->foto_jurnal]) : []);
-                existingDokumenFiles = @json($kegiatanLainnya->dokumen_lpj ? (is_array($kegiatanLainnya->dokumen_lpj) ? $kegiatanLainnya->dokumen_lpj : [$kegiatanLainnya->dokumen_lpj]) : []);
-                existingDokumenLpjFiles = @json($kegiatanLainnya->dokumen_lpj_pdf ?? null);
+                existingFotoFiles = <?php echo json_encode($sekretariat->foto_jurnal ? (is_array($sekretariat->foto_jurnal) ? $sekretariat->foto_jurnal : [$sekretariat->foto_jurnal]) : [], 15, 512) ?>;
+                existingDokumenFiles = <?php echo json_encode($sekretariat->dokumen_lpj ? (is_array($sekretariat->dokumen_lpj) ? $sekretariat->dokumen_lpj : [$sekretariat->dokumen_lpj]) : [], 15, 512) ?>;
             } catch (e) {
                 console.error('Error parsing existing files:', e);
                 existingFotoFiles = [];
                 existingDokumenFiles = [];
-                existingDokumenLpjFiles = [];
             }
 
             // Currency formatting
@@ -697,12 +801,11 @@
                 }
             });
 
-            // Enhanced File Upload Handlers
+            // File upload handlers
             const fotoInput = document.getElementById('foto_jurnal');
             const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
             const fotoFileNameDisplay = document.getElementById('foto-file-name-display');
             const fotoCounter = document.getElementById('fotoCounter');
-            const fotoMaxWarning = document.getElementById('fotoMaxWarning');
 
             const dokumenInput = document.getElementById('dokumen_lpj');
             const dokumenPreviewContainer = document.getElementById('dokumenPreviewContainer');
@@ -711,9 +814,8 @@
             const dokumenMaxWarning = document.getElementById('dokumenMaxWarning');
 
             const dokumenLpjInput = document.getElementById('dokumen_lpj_pdf');
-            const dokumenLpjPreviewContainer = document.getElementById('dokumenLpjPreviewContainer');
             const dokumenLpjFileNameDisplay = document.getElementById('dokumen-lpj-file-name-display');
-            const dokumenLpjCounter = document.getElementById('dokumenLpjCounter');
+            const dokumenLpjPreviewContainer = document.getElementById('dokumenLpjPreviewContainer');
 
             fotoInput.addEventListener('change', function() {
                 handleFileSelection(this.files, 'foto');
@@ -738,7 +840,7 @@
                         return;
                     }
 
-                    selectedDokumenLpjFiles = [file];
+                    selectedDokumenLpjFile = file;
                     dokumenLpjFileNameDisplay.textContent = file.name;
                     dokumenLpjPreviewContainer.style.display = 'block';
 
@@ -752,14 +854,11 @@
                                 <div class="file-name">${file.name}</div>
                                 <div class="file-size">${(file.size / 1024).toFixed(1)} KB</div>
                             </div>
-                            <button type="button" class="remove-file" onclick="removeDokumenLpjFile()">
-                                <i class="fas fa-times"></i>
-                            </button>
                         </div>
                     `;
                     dokumenLpjPreviewContainer.innerHTML = previewHTML;
                 } else {
-                    selectedDokumenLpjFiles = [];
+                    selectedDokumenLpjFile = null;
                     dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
                     dokumenLpjPreviewContainer.style.display = 'none';
                     dokumenLpjPreviewContainer.innerHTML = '';
@@ -768,20 +867,10 @@
 
             function handleFileSelection(files, type) {
                 const isPhoto = type === 'foto';
-                const isDokumenLpj = type === 'dokumenLpj';
-                let currentFiles = [];
-                
-                if (isPhoto) {
-                    currentFiles = selectedFotoFiles;
-                } else if (isDokumenLpj) {
-                    currentFiles = selectedDokumenLpjFiles;
-                } else {
-                    currentFiles = selectedDokumenFiles;
-                }
-                
-                const input = isPhoto ? fotoInput : (isDokumenLpj ? dokumenLpjInput : dokumenInput);
+                const currentFiles = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+                const input = isPhoto ? fotoInput : dokumenInput;
 
-                const existingFiles = isPhoto ? existingFotoFiles : (isDokumenLpj ? existingDokumenLpjFiles : existingDokumenFiles);
+                const existingFiles = isPhoto ? existingFotoFiles : existingDokumenFiles;
                 const existingFilesCount = existingFiles.length;
 
                 const newFiles = Array.from(files).filter(file => {
@@ -795,22 +884,13 @@
                         return false;
                     }
 
-                    if (isDokumenLpj && !file.name.toLowerCase().endsWith('.pdf')) {
-                        alert(`File "${file.name}" bukan file PDF yang valid.`);
-                        return false;
-                    }
-
                     return true;
                 });
 
-                
-
                 if (isPhoto) {
-                    selectedFotoFiles = [...currentFiles, ...newFiles];
-                } else if (isDokumenLpj) {
-                    selectedDokumenLpjFiles = [...currentFiles, ...newFiles];
+                    selectedFotoFiles.push(...newFiles);
                 } else {
-                    selectedDokumenFiles = [...currentFiles, ...newFiles];
+                    selectedDokumenFiles.push(...newFiles);
                 }
 
                 updateFilePreview(type);
@@ -819,54 +899,29 @@
 
             function updateFilePreview(type) {
                 const isPhoto = type === 'foto';
-                const isDokumenLpj = type === 'dokumenLpj';
-                let files = [];
-                
-                if (isPhoto) {
-                    files = selectedFotoFiles;
-                } else if (isDokumenLpj) {
-                    files = selectedDokumenLpjFiles;
-                } else {
-                    files = selectedDokumenFiles;
-                }
-                
-                const container = isPhoto ? fotoPreviewContainer : (isDokumenLpj ? dokumenLpjPreviewContainer : dokumenPreviewContainer);
-                const counter = isPhoto ? fotoCounter : (isDokumenLpj ? dokumenLpjCounter : dokumenCounter);
-                const maxWarning = isPhoto ? fotoMaxWarning : (isDokumenLpj ? null : dokumenMaxWarning);
-                const nameDisplay = isPhoto ? fotoFileNameDisplay : (isDokumenLpj ? dokumenLpjFileNameDisplay : dokumenFileNameDisplay);
+                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+                const container = isPhoto ? fotoPreviewContainer : dokumenPreviewContainer;
+                const counter = isPhoto ? fotoCounter : dokumenCounter;
+                const nameDisplay = isPhoto ? fotoFileNameDisplay : dokumenFileNameDisplay;
 
-                const existingFiles = isPhoto ? existingFotoFiles : (isDokumenLpj ? existingDokumenLpjFiles : existingDokumenFiles);
+                const existingFiles = isPhoto ? existingFotoFiles : existingDokumenFiles;
                 const existingFilesCount = existingFiles.length;
 
                 const totalFiles = existingFilesCount + files.length;
 
                 if (files.length === 0) {
                     container.style.display = 'none';
-                    counter.textContent = totalFiles > 0 ? (isPhoto || isDokumenLpj ? `${totalFiles} file` : `${totalFiles}/${MAX_FILES} file`) : '';
-                    if (maxWarning) maxWarning.style.display = 'none';
+                    counter.textContent = totalFiles > 0 ? `${totalFiles} file` : '';
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto baru di sini, atau klik untuk mengunggah.' :
-                        (isDokumenLpj ? 
-                            'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.' :
-                            'Seret dan lepas dokumen baru di sini, atau klik untuk mengunggah.');
+                        'Seret dan lepas dokumen baru di sini, atau klik untuk mengunggah.';
                     return;
                 }
 
                 container.style.display = 'block';
                 nameDisplay.textContent = `${files.length} file baru dipilih`;
-                
-                if (!isPhoto) {
-                    if (isDokumenLpj) {
-                        counter.textContent = `${totalFiles} file`;
-                    } else {
-                        counter.textContent = `${totalFiles} file`;
-                    }
-                } else {
-                    // Hilangkan batasan jumlah upload foto jurnal
-                    counter.textContent = `${totalFiles} file`;
-                }
+                counter.textContent = `${totalFiles} file`;
 
-                // Generate preview HTML
                 let previewHTML = '';
                 files.forEach((file, index) => {
                     let fileSize = (file.size / 1024).toFixed(1) + ' KB';
@@ -883,7 +938,7 @@
                                     <div class="file-name">${file.name}</div>
                                     <div class="file-size">${fileSize}</div>
                                 </div>
-                                <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
+                                <button type="button" class="remove-file" onclick="removeNewFile(${index}, '${type}')">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -902,7 +957,7 @@
                                     <div class="file-name">${file.name}</div>
                                     <div class="file-size">${fileSize}</div>
                                 </div>
-                                <button type="button" class="remove-file" onclick="removeFile(${index}, '${type}')">
+                                <button type="button" class="remove-file" onclick="removeNewFile(${index}, '${type}')">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -915,19 +970,8 @@
 
             function updateFileInput(type) {
                 const isPhoto = type === 'foto';
-                const isDokumenLpj = type === 'dokumenLpj';
-                let files = [];
-                
-                if (isPhoto) {
-                    files = selectedFotoFiles;
-                } else if (isDokumenLpj) {
-                    // For dokumen_lpj_pdf, it's a single file, not an array
-                    return;
-                } else {
-                    files = selectedDokumenFiles;
-                }
-                
-                const input = isPhoto ? fotoInput : (isDokumenLpj ? dokumenLpjInput : dokumenInput);
+                const files = isPhoto ? selectedFotoFiles : selectedDokumenFiles;
+                const input = isPhoto ? fotoInput : dokumenInput;
 
                 const dt = new DataTransfer();
                 files.forEach(file => {
@@ -936,29 +980,11 @@
                 input.files = dt.files;
             }
 
-            // Global function to remove file
-            window.removeFile = function(index, type) {
+            window.removeNewFile = function(index, type) {
                 const isPhoto = type === 'foto';
-                const isDokumenLpj = type === 'dokumenLpj';
 
                 if (isPhoto) {
-                    // Revoke object URL to prevent memory leaks for images
-                    const file = selectedFotoFiles[index];
-                    if (file) {
-                        const imgElements = document.querySelectorAll('.preview-image');
-                        imgElements.forEach(img => {
-                            if (img.src && img.src.startsWith('blob:')) {
-                                URL.revokeObjectURL(img.src);
-                            }
-                        });
-                    }
                     selectedFotoFiles.splice(index, 1);
-                } else if (isDokumenLpj) {
-                    selectedDokumenLpjFiles = [];
-                    dokumenLpjPreviewContainer.style.display = 'none';
-                    dokumenLpjPreviewContainer.innerHTML = '';
-                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
-                    document.getElementById('dokumen_lpj_pdf').value = '';
                 } else {
                     selectedDokumenFiles.splice(index, 1);
                 }
@@ -967,76 +993,50 @@
                 updateFileInput(type);
             };
 
-            // Global function to remove dokumen LPJ file specifically
-            window.removeDokumenLpjFile = function() {
-                selectedDokumenLpjFiles = [];
-                dokumenLpjPreviewContainer.style.display = 'none';
-                dokumenLpjPreviewContainer.innerHTML = '';
-                dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
-                document.getElementById('dokumen_lpj_pdf').value = '';
-                
-                const totalDokumenLpjs = (existingDokumenLpjFiles ? 1 : 0) + selectedDokumenLpjFiles.length;
-                dokumenLpjCounter.textContent = totalDokumenLpjs > 0 ? `${totalDokumenLpjs} file` : '';
-            };
-
-            // Global function to remove existing file
             window.removeExistingFile = function(button, type, filePath) {
                 if (confirm('Apakah Anda yakin ingin menghapus file ini? File akan dihapus permanen setelah disimpan.')) {
                     const item = button.closest('.file-preview-item');
-                    // For dokumenLpj, we need to handle it differently since it's a single file
-                    if (type === 'dokumenLpj') {
-                        // Remove the hidden input for dokumenLpj
-                        const hiddenInput = item.querySelector('input[type=hidden]');
-                        if (hiddenInput) {
-                            hiddenInput.remove();
-                        }
-                        // Set existingDokumenLpjFiles to null to indicate deletion
-                        existingDokumenLpjFiles = null;
-                    } else {
-                        // Change input name to mark for deletion for other file types
-                        const hiddenInput = item.querySelector('input[type=hidden]');
-                        if (hiddenInput) {
-                            hiddenInput.name = `deleted_${type}s`;
-                        }
-                        
-                        const isPhoto = type === 'foto';
-                        
-                        if (isPhoto) {
-                            const index = existingFotoFiles.findIndex(f => {
-                                if (typeof f === 'string') return f === filePath;
-                                if (typeof f === 'object' && f !== null) return f.path === filePath;
-                                return false;
-                            });
-                            if (index > -1) {
-                                existingFotoFiles.splice(index, 1);
-                            }
-                        } else {
-                            const index = existingDokumenFiles.findIndex(d => {
-                                if (typeof d === 'string') return d === filePath;
-                                if (typeof d === 'object' && d !== null) return d.path === filePath;
-                                return false;
-                            });
-                            if (index > -1) {
-                                existingDokumenFiles.splice(index, 1);
-                            }
-                        }
+                    // Change input name to mark for deletion
+                    const hiddenInput = item.querySelector('input[type=hidden]');
+                    if (hiddenInput) {
+                        hiddenInput.name = `deleted_${type}s[]`;
                     }
                     item.style.display = 'none';
-                    updateFileCounters();
+
+                    const isPhoto = type === 'foto';
+                    if (isPhoto) {
+                        const index = existingFotoFiles.findIndex(f => {
+                            if (typeof f === 'string') return f === filePath;
+                            if (typeof f === 'object' && f !== null) return f.path === filePath;
+                            return false;
+                        });
+                        if (index > -1) {
+                            existingFotoFiles.splice(index, 1);
+                        }
+                    } else {
+                        const index = existingDokumenFiles.findIndex(d => {
+                            if (typeof d === 'string') return d === filePath;
+                            if (typeof d === 'object' && d !== null) return d.path === filePath;
+                            return false;
+                        });
+                        if (index > -1) {
+                            existingDokumenFiles.splice(index, 1);
+                        }
+                    }
                 }
             };
 
-            function updateFileCounters() {
-                const totalFotos = existingFotoFiles.length + selectedFotoFiles.length;
-                fotoCounter.textContent = totalFotos > 0 ? `${totalFotos} file` : '';
-
-                const totalDokumens = existingDokumenFiles.length + selectedDokumenFiles.length;
-                dokumenCounter.textContent = totalDokumens > 0 ? `${totalDokumens} file` : '';
-                dokumenMaxWarning.style.display = 'none';
-
-                const totalDokumenLpjs = (existingDokumenLpjFiles ? 1 : 0) + (selectedDokumenLpjFiles.length > 0 ? 1 : 0);
-                dokumenLpjCounter.textContent = totalDokumenLpjs > 0 ? `${totalDokumenLpjs} file` : '';
-            }
+            window.removeExistingDokumenLpj = function(button, filePath) {
+                if (confirm('Apakah Anda yakin ingin menghapus dokumen LPJ ini? File akan dihapus permanen setelah disimpan.')) {
+                    const item = button.closest('.file-preview-item');
+                    // Change input name to mark for deletion
+                    const hiddenInput = item.querySelector('input[type=hidden]');
+                    if (hiddenInput) {
+                        hiddenInput.name = 'deleted_dokumen_lpj_pdf';
+                    }
+                    item.style.display = 'none';
+                }
+            };
 
             function getFileIcon(extension) {
                 const icons = {
@@ -1064,7 +1064,7 @@
                 return colors[extension] || 'text-muted';
             }
 
-            // Enhanced Drag and Drop functionality
+            // Drag and drop functionality
             const fileUploadWrappers = document.querySelectorAll('.file-upload-wrapper');
 
             fileUploadWrappers.forEach(wrapper => {
@@ -1083,29 +1083,46 @@
 
                     const input = wrapper.querySelector('input[type="file"]');
                     if (e.dataTransfer.files.length && input) {
-                        const type = input.id === 'foto_jurnal' ? 'foto' : (input.id === 'dokumen_lpj_pdf' ? 'dokumenLpj' : 'dokumen');
+                        const type = input.id === 'foto_jurnal' ? 'foto' : 'dokumen';
                         handleFileSelection(e.dataTransfer.files, type);
                     }
                 });
             });
 
-            updateFileCounters();
-
             // Form submission
-            document.getElementById('kegiatanLainnyaForm').addEventListener('submit', function(e) {
-                // Convert currency values back to numbers
+            document.getElementById('lpjForm').addEventListener('submit', function(e) {
                 currencyInputs.forEach(inputId => {
                     const input = document.getElementById(inputId);
                     if (input && input.value) {
-                        input.value = input.value.replace(/[^\d]/g, '');
+                        // Remove all non-digit characters but preserve the actual value
+                        const numericValue = input.value.replace(/[^\d]/g, '');
+                        input.value = numericValue;
                     }
                 });
             });
+
+            // Volume and price calculation
+            const volumeInput = document.getElementById('volume');
+            const unitPriceInput = document.getElementById('jumlah_harga_satuan');
+
+            if (volumeInput && unitPriceInput) {
+                volumeInput.addEventListener('input', calculateTotalPrice);
+                unitPriceInput.addEventListener('input', function() {
+                    setTimeout(calculateTotalPrice, 10);
+                });
+
+                volumeInput.addEventListener('blur', calculateTotalPrice);
+                unitPriceInput.addEventListener('blur', calculateTotalPrice);
+
+                calculateTotalPrice();
+            }
         });
 
-        // Field Total Anggaran diinput manual sesuai permintaan
-        document.addEventListener('DOMContentLoaded', function() {
-            // Tidak ada kalkulasi otomatis karena field Total Anggaran diinput manual
-        });
+        function calculateTotalPrice() {
+            // Kalkulasi otomatis dinonaktifkan, total anggaran diisi manual
+            return;
+        }
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/sekretariat/edit.blade.php ENDPATH**/ ?>

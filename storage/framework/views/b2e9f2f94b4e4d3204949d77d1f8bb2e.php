@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Tambah Laporan Kegiatan Lainnya'); ?>
+<?php $__env->startSection('mainSection', 'Laporan Pertanggungjawaban'); ?>
+<?php $__env->startSection('subSection', 'Kegiatan Lainnya'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index')); ?>
+<?php $__env->startSection('currentSection', 'Tambah Laporan'); ?>
 
-@section('pageTitle', 'Tambah Laporan Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
-@section('subSection', 'Kegiatan Lainnya')
-@section('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index'))
-@section('currentSection', 'Tambah Laporan')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <style>
         body {
             background-color: #f5f5f5 !important;
@@ -228,11 +226,11 @@
                     <div class="card-body p-4 p-md-5">
                         <h3 class="fw-bold mb-4">Tambah Laporan Baru Kegiatan Lainnya</h3>
 
-                        <form action="{{ route('admin.laporan-lpj.kegiatan-lainnya.store') }}"
+                        <form action="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.store')); ?>"
                               method="POST"
                               id="kegiatanLainnyaForm"
                               enctype="multipart/form-data">
-                            @csrf
+                            <?php echo csrf_field(); ?>
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
@@ -242,12 +240,26 @@
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="nama_program_kegiatan" id="nama_program_kegiatan"
-                                        class="form-control @error('nama_program_kegiatan') is-invalid @enderror"
+                                        class="form-control <?php $__errorArgs = ['nama_program_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                         placeholder="Masukkan nama program & kegiatan"
-                                        value="{{ old('nama_program_kegiatan') }}" required>
-                                    @error('nama_program_kegiatan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        value="<?php echo e(old('nama_program_kegiatan')); ?>" required>
+                                    <?php $__errorArgs = ['nama_program_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
@@ -259,16 +271,30 @@
                                 </div>
                                 <div class="col-md-9">
                                     <input type="text" name="jenis_kegiatan" id="jenis_kegiatan"
-                                        class="form-control @error('jenis_kegiatan') is-invalid @enderror"
+                                        class="form-control <?php $__errorArgs = ['jenis_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                         placeholder="Masukkan nama kegiatan"
-                                        value="{{ old('jenis_kegiatan') }}" required>
-                                    @error('jenis_kegiatan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        value="<?php echo e(old('jenis_kegiatan')); ?>" required>
+                                    <?php $__errorArgs = ['jenis_kegiatan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                            {{-- HIDDEN FIELDS --}}
+                            
                             <div style="display: none;">
                                 <div class="row align-items-center mb-3">
                                     <div class="col-md-3">
@@ -276,12 +302,26 @@
                                     </div>
                                     <div class="col-md-9">
                                         <input type="text" name="volume" id="volume"
-                                            class="form-control @error('volume') is-invalid @enderror"
+                                            class="form-control <?php $__errorArgs = ['volume'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             placeholder="Masukkan volume (misal: 5 unit,)"
-                                            value="{{ old('volume') }}">
-                                        @error('volume')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                            value="<?php echo e(old('volume')); ?>">
+                                        <?php $__errorArgs = ['volume'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </div>
 
@@ -293,13 +333,27 @@
                                         <div class="currency-input">
                                             <input type="tel" name="jumlah_harga_satuan" id="jumlah_harga_satuan"
                                                 inputmode="numeric"
-                                                class="form-control @error('jumlah_harga_satuan') is-invalid @enderror"
+                                                class="form-control <?php $__errorArgs = ['jumlah_harga_satuan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                                 placeholder="0"
-                                                value="{{ old('jumlah_harga_satuan') }}">
+                                                value="<?php echo e(old('jumlah_harga_satuan')); ?>">
                                         </div>
-                                        @error('jumlah_harga_satuan')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                        <?php $__errorArgs = ['jumlah_harga_satuan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </div>
                             </div>
@@ -312,13 +366,27 @@
                                     <div class="currency-input">
                                         <input type="tel" name="jumlah_harga" id="jumlah_harga"
                                             inputmode="numeric"
-                                            class="form-control @error('jumlah_harga') is-invalid @enderror"
+                                            class="form-control <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             placeholder="0"
-                                            value="{{ old('jumlah_harga') }}">
+                                            value="<?php echo e(old('jumlah_harga')); ?>">
                                     </div>
-                                    @error('jumlah_harga')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['jumlah_harga'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
@@ -330,7 +398,14 @@
                                 <div class="col-md-9">
                                     <label for="foto_jurnal" class="file-upload-wrapper">
                                         <input type="file" name="foto_jurnal[]" id="foto_jurnal"
-                                            class="@error('foto_jurnal.*') is-invalid @enderror"
+                                            class="<?php $__errorArgs = ['foto_jurnal.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             accept="image/*" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
@@ -348,13 +423,20 @@
                                     <div id="fotoPreviewContainer" class="preview-container" style="display: none;"></div>
                                     <div id="fotoCounter" class="file-counter"></div>
 
-                                    @error('foto_jurnal.*')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['foto_jurnal.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger mt-2"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                            {{-- Enhanced Dokumen Pendukung Upload --}}
+                            
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Dokumen Pendukung</label>
@@ -363,7 +445,14 @@
                                 <div class="col-md-9">
                                     <label for="dokumen_lpj" class="file-upload-wrapper">
                                         <input type="file" name="dokumen_lpj[]" id="dokumen_lpj"
-                                            class="@error('dokumen_lpj.*') is-invalid @enderror"
+                                            class="<?php $__errorArgs = ['dokumen_lpj.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             accept=".pdf,.doc,.docx,.xls,.xlsx" multiple>
 
                                         <div class="d-flex align-items-center gap-12">
@@ -383,13 +472,20 @@
                                     <div id="dokumenMaxWarning" class="max-files-warning" style="display: none;">
                                     </div>
 
-                                    @error('dokumen_lpj.*')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['dokumen_lpj.*'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger mt-2"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
-                            {{-- Dokumen LPJ Upload (PDF Only) --}}
+                            
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
                                     <label class="form-label">Dokumen LPJ</label>
@@ -398,7 +494,14 @@
                                 <div class="col-md-9">
                                     <label for="dokumen_lpj_pdf" class="file-upload-wrapper">
                                         <input type="file" name="dokumen_lpj_pdf" id="dokumen_lpj_pdf"
-                                            class="@error('dokumen_lpj_pdf') is-invalid @enderror"
+                                            class="<?php $__errorArgs = ['dokumen_lpj_pdf'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                             accept=".pdf">
 
                                         <div class="d-flex align-items-center gap-12">
@@ -415,9 +518,16 @@
 
                                     <div id="dokumenLpjPreviewContainer" class="preview-container" style="display: none;"></div>
 
-                                    @error('dokumen_lpj_pdf')
-                                        <div class="text-danger mt-2">{{ $message }}</div>
-                                    @enderror
+                                    <?php $__errorArgs = ['dokumen_lpj_pdf'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="text-danger mt-2"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
 
@@ -427,12 +537,26 @@
                                 </div>
                                 <div class="col-md-9">
                                     <textarea name="keterangan_tambahan" id="keterangan_tambahan"
-                                        class="form-control @error('keterangan_tambahan') is-invalid @enderror"
+                                        class="form-control <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                                         placeholder="Masukkan keterangan tambahan (opsional)"
-                                        rows="4">{{ old('keterangan_tambahan') }}</textarea>
-                                    @error('keterangan_tambahan')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        rows="4"><?php echo e(old('keterangan_tambahan')); ?></textarea>
+                                    <?php $__errorArgs = ['keterangan_tambahan'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                 </div>
                             </div>
                      <div class="row">
@@ -440,7 +564,7 @@
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-save me-2"></i>Simpan
                             </button>
-                            <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.index') }}"
+                            <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.index')); ?>"
                                class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>
@@ -452,9 +576,9 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -771,4 +895,6 @@
             return;
         }
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/kegiatan-lainnya/create.blade.php ENDPATH**/ ?>
