@@ -1185,9 +1185,19 @@
 
         // Status indicator & Button Logic
         if (statusIcon && ajukanBtn) {
-            const pengajuan = data.pengajuan && data.pengajuan.length > 0 ? data.pengajuan.find(p => p.status === 'disetujui') : null;
-            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }} && pengajuan && pengajuan.token > 0;
-            const canModify = {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }} || isModifiable;
+            // Check if user has direct permission to modify (superadmin)
+            const hasDirectPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }};
+            
+            // Check if there's an approved pengajuan for the current user
+            const approvedPengajuan = data.pengajuan && data.pengajuan.length > 0 ? 
+                data.pengajuan.find(p => p.user_id == {{ auth()->id() }} && p.status === 'disetujui') : null;
+                
+            // Check if the current user is the one allowed to modify and has approved pengajuan
+            const hasApprovedPengajuan = data.modifiable_by_user_id == {{ auth()->id() }} && approvedPengajuan;
+            
+            // Determine if can modify based on permissions or approved pengajuan
+            // After approval, user should be able to modify regardless of token (unless tokens are specifically meant to limit edits)
+            const canModify = hasDirectPermission || hasApprovedPengajuan;
 
             if (canModify) {
                 statusIcon.innerHTML = 'Terbuka';

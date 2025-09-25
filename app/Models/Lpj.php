@@ -131,7 +131,7 @@ class Lpj extends Model
 
     public function pengajuan()
     {
-        return $this->hasOne(Pengajuan::class);
+        return $this->hasMany(Pengajuan::class, 'lpj_id');
     }
 
     /**

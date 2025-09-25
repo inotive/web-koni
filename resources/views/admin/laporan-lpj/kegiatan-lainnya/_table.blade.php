@@ -145,8 +145,14 @@
 
                                     @php
                                         $pengajuan = null;
-                                        if (method_exists($kegiatan, 'pengajuan')) {
-                                            $pengajuan = $kegiatan->pengajuan()->where('status', 'disetujui')->orderBy('approved_at', 'desc')->first();
+                                        if (isset($kegiatan->pengajuan) && $kegiatan->pengajuan) {
+                                            // If pengajuan is a collection (hasMany), we need to filter
+                                            if (is_iterable($kegiatan->pengajuan)) {
+                                                $pengajuan = collect($kegiatan->pengajuan)->firstWhere('status', 'disetujui');
+                                            } else {
+                                                // If it's a single object (hasOne), use it directly
+                                                $pengajuan = $kegiatan->pengajuan;
+                                            }
                                         }
 
                                         $isModifiable = isset($kegiatan->modifiable_by_user_id) &&

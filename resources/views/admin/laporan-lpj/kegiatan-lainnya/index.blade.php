@@ -1173,7 +1173,6 @@
 
     // REPLACED FUNCTION
     window.showDetailModal = function(data) {
-        console.log('showDetailModal called with data:', data);
         const modalBody = document.getElementById('detailModalBody');
         const statusIcon = document.getElementById('statusIcon');
         const exportBtn = document.getElementById('export-pdf-btn');
@@ -1186,14 +1185,37 @@
 
         // Status indicator & Button Logic
         if (statusIcon && ajukanBtn) {
-            const pengajuan = data.pengajuan && data.pengajuan.length > 0 ? data.pengajuan.find(p => p.status === 'disetujui') : null;
-            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }} && pengajuan && pengajuan.token > 0;
-            const canModify = {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }} || isModifiable;
+            // Check if user has direct permission to modify (superadmin)
+            const hasDirectPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }};
+            
+            // Check if there's an approved pengajuan for the current user
+            let approvedPengajuan = null;
+            if (data.pengajuan && Array.isArray(data.pengajuan)) {
+                // Filter for pengajuan that are approved, belong to current user, and have tokens remaining
+                approvedPengajuan = data.pengajuan.find(p => 
+                    p.user_id == {{ auth()->id() }} && 
+                    p.status === 'disetujui' && 
+                    p.token > 0
+                );
+            } else if (data.pengajuan) {
+                // If pengajuan is a single object (hasOne relationship)
+                if (data.pengajuan.user_id == {{ auth()->id() }} && 
+                    data.pengajuan.status === 'disetujui' && 
+                    data.pengajuan.token > 0) {
+                    approvedPengajuan = data.pengajuan;
+                }
+            }
+            
+            // Check if the current user is the one allowed to modify and has approved pengajuan
+            const hasApprovedPengajuan = data.modifiable_by_user_id == {{ auth()->id() }} && approvedPengajuan;
+            
+            // Determine if can modify based on permissions or approved pengajuan
+            const canModify = hasDirectPermission || hasApprovedPengajuan;
 
             if (canModify) {
                 statusIcon.innerHTML = 'Terbuka';
                 statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7';
-                ajukanBtn.style.display = 'none'; // Hide "Ajukan Perubahan"
+                ajukanBtn.style.display = 'none'; // Hide "Ajukan Perubahan" when approved
                 exportBtn.style.display = ''; // Show "Export"
             } else {
                 statusIcon.innerHTML = 'Terkunci';
@@ -1326,16 +1348,7 @@
             </div>
         `;
 
-        // Show the modal using Bootstrap modal methods
-        const $modal = $('#detailModal');
-        if ($modal.length) {
-            console.log('Showing modal with data:', data);
-            // Initialize and show the modal using Bootstrap 5
-            const modalInstance = new bootstrap.Modal(document.getElementById('detailModal'));
-            modalInstance.show();
-        } else {
-            console.error('Modal element not found');
-        }
+        new bootstrap.Modal(document.getElementById('detailModal')).show();
     };
 
 

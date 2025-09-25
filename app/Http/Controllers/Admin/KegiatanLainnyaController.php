@@ -28,7 +28,8 @@ class KegiatanLainnyaController extends Controller
     // Cari atau buat parent kategori kegiatan-lainnya
     $parentCategory = $this->getOrCreateParentCategory();
 
-    $query = Lpj::where('parent_id', $parentCategory->id);
+    $query = Lpj::with('pengajuan') // Load the pengajuan relationship
+             ->where('parent_id', $parentCategory->id);
 
     // Filter berdasarkan jenis kegiatan
     if ($request->jenis_kegiatan_filter) {
@@ -197,14 +198,16 @@ class KegiatanLainnyaController extends Controller
 
     public function show($id)
 {
-    $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+    $kegiatanLainnya = Lpj::with('pengajuan') // Load the pengajuan relationship
+                      ->where('parent_id', $this->getOrCreateParentCategory()->id)
                       ->findOrFail($id);
     return view('admin.laporan-lpj.kegiatan-lainnya.show', compact('kegiatanLainnya'));
 }
 
     public function edit($id)
     {
-        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::with('pengajuan') // Load the pengajuan relationship
+                          ->where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
         
         // Check if user is superadmin OR has been granted modification access
@@ -233,7 +236,8 @@ class KegiatanLainnyaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::with('pengajuan') // Load the pengajuan relationship
+                          ->where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
         
         // Check if user is superadmin OR has been granted modification access
@@ -404,7 +408,8 @@ class KegiatanLainnyaController extends Controller
 
     public function destroy($id)
 {
-    $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+    $kegiatanLainnya = Lpj::with('pengajuan') // Load the pengajuan relationship
+                      ->where('parent_id', $this->getOrCreateParentCategory()->id)
                       ->findOrFail($id);
     
     // Check if user is superadmin OR has been granted modification access
@@ -487,7 +492,8 @@ class KegiatanLainnyaController extends Controller
 
     public function removeFile(Request $request, $id)
     {
-        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::with('pengajuan') // Load the pengajuan relationship
+                          ->where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
         
         // Check if user is superadmin OR has been granted modification access
@@ -613,7 +619,8 @@ class KegiatanLainnyaController extends Controller
     }
 
     try {
-        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::with('pengajuan') // Load the pengajuan relationship
+                          ->where('parent_id', $this->getOrCreateParentCategory()->id)
                           ->findOrFail($id);
 
         // Update status approval
@@ -642,7 +649,8 @@ class KegiatanLainnyaController extends Controller
 public function exportDetail($id)
 {
     try {
-        $kegiatanLainnya = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+        $kegiatanLainnya = Lpj::with('pengajuan') // Load the pengajuan relationship
+                              ->where('parent_id', $this->getOrCreateParentCategory()->id)
                               ->findOrFail($id);
 
         // Create initial PDF with letterhead and content
