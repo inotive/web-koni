@@ -1188,6 +1188,7 @@
             const pengajuan = data.pengajuan && data.pengajuan.length > 0 ? data.pengajuan.find(p => p.status === 'disetujui') : null;
             const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }} && pengajuan && pengajuan.token > 0;
             const canModify = {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }} || isModifiable;
+            const canRequestChange = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
 
             if (canModify) {
                 statusIcon.innerHTML = 'Terbuka';
@@ -1197,7 +1198,11 @@
             } else {
                 statusIcon.innerHTML = 'Terkunci';
                 statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7';
-                ajukanBtn.style.display = ''; // Show "Ajukan Perubahan"
+                if (canRequestChange) {
+                    ajukanBtn.style.display = ''; // Show "Ajukan Perubahan"
+                } else {
+                    ajukanBtn.style.display = 'none';
+                }
                 exportBtn.style.display = ''; // Export is always visible
             }
         }
