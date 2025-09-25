@@ -541,15 +541,6 @@
                                             <span>Tambah Laporan</span>
                                         </button> --}}
 
-                                        <div class="search-container">
-                                            <div class="position-relative bg-light">
-                                                <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
-                                                <input type="text" name="search" value="{{ request('search') }}"
-                                                    placeholder="Cari laporan..."
-                                                    class="form-control search-input border border-gray-500 py-2" />
-                                            </div>
-                                        </div>
-
                                         <div class="date-filter-container">
                                             <div class="date-filter-btn {{ request('date_from') || request('date_to') ? 'date-filter-active' : '' }}"
                                                 id="dateFilterBtn">
@@ -617,8 +608,17 @@
                                             </div>
                                         </div>
 
-                                        <div class="filter-dropdown">
-                                            <div class="filter-btn {{ request('filter_type') && request('filter_type') != 'all' ? 'filter-active' : '' }}"
+                                        <div class="search-container">
+                                            <div class="position-relative bg-light">
+                                                <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
+                                                <input type="text" name="search" value="{{ request('search') }}"
+                                                    placeholder="Cari laporan..."
+                                                    class="form-control search-input border border-gray-500 py-2" />
+                                            </div>
+                                        </div>
+
+                                        {{-- <div class="filter-dropdown"> --}}
+                                            {{-- <div class="filter-btn {{ request('filter_type') && request('filter_type') != 'all' ? 'filter-active' : '' }}"
                                                 id="filterBtn">
                                                 <span>
                                                     @if (request('filter_type') == 'pdf')
@@ -676,7 +676,7 @@
                                                     <span class="filter-count">{{ $fileCounts['other'] ?? 0 }}</span>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <input type="hidden" name="filter_type" id="filter_type_input"
                                             value="{{ request('filter_type', 'all') }}">
