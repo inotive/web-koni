@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <style>
        @page {
-            margin: 1cm 1.5cm 1.5cm 1.5cm;
+            margin: 4cm 1.5cm 1.5cm 1.5cm; /* Increased top margin for header */
         }
 
         body {
@@ -17,15 +17,19 @@
             color: #333;
         }
 
-        /* --- HEADER IMAGE --- */
-        .letterhead {
+        /* --- HEADER --- */
+        header {
+            position: fixed;
+            top: -3.5cm;
+            left: 0cm;
+            right: 0cm;
+            height: 3cm;
             text-align: center;
-            margin-bottom: 20px;
         }
 
-        .letterhead img {
+        header img {
             width: 100%;
-            max-height: 200px;  /* adjust for PDF */
+            max-height: 3cm;
             object-fit: contain;
         }
 
@@ -84,6 +88,7 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 15px;
+            page-break-inside: avoid; /* Try to avoid breaking table across pages */
         }
 
         .photo-td {
@@ -144,84 +149,80 @@
     </style>
 </head>
 <body>
-    <!-- HEADER IMAGE -->
-    <div class="letterhead">
-        @php
-            $imagePath = public_path('assets/img/kob-nobg.png');
-            $imageData = base64_encode(file_get_contents($imagePath));
-            $imageSrc = 'data:image/png;base64,' . $imageData;
-        @endphp
-        <img src="{{ $imageSrc }}" alt="KONI Letterhead">
-    </div>
+    <header>
+        <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
+    </header>
 
-    <!-- MAIN CONTENT -->
-    <div class="content">
-        <h3 class="section-title">Detail Program dan Kegiatan</h3>
-        <table class="info-table">
-            <tr>
-                <th>Program</th>
-                <td>{{ $sekretariat->nama_program }}</td>
-            </tr>
-            <tr>
-                <th>Kegiatan</th>
-                <td>{{ $sekretariat->nama_kegiatan }}</td>
-            </tr>
-            <tr>
-                <th>Total Anggaran</th>
-                <td class="amount">Rp {{ number_format($sekretariat->jumlah_harga, 2, ',', '.') }}</td>
-            </tr>
-            @if($sekretariat->tanggal_kegiatan)
-            <tr>
-                <th>Tanggal Kegiatan</th>
-                <td>{{ \Carbon\Carbon::parse($sekretariat->tanggal_kegiatan)->format('d F Y') }}</td>
-            </tr>
-            @endif
-            @if($sekretariat->lokasi_kegiatan)
-            <tr>
-                <th>Lokasi</th>
-                <td>{{ $sekretariat->lokasi_kegiatan }}</td>
-            </tr>
-            @endif
-            @if($sekretariat->keterangan_tambahan)
-            <tr>
-                <th>Keterangan Tambahan</th>
-                <td>{{ $sekretariat->keterangan_tambahan }}</td>
-            </tr>
-            @endif
-        </table>
-
-        @if($sekretariat->foto_jurnal && count($sekretariat->foto_jurnal) > 0)
-            <h3 class="section-title">Dokumentasi Kegiatan</h3>
-            <table class="photo-table">
+    <main>
+        <!-- MAIN CONTENT -->
+        <div class="content">
+            <h3 class="section-title">Detail Program dan Kegiatan</h3>
+            <table class="info-table">
                 <tr>
-                    @foreach($sekretariat->foto_jurnal as $index => $foto)
-                        @if(is_array($foto))
-                            @php
-                                $path = $foto['path'] ?? '';
-                                $originalName = $foto['original_name'] ?? basename($path);
-                            @endphp
-                        @else
-                            @php
-                                $path = $foto;
-                                $originalName = basename($path);
-                            @endphp
-                        @endif
-                        
-                        @if($path && file_exists(storage_path('app/public/' . $path)))
-                            <td class="photo-td">
-                                <div class="photo-container">
-                                    <img src="{{ storage_path('app/public/' . $path) }}" alt="{{ $originalName }}">
-                                    <div class="photo-caption">{{ $originalName }}</div>
-                                </div>
-                            </td>
-                            @if(($index + 1) % 3 == 0)
-                                </tr><tr> <!-- Start new row every 3 images -->
-                            @endif
-                        @endif
-                    @endforeach
+                    <th>Program</th>
+                    <td>{{ $sekretariat->nama_program }}</td>
                 </tr>
+                <tr>
+                    <th>Kegiatan</th>
+                    <td>{{ $sekretariat->nama_kegiatan }}</td>
+                </tr>
+                <tr>
+                    <th>Total Anggaran</th>
+                    <td class="amount">Rp {{ number_format($sekretariat->jumlah_harga, 2, ',', '.') }}</td>
+                </tr>
+                @if($sekretariat->tanggal_kegiatan)
+                <tr>
+                    <th>Tanggal Kegiatan</th>
+                    <td>{{ \Carbon\Carbon::parse($sekretariat->tanggal_kegiatan)->format('d F Y') }}</td>
+                </tr>
+                @endif
+                @if($sekretariat->lokasi_kegiatan)
+                <tr>
+                    <th>Lokasi</th>
+                    <td>{{ $sekretariat->lokasi_kegiatan }}</td>
+                </tr>
+                @endif
+                @if($sekretariat->keterangan_tambahan)
+                <tr>
+                    <th>Keterangan Tambahan</th>
+                    <td>{{ $sekretariat->keterangan_tambahan }}</td>
+                </tr>
+                @endif
             </table>
-        @endif
-    </div>
+
+            @if($sekretariat->foto_jurnal && count($sekretariat->foto_jurnal) > 0)
+                <h3 class="section-title">Dokumentasi Kegiatan</h3>
+                <table class="photo-table">
+                    <tr>
+                        @foreach($sekretariat->foto_jurnal as $index => $foto)
+                            @if(is_array($foto))
+                                @php
+                                    $path = $foto['path'] ?? '';
+                                    $originalName = $foto['original_name'] ?? basename($path);
+                                @endphp
+                            @else
+                                @php
+                                    $path = $foto;
+                                    $originalName = basename($path);
+                                @endphp
+                            @endif
+                            
+                            @if($path && file_exists(storage_path('app/public/' . $path)))
+                                <td class="photo-td">
+                                    <div class="photo-container">
+                                        <img src="{{ storage_path('app/public/' . $path) }}" alt="{{ $originalName }}">
+                                        <div class="photo-caption">{{ $originalName }}</div>
+                                    </div>
+                                </td>
+                                @if(($index + 1) % 3 == 0)
+                                    </tr><tr> <!-- Start new row every 3 images -->
+                                @endif
+                            @endif
+                        @endforeach
+                    </tr>
+                </table>
+            @endif
+        </div>
+    </main>
 </body>
 </html>

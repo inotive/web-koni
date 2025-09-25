@@ -402,17 +402,26 @@
                         // Memastikan nilai serapan adalah numerik dan bukan null
                         $serapan = 0;
                         if (isset($item->serapan) && is_numeric($item->serapan)) {
-                            $serapan = (int)$item->serapan;
+                            $serapan = (int) $item->serapan;
                         }
 
-                        // Membagi RKA secara merata ke semua kegiatan
-                        $rka_per_kegiatan = 0;
-                        if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                            $jumlah_kegiatan = $kegiatan->count();
-                            $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
+                        // Special handling for "Pembinaan Prestasi" budget
+                        if ($item->id == 6) {
+                            $rka_per_kegiatan = 0;
+                            foreach ($item->children as $child_item) {
+                                $child_target = \App\Models\Target::where('id_lpj', $child_item->id)->first();
+                                if ($child_target && isset($child_target->target_anggaran)) {
+                                    $rka_per_kegiatan += (int) $child_target->target_anggaran;
+                                }
+                            }
+                        } else {
+                            // Default logic for other items
+                            $target = \App\Models\Target::where('id_lpj', $item->id)->first();
+                            $rka_per_kegiatan = 0;
+                            if ($target && isset($target->target_anggaran)) {
+                                $rka_per_kegiatan = (int) $target->target_anggaran;
+                            }
                         }
-
-                        $total_budget = isset($item->total_budget) ? $item->total_budget : 0;
 
                         // Perhitungan persentase dengan pengecekan aman
                         $persen = 0;
@@ -490,33 +499,11 @@
                                         // Serapan untuk setiap cabor sudah dihitung di controller
                                         $child_serapan = $child->serapan_cabor ?? 0;
 
-                                        // Membagi RKA kegiatan Pembinaan Prestasi ke anak-anaknya
-                                        $rka_per_kegiatan = 0;
-                                        if (isset($total_rka) && is_numeric($total_rka) && $total_rka > 0) {
-                                            $jumlah_kegiatan = $kegiatan->count();
-                                            $rka_per_kegiatan = ($jumlah_kegiatan > 0) ? (int)($total_rka / $jumlah_kegiatan) : 0;
-                                        }
-
-                                        // Menghitung budget per child berdasarkan jumlah dokumen jika tersedia
-                                        $jumlah_anak = $item->children->count();
+                                        // Mengambil target anggaran spesifik untuk setiap child (Cabor)
+                                        $child_target = \App\Models\Target::where('id_lpj', $child->id)->first();
                                         $child_budget = 0;
-                                        if ($jumlah_anak > 0 && $rka_per_kegiatan > 0) {
-                                            // Jika child memiliki informasi jumlah dokumen, gunakan proporsional
-                                            if (isset($child->children_count) && $child->children_count > 0) {
-                                                // Hitung total dokumen semua child
-                                                $total_dokumen = $item->children->sum('children_count');
-                                                if ($total_dokumen > 0) {
-                                                    // Proporsional berdasarkan jumlah dokumen
-                                                    $proporsi = $child->children_count / $total_dokumen;
-                                                    $child_budget = (int)($rka_per_kegiatan * $proporsi);
-                                                } else {
-                                                    // Rata rata jika tidak ada informasi dokumen
-                                                    $child_budget = (int)($rka_per_kegiatan / $jumlah_anak);
-                                                }
-                                            } else {
-                                                // Rata rata jika tidak ada informasi dokumen
-                                                $child_budget = (int)($rka_per_kegiatan / $jumlah_anak);
-                                            }
+                                        if ($child_target && isset($child_target->target_anggaran)) {
+                                            $child_budget = (int) $child_target->target_anggaran;
                                         }
 
                                         // Perhitungan persentase dengan pengecekan aman
