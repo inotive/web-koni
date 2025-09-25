@@ -398,133 +398,101 @@
                 <div id="informasi-kegiatan-content">
 
                 @foreach ($kegiatan as $i => $item)
-                    @php
-                        // Memastikan nilai serapan adalah numerik dan bukan null
-                        $serapan = 0;
-                        if (isset($item->serapan) && is_numeric($item->serapan)) {
-                            $serapan = (int) $item->serapan;
-                        }
-
-                        // Special handling for "Pembinaan Prestasi" budget
-                        if ($item->id == 6) {
-                            $rka_per_kegiatan = 0;
-                            foreach ($item->children as $child_item) {
-                                $child_target = \App\Models\Target::where('id_lpj', $child_item->id)->first();
-                                if ($child_target && isset($child_target->target_anggaran)) {
-                                    $rka_per_kegiatan += (int) $child_target->target_anggaran;
-                                }
-                            }
-                        } else {
-                            // Default logic for other items
-                            $target = \App\Models\Target::where('id_lpj', $item->id)->first();
-                            $rka_per_kegiatan = 0;
-                            if ($target && isset($target->target_anggaran)) {
-                                $rka_per_kegiatan = (int) $target->target_anggaran;
-                            }
-                        }
-
-                        // Perhitungan persentase dengan pengecekan aman
-                        $persen = 0;
-                        if ($rka_per_kegiatan > 0) {
-                            $persen = round(($serapan / $rka_per_kegiatan) * 100);
-                            // Batasi maksimal 100%
-                            $persen = min(100, $persen);
-                        }
-
-                        // Menampilkan serapan per kegiatan
-                        $display_serapan = $serapan;
-                        $display_budget = $rka_per_kegiatan;
-
-                        // Debugging - Hapus komentar untuk debugging
-                        /*
-                        if ($i == 0) { // Hanya untuk kegiatan pertama
-                            echo "<!-- Debug Kegiatan Utama: ";
-                            echo "Nama: " . (isset($item->nama_program) ? $item->nama_program : 'N/A') . ", ";
-                            echo "Serapan: " . $serapan . ", ";
-                            echo "Total RKA: " . (isset($total_rka) ? $total_rka : 'N/A') . ", ";
-                            echo "RKA per kegiatan: " . $rka_per_kegiatan . " -->";
-                        }
-                        */
-
-                        $barClass = 'bar-success';
-                        if ($persen <= 30) {
-                            $barClass = 'bar-danger';
-                        } elseif ($persen <= 60) {
-                            $barClass = 'bar-warning';
-                        }
-                    @endphp
-
-                    <div class="d-flex align-items-center mb-3 gap-3">
-                        <div style="min-width: 220px; max-width: 220px;">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <span class="title-kegiatan">{{ $i + 1 }}. {{ $item->nama_program }}
-                                    @if($item->id == 6 && $item->children->count() > 0)
-                                        <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail Cabor"></i>
-                                    @endif
-                                </span>
-                                {{-- Icon dropdown untuk Pembinaan Prestasi --}}
-                                @if($item->id == 6 && $item->children->count() > 0)
-                                    <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePembinaanPrestasi" aria-expanded="false" aria-controls="collapsePembinaanPrestasi">
-                                        <i class="fas fa-chevron-down text-primary"></i>
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="flex-grow-1 position-relative">
-                            <div class="progress w-100" style="border-radius: 8px; height: 45px;">
-                                <div class="progress-bar {{ $barClass }}"
-                                    role="progressbar"
-                                    style="width: {{ $persen }}%; border-radius: 8px; opacity: 0.8;"
-                                    aria-valuenow="{{ $persen }}" aria-valuemin="0" aria-valuemax="100">
-                                </div>
-                                <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
-                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
-                                        Serapan : Rp {{ number_format($display_serapan, 0, ',', '.') }} / Rp {{ number_format($display_budget, 0, ',', '.') }} | {{ $item->kegiatan_berjalan_count }}/{{ $item->target_kegiatan ?? 0 }}
-                                    </span>
-                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">{{ $persen }}%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Collapse untuk Pembinaan Prestasi --}}
-                    @if($item->id == 6 && $item->children->count() > 0)
-                        <div class="collapse" id="collapsePembinaanPrestasi">
-                            <div class="card card-body mt-2 mb-4" style="padding: 12px; border-radius: 8px;">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="mb-0">Detail Kegiatan Pembinaan Prestasi</h6>
-                                </div>
-                                @foreach($item->children as $j => $child)
+                                                            @php
+                                                                $serapan = $item->serapan ?? 0;
+                                                                $display_serapan = $serapan;
+                                        
+                                                                // --- Budget Calculation ---
+                                                                $rka_per_kegiatan = 0;
+                                                                if ($item->id == 6) { // Pembinaan Prestasi
+                                                                    // Sum budgets from its children (Cabor Akurasi, etc.)
+                                                                    if ($item->children && $item->children->count() > 0) {
+                                                                        foreach ($item->children as $child_item) {
+                                                                            $child_target = \App\Models\Target::where('id_lpj', $child_item->id)->first();
+                                                                            if ($child_target && isset($child_target->target_anggaran)) {
+                                                                                $rka_per_kegiatan += (int) $child_target->target_anggaran;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                } else { // Other main categories
+                                                                    $target = \App\Models\Target::where('id_lpj', $item->id)->first();
+                                                                    if ($target && isset($target->target_anggaran)) {
+                                                                        $rka_per_kegiatan = (int) $target->target_anggaran;
+                                                                    }
+                                                                }
+                                                                $display_budget = $rka_per_kegiatan;
+                                                                // --- End Budget Calculation ---
+                                        
+                                                                $persen = 0;
+                                                                if ($display_budget > 0) {
+                                                                    $persen = round(($serapan / $display_budget) * 100);
+                                                                    $persen = min(100, $persen);
+                                                                }
+                                        
+                                                                $barClass = 'bar-success';
+                                                                if ($persen <= 30) {
+                                                                    $barClass = 'bar-danger';
+                                                                } elseif ($persen <= 60) {
+                                                                    $barClass = 'bar-warning';
+                                                                }
+                                                            @endphp                    
+                                        <div class="d-flex align-items-center mb-3 gap-3">
+                                            <div style="min-width: 220px; max-width: 220px;">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <span class="title-kegiatan">{{ $i + 1 }}. {{ $item->nama_program }}
+                                                        @if($item->id == 6 && $item->children->count() > 0)
+                                                            <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail Cabor"></i>
+                                                        @endif
+                                                    </span>
+                                                    {{-- Icon dropdown untuk Pembinaan Prestasi --}}
+                                                    @if($item->id == 6 && $item->children->count() > 0)
+                                                        <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePembinaanPrestasi" aria-expanded="false" aria-controls="collapsePembinaanPrestasi">
+                                                            <i class="fas fa-chevron-down text-primary"></i>
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1 position-relative">
+                                                <div class="progress w-100" style="border-radius: 8px; height: 45px;">
+                                                    <div class="progress-bar {{ $barClass }}"
+                                                        role="progressbar"
+                                                        style="width: {{ $persen }}%; border-radius: 8px; opacity: 0.8;"
+                                                        aria-valuenow="{{ $persen }}" aria-valuemin="0" aria-valuemax="100">
+                                                    </div>
+                                                    <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
+                                                        <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
+                                                            Serapan : Rp {{ number_format($display_serapan, 0, ',', '.') }} / Rp {{ number_format($display_budget, 0, ',', '.') }} | {{ $item->kegiatan_berjalan_count }}/{{ $item->target_kegiatan ?? 0 }}
+                                                        </span>
+                                                        <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">{{ $persen }}%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                    
+                                        {{-- Collapse untuk Pembinaan Prestasi --}}
+                                        @if($item->id == 6 && $item->children->count() > 0)
+                                            <div class="collapse" id="collapsePembinaanPrestasi">
+                                                <div class="card card-body mt-2 mb-4" style="padding: 12px; border-radius: 8px;">
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <h6 class="mb-0">Detail Kegiatan Pembinaan Prestasi</h6>
+                                                    </div>
+                                                    @foreach($item->children as $j => $child)
                                     @php
-                                        // Serapan untuk setiap cabor sudah dihitung di controller
                                         $child_serapan = $child->serapan_cabor ?? 0;
 
-                                        // Mengambil target anggaran spesifik untuk setiap child (Cabor)
+                                        // --- Child Budget Calculation ---
                                         $child_target = \App\Models\Target::where('id_lpj', $child->id)->first();
                                         $child_budget = 0;
                                         if ($child_target && isset($child_target->target_anggaran)) {
                                             $child_budget = (int) $child_target->target_anggaran;
                                         }
+                                        // --- End Child Budget Calculation ---
 
-                                        // Perhitungan persentase dengan pengecekan aman
                                         $child_persen = 0;
                                         if ($child_budget > 0) {
                                             $child_persen = round(($child_serapan / $child_budget) * 100);
-                                            // Batasi maksimal 100%
                                             $child_persen = min(100, $child_persen);
                                         }
-
-                                        // Debugging - Hapus komentar untuk debugging
-                                        /*
-                                        if ($j == 0) { // Hanya untuk anak pertama
-                                            echo "<!-- Debug Anak Kegiatan: ";
-                                            echo "Nama: " . (isset($child->nama_program) ? $child->nama_program : 'N/A') . ", ";
-                                            echo "Serapan: " . $child_serapan . ", ";
-                                            echo "RKA per kegiatan: " . $rka_per_kegiatan . ", ";
-                                            echo "Jumlah anak: " . $jumlah_anak . ", ";
-                                            echo "Budget per anak: " . $child_budget . " -->";
-                                        }
-                                        */
 
                                         $childBarClass = 'bar-success';
                                         if ($child_persen <= 30) {
