@@ -4,8 +4,11 @@
     <title>Laporan LPJ - <?php echo e($sekretariat->nama_program); ?></title>
     <meta charset="UTF-8">
     <style>
-       @page {
-            margin: 4cm 1.5cm 1.5cm 1.5cm; /* Increased top margin for header */
+        @page {
+            margin-top: 151px;   /* reserve space for letterhead - matching image height */
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-bottom: 40px;
         }
 
         body {
@@ -17,20 +20,26 @@
             color: #333;
         }
 
-        /* --- HEADER --- */
-        header {
+        /* --- HEADER IMAGE --- */
+        .letterhead {
             position: fixed;
-            top: -3.5cm;
-            left: 0cm;
-            right: 0cm;
-            height: 3cm;
+            top: -151px;   /* move into the reserved top margin - matching reserved space */
+            left: 0;
+            right: 0;
             text-align: center;
+            height: 151px; /* actual header image height */
         }
 
-        header img {
+        .letterhead img {
             width: 100%;
-            max-height: 3cm;
+            height: auto;
+            max-height: 151px; /* match your letterhead (810x151) */
             object-fit: contain;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .content {
+            margin-top: 0;   /* no need for padding-top anymore */
         }
 
         /* --- DOCUMENT TITLE --- */
@@ -52,18 +61,23 @@
             border-left: 5px solid #d32f2f;
             color: #333;
         }
+        
+        /* First section should have reduced top margin to fill header space */
+        .content > .section-title:first-child {
+            margin-top: 5px;  /* Reduced top margin to reduce space after header */
+        }
 
         /* --- INFO TABLE --- */
         .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            font-size: 11pt;
+            margin-bottom: 15px;  /* Reduced margin to save space */
+            font-size: 10pt;     /* Slightly smaller font to save space */
         }
 
         .info-table th,
         .info-table td {
-            padding: 10px 12px;
+            padding: 6px 8px;    /* Reduced padding to save space */
             border: 1px solid #ddd;
         }
 
@@ -88,7 +102,6 @@
             width: 100%;
             border-collapse: separate;
             border-spacing: 15px;
-            page-break-inside: avoid; /* Try to avoid breaking table across pages */
         }
 
         .photo-td {
@@ -150,7 +163,8 @@
     </style>
 </head>
 <body>
-    <header>
+    <!-- HEADER IMAGE -->
+    <div class="letterhead">
         <?php if(file_exists(public_path('assets/img/kop-nobg.png'))): ?>
             <img src="<?php echo e(public_path('assets/img/kop-nobg.png')); ?>" alt="KONI Letterhead">
         <?php else: ?>
@@ -159,11 +173,10 @@
                 <p>Header image not found</p>
             </div>
         <?php endif; ?>
-    </header>
+    </div>
 
-    <main>
-        <!-- MAIN CONTENT -->
-        <div class="content">
+    <!-- MAIN CONTENT -->
+    <div class="content">
             <h3 class="section-title">Detail Program dan Kegiatan</h3>
             <table class="info-table">
                 <tr>
@@ -230,7 +243,6 @@
                 </table>
             <?php endif; ?>
         </div>
-    </main>
 </body>
 </html>
 <?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/laporan-lpj/sekretariat/export.blade.php ENDPATH**/ ?>
