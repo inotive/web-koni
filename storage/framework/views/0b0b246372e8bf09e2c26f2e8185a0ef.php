@@ -307,10 +307,20 @@
             <div class="col-md-6 position-relative">
                 <div class="info-card text-start position-relative">
                     
+                    <?php
+                        $kegiatan_berjalan = $kegiatan_berjalan_all ?? $kegiatan_berjalan_count ?? 0;
+                        $total_kegiatan = $total_kegiatan_all ?? ($kegiatan ? $kegiatan->count() : 0);
+                        $persen_berjalan = $total_kegiatan > 0 ? round(($kegiatan_berjalan / $total_kegiatan) * 100) : 0;
+                    ?>
                     <div class="position-absolute top-0 end-0 mt-7 me-4 d-flex flex-column align-items-end">
-                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Berjalan</span>
+                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($persen_berjalan); ?>% Berjalan</span>
                         <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
-                            <div class="progress-bar bg-success" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
+                            <div class="progress-bar bg-success" style="width: <?php echo e($persen_berjalan); ?>%;"></div>
+                        </div>
+
+                        <span class="text-primary fw-semibold mt-2" style="font-size: 1.2rem;"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Serapan</span>
+                        <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
                         </div>
                     </div>
 
@@ -401,7 +411,7 @@
                                                             <?php
                                                                 $serapan = $item->serapan ?? 0;
                                                                 $display_serapan = $serapan;
-                                        
+
                                                                 // --- Budget Calculation ---
                                                                 $rka_per_kegiatan = 0;
                                                                 if ($item->id == 6) { // Pembinaan Prestasi
@@ -422,20 +432,20 @@
                                                                 }
                                                                 $display_budget = $rka_per_kegiatan;
                                                                 // --- End Budget Calculation ---
-                                        
+
                                                                 $persen = 0;
                                                                 if ($display_budget > 0) {
                                                                     $persen = round(($serapan / $display_budget) * 100);
                                                                     $persen = min(100, $persen);
                                                                 }
-                                        
+
                                                                 $barClass = 'bar-success';
                                                                 if ($persen <= 30) {
                                                                     $barClass = 'bar-danger';
                                                                 } elseif ($persen <= 60) {
                                                                     $barClass = 'bar-warning';
                                                                 }
-                                                            ?>                    
+                                                            ?>
                                         <div class="d-flex align-items-center mb-3 gap-3">
                                             <div style="min-width: 220px; max-width: 220px;">
                                                 <div class="d-flex align-items-center justify-content-between">
@@ -470,7 +480,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                    
+
                                         
                                         <?php if($item->id == 6 && $item->children->count() > 0): ?>
                                             <div class="collapse" id="collapsePembinaanPrestasi">
