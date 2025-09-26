@@ -97,19 +97,22 @@ class SekretariatController extends Controller
             'volume' => 'nullable|string|max:255',
             'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
-            'foto_jurnal' => 'nullable|array|max:10',
+            'foto_jurnal' => 'nullable|array',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
-            'dokumen_lpj' => 'nullable|array|max:10',
+            'dokumen_lpj' => 'nullable|array',
             'dokumen_lpj.*' => 'file|mimes:pdf|max:10240',
+            'dokumen_lpj_pdf' => 'required|file|mimes:pdf|max:10240',
         ], [
-            'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
             'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
-            'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
             'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
+            'dokumen_lpj_pdf.required' => 'Dokumen LPJ PDF wajib diunggah.',
+            'dokumen_lpj_pdf.file' => 'File Dokumen LPJ PDF tidak valid.',
+            'dokumen_lpj_pdf.mimes' => 'Format Dokumen LPJ PDF harus PDF.',
+            'dokumen_lpj_pdf.max' => 'Ukuran Dokumen LPJ PDF maksimal 10MB.',
         ]);
 
         // Cari atau buat parent kategori
@@ -209,30 +212,42 @@ class SekretariatController extends Controller
             ], 403);
         }
 
-        $request->validate([
+        $rules = [
             'nama_program_kegiatan' => 'required|string|max:255',
             'jenis_kegiatan' => 'required|string|max:255',
             'keterangan_tambahan' => 'nullable|string',
             'volume' => 'nullable|string|max:255',
             'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
-            'foto_jurnal' => 'nullable|array|max:10',
+            'foto_jurnal' => 'nullable|array',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
-            'dokumen_lpj' => 'nullable|array|max:10',
+            'dokumen_lpj' => 'nullable|array',
             'dokumen_lpj.*' => 'file|mimes:pdf|max:10240',
             'existing_foto_jurnal' => 'nullable|array',
             'existing_dokumen_lpj' => 'nullable|array',
             'deleted_fotos' => 'nullable|array',
             'deleted_dokumens' => 'nullable|array',
-        ], [
-            'foto_jurnal.max' => 'Maksimal 10 foto yang dapat diunggah.',
+        ];
+
+        $dokumenLpjExists = $sekretariat->dokumen_lpj_pdf && !$request->has('deleted_dokumen_lpj_pdf');
+
+        if (!$dokumenLpjExists && !$request->hasFile('dokumen_lpj_pdf')) {
+            $rules['dokumen_lpj_pdf'] = 'required|file|mimes:pdf|max:10240';
+        } else {
+            $rules['dokumen_lpj_pdf'] = 'nullable|file|mimes:pdf|max:10240';
+        }
+
+        $request->validate($rules, [
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
             'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
             'foto_jurnal.*.max' => 'Ukuran foto maksimal 10MB.',
-            'dokumen_lpj.max' => 'Maksimal 10 dokumen yang dapat diunggah.',
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
             'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
+            'dokumen_lpj_pdf.required' => 'Dokumen LPJ PDF wajib diunggah.',
+            'dokumen_lpj_pdf.file' => 'File Dokumen LPJ PDF tidak valid.',
+            'dokumen_lpj_pdf.mimes' => 'Format Dokumen LPJ PDF harus PDF.',
+            'dokumen_lpj_pdf.max' => 'Ukuran Dokumen LPJ PDF maksimal 10MB.',
         ]);
 
         $data = [
