@@ -101,7 +101,7 @@ class SekretariatController extends Controller
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array',
             'dokumen_lpj.*' => 'file|mimes:pdf|max:10240',
-            'dokumen_lpj_pdf' => 'required|file|mimes:pdf|max:10240',
+            'dokumen_lpj_pdf' => 'nullable|file|mimes:pdf|max:10240',
         ], [
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
             'foto_jurnal.*.mimes' => 'Format foto harus: jpeg, png, jpg, gif.',
@@ -109,7 +109,6 @@ class SekretariatController extends Controller
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
             'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
-            'dokumen_lpj_pdf.required' => 'Dokumen LPJ PDF wajib diunggah.',
             'dokumen_lpj_pdf.file' => 'File Dokumen LPJ PDF tidak valid.',
             'dokumen_lpj_pdf.mimes' => 'Format Dokumen LPJ PDF harus PDF.',
             'dokumen_lpj_pdf.max' => 'Ukuran Dokumen LPJ PDF maksimal 10MB.',
@@ -223,19 +222,12 @@ class SekretariatController extends Controller
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array',
             'dokumen_lpj.*' => 'file|mimes:pdf|max:10240',
+            'dokumen_lpj_pdf' => 'nullable|file|mimes:pdf|max:10240',
             'existing_foto_jurnal' => 'nullable|array',
             'existing_dokumen_lpj' => 'nullable|array',
             'deleted_fotos' => 'nullable|array',
             'deleted_dokumens' => 'nullable|array',
         ];
-
-        $dokumenLpjExists = $sekretariat->dokumen_lpj_pdf && !$request->has('deleted_dokumen_lpj_pdf');
-
-        if (!$dokumenLpjExists && !$request->hasFile('dokumen_lpj_pdf')) {
-            $rules['dokumen_lpj_pdf'] = 'required|file|mimes:pdf|max:10240';
-        } else {
-            $rules['dokumen_lpj_pdf'] = 'nullable|file|mimes:pdf|max:10240';
-        }
 
         $request->validate($rules, [
             'foto_jurnal.*.image' => 'File harus berupa gambar.',
@@ -244,7 +236,6 @@ class SekretariatController extends Controller
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
             'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
-            'dokumen_lpj_pdf.required' => 'Dokumen LPJ PDF wajib diunggah.',
             'dokumen_lpj_pdf.file' => 'File Dokumen LPJ PDF tidak valid.',
             'dokumen_lpj_pdf.mimes' => 'Format Dokumen LPJ PDF harus PDF.',
             'dokumen_lpj_pdf.max' => 'Ukuran Dokumen LPJ PDF maksimal 10MB.',

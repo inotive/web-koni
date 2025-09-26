@@ -390,14 +390,14 @@
                             {{-- Dokumen LPJ Upload (PDF Only) --}}
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
-                                    <label class="form-label">Dokumen LPJ <span class="text-danger">*</span></label>
-                                    <p class="file-upload-hint">Unggah file PDF, maksimal 10MB</p>
+                                    <label class="form-label">Dokumen LPJ</label>
+                                    <p class="file-upload-hint">Unggah file PDF (opsional), maksimal 10MB</p>
                                 </div>
                                 <div class="col-md-9">
                                     <label for="dokumen_lpj_pdf" class="file-upload-wrapper">
                                         <input type="file" name="dokumen_lpj_pdf" id="dokumen_lpj_pdf"
                                             class="@error('dokumen_lpj_pdf') is-invalid @enderror"
-                                            accept=".pdf" required>
+                                            accept=".pdf">
 
                                         <div class="d-flex align-items-center gap-12">
                                             <div class="file-upload-icon-wrapper">
