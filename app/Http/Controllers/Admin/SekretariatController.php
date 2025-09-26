@@ -74,10 +74,10 @@ class SekretariatController extends Controller
         }
 
         return view('admin.laporan-lpj.sekretariat.index', compact(
-            'kegiatanLainnya', 
-            'current_budget', 
-            'kegiatan_count', 
-            'target_anggaran', 
+            'kegiatanLainnya',
+            'current_budget',
+            'kegiatan_count',
+            'target_anggaran',
             'target_kegiatan',
             'parentCategory'
         ));
@@ -188,8 +188,8 @@ class SekretariatController extends Controller
                           ->findOrFail($id);
 
         // Cek apakah user adalah superadmin atau memiliki izin modifikasi
-        if (!auth()->user()->hasRole('superadmin') && 
-            (!isset($sekretariat->modifiable_by_user_id) || 
+        if (!auth()->user()->hasRole('superadmin') &&
+            (!isset($sekretariat->modifiable_by_user_id) ||
              auth()->user()->id != $sekretariat->modifiable_by_user_id)) {
             abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk mengedit data ini.');
         }
@@ -203,8 +203,8 @@ class SekretariatController extends Controller
                           ->findOrFail($id);
 
         // Cek apakah user adalah superadmin atau memiliki izin modifikasi
-        if (!auth()->user()->hasRole('superadmin') && 
-            (!isset($sekretariat->modifiable_by_user_id) || 
+        if (!auth()->user()->hasRole('superadmin') &&
+            (!isset($sekretariat->modifiable_by_user_id) ||
              auth()->user()->id != $sekretariat->modifiable_by_user_id)) {
             return response()->json([
                 'message' => 'Akses ditolak. Anda tidak memiliki izin untuk memperbarui data ini.'
@@ -381,7 +381,7 @@ class SekretariatController extends Controller
             if ($pengajuan) {
                 $pengajuan->update(['token' => 0]);
             }
-            
+
             // Set modifiable_by_user_id to null after editing
             $sekretariat->update(['modifiable_by_user_id' => null]);
         }
@@ -396,8 +396,8 @@ class SekretariatController extends Controller
                           ->findOrFail($id);
 
         // Cek apakah user adalah superadmin atau memiliki izin modifikasi
-        if (!auth()->user()->hasRole('superadmin') && 
-            (!isset($sekretariat->modifiable_by_user_id) || 
+        if (!auth()->user()->hasRole('superadmin') &&
+            (!isset($sekretariat->modifiable_by_user_id) ||
              auth()->user()->id != $sekretariat->modifiable_by_user_id)) {
             return response()->json([
                 'message' => 'Akses ditolak. Anda tidak memiliki izin untuk menghapus data ini.'
@@ -411,7 +411,7 @@ class SekretariatController extends Controller
                     // Jika $foto adalah array dengan key 'path'
                     if (is_array($foto) && isset($foto['path'])) {
                         Storage::disk('public')->delete($foto['path']);
-                    } 
+                    }
                     // Jika $foto adalah string path
                     else if (is_string($foto)) {
                         Storage::disk('public')->delete($foto);
@@ -424,7 +424,7 @@ class SekretariatController extends Controller
                     // Jika $dokumen adalah array dengan key 'path'
                     if (is_array($dokumen) && isset($dokumen['path'])) {
                         Storage::disk('public')->delete($dokumen['path']);
-                    } 
+                    }
                     // Jika $dokumen adalah string path
                     else if (is_string($dokumen)) {
                         Storage::disk('public')->delete($dokumen);
@@ -454,8 +454,8 @@ class SekretariatController extends Controller
                           ->findOrFail($id);
 
         // Cek apakah user adalah superadmin atau memiliki izin modifikasi
-        if (!auth()->user()->hasRole('superadmin') && 
-            (!isset($sekretariat->modifiable_by_user_id) || 
+        if (!auth()->user()->hasRole('superadmin') &&
+            (!isset($sekretariat->modifiable_by_user_id) ||
              auth()->user()->id != $sekretariat->modifiable_by_user_id)) {
             return response()->json(['error' => 'Akses ditolak'], 403);
         }
@@ -492,7 +492,7 @@ class SekretariatController extends Controller
             // Jika $filePath adalah array dengan key 'path'
             if (is_array($filePath) && isset($filePath['path'])) {
                 Storage::disk('public')->delete($filePath['path']);
-            } 
+            }
             // Jika $filePath adalah string path
             else if (is_string($filePath)) {
                 Storage::disk('public')->delete($filePath);
@@ -532,22 +532,70 @@ class SekretariatController extends Controller
      * Export laporan sekretariat ke PDF dengan kop surat
      */
     public function export($id)
-    {
-        try {
-            $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                              ->findOrFail($id);
+{
+    try {
+        // Set limits untuk proses yang lebih berat
+        ini_set('memory_limit', '512M');
+        ini_set('max_execution_time', 300);
 
-            // Create initial PDF with letterhead and content
+        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
+                          ->findOrFail($id);
+
+        // Validasi file sebelum proses
+        $validPdfFiles = [];
+
+        if ($sekretariat->dokumen_lpj && is_array($sekretariat->dokumen_lpj)) {
+            foreach ($sekretariat->dokumen_lpj as $dokumen) {
+                $path = is_array($dokumen) ? ($dokumen['path'] ?? null) : (is_string($dokumen) ? $dokumen : null);
+                if ($path && strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'pdf') {
+                    $filePath = storage_path('app/public/' . $path);
+                    if (file_exists($filePath) && filesize($filePath) > 0) {
+                        $validPdfFiles[] = $path;
+                    }
+                }
+            }
+        }
+
+        if ($sekretariat->dokumen_lpj_pdf) {
+            $path = is_array($sekretariat->dokumen_lpj_pdf) ?
+                ($sekretariat->dokumen_lpj_pdf['path'] ?? null) :
+                (is_string($sekretariat->dokumen_lpj_pdf) ? $sekretariat->dokumen_lpj_pdf : null);
+            if ($path) {
+                $filePath = storage_path('app/public/' . $path);
+                if (file_exists($filePath) && filesize($filePath) > 0) {
+                    $validPdfFiles[] = $path;
+                }
+            }
+        }
+
+        // Jika tidak ada PDF attachment, export sederhana
+        if (empty($validPdfFiles)) {
             $pdf = Pdf::loadView('admin.laporan-lpj.sekretariat.export', compact('sekretariat'));
             $pdf->setPaper('A4', 'portrait');
+            $pdf->setOption('isHtml5ParserEnabled', true);
+            $pdf->setOption('isPhpEnabled', true);
 
-            // Generate initial PDF content
-            $tempMainFile = tempnam(sys_get_temp_dir(), 'main_pdf_');
-            file_put_contents($tempMainFile, $pdf->output());
+            $filename = 'Laporan_Sekretariat_' . Str::slug($sekretariat->nama_program) . '_' . date('Y-m-d') . '.pdf';
 
-            // Initialize FPDI for PDF merging
-            $fpdi = new Fpdi();
+            return $pdf->download($filename);
+        }
 
+        // Jika ada PDF attachment, gunakan FPDI
+        $pdf = Pdf::loadView('admin.laporan-lpj.sekretariat.export', compact('sekretariat'));
+        $pdf->setPaper('A4', 'portrait');
+
+        // Generate temporary file untuk main content
+        $tempMainFile = tempnam(sys_get_temp_dir(), 'main_pdf_');
+        if (!$tempMainFile) {
+            throw new \Exception('Tidak dapat membuat file temporary');
+        }
+
+        file_put_contents($tempMainFile, $pdf->output());
+
+        // Initialize FPDI
+        $fpdi = new Fpdi();
+
+        try {
             // Add main content pages
             $pageCount = $fpdi->setSourceFile($tempMainFile);
             for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
@@ -556,60 +604,51 @@ class SekretariatController extends Controller
                 $fpdi->useTemplate($templateId);
             }
 
-            // Collect all PDF documents
-            $pdfFiles = [];
-            if ($sekretariat->dokumen_lpj && is_array($sekretariat->dokumen_lpj)) {
-                foreach ($sekretariat->dokumen_lpj as $dokumen) {
-                    $path = is_array($dokumen) ? ($dokumen['path'] ?? null) : (is_string($dokumen) ? $dokumen : null);
-                    if ($path && strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'pdf') {
-                        $pdfFiles[] = $path;
-                    }
-                }
-            }
-            if ($sekretariat->dokumen_lpj_pdf) {
-                 $path = is_array($sekretariat->dokumen_lpj_pdf) ? ($sekretariat->dokumen_lpj_pdf['path'] ?? null) : (is_string($sekretariat->dokumen_lpj_pdf) ? $sekretariat->dokumen_lpj_pdf : null);
-                if ($path) {
-                    $pdfFiles[] = $path;
-                }
-            }
-            
-            // Merge PDF attachments
-            foreach ($pdfFiles as $pdfFile) {
+            // Merge valid PDF files
+            foreach ($validPdfFiles as $pdfFile) {
                 $filePath = storage_path('app/public/' . $pdfFile);
 
-                if (file_exists($filePath)) {
-                    try {
-                        $attachmentPageCount = $fpdi->setSourceFile($filePath);
-                        for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
-                            $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
-                            $fpdi->AddPage();
-                            $fpdi->useTemplate($templateId);
-                        }
-                    } catch (\Exception $e) {
-                        \Log::warning("Could not merge PDF file: {$pdfFile}. Error: " . $e->getMessage());
+                try {
+                    $attachmentPageCount = $fpdi->setSourceFile($filePath);
+                    for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
+                        $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                        $fpdi->AddPage();
+                        $fpdi->useTemplate($templateId);
                     }
+                } catch (\Exception $e) {
+                    \Log::warning("Could not merge PDF file: {$pdfFile}. Error: " . $e->getMessage());
+                    continue; // Skip file yang bermasalah
                 }
             }
-
-            // Clean up temporary file
-            unlink($tempMainFile);
 
             // Generate final PDF
             $finalPdf = $fpdi->Output('S');
 
-            // Generate filename
-            $filename = 'Laporan_Sekretariat_' . Str::slug($sekretariat->nama_program) . '_' . date('Y-m-d') . '.pdf';
-
-            return response($finalPdf, 200, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
-            ]);
-
-        } catch (\Exception $e) {
-            \Log::error('Error exporting PDF for Sekretariat: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal membuat laporan PDF. Terjadi kesalahan.');
+        } finally {
+            // Clean up temporary file
+            if (file_exists($tempMainFile)) {
+                unlink($tempMainFile);
+            }
         }
+
+        // Generate filename
+        $filename = 'Laporan_Sekretariat_' . Str::slug($sekretariat->nama_program) . '_' . date('Y-m-d') . '.pdf';
+
+        return response($finalPdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Length' => strlen($finalPdf),
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Error exporting PDF for Sekretariat: ' . $e->getMessage(), [
+            'id' => $id,
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return redirect()->back()->with('error', 'Gagal membuat laporan PDF: ' . $e->getMessage());
     }
+}
 
     /**
      * Update target anggaran and kegiatan for sekretariat
@@ -623,7 +662,7 @@ class SekretariatController extends Controller
 
         try {
             $parentCategory = $this->getOrCreateParentCategory();
-            
+
             $target = \App\Models\Target::updateOrCreate(
                 ['id_lpj' => $parentCategory->id],
                 [

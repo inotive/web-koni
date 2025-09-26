@@ -106,6 +106,7 @@
 
         .photo-container img {
             max-width: 100%;
+            max-height: 200px;
             border-radius: 4px;
             object-fit: cover;
         }
@@ -150,7 +151,14 @@
 </head>
 <body>
     <header>
-        <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
+        @if(file_exists(public_path('assets/img/kop-nobg.png')))
+            <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
+        @else
+            <div style="padding: 20px; border: 1px solid #ccc; text-align: center;">
+                <h2>KONI LETTERHEAD</h2>
+                <p>Header image not found</p>
+            </div>
+        @endif
     </header>
 
     <main>
@@ -195,22 +203,21 @@
                 <table class="photo-table">
                     <tr>
                         @foreach($sekretariat->foto_jurnal as $index => $foto)
-                            @if(is_array($foto))
-                                @php
+                            @php
+                                if(is_array($foto)) {
                                     $path = $foto['path'] ?? '';
                                     $originalName = $foto['original_name'] ?? basename($path);
-                                @endphp
-                            @else
-                                @php
+                                } else {
                                     $path = $foto;
                                     $originalName = basename($path);
-                                @endphp
-                            @endif
-                            
-                            @if($path && file_exists(storage_path('app/public/' . $path)))
+                                }
+                                $fullPath = public_path('storage/' . $path);
+                            @endphp
+
+                            @if($path && file_exists($fullPath))
                                 <td class="photo-td">
                                     <div class="photo-container">
-                                        <img src="{{ storage_path('app/public/' . $path) }}" alt="{{ $originalName }}">
+                                        <img src="{{ $fullPath }}" alt="{{ $originalName }}">
                                         <div class="photo-caption">{{ $originalName }}</div>
                                     </div>
                                 </td>

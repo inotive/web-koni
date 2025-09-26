@@ -106,6 +106,7 @@
 
         .photo-container img {
             max-width: 100%;
+            max-height: 200px;
             border-radius: 4px;
             object-fit: cover;
         }
@@ -150,7 +151,14 @@
 </head>
 <body>
     <header>
-        <img src="<?php echo e(public_path('assets/img/kop-nobg.png')); ?>" alt="KONI Letterhead">
+        <?php if(file_exists(public_path('assets/img/kop-nobg.png'))): ?>
+            <img src="<?php echo e(public_path('assets/img/kop-nobg.png')); ?>" alt="KONI Letterhead">
+        <?php else: ?>
+            <div style="padding: 20px; border: 1px solid #ccc; text-align: center;">
+                <h2>KONI LETTERHEAD</h2>
+                <p>Header image not found</p>
+            </div>
+        <?php endif; ?>
     </header>
 
     <main>
@@ -195,22 +203,21 @@
                 <table class="photo-table">
                     <tr>
                         <?php $__currentLoopData = $sekretariat->foto_jurnal; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <?php if(is_array($foto)): ?>
-                                <?php
+                            <?php
+                                if(is_array($foto)) {
                                     $path = $foto['path'] ?? '';
                                     $originalName = $foto['original_name'] ?? basename($path);
-                                ?>
-                            <?php else: ?>
-                                <?php
+                                } else {
                                     $path = $foto;
                                     $originalName = basename($path);
-                                ?>
-                            <?php endif; ?>
-                            
-                            <?php if($path && file_exists(storage_path('app/public/' . $path))): ?>
+                                }
+                                $fullPath = public_path('storage/' . $path);
+                            ?>
+
+                            <?php if($path && file_exists($fullPath)): ?>
                                 <td class="photo-td">
                                     <div class="photo-container">
-                                        <img src="<?php echo e(storage_path('app/public/' . $path)); ?>" alt="<?php echo e($originalName); ?>">
+                                        <img src="<?php echo e($fullPath); ?>" alt="<?php echo e($originalName); ?>">
                                         <div class="photo-caption"><?php echo e($originalName); ?></div>
                                     </div>
                                 </td>
