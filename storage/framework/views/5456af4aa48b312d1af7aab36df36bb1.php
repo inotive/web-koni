@@ -1,4 +1,4 @@
-@if ($files->isEmpty())
+<?php if($files->isEmpty()): ?>
     <div class="text-center text-muted py-10">
         <div class="d-flex flex-column align-items-center gap-3">
             <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -10,23 +10,23 @@
             </svg>
             <div class="text-center">
                 <div class="fw-bold text-gray-800 mb-1">
-                    @if (request('search'))
+                    <?php if(request('search')): ?>
                         Tidak ada file yang sesuai dengan pencarian/filter
-                    @else
+                    <?php else: ?>
                         Belum ada file
-                    @endif
+                    <?php endif; ?>
                 </div>
                 <div class="text-muted">
-                    @if (request('search'))
+                    <?php if(request('search')): ?>
                         Coba ubah kata kunci pencarian atau filter yang Anda gunakan
-                    @else
+                    <?php else: ?>
                         Klik tombol "Tambah File" untuk menambah file baru
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
-@else
+<?php else: ?>
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle">
             <thead>
@@ -36,15 +36,15 @@
                         <div class="d-flex align-items-center justify-content-center gap-2">
                             <span>Nama Dokumen</span>
                             <div class="sort-icon">
-                                @if (request('sort_by') == 'nama_dokumen')
-                                    @if (request('order') == 'asc')
+                                <?php if(request('sort_by') == 'nama_dokumen'): ?>
+                                    <?php if(request('order') == 'asc'): ?>
                                         <i class="fas fa-sort-up text-primary"></i>
-                                    @else
+                                    <?php else: ?>
                                         <i class="fas fa-sort-down text-primary"></i>
-                                    @endif
-                                @else
+                                    <?php endif; ?>
+                                <?php else: ?>
                                     <i class="fas fa-sort text-muted"></i>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </div>
                     </th>
@@ -52,15 +52,15 @@
                         <div class="d-flex align-items-center justify-content-start gap-2">
                             <span>File Dokumen</span>
                             <div class="sort-icon">
-                                @if (request('sort_by') == 'dokumen_file')
-                                    @if (request('order') == 'asc')
+                                <?php if(request('sort_by') == 'dokumen_file'): ?>
+                                    <?php if(request('order') == 'asc'): ?>
                                         <i class="fas fa-sort-up text-primary"></i>
-                                    @else
+                                    <?php else: ?>
                                         <i class="fas fa-sort-down text-primary"></i>
-                                    @endif
-                                @else
+                                    <?php endif; ?>
+                                <?php else: ?>
                                     <i class="fas fa-sort text-muted"></i>
-                                @endif
+                                <?php endif; ?>
                             </div>
                         </div>
                     </th>
@@ -68,24 +68,25 @@
                 </tr>
             </thead>
             <tbody class="border-bottom">
-                @forelse ($files as $index => $file)
-                    @php
+                <?php $__empty_1 = true; $__currentLoopData = $files; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $file): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                    <?php
                         // Calculate row number correctly for pagination
                         $rowNumber = method_exists($files, 'firstItem') ? $files->firstItem() + $index : $index + 1;
-                    @endphp
-                    <tr data-id="{{ $file->id }}" style="position: relative;">
-                        <td class="text-center fw-bold px-2">{{ $rowNumber }}</td>
+                    ?>
+                    <tr data-id="<?php echo e($file->id); ?>" style="position: relative;">
+                        <td class="text-center fw-bold px-2"><?php echo e($rowNumber); ?></td>
                         <td class="fw-bold px-6">
                             <div class="d-flex flex-column">
-                                <div>{{ $file->nama_dokumen }}</div>
+                                <div><?php echo e($file->nama_dokumen); ?></div>
                                 <small class="text-muted">
-                                    {{ optional($file->tanggal_dokumen)->format('d M Y') }}
+                                    <?php echo e(optional($file->tanggal_dokumen)->format('d M Y')); ?>
+
                                 </small>
                             </div>
                         </td>
                         <td class="px-6 text-start">
-                            @if ($file->dokumen_file)
-                                @php
+                            <?php if($file->dokumen_file): ?>
+                                <?php
                                     $fileName = basename($file->dokumen_file);
                                     $fileExtension = strtolower(pathinfo($file->dokumen_file, PATHINFO_EXTENSION));
 
@@ -96,26 +97,26 @@
                                     // Gunakan path yang sudah dikonfirmasi bekerja
                                     $filePath = 'documents/' . $file->dokumen_file;
                                     $fileUrl = asset('storage/' . $filePath);
-                                @endphp
+                                ?>
                                 <div class="document-link-container">
-                                    <a href="{{ $fileUrl }}" target="_blank" class="document-link"
-                                        title="Klik untuk melihat {{ $fileName }}">
-                                        @if ($fileExtension === 'pdf')
+                                    <a href="<?php echo e($fileUrl); ?>" target="_blank" class="document-link"
+                                        title="Klik untuk melihat <?php echo e($fileName); ?>">
+                                        <?php if($fileExtension === 'pdf'): ?>
                                             <i class="fas fa-file-pdf me-2"></i>
-                                        @elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
+                                        <?php elseif(in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])): ?>
                                             <i class="fas fa-file-image me-2"></i>
-                                        @else
+                                        <?php else: ?>
                                             <i class="fas fa-file-alt me-2"></i>
-                                        @endif
-                                        <span class="document-link-text">{{ $displayName }}</span>
+                                        <?php endif; ?>
+                                        <span class="document-link-text"><?php echo e($displayName); ?></span>
                                     </a>
                                 </div>
-                            @else
+                            <?php else: ?>
                                 <span class="text-muted">-</span>
-                            @endif
+                            <?php endif; ?>
                         </td>
                         <td class="px-2 text-center">
-                            <div class="dropdown dropdown-action" data-row-id="{{ $file->id }}">
+                            <div class="dropdown dropdown-action" data-row-id="<?php echo e($file->id); ?>">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
                                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -140,18 +141,18 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li class="dropdown-item edit"
-                                        onclick="openEditModal({{ $file->id }}, '{{ addslashes($file->nama_dokumen) }}', '{{ optional($file->tanggal_dokumen)->format('Y-m-d') }}', '{{ basename($file->dokumen_file) ?? '' }}')">
+                                        onclick="openEditModal(<?php echo e($file->id); ?>, '<?php echo e(addslashes($file->nama_dokumen)); ?>', '<?php echo e(optional($file->tanggal_dokumen)->format('Y-m-d')); ?>', '<?php echo e(basename($file->dokumen_file) ?? ''); ?>')">
                                         <i class="ki-outline ki-pencil me-2"></i>Edit File
                                     </li>
                                     <li class="dropdown-item delete"
-                                        onclick="deleteFile('{{ $file->id }}', '{{ $file->nama_dokumen }}', '{{ route('admin.file-kesekretariat.destroy', $file) }}')">
+                                        onclick="deleteFile('<?php echo e($file->id); ?>', '<?php echo e($file->nama_dokumen); ?>', '<?php echo e(route('admin.file-kesekretariat.destroy', $file)); ?>')">
                                         <i class="ki-outline ki-trash me-2"></i>Hapus
                                     </li>
                                 </ul>
                             </div>
                         </td>
                     </tr>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <tr>
                         <td class="fw-bold p-6 text-center" colspan="4">
                             <div class="d-flex flex-column align-items-center gap-3">
@@ -165,24 +166,24 @@
                                 </svg>
                                 <div class="text-center">
                                     <div class="fw-bold text-gray-800 mb-1">
-                                        @if (request('search'))
+                                        <?php if(request('search')): ?>
                                             Tidak ada file yang sesuai dengan pencarian/filter
-                                        @else
+                                        <?php else: ?>
                                             Belum ada file
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
                                     <div class="text-muted">
-                                        @if (request('search'))
+                                        <?php if(request('search')): ?>
                                             Coba ubah kata kunci pencarian atau filter yang Anda gunakan
-                                        @else
+                                        <?php else: ?>
                                             Klik tombol "Tambah File" untuk menambah file baru
-                                        @endif
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
                         </td>
                     </tr>
-                @endforelse
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
@@ -192,32 +193,34 @@
             <div class="d-flex align-items-center">
                 <span class="me-2">Show</span>
                 <select name="per_page" class="form-select form-select-sm w-auto">
-                    @foreach ([10, 25, 50, 100] as $limit)
-                        <option value="{{ $limit }}"
-                            {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
-                            {{ $limit }}
+                    <?php $__currentLoopData = [10, 25, 50, 100]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $limit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($limit); ?>"
+                            <?php echo e(request('per_page', 10) == $limit ? 'selected' : ''); ?>>
+                            <?php echo e($limit); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
                 <span class="ms-2">per page</span>
             </div>
         </div>
 
-        @if (isset($files) && method_exists($files, 'hasPages') && $files->hasPages())
+        <?php if(isset($files) && method_exists($files, 'hasPages') && $files->hasPages()): ?>
             <div class="d-flex align-items-center gap-3">
                 <div class="text-muted small">
-                    {{ $files->firstItem() }}-{{ $files->lastItem() }} of {{ $files->total() }}
+                    <?php echo e($files->firstItem()); ?>-<?php echo e($files->lastItem()); ?> of <?php echo e($files->total()); ?>
+
                 </div>
 
                 <div class="d-flex align-items-center gap-2">
-                    @if ($files->onFirstPage())
+                    <?php if($files->onFirstPage()): ?>
                         <span class="pagination-arrow disabled">←</span>
-                    @else
-                        <a href="{{ $files->appends(request()->query())->previousPageUrl() }}"
+                    <?php else: ?>
+                        <a href="<?php echo e($files->appends(request()->query())->previousPageUrl()); ?>"
                             class="pagination-arrow pagination-link" aria-label="Previous">←</a>
-                    @endif
+                    <?php endif; ?>
 
-                    @php
+                    <?php
                         $current = $files->currentPage();
                         $total = $files->lastPage();
                         $start = max(1, $current - 2);
@@ -229,35 +232,36 @@
                                 $start = max(1, $end - 4);
                             }
                         }
-                    @endphp
+                    ?>
 
                     <div class="d-flex align-items-center">
-                        @for ($i = $start; $i <= $end; $i++)
-                            @if ($i == $current)
-                                <span class="pagination-number active">{{ $i }}</span>
-                            @else
-                                <a href="{{ $files->appends(request()->query())->url($i) }}"
-                                    class="pagination-number pagination-link">{{ $i }}</a>
-                            @endif
-                        @endfor
+                        <?php for($i = $start; $i <= $end; $i++): ?>
+                            <?php if($i == $current): ?>
+                                <span class="pagination-number active"><?php echo e($i); ?></span>
+                            <?php else: ?>
+                                <a href="<?php echo e($files->appends(request()->query())->url($i)); ?>"
+                                    class="pagination-number pagination-link"><?php echo e($i); ?></a>
+                            <?php endif; ?>
+                        <?php endfor; ?>
                     </div>
 
-                    @if ($files->hasMorePages())
-                        <a href="{{ $files->appends(request()->query())->nextPageUrl() }}"
+                    <?php if($files->hasMorePages()): ?>
+                        <a href="<?php echo e($files->appends(request()->query())->nextPageUrl()); ?>"
                             class="pagination-arrow pagination-link" aria-label="Next">→</a>
-                    @else
+                    <?php else: ?>
                         <span class="pagination-arrow disabled">→</span>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
-        @elseif(isset($files) && method_exists($files, 'hasPages'))
+        <?php elseif(isset($files) && method_exists($files, 'hasPages')): ?>
             <div class="text-muted small">
-                1-{{ $files->count() }} of {{ $files->total() }}
+                1-<?php echo e($files->count()); ?> of <?php echo e($files->total()); ?>
+
             </div>
-        @endif
+        <?php endif; ?>
     </div>
     </div>
-@endif
+<?php endif; ?>
 
 <style>
     .pagination-arrow {
@@ -621,3 +625,4 @@
         }
     }
 </style>
+<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/file-kesekretariat/_table.blade.php ENDPATH**/ ?>

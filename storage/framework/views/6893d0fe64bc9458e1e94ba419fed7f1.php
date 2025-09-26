@@ -1,10 +1,8 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Manajemen File'); ?>
+<?php $__env->startSection('mainSection', 'Menu Utama'); ?>
+<?php $__env->startSection('currentSection', 'File Kesekretariat'); ?>
 
-@section('pageTitle', 'Manajemen File')
-@section('mainSection', 'Menu Utama')
-@section('currentSection', 'File Kesekretariat')
-
-@section('style')
+<?php $__env->startSection('style'); ?>
     <style>                                                                                                                                                                                                                                                                                                                                  ================================= */
         body {
             background-color: #f5f5f5;
@@ -1036,9 +1034,9 @@
 }
 
     </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="d-grid gap-5 border-0">
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center container">
@@ -1049,8 +1047,8 @@
 
             <!-- Filter Form -->
             <form id="filter" class="d-flex gap-3 filter-container">
-                <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
-                <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
+                <input type="hidden" name="sort_by" id="sort_by_input" value="<?php echo e(request('sort_by', 'created_at')); ?>">
+                <input type="hidden" name="order" id="order_input" value="<?php echo e(request('order', 'desc')); ?>">
                 <button type="button" id="tambahFileBtn"
                     class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
@@ -1060,7 +1058,7 @@
                 <div class="search-container">
                     <div class="position-relative bg-light">
                         <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
-                        <input type="text" name="search" value="{{ request('search') }}"
+                        <input type="text" name="search" value="<?php echo e(request('search')); ?>"
                             placeholder="Cari nama dokumen..."
                             class="form-control border border-gray-500 py-2 search-input" />
                         <div class="search-loading">
@@ -1079,7 +1077,7 @@
                 </div>
                 <div class="card-body">
                     <div id="tableContainer">
-                        @include('admin.file-kesekretariat._table', ['files' => $files])
+                        <?php echo $__env->make('admin.file-kesekretariat._table', ['files' => $files], \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                     </div>
                 </div>
             </div>
@@ -1098,9 +1096,9 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="flex-shrink: 0;"></button>
                     </div>
 
-                    <form id="tambahFileForm" method="POST" action="{{ route('admin.file-kesekretariat.store') }}"
+                    <form id="tambahFileForm" method="POST" action="<?php echo e(route('admin.file-kesekretariat.store')); ?>"
                         enctype="multipart/form-data" class="d-grid gap-4">
-                        @csrf
+                        <?php echo csrf_field(); ?>
 
                         <!-- Document Name Field -->
                         <div>
@@ -1167,8 +1165,8 @@
                     </div>
 
                     <form id="editFileForm" method="POST" enctype="multipart/form-data" class="d-grid gap-4" style="width: 100%; max-width: 100%;">
-                        @csrf
-                        @method('PUT')
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('PUT'); ?>
 
                         <!-- Hidden ID Field -->
                         <input type="hidden" name="file_id" id="edit_file_id">
@@ -1246,9 +1244,9 @@
             </div>
         </div>
 
-    @endsection
+    <?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
 
         function deleteFile(fileId, fileName, deleteUrl) {
@@ -1546,7 +1544,7 @@
             let searchTimeout;
             let editDropzoneInitialized = false;
 
-            const baseUrl = "{{ route('admin.file-kesekretariat.index') }}";
+            const baseUrl = "<?php echo e(route('admin.file-kesekretariat.index')); ?>";
 
             // Form validation helpers
             function clearFormErrors() {
@@ -2350,7 +2348,7 @@
         searchParams.set('per_page', perPage);
     }
 
-    const baseUrl = "{{ route('admin.file-kesekretariat.index') }}";
+    const baseUrl = "<?php echo e(route('admin.file-kesekretariat.index')); ?>";
     const url = `${baseUrl}?${searchParams.toString()}`;
 
     $.ajax({
@@ -2732,7 +2730,7 @@ function hideLoading() {
             const searchParams = new URLSearchParams(window.location.search);
             searchParams.set('per_page', perPage);
             searchParams.delete('page');
-            const url = "{{ route('admin.file-kesekretariat.index') }}?" + searchParams.toString();
+            const url = "<?php echo e(route('admin.file-kesekretariat.index')); ?>?" + searchParams.toString();
             window.location.href = url;
         }
 
@@ -2742,6 +2740,8 @@ function hideLoading() {
             $('#filter input[name="search"]').trigger('input');
         }
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
 
 
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/file-kesekretariat/index.blade.php ENDPATH**/ ?>

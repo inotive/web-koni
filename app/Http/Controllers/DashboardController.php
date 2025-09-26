@@ -42,11 +42,6 @@ class DashboardController extends Controller
         // Gabungkan data kegiatan tambahan di awal
         $kegiatan = $kegiatan_tambahan->merge($kegiatan_utama);
         
-        // Membagi total RKA secara merata ke setiap kegiatan yang sesuai untuk perhitungan persentase
-        // Termasuk Sekretariat dan Kegiatan Lainnya dalam perhitungan
-        $jumlah_kegiatan = $kegiatan->count();
-        $rka_per_kegiatan = ($jumlah_kegiatan > 0 && $total_rka > 0) ? $total_rka / $jumlah_kegiatan : 0;
-        
         // Menghitung total serapan hanya dari kegiatan yang ditampilkan
         // Hanya menghitung data yang benar-benar ditambahkan oleh user (bukan default)
         $total_serapan = 0;
@@ -55,9 +50,26 @@ class DashboardController extends Controller
         // Mengambil semua target dan mengindeksnya berdasarkan id_lpj untuk pencarian efisien
         $targets = Target::all()->keyBy('id_lpj');
         
-        $kegiatan = $kegiatan->map(function ($item) use ($rka_per_kegiatan, $total_rka, &$total_serapan, &$kegiatan_berjalan_count, $targets) {
-            // Menetapkan total budget untuk setiap kegiatan (untuk perhitungan persentase per kegiatan)
-            $item->total_budget = $rka_per_kegiatan;
+        $kegiatan = $kegiatan->map(function ($item) use ($total_rka, &$total_serapan, &$kegiatan_berjalan_count, $targets) {
+            // Menghitung dan menetapkan total budget untuk setiap kegiatan
+            $item_budget = 0;
+            if ($item->id == 6) { // Special handling for Pembinaan Prestasi
+                if ($item->children->count() > 0) {
+                    foreach ($item->children as $child_item) {
+                        $child_target = $targets->get((string)$child_item->id);
+                        if ($child_target && isset($child_target->target_anggaran)) {
+                            $item_budget += (int) $child_target->target_anggaran;
+                        }
+                    }
+                }
+            } else { // Default logic for other items
+                $target = $targets->get((string)$item->id);
+                if ($target && isset($target->target_anggaran)) {
+                    $item_budget = (int) $target->target_anggaran;
+                }
+            }
+            $item->total_budget = $item_budget;
+            
             // Menetapkan total RKA keseluruhan (untuk ditampilkan di dashboard)
             $item->total_rka_keseluruhan = $total_rka;
 
@@ -91,16 +103,15 @@ class DashboardController extends Controller
                 $item->kegiatan_berjalan_count = $item->children->where('jumlah_harga', '>', 0)->count();
             }
             
-            // Untuk Pembinaan Prestasi (ID 6), kita perlu membagi anggarannya ke anak-anak
-            if ($item->id == 6 && $rka_per_kegiatan > 0) {
-                $anak_kegiatan = $item->children;
-                $jumlah_anak = $anak_kegiatan->count();
-                if ($jumlah_anak > 0) {
-                    $anggaran_per_anak = $rka_per_kegiatan / $jumlah_anak;
-                    // Menetapkan anggaran per anak
-                    $anak_kegiatan->each(function($anak) use ($anggaran_per_anak) {
-                        $anak->allocated_budget = $anggaran_per_anak;
-                    });
+            // Untuk Pembinaan Prestasi (ID 6), tetapkan anggaran spesifik untuk setiap anak
+            if ($item->id == 6) {
+                foreach ($item->children as $child) {
+                    $child_target = $targets->get((string)$child->id);
+                    $child_budget = 0;
+                    if ($child_target && isset($child_target->target_anggaran)) {
+                        $child_budget = (int) $child_target->target_anggaran;
+                    }
+                    $child->allocated_budget = $child_budget;
                 }
             }
             

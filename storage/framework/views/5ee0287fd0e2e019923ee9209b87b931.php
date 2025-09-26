@@ -4,11 +4,10 @@
 
 <?php $__env->startSection('style'); ?>
     <style>
-        /* Match page background with Sekretariat & Kegiatan Lainnya */
+
         body {
             background-color: #f5f5f5;
         }
-
         .filter-container {
             display: flex;
             align-items: center;
@@ -359,8 +358,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 400px;
-            /* Adjust as needed */
+            max-width: 400px; /* Adjust as needed */
         }
 
         /* Form elements should also respect modal width */
@@ -512,8 +510,8 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('content'); ?>
-    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="padding:10px 30px">
-        <h2 class="fw-bold fs-2 mb-0 text-dark">Database Bendahara</h2>
+    <div class="flex-wrap mb-2 d-flex justify-content-between align-items-center" style="padding:10px 30px">
+        <h2 class="mb-0 fw-bold fs-2 text-dark">Database Bendahara</h2>
         <button id="tambahLaporanBtn" class="btn"
             style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Laporan
@@ -525,154 +523,184 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="d-grid gap-5 border-0">
-                                <div class="d-flex justify-content-between align-items-center ">
+                            <div class="gap-5 border-0 d-grid">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div class="d-none d-md-block">
-                                        <h3 class="fw-bold fs-4 mb-0">Database Bendahara</h3>
+                                        <h3 class="mb-0 fw-bold fs-4">Database Bendahara</h3>
                                         <div class="text-muted small">Kelola laporan bendahara</div>
                                     </div>
 
-                                    <form id="filter" class="d-flex filter-container gap-3">
+                                    <form id="filter" class="gap-3 d-flex filter-container">
                                         
-
-                                        <div class="date-filter-container">
-                                            <div class="date-filter-btn <?php echo e(request('date_from') || request('date_to') ? 'date-filter-active' : ''); ?>"
-                                                id="dateFilterBtn">
-                                                <?php if(request('date_from') || request('date_to')): ?>
-                                                    <i class="fas fa-calendar-check"></i>
-                                                <?php else: ?>
-                                                    <i class="fas fa-calendar"></i>
-                                                <?php endif; ?>
-                                                <span class="filter-text">
-                                                    <?php if(request('date_from') || request('date_to')): ?>
-                                                        <?php if(request('date_from') && request('date_to')): ?>
-                                                            <?php echo e(\Carbon\Carbon::parse(request('date_from'))->format('d/m/Y')); ?>
-
-                                                            -
-                                                            <?php echo e(\Carbon\Carbon::parse(request('date_to'))->format('d/m/Y')); ?>
-
-                                                        <?php elseif(request('date_from')): ?>
-                                                            Dari
-                                                            <?php echo e(\Carbon\Carbon::parse(request('date_from'))->format('d/m/Y')); ?>
-
-                                                        <?php else: ?>
-                                                            Sampai
-                                                            <?php echo e(\Carbon\Carbon::parse(request('date_to'))->format('d/m/Y')); ?>
-
-                                                        <?php endif; ?>
-                                                    <?php endif; ?>
-                                                </span>
-                                            </div>
-
-                                            <div class="date-filter-menu" id="dateFilterMenu">
-                                                <div class="date-presets">
-                                                    <div class="date-presets-label">Preset Cepat:</div>
-                                                    <div class="date-preset-buttons">
-                                                        <button type="button" class="date-preset-btn"
-                                                            data-preset="today">Hari Ini</button>
-                                                        <button type="button" class="date-preset-btn"
-                                                            data-preset="this-week">Minggu Ini</button>
-                                                        <button type="button" class="date-preset-btn"
-                                                            data-preset="this-month">Bulan Ini</button>
-                                                        <button type="button" class="date-preset-btn"
-                                                            data-preset="this-year">Tahun Ini</button>
-                                                        <button type="button" class="date-preset-btn"
-                                                            data-preset="last-30-days">30 Hari
-                                                            Terakhir</button>
-                                                    </div>
-                                                </div>
-
-                                                <div class="date-input-group">
-                                                    <div class="date-input-wrapper">
-                                                        <label class="date-input-label">Dari Tanggal</label>
-                                                        <input type="date" name="date_from"
-                                                            value="<?php echo e(request('date_from')); ?>" class="date-input"
-                                                            id="dateFromInput">
-                                                    </div>
-                                                    <div class="date-input-wrapper">
-                                                        <label class="date-input-label">Sampai Tanggal</label>
-                                                        <input type="date" name="date_to"
-                                                            value="<?php echo e(request('date_to')); ?>" class="date-input"
-                                                            id="dateToInput">
-                                                    </div>
-                                                </div>
-
-                                                <div class="date-filter-actions">
-                                                    <button type="button" class="date-filter-apply"
-                                                        id="applyDateFilter">Terapkan</button>
-                                                    <button type="button" class="date-filter-clear"
-                                                        id="clearDateFilter">Reset</button>
-                                                </div>
-                                            </div>
-                                        </div>
 
                                         <div class="search-container">
                                             <div class="position-relative bg-light">
                                                 <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
                                                 <input type="text" name="search" value="<?php echo e(request('search')); ?>"
                                                     placeholder="Cari laporan..."
-                                                    class="form-control search-input border border-gray-500 py-2" />
+                                                    class="py-2 border border-gray-500 form-control search-input" />
                                             </div>
                                         </div>
 
-                                        
-                                            
+                <div class="date-filter-container">
+                    <div class="date-filter-btn <?php echo e(request('date_from') || request('date_to') ? 'date-filter-active' : ''); ?>"
+                        id="dateFilterBtn">
+                        <?php if(request('date_from') || request('date_to')): ?>
+                            <i class="fas fa-calendar-check"></i>
+                        <?php else: ?>
+                            <i class="fas fa-calendar"></i>
+                        <?php endif; ?>
+                        <span class="filter-text">
+                            <?php if(request('date_from') || request('date_to')): ?>
+                                <?php if(request('date_from') && request('date_to')): ?>
+                                    <?php echo e(\Carbon\Carbon::parse(request('date_from'))->format('d/m/Y')); ?> -
+                                    <?php echo e(\Carbon\Carbon::parse(request('date_to'))->format('d/m/Y')); ?>
 
-                                        <input type="hidden" name="filter_type" id="filter_type_input"
-                                            value="<?php echo e(request('filter_type', 'all')); ?>">
-                                        <input type="hidden" name="date_from" id="date_from_input"
-                                            value="<?php echo e(request('date_from')); ?>">
-                                        <input type="hidden" name="date_to" id="date_to_input"
-                                            value="<?php echo e(request('date_to')); ?>">
-                                        <input type="hidden" name="sort_by" id="sort_by_input"
-                                            value="<?php echo e(request('sort_by', 'created_at')); ?>">
-                                        <input type="hidden" name="order" id="order_input"
-                                            value="<?php echo e(request('order', 'desc')); ?>">
-                                    </form>
-                                </div>
+                                <?php elseif(request('date_from')): ?>
+                                    Dari <?php echo e(\Carbon\Carbon::parse(request('date_from'))->format('d/m/Y')); ?>
 
-                                <div id="table">
-                                    <?php echo $__env->make(
-                                        'admin.bendahara._table',
-                                        compact('laporanBendahara', 'fileCounts', 'currentSort'), \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                </div>
+                                <?php else: ?>
+                                    Sampai <?php echo e(\Carbon\Carbon::parse(request('date_to'))->format('d/m/Y')); ?>
+
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </span>
+                    </div>
+
+                    <div class="date-filter-menu" id="dateFilterMenu">
+                        <div class="date-presets">
+                            <div class="date-presets-label">Preset Cepat:</div>
+                            <div class="date-preset-buttons">
+                                <button type="button" class="date-preset-btn" data-preset="today">Hari Ini</button>
+                                <button type="button" class="date-preset-btn" data-preset="this-week">Minggu Ini</button>
+                                <button type="button" class="date-preset-btn" data-preset="this-month">Bulan Ini</button>
+                                <button type="button" class="date-preset-btn" data-preset="this-year">Tahun Ini</button>
+                                <button type="button" class="date-preset-btn" data-preset="last-30-days">30 Hari
+                                    Terakhir</button>
                             </div>
+                        </div>
+
+                        <div class="date-input-group">
+                            <div class="date-input-wrapper">
+                                <label class="date-input-label">Dari Tanggal</label>
+                                <input type="date" name="date_from" value="<?php echo e(request('date_from')); ?>" class="date-input"
+                                    id="dateFromInput">
+                            </div>
+                            <div class="date-input-wrapper">
+                                <label class="date-input-label">Sampai Tanggal</label>
+                                <input type="date" name="date_to" value="<?php echo e(request('date_to')); ?>" class="date-input"
+                                    id="dateToInput">
+                            </div>
+                        </div>
+
+                        <div class="date-filter-actions">
+                            <button type="button" class="date-filter-apply" id="applyDateFilter">Terapkan</button>
+                            <button type="button" class="date-filter-clear" id="clearDateFilter">Reset</button>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <div class="filter-dropdown">
+                    <div class="filter-btn <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'filter-active' : ''); ?>"
+                        id="filterBtn">
+                        <span>
+                            <?php if(request('filter_type') == 'pdf'): ?>
+                                <i class="fas fa-file-pdf me-2"
+                                    style="color: <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'white' : '#dc3545'); ?>;"></i>File
+                                PDF
+                            <?php elseif(request('filter_type') == 'excel'): ?>
+                                <i class="fas fa-file-excel me-2"
+                                    style="color: <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'white' : '#198754'); ?>;"></i>File
+                                Excel
+                            <?php elseif(request('filter_type') == 'other'): ?>
+                                <i class="fas fa-file me-2"
+                                    style="color: <?php echo e(request('filter_type') && request('filter_type') != 'all' ? 'white' : '#6c757d'); ?>;"></i>File
+                                Lain
+                            <?php else: ?>
+                                <i class="fas fa-filter me-2"></i>Filter Tipe File
+                            <?php endif; ?>
+                        </span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                    </div>
+
+                    <div class="filter-menu" id="filterMenu">
+                        <div class="filter-option <?php echo e(request('filter_type', 'all') == 'all' ? 'active' : ''); ?>"
+                            data-filter="all">
+                            <span>
+                                <i class="fas fa-list file-type-icon"></i>
+                                Semua File
+                            </span>
+                            <span class="filter-count"><?php echo e($fileCounts['all'] ?? 0); ?></span>
+                        </div>
+                        <div class="filter-option <?php echo e(request('filter_type') == 'pdf' ? 'active' : ''); ?>" data-filter="pdf">
+                            <span>
+                                <i class="fas fa-file-pdf file-type-icon" style="color: #dc3545;"></i>
+                                File PDF
+                            </span>
+                            <span class="filter-count"><?php echo e($fileCounts['pdf'] ?? 0); ?></span>
+                        </div>
+                        <div class="filter-option <?php echo e(request('filter_type') == 'excel' ? 'active' : ''); ?>"
+                            data-filter="excel">
+                            <span>
+                                <i class="fas fa-file-excel file-type-icon" style="color: #198754;"></i>
+                                File Excel
+                            </span>
+                            <span class="filter-count"><?php echo e($fileCounts['excel'] ?? 0); ?></span>
+                        </div>
+                        <div class="filter-option <?php echo e(request('filter_type') == 'other' ? 'active' : ''); ?>"
+                            data-filter="other">
+                            <span>
+                                <i class="fas fa-file file-type-icon" style="color: #6c757d;"></i>
+                                File Lain
+                            </span>
+                            <span class="filter-count"><?php echo e($fileCounts['other'] ?? 0); ?></span>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" name="filter_type" id="filter_type_input"
+                    value="<?php echo e(request('filter_type', 'all')); ?>">
+                <input type="hidden" name="date_from" id="date_from_input" value="<?php echo e(request('date_from')); ?>">
+                <input type="hidden" name="date_to" id="date_to_input" value="<?php echo e(request('date_to')); ?>">
+                <input type="hidden" name="sort_by" id="sort_by_input" value="<?php echo e(request('sort_by', 'created_at')); ?>">
+                <input type="hidden" name="order" id="order_input" value="<?php echo e(request('order', 'desc')); ?>">
+            </form>
+        </div>
+
+        <div id="table" class="container">
+            <?php echo $__env->make('admin.bendahara._table', compact('laporanBendahara', 'fileCounts', 'currentSort'), \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
         </div>
     </div>
 
     <!-- Add Modal -->
     <div class="modal fade" id="add" tabindex="-1" aria-labelledby="add" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4 gap-5 px-10 py-8">
+            <div class="gap-5 px-10 py-8 modal-content rounded-4">
                 <div class="d-flex justify-content-between align-items-center">
-                    <div class="fs-2 fw-bold leading-5">Tambah Laporan Bendahara</div>
+                    <div class="leading-5 fs-2 fw-bold">Tambah Laporan Bendahara</div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <form id="formAdd" action="<?php echo e(route('admin.bendahara.store')); ?>" method="POST"
-                    enctype="multipart/form-data" class="d-grid gap-4">
+                    enctype="multipart/form-data" class="gap-4 d-grid">
                     <?php echo csrf_field(); ?>
 
                     <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Judul Laporan</div>
+                        <div class="mb-3 text-gray-800 fw-semibold required">Judul Laporan</div>
                         <input type="text" name="judul" placeholder="Masukkan Judul Laporan"
-                            class="form-control bg-light border border-gray-400" required />
+                            class="border border-gray-400 form-control bg-light" required />
                         <div class="invalid-feedback"></div>
                     </div>
 
                     <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Tanggal Laporan</div>
+                        <div class="mb-3 text-gray-800 fw-semibold required">Tanggal Laporan</div>
                         <input type="date" name="tanggal" placeholder="Pilih Tanggal Laporan"
-                            class="form-control bg-light border border-gray-400" required />
+                            class="border border-gray-400 form-control bg-light" required />
                         <div class="invalid-feedback"></div>
                     </div>
 
                     <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Unggah Dokumen</div>
+                        <div class="mb-3 text-gray-800 fw-semibold required">Unggah Dokumen</div>
                         <div class="fv-row">
                             <div class="dropzone" id="dropzone-formAdd">
                                 <div class="dz-message needsclick">
@@ -680,8 +708,8 @@
                                         <span class="path1"></span><span class="path2"></span>
                                     </i>
                                     <div class="ms-4">
-                                        <h3 class="fs-5 fw-bold mb-1 text-gray-900">Seret atau pilih dokumen.</h3>
-                                        <span class="fs-7 fw-semibold text-gray-500">Format: PDF, XLS, XLSX. Max. 10
+                                        <h3 class="mb-1 text-gray-900 fs-5 fw-bold">Seret atau pilih dokumen.</h3>
+                                        <span class="text-gray-500 fs-7 fw-semibold">Format: PDF, XLS, XLSX. Max. 10
                                             MB.</span>
                                     </div>
                                 </div>
@@ -691,9 +719,9 @@
                     </div>
                 </form>
 
-                <div class="d-grid py-4">
+                <div class="py-4 d-grid">
                     <button type="button" onclick="submitForm('formAdd')" id="submitBtnAdd"
-                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                        class="gap-2 p-4 text-white rounded border-0 bg-danger fw-bold d-flex align-items-center justify-content-center">
                         <span class="btn-text">Tambah Laporan</span>
                     </button>
                 </div>
@@ -710,7 +738,7 @@
                     <h5 class="modal-title text-truncate" id="filePreviewModalLabel">Preview Dokumen</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-0">
+                <div class="p-0 modal-body">
                     <div id="previewContainer" class="w-100 h-100">
                         <!-- Preview content will be loaded here -->
                     </div>
@@ -1542,4 +1570,4 @@
     </script>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/bendahara/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/bendahara/index.blade.php ENDPATH**/ ?>
