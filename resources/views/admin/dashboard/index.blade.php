@@ -315,14 +315,14 @@
                         $persen_berjalan = $total_kegiatan > 0 ? round(($kegiatan_berjalan / $total_kegiatan) * 100) : 0;
                     @endphp
                     <div class="position-absolute top-0 end-0 mt-7 me-4 d-flex flex-column align-items-end">
+                          <span class="text-primary fw-semibold mt-2" style="font-size: 1.2rem;">{{ $total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0 }}% Serapan</span>
+                        <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: {{ $total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0 }}%;"></div>
+                        </div>
+                        
                         <span class="text-success fw-semibold" style="font-size: 1.2rem;">{{ $persen_berjalan }}% Berjalan</span>
                         <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
                             <div class="progress-bar bg-success" style="width: {{ $persen_berjalan }}%;"></div>
-                        </div>
-
-                        <span class="text-primary fw-semibold mt-2" style="font-size: 1.2rem;">{{ $total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0 }}% Serapan</span>
-                        <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
-                            <div class="progress-bar bg-primary" style="width: {{ $total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0 }}%;"></div>
                         </div>
                     </div>
 
