@@ -1192,47 +1192,47 @@
                 });
             };
 
-            // REPLACED FUNCTION
             window.showDetailModal = function(data) {
-                const modalBody = document.getElementById('detailModalBody');
-                const statusIcon = document.getElementById('statusIcon');
-                const exportBtn = document.getElementById('export-pdf-btn');
-                const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
+        const modalBody = document.getElementById('detailModalBody');
+        const statusIcon = document.getElementById('statusIcon');
+        const exportBtn = document.getElementById('export-pdf-btn');
 
-                if (exportBtn) {
-                    exportBtn.setAttribute('data-lpj-id', data.id);
-                    // exportBtn.style.backgroundColor = '#e63946'; // Red color
+        if (exportBtn) exportBtn.setAttribute('data-lpj-id', data.id);
+
+        // Status indicator
+        if (statusIcon) {
+            const canPengajuanModifikasi = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
+            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
+
+            // Handle the pengajuan data - it should be a single object, not an array
+            const pengajuan = data.pengajuan; // This is the hasOne relationship
+            const hasToken = pengajuan && pengajuan.status === 'disetujui' && pengajuan.token > 0;
+
+            let isModifiableStatus = false;
+            if (canPengajuanModifikasi) {
+                isModifiableStatus = true;
+            } else if (isModifiable && hasToken) {
+                isModifiableStatus = true;
+            }
+
+            if (isModifiableStatus) {
+                statusIcon.innerHTML = 'Terbuka';
+                statusIcon.className = 'badge border-success text-success bg-opacity-20 bg-success fs-7 d-flex align-items-center';
+            } else {
+                statusIcon.innerHTML = 'Terkunci';
+                statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7 d-flex align-items-center';
+            }
+
+            const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
+            if (ajukanBtn) {
+                // Show the pengajuan button only if the user cannot modify (no permission and no valid token)
+                if (isModifiableStatus) {
+                    ajukanBtn.style.display = 'none';
+                } else {
+                    ajukanBtn.style.display = '';
                 }
-
-                // Status indicator & Button Logic
-                if (statusIcon && ajukanBtn) {
-                    const pengajuan = data.pengajuan && data.pengajuan.length > 0 ? data.pengajuan.find(p => p
-                        .status === 'disetujui') : null;
-                    const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id ==
-                        {{ auth()->id() }} && pengajuan && pengajuan.token > 0;
-                    const canModify =
-                        {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }} ||
-                        isModifiable;
-                    const canRequestChange =
-                        {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
-
-                    if (canModify) {
-                        statusIcon.innerHTML = 'Terbuka';
-                        statusIcon.className =
-                        'badge border-success text-success bg-opacity-20 bg-success fs-7';
-                        ajukanBtn.style.display = 'none'; // Hide "Ajukan Perubahan"
-                        exportBtn.style.display = ''; // Show "Export"
-                    } else {
-                        statusIcon.innerHTML = 'Terkunci';
-                        statusIcon.className = 'badge border-danger text-danger bg-opacity-20 bg-danger fs-7';
-                        if (canRequestChange) {
-                            ajukanBtn.style.display = ''; // Show "Ajukan Perubahan"
-                        } else {
-                            ajukanBtn.style.display = 'none';
-                        }
-                        exportBtn.style.display = ''; // Export is always visible
-                    }
-                }
+            }
+        }
 
                 $('#detailModal').data('lpj-id', data.id);
 

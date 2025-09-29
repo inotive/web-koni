@@ -617,12 +617,8 @@ unset($__errorArgs, $__bag); ?>
                             
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
-                                    <label class="form-label">Dokumen LPJ <?php if(!$sekretariat->dokumen_lpj_pdf): ?><span class="text-danger">*</span><?php endif; ?></label>
-                                    <?php if(!$sekretariat->dokumen_lpj_pdf): ?>
-                                        <p class="file-upload-hint">Unggah file PDF, maksimal 10MB</p>
-                                    <?php else: ?>
-                                        <p class="file-upload-hint">Unggah file PDF baru untuk menggantikan yang lama, maksimal 10MB</p>
-                                    <?php endif; ?>
+                                    <label class="form-label">Dokumen LPJ</label>
+                                    <p class="file-upload-hint">Unggah file PDF (opsional), maksimal 10MB</p>
                                 </div>
                                 <div class="col-md-9">
                                     <?php
@@ -681,7 +677,7 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                               accept=".pdf" <?php echo e(!$sekretariat->dokumen_lpj_pdf ? 'required' : ''); ?>>
+                                               accept=".pdf">
 
                                         <div class="d-flex align-items-center gap-12">
                                             <div class="file-upload-icon-wrapper">
