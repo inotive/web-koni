@@ -653,7 +653,7 @@ public function exportDetail($id)
                               ->where('parent_id', $this->getOrCreateParentCategory()->id)
                               ->findOrFail($id);
 
-        // Create initial PDF with letterhead and content
+        // Create the main content with DomPDF
         $pdf = Pdf::loadView('admin.laporan-lpj.kegiatan-lainnya.export', compact('kegiatanLainnya'));
         $pdf->setPaper('A4', 'portrait');
 
@@ -664,7 +664,7 @@ public function exportDetail($id)
         // Initialize FPDI for PDF merging
         $fpdi = new Fpdi();
 
-        // Add main content pages
+        // Add main content pages (these will have header from the CSS)
         $pageCount = $fpdi->setSourceFile($tempMainFile);
         for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
             $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
@@ -672,7 +672,7 @@ public function exportDetail($id)
             $fpdi->useTemplate($templateId);
         }
 
-        // Merge PDF attachments (dokumen_lpj and dokumen_lpj_pdf)
+        // Process PDF attachments (dokumen_lpj and dokumen_lpj_pdf)
         if ($kegiatanLainnya->dokumen_lpj && count($kegiatanLainnya->dokumen_lpj) > 0) {
             foreach ($kegiatanLainnya->dokumen_lpj as $dokumen) {
                 $path = is_array($dokumen) ? ($dokumen['path'] ?? '') : $dokumen;

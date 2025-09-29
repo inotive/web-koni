@@ -307,10 +307,20 @@
             <div class="col-md-6 position-relative">
                 <div class="info-card text-start position-relative">
                     
+                    <?php
+                        $kegiatan_berjalan = $kegiatan_berjalan_all ?? $kegiatan_berjalan_count ?? 0;
+                        $total_kegiatan = $total_kegiatan_all ?? ($kegiatan ? $kegiatan->count() : 0);
+                        $persen_berjalan = $total_kegiatan > 0 ? round(($kegiatan_berjalan / $total_kegiatan) * 100) : 0;
+                    ?>
                     <div class="position-absolute top-0 end-0 mt-7 me-4 d-flex flex-column align-items-end">
-                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Berjalan</span>
+                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($persen_berjalan); ?>% Berjalan</span>
                         <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
-                            <div class="progress-bar bg-success" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
+                            <div class="progress-bar bg-success" style="width: <?php echo e($persen_berjalan); ?>%;"></div>
+                        </div>
+
+                        <span class="text-primary fw-semibold mt-2" style="font-size: 1.2rem;"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Serapan</span>
+                        <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
                         </div>
                     </div>
 
@@ -398,27 +408,44 @@
                 <div id="informasi-kegiatan-content">
 
                 <?php $__currentLoopData = $kegiatan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php
-                                            // Data serapan dan budget sudah dihitung di controller
-                                            $serapan = $item->serapan ?? 0;
-                                            $display_budget = $item->total_budget ?? 0;
-                                            $display_serapan = $serapan;
-                    
-                                            // Perhitungan persentase
-                                            $persen = 0;
-                                            if ($display_budget > 0) {
-                                                $persen = round(($serapan / $display_budget) * 100);
-                                                $persen = min(100, $persen);
-                                            }
-                    
-                                            $barClass = 'bar-success';
-                                            if ($persen <= 30) {
-                                                $barClass = 'bar-danger';
-                                            } elseif ($persen <= 60) {
-                                                $barClass = 'bar-warning';
-                                            }
-                                        ?>
-                    
+                                                            <?php
+                                                                $serapan = $item->serapan ?? 0;
+                                                                $display_serapan = $serapan;
+
+                                                                // --- Budget Calculation ---
+                                                                $rka_per_kegiatan = 0;
+                                                                if ($item->id == 6) { // Pembinaan Prestasi
+                                                                    // Sum budgets from its children (Cabor Akurasi, etc.)
+                                                                    if ($item->children && $item->children->count() > 0) {
+                                                                        foreach ($item->children as $child_item) {
+                                                                            $child_target = \App\Models\Target::where('id_lpj', $child_item->id)->first();
+                                                                            if ($child_target && isset($child_target->target_anggaran)) {
+                                                                                $rka_per_kegiatan += (int) $child_target->target_anggaran;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                } else { // Other main categories
+                                                                    $target = \App\Models\Target::where('id_lpj', $item->id)->first();
+                                                                    if ($target && isset($target->target_anggaran)) {
+                                                                        $rka_per_kegiatan = (int) $target->target_anggaran;
+                                                                    }
+                                                                }
+                                                                $display_budget = $rka_per_kegiatan;
+                                                                // --- End Budget Calculation ---
+
+                                                                $persen = 0;
+                                                                if ($display_budget > 0) {
+                                                                    $persen = round(($serapan / $display_budget) * 100);
+                                                                    $persen = min(100, $persen);
+                                                                }
+
+                                                                $barClass = 'bar-success';
+                                                                if ($persen <= 30) {
+                                                                    $barClass = 'bar-danger';
+                                                                } elseif ($persen <= 60) {
+                                                                    $barClass = 'bar-warning';
+                                                                }
+                                                            ?>
                                         <div class="d-flex align-items-center mb-3 gap-3">
                                             <div style="min-width: 220px; max-width: 220px;">
                                                 <div class="d-flex align-items-center justify-content-between">
@@ -453,7 +480,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                    
+
                                         
                                         <?php if($item->id == 6 && $item->children->count() > 0): ?>
                                             <div class="collapse" id="collapsePembinaanPrestasi">
@@ -463,15 +490,19 @@
                                                     </div>
                                                     <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                        // Serapan dan budget untuk cabor sudah dihitung di controller
                                         $child_serapan = $child->serapan_cabor ?? 0;
-                                        $child_budget = $child->allocated_budget ?? 0;
 
-                                        // Perhitungan persentase dengan pengecekan aman
+                                        // --- Child Budget Calculation ---
+                                        $child_target = \App\Models\Target::where('id_lpj', $child->id)->first();
+                                        $child_budget = 0;
+                                        if ($child_target && isset($child_target->target_anggaran)) {
+                                            $child_budget = (int) $child_target->target_anggaran;
+                                        }
+                                        // --- End Child Budget Calculation ---
+
                                         $child_persen = 0;
                                         if ($child_budget > 0) {
                                             $child_persen = round(($child_serapan / $child_budget) * 100);
-                                            // Batasi maksimal 100%
                                             $child_persen = min(100, $child_persen);
                                         }
 
