@@ -672,37 +672,64 @@ public function exportDetail($id)
             $fpdi->useTemplate($templateId);
         }
 
-        // Collect all PDF documents
-        $pdfFiles = [];
-        if ($kegiatanLainnya->dokumen_lpj && is_array($kegiatanLainnya->dokumen_lpj)) {
+        // Merge PDF attachments (dokumen_lpj and dokumen_lpj_pdf)
+        if ($kegiatanLainnya->dokumen_lpj && count($kegiatanLainnya->dokumen_lpj) > 0) {
             foreach ($kegiatanLainnya->dokumen_lpj as $dokumen) {
-                $path = is_array($dokumen) ? ($dokumen['path'] ?? null) : (is_string($dokumen) ? $dokumen : null);
-                if ($path && strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'pdf') {
-                    $pdfFiles[] = $path;
+                $path = is_array($dokumen) ? ($dokumen['path'] ?? '') : $dokumen;
+                
+                if ($path) {
+                    $filePath = storage_path('app/public/' . $path);
+                    
+                    if (file_exists($filePath)) {
+                        $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+                        // Only merge PDF files
+                        if ($fileExtension === 'pdf') {
+                            try {
+                                $attachmentPageCount = $fpdi->setSourceFile($filePath);
+
+                                for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
+                                    $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                                    $fpdi->AddPage();
+                                    $fpdi->useTemplate($templateId);
+                                }
+                            } catch (\Exception $e) {
+                                // Log error but continue with other files
+                                \Log::warning("Could not merge PDF file: {$path}. Error: " . $e->getMessage());
+                            }
+                        }
+                    }
                 }
             }
         }
-        if ($kegiatanLainnya->dokumen_lpj_pdf) {
-             $path = is_array($kegiatanLainnya->dokumen_lpj_pdf) ? ($kegiatanLainnya->dokumen_lpj_pdf['path'] ?? null) : (is_string($kegiatanLainnya->dokumen_lpj_pdf) ? $kegiatanLainnya->dokumen_lpj_pdf : null);
-            if ($path) {
-                $pdfFiles[] = $path;
-            }
-        }
-        
-        // Merge PDF attachments
-        foreach ($pdfFiles as $pdfFile) {
-            $filePath = storage_path('app/public/' . $pdfFile);
 
-            if (file_exists($filePath)) {
-                try {
-                    $attachmentPageCount = $fpdi->setSourceFile($filePath);
-                    for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
-                        $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
-                        $fpdi->AddPage();
-                        $fpdi->useTemplate($templateId);
+        // Check for dokumen_lpj_pdf
+        if ($kegiatanLainnya->dokumen_lpj_pdf) {
+            $path = is_array($kegiatanLainnya->dokumen_lpj_pdf) ? 
+                   ($kegiatanLainnya->dokumen_lpj_pdf['path'] ?? '') : 
+                   $kegiatanLainnya->dokumen_lpj_pdf;
+            
+            if ($path) {
+                $filePath = storage_path('app/public/' . $path);
+                
+                if (file_exists($filePath)) {
+                    $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+                    // Only merge PDF files
+                    if ($fileExtension === 'pdf') {
+                        try {
+                            $attachmentPageCount = $fpdi->setSourceFile($filePath);
+
+                            for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
+                                $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                                $fpdi->AddPage();
+                                $fpdi->useTemplate($templateId);
+                            }
+                        } catch (\Exception $e) {
+                            // Log error but continue
+                            \Log::warning("Could not merge PDF file: {$path}. Error: " . $e->getMessage());
+                        }
                     }
-                } catch (\Exception $e) {
-                    \Log::warning("Could not merge PDF file: {$pdfFile}. Error: " . $e->getMessage());
                 }
             }
         }
@@ -719,13 +746,25 @@ public function exportDetail($id)
         return response($finalPdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Length' => strlen($finalPdf)
         ]);
 
     } catch (\Exception $e) {
         \Log::error('Error exporting PDF for Kegiatan Lainnya: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Gagal membuat laporan PDF. Terjadi kesalahan.');
+        return redirect()->back()->with('error', 'Gagal membuat laporan PDF. Terjadi kesalahan: ' . $e->getMessage());
     }
 }
+
+    /**
+     * Export all kegiatan lainnya to PDF
+     */
+    public function exportAll(Request $request)
+    {
+        // For now, redirect to index with export functionality
+        // In the future, this could export all entries as a single PDF
+        return redirect()->route('admin.laporan-lpj.kegiatan-lainnya.index')
+                         ->with('error', 'Fungsi export semua data belum diimplementasikan.');
+    }
 
     /**
      * Update target anggaran and kegiatan for kegiatan-lainnya

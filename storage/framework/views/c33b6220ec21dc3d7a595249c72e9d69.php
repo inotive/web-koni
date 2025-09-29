@@ -4,8 +4,11 @@
     <title>Laporan LPJ - <?php echo e($kegiatanLainnya->nama_program); ?></title>
     <meta charset="UTF-8">
     <style>
-       @page {
-            margin: 1cm 1.5cm 1.5cm 1.5cm;
+        @page {
+            margin-top: 160px;   /* reserve space for letterhead */
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-bottom: 40px;
         }
 
         body {
@@ -19,14 +22,24 @@
 
         /* --- HEADER IMAGE --- */
         .letterhead {
+            position: fixed;
+            top: -160px;   /* move into the reserved top margin */
+            left: 0;
+            right: 0;
             text-align: center;
-            margin-bottom: 20px;
+            height: 151px; /* actual header image height */
         }
 
         .letterhead img {
             width: 100%;
-            max-height: 200px;  /* adjust for PDF */
+            height: auto;
+            max-height: 151px; /* match your letterhead (810x151) */
             object-fit: contain;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .content {
+            margin-top: 0;   /* no need for padding-top anymore */
         }
 
         /* --- DOCUMENT TITLE --- */
@@ -118,7 +131,6 @@
             display: flex;
             justify-content: space-between;
         }
-
         .signature-box {
             text-align: center;
             width: 220px;
@@ -147,11 +159,19 @@
     <!-- HEADER IMAGE -->
     <div class="letterhead">
         <?php
-            $imagePath = public_path('assets/img/kob-nobg.png');
-            $imageData = base64_encode(file_get_contents($imagePath));
-            $imageSrc = 'data:image/png;base64,' . $imageData;
+            $headerImagePath = public_path('assets/img/kop-nobg.png');
+            if(file_exists($headerImagePath)) {
+                $headerImageMimeType = mime_content_type($headerImagePath);
+                $headerImageData = base64_encode(file_get_contents($headerImagePath));
+                $headerImageSrc = 'data:' . $headerImageMimeType . ';base64,' . $headerImageData;
+                echo '<img src="' . $headerImageSrc . '" alt="KONI Letterhead">';
+            } else {
+                // Fallback if image doesn't exist
+                echo '<div style="height: 151px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                        <span style="color: #6c757d; font-weight: bold;">LOGO KONI</span>
+                      </div>';
+            }
         ?>
-        <img src="<?php echo e($imageSrc); ?>" alt="KONI Letterhead">
     </div>
 
     <!-- MAIN CONTENT -->
@@ -170,6 +190,18 @@
                 <th>Total Anggaran</th>
                 <td class="amount">Rp <?php echo e(number_format($kegiatanLainnya->jumlah_harga, 2, ',', '.')); ?></td>
             </tr>
+            <?php if($kegiatanLainnya->created_at): ?>
+            <tr>
+                <th>Tanggal Ditambahkan</th>
+                <td><?php echo e(\Carbon\Carbon::parse($kegiatanLainnya->created_at)->format('d F Y')); ?></td>
+            </tr>
+            <?php endif; ?>
+            <?php if($kegiatanLainnya->tanggal_kegiatan): ?>
+            <tr>
+                <th>Tanggal Kegiatan</th>
+                <td><?php echo e(\Carbon\Carbon::parse($kegiatanLainnya->tanggal_kegiatan)->format('d F Y')); ?></td>
+            </tr>
+            <?php endif; ?>
             <?php if($kegiatanLainnya->volume): ?>
             <tr>
                 <th>Volume</th>
@@ -197,16 +229,19 @@
                     <?php $__currentLoopData = $kegiatanLainnya->foto_jurnal; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <?php
                             $path = is_array($foto) ? ($foto['path'] ?? '') : $foto;
-                            $originalName = is_array($foto) ? 
-                                           ($foto['original_name'] ?? basename($path)) : 
-                                           basename($path);
                         ?>
                         
-                        <?php if($path && file_exists(storage_path('app/public/' . $path))): ?>
+                        <?php if(file_exists(storage_path('app/public/' . $path))): ?>
                             <td class="photo-td">
                                 <div class="photo-container">
-                                    <img src="<?php echo e(storage_path('app/public/' . $path)); ?>" alt="<?php echo e($originalName); ?>">
-                                    <div class="photo-caption"><?php echo e($originalName); ?></div>
+                                    <!-- Placeholder for image - using CSS background to avoid GD issues -->
+                                    <div style="width: 100%; height: 150px; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 4px;">
+                                        <span style="color: #666; font-size: 12px; text-align: center; padding: 10px;">
+                                            Gambar: <?php echo e(pathinfo($path, PATHINFO_FILENAME)); ?><br>
+                                            (Lampiran dalam dokumen asli)
+                                        </span>
+                                    </div>
+                                    <div class="photo-caption"><?php echo e(pathinfo($path, PATHINFO_FILENAME)); ?></div>
                                 </div>
                             </td>
                             <?php if(($index + 1) % 3 == 0): ?>

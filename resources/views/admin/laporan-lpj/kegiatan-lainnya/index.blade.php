@@ -1606,7 +1606,7 @@ $('#ajukanPerubahanBtn').on('click', function() {
                     alert('Terjadi kesalahan: ID laporan tidak ditemukan.');
                     return;
                 }
-                const exportUrl = `/admin/laporan-lpj/kegiatan-lainnya/${lpjId}/export`;
+                const exportUrl = "{{ route('admin.laporan-lpj.kegiatan-lainnya.export', ':id') }}".replace(':id', lpjId);
                 window.open(exportUrl, '_blank');
             });
 
