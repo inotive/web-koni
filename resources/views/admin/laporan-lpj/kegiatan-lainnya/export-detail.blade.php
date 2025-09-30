@@ -223,7 +223,7 @@
                       </div>';
             }
         @endphp
-    </div>
+     </div>
 
     <!-- Konten Utama -->
     <div class="container">
@@ -315,35 +315,7 @@
                 @endif
             </div>
 
-            <!-- Dokumen Pendukung -->
-            <div class="info-item">
-                <div class="info-label">Dokumen Pendukung:</div>
-                @if(!empty($data['dokumen_lpj']) && is_array($data['dokumen_lpj']) && count($data['dokumen_lpj']) > 0)
-                <div class="dokumen-list">
-                    @foreach($data['dokumen_lpj'] as $dokumen)
-                        @php
-                            $path = is_object($dokumen) ? $dokumen->path : (is_array($dokumen) ? $dokumen['path'] : $dokumen);
-                            $fullPath = public_path('storage/' . $path);
-                            $fileName = basename($path);
-                            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-                            
-                            $iconClass = 'fas fa-file';
-                            if ($fileExtension === 'pdf') $iconClass = 'fas fa-file-pdf text-danger';
-                            elseif (in_array($fileExtension, ['doc', 'docx'])) $iconClass = 'fas fa-file-word text-primary';
-                            elseif (in_array($fileExtension, ['xls', 'xlsx'])) $iconClass = 'fas fa-file-excel text-success';
-                            elseif (in_array($fileExtension, ['ppt', 'pptx'])) $iconClass = 'fas fa-file-powerpoint text-warning';
-                            elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) $iconClass = 'fas fa-file-image text-info';
-                        @endphp
-                        <div class="dokumen-item">
-                            <i class="{{ $iconClass }}"></i>
-                            <span>{{ $fileName }}</span>
-                        </div>
-                    @endforeach
-                </div>
-                @else
-                <div class="no-data">Tidak ada dokumen pendukung</div>
-                @endif
-            </div>
+
         </div>
 
         @if(!empty($data['keterangan_tambahan']))
