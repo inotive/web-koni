@@ -44,7 +44,7 @@
 <?php $__env->startSection('content'); ?>
 <style>
     body { background-color: #f5f5f5 !important; }
-    .main-content { background-color: #f5f5f5; min-height: 100vh; padding: 20px 10px 40px; }
+    .main-content { background-color: #f5f5f5; padding: 20px 10px; }
     .card-form { background-color: white; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); }
     .form-control, .form-select { border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; }
     .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2); }
