@@ -556,17 +556,7 @@ class SekretariatController extends Controller
             }
         }
 
-        if ($sekretariat->dokumen_lpj_pdf) {
-            $path = is_array($sekretariat->dokumen_lpj_pdf) ?
-                ($sekretariat->dokumen_lpj_pdf['path'] ?? null) :
-                (is_string($sekretariat->dokumen_lpj_pdf) ? $sekretariat->dokumen_lpj_pdf : null);
-            if ($path) {
-                $filePath = storage_path('app/public/' . $path);
-                if (file_exists($filePath) && filesize($filePath) > 0) {
-                    $validPdfFiles[] = $path;
-                }
-            }
-        }
+
 
         // Jika tidak ada PDF attachment, export sederhana
         if (empty($validPdfFiles)) {
