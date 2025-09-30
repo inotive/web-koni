@@ -313,14 +313,14 @@
                         $persen_berjalan = $total_kegiatan > 0 ? round(($kegiatan_berjalan / $total_kegiatan) * 100) : 0;
                     ?>
                     <div class="position-absolute top-0 end-0 mt-7 me-4 d-flex flex-column align-items-end">
+                          <span class="text-primary fw-semibold mt-2" style="font-size: 1.2rem;"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Serapan</span>
+                        <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
+                        </div>
+                        
                         <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($persen_berjalan); ?>% Berjalan</span>
                         <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
                             <div class="progress-bar bg-success" style="width: <?php echo e($persen_berjalan); ?>%;"></div>
-                        </div>
-
-                        <span class="text-primary fw-semibold mt-2" style="font-size: 1.2rem;"><?php echo e($total_rka > 0 ? round(($total_serapan / $total_rka) * 100) : 0); ?>% Serapan</span>
-                        <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
-                            <div class="progress-bar bg-primary" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
                         </div>
                     </div>
 
@@ -408,95 +408,133 @@
                 <div id="informasi-kegiatan-content">
 
                 <?php $__currentLoopData = $kegiatan; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $i => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <?php
-                                                                $serapan = $item->serapan ?? 0;
-                                                                $display_serapan = $serapan;
+                    <?php
+                        $serapan = $item->serapan ?? 0;
+                        $display_serapan = $serapan;
 
-                                                                // --- Budget Calculation ---
-                                                                $rka_per_kegiatan = 0;
-                                                                if ($item->id == 6) { // Pembinaan Prestasi
-                                                                    // Sum budgets from its children (Cabor Akurasi, etc.)
-                                                                    if ($item->children && $item->children->count() > 0) {
-                                                                        foreach ($item->children as $child_item) {
-                                                                            $child_target = \App\Models\Target::where('id_lpj', $child_item->id)->first();
-                                                                            if ($child_target && isset($child_target->target_anggaran)) {
-                                                                                $rka_per_kegiatan += (int) $child_target->target_anggaran;
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                } else { // Other main categories
-                                                                    $target = \App\Models\Target::where('id_lpj', $item->id)->first();
-                                                                    if ($target && isset($target->target_anggaran)) {
-                                                                        $rka_per_kegiatan = (int) $target->target_anggaran;
-                                                                    }
-                                                                }
-                                                                $display_budget = $rka_per_kegiatan;
-                                                                // --- End Budget Calculation ---
+                        // --- Budget & Target Kegiatan Calculation (Generalized) ---
+                        $rka_per_kegiatan = 0;
+                        $display_target_kegiatan = 0;
 
-                                                                $persen = 0;
-                                                                if ($display_budget > 0) {
-                                                                    $persen = round(($serapan / $display_budget) * 100);
-                                                                    $persen = min(100, $persen);
-                                                                }
+                        // Check if the item is a parent category with children
+                        if ($item->children && $item->children->count() > 0) {
+                            // This is a parent category (like Pembinaan Prestasi, Sport Science, etc.)
+                            $parent_target = \App\Models\Target::where('id_lpj', $item->id)->first();
 
-                                                                $barClass = 'bar-success';
-                                                                if ($persen <= 30) {
-                                                                    $barClass = 'bar-danger';
-                                                                } elseif ($persen <= 60) {
-                                                                    $barClass = 'bar-warning';
-                                                                }
-                                                            ?>
-                                        <div class="d-flex align-items-center mb-3 gap-3">
-                                            <div style="min-width: 220px; max-width: 220px;">
-                                                <div class="d-flex align-items-center justify-content-between">
-                                                    <span class="title-kegiatan"><?php echo e($i + 1); ?>. <?php echo e($item->nama_program); ?>
+                            // Use parent's target if it exists and is filled
+                            if ($parent_target && isset($parent_target->target_anggaran) && $parent_target->target_anggaran > 0) {
+                                $rka_per_kegiatan = (int) $parent_target->target_anggaran;
+                                $display_target_kegiatan = (int) ($parent_target->target_kegiatan ?? 0);
+                            } else {
+                                // If no parent budget, fall back to summing children's budgets and targets (recursively)
+                                foreach ($item->children as $child_item) {
+                                    $child_target_db = \App\Models\Target::where('id_lpj', $child_item->id)->first();
+                                    $child_budget = 0;
 
-                                                        <?php if($item->id == 6 && $item->children->count() > 0): ?>
-                                                            <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail Cabor"></i>
-                                                        <?php endif; ?>
-                                                    </span>
-                                                    
-                                                    <?php if($item->id == 6 && $item->children->count() > 0): ?>
-                                                        <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePembinaanPrestasi" aria-expanded="false" aria-controls="collapsePembinaanPrestasi">
-                                                            <i class="fas fa-chevron-down text-primary"></i>
-                                                        </button>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1 position-relative">
-                                                <div class="progress w-100" style="border-radius: 8px; height: 45px;">
-                                                    <div class="progress-bar <?php echo e($barClass); ?>"
-                                                        role="progressbar"
-                                                        style="width: <?php echo e($persen); ?>%; border-radius: 8px; opacity: 0.8;"
-                                                        aria-valuenow="<?php echo e($persen); ?>" aria-valuemin="0" aria-valuemax="100">
-                                                    </div>
-                                                    <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
-                                                        <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
-                                                            Serapan : Rp <?php echo e(number_format($display_serapan, 0, ',', '.')); ?> / Rp <?php echo e(number_format($display_budget, 0, ',', '.')); ?> | <?php echo e($item->kegiatan_berjalan_count); ?>/<?php echo e($item->target_kegiatan ?? 0); ?>
+                                    if ($child_target_db && isset($child_target_db->target_anggaran) && $child_target_db->target_anggaran > 0) {
+                                        $child_budget = (int) $child_target_db->target_anggaran;
+                                    } else {
+                                        if ($child_item->children && $child_item->children->count() > 0) {
+                                            foreach ($child_item->children as $grandchild_item) {
+                                                $grandchild_target_db = \App\Models\Target::where('id_lpj', $grandchild_item->id)->first();
+                                                if ($grandchild_target_db && isset($grandchild_target_db->target_anggaran)) {
+                                                    $child_budget += (int) $grandchild_target_db->target_anggaran;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    $rka_per_kegiatan += $child_budget;
 
-                                                        </span>
-                                                        <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);"><?php echo e($persen); ?>%</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    if ($child_target_db) {
+                                        $display_target_kegiatan += (int) ($child_target_db->target_kegiatan ?? 0);
+                                    }
+                                }
+                            }
+                        } else {
+                            // This is a single item or a child with no further children
+                            $target = \App\Models\Target::where('id_lpj', $item->id)->first();
+                            if ($target) {
+                                $rka_per_kegiatan = (int) ($target->target_anggaran ?? 0);
+                                $display_target_kegiatan = (int) ($target->target_kegiatan ?? 0);
+                            }
+                        }
+                        $display_budget = $rka_per_kegiatan;
+                        // --- End Budget & Target Kegiatan Calculation ---
 
-                                        
-                                        <?php if($item->id == 6 && $item->children->count() > 0): ?>
-                                            <div class="collapse" id="collapsePembinaanPrestasi">
-                                                <div class="card card-body mt-2 mb-4" style="padding: 12px; border-radius: 8px;">
-                                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                                        <h6 class="mb-0">Detail Kegiatan Pembinaan Prestasi</h6>
-                                                    </div>
-                                                    <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        $persen = 0;
+                        if ($display_budget > 0) {
+                            $persen = round(($serapan / $display_budget) * 100);
+                            $persen = min(100, $persen);
+                        }
+
+                        $barClass = 'bar-success';
+                        if ($persen <= 30) {
+                            $barClass = 'bar-danger';
+                        } elseif ($persen <= 60) {
+                            $barClass = 'bar-warning';
+                        }
+                    ?>
+                    <div class="d-flex align-items-center mb-3 gap-3">
+                        <div style="min-width: 220px; max-width: 220px;">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="title-kegiatan"><?php echo e($i + 1); ?>. <?php echo e($item->nama_program); ?>
+
+                                    <?php if($item->children->count() > 0 && trim($item->nama_program) == 'Pembinaan Prestasi'): ?>
+                                        <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail"></i>
+                                    <?php endif; ?>
+                                </span>
+                                
+                                <?php if($item->children->count() > 0 && trim($item->nama_program) == 'Pembinaan Prestasi'): ?>
+                                    <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<?php echo e($item->id); ?>" aria-expanded="false" aria-controls="collapse-<?php echo e($item->id); ?>">
+                                        <i class="fas fa-chevron-down text-primary"></i>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 position-relative">
+                            <div class="progress w-100" style="border-radius: 8px; height: 45px;">
+                                <div class="progress-bar <?php echo e($barClass); ?>"
+                                    role="progressbar"
+                                    style="width: <?php echo e($persen); ?>%; border-radius: 8px; opacity: 0.8;"
+                                    aria-valuenow="<?php echo e($persen); ?>" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                                <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
+                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
+                                        Serapan : Rp <?php echo e(number_format($display_serapan, 0, ',', '.')); ?> / Rp <?php echo e(number_format($display_budget, 0, ',', '.')); ?> | <?php echo e($item->kegiatan_berjalan_count); ?>/<?php echo e($display_target_kegiatan); ?>
+
+                                    </span>
+                                    <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);"><?php echo e($persen); ?>%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <?php if($item->children->count() > 0 && trim($item->nama_program) == 'Pembinaan Prestasi'): ?>
+                        <div class="collapse" id="collapse-<?php echo e($item->id); ?>">
+                            <div class="card card-body mt-2 mb-4" style="padding: 12px; border-radius: 8px;">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="mb-0">Detail Kegiatan <?php echo e($item->nama_program); ?></h6>
+                                </div>
+                                <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
                                         $child_serapan = $child->serapan_cabor ?? 0;
 
-                                        // --- Child Budget Calculation ---
-                                        $child_target = \App\Models\Target::where('id_lpj', $child->id)->first();
+                                        // --- Child (Cabor) Budget Calculation ---
+                                        $child_target_db = \App\Models\Target::where('id_lpj', $child->id)->first();
                                         $child_budget = 0;
-                                        if ($child_target && isset($child_target->target_anggaran)) {
-                                            $child_budget = (int) $child_target->target_anggaran;
+
+                                        if ($child_target_db && isset($child_target_db->target_anggaran) && $child_target_db->target_anggaran > 0) {
+                                            $child_budget = (int) $child_target_db->target_anggaran;
+                                        } else {
+                                            if ($child->children && $child->children->count() > 0) {
+                                                foreach ($child->children as $grandchild_item) {
+                                                    $grandchild_target_db = \App\Models\Target::where('id_lpj', $grandchild_item->id)->first();
+                                                    if ($grandchild_target_db && isset($grandchild_target_db->target_anggaran)) {
+                                                        $child_budget += (int) $grandchild_target_db->target_anggaran;
+                                                    }
+                                                }
+                                            }
                                         }
                                         // --- End Child Budget Calculation ---
 
@@ -507,11 +545,8 @@
                                         }
 
                                         $childBarClass = 'bar-success';
-                                        if ($child_persen <= 30) {
-                                            $childBarClass = 'bar-danger';
-                                        } elseif ($child_persen <= 60) {
-                                            $childBarClass = 'bar-warning';
-                                        }
+                                        if ($child_persen <= 30) { $childBarClass = 'bar-danger'; }
+                                        elseif ($child_persen <= 60) { $childBarClass = 'bar-warning'; }
                                     ?>
 
                                     <div class="d-flex align-items-center mb-3 gap-3">
@@ -520,11 +555,7 @@
                                         </div>
                                         <div class="flex-grow-1 position-relative">
                                             <div class="progress w-100" style="border-radius: 8px; height: 45px;">
-                                                <div class="progress-bar <?php echo e($childBarClass); ?>"
-                                                    role="progressbar"
-                                                    style="width: <?php echo e($child_persen); ?>%; border-radius: 8px; opacity: 0.8;"
-                                                    aria-valuenow="<?php echo e($child_persen); ?>" aria-valuemin="0" aria-valuemax="100">
-                                                </div>
+                                                <div class="progress-bar <?php echo e($childBarClass); ?>" role="progressbar" style="width: <?php echo e($child_persen); ?>%; border-radius: 8px; opacity: 0.8;" aria-valuenow="<?php echo e($child_persen); ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                                 <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-3" style="top: 0; left: 0; pointer-events: none;">
                                                     <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
                                                         Rp <?php echo e(number_format($child_serapan, 0, ',', '.')); ?> / Rp <?php echo e(number_format($child_budget, 0, ',', '.')); ?>
@@ -539,41 +570,28 @@
                                     
                                     <?php if($child->children->count() > 0): ?>
                                         <div class="ms-4 mb-3">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div class="d-flex align-items-center mb-2">
                                                 <h6 class="small text-muted mb-0">Folder dalam <?php echo e($child->nama_program); ?>:</h6>
-                                                <button class="btn btn-sm p-0 border-0 dropdown-icon" type="button" data-bs-toggle="collapse" data-bs-target="#folderCollapse<?php echo e($j); ?>" aria-expanded="false" aria-controls="folderCollapse<?php echo e($j); ?>">
+                                                <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#folderCollapse<?php echo e($child->id); ?>" aria-expanded="false" aria-controls="folderCollapse<?php echo e($child->id); ?>">
                                                     <i class="fas fa-chevron-down text-primary"></i>
                                                 </button>
                                             </div>
-                                            <div class="collapse" id="folderCollapse<?php echo e($j); ?>">
+                                            <div class="collapse" id="folderCollapse<?php echo e($child->id); ?>">
                                                 <?php $__currentLoopData = $child->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k => $grandchild): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                     <?php
-                                                        // Menghitung serapan untuk setiap folder
-                                                        $grandchild_serapan = 0;
+                                                        // Grandchild serapan
+                                                        $grandchild_serapan = \App\Models\Lpj::where('parent_id', $grandchild->id)
+                                                            ->get()->sum(function($doc) {
+                                                                return (int)($doc->jumlah_harga ?? 0);
+                                                            });
 
-                                                        // Ambil dokumen langsung di bawah parent ini
-                                                        $grandchild_ids = \App\Models\Lpj::where('parent_id', $grandchild->id)->pluck('id');
-
-                                                        // Juga ambil dokumen dari subfolder-subfolder (anak langsung dari grandchild)
-                                                        $subfolder_ids = \App\Models\Lpj::where('parent_id', $grandchild->id)->pluck('id');
-                                                        $all_ids = $grandchild_ids->merge($subfolder_ids);
-
-                                                        if ($all_ids->count() > 0) {
-                                                            $grandchild_serapan = \App\Models\Lpj::whereIn('id', $all_ids)
-                                                                ->get()
-                                                                ->sum(function($item) {
-                                                                    $harga = (int)($item->jumlah_harga ?? 0);
-                                                                    return ($harga > 1 && $harga != 2) ? $harga : 0;
-                                                                });
-                                                        }
-
-                                                        // Menghitung budget per folder
+                                                        // Grandchild budget
+                                                        $grandchild_target_db = \App\Models\Target::where('id_lpj', $grandchild->id)->first();
                                                         $grandchild_budget = 0;
-                                                        if ($child_budget > 0 && $child->children->count() > 0) {
-                                                            $grandchild_budget = (int)($child_budget / $child->children->count());
+                                                        if ($grandchild_target_db && isset($grandchild_target_db->target_anggaran)) {
+                                                            $grandchild_budget = (int) $grandchild_target_db->target_anggaran;
                                                         }
 
-                                                        // Perhitungan persentase untuk folder
                                                         $grandchild_persen = 0;
                                                         if ($grandchild_budget > 0) {
                                                             $grandchild_persen = round(($grandchild_serapan / $grandchild_budget) * 100);
@@ -581,11 +599,8 @@
                                                         }
 
                                                         $grandchildBarClass = 'bar-success';
-                                                        if ($grandchild_persen <= 30) {
-                                                            $grandchildBarClass = 'bar-danger';
-                                                        } elseif ($grandchild_persen <= 60) {
-                                                            $grandchildBarClass = 'bar-warning';
-                                                        }
+                                                        if ($grandchild_persen <= 30) { $grandchildBarClass = 'bar-danger'; }
+                                                        elseif ($grandchild_persen <= 60) { $grandchildBarClass = 'bar-warning'; }
                                                     ?>
 
                                                     <div class="d-flex align-items-center mb-2 gap-3">
@@ -594,11 +609,7 @@
                                                         </div>
                                                         <div class="flex-grow-1 position-relative">
                                                             <div class="progress w-100" style="border-radius: 6px; height: 35px;">
-                                                                <div class="progress-bar <?php echo e($grandchildBarClass); ?>"
-                                                                    role="progressbar"
-                                                                    style="width: <?php echo e($grandchild_persen); ?>%; border-radius: 6px; opacity: 0.8;"
-                                                                    aria-valuenow="<?php echo e($grandchild_persen); ?>" aria-valuemin="0" aria-valuemax="100">
-                                                                </div>
+                                                                <div class="progress-bar <?php echo e($grandchildBarClass); ?>" role="progressbar" style="width: <?php echo e($grandchild_persen); ?>%; border-radius: 6px; opacity: 0.8;" aria-valuenow="<?php echo e($grandchild_persen); ?>" aria-valuemin="0" aria-valuemax="100"></div>
                                                                 <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-2" style="top: 0; left: 0; pointer-events: none;">
                                                                     <span class="small fw-bold" style="color: #151D48; text-shadow: 0 0 1px rgba(255,255,255,0.3);">
                                                                         Rp <?php echo e(number_format($grandchild_serapan, 0, ',', '.')); ?> / Rp <?php echo e(number_format($grandchild_budget, 0, ',', '.')); ?>
@@ -614,7 +625,6 @@
                                         </div>
                                     <?php endif; ?>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
                             </div>
                         </div>
                     <?php endif; ?>

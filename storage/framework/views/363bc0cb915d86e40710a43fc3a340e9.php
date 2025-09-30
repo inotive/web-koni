@@ -101,11 +101,11 @@
         .photo-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 15px;
+            border-spacing: 25px;
         }
 
         .photo-td {
-            width: 33%;
+            width: 50%;
             text-align: center;
             vertical-align: top;
         }
@@ -115,13 +115,18 @@
             padding: 8px;
             border-radius: 6px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: inline-block;
+            width: auto;
+            height: auto;
         }
 
         .photo-container img {
+            width: auto;
+            height: auto;
             max-width: 100%;
-            max-height: 200px;
+            max-height: none;
             border-radius: 4px;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         .photo-caption {
