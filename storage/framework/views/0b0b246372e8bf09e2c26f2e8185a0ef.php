@@ -570,9 +570,9 @@
                                     
                                     <?php if($child->children->count() > 0): ?>
                                         <div class="ms-4 mb-3">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div class="d-flex align-items-center mb-2">
                                                 <h6 class="small text-muted mb-0">Folder dalam <?php echo e($child->nama_program); ?>:</h6>
-                                                <button class="btn btn-sm p-0 border-0 dropdown-icon" type="button" data-bs-toggle="collapse" data-bs-target="#folderCollapse<?php echo e($child->id); ?>" aria-expanded="false" aria-controls="folderCollapse<?php echo e($child->id); ?>">
+                                                <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#folderCollapse<?php echo e($child->id); ?>" aria-expanded="false" aria-controls="folderCollapse<?php echo e($child->id); ?>">
                                                     <i class="fas fa-chevron-down text-primary"></i>
                                                 </button>
                                             </div>
