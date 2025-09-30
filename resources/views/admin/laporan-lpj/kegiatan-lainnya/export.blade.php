@@ -158,7 +158,20 @@
 <body>
     <!-- HEADER IMAGE -->
     <div class="letterhead">
-        <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
+        @php
+            $imagePath = public_path('assets/img/kop-nobg.png');
+            if(file_exists($imagePath)) {
+                $imageMimeType = mime_content_type($imagePath);
+                $imageData = base64_encode(file_get_contents($imagePath));
+                $imageSrc = 'data:' . $imageMimeType . ';base64,' . $imageData;
+                echo '<img src="' . $imageSrc . '" alt="KONI Letterhead">';
+            } else {
+                // Fallback if image doesn't exist
+                echo '<div style="height: 151px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
+                        <span style="color: #6c757d; font-weight: bold; font-size: 24px;">KOP SURAT KONI</span>
+                      </div>';
+            }
+        @endphp
     </div>
 
     <!-- MAIN CONTENT -->

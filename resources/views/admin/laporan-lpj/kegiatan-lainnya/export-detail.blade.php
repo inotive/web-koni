@@ -4,6 +4,13 @@
     <title>{{ $title }}</title>
     <meta charset="utf-8">
     <style>
+        @page {
+            margin-top: 160px;   /* reserve space for header */
+            margin-left: 30px;
+            margin-right: 30px;
+            margin-bottom: 40px;
+        }
+
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 12px;
@@ -12,7 +19,24 @@
             color: #333;
         }
 
-        /* Kop Surat */
+        /* --- HEADER IMAGE --- */
+        .header {
+            position: fixed;
+            top: -160px;   /* move into the reserved top margin */
+            left: 0;
+            right: 0;
+            text-align: center;
+            height: 151px; /* header height */
+        }
+
+        .header img {
+            width: 100%;
+            height: auto;
+            max-height: 151px; /* adjust to your header */
+            object-fit: contain;
+        }
+
+        /* Kop Surat - for fallback text header if image doesn't load */
         .kop-surat {
             text-align: center;
             border-bottom: 3px solid #dc3545;
@@ -180,12 +204,25 @@
     </style>
 </head>
 <body>
-    <!-- Kop Surat -->
-    <div class="kop-surat">
-        <h1>KOMITE OLAHRAGA NASIONAL INDONESIA</h1>
-        <h2>LAPORAN PERTANGGUNGJAWABAN KEGIATAN LAINNYA</h2>
-        <p>Jl. Jenderal Sudirman No. 123, Jakarta Pusat 10210</p>
-        <p>Telp: (021) 1234567 | Email: info@koni.or.id</p>
+    <!-- HEADER IMAGE -->
+    <div class="header">
+        @php
+            $imagePath = public_path('assets/img/kop-nobg.png');
+            if(file_exists($imagePath)) {
+                $imageMimeType = mime_content_type($imagePath);
+                $imageData = base64_encode(file_get_contents($imagePath));
+                $imageSrc = 'data:' . $imageMimeType . ';base64,' . $imageData;
+                echo '<img src="' . $imageSrc . '" alt="KONI Letterhead">';
+            } else {
+                // Fallback if image doesn't exist - show the text header
+                echo '<div class="kop-surat">
+                        <h1>KOMITE OLAHRAGA NASIONAL INDONESIA</h1>
+                        <h2>LAPORAN PERTANGGUNGJAWABAN KEGIATAN LAINNYA</h2>
+                        <p>Jl. Jenderal Sudirman No. 123, Jakarta Pusat 10210</p>
+                        <p>Telp: (021) 1234567 | Email: info@koni.or.id</p>
+                      </div>';
+            }
+        @endphp
     </div>
 
     <!-- Konten Utama -->
