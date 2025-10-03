@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan LPJ - {{ $kegiatanLainnya->nama_program }}</title>
+    <title>Laporan LPJ - <?php echo e($sekretariat->nama_program); ?></title>
     <meta charset="UTF-8">
     <style>
-        @page {
-            margin-top: 151px;   /* reserve space for letterhead - matching image height */
-            margin-left: 30px;
-            margin-right: 30px;
-            margin-bottom: 40px;
+       @page {
+            margin: 4cm 1.5cm 1.5cm 1.5cm; /* Increased top margin for header */
         }
 
         body {
@@ -20,26 +17,20 @@
             color: #333;
         }
 
-        /* --- HEADER IMAGE --- */
-        .letterhead {
+        /* --- HEADER --- */
+        header {
             position: fixed;
-            top: -151px;   /* move into the reserved top margin - matching reserved space */
-            left: 0;
-            right: 0;
+            top: -3.5cm;
+            left: 0cm;
+            right: 0cm;
+            height: 3cm;
             text-align: center;
-            height: 151px; /* actual header image height */
         }
 
-        .letterhead img {
+        header img {
             width: 100%;
-            height: auto;
-            max-height: 151px; /* match your letterhead (810x151) */
+            max-height: 3cm;
             object-fit: contain;
-        }
-
-        /* --- MAIN CONTENT --- */
-        .content {
-            margin-top: 0;   /* no need for padding-top anymore */
         }
 
         /* --- DOCUMENT TITLE --- */
@@ -62,22 +53,17 @@
             color: #333;
         }
 
-        /* First section should have reduced top margin to fill header space */
-        .content > .section-title:first-child {
-            margin-top: 5px;  /* Reduced top margin to reduce space after header */
-        }
-
         /* --- INFO TABLE --- */
         .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;  /* Reduced margin to save space */
-            font-size: 10pt;     /* Slightly smaller font to save space */
+            margin-bottom: 20px;
+            font-size: 11pt;
         }
 
         .info-table th,
         .info-table td {
-            padding: 6px 8px;    /* Reduced padding to save space */
+            padding: 10px 12px;
             border: 1px solid #ddd;
         }
 
@@ -101,11 +87,12 @@
         .photo-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 25px;
+            border-spacing: 15px;
+            page-break-inside: avoid; /* Try to avoid breaking table across pages */
         }
 
         .photo-td {
-            width: 50%;
+            width: 33%;
             text-align: center;
             vertical-align: top;
         }
@@ -115,18 +102,13 @@
             padding: 8px;
             border-radius: 6px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: inline-block;
-            width: auto;
-            height: auto;
         }
 
         .photo-container img {
-            width: auto;
-            height: auto;
             max-width: 100%;
-            max-height: none;
+            max-height: 200px;
             border-radius: 4px;
-            object-fit: contain;
+            object-fit: cover;
         }
 
         .photo-caption {
@@ -168,60 +150,60 @@
     </style>
 </head>
 <body>
-    <!-- HEADER IMAGE -->
-    <div class="letterhead">
-        @if(file_exists(public_path('assets/img/kop-nobg.png')))
-            <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
-        @else
+    <header>
+        <?php if(file_exists(public_path('assets/img/kop-nobg.png'))): ?>
+            <img src="<?php echo e(public_path('assets/img/kop-nobg.png')); ?>" alt="KONI Letterhead">
+        <?php else: ?>
             <div style="padding: 20px; border: 1px solid #ccc; text-align: center;">
                 <h2>KONI LETTERHEAD</h2>
                 <p>Header image not found</p>
             </div>
-        @endif
-    </div>
+        <?php endif; ?>
+    </header>
 
-    <!-- MAIN CONTENT -->
-    <div class="content">
+    <main>
+        <!-- MAIN CONTENT -->
+        <div class="content">
             <h3 class="section-title">Detail Program dan Kegiatan</h3>
             <table class="info-table">
                 <tr>
                     <th>Program</th>
-                    <td>{{ $kegiatanLainnya->nama_program }}</td>
+                    <td><?php echo e($sekretariat->nama_program); ?></td>
                 </tr>
                 <tr>
                     <th>Kegiatan</th>
-                    <td>{{ $kegiatanLainnya->nama_kegiatan }}</td>
+                    <td><?php echo e($sekretariat->nama_kegiatan); ?></td>
                 </tr>
                 <tr>
                     <th>Total Anggaran</th>
-                    <td class="amount">Rp {{ number_format($kegiatanLainnya->jumlah_harga, 2, ',', '.') }}</td>
+                    <td class="amount">Rp <?php echo e(number_format($sekretariat->jumlah_harga, 2, ',', '.')); ?></td>
                 </tr>
-                @if($kegiatanLainnya->tanggal_kegiatan)
+                <?php if($sekretariat->tanggal_kegiatan): ?>
                 <tr>
                     <th>Tanggal Kegiatan</th>
-                    <td>{{ \Carbon\Carbon::parse($kegiatanLainnya->tanggal_kegiatan)->format('d F Y') }}</td>
+                    <td><?php echo e(\Carbon\Carbon::parse($sekretariat->tanggal_kegiatan)->format('d F Y')); ?></td>
                 </tr>
-                @endif
-                @if($kegiatanLainnya->lokasi_kegiatan)
+                <?php endif; ?>
+                <?php if($sekretariat->lokasi_kegiatan): ?>
                 <tr>
                     <th>Lokasi</th>
-                    <td>{{ $kegiatanLainnya->lokasi_kegiatan }}</td>
+                    <td><?php echo e($sekretariat->lokasi_kegiatan); ?></td>
                 </tr>
-                @endif
-                @if($kegiatanLainnya->keterangan_tambahan)
+                <?php endif; ?>
+                <?php if($sekretariat->keterangan_tambahan): ?>
                 <tr>
                     <th>Keterangan Tambahan</th>
-                    <td>{{ $kegiatanLainnya->keterangan_tambahan }}</td>
+                    <td><?php echo e($sekretariat->keterangan_tambahan); ?></td>
                 </tr>
-                @endif
+                <?php endif; ?>
             </table>
 
-            @if($kegiatanLainnya->foto_jurnal && count($kegiatanLainnya->foto_jurnal) > 0)
+            <?php if($sekretariat->foto_jurnal && count($sekretariat->foto_jurnal) > 0): ?>
                 <h3 class="section-title">Dokumentasi Kegiatan</h3>
                 <table class="photo-table">
                     <tr>
-                        @foreach($kegiatanLainnya->foto_jurnal as $index => $foto)
-                            @php
+                        <?php $__currentLoopData = $sekretariat->foto_jurnal; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
                                 if(is_array($foto)) {
                                     $path = $foto['path'] ?? '';
                                     $originalName = $foto['original_name'] ?? basename($path);
@@ -230,23 +212,25 @@
                                     $originalName = basename($path);
                                 }
                                 $fullPath = public_path('storage/' . $path);
-                            @endphp
+                            ?>
 
-                            @if($path && file_exists($fullPath))
+                            <?php if($path && file_exists($fullPath)): ?>
                                 <td class="photo-td">
                                     <div class="photo-container">
-                                        <img src="{{ $fullPath }}" alt="{{ $originalName }}">
-                                        <div class="photo-caption">{{ $originalName }}</div>
+                                        <img src="<?php echo e($fullPath); ?>" alt="<?php echo e($originalName); ?>">
+                                        <div class="photo-caption"><?php echo e($originalName); ?></div>
                                     </div>
                                 </td>
-                                @if(($index + 1) % 3 == 0)
+                                <?php if(($index + 1) % 3 == 0): ?>
                                     </tr><tr> <!-- Start new row every 3 images -->
-                                @endif
-                            @endif
-                        @endforeach
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tr>
                 </table>
-            @endif
+            <?php endif; ?>
         </div>
+    </main>
 </body>
 </html>
+<?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/sekretariat/export.blade.php ENDPATH**/ ?>
