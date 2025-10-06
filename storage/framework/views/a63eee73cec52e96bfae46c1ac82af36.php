@@ -141,6 +141,12 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
                                     <li>
+                                        <?php
+                                            // Eager load the latest approved pengajuan for the modal JS
+                                            if (method_exists($kegiatan, 'pengajuan')) {
+                                                $kegiatan->setRelation('pengajuan', $kegiatan->pengajuan()->where('status', 'disetujui')->orderBy('approved_at', 'desc')->first());
+                                            }
+                                        ?>
                                         <a href="javascript:void(0)" class="dropdown-item-custom"
                                            onclick="showDetailModal(<?php echo e(json_encode($kegiatan)); ?>)">
                                             <i class="fas fa-eye me-2"></i> Lihat Detail

@@ -131,7 +131,10 @@ class Lpj extends Model
 
     public function pengajuan()
     {
-        return $this->hasMany(Pengajuan::class, 'lpj_id');
+        return $this->hasOne(Pengajuan::class, 'lpj_id')
+                    ->where('status', 'disetujui')
+                    ->orderBy('approved_at', 'desc')
+                    ->latest();
     }
 
     /**

@@ -721,16 +721,18 @@ $(document).ready(function() {
         // Status indicator
         if (statusIcon) {
             const canPengajuanModifikasi = {{ auth()->user()->can('pengajuan-modifikasi-laporan') ? 'true' : 'false' }};
-            const isModifiable = data.modifiable_by_user_id && data.modifiable_by_user_id == {{ auth()->id() }};
-
-            // Handle the pengajuan data - it should be a single object, not an array
-            const pengajuan = data.pengajuan; // This is the hasOne relationship
-            const hasToken = pengajuan && pengajuan.status === 'disetujui' && pengajuan.token > 0;
+            const currentUserId = {{ auth()->id() }};
+            const pengajuan = data.pengajuan;
+            const hasValidTokenForCurrentUser = pengajuan &&
+                                                pengajuan.user_id == currentUserId &&
+                                                pengajuan.status === 'disetujui' &&
+                                                pengajuan.token > 0;
 
             let isModifiableStatus = false;
             if (canPengajuanModifikasi) {
                 isModifiableStatus = true;
-            } else if (isModifiable && hasToken) {
+            }
+            else if (hasValidTokenForCurrentUser) {
                 isModifiableStatus = true;
             }
 
@@ -744,7 +746,6 @@ $(document).ready(function() {
 
             const ajukanBtn = document.getElementById('ajukanPerubahanBtn');
             if (ajukanBtn) {
-                // Show the pengajuan button only if the user cannot modify (no permission and no valid token)
                 if (isModifiableStatus) {
                     ajukanBtn.style.display = 'none';
                 } else {

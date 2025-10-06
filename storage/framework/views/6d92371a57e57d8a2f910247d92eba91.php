@@ -1,19 +1,18 @@
-@extends('layouts.app')
-@section('pageTitle', 'Edit Cabang Olahraga')
-@section('mainSection', 'Konfigurasi')
-@section('mainSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
-@section('subSection', 'Cabang Olahraga')
-@section('subSectionUrl', route('admin.konfigurasi.cabang-olahraga.index'))
-@section('currentSection', 'Edit Cabang Olahraga')
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/create.css') }}">
-@endpush
+<?php $__env->startSection('pageTitle', 'Tambah Cabang Olahraga'); ?>
+<?php $__env->startSection('mainSection', 'Konfigurasi'); ?>
+<?php $__env->startSection('mainSectionUrl', route('admin.konfigurasi.cabang-olahraga.index')); ?>
+<?php $__env->startSection('subSection', 'Cabang Olahraga'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.konfigurasi.cabang-olahraga.index')); ?>
+<?php $__env->startSection('currentSection', 'Tambah Cabang Olahraga'); ?>
+<?php $__env->startPush('styles'); ?>
+    <link rel="stylesheet" href="<?php echo e(asset('css/create.css')); ?>">
+<?php $__env->stopPush(); ?>
 
-@section('breadcrumb-title')
-    {{-- <h1 class="text-dark fw-bold fs-3 mb-0">Edit Cabang Olahraga</h1> --}}
-@endsection
+<?php $__env->startSection('breadcrumb-title'); ?>
+    
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <style>
         body {
@@ -79,37 +78,16 @@
             border-radius: 8px;
             object-fit: cover;
         }
-
-        .current-image-container {
-            margin-top: 1rem;
-        }
-
-        .current-image-label {
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .current-image {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #dee2e6;
-        }
-
     </style>
 
     <div class="container mt-4">
         <div class="card card-form">
             <div class="card-body p-4 p-md-5">
-                <h3 class="fw-bold mb-4">Edit Data Cabang Olahraga</h3>
+                <h3 class="fw-bold mb-4">Tambah Data Cabang Olahraga</h3>
 
-                <form action="{{ route('admin.konfigurasi.cabang-olahraga.update', $cabor->id) }}" method="POST"
+                <form action="<?php echo e(route('admin.konfigurasi.cabang-olahraga.store')); ?>" method="POST"
                     enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+                    <?php echo csrf_field(); ?>
 
                     <div class="row align-items-center mb-4">
                         <div class="col-md-3">
@@ -119,10 +97,7 @@
                             <label for="icon_cabor" class="file-upload-wrapper" id="dropArea">
                                 <input type="file" name="icon_cabor" id="icon_cabor"
                                     accept=".png,.webp,.svg,image/png,image/webp,image/svg+xml">
-
-                                <!-- Upload content - akan disembunyikan jika ada ikon -->
-                                <div class="d-flex justify-content-center align-items-center" id="uploadContent"
-                                    @if ($cabor->icon_cabor) style="display: none !important;" @endif>
+                                <div class="d-flex justify-content-center align-items-center" id="uploadContent">
                                     <i class="fas fa-cloud-upload-alt file-upload-icon me-3" id="uploadIcon"></i>
                                     <div id="uploadText">
                                         <p class="file-upload-text mb-1">Seret dan lepas file di sini, atau klik untuk
@@ -130,104 +105,118 @@
                                         <p class="file-upload-hint" id="file-name-display">PNG, WebP, atau SVG (80x80px)</p>
                                     </div>
                                 </div>
-
-                                <!-- Container untuk preview ikon baru -->
                                 <div id="imagePreviewContainer" style="display: none;"></div>
-
-                                <!-- Container untuk ikon yang sudah ada - ditampilkan di dalam kotak -->
-                                @if ($cabor->icon_cabor)
-                                    <div id="existingImageContainer"
-                                        class="d-flex justify-content-center align-items-center">
-                                        <img src="{{ asset('storage/' . $cabor->icon_cabor) }}" alt="Ikon Cabor"
-                                            class="preview-image me-3"
-                                            style="width: 80px; height: 80px; object-fit: contain; border: 1px solid #dee2e6;">
-                                        <div>
-                                            <p class="file-upload-text mb-1">Ikon Cabor Saat Ini</p>
-                                            <p class="file-upload-hint">80x80px</p>
-                                            <p class="file-upload-hint">Klik untuk mengubah ikon</p>
-                                        </div>
-                                    </div>
-                                @endif
                             </label>
-                            @error('icon_cabor')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
+                            <?php $__errorArgs = ['icon_cabor'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="invalid-feedback d-block"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                         </div>
                     </div>
 
-                    @php
+                    <?php
                         $fields = [
                             'nama_cabor' => [
                                 'label' => 'Nama Cabang Olahraga',
                                 'type' => 'text',
                                 'placeholder' => 'Masukkan nama cabang olahraga',
                                 'required' => true,
-                                'value' => $cabor->nama_cabor,
                             ],
                             'ketua_penanggung_jawab' => [
                                 'label' => 'Ketua Penanggung Jawab',
                                 'type' => 'text',
                                 'placeholder' => 'Masukkan nama ketua penanggung jawab',
                                 'required' => true,
-                                'value' => $cabor->ketua_penanggung_jawab,
                             ],
                             'status' => [
                                 'label' => 'Status Keaktifan',
                                 'type' => 'select',
                                 'options' => ['Aktif', 'Pembinaan'],
                                 'required' => true,
-                                'value' => $cabor->status,
                             ],
                             'tanggal_pembentukan' => [
                                 'label' => 'Tanggal Pembentukan',
                                 'type' => 'date',
                                 'required' => true,
-                                // pastikan formatnya Y-m-d
-                                'value' => optional($cabor->tanggal_pembentukan)->format('Y-m-d'),
                             ],
                         ];
-                    @endphp
+                    ?>
 
-                    @foreach ($fields as $key => $field)
+                    <?php $__currentLoopData = $fields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $field): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="row align-items-center mb-3">
                             <div class="col-md-3">
-                                <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
+                                <label for="<?php echo e($key); ?>" class="form-label"><?php echo e($field['label']); ?></label>
                             </div>
                             <div class="col-md-9">
-                                @php
-                                    $value = old($key, $field['value']);
-                                @endphp
-                                @if ($field['type'] === 'select')
-                                    <select name="{{ $key }}" id="{{ $key }}"
-                                        class="form-select @error($key) is-invalid @enderror"
-                                        {{ $field['required'] ? 'required' : '' }}>
-                                        <option value="">Pilih {{ $field['label'] }}</option>
-                                        @foreach ($field['options'] as $option)
-                                            <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>
-                                                {{ $option }}</option>
-                                        @endforeach
+                                <?php
+                                    $value = old($key, '');
+                                ?>
+                                <?php if($field['type'] === 'select'): ?>
+                                    <select name="<?php echo e($key); ?>" id="<?php echo e($key); ?>"
+                                        class="form-select <?php $__errorArgs = [$key];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                        <?php echo e($field['required'] ? 'required' : ''); ?>>
+                                        <option value="">Pilih <?php echo e($field['label']); ?></option>
+                                        <?php $__currentLoopData = $field['options']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $option): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <option value="<?php echo e($option); ?>" <?php echo e($value == $option ? 'selected' : ''); ?>>
+                                                <?php echo e($option); ?></option>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </select>
-                                @elseif ($field['type'] === 'textarea')
-                                    <textarea name="{{ $key }}" id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
-                                        placeholder="{{ $field['placeholder'] }}" rows="3" {{ $field['required'] ? 'required' : '' }}>{{ $value }}</textarea>
-                                @else
-                                    <input type="{{ $field['type'] }}" name="{{ $key }}"
-                                        id="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
-                                        placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}"
-                                        {{ $field['required'] ? 'required' : '' }}
-                                        @if ($field['type'] === 'number') min="0" @endif>
-                                @endif
-                                @error($key)
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php elseif($field['type'] === 'textarea'): ?>
+                                    <textarea name="<?php echo e($key); ?>" id="<?php echo e($key); ?>" class="form-control <?php $__errorArgs = [$key];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                        placeholder="<?php echo e($field['placeholder']); ?>" rows="3" <?php echo e($field['required'] ? 'required' : ''); ?>><?php echo e($value); ?></textarea>
+                                <?php else: ?>
+                                    <input type="<?php echo e($field['type']); ?>" name="<?php echo e($key); ?>"
+                                        id="<?php echo e($key); ?>" class="form-control <?php $__errorArgs = [$key];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                        placeholder="<?php echo e($field['placeholder'] ?? ''); ?>" value="<?php echo e($value); ?>"
+                                        <?php echo e($field['required'] ? 'required' : ''); ?>
+
+                                        <?php if($field['type'] === 'number'): ?> min="0" <?php endif; ?>>
+                                <?php endif; ?>
+                                <?php $__errorArgs = [$key];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                     <div class="row mt-4">
                         <div class="col-md-9 offset-md-3 d-flex gap-2">
-                            <button type="submit" class="btn btn-danger px-4">Update Data</button>
-                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}"
+                            <button type="submit" class="btn btn-danger px-4">Simpan Data</button>
+                            <a href="<?php echo e(route('admin.konfigurasi.cabang-olahraga.index')); ?>"
                                 class="btn btn-secondary px-4">Batal</a>
                         </div>
                     </div>
@@ -240,9 +229,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const uploadInput = document.getElementById('icon_cabor');
             const dropArea = document.getElementById('dropArea');
-            const uploadContent = document.getElementById('uploadContent');
             const previewContainer = document.getElementById('imagePreviewContainer');
-            const existingImageContainer = document.getElementById('existingImageContainer');
 
             // Define allowed file types
             const allowedTypes = ['image/png', 'image/webp', 'image/svg+xml'];
@@ -311,6 +298,8 @@
             // Image preview functionality with auto resize
             uploadInput.addEventListener('change', function() {
                 const file = this.files[0];
+                const uploadContent = document.getElementById('uploadContent');
+                const previewContainer = document.getElementById('imagePreviewContainer');
 
                 if (file) {
                     if (!isValidFileType(file)) {
@@ -319,27 +308,22 @@
                         return;
                     }
 
-                    // Hide upload content and existing image
-                    uploadContent.style.display = 'none';
-                    if (existingImageContainer) {
-                        existingImageContainer.style.display = 'none';
-                    }
-
                     // Show loading state
+                    uploadContent.style.display = 'none';
                     previewContainer.style.display = 'flex';
                     previewContainer.style.justifyContent = 'center';
                     previewContainer.style.alignItems = 'center';
                     previewContainer.innerHTML = `
-                    <div class="d-flex justify-content-center align-items-center">
-                        <div class="spinner-border text-primary me-3" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div class="spinner-border text-primary me-3" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div>
+                                <p class="file-upload-text mb-1">Memproses gambar...</p>
+                                <p class="file-upload-hint">Mohon tunggu sebentar</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="file-upload-text mb-1">Memproses gambar...</p>
-                            <p class="file-upload-hint">Mohon tunggu sebentar</p>
-                        </div>
-                    </div>
-                `;
+                    `;
 
                     // Resize image and update preview
                     resizeImage(file, (resizedFile) => {
@@ -353,31 +337,24 @@
                         reader.onload = function(e) {
                             const fileSize = (resizedFile.size / 1024).toFixed(1);
                             const previewContent = `
-                        <div class="d-flex justify-content-center align-items-center">
-                            <img src="${e.target.result}" class="preview-image me-3" alt="Preview Ikon Cabor" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; border: 1px solid #dee2e6;">
-                            <div>
-                                <p class="file-upload-text mb-1">${resizedFile.name}</p>
-                                <p class="file-upload-hint">80x80px • ${fileSize} KB</p>
-                                <p class="file-upload-hint">Klik untuk mengubah ikon</p>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <img src="${e.target.result}" class="preview-image me-3" alt="Preview Ikon Cabor" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; border: 1px solid #dee2e6;">
+                                <div>
+                                    <p class="file-upload-text mb-1">${resizedFile.name}</p>
+                                    <p class="file-upload-hint">80x80px • ${fileSize} KB</p>
+                                    <p class="file-upload-hint">Klik untuk mengubah ikon</p>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
                             previewContainer.innerHTML = previewContent;
                         };
                         reader.readAsDataURL(resizedFile);
                     });
                 } else {
-                    // Reset to original state
+                    // Show upload content and hide preview
+                    uploadContent.style.display = 'flex';
                     previewContainer.style.display = 'none';
                     previewContainer.innerHTML = '';
-
-                    // Show appropriate content based on whether existing image exists
-                    if (existingImageContainer) {
-                        existingImageContainer.style.display = 'flex';
-                        uploadContent.style.display = 'none';
-                    } else {
-                        uploadContent.style.display = 'flex';
-                    }
                 }
             });
 
@@ -439,4 +416,6 @@
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/cabang-olahraga/create.blade.php ENDPATH**/ ?>

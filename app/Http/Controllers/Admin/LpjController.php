@@ -94,7 +94,11 @@ class LpjController extends Controller
 
         // Pagination
         $perPage = $request->get('per_page', 10);
-        $lpjData = $query->paginate($perPage)->withQueryString();
+        $lpjData = $query->with(['pengajuan' => function($query) {
+            $query->where('status', 'disetujui')
+                ->orderBy('approved_at', 'desc')
+                ->limit(1);
+        }])->paginate($perPage)->withQueryString();
 
         // Get current parent and breadcrumb data
         $parent = $parentId ? Lpj::findOrFail($parentId) : null;
