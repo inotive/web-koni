@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan LPJ - {{ $kegiatanLainnya->nama_program }}</title>
+    <title>Laporan LPJ - <?php echo e($kegiatanLainnya->nama_program); ?></title>
     <meta charset="UTF-8">
     <style>
         @page {
@@ -170,14 +170,14 @@
 <body>
     <!-- HEADER IMAGE -->
     <div class="letterhead">
-        @if(file_exists(public_path('assets/img/kop-nobg.png')))
-            <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
-        @else
+        <?php if(file_exists(public_path('assets/img/kop-nobg.png'))): ?>
+            <img src="<?php echo e(public_path('assets/img/kop-nobg.png')); ?>" alt="KONI Letterhead">
+        <?php else: ?>
             <div style="padding: 20px; border: 1px solid #ccc; text-align: center;">
                 <h2>KONI LETTERHEAD</h2>
                 <p>Header image not found</p>
             </div>
-        @endif
+        <?php endif; ?>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -186,42 +186,42 @@
             <table class="info-table">
                 <tr>
                     <th>Program</th>
-                    <td>{{ $kegiatanLainnya->nama_program }}</td>
+                    <td><?php echo e($kegiatanLainnya->nama_program); ?></td>
                 </tr>
                 <tr>
                     <th>Kegiatan</th>
-                    <td>{{ $kegiatanLainnya->nama_kegiatan }}</td>
+                    <td><?php echo e($kegiatanLainnya->nama_kegiatan); ?></td>
                 </tr>
                 <tr>
                     <th>Total Anggaran</th>
-                    <td class="amount">Rp {{ number_format($kegiatanLainnya->jumlah_harga, 2, ',', '.') }}</td>
+                    <td class="amount">Rp <?php echo e(number_format($kegiatanLainnya->jumlah_harga, 2, ',', '.')); ?></td>
                 </tr>
-                @if($kegiatanLainnya->tanggal_kegiatan)
+                <?php if($kegiatanLainnya->tanggal_kegiatan): ?>
                 <tr>
                     <th>Tanggal Kegiatan</th>
-                    <td>{{ \Carbon\Carbon::parse($kegiatanLainnya->tanggal_kegiatan)->format('d F Y') }}</td>
+                    <td><?php echo e(\Carbon\Carbon::parse($kegiatanLainnya->tanggal_kegiatan)->format('d F Y')); ?></td>
                 </tr>
-                @endif
-                @if($kegiatanLainnya->lokasi_kegiatan)
+                <?php endif; ?>
+                <?php if($kegiatanLainnya->lokasi_kegiatan): ?>
                 <tr>
                     <th>Lokasi</th>
-                    <td>{{ $kegiatanLainnya->lokasi_kegiatan }}</td>
+                    <td><?php echo e($kegiatanLainnya->lokasi_kegiatan); ?></td>
                 </tr>
-                @endif
-                @if($kegiatanLainnya->keterangan_tambahan)
+                <?php endif; ?>
+                <?php if($kegiatanLainnya->keterangan_tambahan): ?>
                 <tr>
                     <th>Keterangan Tambahan</th>
-                    <td>{{ $kegiatanLainnya->keterangan_tambahan }}</td>
+                    <td><?php echo e($kegiatanLainnya->keterangan_tambahan); ?></td>
                 </tr>
-                @endif
+                <?php endif; ?>
             </table>
 
-            @if($kegiatanLainnya->foto_jurnal && count($kegiatanLainnya->foto_jurnal) > 0)
+            <?php if($kegiatanLainnya->foto_jurnal && count($kegiatanLainnya->foto_jurnal) > 0): ?>
                 <h3 class="section-title">Dokumentasi Kegiatan</h3>
                 <table class="photo-table">
                     <tr>
-                        @foreach($kegiatanLainnya->foto_jurnal as $index => $foto)
-                            @php
+                        <?php $__currentLoopData = $kegiatanLainnya->foto_jurnal; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $foto): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php
                                 if(is_array($foto)) {
                                     $path = $foto['path'] ?? '';
                                     $originalName = $foto['original_name'] ?? basename($path);
@@ -230,23 +230,24 @@
                                     $originalName = basename($path);
                                 }
                                 $fullPath = public_path('storage/' . $path);
-                            @endphp
+                            ?>
 
-                            @if($path && file_exists($fullPath))
+                            <?php if($path && file_exists($fullPath)): ?>
                                 <td class="photo-td">
                                     <div class="photo-container">
-                                        <img src="{{ $fullPath }}" alt="{{ $originalName }}">
-                                        <div class="photo-caption">{{ $originalName }}</div>
+                                        <img src="<?php echo e($fullPath); ?>" alt="<?php echo e($originalName); ?>">
+                                        <div class="photo-caption"><?php echo e($originalName); ?></div>
                                     </div>
                                 </td>
-                                @if(($index + 1) % 3 == 0)
+                                <?php if(($index + 1) % 3 == 0): ?>
                                     </tr><tr> <!-- Start new row every 3 images -->
-                                @endif
-                            @endif
-                        @endforeach
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tr>
                 </table>
-            @endif
+            <?php endif; ?>
         </div>
 </body>
 </html>
+<?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/kegiatan-lainnya/export.blade.php ENDPATH**/ ?>

@@ -672,6 +672,65 @@ public function exportDetail($id)
             $fpdi->useTemplate($templateId);
         }
 
+        // Merge PDF attachments (dokumen_lpj only, excluding dokumen_lpj_pdf)
+        if ($kegiatanLainnya->dokumen_lpj && count($kegiatanLainnya->dokumen_lpj) > 0) {
+            foreach ($kegiatanLainnya->dokumen_lpj as $dokumen) {
+                $path = is_array($dokumen) ? ($dokumen['path'] ?? $dokumen) : $dokumen;
+                $filePath = storage_path('app/public/' . $path);
+
+                if (file_exists($filePath)) {
+                    $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+                    // Only merge PDF files
+                    if ($fileExtension === 'pdf') {
+                        try {
+                            $attachmentPageCount = $fpdi->setSourceFile($filePath);
+
+                            for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
+                                $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                                $fpdi->AddPage();
+                                $fpdi->useTemplate($templateId);
+                            }
+                        } catch (\Exception $e) {
+                            // Log error but continue with other files
+                            \Log::warning("Could not merge PDF file: {$path}. Error: " . $e->getMessage());
+                        }
+                    }
+                }
+            }
+        }
+
+        // Merge dokumen_lpj_pdf if it exists
+        if ($kegiatanLainnya->dokumen_lpj_pdf) {
+            $path = is_array($kegiatanLainnya->dokumen_lpj_pdf) ? 
+                    ($kegiatanLainnya->dokumen_lpj_pdf['path'] ?? '') : 
+                    $kegiatanLainnya->dokumen_lpj_pdf;
+
+            if ($path) {
+                $filePath = storage_path('app/public/' . $path);
+
+                if (file_exists($filePath)) {
+                    $fileExtension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+                    // Only merge PDF files
+                    if ($fileExtension === 'pdf') {
+                        try {
+                            $attachmentPageCount = $fpdi->setSourceFile($filePath);
+
+                            for ($pageNo = 1; $pageNo <= $attachmentPageCount; $pageNo++) {
+                                $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
+                                $fpdi->AddPage();
+                                $fpdi->useTemplate($templateId);
+                            }
+                        } catch (\Exception $e) {
+                            // Log error but continue
+                            \Log::warning("Could not merge PDF file: {$path}. Error: " . $e->getMessage());
+                        }
+                    }
+                }
+            }
+        }
+
         // Clean up temporary file
         unlink($tempMainFile);
 
