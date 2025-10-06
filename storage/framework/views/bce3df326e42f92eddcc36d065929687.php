@@ -1,12 +1,11 @@
-@extends('layouts.app')
-@section('pageTitle', 'Edit Data Pelatih')
-@section('mainSection', 'Konfigurasi')
-@section('mainSectionUrl', route('admin.konfigurasi.pelatih.index'))
-@section('subSection', 'Pelatih')
-@section('subSectionUrl', route('admin.konfigurasi.pelatih.index'))
-@section('currentSection', 'Edit Data Pelatih')
+<?php $__env->startSection('pageTitle', 'Edit Data Pelatih'); ?>
+<?php $__env->startSection('mainSection', 'Konfigurasi'); ?>
+<?php $__env->startSection('mainSectionUrl', route('admin.konfigurasi.pelatih.index')); ?>
+<?php $__env->startSection('subSection', 'Pelatih'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.konfigurasi.pelatih.index')); ?>
+<?php $__env->startSection('currentSection', 'Edit Data Pelatih'); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     body {
         background-color: #f5f5f5 !important;
@@ -130,9 +129,9 @@
         <div class="card card-form">
             <div class="card-body p-4 p-md-5">
                 <h3 class="fw-bold mb-4">Edit Data</h3>
-                <form action="{{ route('admin.konfigurasi.pelatih.update', $pelatih->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+                <form action="<?php echo e(route('admin.konfigurasi.pelatih.update', $pelatih->id)); ?>" method="POST" enctype="multipart/form-data">
+                    <?php echo csrf_field(); ?>
+                    <?php echo method_field('PUT'); ?>
 
                     <!-- File Upload -->
                     <div class="row align-items-start mb-4">
@@ -142,31 +141,46 @@
                         </div>
                         <div class="col-md-9">
                             <label for="foto" class="file-upload-wrapper" id="uploadContent">
-                                <input type="file" name="foto" id="foto" class="@error('foto') is-invalid @enderror">
+                                <input type="file" name="foto" id="foto" class="<?php $__errorArgs = ['foto'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>">
                                 <div class="file-upload-icon-wrapper">
-                                    @if ($pelatih->foto)
-                                        <img src="{{ Storage::url($pelatih->foto) }}" class="preview-image me-2" alt="Current Foto">
-                                    @else
+                                    <?php if($pelatih->foto): ?>
+                                        <img src="<?php echo e(Storage::url($pelatih->foto)); ?>" class="preview-image me-2" alt="Current Foto">
+                                    <?php else: ?>
                                         <i class="fas fa-upload file-upload-icon"></i>
-                                    @endif
+                                    <?php endif; ?>
                                 </div>
                                 <div>
                                     <p class="file-upload-text mb-1" id="file-name-display">
-                                        {{ $pelatih->foto ? 'Klik untuk mengubah foto' : 'Seret dan lepas file di sini, atau klik untuk mengunggah.' }}
+                                        <?php echo e($pelatih->foto ? 'Klik untuk mengubah foto' : 'Seret dan lepas file di sini, atau klik untuk mengunggah.'); ?>
+
                                     </p>
                                     <p class="file-upload-hint">Kosongkan jika tidak ingin mengubah foto</p>
                                 </div>
                             </label>
 
-                            @error('foto')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
+                            <?php $__errorArgs = ['foto'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <div class="invalid-feedback d-block"><?php echo e($message); ?></div>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
 
                             <div id="imagePreviewContainer" style="display: none;"></div>
                         </div>
                     </div>
 
-                    @php
+                    <?php
                         $fields = [
                             'nama' => ['label' => 'Nama', 'type' => 'text', 'placeholder' => 'Joko Widodo'],
                             'cabor_id' => ['label' => 'Cabang Olahraga', 'type' => 'select', 'options' => $cabors],
@@ -179,53 +193,75 @@
                             'alamatprovinsi' => ['label' => 'Provinsi', 'type' => 'text', 'placeholder' => 'Contoh: Kalimantan Timur'],
                             'alamatkota' => ['label' => 'Kota/Kabupaten', 'type' => 'text', 'placeholder' => 'Contoh: Balikpapan'],
                         ];
-                    @endphp
+                    ?>
 
-                    @foreach ($fields as $key => $field)
+                    <?php $__currentLoopData = $fields; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $field): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="row align-items-center mb-3">
                             <div class="col-md-3">
-                                <label for="{{ $key }}" class="form-label">{{ $field['label'] }}</label>
+                                <label for="<?php echo e($key); ?>" class="form-label"><?php echo e($field['label']); ?></label>
                             </div>
                             <div class="col-md-9">
-                                @php
+                                <?php
                                     $value = old($key, $pelatih->{$key} ?? '');
                                     if ($field['type'] === 'date' && $value) {
                                         $value = \Carbon\Carbon::parse($value)->format('Y-m-d');
                                     }
-                                @endphp
+                                ?>
 
-                                @if ($field['type'] === 'select')
-                                    <select name="{{ $key }}" id="{{ $key }}" class="form-select @error($key) is-invalid @enderror">
-                                        <option value="">Pilih {{ $field['label'] }}</option>
-                                        @if ($key === 'cabor_id')
-                                            @foreach ($field['options'] as $id => $nama)
-                                                <option value="{{ $id }}" {{ $value == $id ? 'selected' : '' }}>{{ $nama }}</option>
-                                            @endforeach
-                                        @else
-                                            @foreach ($field['options'] as $option)
-                                                <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>{{ $option }}</option>
-                                            @endforeach
-                                        @endif
+                                <?php if($field['type'] === 'select'): ?>
+                                    <select name="<?php echo e($key); ?>" id="<?php echo e($key); ?>" class="form-select <?php $__errorArgs = [$key];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>">
+                                        <option value="">Pilih <?php echo e($field['label']); ?></option>
+                                        <?php if($key === 'cabor_id'): ?>
+                                            <?php $__currentLoopData = $field['options']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $id => $nama): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($id); ?>" <?php echo e($value == $id ? 'selected' : ''); ?>><?php echo e($nama); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php else: ?>
+                                            <?php $__currentLoopData = $field['options']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $option): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option value="<?php echo e($option); ?>" <?php echo e($value == $option ? 'selected' : ''); ?>><?php echo e($option); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        <?php endif; ?>
                                     </select>
-                                @else
-                                    <input type="{{ $field['type'] }}" name="{{ $key }}" id="{{ $key }}"
-                                           class="form-control @error($key) is-invalid @enderror"
-                                           placeholder="{{ $field['placeholder'] ?? '' }}" value="{{ $value }}">
-                                            {{ in_array($key, ['nama','cabor_id','tanggal_lahir','tempat_lahir','kelamin','alamat','alamatprovinsi','alamatkota']) ? '' : '' }}
-                                @endif
-                                @error($key)
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <?php else: ?>
+                                    <input type="<?php echo e($field['type']); ?>" name="<?php echo e($key); ?>" id="<?php echo e($key); ?>"
+                                           class="form-control <?php $__errorArgs = [$key];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                           placeholder="<?php echo e($field['placeholder'] ?? ''); ?>" value="<?php echo e($value); ?>">
+                                            <?php echo e(in_array($key, ['nama','cabor_id','tanggal_lahir','tempat_lahir','kelamin','alamat','alamatprovinsi','alamatkota']) ? '' : ''); ?>
+
+                                <?php endif; ?>
+                                <?php $__errorArgs = [$key];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <div class="invalid-feedback"><?php echo e($message); ?></div>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                             </div>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     <input type="hidden" name="ketersediaan" value="Tersedia">
                     <div class="row">
                         <div class="col-md-9 offset-md-3 d-flex gap-3">
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-save me-2"></i>Simpan
                             </button>
-                            <a href="{{ route('admin.konfigurasi.pelatih.index') }}"
+                            <a href="<?php echo e(route('admin.konfigurasi.pelatih.index')); ?>"
                                class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>
@@ -279,4 +315,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/pelatih/edit.blade.php ENDPATH**/ ?>

@@ -21,8 +21,7 @@
 
         .main-content {
             background-color: #f5f5f5;
-            min-height: 100vh;
-            padding: 20px 10px 40px;
+            padding: 20px 10px;
         }
 
         .card-form {
@@ -79,8 +78,6 @@
             margin-top: 4px;
         }
 
-        <style>
-
         /* Tambahkan style ini */
         .select2-container--bootstrap-5 .select2-selection {
             border-radius: 8px !important;
@@ -102,7 +99,6 @@
         .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
             height: 40px !important;
         }
-    </style>
     </style>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
