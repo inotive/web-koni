@@ -33,7 +33,8 @@ class Lpj extends Model
         'catatan_approval',
         'target_anggaran',
         'target_kegiatan',
-        'tanggal_kegiatan'
+        'tanggal_kegiatan',
+        'year'
     ];
 
     protected $casts = [

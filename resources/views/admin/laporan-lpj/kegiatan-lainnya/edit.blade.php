@@ -316,6 +316,27 @@
                                 </div>
                             </div>
 
+                            <div class="row align-items-center mb-3">
+                                <div class="col-md-3">
+                                    <label for="year" class="form-label">Tahun <span class="text-danger">*</span></label>
+                                </div>
+                                <div class="col-md-9">
+                                    @php
+                                        $currentYear = now()->year;
+                                        $startYear = $currentYear - 5;
+                                        $endYear = $currentYear + 2;
+                                    @endphp
+                                    <select name="year" id="year" class="form-select @error('year') is-invalid @enderror" required>
+                                        @for ($y = $endYear; $y >= $startYear; $y--)
+                                            <option value="{{ $y }}" {{ (int) old('year', $kegiatanLainnya->year ?? $currentYear) === (int) $y ? 'selected' : '' }}>{{ $y }}</option>
+                                        @endfor
+                                    </select>
+                                    @error('year')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
                             <div class="row align-items-center mb-3" style="display: none;">
                                 <div class="col-md-3">
                                     <label for="jumlah_harga_satuan" class="form-label">Harga Satuan</label>

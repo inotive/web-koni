@@ -472,18 +472,41 @@
 
     <div class="d-flex flex-column mb-8">
         <h1 class="text-dark fw-bold mb-1">Kegiatan Lainnya</h1>
-        <div class="text-muted fw-semibold fs-6">Manajemen Laporan Kegiatan Lainnya Anda Sekarang</div>
+        <div class="text-muted fw-semibold fs-6 d-flex justify-content-between align-items-center">
+            <div>Manajemen Laporan Kegiatan Lainnya Anda Sekarang</div>
+            <div class="d-flex align-items-center gap-2">
+                <form method="GET" id="yearFilterFormKegiatanLainnyaProgress" class="d-flex align-items-center gap-2">
+                    @foreach (request()->except('year') as $k => $v)
+                        <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                    @endforeach
+                    <select name="year" class="form-select" style="width: 120px"
+                        onchange="document.getElementById('yearFilterFormKegiatanLainnyaProgress').submit()">
+                        @if (isset($availableYears) && count($availableYears))
+                            @foreach ($availableYears as $year)
+                                <option value="{{ $year }}"
+                                    {{ (string) $year === (string) ($selectedYear ?? now()->year) ? 'selected' : '' }}>
+                                    {{ $year }}</option>
+                            @endforeach
+                        @else
+                            <option value="{{ now()->year }}" selected>{{ now()->year }}</option>
+                        @endif
+                    </select>
+                </form>
+            </div>
+        </div>
     </div>
 
     @if(isset($current_budget) && isset($target_anggaran))
     <div class="top-progress-wrapper mb-4">
         <div class="d-flex justify-content-between mt-2">
             <h3 class="text-muted mb-4">Total Anggaran</h3>
-            <span class="text-muted">
-                <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </a>
-            </span>
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-muted">
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                </span>
+            </div>
         </div>
         <div class="d-flex justify-content-between mb-2">
             @php
@@ -523,7 +546,7 @@
     <div class="col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - 2025</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - {{ $selectedYear ?? now()->year }}</h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
@@ -878,8 +901,12 @@
     function doSearch(searchValue) {
         showSearchLoading();
 
+        // Get the selected year from the dropdown
+        const selectedYear = $('select[name="year"]').val();
+
         updateTable({
             'search': searchValue,
+            'year': selectedYear,
             'page': 1
         }).finally(() => {
             hideSearchLoading();
@@ -893,6 +920,12 @@
             }
 
             const currentUrl = new URL(window.location.href);
+
+            // Always include the selected year from dropdown
+            const selectedYear = $('select[name="year"]').val();
+            if (selectedYear) {
+                currentUrl.searchParams.set('year', selectedYear);
+            }
 
             for (const key in params) {
                 if (params[key] !== null && params[key] !== undefined && params[key] !== '') {
@@ -1417,11 +1450,13 @@
         const jenisKegiatan = $('#filter-jenis-kegiatan').val();
         const startDate = $('#filter-start-date').val();
         const endDate = $('#filter-end-date').val();
+        const selectedYear = $('select[name="year"]').val();
 
         updateTable({
             'jenis_kegiatan_filter': jenisKegiatan,
             'start_date': startDate,
             'end_date': endDate,
+            'year': selectedYear,
             'page': 1
         });
     });

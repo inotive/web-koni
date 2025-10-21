@@ -327,22 +327,29 @@
                     <strong>
                         <h1 class="fw-bold mb-1">Bidang Bidang</h1>
                     </strong>
-                    <h3 class="text-muted mb-0">Jelajahi Bidang Bidang yang terdaftar</h3>
+                    <h3 class="text-muted mb-0">Jelajahi Bidang Bidang yang terdaftar untuk tahun <?php echo e($selectedYear); ?></h3>
                 </div>
 
-                <!-- Enhanced Search and Sort Controls -->
-                
-
-                    <!-- Sort Dropdown -->
-                    
-                </div>
+                <!-- Year Filter -->
+                <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
+                    <label for="year" class="text-muted mb-0">Tahun:</label>
+                    <select name="year" class="form-select" style="width: 120px" onchange="this.form.submit()">
+                        <?php if(isset($availableYears) && count($availableYears) > 0): ?>
+                            <?php $__currentLoopData = $availableYears; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option value="<?php echo e($year); ?>" <?php echo e((string)$year === (string)($selectedYear ?? now()->year) ? 'selected' : ''); ?>><?php echo e($year); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php else: ?>
+                            <option value="<?php echo e(now()->year); ?>" selected><?php echo e(now()->year); ?></option>
+                        <?php endif; ?>
+                    </select>
+                </form>
             </div>
 
            <?php
                 $anggaran_percentage = $target_anggaran > 0 ? ($total_anggaran / $target_anggaran) * 100 : 0;
             ?>
             <div class="top-progress-wrapper mb-4">
-                <h3 class="text-muted mb-0">Total Anggaran</h3>
+                <h3 class="text-muted mb-0">Total Anggaran <?php echo e($selectedYear); ?></h3>
                 <div class="d-flex justify-content-between mb-2">
                     <h1 class="fw-bold mb-1">Rp. <?php echo e(number_format($total_anggaran, 0, ',', '.')); ?> / Rp. <?php echo e(number_format($target_anggaran, 0, ',', '.')); ?></h1>
                     <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="<?php echo e(round($anggaran_percentage, 2)); ?>% dari total anggaran">
@@ -383,7 +390,7 @@
         <!-- Bidang Grid -->
         <div class="bidang-grid grid-default" id="bidangGrid">
             <!-- Mobilisasi Sumberdaya -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 1])); ?>" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="<?php echo e($mobilisasiCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 1, 'year' => $selectedYear])); ?>" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="<?php echo e($mobilisasiCount ?? 0); ?>">
                 <div class="bidang-icon icon-mobilisasi">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/bank.png')); ?>" alt="">
                 </div>
@@ -422,7 +429,7 @@
             </a>
 
             <!-- Hubungan Antar Lembaga -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2])); ?>" class="bidang-card" data-title="hubungan antar lembaga" data-docs="<?php echo e($hubungan_lembagaCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2, 'year' => $selectedYear])); ?>" class="bidang-card" data-title="hubungan antar lembaga" data-docs="<?php echo e($hubungan_lembagaCount ?? 0); ?>">
                 <div class="bidang-icon icon-hubungan">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/data.png')); ?>" alt="">
                 </div>
@@ -462,7 +469,7 @@
 
             <!-- Continue for other cards... -->
             <!-- Kesehatan -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 3])); ?>" class="bidang-card" data-title="kesehatan" data-docs="<?php echo e($kesehatanCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 3, 'year' => $selectedYear])); ?>" class="bidang-card" data-title="kesehatan" data-docs="<?php echo e($kesehatanCount ?? 0); ?>">
                 <div class="bidang-icon icon-kesehatan">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/pulse.png')); ?>" alt="">
                 </div>
@@ -501,7 +508,7 @@
             </a>
 
             <!-- Organisasi -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 4])); ?>" class="bidang-card" data-title="organisasi" data-docs="<?php echo e($organisasiCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 4, 'year' => $selectedYear])); ?>" class="bidang-card" data-title="organisasi" data-docs="<?php echo e($organisasiCount ?? 0); ?>">
                 <div class="bidang-icon icon-organisasi">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/people.png')); ?>" alt="">
                 </div>
@@ -540,7 +547,7 @@
             </a>
 
             <!-- Pembinaan Hukum Olahraga -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 5])); ?>" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="<?php echo e($pembinaan_hukumCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 5, 'year' => $selectedYear])); ?>" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="<?php echo e($pembinaan_hukumCount ?? 0); ?>">
                 <div class="bidang-icon icon-hukum">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/shield.png')); ?>" alt="">
                 </div>
@@ -579,7 +586,7 @@
             </a>
 
                 <!-- Pembinaan Prestasi -->
-                <a href="<?php echo e(route('admin.laporan-lpj.bidang.prestasi.index')); ?>" class="bidang-card"
+                <a href="<?php echo e(route('admin.laporan-lpj.bidang.prestasi.index', ['year' => $selectedYear])); ?>" class="bidang-card"
                     data-title="pembinaan prestasi">
                     <div class="bidang-icon icon-prestasi">
                         <img src="<?php echo e(asset('assets2/media/misc/bidang/dribbble.png')); ?>" alt="">
@@ -618,7 +625,7 @@
                 </a>
 
             <!-- Sport Science & Iptek -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 7])); ?>" class="bidang-card" data-title="sport science iptek" data-docs="<?php echo e($scienceCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 7, 'year' => $selectedYear])); ?>" class="bidang-card" data-title="sport science iptek" data-docs="<?php echo e($scienceCount ?? 0); ?>">
                 <div class="bidang-icon icon-science">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/test-tubes.png')); ?>" alt="">
                 </div>
@@ -657,7 +664,7 @@
             </a>
 
             <!-- Perencanaan Program dan Anggaran -->
-            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 8])); ?>" class="bidang-card" data-title="perencanaan program anggaran" data-docs="<?php echo e($perencanaan_programCount ?? 0); ?>">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 8, 'year' => $selectedYear])); ?>" class="bidang-card" data-title="perencanaan program anggaran" data-docs="<?php echo e($perencanaan_programCount ?? 0); ?>">
                 <div class="bidang-icon icon-perencanaan">
                     <img src="<?php echo e(asset('assets2/media/misc/bidang/tab-tablet.png')); ?>" alt="">
                 </div>
@@ -874,5 +881,4 @@
         });
     </script>
 <?php $__env->stopSection(); ?>
-
 <?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang/index.blade.php ENDPATH**/ ?>

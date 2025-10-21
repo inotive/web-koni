@@ -31,6 +31,22 @@ class KegiatanLainnyaController extends Controller
     $query = Lpj::with('pengajuan') // Load the pengajuan relationship
              ->where('parent_id', $parentCategory->id);
 
+    // Year filter and available years (use 'year' column)
+    $selectedYear = $request->get('year');
+    if ($selectedYear) {
+        $query->where('year', $selectedYear);
+    }
+
+    // Build available years list based on current scope (kegiatan-lainnya only)
+    $yearsBase = Lpj::query();
+    $yearsBase->where('parent_id', $parentCategory->id);
+    $availableYears = $yearsBase
+        ->whereNotNull('year')
+        ->select('year')
+        ->distinct()
+        ->orderByDesc('year')
+        ->pluck('year');
+
     // Filter berdasarkan jenis kegiatan
     if ($request->jenis_kegiatan_filter) {
         $query->where('nama_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
@@ -91,7 +107,9 @@ class KegiatanLainnyaController extends Controller
         'current_budget', 
         'kegiatan_count', 
         'target_anggaran', 
-        'target_kegiatan'
+        'target_kegiatan',
+        'availableYears',
+        'selectedYear'
     ));
 }
 
@@ -111,6 +129,7 @@ class KegiatanLainnyaController extends Controller
             'volume' => 'nullable|string|max:255',
             'jumlah_harga_satuan' => 'nullable|string',
             'jumlah_harga' => 'required|string',
+            'year' => 'nullable|integer|min:2000|max:2100',
             'foto_jurnal' => 'required|array',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array',
@@ -155,6 +174,7 @@ class KegiatanLainnyaController extends Controller
             'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
             'jumlah_harga' => $jumlahHarga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
+            'year' => $request->year ?? now()->year,
             'icon' => 'fas fa-clipboard-list' // Default icon untuk kegiatan-lainnya
         ];
 
@@ -271,6 +291,7 @@ class KegiatanLainnyaController extends Controller
             'volume' => 'nullable|string|max:255',
             'jumlah_harga_satuan' => 'nullable|string',
             'jumlah_harga' => 'required|string',
+            'year' => 'nullable|integer|min:2000|max:2100',
             'foto_jurnal' => 'nullable|array',
             'foto_jurnal.*' => 'image|mimes:jpeg,png,jpg,gif|max:10240',
             'dokumen_lpj' => 'nullable|array',
@@ -384,6 +405,7 @@ class KegiatanLainnyaController extends Controller
             'jumlah_harga_satuan' => $jumlahHargaSatuan ?? 0, // Default ke 0 jika null
             'jumlah_harga' => $jumlahHarga,
             'keterangan_tambahan' => $request->keterangan_tambahan,
+            'year' => $request->year ?? now()->year,
             'foto_jurnal' => $allFotoJurnal,
             'dokumen_lpj' => $allDokumenLpj,
             'dokumen_lpj_pdf' => $allDokumenLpjPdf
