@@ -212,6 +212,14 @@ class DashboardController extends Controller
                             return ($harga > 1 && $harga != 2) ? $harga : 0;
                         });
                         
+                        // For items other than Pembinaan Prestasi (ID 6), also check if the child itself has data
+                        if ($item->id != 6) {
+                            // If no grandchildren found with data, check if the child itself has data > 2
+                            if ($serapan_child == 0 && $child->jumlah_harga > 2) {
+                                $serapan_child = (int)$child->jumlah_harga;
+                            }
+                        }
+                        
                         // Attach the calculated absorption to the child object for the view
                         if ($item->id == 6) {
                             $child->serapan_cabor = $serapan_child;
