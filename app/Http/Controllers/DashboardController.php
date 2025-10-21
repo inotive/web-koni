@@ -64,9 +64,20 @@ class DashboardController extends Controller
                       }])
                       ->get();
                       
-        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        // Dapatkan ID untuk Kegiatan Lainnya secara dinamis
+        $kegiatanLainnyaParent = Lpj::whereNull('parent_id')
+                                   ->where('nama_program', 'kegiatan-lainnya')
+                                   ->first();
+        $kegiatanLainnyaId = $kegiatanLainnyaParent ? $kegiatanLainnyaParent->id : null;
+
+        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (dinamis)
         $kegiatan_tambahan = Lpj::whereNull('parent_id')
-                              ->whereIn('id', [59, 88])
+                              ->where(function($query) use ($kegiatanLainnyaId) {
+                                  $query->where('id', 59); // Sekretariat
+                                  if ($kegiatanLainnyaId) {
+                                      $query->orWhere('id', $kegiatanLainnyaId); // Kegiatan Lainnya
+                                  }
+                              })
                               ->where(function($query) use ($selectedYear) {
                                   $query->whereYear('created_at', $selectedYear)
                                         ->orWhereNull('created_at');
@@ -90,15 +101,30 @@ class DashboardController extends Controller
         // Mengambil semua target dan mengindeksnya berdasarkan id_lpj untuk pencarian efisien
         $targets = Target::all()->keyBy('id_lpj');
         
-        $kegiatan = $kegiatan->map(function ($item) use ($total_rka, &$total_serapan, &$kegiatan_berjalan_count, $targets, $selectedYear) {
+        $kegiatan = $kegiatan->map(function ($item) use ($total_rka, &$total_serapan, &$kegiatan_berjalan_count, $targets, $selectedYear, $kegiatanLainnyaId) {
             // Menghitung dan menetapkan total budget untuk setiap kegiatan
             $item_budget = 0;
             if ($item->id == 6) { // Special handling for Pembinaan Prestasi
                 if ($item->children->count() > 0) {
-                    foreach ($item->children as $child_item) {
-                        $child_target = $targets->get((string)$child_item->id);
-                        if ($child_target && isset($child_target->target_anggaran)) {
-                            $item_budget += (int) $child_target->target_anggaran;
+                    // For Pembinaan Prestasi, budget might be stored at different levels (children or grandchildren)
+                    $prestasi_children_ids = $item->children->pluck('id');
+                    $prestasi_grandchildren_ids = \App\Models\Lpj::whereIn('parent_id', $prestasi_children_ids)->pluck('id');
+                    
+                    // First, try summing from grandchildren (deeper level)
+                    foreach ($prestasi_grandchildren_ids as $grandchild_id) {
+                        $grandchild_target = $targets->get((string)$grandchild_id);
+                        if ($grandchild_target && isset($grandchild_target->target_anggaran)) {
+                            $item_budget += (int)$grandchild_target->target_anggaran;
+                        }
+                    }
+                    
+                    // If no budget found at deepest level, try direct children (IDs 9-12)
+                    if ($item_budget == 0) {
+                        foreach ($item->children as $child_item) {
+                            $child_target = $targets->get((string)$child_item->id);
+                            if ($child_target && isset($child_target->target_anggaran)) {
+                                $item_budget += (int) $child_target->target_anggaran;
+                            }
                         }
                     }
                 }
@@ -116,14 +142,43 @@ class DashboardController extends Controller
             // Hitung target kegiatan secara khusus untuk parent categories with children
             if ($item->children->count() > 0) {
                 $total_target_parent = 0;
-                foreach ($item->children as $child) { // Child level
-                    foreach ($child->children as $grandchild) { // Folders level
-                        $grandchild_target = $targets->get((string)$grandchild->id);
-                        if ($grandchild_target) {
+                
+                // Special handling for Pembinaan Prestasi (ID 6) - target values are stored at grandchildren level (under IDs 9-12)
+                if ($item->id == 6) {
+                    // Get all IDs under the children of ID 6 (which are IDs 9-12)
+                    $prestasi_children_ids = $item->children->pluck('id');
+                    $prestasi_grandchildren_ids = \App\Models\Lpj::whereIn('parent_id', $prestasi_children_ids)->pluck('id');
+                    
+                    // Sum targets from all entries under the Cabor (ID 9-12) sections
+                    foreach ($prestasi_grandchildren_ids as $grandchild_id) {
+                        // Check if this grandchild_id exists in the targets collection
+                        $grandchild_target = $targets->get((string)$grandchild_id);
+                        if ($grandchild_target && isset($grandchild_target->target_kegiatan)) {
                             $total_target_parent += (int)$grandchild_target->target_kegiatan;
                         }
                     }
+                    
+                    // If no targets found at deepest level, try looking at direct children level
+                    if ($total_target_parent == 0) {
+                        foreach ($item->children as $child) { // IDs 9-12
+                            $child_target = $targets->get((string)$child->id);
+                            if ($child_target && isset($child_target->target_kegiatan)) {
+                                $total_target_parent += (int)$child_target->target_kegiatan;
+                            }
+                        }
+                    }
+                } else {
+                    // For other parent categories, look for targets at grandchild level
+                    foreach ($item->children as $child) { // Child level
+                        foreach ($child->children as $grandchild) { // Folders level
+                            $grandchild_target = $targets->get((string)$grandchild->id);
+                            if ($grandchild_target && isset($grandchild_target->target_kegiatan)) {
+                                $total_target_parent += (int)$grandchild_target->target_kegiatan;
+                            }
+                        }
+                    }
                 }
+                
                 $item->target_kegiatan = $total_target_parent;
             } else {
                 $target = $targets->get($item->id);
@@ -132,16 +187,41 @@ class DashboardController extends Controller
 
             // Hitung kegiatan berjalan
             if ($item->children->count() > 0) {
-                $kegiatan_berjalan_parent = 0;
-                foreach ($item->children as $child) { // Child level
-                    foreach ($child->children as $grandchild) { // Folders level
-                        // Count grandchildren with jumlah_harga > 0 (filtered by year in the query)
-                        $kegiatan_berjalan_parent += $grandchild->children->where('jumlah_harga', '>', 0)->filter(function($greatGrandchild) use ($selectedYear) {
-                            return (!$greatGrandchild->created_at) || $greatGrandchild->created_at->year == $selectedYear;
-                        })->count();
+                if ($item->id == 59 || ($kegiatanLainnyaId && $item->id == $kegiatanLainnyaId)) {
+                    $item->kegiatan_berjalan_count = $item->children->where('jumlah_harga', '>', 0)->filter(function($child) use ($selectedYear) {
+                        return (!$child->created_at) || $child->created_at->year == $selectedYear;
+                    })->count();
+                } else {
+                    // Special handling for Pembinaan Prestasi (ID 6)
+                    if ($item->id == 6) {
+                        $kegiatan_berjalan_count = 0;
+                        // For Pembinaan Prestasi, count activities at the great-grandchildren level
+                        foreach ($item->children as $child) { // Cabor level (IDs 9-12)
+                            foreach ($child->children as $grandchild) { // Folders level
+                                // Count grandchildren's children (great-grandchildren level) with jumlah_harga > 0
+                                $activities = $grandchild->children->filter(function($greatGrandchild) use ($selectedYear) {
+                                    return (!$greatGrandchild->created_at) || $greatGrandchild->created_at->year == $selectedYear;
+                                })->filter(function($greatGrandchild) {
+                                    return (int)($greatGrandchild->jumlah_harga ?? 0) > 0;
+                                });
+                                
+                                $kegiatan_berjalan_count += $activities->count();
+                            }
+                        }
+                        $item->kegiatan_berjalan_count = $kegiatan_berjalan_count;
+                    } else {
+                        $kegiatan_berjalan_parent = 0;
+                        foreach ($item->children as $child) { // Child level
+                            foreach ($child->children as $grandchild) { // Folders level
+                                // Count grandchildren with jumlah_harga > 0 (filtered by year in the query)
+                                $kegiatan_berjalan_parent += $grandchild->children->where('jumlah_harga', '>', 0)->filter(function($greatGrandchild) use ($selectedYear) {
+                                    return (!$greatGrandchild->created_at) || $greatGrandchild->created_at->year == $selectedYear;
+                                })->count();
+                            }
+                        }
+                        $item->kegiatan_berjalan_count = $kegiatan_berjalan_parent;
                     }
                 }
-                $item->kegiatan_berjalan_count = $kegiatan_berjalan_parent;
             } else {
                 // Count children with jumlah_harga > 0 (filtered by year in the query)
                 $item->kegiatan_berjalan_count = $item->children->where('jumlah_harga', '>', 0)->filter(function($child) use ($selectedYear) {
@@ -168,36 +248,56 @@ class DashboardController extends Controller
                 // Special handling for parent categories with children
                 $total_serapan_parent = 0;
 
-                // Loop through each child to calculate its specific absorption
-                foreach ($item->children as $child) {
-                    $grandchild_ids = Lpj::where('parent_id', $child->id)
-                        ->where(function($query) use ($selectedYear) {
-                            $query->whereYear('created_at', $selectedYear)
-                                  ->orWhereNull('created_at');
-                        })->pluck('id');
-                    
-                    $greatGrandchildren = Lpj::whereIn('parent_id', $grandchild_ids)
-                        ->where(function($query) use ($selectedYear) {
-                            $query->whereYear('created_at', $selectedYear)
-                                  ->orWhereNull('created_at');
-                        })
-                        ->get();
-                    
-                    $serapan_child = $greatGrandchildren->sum(function($greatGrandchild) {
-                        $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                // Handle Sekretariat (ID 59) and Kegiatan Lainnya (dinamis) which have a flatter structure
+                if ($item->id == 59 || ($kegiatanLainnyaId && $item->id == $kegiatanLainnyaId)) {
+                    $total_serapan_parent = $item->children->sum(function($child) {
+                        $harga = (int)($child->jumlah_harga ?? 0);
                         return ($harga > 1 && $harga != 2) ? $harga : 0;
                     });
-                    
-                    // Attach the calculated absorption to the child object for the view
-                    // For "Pembinaan Prestasi" (ID 6), use the specific name for compatibility
-                    if ($item->id == 6) {
-                        $child->serapan_cabor = $serapan_child;
-                    } else {
-                        $child->serapan_child = $serapan_child;
+                } else {
+                    // Loop through each child to calculate its specific absorption for other items
+                    foreach ($item->children as $child) {
+                        $serapan_child = 0;
+                        
+                        // Check for deeper level data (grandchildren's children - 4th level)
+                        $grandchild_ids = Lpj::where('parent_id', $child->id)
+                            ->where(function($query) use ($selectedYear) {
+                                $query->whereYear('created_at', $selectedYear)
+                                    ->orWhereNull('created_at');
+                            })->pluck('id');
+                        
+                        if ($grandchild_ids->count() > 0) {
+                            $greatGrandchildren = Lpj::whereIn('parent_id', $grandchild_ids)
+                                ->where(function($query) use ($selectedYear) {
+                                    $query->whereYear('created_at', $selectedYear)
+                                        ->orWhereNull('created_at');
+                                })
+                                ->get();
+                            
+                            $serapan_child = $greatGrandchildren->sum(function($greatGrandchild) {
+                                $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                                return ($harga > 1 && $harga != 2) ? $harga : 0;
+                            });
+                        }
+                        
+                        // If no deeper level data found and this is not Pembinaan Prestasi, also consider direct child data
+                        if ($serapan_child == 0 && $item->id != 6) {
+                            $harga = (int)($child->jumlah_harga ?? 0);
+                            if ($harga > 1 && $harga != 2) {
+                                $serapan_child = $harga;
+                            }
+                        }
+                        
+                        // Attach the calculated absorption to the child object for the view
+                        if ($item->id == 6) {
+                            $child->serapan_cabor = $serapan_child;
+                        } else {
+                            $child->serapan_child = $serapan_child;
+                        }
+                        
+                        // Add to the total for the parent category
+                        $total_serapan_parent += $serapan_child;
                     }
-                    
-                    // Add to the total for the parent category
-                    $total_serapan_parent += $serapan_child;
                 }
                 $serapan_aktif = $total_serapan_parent;
 
@@ -244,6 +344,12 @@ class DashboardController extends Controller
 
         $total_kegiatan_all = Target::sum('target_kegiatan');
 
+        // Dapatkan ID untuk Kegiatan Lainnya secara dinamis (untuk kegiatan_berjalan)
+        $kegiatanLainnyaParent = Lpj::whereNull('parent_id')
+                                   ->where('nama_program', 'kegiatan-lainnya')
+                                   ->first();
+        $kegiatanLainnyaId = $kegiatanLainnyaParent ? $kegiatanLainnyaParent->id : null;
+
         // Mengambil kegiatan berjalan dari semua halaman LPJ
         // 1. Sekretariat (ID 59) - hitung anak-anak dengan jumlah_harga > 0
         $kegiatan_berjalan_sekretariat = Lpj::where('parent_id', 59)
@@ -253,13 +359,13 @@ class DashboardController extends Controller
                       ->orWhereNull('created_at');
             })->count();
         
-        // 2. Kegiatan Lainnya (ID 88) - hitung anak-anak dengan jumlah_harga > 0
-        $kegiatan_berjalan_lainnya = Lpj::where('parent_id', 88)
+        // 2. Kegiatan Lainnya (dinamis) - hitung anak-anak dengan jumlah_harga > 0
+        $kegiatan_berjalan_lainnya = $kegiatanLainnyaId ? Lpj::where('parent_id', $kegiatanLainnyaId)
             ->where('jumlah_harga', '>', 0)
             ->where(function($query) use ($selectedYear) {
                 $query->whereYear('created_at', $selectedYear)
                       ->orWhereNull('created_at');
-            })->count();
+            })->count() : 0;
         
         // 3. Bidang-bidang (ID 1-8) - hitung anak-anak dengan jumlah_harga > 0
         $kegiatan_berjalan_bidang = 0;
@@ -271,20 +377,39 @@ class DashboardController extends Controller
                           ->orWhereNull('created_at');
                 })->get();
             if ($children->count() > 0) {
-                // If parent has children, calculate from grand-grandchildren level
-                foreach ($children as $child) {
-                    $grandchildren = Lpj::where('parent_id', $child->id)
-                        ->where(function($query) use ($selectedYear) {
-                            $query->whereYear('created_at', $selectedYear)
-                                  ->orWhereNull('created_at');
-                        })->get(); // Level 2
-                    foreach ($grandchildren as $grandchild) {
-                        // Level 3 (Kegiatan) - ini yang kita hitung jika jumlah_harga > 0
-                        $greatGrandchildren = Lpj::where('parent_id', $grandchild->id)->where('jumlah_harga', '>', 0)->get();
-                        $greatGrandchildrenCount = $greatGrandchildren->filter(function($greatGrandchild) use ($selectedYear) {
-                            return (!$greatGrandchild->created_at) || $greatGrandchild->created_at->year == $selectedYear;
-                        })->count();
-                        $kegiatan_berjalan_bidang += $greatGrandchildrenCount;
+                // Special handling for Pembinaan Prestasi (ID 6)
+                if ($i == 6) {
+                    // For Pembinaan Prestasi, calculate from the great-grandchildren level
+                    foreach ($children as $child) { // Cabor level (IDs 9-12)
+                        $grandchildren = Lpj::where('parent_id', $child->id)
+                            ->where(function($query) use ($selectedYear) {
+                                $query->whereYear('created_at', $selectedYear)
+                                      ->orWhereNull('created_at');
+                            })->get(); // Level 2
+                        foreach ($grandchildren as $grandchild) { // Level 2
+                            $greatGrandchildren = Lpj::where('parent_id', $grandchild->id)->where('jumlah_harga', '>', 0)->get();
+                            $greatGrandchildrenCount = $greatGrandchildren->filter(function($greatGrandchild) use ($selectedYear) {
+                                return (!$greatGrandchild->created_at) || $greatGrandchild->created_at->year == $selectedYear;
+                            })->count();
+                            $kegiatan_berjalan_bidang += $greatGrandchildrenCount;
+                        }
+                    }
+                } else {
+                    // For other parent categories, calculate from grand-grandchildren level
+                    foreach ($children as $child) {
+                        $grandchildren = Lpj::where('parent_id', $child->id)
+                            ->where(function($query) use ($selectedYear) {
+                                $query->whereYear('created_at', $selectedYear)
+                                      ->orWhereNull('created_at');
+                            })->get(); // Level 2
+                        foreach ($grandchildren as $grandchild) {
+                            // Level 3 (Kegiatan) - ini yang kita hitung jika jumlah_harga > 0
+                            $greatGrandchildren = Lpj::where('parent_id', $grandchild->id)->where('jumlah_harga', '>', 0)->get();
+                            $greatGrandchildrenCount = $greatGrandchildren->filter(function($greatGrandchild) use ($selectedYear) {
+                                return (!$greatGrandchild->created_at) || $greatGrandchild->created_at->year == $selectedYear;
+                            })->count();
+                            $kegiatan_berjalan_bidang += $greatGrandchildrenCount;
+                        }
                     }
                 }
             } else {
@@ -384,14 +509,24 @@ class DashboardController extends Controller
         $total_rka = \App\Models\LaporanRKA::sum('total_anggaran');
 
         // Mengambil kegiatan dari LPJ hanya sampai ID 8 (Perencanaan Program dan Anggaran)
-        // Menyertakan Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
         $kegiatan_utama = Lpj::whereNull('parent_id')
                       ->where('id', '<=', 8)
                       ->get();
-                      
-        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        
+        // Dapatkan ID untuk Kegiatan Lainnya secara dinamis
+        $kegiatanLainnyaParent = Lpj::whereNull('parent_id')
+                                   ->where('nama_program', 'kegiatan-lainnya')
+                                   ->first();
+        $kegiatanLainnyaId = $kegiatanLainnyaParent ? $kegiatanLainnyaParent->id : null;
+
+        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (dinamis)
         $kegiatan_tambahan = Lpj::whereNull('parent_id')
-                              ->whereIn('id', [59, 88])
+                              ->where(function($query) use ($kegiatanLainnyaId) {
+                                  $query->where('id', 59); // Sekretariat
+                                  if ($kegiatanLainnyaId) {
+                                      $query->orWhere('id', $kegiatanLainnyaId); // Kegiatan Lainnya
+                                  }
+                              })
                               ->get();
                               
         // Gabungkan data kegiatan tambahan di awal
