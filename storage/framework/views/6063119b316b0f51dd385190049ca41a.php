@@ -102,38 +102,7 @@
                         <?php echo csrf_field(); ?>
 
                         
-                        <div class="row align-items-center mb-3">
-                            <div class="col-md-3">
-                                <label for="year" class="form-label">Tahun <span class="text-danger">*</span></label>
-                            </div>
-                            <div class="col-md-9">
-                                <?php
-                                    $currentYear = now()->year;
-                                    $startYear = $currentYear - 5;
-                                    $endYear = $currentYear + 2;
-                                ?>
-                                <select name="year" id="year" class="form-select <?php $__errorArgs = ['year'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" required>
-                                    <?php for($y = $endYear; $y >= $startYear; $y--): ?>
-                                        <option value="<?php echo e($y); ?>" <?php echo e((int) old('year', $currentYear) === (int) $y ? 'selected' : ''); ?>><?php echo e($y); ?></option>
-                                    <?php endfor; ?>
-                                </select>
-                                <?php $__errorArgs = ['year'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?><div class="invalid-feedback"><?php echo e($message); ?></div><?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                            </div>
-                        </div>
+                        
                         <div class="row align-items-center mb-3">
                             <div class="col-md-3">
                                 <label for="nama_program" class="form-label">Nama Program <span class="text-danger">*</span></label>

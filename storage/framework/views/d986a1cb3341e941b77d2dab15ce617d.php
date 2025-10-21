@@ -511,9 +511,13 @@
             $percentage = $target_anggaran > 0 ? ($current_budget / $target_anggaran) * 100 : 0;
         ?>
         <div class="top-progress-wrapper mb-4">
-            <h3 class="text-muted mb-0">Total Anggaran <?php echo e($tahunFilter ?? date('Y')); ?></h3>
-            <div class="d-flex justify-content-between mb-2">
-                <h1 class="fw-bold mb-1">Rp. <?php echo e(number_format($current_budget, 0, ',', '.')); ?> / Rp. <?php echo e(number_format($target_anggaran, 0, ',', '.')); ?></h1>
+            <div class="d-flex justify-content-between">
+                <h3 class="text-muted mb-0">Total Anggaran <?php echo e($tahunFilter ?? date('Y')); ?></h3>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal" class="text-muted">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+            </div>
+            <div class="d-flex justify-content-between mb-2">                <h1 class="fw-bold mb-1">Rp. <?php echo e(number_format($current_budget, 0, ',', '.')); ?> / Rp. <?php echo e(number_format($target_anggaran, 0, ',', '.')); ?></h1>
                 <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="<?php echo e(round($percentage, 2)); ?>% dari total anggaran">
                     <?php echo e(round($percentage)); ?>%
                 </h3>

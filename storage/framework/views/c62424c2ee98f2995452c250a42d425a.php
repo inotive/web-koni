@@ -1,6 +1,14 @@
 <?php
     use App\Models\Pengajuan;
-    $pengajuanCount = Pengajuan::where('status', 'menunggu persetujuan')->count();
+    use Illuminate\Support\Facades\Auth;
+
+    $query = Pengajuan::where('status', 'menunggu persetujuan');
+
+    if (!Auth::user()->can('pengajuan-modifikasi-laporan-manage')) {
+        $query->where('user_id', Auth::id());
+    }
+
+    $pengajuanCount = $query->count();
 ?>
 
 <div id="kt_aside" class="aside" data-kt-drawer="true" data-kt-drawer-name="aside"
