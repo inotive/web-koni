@@ -106,10 +106,25 @@ class DashboardController extends Controller
             $item_budget = 0;
             if ($item->id == 6) { // Special handling for Pembinaan Prestasi
                 if ($item->children->count() > 0) {
-                    foreach ($item->children as $child_item) {
-                        $child_target = $targets->get((string)$child_item->id);
-                        if ($child_target && isset($child_target->target_anggaran)) {
-                            $item_budget += (int) $child_target->target_anggaran;
+                    // For Pembinaan Prestasi, budget might be stored at different levels (children or grandchildren)
+                    $prestasi_children_ids = $item->children->pluck('id');
+                    $prestasi_grandchildren_ids = \App\Models\Lpj::whereIn('parent_id', $prestasi_children_ids)->pluck('id');
+                    
+                    // First, try summing from grandchildren (deeper level)
+                    foreach ($prestasi_grandchildren_ids as $grandchild_id) {
+                        $grandchild_target = $targets->get((string)$grandchild_id);
+                        if ($grandchild_target && isset($grandchild_target->target_anggaran)) {
+                            $item_budget += (int)$grandchild_target->target_anggaran;
+                        }
+                    }
+                    
+                    // If no budget found at deepest level, try direct children (IDs 9-12)
+                    if ($item_budget == 0) {
+                        foreach ($item->children as $child_item) {
+                            $child_target = $targets->get((string)$child_item->id);
+                            if ($child_target && isset($child_target->target_anggaran)) {
+                                $item_budget += (int) $child_target->target_anggaran;
+                            }
                         }
                     }
                 }
@@ -127,14 +142,43 @@ class DashboardController extends Controller
             // Hitung target kegiatan secara khusus untuk parent categories with children
             if ($item->children->count() > 0) {
                 $total_target_parent = 0;
-                foreach ($item->children as $child) { // Child level
-                    foreach ($child->children as $grandchild) { // Folders level
-                        $grandchild_target = $targets->get((string)$grandchild->id);
-                        if ($grandchild_target) {
+                
+                // Special handling for Pembinaan Prestasi (ID 6) - target values are stored at grandchildren level (under IDs 9-12)
+                if ($item->id == 6) {
+                    // Get all IDs under the children of ID 6 (which are IDs 9-12)
+                    $prestasi_children_ids = $item->children->pluck('id');
+                    $prestasi_grandchildren_ids = \App\Models\Lpj::whereIn('parent_id', $prestasi_children_ids)->pluck('id');
+                    
+                    // Sum targets from all entries under the Cabor (ID 9-12) sections
+                    foreach ($prestasi_grandchildren_ids as $grandchild_id) {
+                        // Check if this grandchild_id exists in the targets collection
+                        $grandchild_target = $targets->get((string)$grandchild_id);
+                        if ($grandchild_target && isset($grandchild_target->target_kegiatan)) {
                             $total_target_parent += (int)$grandchild_target->target_kegiatan;
                         }
                     }
+                    
+                    // If no targets found at deepest level, try looking at direct children level
+                    if ($total_target_parent == 0) {
+                        foreach ($item->children as $child) { // IDs 9-12
+                            $child_target = $targets->get((string)$child->id);
+                            if ($child_target && isset($child_target->target_kegiatan)) {
+                                $total_target_parent += (int)$child_target->target_kegiatan;
+                            }
+                        }
+                    }
+                } else {
+                    // For other parent categories, look for targets at grandchild level
+                    foreach ($item->children as $child) { // Child level
+                        foreach ($child->children as $grandchild) { // Folders level
+                            $grandchild_target = $targets->get((string)$grandchild->id);
+                            if ($grandchild_target && isset($grandchild_target->target_kegiatan)) {
+                                $total_target_parent += (int)$grandchild_target->target_kegiatan;
+                            }
+                        }
+                    }
                 }
+                
                 $item->target_kegiatan = $total_target_parent;
             } else {
                 $target = $targets->get($item->id);
