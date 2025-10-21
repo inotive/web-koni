@@ -194,29 +194,34 @@ class DashboardController extends Controller
                 } else {
                     // Loop through each child to calculate its specific absorption for other items
                     foreach ($item->children as $child) {
+                        $serapan_child = 0;
+                        
+                        // Check for deeper level data (grandchildren's children - 4th level)
                         $grandchild_ids = Lpj::where('parent_id', $child->id)
                             ->where(function($query) use ($selectedYear) {
                                 $query->whereYear('created_at', $selectedYear)
                                     ->orWhereNull('created_at');
                             })->pluck('id');
                         
-                        $greatGrandchildren = Lpj::whereIn('parent_id', $grandchild_ids)
-                            ->where(function($query) use ($selectedYear) {
-                                $query->whereYear('created_at', $selectedYear)
-                                    ->orWhereNull('created_at');
-                            })
-                            ->get();
+                        if ($grandchild_ids->count() > 0) {
+                            $greatGrandchildren = Lpj::whereIn('parent_id', $grandchild_ids)
+                                ->where(function($query) use ($selectedYear) {
+                                    $query->whereYear('created_at', $selectedYear)
+                                        ->orWhereNull('created_at');
+                                })
+                                ->get();
+                            
+                            $serapan_child = $greatGrandchildren->sum(function($greatGrandchild) {
+                                $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                                return ($harga > 1 && $harga != 2) ? $harga : 0;
+                            });
+                        }
                         
-                        $serapan_child = $greatGrandchildren->sum(function($greatGrandchild) {
-                            $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
-                            return ($harga > 1 && $harga != 2) ? $harga : 0;
-                        });
-                        
-                        // For items other than Pembinaan Prestasi (ID 6), also check if the child itself has data
-                        if ($item->id != 6) {
-                            // If no grandchildren found with data, check if the child itself has data > 2
-                            if ($serapan_child == 0 && $child->jumlah_harga > 2) {
-                                $serapan_child = (int)$child->jumlah_harga;
+                        // If no deeper level data found and this is not Pembinaan Prestasi, also consider direct child data
+                        if ($serapan_child == 0 && $item->id != 6) {
+                            $harga = (int)($child->jumlah_harga ?? 0);
+                            if ($harga > 1 && $harga != 2) {
+                                $serapan_child = $harga;
                             }
                         }
                         
