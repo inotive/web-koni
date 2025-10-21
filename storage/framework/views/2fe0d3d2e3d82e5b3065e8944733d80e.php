@@ -1,1 +1,0 @@
-<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/laporan-lpj/sekretariat/show.blade.php ENDPATH**/ ?>

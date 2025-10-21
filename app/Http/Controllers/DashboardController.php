@@ -64,9 +64,20 @@ class DashboardController extends Controller
                       }])
                       ->get();
                       
-        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        // Dapatkan ID untuk Kegiatan Lainnya secara dinamis
+        $kegiatanLainnyaParent = Lpj::whereNull('parent_id')
+                                   ->where('nama_program', 'kegiatan-lainnya')
+                                   ->first();
+        $kegiatanLainnyaId = $kegiatanLainnyaParent ? $kegiatanLainnyaParent->id : null;
+
+        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (dinamis)
         $kegiatan_tambahan = Lpj::whereNull('parent_id')
-                              ->whereIn('id', [59, 88])
+                              ->where(function($query) use ($kegiatanLainnyaId) {
+                                  $query->where('id', 59); // Sekretariat
+                                  if ($kegiatanLainnyaId) {
+                                      $query->orWhere('id', $kegiatanLainnyaId); // Kegiatan Lainnya
+                                  }
+                              })
                               ->where(function($query) use ($selectedYear) {
                                   $query->whereYear('created_at', $selectedYear)
                                         ->orWhereNull('created_at');
@@ -90,7 +101,7 @@ class DashboardController extends Controller
         // Mengambil semua target dan mengindeksnya berdasarkan id_lpj untuk pencarian efisien
         $targets = Target::all()->keyBy('id_lpj');
         
-        $kegiatan = $kegiatan->map(function ($item) use ($total_rka, &$total_serapan, &$kegiatan_berjalan_count, $targets, $selectedYear) {
+        $kegiatan = $kegiatan->map(function ($item) use ($total_rka, &$total_serapan, &$kegiatan_berjalan_count, $targets, $selectedYear, $kegiatanLainnyaId) {
             // Menghitung dan menetapkan total budget untuk setiap kegiatan
             $item_budget = 0;
             if ($item->id == 6) { // Special handling for Pembinaan Prestasi
@@ -132,7 +143,7 @@ class DashboardController extends Controller
 
             // Hitung kegiatan berjalan
             if ($item->children->count() > 0) {
-                if ($item->id == 59 || $item->id == 88) {
+                if ($item->id == 59 || ($kegiatanLainnyaId && $item->id == $kegiatanLainnyaId)) {
                     $item->kegiatan_berjalan_count = $item->children->where('jumlah_harga', '>', 0)->filter(function($child) use ($selectedYear) {
                         return (!$child->created_at) || $child->created_at->year == $selectedYear;
                     })->count();
@@ -174,8 +185,8 @@ class DashboardController extends Controller
                 // Special handling for parent categories with children
                 $total_serapan_parent = 0;
 
-                // Handle Sekretariat (ID 59) and Kegiatan Lainnya (ID 88) which have a flatter structure
-                if ($item->id == 59 || $item->id == 88) {
+                // Handle Sekretariat (ID 59) and Kegiatan Lainnya (dinamis) which have a flatter structure
+                if ($item->id == 59 || ($kegiatanLainnyaId && $item->id == $kegiatanLainnyaId)) {
                     $total_serapan_parent = $item->children->sum(function($child) {
                         $harga = (int)($child->jumlah_harga ?? 0);
                         return ($harga > 1 && $harga != 2) ? $harga : 0;
@@ -257,6 +268,12 @@ class DashboardController extends Controller
 
         $total_kegiatan_all = Target::sum('target_kegiatan');
 
+        // Dapatkan ID untuk Kegiatan Lainnya secara dinamis (untuk kegiatan_berjalan)
+        $kegiatanLainnyaParent = Lpj::whereNull('parent_id')
+                                   ->where('nama_program', 'kegiatan-lainnya')
+                                   ->first();
+        $kegiatanLainnyaId = $kegiatanLainnyaParent ? $kegiatanLainnyaParent->id : null;
+
         // Mengambil kegiatan berjalan dari semua halaman LPJ
         // 1. Sekretariat (ID 59) - hitung anak-anak dengan jumlah_harga > 0
         $kegiatan_berjalan_sekretariat = Lpj::where('parent_id', 59)
@@ -266,13 +283,13 @@ class DashboardController extends Controller
                       ->orWhereNull('created_at');
             })->count();
         
-        // 2. Kegiatan Lainnya (ID 88) - hitung anak-anak dengan jumlah_harga > 0
-        $kegiatan_berjalan_lainnya = Lpj::where('parent_id', 88)
+        // 2. Kegiatan Lainnya (dinamis) - hitung anak-anak dengan jumlah_harga > 0
+        $kegiatan_berjalan_lainnya = $kegiatanLainnyaId ? Lpj::where('parent_id', $kegiatanLainnyaId)
             ->where('jumlah_harga', '>', 0)
             ->where(function($query) use ($selectedYear) {
                 $query->whereYear('created_at', $selectedYear)
                       ->orWhereNull('created_at');
-            })->count();
+            })->count() : 0;
         
         // 3. Bidang-bidang (ID 1-8) - hitung anak-anak dengan jumlah_harga > 0
         $kegiatan_berjalan_bidang = 0;
@@ -397,14 +414,24 @@ class DashboardController extends Controller
         $total_rka = \App\Models\LaporanRKA::sum('total_anggaran');
 
         // Mengambil kegiatan dari LPJ hanya sampai ID 8 (Perencanaan Program dan Anggaran)
-        // Menyertakan Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
         $kegiatan_utama = Lpj::whereNull('parent_id')
                       ->where('id', '<=', 8)
                       ->get();
-                      
-        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (ID 88)
+        
+        // Dapatkan ID untuk Kegiatan Lainnya secara dinamis
+        $kegiatanLainnyaParent = Lpj::whereNull('parent_id')
+                                   ->where('nama_program', 'kegiatan-lainnya')
+                                   ->first();
+        $kegiatanLainnyaId = $kegiatanLainnyaParent ? $kegiatanLainnyaParent->id : null;
+
+        // Mengambil data Sekretariat (ID 59) dan Kegiatan Lainnya (dinamis)
         $kegiatan_tambahan = Lpj::whereNull('parent_id')
-                              ->whereIn('id', [59, 88])
+                              ->where(function($query) use ($kegiatanLainnyaId) {
+                                  $query->where('id', 59); // Sekretariat
+                                  if ($kegiatanLainnyaId) {
+                                      $query->orWhere('id', $kegiatanLainnyaId); // Kegiatan Lainnya
+                                  }
+                              })
                               ->get();
                               
         // Gabungkan data kegiatan tambahan di awal
