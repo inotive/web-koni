@@ -17,8 +17,17 @@
                     @endif
                 </div>
                 <div class="text-muted">
-                    @if (request('search') || request('start_date') || request('end_date'))
-                        Coba ubah kata kunci pencarian atau filter yang Anda gunakan
+                    @if (request('search'))
+                        Coba ubah kata kunci pencarian
+                    @elseif (request('start_date') || request('end_date'))
+                        @if (request('start_date') && request('end_date'))
+                            Tidak ada surat antara tanggal {{ \Carbon\Carbon::parse(request('start_date'))->format('d M Y') }} - {{ \Carbon\Carbon::parse(request('end_date'))->format('d M Y') }}
+                        @elseif (request('start_date'))
+                            Tidak ada surat mulai tanggal {{ \Carbon\Carbon::parse(request('start_date'))->format('d M Y') }}
+                        @else
+                            Tidak ada surat hingga tanggal {{ \Carbon\Carbon::parse(request('end_date'))->format('d M Y') }}
+                        @endif
+                        <br>Ubah rentang tanggal yang dipilih
                     @else
                         Klik tombol "Tambah Surat" untuk menambah surat baru
                     @endif

@@ -44,6 +44,18 @@ class SuratController extends Controller
         if ($request->filled('created_date')) {
             $query->whereDate('created_at', $request->get('created_date'));
         }
+        
+        // Filter by date range (start and end dates)
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('created_at', [
+                $request->get('start_date') . ' 00:00:00',
+                $request->get('end_date') . ' 23:59:59'
+            ]);
+        } elseif ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->get('start_date'));
+        } elseif ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->get('end_date'));
+        }
 
         $perPage = $request->get('per_page', 10);
 
