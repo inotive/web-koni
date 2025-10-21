@@ -34,7 +34,7 @@ class LaporanRKAController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'rka_id' => 'required|exists:manajemen_rkas,id',
-            'total_anggaran' => 'required|string|max:255',
+            'total_anggaran' => 'required|max:255',
             'file' => 'required|mimes:pdf|max:10240',
         ]);
 
