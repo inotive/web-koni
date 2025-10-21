@@ -483,12 +483,12 @@
                         <div style="min-width: 220px; max-width: 220px;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <span class="title-kegiatan">{{ $i + 1 }}. {{ $item->nama_program }}
-                                    @if($item->children->count() > 0)
+                                    @if($item->children->count() > 0 && $item->id != 1 && $item->id != 59)
                                         <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail"></i>
                                     @endif
                                 </span>
-                                {{-- Icon dropdown for any parent category --}}
-                                @if($item->children->count() > 0)
+                                {{-- Icon dropdown for any parent category (except ID 1 and 59) --}}
+                                @if($item->children->count() > 0 && $item->id != 1 && $item->id != 59)
                                     <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{$item->id}}" aria-expanded="false" aria-controls="collapse-{{$item->id}}">
                                         <i class="fas fa-chevron-down text-primary"></i>
                                     </button>

@@ -484,12 +484,12 @@
                             <div class="d-flex align-items-center justify-content-between">
                                 <span class="title-kegiatan"><?php echo e($i + 1); ?>. <?php echo e($item->nama_program); ?>
 
-                                    <?php if($item->children->count() > 0): ?>
+                                    <?php if($item->children->count() > 0 && $item->id != 1 && $item->id != 59): ?>
                                         <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail"></i>
                                     <?php endif; ?>
                                 </span>
                                 
-                                <?php if($item->children->count() > 0): ?>
+                                <?php if($item->children->count() > 0 && $item->id != 1 && $item->id != 59): ?>
                                     <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<?php echo e($item->id); ?>" aria-expanded="false" aria-controls="collapse-<?php echo e($item->id); ?>">
                                         <i class="fas fa-chevron-down text-primary"></i>
                                     </button>
@@ -609,7 +609,10 @@
                                                     <?php
                                                         // Grandchild serapan
                                                         $grandchild_serapan = \App\Models\Lpj::where('parent_id', $grandchild->id)
-                                                            ->whereYear('created_at', $selectedYear)
+                                                            ->where(function($query) use ($selectedYear) {
+                                                                $query->whereYear('created_at', $selectedYear)
+                                                                      ->orWhereNull('created_at');
+                                                            })
                                                             ->get()->sum(function($doc) {
                                                                 $harga = (int)($doc->jumlah_harga ?? 0);
                                                                 return ($harga > 1 && $harga != 2) ? $harga : 0;
