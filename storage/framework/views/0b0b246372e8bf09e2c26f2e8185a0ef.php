@@ -484,12 +484,12 @@
                             <div class="d-flex align-items-center justify-content-between">
                                 <span class="title-kegiatan"><?php echo e($i + 1); ?>. <?php echo e($item->nama_program); ?>
 
-                                    <?php if($item->children->count() > 0 && trim($item->nama_program) == 'Pembinaan Prestasi'): ?>
+                                    <?php if($item->children->count() > 0): ?>
                                         <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail"></i>
                                     <?php endif; ?>
                                 </span>
                                 
-                                <?php if($item->children->count() > 0 && trim($item->nama_program) == 'Pembinaan Prestasi'): ?>
+                                <?php if($item->children->count() > 0): ?>
                                     <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<?php echo e($item->id); ?>" aria-expanded="false" aria-controls="collapse-<?php echo e($item->id); ?>">
                                         <i class="fas fa-chevron-down text-primary"></i>
                                     </button>
@@ -515,7 +515,7 @@
                     </div>
 
                     
-                    <?php if($item->children->count() > 0 && trim($item->nama_program) == 'Pembinaan Prestasi'): ?>
+                    <?php if($item->children->count() > 0): ?>
                         <div class="collapse" id="collapse-<?php echo e($item->id); ?>">
                             <div class="card card-body mt-2 mb-4" style="padding: 12px; border-radius: 8px;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -523,9 +523,32 @@
                                 </div>
                                 <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
-                                        $child_serapan = $child->serapan_cabor ?? 0;
+                                        $child_serapan = 0;
+                                        
+                                        // Calculate child serapan based on context
+                                        if ($item->id == 6) { // Special handling for "Pembinaan Prestasi"
+                                            $child_serapan = $child->serapan_cabor ?? 0;
+                                        } else {
+                                            // For other parent categories, calculate from children's data
+                                            $child_serapan = $child->jumlah_harga ?? 0;
+                                            // Also sum up from grandchildren if they exist
+                                            if ($child->children && $child->children->count() > 0) {
+                                                foreach ($child->children as $grandchild) {
+                                                    $harga = (int)($grandchild->jumlah_harga ?? 0);
+                                                    if ($harga > 1 && $harga != 2) {
+                                                        $child_serapan += $harga;
+                                                    }
+                                                }
+                                            } else {
+                                                // If no grandchildren, calculate from the child's own data
+                                                $harga = (int)($child->jumlah_harga ?? 0);
+                                                if ($harga > 1 && $harga != 2) {
+                                                    $child_serapan = $harga;
+                                                }
+                                            }
+                                        }
 
-                                        // --- Child (Cabor) Budget Calculation ---
+                                        // --- Child Budget Calculation ---
                                         $child_target_db = \App\Models\Target::where('id_lpj', $child->id)->first();
                                         $child_budget = 0;
 
@@ -586,8 +609,10 @@
                                                     <?php
                                                         // Grandchild serapan
                                                         $grandchild_serapan = \App\Models\Lpj::where('parent_id', $grandchild->id)
+                                                            ->whereYear('created_at', $selectedYear)
                                                             ->get()->sum(function($doc) {
-                                                                return (int)($doc->jumlah_harga ?? 0);
+                                                                $harga = (int)($doc->jumlah_harga ?? 0);
+                                                                return ($harga > 1 && $harga != 2) ? $harga : 0;
                                                             });
 
                                                         // Grandchild budget
