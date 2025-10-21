@@ -19,6 +19,10 @@ class LaporanRKA extends Model
         'name',
     ];
 
+    protected $casts = [
+        'total_anggaran' => 'decimal:0',
+    ];
+
     public function rka()
     {
         return $this->belongsTo(ManajemenRKA::class, 'manajemen_rka_id');
