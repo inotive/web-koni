@@ -5,7 +5,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ config('app.name', 'KONI Tabalong') }} | {{ $title ?? 'Login' }}</title>
-    <meta name="description" content="Web Koni Tabalong" />
+    <meta name="description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong" />
+    
+    <!-- Open Graph / WhatsApp Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="KONI Tabalong - Sistem Informasi Manajemen">
+    <meta property="og:description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong">
+    <meta property="og:image" content="{{ asset('assets/img/koni.png') }}">
+    <meta property="og:site_name" content="KONI Tabalong">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="KONI Tabalong - Sistem Informasi Manajemen">
+    <meta name="twitter:description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong">
+    <meta name="twitter:image" content="{{ asset('assets/img/koni.png') }}">
+    
     <link rel="shortcut icon" href="{{ asset('landing-assets/img/logo.png') }}" />
 
     <!-- Fonts -->
