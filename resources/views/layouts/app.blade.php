@@ -6,6 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>KONI Tabalong - @yield('title')</title>
+    
+    <!-- Open Graph / WhatsApp Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('title', 'Dashboard') - KONI Tabalong">
+    <meta property="og:description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong">
+    <meta property="og:image" content="{{ asset('assets/img/logo-koni-simplified.png') }}">
+    <meta property="og:site_name" content="KONI Tabalong">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'Dashboard') - KONI Tabalong">
+    <meta name="twitter:description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong">
+    <meta name="twitter:image" content="{{ asset('assets/img/logo-koni-simplified.png') }}">
 
     <link rel="shortcut icon" href="{{ asset('assets/img/logo-koni-simplified.png') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
