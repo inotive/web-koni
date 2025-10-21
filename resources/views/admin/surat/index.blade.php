@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Manajemen Template Surat Masuk & Keluar')
+@section('pageTitle', 'Manajemen Surat Masuk & Keluar')
 @section('mainSection', 'Menu Utama')
 @section('currentSection', 'Surat Masuk & Keluar')
 
@@ -234,8 +234,8 @@
     <div class="d-grid gap-5 border-0">
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
-                <h1>Template Surat Masuk & Keluar</h1>
-                <span>Manajemen Template Surat Masuk & Keluar</span>
+                <h1>Surat Masuk & Keluar</h1>
+                <span>Manajemen Surat Masuk & Keluar</span>
             </div>
 
             <form id="filter" class="d-flex gap-3 filter-container">
@@ -247,7 +247,7 @@
                 <button type="button" id="tambahSuratBtn"
                     class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
-                    <span id="tambahSuratText">Upload Template</span>
+                    <span id="tambahSuratText">Upload Surat</span>
                 </button>
 
                 <div class="search-container">
@@ -309,7 +309,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 gap-5 px-10 py-8">
                 <div class="d-flex justify-content-between align-items-center gap-2">
-                    <div class="fs-2 fw-bold text-truncate leading-5" id="modalTitle">Upload Template</div>
+                    <div class="fs-2 fw-bold text-truncate leading-5" id="modalTitle">Upload Surat</div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -355,7 +355,7 @@
                 <div class="d-grid py-4">
                     <button type="button" onclick="submitForm('formAdd')" id="submitBtn"
                         class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
-                        Upload Template
+                        Upload Surat
                     </button>
                 </div>
             </div>
@@ -373,8 +373,8 @@
         const dropzones = {};
 
         function updateAddButtonText() {
-            const buttonText = 'Upload Template';
-            const modalTitle = 'Upload Template';
+            const buttonText = 'Upload Surat';
+            const modalTitle = 'Upload Surat';
             $('#tambahSuratText').text(buttonText);
             $('#modalTitle').text(modalTitle);
             $('#submitBtn').text(buttonText);
