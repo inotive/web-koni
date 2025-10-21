@@ -483,88 +483,77 @@
         }
     </style>
 
-    <div class="mb-8 d-flex flex-column">
-        <h1 class="mb-1 text-dark fw-bold">Laporan Sekretariat</h1>
-        {{-- <div class="text-muted fw-semibold fs-6">Manajemen Laporan Sekretariat Anda Sekarang</div> --}}
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <!-- Page Header -->
+        <div>
+            <strong>
+                <h1 class="fw-bold mb-1">Laporan Sekretariat</h1>
+            </strong>
+            <h3 class="text-muted mb-0">Jelajahi Laporan Sekretariat untuk tahun {{ $tahunFilter ?? date('Y') }}</h3>
+        </div>
+
+        <!-- Year Filter -->
+        <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
+            <label for="year" class="text-muted mb-0">Tahun:</label>
+            <select name="tahun_filter" class="form-select" style="width: 120px" onchange="this.form.submit()">
+                @if(isset($availableYears) && count($availableYears) > 0)
+                    @foreach($availableYears as $year)
+                        <option value="{{ $year }}" {{ (string)$year === (string)($tahunFilter ?? now()->year) ? 'selected' : '' }}>{{ $year }}</option>
+                    @endforeach
+                @else
+                    <option value="{{ now()->year }}" selected>{{ now()->year }}</option>
+                @endif
+            </select>
+        </form>
     </div>
 
     @if (isset($current_budget) && isset($target_anggaran))
-        <div class="mb-4 top-progress-wrapper">
-            <div class="mt-2 d-flex justify-content-between">
-                <h1 class="mb-0 text-muted">Total Anggaran</h1>
-                <span class="text-muted">
-                    <a href="#" data-bs-toggle="modal" data-bs-target="#editTargetModal">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </a>
-                </span>
-            </div>
-            <div class="mb-2 d-flex justify-content-between">
-                @php
-                    $percentage = $target_anggaran > 0 ? ($current_budget / $target_anggaran) * 100 : 0;
-                @endphp
-                <h1 class="mb-1 fw-bold">Rp {{ number_format($current_budget, 0, ',', '.') }} / Rp
-                    {{ number_format($target_anggaran, 0, ',', '.') }}</h1>
-                <h3 class="mb-0 text-muted" data-bs-toggle="tooltip"
-                    title="{{ round($percentage, 2) }}% dari total anggaran">
+        @php
+            $percentage = $target_anggaran > 0 ? ($current_budget / $target_anggaran) * 100 : 0;
+        @endphp
+        <div class="top-progress-wrapper mb-4">
+            <h3 class="text-muted mb-0">Total Anggaran {{ $tahunFilter ?? date('Y') }}</h3>
+            <div class="d-flex justify-content-between mb-2">
+                <h1 class="fw-bold mb-1">Rp. {{ number_format($current_budget, 0, ',', '.') }} / Rp. {{ number_format($target_anggaran, 0, ',', '.') }}</h1>
+                <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="{{ round($percentage, 2) }}% dari total anggaran">
                     {{ round($percentage) }}%
                 </h3>
             </div>
 
             <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
-                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                    role="progressbar"
                     style="width: {{ $percentage }}%; background-color: #F8285A; border-radius: 12px;"
-                    aria-valuenow="{{ $percentage }}" aria-valuemin="0" aria-valuemax="100">
+                    aria-valuenow="{{ $percentage }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100">
                 </div>
             </div>
 
-            <div class="flex-row-reverse mt-2 d-flex bd-highlight">
-                <div class="gap-2 mt-1 info-label d-flex align-items-center">
-                    <span class="px-3 py-1 border badge bg-success-subtle text-success fw-semibold border-success-subtle">
+            <div class="d-flex flex-row-reverse bd-highlight mt-2">
+                <div class="info-label mt-1 d-flex align-items-center gap-2">
+                    <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle">
                         {{ $kegiatan_count ?? 0 }} Kegiatan Berjalan
                     </span>
-                    <span>/
-                    </span>
-                    <span class="px-3 py-1 border badge bg-primary-subtle text-primary fw-semibold border-primary-subtle">
+                    <span>/</span>
+                    <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle">
                         {{ $target_kegiatan ?? 0 }} Target Kegiatan
                     </span>
                 </div>
             </div>
         </div>
-    @endif
+    @endif>
 
     <div class="mt-5 col-12">
         <div class="card">
             <div class="flex-wrap py-5 card-header d-flex justify-content-between align-items-center">
-                <h3 class="mb-0 card-title fw-bold fs-4">Daftar Table Sekretariat - 2025</h3>
+                <h3 class="mb-0 card-title fw-bold fs-4">Daftar Table Sekretariat - {{ $tahunFilter ?? date('Y') }}</h3>
 
                 <div class="flex-wrap gap-2 d-flex align-items-center ms-auto">
                     <a href="{{ route('admin.laporan-lpj.sekretariat.create') }}" class="btn btn-primary"
                         style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
                         <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
                     </a>
-
-                    <!-- Year Filter Dropdown -->
-                    <div class="dropdown">
-                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="yearFilterDropdown" 
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-calendar me-1"></i>
-                            Tahun {{ $tahunFilter ?? date('Y') }}
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="yearFilterDropdown">
-                            @if(isset($availableYears) && $availableYears)
-                                @foreach($availableYears as $year)
-                                    <li>
-                                        <a class="dropdown-item {{ $tahunFilter == $year ? 'active' : '' }}" 
-                                           href="{{ request()->fullUrlWithQuery(['tahun_filter' => $year, 'page' => 1]) }}">Tahun {{ $year }}</a>
-                                    </li>
-                                @endforeach
-                            @else
-                                <li>
-                                    <a class="dropdown-item disabled" href="#">Tidak ada data tahun</a>
-                                </li>
-                            @endif
-                        </ul>
-                    </div>
 
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
@@ -981,7 +970,7 @@
                 if (href && href.indexOf('tahun_filter') !== -1) {
                     e.preventDefault();
                     showLoading();
-                    
+
                     $.ajax({
                         url: href,
                         type: 'GET',
@@ -991,10 +980,10 @@
                         success: function(response) {
                             $('#table-container').html(response);
                             hideLoading();
-                            
+
                             // Update the URL in browser history
                             window.history.pushState(null, null, href);
-                            
+
                             initializeDataTable();
                             initializeTooltips();
                             initializeDropdownEvents();

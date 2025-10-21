@@ -283,13 +283,18 @@
                         <h2 class="fs-2 mb-1">Selamat Datang, <span class="text-danger"><?php echo e(auth()->user()->username); ?></span></h2>
                         <p class="text-muted fs-4 mb-0">Platform Digital Terpusat KONI Tabalong dan Cabang Olahraga</p>
                     </div>
-                    <div>
-                        <select class="form-select form-select-md" style="min-width: 150px; background-color: transparent; border: none; color: black;">
-                            <option value="2025" selected>Periode 2025</option>
-                            <option value="2024">Periode 2024</option>
-                            <option value="2023">Periode 2023</option>
+                    <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
+                        <label for="year" class="text-muted mb-0">Tahun:</label>
+                        <select name="year" class="form-select" style="width: 120px" onchange="this.form.submit()">
+                            <?php if(isset($availableYears) && count($availableYears) > 0): ?>
+                                <?php $__currentLoopData = $availableYears; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($year); ?>" <?php echo e((string)$year === (string)($selectedYear ?? now()->year) ? 'selected' : ''); ?>><?php echo e($year); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php else: ?>
+                                <option value="<?php echo e(now()->year); ?>" selected><?php echo e(now()->year); ?></option>
+                            <?php endif; ?>
                         </select>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -395,7 +400,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-10">
                         <div>
                             <h5 class="card-title mb-0 f-3">Informasi Serapan Kegiatan Koni Kab.</h5>
-                            <h5 class="text-danger mb-0">Tabalong 2025</h5>
+                            <h5 class="text-danger mb-0">Tabalong <?php echo e($selectedYear ?? date('Y')); ?></h5>
                         </div>
 
                         <div class="d-flex gap-2">
