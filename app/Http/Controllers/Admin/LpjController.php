@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Lpj;
 use App\Models\Pengajuan;
-use App\Models\Target; // Fixed capitalization
+use App\Models\Target;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -17,57 +18,33 @@ use setasign\Fpdi\PdfReader\PageBoundaries;
 
 class LpjController extends Controller
 {
-    /**
-     * DIPAKE BUAT BIDANG-BIDANG, BUKAN UNTUK SEMUA LPJ
-     */
     public function index(Request $request, $parentId = null)
     {
-        $query = Lpj::query();
+        $selectedYear = $request->input('year', now()->year);
+        $availableYears = Lpj::select(DB::raw('YEAR(created_at) as year'))
+                            ->distinct()
+                            ->orderBy('year', 'desc')
+                            ->pluck('year');
+
+        $query = Lpj::query()->whereYear('created_at', $selectedYear);
 
         $target = null;
         $current_budget = 0;
         $kegiatan_count = 0;
+        $parent = $parentId ? Lpj::findOrFail($parentId) : null;
 
-        // Filter by parent ID
         if ($parentId) {
-            $parent = Lpj::findOrFail($parentId);
             $query->where('parent_id', $parentId);
 
-            // Fixed model reference
-            $target = Target::where('id_lpj', $parentId)->first();
+            $target = Target::where('id_lpj', $parentId)->whereYear('created_at', $selectedYear)->first();
 
-            // Fixed budget calculation - use proper field names
-            $children = Lpj::where('parent_id', $parentId)->get();
-            foreach ($children as $child) {
-                // Use jumlah_harga instead of getTotalBudget() method
-                $current_budget += ($child->jumlah_harga ?? 0);
-            }
+            $children = Lpj::where('parent_id', $parentId)->whereYear('created_at', $selectedYear)->get();
+            $current_budget = $children->sum('jumlah_harga');
             $kegiatan_count = $children->count();
         } else {
             $query->whereNull('parent_id');
         }
 
-        // Year filter and available years (use 'year' column)
-        $selectedYear = $request->get('year');
-        if ($selectedYear) {
-            $query->where('year', $selectedYear);
-        }
-
-        // Build available years list based on current scope (children of parent or root)
-        $yearsBase = Lpj::query();
-        if ($parentId) {
-            $yearsBase->where('parent_id', $parentId);
-        } else {
-            $yearsBase->whereNull('parent_id');
-        }
-        $availableYears = $yearsBase
-            ->whereNotNull('year')
-            ->select('year')
-            ->distinct()
-            ->orderByDesc('year')
-            ->pluck('year');
-
-        // Apply search filter
         if ($request->filled('search')) {
             $searchTerm = $request->get('search');
             $query->where(function ($q) use ($searchTerm) {
@@ -77,22 +54,13 @@ class LpjController extends Controller
             });
         }
 
-        // Apply kegiatan filter
-        if ($request->filled('jenis_kegiatan_filter')) {
-            $query->where('nama_kegiatan', $request->get('jenis_kegiatan_filter'));
-        }
-
-        // Apply sorting
-        $sortBy = $request->get('sort_by', 'created_at');
         $sortField = $request->get('sort', 'created_at');
         $sortDirection = $request->get('direction', 'desc');
-
         $allowedSorts = ['nama_program', 'nama_kegiatan', 'volume', 'jumlah_harga_satuan', 'jumlah_harga', 'created_at'];
         if (in_array($sortField, $allowedSorts)) {
             $query->orderBy($sortField, $sortDirection);
         }
 
-        // Pagination
         $perPage = $request->get('per_page', 10);
         $lpjData = $query->with(['pengajuan' => function($query) {
             $query->where('status', 'disetujui')
@@ -100,18 +68,14 @@ class LpjController extends Controller
                 ->limit(1);
         }])->paginate($perPage)->withQueryString();
 
-        // Get current parent and breadcrumb data
-        $parent = $parentId ? Lpj::findOrFail($parentId) : null;
-        $currentParent = $parentId ? Lpj::find($parentId) : null;
-        $breadcrumbs = $this->buildBreadcrumbs($currentParent);
+        $currentParent = $parent;
+        $breadcrumbs = $this->buildBreadcrumbs($request, $currentParent);
 
-        // Get unique kegiatan for filter
-        $uniqueKegiatan = Lpj::where('parent_id', $parentId)
-                            ->select(['*', 'modifiable_by_user_id'])
-                            ->whereNotNull('nama_kegiatan')
-                            ->pluck('nama_kegiatan')
-                            ->unique()
-                            ->filter();
+        $uniqueKegiatanQuery = Lpj::whereYear('created_at', $selectedYear)->whereNotNull('nama_kegiatan');
+        if ($parentId) {
+            $uniqueKegiatanQuery->where('parent_id', $parentId);
+        }
+        $uniqueKegiatan = $uniqueKegiatanQuery->pluck('nama_kegiatan')->unique()->filter();
 
         if ($request->ajax()) {
             return view('admin.laporan-lpj.bidang_new.dynamic._table', compact('lpjData', 'currentParent'))->render();
@@ -132,22 +96,14 @@ class LpjController extends Controller
         ));
     }
 
-    // ... rest of your methods remain the same ...
-
-    /**
-     * Show the form for creating a new resource
-     */
-    public function create($parentId = null)
+    public function create(Request $request, $parentId = null)
     {
         $parent = $parentId ? Lpj::findOrFail($parentId) : null;
-        $breadcrumbs = $this->buildBreadcrumbs($parent);
+        $breadcrumbs = $this->buildBreadcrumbs($request, $parent);
 
         return view('admin.laporan-lpj.bidang_new.dynamic.create', compact('parent', 'breadcrumbs', 'parentId'));
     }
 
-    /**
-     * Store a newly created resource
-     */
     public function store(Request $request, $parentId = null)
     {
         $validated = $request->validate([
@@ -157,13 +113,11 @@ class LpjController extends Controller
             'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
-            'year' => 'nullable|integer|min:2000|max:2100',
-            'foto_jurnal.*' => 'nullable|image|max:10240', // 10MB
+            'foto_jurnal.*' => 'nullable|image|max:10240',
             'dokumen_pendukung.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
             'dokumen_lpj.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240'
         ]);
 
-        // Handle file uploads
         $fotoJurnal = $this->handleFileUploads($request, 'foto_jurnal', 'lpj/foto');
         $dokumenPendukung = $this->handleFileUploads($request, 'dokumen_pendukung', 'lpj/dokumen');
         $dokumenLpj = $this->handleFileUploads($request, 'dokumen_lpj', 'lpj/dokumen');
@@ -176,7 +130,7 @@ class LpjController extends Controller
             'jumlah_harga_satuan' => $validated['jumlah_harga_satuan'] ?? 0,
             'jumlah_harga' => $validated['jumlah_harga'] ?? 0,
             'keterangan_tambahan' => $validated['keterangan_tambahan'],
-            'year' => $validated['year'] ?? now()->year,
+            'year' => now()->year, // Set default year
             'foto_jurnal' => $fotoJurnal,
             'dokumen_pendukung' => $dokumenPendukung,
             'dokumen_lpj' => $dokumenLpj,
@@ -194,31 +148,22 @@ class LpjController extends Controller
             ->with('OK', $message);
     }
 
-    /**
-     * Display the specified resource
-     */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $lpj = Lpj::findOrFail($id);
-        $breadcrumbs = $this->buildBreadcrumbs($lpj->parent);
+        $breadcrumbs = $this->buildBreadcrumbs($request, $lpj->parent);
 
         return view('admin.laporan-lpj.bidang_new.dynamic.show', compact('lpj', 'breadcrumbs'));
     }
 
-    /**
-     * Show the form for editing
-     */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
         $lpj = Lpj::findOrFail($id);
-        $breadcrumbs = $this->buildBreadcrumbs($lpj->parent);
+        $breadcrumbs = $this->buildBreadcrumbs($request, $lpj->parent);
 
         return view('admin.laporan-lpj.bidang_new.dynamic.edit', compact('lpj', 'breadcrumbs'));
     }
 
-    /**
-     * Update the specified resource
-     */
     public function update(Request $request, $id)
     {
         $lpj = Lpj::findOrFail($id);
@@ -244,7 +189,6 @@ class LpjController extends Controller
             'jumlah_harga_satuan' => 'nullable|numeric|min:0',
             'jumlah_harga' => 'required|numeric|min:0',
             'keterangan_tambahan' => 'nullable|string',
-            'year' => 'nullable|integer|min:2000|max:2100',
             'foto_jurnal.*' => 'nullable|image|max:10240',
             'dokumen_pendukung.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
             'dokumen_lpj.*' => 'nullable|mimes:pdf,doc,docx,xls,xlsx|max:10240',
@@ -253,12 +197,10 @@ class LpjController extends Controller
             'existing_dokumen_lpj' => 'nullable|array',
         ]);
 
-        // Handle existing files
         $existingFotoJurnal = $request->get('existing_foto_jurnal', []);
         $existingDokumenPendukung = $request->input('existing_dokumen_pendukung', []);
         $existingDokumenLpj = $request->get('existing_dokumen_lpj', []);
 
-        // Delete removed files
         if ($lpj->foto_jurnal) {
             foreach ($lpj->foto_jurnal as $foto) {
                 if (!in_array($foto, $existingFotoJurnal)) {
@@ -267,7 +209,7 @@ class LpjController extends Controller
             }
         }
 
-        if ($lpj->dokumen_pendukung) { // Fixed typo here
+        if ($lpj->dokumen_pendukung) {
             foreach ($lpj->dokumen_pendukung as $dokumen) {
                 if (!in_array($dokumen, $existingDokumenPendukung)) {
                     Storage::delete($dokumen);
@@ -283,12 +225,10 @@ class LpjController extends Controller
             }
         }
 
-        // Handle new file uploads
         $newFotoJurnal = $this->handleFileUploads($request, 'foto_jurnal', 'lpj/foto');
         $newDokumenPendukung = $this->handleFileUploads($request, 'dokumen_pendukung', 'lpj/dokumen');
         $newDokumenLpj = $this->handleFileUploads($request, 'dokumen_lpj', 'lpj/dokumen');
 
-        // Merge existing and new files
         $allFotoJurnal = array_merge($existingFotoJurnal, $newFotoJurnal);
         $allDokumenPendukung = array_merge($existingDokumenPendukung, $newDokumenPendukung);
         $allDokumenLpj = array_merge($existingDokumenLpj, $newDokumenLpj);
@@ -300,7 +240,7 @@ class LpjController extends Controller
             'jumlah_harga_satuan' => $validated['jumlah_harga_satuan'] ?? 0,
             'jumlah_harga' => $validated['jumlah_harga'] ?? 0,
             'keterangan_tambahan' => $validated['keterangan_tambahan'],
-            'year' => $validated['year'] ?? $lpj->year ?? now()->year,
+            'year' => $lpj->created_at->year, // Set year from created_at
             'foto_jurnal' => $allFotoJurnal,
             'dokumen_pendukung' => $allDokumenPendukung,
             'dokumen_lpj' => $allDokumenLpj,
@@ -323,9 +263,6 @@ class LpjController extends Controller
             ->with('OK', $message);
     }
 
-    /**
-     * Remove the specified resource
-     */
     public function destroy($id)
     {
         try {
@@ -347,7 +284,6 @@ class LpjController extends Controller
 
             $parentId = $lpj->parent_id;
 
-            // Delete associated files
             if ($lpj->foto_jurnal) {
                 foreach ($lpj->foto_jurnal as $foto) {
                     Storage::delete($foto);
@@ -380,26 +316,19 @@ class LpjController extends Controller
         }
     }
 
-    /**
-     * Export specific LPJ data to PDF with letterhead
-     */
     public function exportPdf($id)
     {
         try {
             $lpj = Lpj::findOrFail($id);
 
-            // Create initial PDF with letterhead and content
             $pdf = Pdf::loadView('admin.laporan-lpj.bidang_new.dynamic.pdf-export', compact('lpj'));
             $pdf->setPaper('A4', 'portrait');
 
-            // Generate initial PDF content
             $tempMainFile = tempnam(sys_get_temp_dir(), 'main_pdf_');
             file_put_contents($tempMainFile, $pdf->output());
 
-            // Initialize FPDI for PDF merging
             $fpdi = new Fpdi();
 
-            // Add main content pages
             $pageCount = $fpdi->setSourceFile($tempMainFile);
             for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
                 $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
@@ -407,7 +336,6 @@ class LpjController extends Controller
                 $fpdi->useTemplate($templateId);
             }
 
-            // Merge PDF attachments (dokumen_pendukung only, excluding dokumen_lpj)
             if ($lpj->dokumen_pendukung && count($lpj->dokumen_pendukung) > 0) {
                 foreach ($lpj->dokumen_pendukung as $dokumen) {
                     $filePath = storage_path('app/public/' . $dokumen);
@@ -415,7 +343,6 @@ class LpjController extends Controller
                     if (file_exists($filePath)) {
                         $fileExtension = strtolower(pathinfo($dokumen, PATHINFO_EXTENSION));
 
-                        // Only merge PDF files
                         if ($fileExtension === 'pdf') {
                             try {
                                 $attachmentPageCount = $fpdi->setSourceFile($filePath);
@@ -426,7 +353,6 @@ class LpjController extends Controller
                                     $fpdi->useTemplate($templateId);
                                 }
                             } catch (\Exception $e) {
-                                // Log error but continue with other files
                                 \Log::warning("Could not merge PDF file: {$dokumen}. Error: " . $e->getMessage());
                             }
                         }
@@ -434,13 +360,10 @@ class LpjController extends Controller
                 }
             }
 
-            // Clean up temporary file
             unlink($tempMainFile);
 
-            // Generate final PDF
             $finalPdf = $fpdi->Output('S');
 
-            // Generate filename
             $filename = 'Laporan_' . Str::slug($lpj->nama_program) . '_' . date('Y-m-d') . '.pdf';
 
             return response($finalPdf, 200, [
@@ -457,20 +380,14 @@ class LpjController extends Controller
         }
     }
 
-    /**
-     * Create a new category/parent
-     */
-    public function createCategory($parentId = null)
+    public function createCategory(Request $request, $parentId = null)
     {
         $parent = $parentId ? Lpj::findOrFail($parentId) : null;
-        $breadcrumbs = $this->buildBreadcrumbs($parent);
+        $breadcrumbs = $this->buildBreadcrumbs($request, $parent);
 
         return view('admin.laporan-lpj.bidang_new.dynamic.create-category', compact('parent', 'breadcrumbs', 'parentId'));
     }
 
-    /**
-     * Store a new category/parent
-     */
     public function storeCategory(Request $request, $parentId = null)
     {
         $validated = $request->validate([
@@ -499,9 +416,6 @@ class LpjController extends Controller
             ->with('OK', $message);
     }
 
-    /**
-     * Navigate to child entries
-     */
     public function navigate($id)
     {
         $lpj = Lpj::findOrFail($id);
@@ -509,9 +423,6 @@ class LpjController extends Controller
         return redirect()->route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $id]);
     }
 
-    /**
-     * Handle file uploads
-     */
     private function handleFileUploads(Request $request, string $fieldName, string $path, array $existingFiles = []): array
     {
         $uploadedFiles = [];
@@ -527,11 +438,10 @@ class LpjController extends Controller
         return $uploadedFiles;
     }
 
-    /**
-     * Build breadcrumb navigation
-     */
-    private function buildBreadcrumbs($currentItem = null): array
+    private function buildBreadcrumbs(Request $request, $currentItem = null): array
     {
+        $queryParams = $request->only('year');
+
         $breadcrumbs = [
             [
                 'title' => 'Dashboard',
@@ -545,20 +455,19 @@ class LpjController extends Controller
             ],
             [
                 'title' => 'Bidang',
-                'url' => route('admin.laporan-lpj.bidang.dynamic.index'),
+                'url' => route('admin.laporan-lpj.bidang.index', $queryParams),
                 'active' => false
             ]
         ];
 
         if ($currentItem) {
-            // Get ancestors if the model has this method
             if (method_exists($currentItem, 'ancestors')) {
                 $ancestors = $currentItem->ancestors();
 
                 foreach ($ancestors as $ancestor) {
                     $breadcrumbs[] = [
                         'title' => $ancestor->nama_program,
-                        'url' => route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $ancestor->id]),
+                        'url' => route('admin.laporan-lpj.bidang.dynamic.child.index', array_merge(['parentId' => $ancestor->id], $queryParams)),
                         'active' => false
                     ];
                 }
@@ -580,9 +489,6 @@ class LpjController extends Controller
         return $breadcrumbs;
     }
 
-    /**
-     * Get tree structure for navigation
-     */
     public function getTreeStructure($parentId = null)
     {
         $items = Lpj::where('parent_id', $parentId)
@@ -614,14 +520,12 @@ class LpjController extends Controller
         try {
             $query = Lpj::query();
 
-            // Filter by parent ID
             if ($parentId) {
                 $query->where('parent_id', $parentId);
             } else {
                 $query->whereNull('parent_id');
             }
 
-            // Apply search filter
             if ($request->filled('search')) {
                 $searchTerm = $request->get('search');
                 $query->where(function ($q) use ($searchTerm) {
@@ -631,25 +535,20 @@ class LpjController extends Controller
                 });
             }
 
-            // Apply kegiatan filter
             if ($request->filled('jenis_kegiatan_filter')) {
                 $query->where('nama_kegiatan', $request->get('jenis_kegiatan_filter'));
             }
 
             $lpjData = $query->get();
 
-            // Create initial PDF with letterhead and content
             $pdf = Pdf::loadView('admin.laporan-lpj.bidang_new.dynamic.pdf-export-all', compact('lpjData'));
             $pdf->setPaper('A4', 'portrait');
 
-            // Generate initial PDF content
             $tempMainFile = tempnam(sys_get_temp_dir(), 'main_pdf_');
             file_put_contents($tempMainFile, $pdf->output());
 
-            // Initialize FPDI for PDF merging
             $fpdi = new Fpdi();
 
-            // Add main content pages
             $pageCount = $fpdi->setSourceFile($tempMainFile);
             for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
                 $templateId = $fpdi->importPage($pageNo, PageBoundaries::MEDIA_BOX);
@@ -657,7 +556,6 @@ class LpjController extends Controller
                 $fpdi->useTemplate($templateId);
             }
 
-            // Merge PDF attachments from all LPJ documents
             foreach ($lpjData as $lpj) {
                 if ($lpj->dokumen_pendukung && count($lpj->dokumen_pendukung) > 0) {
                     foreach ($lpj->dokumen_pendukung as $dokumen) {
@@ -666,7 +564,6 @@ class LpjController extends Controller
                         if (file_exists($filePath)) {
                             $fileExtension = strtolower(pathinfo($dokumen, PATHINFO_EXTENSION));
 
-                            // Only merge PDF files
                             if ($fileExtension === 'pdf') {
                                 try {
                                     $attachmentPageCount = $fpdi->setSourceFile($filePath);
@@ -677,7 +574,6 @@ class LpjController extends Controller
                                         $fpdi->useTemplate($templateId);
                                     }
                                 } catch (\Exception $e) {
-                                    // Log error but continue with other files
                                     \Log::warning("Could not merge PDF file: {$dokumen}. Error: " . $e->getMessage());
                                 }
                             }
@@ -686,13 +582,10 @@ class LpjController extends Controller
                 }
             }
 
-            // Clean up temporary file
             unlink($tempMainFile);
 
-            // Generate final PDF
             $finalPdf = $fpdi->Output('S');
 
-            // Generate filename
             $filename = 'Laporan_LPJ_All_' . date('Y-m-d') . '.pdf';
 
             return response($finalPdf, 200, [

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Detail pelatih - {{ $pelatih->nama }}</title>
+    <title>Detail pelatih - <?php echo e($pelatih->nama); ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
         body {
@@ -121,43 +121,43 @@
         <div class="info-container">
             <div class="info-left">
                 <div class="info-photo">
-                    @if ($pelatih->foto)
-                        <img src="{{ public_path('storage/' . $pelatih->foto) }}" alt="Foto Pelatih" class="photo">
-                    @else
+                    <?php if($pelatih->foto): ?>
+                        <img src="<?php echo e(public_path('storage/' . $pelatih->foto)); ?>" alt="Foto Pelatih" class="photo">
+                    <?php else: ?>
                         <div class="no-photo">Tidak ada foto</div>
-                    @endif
+                    <?php endif; ?>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Nama</div>
-                    <div class="info-value">{{ $pelatih->nama }}</div>
+                    <div class="info-value"><?php echo e($pelatih->nama); ?></div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Cabang Olahraga</div>
-                    <div class="info-value">{{ $pelatih->cabangOlahraga->nama_cabor ?? '-' }}</div>
+                    <div class="info-value"><?php echo e($pelatih->cabangOlahraga->nama_cabor ?? '-'); ?></div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Email</div>
-                    <div class="info-value">{{ $pelatih->email ?? '-' }}</div>
+                    <div class="info-value"><?php echo e($pelatih->email ?? '-'); ?></div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">No Telepon</div>
-                    <div class="info-value">{{ $pelatih->no_telepon ?? '-' }}</div>
+                    <div class="info-value"><?php echo e($pelatih->no_telepon ?? '-'); ?></div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Tempat Lahir</div>
-                    <div class="info-value">{{ $pelatih->tempat_lahir ?? '-' }}</div>
+                    <div class="info-value"><?php echo e($pelatih->tempat_lahir ?? '-'); ?></div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Tanggal Lahir</div>
-                    <div class="info-value">{{ $pelatih->tanggal_lahir ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d/m/Y') : '-' }}</div>
+                    <div class="info-value"><?php echo e($pelatih->tanggal_lahir ? \Carbon\Carbon::parse($pelatih->tanggal_lahir)->format('d/m/Y') : '-'); ?></div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Jenis Kelamin</div>
-                    <div class="info-value">{{ $pelatih->jenis_kelamin }}</div>
+                    <div class="info-value"><?php echo e($pelatih->jenis_kelamin); ?></div>
                 </div>
                 <div class="info-row">
                     <div class="info-label">Ketersediaan</div>
-                    <div class="info-value">{{ $pelatih->ketersediaan }}</div>
+                    <div class="info-value"><?php echo e($pelatih->ketersediaan); ?></div>
                 </div>
             </div>
         </div>
@@ -167,20 +167,22 @@
         <div class="section-title">ALAMAT</div>
         <div class="info-row">
             <div class="info-label">Alamat</div>
-            <div class="info-value">{{ $pelatih->alamat ?? '-' }}</div>
+            <div class="info-value"><?php echo e($pelatih->alamat ?? '-'); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Kota</div>
-            <div class="info-value">{{ $pelatih->alamatkota ?? '-' }}</div>
+            <div class="info-value"><?php echo e($pelatih->alamatkota ?? '-'); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Provinsi</div>
-            <div class="info-value">{{ $pelatih->alamatprovinsi ?? '-' }}</div>
+            <div class="info-value"><?php echo e($pelatih->alamatprovinsi ?? '-'); ?></div>
         </div>
     </div>
 
     <div class="footer">
-        Dicetak pada: {{ \Carbon\Carbon::now()->format('d/m/Y H:i:s') }}
+        Dicetak pada: <?php echo e(\Carbon\Carbon::now()->format('d/m/Y H:i:s')); ?>
+
     </div>
 </body>
 </html>
+<?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/pelatih/pdf-export.blade.php ENDPATH**/ ?>

@@ -103,7 +103,7 @@
                         @csrf
 
                         {{-- Basic Fields --}}
-                        <div class="row align-items-center mb-3">
+                        {{-- <div class="row align-items-center mb-3">
                             <div class="col-md-3">
                                 <label for="year" class="form-label">Tahun <span class="text-danger">*</span></label>
                             </div>
@@ -120,7 +120,7 @@
                                 </select>
                                 @error('year')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="row align-items-center mb-3">
                             <div class="col-md-3">
                                 <label for="nama_program" class="form-label">Nama Program <span class="text-danger">*</span></label>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Lpj;
 use App\Models\Target;
+use Illuminate\Support\Facades\DB;
 
 class BidangController extends Controller
 {
@@ -17,9 +18,14 @@ class BidangController extends Controller
     /**
      * Display the main bidang index page
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Define the parent IDs for each bidang
+        $selectedYear = $request->input('year', now()->year);
+        $availableYears = Lpj::select(DB::raw('YEAR(created_at) as year'))
+                            ->distinct()
+                            ->orderBy('year', 'desc')
+                            ->pluck('year');
+
         $bidangParentIds = [
             'mobilisasi' => 1,
             'hubungan_lembaga' => 2,
@@ -31,28 +37,21 @@ class BidangController extends Controller
             'perencanaan_program' => 8,
         ];
 
-        // Initialize totals
         $total_anggaran = 0;
         $total_kegiatan = 0;
-
-        // Calculate counts and totals for each bidang
         $bidangInfo = [];
         $bidangDetails = [];
         
         foreach ($bidangParentIds as $key => $id) {
-            $target = Target::where('id_lpj', $id)->first(); // Fetch target first
+            $target = Target::where('id_lpj', $id)->whereYear('created_at', $selectedYear)->first();
 
             if ($id == 6) { // Special handling for Pembinaan Prestasi
-                $info = $this->getPrestasiInfo($id);
+                $info = $this->getPrestasiInfo($id, $selectedYear);
                 
-                // Get children of Prestasi (the 4 cabors)
                 $prestasi_children_ids = Lpj::where('parent_id', $id)->pluck('id');
-                // Get grandchildren of Prestasi (Pordasi, etc.)
                 $prestasi_grandchildren_ids = Lpj::whereIn('parent_id', $prestasi_children_ids)->pluck('id');
-
-                // Calculate target kegiatan and anggaran by summing targets of the grandchildren
-                $prestasi_target_kegiatan = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->sum('target_kegiatan');
-                $prestasi_target_anggaran = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->sum('target_anggaran');
+                $prestasi_target_kegiatan = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->whereYear('created_at', $selectedYear)->sum('target_kegiatan');
+                $prestasi_target_anggaran = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->whereYear('created_at', $selectedYear)->sum('target_anggaran');
 
                 $bidangDetails[$key] = [
                     'anggaran' => $info['anggaran'],
@@ -60,9 +59,8 @@ class BidangController extends Controller
                     'kegiatan' => $info['count'],
                     'target_kegiatan' => $prestasi_target_kegiatan
                 ];
-
             } else {
-                $info = $this->getDescendantsInfo($id);
+                $info = $this->getDescendantsInfo($id, $selectedYear);
                 $bidangDetails[$key] = [
                     'anggaran' => $info['anggaran'],
                     'target_anggaran' => $target->target_anggaran ?? 0,
@@ -76,249 +74,136 @@ class BidangController extends Controller
             $total_kegiatan += $info['count'];
         }
 
-        // Get target values for overall
-        $target_anggaran = Target::whereIn('id_lpj', array_values($bidangParentIds))->sum('target_anggaran');
-        $target_kegiatan = Target::whereIn('id_lpj', array_values($bidangParentIds))->sum('target_kegiatan');
+        $target_anggaran = Target::whereIn('id_lpj', array_values($bidangParentIds))->whereYear('created_at', $selectedYear)->sum('target_anggaran');
+        $target_kegiatan = Target::whereIn('id_lpj', array_values($bidangParentIds))->whereYear('created_at', $selectedYear)->sum('target_kegiatan');
 
         return view('admin.laporan-lpj.bidang.index', array_merge($bidangInfo, [
             'total_anggaran' => $total_anggaran,
             'total_kegiatan' => $total_kegiatan,
             'target_anggaran' => $target_anggaran,
             'target_kegiatan' => $target_kegiatan,
-            'bidangDetails' => $bidangDetails
+            'bidangDetails' => $bidangDetails,
+            'selectedYear' => $selectedYear,
+            'availableYears' => $availableYears,
         ]));
     }
 
-    /**
-     * Get Prestasi info (great-grandchildren of Pembinaan Prestasi)
-     */
-    private function getPrestasiInfo($parentId)
+    private function getAllDescendantIds($parentId) {
+        $children = Lpj::where('parent_id', $parentId)->get();
+        $ids = $children->pluck('id')->toArray();
+        foreach ($children as $child) {
+            $ids = array_merge($ids, $this->getAllDescendantIds($child->id));
+        }
+        return $ids;
+    }
+
+    private function getPrestasiInfo($parentId, $year)
     {
         $info = ['count' => 0, 'anggaran' => 0];
-        $children = Lpj::where('parent_id', $parentId)->get(); // Level 1
-
-        foreach ($children as $child) {
-            $grandchildren = Lpj::where('parent_id', $child->id)->get(); // Level 2
-            foreach ($grandchildren as $grandchild) {
-                $greatGrandchildren = Lpj::where('parent_id', $grandchild->id)->get(); // Level 3
-                $info['count'] += $greatGrandchildren->count();
-                $info['anggaran'] += $greatGrandchildren->sum('jumlah_harga');
-            }
-        }
+        $children_ids = Lpj::where('parent_id', $parentId)->pluck('id');
+        $grandchildren_ids = Lpj::whereIn('parent_id', $children_ids)->pluck('id');
+        
+        $reports = Lpj::whereIn('parent_id', $grandchildren_ids)->whereYear('created_at', $year)->get();
+        
+        $info['count'] = $reports->count();
+        $info['anggaran'] = $reports->sum('jumlah_harga');
 
         return $info;
     }
 
-    /**
-     * Recursively get descendants' information (count and budget)
-     */
-    private function getDescendantsInfo($parentId)
+    private function getDescendantsInfo($parentId, $year)
     {
-        $children = Lpj::where('parent_id', $parentId)->get();
+        $allDescendantIds = $this->getAllDescendantIds($parentId);
+        array_push($allDescendantIds, $parentId);
 
-        $count = 0;
-        $anggaran = 0;
+        $reports = Lpj::whereIn('parent_id', $allDescendantIds)
+                        ->whereYear('created_at', $year)
+                        ->whereDoesntHave('children')
+                        ->get();
 
-        foreach ($children as $child) {
-            $subChildren = Lpj::where('parent_id', $child->id)->get();
-            if ($subChildren->isEmpty()) {
-                // This is a leaf node (an activity)
-                $count++;
-                $anggaran += $child->jumlah_harga;
-            } else {
-                // This is a category, recurse
-                $info = $this->getDescendantsInfo($child->id);
-                $count += $info['count'];
-                $anggaran += $info['anggaran'];
-            }
-        }
-
-        return ['count' => $count, 'anggaran' => $anggaran];
+        return [
+            'count' => $reports->count(),
+            'anggaran' => $reports->sum('jumlah_harga')
+        ];
     }
 
-
-    /**
-     * Recursively count all descendants of a parent
-     * Use this if you want total count including sub-levels
-     */
-    private function countAllDescendants($parentId)
+    public function prestasiIndex(Request $request)
     {
-        $count = 0;
+        $selectedYear = $request->input('year', now()->year);
+        $availableYears = Lpj::select(DB::raw('YEAR(created_at) as year'))->distinct()->orderBy('year', 'desc')->pluck('year');
 
-        $children = Lpj::where('parent_id', $parentId)->get();
-        $count += $children->count();
-
-        foreach ($children as $child) {
-            $count += $this->countAllDescendants($child->id);
-        }
-
-        return $count;
-    }
-
-    /**
-     * Get count of data entries only (not categories)
-     * Use this if you only want to count actual data entries, not parent categories
-     */
-    private function getDataEntriesCount($parentId)
-    {
-        return Lpj::where('parent_id', $parentId)
-                  ->where(function($query) {
-                      $query->whereNotNull('volume')
-                            ->orWhereNotNull('jumlah_harga_satuan')
-                            ->orWhereNotNull('jumlah_harga');
-                  })
-                  ->count();
-    }
-
-    /**
-     * Display the pembinaan prestasi page
-     */
-    public function prestasiIndex()
-    {
-        // Get prestasi parent and its children for the prestasi index page
-        $prestasiParentId = 6; // Adjust based on your seeded data
+        $prestasiParentId = 6;
         $parent = Lpj::find($prestasiParentId);
         $children = Lpj::where('parent_id', $prestasiParentId)
                        ->withCount('children')
                        ->orderBy('nama_program', 'asc')
                        ->get();
         
-        // Calculate totals for prestasi
-        $total_anggaran = 0;
-        $total_kegiatan = 0;
-        
-        // Add individual budget information to each child
-        foreach($children as $child) {
-            $total_kegiatan += $child->children_count;
-            
-            // Get grand children to calculate anggaran
-            $grandchildren = $child->children;
-            $child_anggaran = 0;
-            foreach($grandchildren as $grandchild) {
-                // Get great grandchildren to calculate anggaran
-                $greatGrandchildren = $grandchild->children;
-                foreach($greatGrandchildren as $greatGrandchild) {
-                    $child_anggaran += $greatGrandchild->jumlah_harga ?? 0;
-                }
-            }
-            
-            // Add anggaran to child object
-            $child->anggaran = $child_anggaran;
-            $total_anggaran += $child_anggaran;
-        }
-        
-        // Get target values
-        $target = Target::where('id_lpj', $prestasiParentId)->first();
-        $target_anggaran = $target->target_anggaran ?? 1000000000; // Example target
-        $target_kegiatan = $target->target_kegiatan ?? 100; // Example target
-        $anggaran_percentage = $target_anggaran > 0 ? ($total_anggaran / $target_anggaran) * 100 : 0;
-
-        return view('admin.laporan-lpj.bidang.prestasi.index', compact('children', 'parent', 'total_anggaran', 'total_kegiatan', 'target_anggaran', 'target_kegiatan', 'anggaran_percentage'));
+        return view('admin.laporan-lpj.bidang.prestasi.index', compact('children', 'parent', 'selectedYear', 'availableYears'));
     }
 
-    /**
-     * Cabor Akurasi - Updated to match your new structure
-     */
-    public function caborAkurasi(Request $request)
+    private function getCaborData(Request $request, $parentId)
     {
-        // The ID for 'Cabor Akurasi' - adjust based on your seeded data
-        $caborAkurasiParentId = 10;
+        $selectedYear = $request->input('year', now()->year);
+        $availableYears = Lpj::select(DB::raw('YEAR(created_at) as year'))->distinct()->orderBy('year', 'desc')->pluck('year');
 
-        // Eager load children count for performance
-        $parent = Lpj::findOrFail($caborAkurasiParentId);
-        $children = Lpj::where('parent_id', $caborAkurasiParentId)
-                        ->with(['children', 'target']) // Eager load
-                        ->withCount('children') // Counts sub-items (dokumen)
+        $parent = Lpj::findOrFail($parentId);
+        
+        $children = Lpj::where('parent_id', $parentId)
+                        ->with(['target' => function($query) use ($selectedYear) {
+                            $query->whereYear('created_at', $selectedYear);
+                        }])
                         ->orderBy('nama_program', 'asc')
                         ->get();
         
         foreach ($children as $child) {
-            $anggaran = $child->children->sum('jumlah_harga');
+            $reports = Lpj::where('parent_id', $child->id)->whereYear('created_at', $selectedYear)->get();
+            $anggaran = $reports->sum('jumlah_harga');
+            $kegiatan = $reports->count();
+
             $child->realisasi_anggaran = $anggaran;
+            $child->children_count = $kegiatan;
             $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
             $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
         }
 
-        if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Akurasi._table', compact('children'))->render();
-        }
+        return compact('children', 'parent', 'selectedYear', 'availableYears');
+    }
 
-        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.index', compact('children', 'parent'));
+    public function caborAkurasi(Request $request)
+    {
+        $data = $this->getCaborData($request, 10);
+        if ($request->ajax()) {
+            return view('admin.laporan-lpj.bidang.prestasi.Akurasi._table', $data)->render();
+        }
+        return view('admin.laporan-lpj.bidang.prestasi.Akurasi.index', $data);
     }
 
     public function caborBeladiri(Request $request)
     {
-        $caborBeladiriParentId = 12; // Adjust based on your seeded data
-
-        $parent = Lpj::findOrFail($caborBeladiriParentId);
-        $children = Lpj::where('parent_id', $caborBeladiriParentId)
-                        ->with(['children', 'target']) // Eager load
-                        ->withCount('children')
-                        ->orderBy('nama_program', 'asc')
-                        ->get();
-        
-        foreach ($children as $child) {
-            $anggaran = $child->children->sum('jumlah_harga');
-            $child->realisasi_anggaran = $anggaran;
-            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
-            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
-        }
-
+        $data = $this->getCaborData($request, 12);
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Beladiri._table', compact('children'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.Beladiri._table', $data)->render();
         }
-
-        return view('admin.laporan-lpj.bidang.prestasi.Beladiri.index', compact('children', 'parent'));
+        return view('admin.laporan-lpj.bidang.prestasi.Beladiri.index', $data);
     }
 
     public function caborPermainan(Request $request)
     {
-        $caborPermainanParentId = 11; // Adjust based on your seeded data
-
-        $parent = Lpj::findOrFail($caborPermainanParentId);
-        $children = Lpj::where('parent_id', $caborPermainanParentId)
-                        ->with(['children', 'target']) // Eager load
-                        ->withCount('children')
-                        ->orderBy('nama_program', 'asc')
-                        ->get();
-        
-        foreach ($children as $child) {
-            $anggaran = $child->children->sum('jumlah_harga');
-            $child->realisasi_anggaran = $anggaran;
-            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
-            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
-        }
-
+        $data = $this->getCaborData($request, 11);
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Permainan._table', compact('children'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.Permainan._table', $data)->render();
         }
-
-        return view('admin.laporan-lpj.bidang.prestasi.Permainan.index', compact('children', 'parent'));
+        return view('admin.laporan-lpj.bidang.prestasi.Permainan.index', $data);
     }
 
     public function caborTerukur(Request $request)
     {
-        $caborTerukurParentId = 9; // Adjust based on your seeded data
-
-        $parent = Lpj::findOrFail($caborTerukurParentId);
-        $children = Lpj::where('parent_id', $caborTerukurParentId)
-                        ->with(['children', 'target']) // Eager load
-                        ->withCount('children')
-                        ->orderBy('nama_program', 'asc')
-                        ->get();
-        
-        foreach ($children as $child) {
-            $anggaran = $child->children->sum('jumlah_harga');
-            $child->realisasi_anggaran = $anggaran;
-            $child->target_anggaran_value = $child->target->target_anggaran ?? 0;
-            $child->target_kegiatan_value = $child->target->target_kegiatan ?? 0;
-        }
-
+        $data = $this->getCaborData($request, 9);
         if ($request->ajax()) {
-            return view('admin.laporan-lpj.bidang.prestasi.Terukur._table', compact('children'))->render();
+            return view('admin.laporan-lpj.bidang.prestasi.Terukur._table', $data)->render();
         }
-
-        return view('admin.laporan-lpj.bidang.prestasi.Terukur.index', compact('children', 'parent'));
+        return view('admin.laporan-lpj.bidang.prestasi.Terukur.index', $data);
     }
 
     /**

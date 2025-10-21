@@ -1,6 +1,6 @@
 <div class="row g-10">
     @forelse($children as $child)
-        <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $child->id]) }}" class="col-12 col-sm-6 col-md-3">
+        <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $child->id, 'year' => $selectedYear]) }}" class="col-12 col-sm-6 col-md-3">
             <div class="card gap-2 p-3 text-center shadow-sm" style="min-height: 220px; transition: background-color 0.3s;"
                 onmouseover="this.style.backgroundColor='#E5E7EB'" onmouseout="this.style.backgroundColor='#ffffff'">
                 <i class="ki-outline ki-folder text-gray-600" style="font-size: 80px"></i>

@@ -340,6 +340,15 @@
                     @csrf
                     @method('PUT')
 
+                    {{-- <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="year" class="form-label">Tahun</label>
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" name="year" id="year" class="form-control" value="{{ old('year', $lpj->year) }}">
+                        </div>
+                    </div> --}}
+
                     {{-- Basic Information --}}
                     <div class="row mb-3">
                         <div class="col-md-3">

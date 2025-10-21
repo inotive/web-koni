@@ -1,12 +1,10 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Pembinaan Prestasi'); ?>
+<?php $__env->startSection('mainSection', 'Laporan LPJ'); ?>
+<?php $__env->startSection('subSection', 'Bidang Bidang'); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.bidang.index', ['year' => $selectedYear])); ?>
+<?php $__env->startSection('currentSection', 'Pembinaan Prestasi'); ?>
 
-@section('pageTitle', 'Pembinaan Prestasi')
-@section('mainSection', 'Laporan LPJ')
-@section('subSection', 'Bidang Bidang')
-@section('subSectionUrl', route('admin.laporan-lpj.bidang.index', ['year' => $selectedYear]))
-@section('currentSection', 'Pembinaan Prestasi')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 
 <style>
     body {
@@ -304,7 +302,7 @@
             <!-- Page Header -->
             <div>
                 <strong><h1 class="fw-bold mb-1">Pembinaan Prestasi</h1></strong>
-                <h3 class="text-muted mb-0">Kategori Pembinaan Prestasi Tahun {{ $selectedYear }}</h3>
+                <h3 class="text-muted mb-0">Kategori Pembinaan Prestasi Tahun <?php echo e($selectedYear); ?></h3>
             </div>
         </div>
 
@@ -318,36 +316,36 @@
         <!-- Bidang Grid -->
         <div class="bidang-grid grid-default" id="bidangGrid">
             <!-- Cabor Terukur -->
-            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-terukur', ['year' => $selectedYear]) }}" class="bidang-card" data-title="cabor terukur">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.prestasi.cabor-terukur', ['year' => $selectedYear])); ?>" class="bidang-card" data-title="cabor terukur">
                 <div class="bidang-icon icon-mobilisasi">
-                    <img src="{{ asset('assets2/media/misc/bidang/timer.png') }}" alt="">
+                    <img src="<?php echo e(asset('assets2/media/misc/bidang/timer.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Cabor Terukur</h4>
                 <p class="bidang-count">10 Olahraga</p>
             </a>
 
             <!-- Cabor Akurasi -->
-            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi', ['year' => $selectedYear]) }}" class="bidang-card" data-title="cabor akurasi">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.prestasi.cabor-akurasi', ['year' => $selectedYear])); ?>" class="bidang-card" data-title="cabor akurasi">
                 <div class="bidang-icon icon-hubungan">
-                    <img src="{{ asset('assets2/media/misc/bidang/focus.png') }}" alt="">
+                    <img src="<?php echo e(asset('assets2/media/misc/bidang/focus.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Cabor Akurasi</h4>
                 <p class="bidang-count">11 Olahraga</p>
             </a>
 
             <!-- Cabor Permainan -->
-            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan', ['year' => $selectedYear]) }}" class="bidang-card" data-title="cabor permainan">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.prestasi.cabor-permainan', ['year' => $selectedYear])); ?>" class="bidang-card" data-title="cabor permainan">
                 <div class="bidang-icon icon-kesehatan">
-                    <img src="{{ asset('assets2/media/misc/bidang/cup.png') }}" alt="">
+                    <img src="<?php echo e(asset('assets2/media/misc/bidang/cup.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Cabor Permainan</h4>
                 <p class="bidang-count">12 Olahraga</p>
             </a>
 
             <!-- Cabor Beladiri -->
-            <a href="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri', ['year' => $selectedYear]) }}" class="bidang-card" data-title="cabor beladiri">
+            <a href="<?php echo e(route('admin.laporan-lpj.bidang.prestasi.cabor-beladiri', ['year' => $selectedYear])); ?>" class="bidang-card" data-title="cabor beladiri">
                 <div class="bidang-icon icon-organisasi">
-                    <img src="{{ asset('assets2/media/misc/bidang/courier-express.png') }}" alt="">
+                    <img src="<?php echo e(asset('assets2/media/misc/bidang/courier-express.png')); ?>" alt="">
                 </div>
                 <h4 class="bidang-title">Cabor Beladiri</h4>
                 <p class="bidang-count">13 Olahraga</p>
@@ -356,9 +354,9 @@
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
 <script>
 $(document).ready(function() {
     // let currentSort = 'default';
@@ -532,4 +530,5 @@ $(document).ready(function() {
     });
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ThinkPad\OneDrive\Dokumen\GitHub\web-koni\resources\views/admin/laporan-lpj/bidang/prestasi/index.blade.php ENDPATH**/ ?>

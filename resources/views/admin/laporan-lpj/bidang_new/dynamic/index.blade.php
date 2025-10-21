@@ -2,6 +2,8 @@
 
 @php
     $subSection3Url = '';
+    $queryParams = ['year' => $selectedYear ?? now()->year];
+
     if ($parent?->parent) {
         $routes = [
             9 => 'admin.laporan-lpj.bidang.prestasi.cabor-terukur',
@@ -11,8 +13,8 @@
         ];
 
         $subSection3Url = isset($routes[$parent->parent->id])
-            ? route($routes[$parent->parent->id], ['parentId' => $parent->parent->id])
-            : route('admin.laporan-lpj.bidang.dynamic.index');
+            ? route($routes[$parent->parent->id], array_merge(['parentId' => $parent->parent->id], $queryParams))
+            : route('admin.laporan-lpj.bidang.dynamic.index', $queryParams);
     }
 
     if (!function_exists('formatRupiah')) {
@@ -26,9 +28,9 @@
 @section('pageTitle', $currentParent ? $currentParent->nama_program : 'Root Level')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
-@section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
+@section('subSectionUrl', route('admin.laporan-lpj.bidang.index', $queryParams))
 @section('subSection2', $parent?->parent?->parent?->nama_program ?? '')
-@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
+@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index', $queryParams))
 @section('subSection3', $parent?->parent?->nama_program ?? '')
 @section('subSection3Url', $subSection3Url)
 @section('currentSection', $currentParent ? $currentParent->nama_program : 'Root Level')
@@ -243,29 +245,12 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-8">
         <div>
             <h1 class="text-dark fw-bold mb-1">
-                Laporan {{ $currentParent ? $currentParent->nama_program : 'Root Level' }}
+                Laporan {{ $currentParent ? $currentParent->nama_program : 'Root Level' }} - {{ $selectedYear ?? now()->year }}
             </h1>
             @if($currentParent)
                 <p class="text-muted mb-0">{{ $currentParent->breadcrumb }}</p>
             @endif
         </div>
-        <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
-            @foreach (request()->except('year') as $k => $v)
-                <input type="hidden" name="{{ $k }}" value="{{ $v }}">
-            @endforeach
-            <select name="year" class="form-select" style="width: 120px"
-                onchange="document.getElementById('yearFilterForm').submit()">
-                @if (isset($availableYears) && count($availableYears))
-                    @foreach ($availableYears as $year)
-                        <option value="{{ $year }}"
-                            {{ (string) $year === (string) ($selectedYear ?? now()->year) ? 'selected' : '' }}>
-                            {{ $year }}</option>
-                    @endforeach
-                @else
-                    <option value="{{ now()->year }}" selected>{{ now()->year }}</option>
-                @endif
-            </select>
-        </form>
     </div>
 
     @if($parentId)
