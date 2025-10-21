@@ -101,7 +101,7 @@ class LaporanRKAController extends Controller
     public function update(Request $request, String $id)
     {
         $validator = Validator::make($request->all(), [
-            'total_anggaran' => 'required|string|max:255',
+            'total_anggaran' => 'required|max:255',
             'file' => 'mimes:pdf|max:10240',
         ]);
 
