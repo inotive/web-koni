@@ -3,9 +3,9 @@
 @section('pageTitle', 'Cabor Permainan')
 @section('mainSection', 'Laporan LPJ')
 @section('subSection', 'Bidang Bidang')
-@section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
+@section('subSectionUrl', route('admin.laporan-lpj.bidang.index', ['year' => $selectedYear]))
 @section('subSection2', 'Pembinaan Prestasi')
-@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index'))
+@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index', ['year' => $selectedYear]))
 @section('currentSection', 'Cabor Permainan')
 
 @section('content')
@@ -13,18 +13,14 @@
         <div class="d-flex justify-content-between align-items-center container">
             <div class="d-none d-md-block">
                 <h1>Cabor Permainan</h1>
-                <span>Informasi Cabor Permainan</span>
+                <span>Informasi Cabor Permainan untuk tahun {{ $selectedYear }}</span>
             </div>
-            <form id="filter" class="d-flex gap-3">
+            <form id="filter" action="{{ route('admin.laporan-lpj.bidang.prestasi.cabor-permainan') }}" method="GET" class="d-flex gap-3">
                 <div class="position-relative bg-light" style="width: 180px">
                     <i class="ki-outline ki-magnifier fs-2 position-absolute top-50 translate-middle-y ms-3"></i>
                     <input type="text" name="search" value="{{ request('search') }}" data-kt-docs-table-filter="search"
                         placeholder="Cari Teams" class="form-control border border-gray-500 py-2 ps-12" />
                 </div>
-                {{-- <select name="sortBy" id="sortBy" class="form-select border border-gray-500 py-2" style="width: 85px">
-                    <option value="ASC">A - Z</option>
-                    <option value="DESC">Z - A</option>
-                </select> --}}
             </form>
         </div>
 
