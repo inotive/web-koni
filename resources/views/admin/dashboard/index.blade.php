@@ -431,27 +431,60 @@
                                 $rka_per_kegiatan = (int) $parent_target->target_anggaran;
                                 $display_target_kegiatan = (int) ($parent_target->target_kegiatan ?? 0);
                             } else {
-                                // If no parent budget, fall back to summing children's budgets and targets (recursively)
-                                foreach ($item->children as $child_item) {
-                                    $child_target_db = \App\Models\Target::where('id_lpj', $child_item->id)->first();
-                                    $child_budget = 0;
-
-                                    if ($child_target_db && isset($child_target_db->target_anggaran) && $child_target_db->target_anggaran > 0) {
-                                        $child_budget = (int) $child_target_db->target_anggaran;
-                                    } else {
-                                        if ($child_item->children && $child_item->children->count() > 0) {
-                                            foreach ($child_item->children as $grandchild_item) {
-                                                $grandchild_target_db = \App\Models\Target::where('id_lpj', $grandchild_item->id)->first();
-                                                if ($grandchild_target_db && isset($grandchild_target_db->target_anggaran)) {
-                                                    $child_budget += (int) $grandchild_target_db->target_anggaran;
-                                                }
+                                // Special handling for Pembinaan Prestasi (ID 6) - target values are stored at grandchildren level (under IDs 9-12)
+                                if ($item->id == 6) {
+                                    // Get all IDs under the children of ID 6 (which are IDs 9-12)
+                                    $prestasi_children_ids = $item->children->pluck('id');
+                                    $prestasi_grandchildren_ids = \App\Models\Lpj::whereIn('parent_id', $prestasi_children_ids)->pluck('id');
+                                    
+                                    // Sum budgets from all entries under the Cabor (ID 9-12) sections
+                                    foreach ($prestasi_grandchildren_ids as $grandchild_id) {
+                                        $grandchild_target = \App\Models\Target::where('id_lpj', $grandchild_id)->first();
+                                        if ($grandchild_target && isset($grandchild_target->target_anggaran)) {
+                                            $rka_per_kegiatan += (int)$grandchild_target->target_anggaran;
+                                        }
+                                    }
+                                    
+                                    // Sum targets from all entries under the Cabor (ID 9-12) sections
+                                    foreach ($prestasi_grandchildren_ids as $grandchild_id) {
+                                        $grandchild_target = \App\Models\Target::where('id_lpj', $grandchild_id)->first();
+                                        if ($grandchild_target && isset($grandchild_target->target_kegiatan)) {
+                                            $display_target_kegiatan += (int)$grandchild_target->target_kegiatan;
+                                        }
+                                    }
+                                    
+                                    // If no targets found at deepest level, try looking at direct children level
+                                    if ($display_target_kegiatan == 0) {
+                                        foreach ($item->children as $child) { // IDs 9-12
+                                            $child_target = \App\Models\Target::where('id_lpj', $child->id)->first();
+                                            if ($child_target && isset($child_target->target_kegiatan)) {
+                                                $display_target_kegiatan += (int)$child_target->target_kegiatan;
                                             }
                                         }
                                     }
-                                    $rka_per_kegiatan += $child_budget;
+                                } else {
+                                    // If no parent budget, fall back to summing children's budgets and targets (recursively)
+                                    foreach ($item->children as $child_item) {
+                                        $child_target_db = \App\Models\Target::where('id_lpj', $child_item->id)->first();
+                                        $child_budget = 0;
 
-                                    if ($child_target_db) {
-                                        $display_target_kegiatan += (int) ($child_target_db->target_kegiatan ?? 0);
+                                        if ($child_target_db && isset($child_target_db->target_anggaran) && $child_target_db->target_anggaran > 0) {
+                                            $child_budget = (int) $child_target_db->target_anggaran;
+                                        } else {
+                                            if ($child_item->children && $child_item->children->count() > 0) {
+                                                foreach ($child_item->children as $grandchild_item) {
+                                                    $grandchild_target_db = \App\Models\Target::where('id_lpj', $grandchild_item->id)->first();
+                                                    if ($grandchild_target_db && isset($grandchild_target_db->target_anggaran)) {
+                                                        $child_budget += (int) $grandchild_target_db->target_anggaran;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        $rka_per_kegiatan += $child_budget;
+
+                                        if ($child_target_db) {
+                                            $display_target_kegiatan += (int) ($child_target_db->target_kegiatan ?? 0);
+                                        }
                                     }
                                 }
                             }
