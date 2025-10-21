@@ -1,5 +1,7 @@
 <?php
     $subSection3Url = '';
+    $queryParams = ['year' => $selectedYear ?? now()->year];
+
     if ($parent?->parent) {
         $routes = [
             9 => 'admin.laporan-lpj.bidang.prestasi.cabor-terukur',
@@ -9,8 +11,8 @@
         ];
 
         $subSection3Url = isset($routes[$parent->parent->id])
-            ? route($routes[$parent->parent->id], ['parentId' => $parent->parent->id])
-            : route('admin.laporan-lpj.bidang.dynamic.index');
+            ? route($routes[$parent->parent->id], array_merge(['parentId' => $parent->parent->id], $queryParams))
+            : route('admin.laporan-lpj.bidang.dynamic.index', $queryParams);
     }
 
     if (!function_exists('formatRupiah')) {
@@ -24,9 +26,9 @@
 <?php $__env->startSection('pageTitle', $currentParent ? $currentParent->nama_program : 'Root Level'); ?>
 <?php $__env->startSection('mainSection', 'Laporan LPJ'); ?>
 <?php $__env->startSection('subSection', 'Bidang Bidang'); ?>
-<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.bidang.index')); ?>
+<?php $__env->startSection('subSectionUrl', route('admin.laporan-lpj.bidang.index', $queryParams)); ?>
 <?php $__env->startSection('subSection2', $parent?->parent?->parent?->nama_program ?? ''); ?>
-<?php $__env->startSection('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index')); ?>
+<?php $__env->startSection('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index', $queryParams)); ?>
 <?php $__env->startSection('subSection3', $parent?->parent?->nama_program ?? ''); ?>
 <?php $__env->startSection('subSection3Url', $subSection3Url); ?>
 <?php $__env->startSection('currentSection', $currentParent ? $currentParent->nama_program : 'Root Level'); ?>
@@ -241,30 +243,13 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-8">
         <div>
             <h1 class="text-dark fw-bold mb-1">
-                Laporan <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?>
+                Laporan <?php echo e($currentParent ? $currentParent->nama_program : 'Root Level'); ?> - <?php echo e($selectedYear ?? now()->year); ?>
 
             </h1>
             <?php if($currentParent): ?>
                 <p class="text-muted mb-0"><?php echo e($currentParent->breadcrumb); ?></p>
             <?php endif; ?>
         </div>
-        <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
-            <?php $__currentLoopData = request()->except('year'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k => $v): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <input type="hidden" name="<?php echo e($k); ?>" value="<?php echo e($v); ?>">
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-            <select name="year" class="form-select" style="width: 120px"
-                onchange="document.getElementById('yearFilterForm').submit()">
-                <?php if(isset($availableYears) && count($availableYears)): ?>
-                    <?php $__currentLoopData = $availableYears; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($year); ?>"
-                            <?php echo e((string) $year === (string) ($selectedYear ?? now()->year) ? 'selected' : ''); ?>>
-                            <?php echo e($year); ?></option>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                <?php else: ?>
-                    <option value="<?php echo e(now()->year); ?>" selected><?php echo e(now()->year); ?></option>
-                <?php endif; ?>
-            </select>
-        </form>
     </div>
 
     <?php if($parentId): ?>
