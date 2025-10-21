@@ -10,14 +10,14 @@
             </svg>
             <div class="text-center">
                 <div class="fw-bold text-gray-800 mb-1">
-                    <?php if(request('search')): ?>
+                    <?php if(request('search') || request('year')): ?>
                         Tidak ada file yang sesuai dengan pencarian/filter
                     <?php else: ?>
                         Belum ada file
                     <?php endif; ?>
                 </div>
                 <div class="text-muted">
-                    <?php if(request('search')): ?>
+                    <?php if(request('search') || request('year')): ?>
                         Coba ubah kata kunci pencarian atau filter yang Anda gunakan
                     <?php else: ?>
                         Klik tombol "Tambah File" untuk menambah file baru
@@ -166,14 +166,14 @@
                                 </svg>
                                 <div class="text-center">
                                     <div class="fw-bold text-gray-800 mb-1">
-                                        <?php if(request('search')): ?>
+                                        <?php if(request('search') || request('year')): ?>
                                             Tidak ada file yang sesuai dengan pencarian/filter
                                         <?php else: ?>
                                             Belum ada file
                                         <?php endif; ?>
                                     </div>
                                     <div class="text-muted">
-                                        <?php if(request('search')): ?>
+                                        <?php if(request('search') || request('year')): ?>
                                             Coba ubah kata kunci pencarian atau filter yang Anda gunakan
                                         <?php else: ?>
                                             Klik tombol "Tambah File" untuk menambah file baru

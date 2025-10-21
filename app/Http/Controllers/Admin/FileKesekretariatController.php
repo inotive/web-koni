@@ -31,6 +31,19 @@ class FileKesekretariatController extends Controller
             $order = 'desc';
         }
 
+        // Year filter for tanggal_dokumen
+        $selectedYear = $request->get('year');
+        if ($selectedYear) {
+            $query->whereYear('tanggal_dokumen', $selectedYear);
+        }
+
+        // Build available years list based on tanggal_dokumen column
+        $availableYears = FileKesekretariat::selectRaw('YEAR(tanggal_dokumen) as year')
+            ->whereNotNull('tanggal_dokumen')
+            ->groupBy('year')
+            ->orderByDesc('year')
+            ->pluck('year');
+
         // Search functionality
         if ($request->filled('search')) {
             $search = $request->get('search');
@@ -71,7 +84,7 @@ class FileKesekretariatController extends Controller
         $files = $query->paginate($perPage);
         $files->appends($request->query());
 
-        return view('admin.file-kesekretariat.index', compact('files'));
+        return view('admin.file-kesekretariat.index', compact('files', 'availableYears', 'selectedYear'));
     }
 
     private function getOriginalFileName($fileName)

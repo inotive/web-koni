@@ -1066,6 +1066,27 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="d-flex align-items-center">
+                    <form method="GET" id="yearFilterFormFileKesekretariat" class="d-flex align-items-center gap-2">
+                        <?php $__currentLoopData = request()->except('year'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k => $v): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <input type="hidden" name="<?php echo e($k); ?>" value="<?php echo e($v); ?>">
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <select name="year" class="form-select" style="width: 120px"
+                            onchange="document.getElementById('yearFilterFormFileKesekretariat').submit()">
+                            <option value="">Semua Tahun</option>
+                            <?php if(isset($availableYears) && count($availableYears)): ?>
+                                <?php $__currentLoopData = $availableYears; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($year); ?>"
+                                        <?php echo e((string) $year === (string) ($selectedYear ?? '') ? 'selected' : ''); ?>>
+                                        <?php echo e($year); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php else: ?>
+                                <option value="<?php echo e(now()->year); ?>" <?php echo e(request('year') == now()->year ? 'selected' : ''); ?>><?php echo e(now()->year); ?></option>
+                            <?php endif; ?>
+                        </select>
+                    </form>
+                </div>
             </form>
         </div>
 
@@ -2263,11 +2284,18 @@
             newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
         }
 
-        performSearch({
+        const selectedYear = $('select[name="year"]').val(); // Get selected year
+        const searchParams = {
             page: 1,
             sort_by: sortBy,
             order: newOrder
-        }, true);
+        };
+        
+        if (selectedYear) {
+            searchParams.year = selectedYear; // Include year parameter
+        }
+
+        performSearch(searchParams, true);
     });
 
                 // Dropdown functionality
@@ -2290,6 +2318,7 @@
         if (url && url !== '#' && !$(this).hasClass('disabled')) {
             const urlParams = new URLSearchParams(url.split('?')[1]);
             const page = urlParams.get('page');
+            const year = urlParams.get('year'); // Get year from URL params
 
             if (page) {
                 console.log('Going to page:', page); // Debug log
@@ -2310,6 +2339,10 @@
                 if (currentSearch && currentSearch.trim()) {
                     searchParams.search = currentSearch;
                 }
+                
+                if (year) {
+                    searchParams.year = year; // Include year parameter
+                }
 
                 performSearch(searchParams, true);
             }
@@ -2324,11 +2357,13 @@
 
     const searchParams = new URLSearchParams();
     const search = $('#filter input[name="search"]').val().trim();
+    const year = $('select[name="year"]').val(); // Get selected year
 
     // Get current URL parameters to maintain state
     const currentUrl = new URLSearchParams(window.location.search);
 
     if (search) searchParams.set('search', search);
+    if (year) searchParams.set('year', year); // Add year parameter
     if (params.page) searchParams.set('page', params.page);
     if (params.per_page) searchParams.set('per_page', params.per_page);
     if (params.sort_by) searchParams.set('sort_by', params.sort_by);
@@ -2346,6 +2381,14 @@
     if (!params.per_page) {
         const perPage = currentUrl.get('per_page') || '10';
         searchParams.set('per_page', perPage);
+    }
+
+    // Keep year if not specified in params
+    if (!params.year) {
+        const selectedYear = currentUrl.get('year');
+        if (selectedYear) {
+            searchParams.set('year', selectedYear);
+        }
     }
 
     const baseUrl = "<?php echo e(route('admin.file-kesekretariat.index')); ?>";
@@ -2664,7 +2707,12 @@ function hideLoading() {
 
             // Auto search on input
             $('#filter input[name="search"]').on('input', function() {
-                performSearch({page: 1}, true);
+                const selectedYear = $('select[name="year"]').val(); // Get selected year
+                const searchParams = {page: 1};
+                if (selectedYear) {
+                    searchParams.year = selectedYear; // Include year parameter
+                }
+                performSearch(searchParams, true);
             });
 
             // Reset modal when closed
@@ -2708,7 +2756,12 @@ function hideLoading() {
             // Per page dropdown
             $(document).on('change', 'select[name="per_page"]', function() {
                 const perPage = $(this).val();
-                performSearch({page: 1, per_page: perPage}, true);
+                const selectedYear = $('select[name="year"]').val(); // Get selected year
+                const searchParams = {page: 1, per_page: perPage};
+                if (selectedYear) {
+                    searchParams.year = selectedYear; // Include year parameter
+                }
+                performSearch(searchParams, true);
             });
         });
 
@@ -2736,6 +2789,7 @@ function hideLoading() {
 
         function resetAllFilters() {
             $('#filter input[name="search"]').val('');
+            $('select[name="year"]').val(''); // Reset year filter
             $('#filter-file-type').val('');
             $('#filter input[name="search"]').trigger('input');
         }

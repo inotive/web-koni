@@ -1068,6 +1068,27 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="d-flex align-items-center">
+                    <form method="GET" id="yearFilterFormFileKesekretariat" class="d-flex align-items-center gap-2">
+                        @foreach (request()->except('year') as $k => $v)
+                            <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                        @endforeach
+                        <select name="year" class="form-select" style="width: 120px"
+                            onchange="document.getElementById('yearFilterFormFileKesekretariat').submit()">
+                            <option value="">Semua Tahun</option>
+                            @if (isset($availableYears) && count($availableYears))
+                                @foreach ($availableYears as $year)
+                                    <option value="{{ $year }}"
+                                        {{ (string) $year === (string) ($selectedYear ?? '') ? 'selected' : '' }}>
+                                        {{ $year }}</option>
+                                @endforeach
+                            @else
+                                <option value="{{ now()->year }}" {{ request('year') == now()->year ? 'selected' : '' }}>{{ now()->year }}</option>
+                            @endif
+                        </select>
+                    </form>
+                </div>
             </form>
         </div>
 
@@ -2265,11 +2286,18 @@
             newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
         }
 
-        performSearch({
+        const selectedYear = $('select[name="year"]').val(); // Get selected year
+        const searchParams = {
             page: 1,
             sort_by: sortBy,
             order: newOrder
-        }, true);
+        };
+        
+        if (selectedYear) {
+            searchParams.year = selectedYear; // Include year parameter
+        }
+
+        performSearch(searchParams, true);
     });
 
                 // Dropdown functionality
@@ -2292,6 +2320,7 @@
         if (url && url !== '#' && !$(this).hasClass('disabled')) {
             const urlParams = new URLSearchParams(url.split('?')[1]);
             const page = urlParams.get('page');
+            const year = urlParams.get('year'); // Get year from URL params
 
             if (page) {
                 console.log('Going to page:', page); // Debug log
@@ -2312,6 +2341,10 @@
                 if (currentSearch && currentSearch.trim()) {
                     searchParams.search = currentSearch;
                 }
+                
+                if (year) {
+                    searchParams.year = year; // Include year parameter
+                }
 
                 performSearch(searchParams, true);
             }
@@ -2326,11 +2359,13 @@
 
     const searchParams = new URLSearchParams();
     const search = $('#filter input[name="search"]').val().trim();
+    const year = $('select[name="year"]').val(); // Get selected year
 
     // Get current URL parameters to maintain state
     const currentUrl = new URLSearchParams(window.location.search);
 
     if (search) searchParams.set('search', search);
+    if (year) searchParams.set('year', year); // Add year parameter
     if (params.page) searchParams.set('page', params.page);
     if (params.per_page) searchParams.set('per_page', params.per_page);
     if (params.sort_by) searchParams.set('sort_by', params.sort_by);
@@ -2348,6 +2383,14 @@
     if (!params.per_page) {
         const perPage = currentUrl.get('per_page') || '10';
         searchParams.set('per_page', perPage);
+    }
+
+    // Keep year if not specified in params
+    if (!params.year) {
+        const selectedYear = currentUrl.get('year');
+        if (selectedYear) {
+            searchParams.set('year', selectedYear);
+        }
     }
 
     const baseUrl = "{{ route('admin.file-kesekretariat.index') }}";
@@ -2666,7 +2709,12 @@ function hideLoading() {
 
             // Auto search on input
             $('#filter input[name="search"]').on('input', function() {
-                performSearch({page: 1}, true);
+                const selectedYear = $('select[name="year"]').val(); // Get selected year
+                const searchParams = {page: 1};
+                if (selectedYear) {
+                    searchParams.year = selectedYear; // Include year parameter
+                }
+                performSearch(searchParams, true);
             });
 
             // Reset modal when closed
@@ -2710,7 +2758,12 @@ function hideLoading() {
             // Per page dropdown
             $(document).on('change', 'select[name="per_page"]', function() {
                 const perPage = $(this).val();
-                performSearch({page: 1, per_page: perPage}, true);
+                const selectedYear = $('select[name="year"]').val(); // Get selected year
+                const searchParams = {page: 1, per_page: perPage};
+                if (selectedYear) {
+                    searchParams.year = selectedYear; // Include year parameter
+                }
+                performSearch(searchParams, true);
             });
         });
 
@@ -2738,6 +2791,7 @@ function hideLoading() {
 
         function resetAllFilters() {
             $('#filter input[name="search"]').val('');
+            $('select[name="year"]').val(''); // Reset year filter
             $('#filter-file-type').val('');
             $('#filter input[name="search"]').trigger('input');
         }
