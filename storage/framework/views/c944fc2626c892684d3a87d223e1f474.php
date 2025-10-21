@@ -15,6 +15,10 @@
 <?php $__env->startSection('content'); ?>
 
     <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
         .form-label {
             font-weight: 500;
             color: #495057;
