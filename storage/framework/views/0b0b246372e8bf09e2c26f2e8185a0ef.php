@@ -484,12 +484,12 @@
                             <div class="d-flex align-items-center justify-content-between">
                                 <span class="title-kegiatan"><?php echo e($i + 1); ?>. <?php echo e($item->nama_program); ?>
 
-                                    <?php if($item->children->count() > 0 && $item->id != 1 && $item->id != 59): ?>
+                                    <?php if($item->id == 6): ?>
                                         <i class="fas fa-info-circle text-primary ms-1" data-bs-toggle="tooltip" title="Klik untuk melihat detail"></i>
                                     <?php endif; ?>
                                 </span>
                                 
-                                <?php if($item->children->count() > 0 && $item->id != 1 && $item->id != 59): ?>
+                                <?php if($item->id == 6): ?>
                                     <button class="btn btn-sm p-0 border-0 dropdown-icon ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-<?php echo e($item->id); ?>" aria-expanded="false" aria-controls="collapse-<?php echo e($item->id); ?>">
                                         <i class="fas fa-chevron-down text-primary"></i>
                                     </button>
@@ -515,7 +515,7 @@
                     </div>
 
                     
-                    <?php if($item->children->count() > 0): ?>
+                    <?php if($item->children->count() > 0 && $item->id != 1 && $item->id != 59): ?>
                         <div class="collapse" id="collapse-<?php echo e($item->id); ?>">
                             <div class="card card-body mt-2 mb-4" style="padding: 12px; border-radius: 8px;">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
