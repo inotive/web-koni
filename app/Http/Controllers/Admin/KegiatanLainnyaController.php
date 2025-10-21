@@ -72,9 +72,35 @@ class KegiatanLainnyaController extends Controller
     $totalKegiatan = (clone $query)->count();
     $totalAnggaran = (clone $query)->sum('jumlah_harga');
 
-    // Get target budget and kegiatan count for kegiatan-lainnya
-    $current_budget = Lpj::where('parent_id', $parentCategory->id)->sum('jumlah_harga');
-    $kegiatan_count = Lpj::where('parent_id', $parentCategory->id)->count();
+    // Get target budget and kegiatan count for kegiatan-lainnya (apply same filters as main query)
+    $budgetQuery = Lpj::where('parent_id', $parentCategory->id);
+    
+    // Apply year filter to budget calculation
+    if ($selectedYear) {
+        $budgetQuery->where('year', $selectedYear);
+    }
+    
+    // Apply other filters to budget calculation as well
+    if ($request->jenis_kegiatan_filter) {
+        $budgetQuery->where('nama_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
+    }
+    
+    if ($request->start_date) {
+        $budgetQuery->whereDate('created_at', '>=', $request->start_date);
+    }
+    if ($request->end_date) {
+        $budgetQuery->whereDate('created_at', '<=', $request->end_date);
+    }
+    
+    if ($request->search) {
+        $budgetQuery->where(function($q) use ($request) {
+            $q->where('nama_program', 'like', "%{$request->search}%")
+              ->orWhere('nama_kegiatan', 'like', "%{$request->search}%");
+        });
+    }
+
+    $current_budget = $budgetQuery->sum('jumlah_harga');
+    $kegiatan_count = $budgetQuery->count();
     $target = \App\Models\Target::where('id_lpj', $parentCategory->id)->first();
     $target_anggaran = $target->target_anggaran ?? 0;
     $target_kegiatan = $target->target_kegiatan ?? 0;
@@ -96,9 +122,17 @@ class KegiatanLainnyaController extends Controller
         ->paginate($request->get('per_page', 10))
         ->appends($request->except('page'));
 
-    // Untuk AJAX request (filtering/searching), return partial view dengan data summary
+    // Untuk AJAX request (filtering/searching), return partial view dengan data summary dan budget info
     if ($request->ajax()) {
-        return view('admin.laporan-lpj.kegiatan-lainnya._table', compact('kegiatanLainnya', 'totalKegiatan', 'totalAnggaran'))->render();
+        return response()->json([
+            'table_html' => view('admin.laporan-lpj.kegiatan-lainnya._table', compact('kegiatanLainnya', 'totalKegiatan', 'totalAnggaran'))->render(),
+            'current_budget' => $current_budget,
+            'target_anggaran' => $target_anggaran,
+            'kegiatan_count' => $kegiatan_count,
+            'target_kegiatan' => $target_kegiatan,
+            'selectedYear' => $selectedYear,
+            'availableYears' => $availableYears
+        ]);
     }
 
     // Untuk request biasa, return full view dengan data summary

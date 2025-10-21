@@ -1,22 +1,21 @@
-@extends('layouts.app')
+<?php $__env->startSection('pageTitle', 'Manajemen Kegiatan Lainnya'); ?>
+<?php $__env->startSection('mainSection', 'Laporan Pertanggungjawaban'); ?>
+<?php $__env->startSection('currentSection', 'Kegiatan Lainnya'); ?>
 
-@section('pageTitle', 'Manajemen Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
-@section('currentSection', 'Kegiatan Lainnya')
+<?php $__env->startSection('breadcrumb-title'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-title')
-@endsection
+<?php $__env->startSection('breadcrumb-items'); ?>
+<?php $__env->stopSection(); ?>
 
-@section('breadcrumb-items')
-@endsection
-
-@section('content')
-    @if(session('error'))
+<?php $__env->startSection('content'); ?>
+    <?php if(session('error')): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
+            <?php echo e(session('error')); ?>
+
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    @endif
+    <?php endif; ?>
 
     <style>
         #detailModal .btn-outline-primary:hover,
@@ -476,22 +475,22 @@
             <div>Manajemen Laporan Kegiatan Lainnya Anda Sekarang</div>
             <div class="d-flex align-items-center gap-2">
                 <select name="year" class="form-select" style="width: 120px" id="yearFilterSelect">
-                    @if (isset($availableYears) && count($availableYears))
-                        @foreach ($availableYears as $year)
-                            <option value="{{ $year }}"
-                                {{ (string) $year === (string) ($selectedYear ?? now()->year) ? 'selected' : '' }}>
-                                {{ $year }}</option>
-                            @endforeach
-                        @else
-                            <option value="{{ now()->year }}" selected>{{ now()->year }}</option>
-                        @endif
+                    <?php if(isset($availableYears) && count($availableYears)): ?>
+                        <?php $__currentLoopData = $availableYears; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($year); ?>"
+                                <?php echo e((string) $year === (string) ($selectedYear ?? now()->year) ? 'selected' : ''); ?>>
+                                <?php echo e($year); ?></option>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php else: ?>
+                            <option value="<?php echo e(now()->year); ?>" selected><?php echo e(now()->year); ?></option>
+                        <?php endif; ?>
                     </select>
                 </div>
             </div>
         </div>
     </div>
 
-    @if(isset($current_budget) && isset($target_anggaran))
+    <?php if(isset($current_budget) && isset($target_anggaran)): ?>
     <div class="top-progress-wrapper mb-4">
         <div class="d-flex justify-content-between mt-2">
             <h3 class="text-muted mb-4">Total Anggaran</h3>
@@ -504,20 +503,20 @@
             </div>
         </div>
         <div class="d-flex justify-content-between mb-2">
-            @php
+            <?php
                 $percentage = ($target_anggaran > 0) ? ($current_budget / $target_anggaran) * 100 : 0;
-            @endphp
-            <h1 class="fw-bold mb-1 budget-amount">Rp {{ number_format($current_budget, 0, ",", ".") }} / Rp {{ number_format($target_anggaran, 0, ",", ".") }}</h1>
-            <h3 class="text-muted mb-0 budget-percentage" data-bs-toggle="tooltip" title="{{ round($percentage, 2) }}% dari total anggaran">
-                {{ round($percentage) }}%
+            ?>
+            <h1 class="fw-bold mb-1 budget-amount">Rp <?php echo e(number_format($current_budget, 0, ",", ".")); ?> / Rp <?php echo e(number_format($target_anggaran, 0, ",", ".")); ?></h1>
+            <h3 class="text-muted mb-0 budget-percentage" data-bs-toggle="tooltip" title="<?php echo e(round($percentage, 2)); ?>% dari total anggaran">
+                <?php echo e(round($percentage)); ?>%
             </h3>
         </div>
 
         <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
             <div class="progress-bar progress-bar-striped progress-bar-animated"
                 role="progressbar"
-                style="width: {{ $percentage }}%; background-color: #F8285A; border-radius: 12px;"
-                aria-valuenow="{{ $percentage }}"
+                style="width: <?php echo e($percentage); ?>%; background-color: #F8285A; border-radius: 12px;"
+                aria-valuenow="<?php echo e($percentage); ?>"
                 aria-valuemin="0"
                 aria-valuemax="100">
             </div>
@@ -526,32 +525,32 @@
         <div class="d-flex flex-row-reverse bd-highlight mt-2">
             <div class="info-label mt-1 d-flex align-items-center gap-2">
                 <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 border border-success-subtle kegiatan-count">
-                    {{ $kegiatan_count ?? 0 }} Kegiatan Berjalan
+                    <?php echo e($kegiatan_count ?? 0); ?> Kegiatan Berjalan
                 </span>
                 <span>/
                 </span>
                 <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle target-kegiatan-count">
-                    {{ $target_kegiatan ?? 0 }} Target Kegiatan
+                    <?php echo e($target_kegiatan ?? 0); ?> Target Kegiatan
                 </span>
             </div>
         </div>
     </div>
-    @endif
+    <?php endif; ?>
 
     <div class="col-12 mt-5">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
-                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - {{ $selectedYear ?? now()->year }}</h3>
+                <h3 class="card-title fw-bold fs-4 mb-0">Daftar Kegiatan Lainnya - <?php echo e($selectedYear ?? now()->year); ?></h3>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
-                    <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
+                    <a href="<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.create')); ?>" class="btn btn-primary"
     style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
 </a>
 
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
-                            placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
+                            placeholder="Cari kegiatan..." value="<?php echo e(request('search')); ?>" autocomplete="off">
 
                         <button class="btn btn-outline-secondary search-clear-btn d-none" type="button" id="clear-search"
                             style="position: absolute; right: 55px; z-index: 10; border: none; background: transparent; padding: 8px;">
@@ -584,7 +583,7 @@
                 </div>
 
                 <div id="table-container">
-                    @include('admin.laporan-lpj.kegiatan-lainnya._table')
+                    <?php echo $__env->make('admin.laporan-lpj.kegiatan-lainnya._table', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                 </div>
             </div>
         </div>
@@ -653,7 +652,7 @@
                     </div>
                 </div>
                 <div class="modal-body" id="detailModalBody">
-                    {{-- Populated by JS --}}
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -662,7 +661,7 @@
         </div>
     </div>
 
-    {{-- Pengajuan Modal --}}
+    
     <div class="modal fade" id="pengajuanModal" tabindex="-1" aria-labelledby="pengajuanModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -686,9 +685,9 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('script')
+<?php $__env->startSection('script'); ?>
     <script>
        $(document).ready(function() {
     let dataTable = null;
@@ -1244,20 +1243,20 @@
         // Status indicator & Button Logic
         if (statusIcon && ajukanBtn) {
             // Check if user has direct permission to modify (superadmin)
-            const hasDirectPermission = {{ auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false' }};
+            const hasDirectPermission = <?php echo e(auth()->user()->can('pengajuan-modifikasi-laporan-manage') ? 'true' : 'false'); ?>;
             
             // Check if there's an approved pengajuan for the current user
             let approvedPengajuan = null;
             if (data.pengajuan && Array.isArray(data.pengajuan)) {
                 // Filter for pengajuan that are approved, belong to current user, and have tokens remaining
                 approvedPengajuan = data.pengajuan.find(p => 
-                    p.user_id == {{ auth()->id() }} && 
+                    p.user_id == <?php echo e(auth()->id()); ?> && 
                     p.status === 'disetujui' && 
                     p.token > 0
                 );
             } else if (data.pengajuan) {
                 // If pengajuan is a single object (hasOne relationship)
-                if (data.pengajuan.user_id == {{ auth()->id() }} && 
+                if (data.pengajuan.user_id == <?php echo e(auth()->id()); ?> && 
                     data.pengajuan.status === 'disetujui' && 
                     data.pengajuan.token > 0) {
                     approvedPengajuan = data.pengajuan;
@@ -1265,7 +1264,7 @@
             }
             
             // Check if the current user is the one allowed to modify and has approved pengajuan
-            const hasApprovedPengajuan = data.modifiable_by_user_id == {{ auth()->id() }} && approvedPengajuan;
+            const hasApprovedPengajuan = data.modifiable_by_user_id == <?php echo e(auth()->id()); ?> && approvedPengajuan;
             
             // Determine if can modify based on permissions or approved pengajuan
             const canModify = hasDirectPermission || hasApprovedPengajuan;
@@ -1675,7 +1674,7 @@ $('#ajukanPerubahanBtn').on('click', function() {
                     alert('Terjadi kesalahan: ID laporan tidak ditemukan.');
                     return;
                 }
-                const exportUrl = "{{ route('admin.laporan-lpj.kegiatan-lainnya.export', ':id') }}".replace(':id', lpjId);
+                const exportUrl = "<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.export', ':id')); ?>".replace(':id', lpjId);
                 window.open(exportUrl, '_blank');
             });
 
@@ -1689,13 +1688,14 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 }
 
                 $.ajax({
-                    url: "{{ route('admin.laporan-lpj.pengajuan.store') }}",
+                    url: "<?php echo e(route('admin.laporan-lpj.pengajuan.store')); ?>",
                     type: 'POST',
                     data: {
-                        _token: '{{ csrf_token() }}',
+                        _token: '<?php echo e(csrf_token()); ?>',
                         lpj_id: lpjId,
                         alasan: alasan,
-                        user_id: {{ auth()->id() }}
+                        user_id: <?php echo e(auth()->id()); ?>
+
                     },
                     success: function(response) {
                         if(response.success) {
@@ -1754,10 +1754,10 @@ $('#ajukanPerubahanBtn').on('click', function() {
                 $submitBtn.addClass('btn-loading').prop('disabled', true);
 
                 $.ajax({
-                    url: "{{ route('admin.laporan-lpj.kegiatan-lainnya.update-target') }}",
+                    url: "<?php echo e(route('admin.laporan-lpj.kegiatan-lainnya.update-target')); ?>",
                     type: 'POST',
                     data: formData,
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                    headers: { 'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>' },
                     success: function(response) {
                         $submitBtn.removeClass('btn-loading').prop('disabled', false);
 
@@ -1788,7 +1788,7 @@ $('#ajukanPerubahanBtn').on('click', function() {
         });
     </script>
 
-    {{-- Edit Target Modal --}}
+    
     <div class="modal fade" id="editTargetModal" tabindex="-1" aria-labelledby="editTargetModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content rounded-4 gap-5 px-10 py-8">
@@ -1801,7 +1801,7 @@ $('#ajukanPerubahanBtn').on('click', function() {
                     <div>
                         <div class="fw-semibold required mb-3 text-gray-800">Target Anggaran</div>
                         <input type="text" name="target_anggaran" id="target_anggaran"
-                               value="Rp {{ number_format($target_anggaran ?? 0, 0, ",", ".") }}"
+                               value="Rp <?php echo e(number_format($target_anggaran ?? 0, 0, ",", ".")); ?>"
                                placeholder="Masukkan target anggaran"
                                class="form-control bg-light border border-gray-400" required />
                         <div class="invalid-feedback"></div>
@@ -1810,7 +1810,7 @@ $('#ajukanPerubahanBtn').on('click', function() {
                     <div>
                         <div class="fw-semibold required mb-3 text-gray-800">Target Kegiatan</div>
                         <input type="number" name="target_kegiatan" id="target_kegiatan"
-                               value="{{ $target_kegiatan ?? 0 }}"
+                               value="<?php echo e($target_kegiatan ?? 0); ?>"
                                placeholder="Masukkan jumlah target kegiatan"
                                class="form-control bg-light border border-gray-400" required />
                         <div class="invalid-feedback"></div>
@@ -1826,4 +1826,6 @@ $('#ajukanPerubahanBtn').on('click', function() {
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Javier\Documents\GitHub\web-koni\resources\views/admin/laporan-lpj/kegiatan-lainnya/index.blade.php ENDPATH**/ ?>
