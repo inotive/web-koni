@@ -132,16 +132,22 @@ class DashboardController extends Controller
 
             // Hitung kegiatan berjalan
             if ($item->children->count() > 0) {
-                $kegiatan_berjalan_parent = 0;
-                foreach ($item->children as $child) { // Child level
-                    foreach ($child->children as $grandchild) { // Folders level
-                        // Count grandchildren with jumlah_harga > 0 (filtered by year in the query)
-                        $kegiatan_berjalan_parent += $grandchild->children->where('jumlah_harga', '>', 0)->filter(function($greatGrandchild) use ($selectedYear) {
-                            return (!$greatGrandchild->created_at) || $greatGrandchild->created_at->year == $selectedYear;
-                        })->count();
+                if ($item->id == 59 || $item->id == 88) {
+                    $item->kegiatan_berjalan_count = $item->children->where('jumlah_harga', '>', 0)->filter(function($child) use ($selectedYear) {
+                        return (!$child->created_at) || $child->created_at->year == $selectedYear;
+                    })->count();
+                } else {
+                    $kegiatan_berjalan_parent = 0;
+                    foreach ($item->children as $child) { // Child level
+                        foreach ($child->children as $grandchild) { // Folders level
+                            // Count grandchildren with jumlah_harga > 0 (filtered by year in the query)
+                            $kegiatan_berjalan_parent += $grandchild->children->where('jumlah_harga', '>', 0)->filter(function($greatGrandchild) use ($selectedYear) {
+                                return (!$greatGrandchild->created_at) || $greatGrandchild->created_at->year == $selectedYear;
+                            })->count();
+                        }
                     }
+                    $item->kegiatan_berjalan_count = $kegiatan_berjalan_parent;
                 }
-                $item->kegiatan_berjalan_count = $kegiatan_berjalan_parent;
             } else {
                 // Count children with jumlah_harga > 0 (filtered by year in the query)
                 $item->kegiatan_berjalan_count = $item->children->where('jumlah_harga', '>', 0)->filter(function($child) use ($selectedYear) {

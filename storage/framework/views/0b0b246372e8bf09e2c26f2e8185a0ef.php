@@ -463,7 +463,7 @@
                                 $display_target_kegiatan = (int) ($target->target_kegiatan ?? 0);
                             }
                         }
-                        $display_budget = $rka_per_kegiatan;
+                        $display_budget = $item->total_budget;
                         // --- End Budget & Target Kegiatan Calculation ---
 
                         $persen = 0;
