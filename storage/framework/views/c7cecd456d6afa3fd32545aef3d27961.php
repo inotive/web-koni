@@ -18,8 +18,20 @@
                     <?php endif; ?>
                 </div>
                 <div class="text-muted">
-                    <?php if(request('search') || request('start_date') || request('end_date')): ?>
-                        Coba ubah kata kunci pencarian atau filter yang Anda gunakan
+                    <?php if(request('search')): ?>
+                        Coba ubah kata kunci pencarian
+                    <?php elseif(request('start_date') || request('end_date')): ?>
+                        <?php if(request('start_date') && request('end_date')): ?>
+                            Tidak ada surat antara tanggal <?php echo e(\Carbon\Carbon::parse(request('start_date'))->format('d M Y')); ?> - <?php echo e(\Carbon\Carbon::parse(request('end_date'))->format('d M Y')); ?>
+
+                        <?php elseif(request('start_date')): ?>
+                            Tidak ada surat mulai tanggal <?php echo e(\Carbon\Carbon::parse(request('start_date'))->format('d M Y')); ?>
+
+                        <?php else: ?>
+                            Tidak ada surat hingga tanggal <?php echo e(\Carbon\Carbon::parse(request('end_date'))->format('d M Y')); ?>
+
+                        <?php endif; ?>
+                        <br>Ubah rentang tanggal yang dipilih
                     <?php else: ?>
                         Klik tombol "Tambah Surat" untuk menambah surat baru
                     <?php endif; ?>

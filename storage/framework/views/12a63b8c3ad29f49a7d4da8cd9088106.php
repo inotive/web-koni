@@ -255,6 +255,44 @@
                             class="form-control border border-gray-500 py-2 search-input" />
                     </div>
                 </div>
+
+                <!-- Date Filter -->
+                <div class="date-filter-container">
+                    <button type="button" class="date-filter-btn <?php echo e((request('start_date') || request('end_date')) ? 'date-filter-active' : ''); ?>"
+                            id="dateFilterBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="filter-text">Filter Tanggal</span>
+                        <i class="fas fa-calendar-alt"></i>
+                    </button>
+
+                    <ul class="dropdown-menu date-filter-menu" aria-labelledby="dateFilterBtn">
+                        <div class="date-filter-menu-content p-4">
+                            <div class="date-input-group">
+                                <div class="date-input-wrapper">
+                                    <label class="date-input-label">Tanggal Awal</label>
+                                    <input type="date" name="start_date" id="startDate"
+                                           value="<?php echo e(request('start_date')); ?>"
+                                           class="form-control date-input">
+                                </div>
+
+                                <div class="date-input-wrapper">
+                                    <label class="date-input-label">Tanggal Akhir</label>
+                                    <input type="date" name="end_date" id="endDate"
+                                           value="<?php echo e(request('end_date')); ?>"
+                                           class="form-control date-input">
+                                </div>
+                            </div>
+
+                            <div class="date-filter-actions d-flex gap-2">
+                                <button type="button" class="date-filter-apply" id="applyDateFilter">
+                                    Terapkan
+                                </button>
+                                <button type="button" class="date-filter-clear" id="clearDateFilter">
+                                    Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
             </form>
         </div>
 
@@ -930,6 +968,71 @@
             const year = date.getFullYear();
             return `${day}/${month}/${year}`;
         }
+
+        // Date Range Filter
+        $(document).ready(function() {
+            // Apply date filter
+            $('#applyDateFilter').click(function() {
+                const startDate = $('#startDate').val();
+                const endDate = $('#endDate').val();
+
+                // Set the values in hidden inputs and submit the form
+                if (startDate) {
+                    $('[name="start_date"]').val(startDate);
+                } else {
+                    $('[name="start_date"]').val('');
+                }
+
+                if (endDate) {
+                    $('[name="end_date"]').val(endDate);
+                } else {
+                    $('[name="end_date"]').val('');
+                }
+
+                // Submit the filter form
+                $('#filter').submit();
+            });
+
+            // Clear date filter
+            $('#clearDateFilter').click(function() {
+                $('#startDate').val('');
+                $('#endDate').val('');
+                $('[name="start_date"]').val('');
+                $('[name="end_date"]').val('');
+                $('#filter').submit();
+            });
+
+            // Update date filter button text when dates are selected
+            function updateDateFilterButtonText() {
+                const startDate = $('#startDate').val();
+                const endDate = $('#endDate').val();
+                const button = $('#dateFilterBtn');
+
+                if (startDate || endDate) {
+                    button.addClass('date-filter-active');
+                    let text = 'Tanggal:';
+                    if (startDate) {
+                        text += ` ${formatDateToIndonesian(startDate)}`;
+                    }
+                    if (startDate && endDate) {
+                        text += ' s/d ';
+                    }
+                    if (endDate) {
+                        text += formatDateToIndonesian(endDate);
+                    }
+                    button.html(`<span class="filter-text">${text}</span><i class="fas fa-calendar-alt"></i>`);
+                } else {
+                    button.removeClass('date-filter-active');
+                    button.html('<span class="filter-text">Filter Tanggal</span><i class="fas fa-calendar-alt"></i>');
+                }
+            }
+
+            // Update the button text when date inputs change
+            $('#startDate, #endDate').on('change', updateDateFilterButtonText);
+
+            // Initialize the button text on page load
+            updateDateFilterButtonText();
+        });
     </script>
 <?php $__env->stopSection(); ?>
 
