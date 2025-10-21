@@ -168,36 +168,43 @@ class DashboardController extends Controller
                 // Special handling for parent categories with children
                 $total_serapan_parent = 0;
 
-                // Loop through each child to calculate its specific absorption
-                foreach ($item->children as $child) {
-                    $grandchild_ids = Lpj::where('parent_id', $child->id)
-                        ->where(function($query) use ($selectedYear) {
-                            $query->whereYear('created_at', $selectedYear)
-                                  ->orWhereNull('created_at');
-                        })->pluck('id');
-                    
-                    $greatGrandchildren = Lpj::whereIn('parent_id', $grandchild_ids)
-                        ->where(function($query) use ($selectedYear) {
-                            $query->whereYear('created_at', $selectedYear)
-                                  ->orWhereNull('created_at');
-                        })
-                        ->get();
-                    
-                    $serapan_child = $greatGrandchildren->sum(function($greatGrandchild) {
-                        $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                // Handle Sekretariat (ID 59) and Kegiatan Lainnya (ID 88) which have a flatter structure
+                if ($item->id == 59 || $item->id == 88) {
+                    $total_serapan_parent = $item->children->sum(function($child) {
+                        $harga = (int)($child->jumlah_harga ?? 0);
                         return ($harga > 1 && $harga != 2) ? $harga : 0;
                     });
-                    
-                    // Attach the calculated absorption to the child object for the view
-                    // For "Pembinaan Prestasi" (ID 6), use the specific name for compatibility
-                    if ($item->id == 6) {
-                        $child->serapan_cabor = $serapan_child;
-                    } else {
-                        $child->serapan_child = $serapan_child;
+                } else {
+                    // Loop through each child to calculate its specific absorption for other items
+                    foreach ($item->children as $child) {
+                        $grandchild_ids = Lpj::where('parent_id', $child->id)
+                            ->where(function($query) use ($selectedYear) {
+                                $query->whereYear('created_at', $selectedYear)
+                                    ->orWhereNull('created_at');
+                            })->pluck('id');
+                        
+                        $greatGrandchildren = Lpj::whereIn('parent_id', $grandchild_ids)
+                            ->where(function($query) use ($selectedYear) {
+                                $query->whereYear('created_at', $selectedYear)
+                                    ->orWhereNull('created_at');
+                            })
+                            ->get();
+                        
+                        $serapan_child = $greatGrandchildren->sum(function($greatGrandchild) {
+                            $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                            return ($harga > 1 && $harga != 2) ? $harga : 0;
+                        });
+                        
+                        // Attach the calculated absorption to the child object for the view
+                        if ($item->id == 6) {
+                            $child->serapan_cabor = $serapan_child;
+                        } else {
+                            $child->serapan_child = $serapan_child;
+                        }
+                        
+                        // Add to the total for the parent category
+                        $total_serapan_parent += $serapan_child;
                     }
-                    
-                    // Add to the total for the parent category
-                    $total_serapan_parent += $serapan_child;
                 }
                 $serapan_aktif = $total_serapan_parent;
 

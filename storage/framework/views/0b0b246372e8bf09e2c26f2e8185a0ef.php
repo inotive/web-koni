@@ -323,7 +323,7 @@
                             <div class="progress-bar bg-primary" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
                         </div>
 
-                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($persen_berjalan); ?>% Berjalan</span>
+                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($persen_berjalan); ?>% Keg.Berjalan</span>
                         <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
                             <div class="progress-bar bg-success" style="width: <?php echo e($persen_berjalan); ?>%;"></div>
                         </div>
@@ -524,7 +524,7 @@
                                 <?php $__currentLoopData = $item->children; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $j => $child): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <?php
                                         $child_serapan = 0;
-                                        
+
                                         // Calculate child serapan based on context
                                         if ($item->id == 6) { // Special handling for "Pembinaan Prestasi"
                                             $child_serapan = $child->serapan_cabor ?? 0;
