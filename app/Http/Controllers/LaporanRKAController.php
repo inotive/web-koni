@@ -55,7 +55,7 @@ class LaporanRKAController extends Controller
 
             LaporanRKA::create([
                 'manajemen_rka_id' => $request->rka_id,
-                'total_anggaran' => (int) str_replace('.', '', $request->total_anggaran),
+                'total_anggaran' => str_replace('.', '', $request->total_anggaran),
                 'file_size' => $file_size,
                 'file_path' => $file_path,
                 'name' => $name,
@@ -118,7 +118,7 @@ class LaporanRKAController extends Controller
             $laporan = LaporanRKA::findOrFail($id);
 
             $data = [
-                'total_anggaran' => (int) str_replace('.', '', $request->total_anggaran),
+                'total_anggaran' => str_replace('.', '', $request->total_anggaran),
             ];
 
             if ($request->hasFile('file')) {
