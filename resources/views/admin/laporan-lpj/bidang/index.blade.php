@@ -329,55 +329,29 @@
                     <strong>
                         <h1 class="fw-bold mb-1">Bidang Bidang</h1>
                     </strong>
-                    <h3 class="text-muted mb-0">Jelajahi Bidang Bidang yang terdaftar</h3>
+                    <h3 class="text-muted mb-0">Jelajahi Bidang Bidang yang terdaftar untuk tahun {{ $selectedYear }}</h3>
                 </div>
 
-                <!-- Enhanced Search and Sort Controls -->
-                {{-- <div class="controls-container">
-                    <!-- Search Container -->
-                    <div class="search-container">
-                        <input type="text" class="form-control search-input" placeholder="Search Teams..." id="searchInput">
-                        <i class="fas fa-search search-icon"></i>
-                    </div> --}}
-
-                    <!-- Sort Dropdown -->
-                    {{-- <div class="sort-dropdown">
-                <div class="sort-btn" id="sortBtn">
-                    <i class="fas fa-sort"></i>
-                    <span>Sort by</span>
-                    <i class="fas fa-chevron-down ms-1" style="font-size: 0.8rem;"></i>
-                </div>
-                <div class="sort-menu" id="sortMenu">
-                    <div class="sort-option active" data-sort="default">
-                        <span>Default Order</span>
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <div class="sort-option" data-sort="name-asc">
-                        <span>Name (A-Z)</span>
-                        <i class="fas fa-sort-alpha-down"></i>
-                    </div>
-                    <div class="sort-option" data-sort="name-desc">
-                        <span>Name (Z-A)</span>
-                        <i class="fas fa-sort-alpha-up"></i>
-                    </div>
-                    <div class="sort-option" data-sort="docs-desc">
-                        <span>Most Documents</span>
-                        <i class="fas fa-sort-numeric-down"></i>
-                    </div>
-                    <div class="sort-option" data-sort="docs-asc">
-                        <span>Least Documents</span>
-                        <i class="fas fa-sort-numeric-up"></i>
-                    </div>
-                </div>
-            </div> --}}
-                </div>
+                <!-- Year Filter -->
+                <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
+                    <label for="year" class="text-muted mb-0">Tahun:</label>
+                    <select name="year" class="form-select" style="width: 120px" onchange="this.form.submit()">
+                        @if(isset($availableYears) && count($availableYears) > 0)
+                            @foreach($availableYears as $year)
+                                <option value="{{ $year }}" {{ (string)$year === (string)($selectedYear ?? now()->year) ? 'selected' : '' }}>{{ $year }}</option>
+                            @endforeach
+                        @else
+                            <option value="{{ now()->year }}" selected>{{ now()->year }}</option>
+                        @endif
+                    </select>
+                </form>
             </div>
 
            @php
                 $anggaran_percentage = $target_anggaran > 0 ? ($total_anggaran / $target_anggaran) * 100 : 0;
             @endphp
             <div class="top-progress-wrapper mb-4">
-                <h3 class="text-muted mb-0">Total Anggaran</h3>
+                <h3 class="text-muted mb-0">Total Anggaran {{ $selectedYear }}</h3>
                 <div class="d-flex justify-content-between mb-2">
                     <h1 class="fw-bold mb-1">Rp. {{ number_format($total_anggaran, 0, ',', '.') }} / Rp. {{ number_format($target_anggaran, 0, ',', '.') }}</h1>
                     <h3 class="text-muted mb-0" data-bs-toggle="tooltip" title="{{ round($anggaran_percentage, 2) }}% dari total anggaran">
@@ -418,7 +392,7 @@
         <!-- Bidang Grid -->
         <div class="bidang-grid grid-default" id="bidangGrid">
             <!-- Mobilisasi Sumberdaya -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 1]) }}" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="{{ $mobilisasiCount ?? 0 }}">
+            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 1, 'year' => $selectedYear]) }}" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="{{ $mobilisasiCount ?? 0 }}">
                 <div class="bidang-icon icon-mobilisasi">
                     <img src="{{ asset('assets2/media/misc/bidang/bank.png') }}" alt="">
                 </div>
@@ -457,7 +431,7 @@
             </a>
 
             <!-- Hubungan Antar Lembaga -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2]) }}" class="bidang-card" data-title="hubungan antar lembaga" data-docs="{{ $hubungan_lembagaCount ?? 0 }}">
+            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2, 'year' => $selectedYear]) }}" class="bidang-card" data-title="hubungan antar lembaga" data-docs="{{ $hubungan_lembagaCount ?? 0 }}">
                 <div class="bidang-icon icon-hubungan">
                     <img src="{{ asset('assets2/media/misc/bidang/data.png') }}" alt="">
                 </div>
@@ -497,7 +471,7 @@
 
             <!-- Continue for other cards... -->
             <!-- Kesehatan -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 3]) }}" class="bidang-card" data-title="kesehatan" data-docs="{{ $kesehatanCount ?? 0 }}">
+            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 3, 'year' => $selectedYear]) }}" class="bidang-card" data-title="kesehatan" data-docs="{{ $kesehatanCount ?? 0 }}">
                 <div class="bidang-icon icon-kesehatan">
                     <img src="{{ asset('assets2/media/misc/bidang/pulse.png') }}" alt="">
                 </div>
@@ -536,7 +510,7 @@
             </a>
 
             <!-- Organisasi -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 4]) }}" class="bidang-card" data-title="organisasi" data-docs="{{ $organisasiCount ?? 0 }}">
+            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 4, 'year' => $selectedYear]) }}" class="bidang-card" data-title="organisasi" data-docs="{{ $organisasiCount ?? 0 }}">
                 <div class="bidang-icon icon-organisasi">
                     <img src="{{ asset('assets2/media/misc/bidang/people.png') }}" alt="">
                 </div>
@@ -575,7 +549,7 @@
             </a>
 
             <!-- Pembinaan Hukum Olahraga -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 5]) }}" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="{{ $pembinaan_hukumCount ?? 0 }}">
+            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 5, 'year' => $selectedYear]) }}" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="{{ $pembinaan_hukumCount ?? 0 }}">
                 <div class="bidang-icon icon-hukum">
                     <img src="{{ asset('assets2/media/misc/bidang/shield.png') }}" alt="">
                 </div>
@@ -614,7 +588,7 @@
             </a>
 
                 <!-- Pembinaan Prestasi -->
-                <a href="{{ route('admin.laporan-lpj.bidang.prestasi.index') }}" class="bidang-card"
+                <a href="{{ route('admin.laporan-lpj.bidang.prestasi.index', ['year' => $selectedYear]) }}" class="bidang-card"
                     data-title="pembinaan prestasi">
                     <div class="bidang-icon icon-prestasi">
                         <img src="{{ asset('assets2/media/misc/bidang/dribbble.png') }}" alt="">
@@ -653,7 +627,7 @@
                 </a>
 
             <!-- Sport Science & Iptek -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 7]) }}" class="bidang-card" data-title="sport science iptek" data-docs="{{ $scienceCount ?? 0 }}">
+            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 7, 'year' => $selectedYear]) }}" class="bidang-card" data-title="sport science iptek" data-docs="{{ $scienceCount ?? 0 }}">
                 <div class="bidang-icon icon-science">
                     <img src="{{ asset('assets2/media/misc/bidang/test-tubes.png') }}" alt="">
                 </div>
@@ -692,7 +666,7 @@
             </a>
 
             <!-- Perencanaan Program dan Anggaran -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 8]) }}" class="bidang-card" data-title="perencanaan program anggaran" data-docs="{{ $perencanaan_programCount ?? 0 }}">
+            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 8, 'year' => $selectedYear]) }}" class="bidang-card" data-title="perencanaan program anggaran" data-docs="{{ $perencanaan_programCount ?? 0 }}">
                 <div class="bidang-icon icon-perencanaan">
                     <img src="{{ asset('assets2/media/misc/bidang/tab-tablet.png') }}" alt="">
                 </div>

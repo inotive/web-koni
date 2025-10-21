@@ -20,6 +20,11 @@ class PengajuanController extends Controller
     {
         $query = Pengajuan::with(['lpj', 'user']);
 
+        // Restrict query for non-admins
+        if (!Auth::user()->can('pengajuan-modifikasi-laporan-manage')) {
+            $query->where('user_id', Auth::id());
+        }
+
         // Sorting
         $sortField = $request->get('sort', 'created_at');
         $sortDirection = $request->get('direction', 'desc');
