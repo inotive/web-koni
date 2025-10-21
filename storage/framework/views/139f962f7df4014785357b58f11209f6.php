@@ -92,6 +92,25 @@
             background-color: #f2f2f2;
             font-weight: bold;
         }
+        
+        /* Medal Icon Styles for PDF Export */
+        .medal-icon {
+            display: inline-block;
+            font-size: 14px;
+            margin-right: 4px;
+        }
+        
+        .medal-gold {
+            color: #FFD700;
+        }
+        
+        .medal-silver {
+            color: #C0C0C0;
+        }
+        
+        .medal-bronze {
+            color: #CD7F32;
+        }
 
         .text-center {
             text-align: center;
@@ -226,6 +245,23 @@
             </thead>
             <tbody>
                 <?php $__currentLoopData = $atlet->prestasis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $prestasi): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <?php
+                    $medaliType = strtolower($prestasi->medali ?? '');
+                    $medalClass = '';
+                    $medalSymbol = '';
+                    if ($medaliType === 'emas') {
+                        $medalClass = 'medal-gold';
+                        $medalSymbol = '🥇';
+                    } elseif ($medaliType === 'perak') {
+                        $medalClass = 'medal-silver';
+                        $medalSymbol = '🥈';
+                    } elseif ($medaliType === 'perunggu') {
+                        $medalClass = 'medal-bronze';
+                        $medalSymbol = '🥉';
+                    } else {
+                        $medalSymbol = $prestasi->medali ?? '-';
+                    }
+                ?>
                 <tr>
                     <td class="text-center"><?php echo e($index + 1); ?></td>
                     <td><?php echo e($prestasi->nama_prestasi ?? '-'); ?></td>
@@ -234,7 +270,16 @@
                     <td><?php echo e($prestasi->tingkat ?? '-'); ?></td>
                     <td><?php echo e($prestasi->tempat ?? '-'); ?></td>
                     <td><?php echo e($prestasi->tahun ?? '-'); ?></td>
-                    <td><?php echo e($prestasi->medali ?? '-'); ?></td>
+                    <td>
+                        <?php if($medalSymbol !== '-' && $medalSymbol !== ''): ?>
+                            <span class="medal-icon <?php echo e($medalClass); ?>"><?php echo e($medalSymbol); ?></span>
+                            <?php echo e(ucfirst($medaliType)); ?>
+
+                        <?php else: ?>
+                            <?php echo e($prestasi->medali ?? '-'); ?>
+
+                        <?php endif; ?>
+                    </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>

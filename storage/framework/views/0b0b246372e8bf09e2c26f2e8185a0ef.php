@@ -314,7 +314,7 @@
                     
                     <?php
                         $kegiatan_berjalan = $kegiatan_berjalan_all ?? $kegiatan_berjalan_count ?? 0;
-                        $total_kegiatan = $total_kegiatan_all ?? ($kegiatan ? $kegiatan->count() : 0);
+                        $total_kegiatan = $kegiatan ? $kegiatan->count() : 0;
                         $persen_berjalan = $total_kegiatan > 0 ? round(($kegiatan_berjalan / $total_kegiatan) * 100) : 0;
                     ?>
                     <div class="position-absolute top-0 end-0 mt-7 me-4 d-flex flex-column align-items-end">
@@ -322,8 +322,8 @@
                         <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
                             <div class="progress-bar bg-primary" style="width: <?php echo e($total_rka > 0 ? ($total_serapan / $total_rka) * 100 : 0); ?>%;"></div>
                         </div>
-                        
-                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($persen_berjalan); ?>% Berjalan</span>
+
+                        <span class="text-success fw-semibold" style="font-size: 1.2rem;"><?php echo e($persen_berjalan); ?>% Keg. Berjalan</span>
                         <div class="progress bg-light mt-1" style="width: 100px; height: 8px;">
                             <div class="progress-bar bg-success" style="width: <?php echo e($persen_berjalan); ?>%;"></div>
                         </div>
@@ -342,7 +342,7 @@
                             Kegiatan Berjalan</span>
                         <span>/</span>
                         <span
-                            class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle"><?php echo e($total_kegiatan_all ?? $kegiatan->count()); ?>
+                            class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 border border-primary-subtle"><?php echo e($kegiatan->count()); ?>
 
                             Total Kegiatan</span>
                     </div>
