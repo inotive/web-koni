@@ -606,7 +606,10 @@
                                                     @php
                                                         // Grandchild serapan
                                                         $grandchild_serapan = \App\Models\Lpj::where('parent_id', $grandchild->id)
-                                                            ->whereYear('created_at', $selectedYear)
+                                                            ->where(function($query) use ($selectedYear) {
+                                                                $query->whereYear('created_at', $selectedYear)
+                                                                      ->orWhereNull('created_at');
+                                                            })
                                                             ->get()->sum(function($doc) {
                                                                 $harga = (int)($doc->jumlah_harga ?? 0);
                                                                 return ($harga > 1 && $harga != 2) ? $harga : 0;

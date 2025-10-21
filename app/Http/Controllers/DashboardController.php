@@ -246,34 +246,57 @@ class DashboardController extends Controller
 
         // Mengambil kegiatan berjalan dari semua halaman LPJ
         // 1. Sekretariat (ID 59) - hitung anak-anak dengan jumlah_harga > 0
-        $kegiatan_berjalan_sekretariat = Lpj::where('parent_id', 59)->where('jumlah_harga', '>', 0)->whereYear('created_at', $selectedYear)->count();
+        $kegiatan_berjalan_sekretariat = Lpj::where('parent_id', 59)
+            ->where('jumlah_harga', '>', 0)
+            ->where(function($query) use ($selectedYear) {
+                $query->whereYear('created_at', $selectedYear)
+                      ->orWhereNull('created_at');
+            })->count();
         
         // 2. Kegiatan Lainnya (ID 88) - hitung anak-anak dengan jumlah_harga > 0
-        $kegiatan_berjalan_lainnya = Lpj::where('parent_id', 88)->where('jumlah_harga', '>', 0)->whereYear('created_at', $selectedYear)->count();
+        $kegiatan_berjalan_lainnya = Lpj::where('parent_id', 88)
+            ->where('jumlah_harga', '>', 0)
+            ->where(function($query) use ($selectedYear) {
+                $query->whereYear('created_at', $selectedYear)
+                      ->orWhereNull('created_at');
+            })->count();
         
         // 3. Bidang-bidang (ID 1-8) - hitung anak-anak dengan jumlah_harga > 0
         $kegiatan_berjalan_bidang = 0;
         for ($i = 1; $i <= 8; $i++) {
             // Check if this parent has children (like how Pembinaan Prestasi does)
-            $children = Lpj::where('parent_id', $i)->whereYear('created_at', $selectedYear)->get();
+            $children = Lpj::where('parent_id', $i)
+                ->where(function($query) use ($selectedYear) {
+                    $query->whereYear('created_at', $selectedYear)
+                          ->orWhereNull('created_at');
+                })->get();
             if ($children->count() > 0) {
                 // If parent has children, calculate from grand-grandchildren level
                 foreach ($children as $child) {
-                    $grandchildren = Lpj::where('parent_id', $child->id)->whereYear('created_at', $selectedYear)->get(); // Level 2
+                    $grandchildren = Lpj::where('parent_id', $child->id)
+                        ->where(function($query) use ($selectedYear) {
+                            $query->whereYear('created_at', $selectedYear)
+                                  ->orWhereNull('created_at');
+                        })->get(); // Level 2
                     foreach ($grandchildren as $grandchild) {
                         // Level 3 (Kegiatan) - ini yang kita hitung jika jumlah_harga > 0
                         $greatGrandchildren = Lpj::where('parent_id', $grandchild->id)->where('jumlah_harga', '>', 0)->get();
                         $greatGrandchildrenCount = $greatGrandchildren->filter(function($greatGrandchild) use ($selectedYear) {
-                            return $greatGrandchild->created_at && $greatGrandchild->created_at->year == $selectedYear;
+                            return (!$greatGrandchild->created_at) || $greatGrandchild->created_at->year == $selectedYear;
                         })->count();
                         $kegiatan_berjalan_bidang += $greatGrandchildrenCount;
                     }
                 }
             } else {
                 // For parent categories without children, calculate from direct children level
-                $children = Lpj::where('parent_id', $i)->where('jumlah_harga', '>', 0)->whereYear('created_at', $selectedYear)->get();
+                $children = Lpj::where('parent_id', $i)
+                    ->where('jumlah_harga', '>', 0)
+                    ->where(function($query) use ($selectedYear) {
+                        $query->whereYear('created_at', $selectedYear)
+                              ->orWhereNull('created_at');
+                    })->get();
                 $childrenCount = $children->filter(function($child) use ($selectedYear) {
-                    return $child->created_at && $child->created_at->year == $selectedYear;
+                    return (!$child->created_at) || $child->created_at->year == $selectedYear;
                 })->count();
                 $kegiatan_berjalan_bidang += $childrenCount;
             }
