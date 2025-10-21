@@ -543,6 +543,29 @@
                         <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
                     </a>
 
+                    <!-- Year Filter Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="yearFilterDropdown" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-calendar me-1"></i>
+                            Tahun {{ $tahunFilter ?? date('Y') }}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="yearFilterDropdown">
+                            @if(isset($availableYears) && $availableYears)
+                                @foreach($availableYears as $year)
+                                    <li>
+                                        <a class="dropdown-item {{ $tahunFilter == $year ? 'active' : '' }}" 
+                                           href="{{ request()->fullUrlWithQuery(['tahun_filter' => $year, 'page' => 1]) }}">Tahun {{ $year }}</a>
+                                    </li>
+                                @endforeach
+                            @else
+                                <li>
+                                    <a class="dropdown-item disabled" href="#">Tidak ada data tahun</a>
+                                </li>
+                            @endif
+                        </ul>
+                    </div>
+
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
                             placeholder="Cari kegiatan..." value="{{ request('search') }}" autocomplete="off">
@@ -952,6 +975,39 @@
                 });
             }
 
+            // Year filter functionality
+            $(document).on('click', '.dropdown-item', function(e) {
+                const href = $(this).attr('href');
+                if (href && href.indexOf('tahun_filter') !== -1) {
+                    e.preventDefault();
+                    showLoading();
+                    
+                    $.ajax({
+                        url: href,
+                        type: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function(response) {
+                            $('#table-container').html(response);
+                            hideLoading();
+                            
+                            // Update the URL in browser history
+                            window.history.pushState(null, null, href);
+                            
+                            initializeDataTable();
+                            initializeTooltips();
+                            initializeDropdownEvents();
+                            updateFilterCount();
+                        },
+                        error: function(xhr, status, error) {
+                            hideLoading();
+                            showNotification('Terjadi kesalahan saat memuat data.', 'error');
+                        }
+                    });
+                }
+            });
+
             function showNotification(message, type = 'info') {
                 const alertClass = {
                     'success': 'alert-success',
@@ -981,6 +1037,8 @@
 
                 if (urlParams.get('jenis_kegiatan_filter')) count++;
                 if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
+                // Only count year filter if it's explicitly set (not the default)
+                if (urlParams.get('tahun_filter') && urlParams.get('tahun_filter') != new Date().getFullYear()) count++;
 
                 const badge = $('#filter-count');
                 if (count > 0) {

@@ -30,6 +30,10 @@ class SekretariatController extends Controller
 
         $query = Lpj::where('parent_id', $parentCategory->id);
 
+        // Filter berdasarkan tahun - jika tidak ada filter tahun, gunakan tahun saat ini
+        $tahunFilter = $request->tahun_filter ?? date('Y');
+        $query->whereYear('created_at', $tahunFilter);
+
         if ($request->jenis_kegiatan_filter) {
             $query->where('nama_kegiatan', 'like', "%{$request->jenis_kegiatan_filter}%");
         }
@@ -69,6 +73,14 @@ class SekretariatController extends Controller
         $target_anggaran = $target->target_anggaran ?? 0;
         $target_kegiatan = $target->target_kegiatan ?? 0;
 
+        // Get available years for the dropdown
+        $availableYears = Lpj::where('parent_id', $parentCategory->id)
+            ->selectRaw('YEAR(created_at) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
         if ($request->ajax()) {
             return view('admin.laporan-lpj.sekretariat._table', compact('kegiatanLainnya'))->render();
         }
@@ -79,7 +91,9 @@ class SekretariatController extends Controller
             'kegiatan_count',
             'target_anggaran',
             'target_kegiatan',
-            'parentCategory'
+            'parentCategory',
+            'availableYears',
+            'tahunFilter'
         ));
     }
 

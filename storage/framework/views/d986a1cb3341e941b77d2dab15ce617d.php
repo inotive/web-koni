@@ -542,6 +542,30 @@
                         <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
                     </a>
 
+                    <!-- Year Filter Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="yearFilterDropdown" 
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-calendar me-1"></i>
+                            Tahun <?php echo e($tahunFilter ?? date('Y')); ?>
+
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="yearFilterDropdown">
+                            <?php if(isset($availableYears) && $availableYears): ?>
+                                <?php $__currentLoopData = $availableYears; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $year): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <li>
+                                        <a class="dropdown-item <?php echo e($tahunFilter == $year ? 'active' : ''); ?>" 
+                                           href="<?php echo e(request()->fullUrlWithQuery(['tahun_filter' => $year, 'page' => 1])); ?>">Tahun <?php echo e($year); ?></a>
+                                    </li>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <?php else: ?>
+                                <li>
+                                    <a class="dropdown-item disabled" href="#">Tidak ada data tahun</a>
+                                </li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+
                     <div class="input-group position-relative" style="width: 250px;">
                         <input type="search" name="search" id="search" class="form-control"
                             placeholder="Cari kegiatan..." value="<?php echo e(request('search')); ?>" autocomplete="off">
@@ -951,6 +975,39 @@
                 });
             }
 
+            // Year filter functionality
+            $(document).on('click', '.dropdown-item', function(e) {
+                const href = $(this).attr('href');
+                if (href && href.indexOf('tahun_filter') !== -1) {
+                    e.preventDefault();
+                    showLoading();
+                    
+                    $.ajax({
+                        url: href,
+                        type: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function(response) {
+                            $('#table-container').html(response);
+                            hideLoading();
+                            
+                            // Update the URL in browser history
+                            window.history.pushState(null, null, href);
+                            
+                            initializeDataTable();
+                            initializeTooltips();
+                            initializeDropdownEvents();
+                            updateFilterCount();
+                        },
+                        error: function(xhr, status, error) {
+                            hideLoading();
+                            showNotification('Terjadi kesalahan saat memuat data.', 'error');
+                        }
+                    });
+                }
+            });
+
             function showNotification(message, type = 'info') {
                 const alertClass = {
                     'success': 'alert-success',
@@ -980,6 +1037,8 @@
 
                 if (urlParams.get('jenis_kegiatan_filter')) count++;
                 if (urlParams.get('start_date') || urlParams.get('end_date')) count++;
+                // Only count year filter if it's explicitly set (not the default)
+                if (urlParams.get('tahun_filter') && urlParams.get('tahun_filter') != new Date().getFullYear()) count++;
 
                 const badge = $('#filter-count');
                 if (count > 0) {
