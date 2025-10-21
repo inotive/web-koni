@@ -118,13 +118,17 @@ class DashboardController extends Controller
                 foreach ($item->children as $child) { // Cabor
                     foreach ($child->children as $grandchild) { // Folders
                         // Count grandchildren with jumlah_harga > 0 (filtered by year in the query)
-                        $kegiatan_berjalan_pembinaan += $grandchild->children->where('jumlah_harga', '>', 0)->count();
+                        $kegiatan_berjalan_pembinaan += $grandchild->children->where('jumlah_harga', '>', 0)->filter(function($greatGrandchild) use ($selectedYear) {
+                            return $greatGrandchild->created_at && $greatGrandchild->created_at->year == $selectedYear;
+                        })->count();
                     }
                 }
                 $item->kegiatan_berjalan_count = $kegiatan_berjalan_pembinaan;
             } else {
                 // Count children with jumlah_harga > 0 (filtered by year in the query)
-                $item->kegiatan_berjalan_count = $item->children->where('jumlah_harga', '>', 0)->count();
+                $item->kegiatan_berjalan_count = $item->children->where('jumlah_harga', '>', 0)->filter(function($child) use ($selectedYear) {
+                    return $child->created_at && $child->created_at->year == $selectedYear;
+                })->count();
             }
             
             // Untuk Pembinaan Prestasi (ID 6), tetapkan anggaran spesifik untuk setiap anak
@@ -150,13 +154,14 @@ class DashboardController extends Controller
                 foreach ($item->children as $child) {
                     $grandchild_ids = Lpj::where('parent_id', $child->id)->whereYear('created_at', $selectedYear)->pluck('id');
                     
-                    $serapan_cabor = Lpj::whereIn('parent_id', $grandchild_ids)
+                    $greatGrandchildren = Lpj::whereIn('parent_id', $grandchild_ids)
                         ->whereYear('created_at', $selectedYear)
-                        ->get()
-                        ->sum(function($greatGrandchild) {
-                            $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
-                            return ($harga > 1 && $harga != 2) ? $harga : 0;
-                        });
+                        ->get();
+                    
+                    $serapan_cabor = $greatGrandchildren->sum(function($greatGrandchild) {
+                        $harga = (int)($greatGrandchild->jumlah_harga ?? 0);
+                        return ($harga > 1 && $harga != 2) ? $harga : 0;
+                    });
                     
                     // Attach the calculated absorption to the Cabor object for the view
                     $child->serapan_cabor = $serapan_cabor;

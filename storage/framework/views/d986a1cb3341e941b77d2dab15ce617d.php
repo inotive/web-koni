@@ -541,8 +541,8 @@
                 </div>
             </div>
         </div>
-    <?php endif; ?>>
-
+    <?php endif; ?>
+    
     <div class="mt-5 col-12">
         <div class="card">
             <div class="flex-wrap py-5 card-header d-flex justify-content-between align-items-center">

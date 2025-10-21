@@ -542,8 +542,8 @@
                 </div>
             </div>
         </div>
-    @endif>
-
+    @endif
+    
     <div class="mt-5 col-12">
         <div class="card">
             <div class="flex-wrap py-5 card-header d-flex justify-content-between align-items-center">
