@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Detail Atlet - {{ $atlet->nama }}</title>
+    <title>Detail Atlet - <?php echo e($atlet->nama); ?></title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
         body {
@@ -118,14 +118,14 @@
 <body>
     <!-- HEADER IMAGE -->
     <div class="letterhead">
-        @if(file_exists(public_path('assets/img/kop-nobg.png')))
-            <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
-        @else
+        <?php if(file_exists(public_path('assets/img/kop-nobg.png'))): ?>
+            <img src="<?php echo e(public_path('assets/img/kop-nobg.png')); ?>" alt="KONI Letterhead">
+        <?php else: ?>
             <div style="padding: 20px; border: 1px solid #ccc; text-align: center;">
                 <h2>KONI LETTERHEAD</h2>
                 <p>Header image not found</p>
             </div>
-        @endif
+        <?php endif; ?>
     </div>
 
     <div class="header">
@@ -134,13 +134,13 @@
 
     <div class="photo-section">
         <div class="photo-container">
-            @if($atlet->foto && file_exists(public_path('storage/' . $atlet->foto)))
-                <img src="{{ public_path('storage/' . $atlet->foto) }}" alt="Foto Atlet" class="photo">
-            @else
+            <?php if($atlet->foto && file_exists(public_path('storage/' . $atlet->foto))): ?>
+                <img src="<?php echo e(public_path('storage/' . $atlet->foto)); ?>" alt="Foto Atlet" class="photo">
+            <?php else: ?>
                 <div style="width: 120px; height: 120px; border: 1px solid #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
                     <span style="font-size: 10px; text-align: center;">Tidak ada foto</span>
                 </div>
-            @endif
+            <?php endif; ?>
         </div>
     </div>
 
@@ -148,35 +148,35 @@
         <div class="section-title">INFORMASI PRIBADI</div>
         <div class="info-row">
             <div class="info-label">Nama</div>
-            <div class="info-value">{{ $atlet->nama }}</div>
+            <div class="info-value"><?php echo e($atlet->nama); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Cabang Olahraga</div>
-            <div class="info-value">{{ $atlet->cabangOlahraga->nama_cabor ?? '-' }}</div>
+            <div class="info-value"><?php echo e($atlet->cabangOlahraga->nama_cabor ?? '-'); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Email</div>
-            <div class="info-value">{{ $atlet->email ?? '-' }}</div>
+            <div class="info-value"><?php echo e($atlet->email ?? '-'); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">No Telepon</div>
-            <div class="info-value">{{ $atlet->no_telepon ?? '-' }}</div>
+            <div class="info-value"><?php echo e($atlet->no_telepon ?? '-'); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Tempat Lahir</div>
-            <div class="info-value">{{ $atlet->tempat_lahir ?? '-' }}</div>
+            <div class="info-value"><?php echo e($atlet->tempat_lahir ?? '-'); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Tanggal Lahir</div>
-            <div class="info-value">{{ $atlet->tanggal_lahir ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->format('d/m/Y') : '-' }}</div>
+            <div class="info-value"><?php echo e($atlet->tanggal_lahir ? \Carbon\Carbon::parse($atlet->tanggal_lahir)->format('d/m/Y') : '-'); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Jenis Kelamin</div>
-            <div class="info-value">{{ $atlet->jenis_kelamin }}</div>
+            <div class="info-value"><?php echo e($atlet->jenis_kelamin); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Ketersediaan</div>
-            <div class="info-value">{{ $atlet->ketersediaan }}</div>
+            <div class="info-value"><?php echo e($atlet->ketersediaan); ?></div>
         </div>
     </div>
 
@@ -184,25 +184,25 @@
         <div class="section-title">ALAMAT</div>
         <div class="info-row">
             <div class="info-label">Alamat</div>
-            <div class="info-value">{{ $atlet->alamat ?? '-' }}</div>
+            <div class="info-value"><?php echo e($atlet->alamat ?? '-'); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Kota</div>
-            <div class="info-value">{{ $atlet->alamatkota ?? '-' }}</div>
+            <div class="info-value"><?php echo e($atlet->alamatkota ?? '-'); ?></div>
         </div>
         <div class="info-row">
             <div class="info-label">Provinsi</div>
-            <div class="info-value">{{ $atlet->alamatprovinsi ?? '-' }}</div>
+            <div class="info-value"><?php echo e($atlet->alamatprovinsi ?? '-'); ?></div>
         </div>
     </div>
 
     <div class="section">
         <div class="section-title">RIWAYAT PRESTASI</div>
         <div class="info-row">
-            <div class="info-label">Total Prestasi {{ $atlet->nama }}</div>
+            <div class="info-label">Total Prestasi <?php echo e($atlet->nama); ?></div>
         </div>
 
-        @if($atlet->prestasis->count() > 0)
+        <?php if($atlet->prestasis->count() > 0): ?>
         <table>
             <thead>
                 <tr>
@@ -217,27 +217,29 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($atlet->prestasis as $index => $prestasi)
+                <?php $__currentLoopData = $atlet->prestasis; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $prestasi): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
-                    <td class="text-center">{{ $index + 1 }}</td>
-                    <td>{{ $prestasi->nama_prestasi ?? '-' }}</td>
-                    <td>{{ $prestasi->kejuaraan ?? '-' }}</td>
-                    <td>{{ $atlet->cabangOlahraga->nama_cabor ?? '-' }}</td>
-                    <td>{{ $prestasi->tingkat ?? '-' }}</td>
-                    <td>{{ $prestasi->tempat ?? '-' }}</td>
-                    <td>{{ $prestasi->tahun ?? '-' }}</td>
-                    <td>{{ $prestasi->medali ?? '-' }}</td>
+                    <td class="text-center"><?php echo e($index + 1); ?></td>
+                    <td><?php echo e($prestasi->nama_prestasi ?? '-'); ?></td>
+                    <td><?php echo e($prestasi->kejuaraan ?? '-'); ?></td>
+                    <td><?php echo e($atlet->cabangOlahraga->nama_cabor ?? '-'); ?></td>
+                    <td><?php echo e($prestasi->tingkat ?? '-'); ?></td>
+                    <td><?php echo e($prestasi->tempat ?? '-'); ?></td>
+                    <td><?php echo e($prestasi->tahun ?? '-'); ?></td>
+                    <td><?php echo e($prestasi->medali ?? '-'); ?></td>
                 </tr>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </tbody>
         </table>
-        @else
+        <?php else: ?>
         <div>Tidak ada data prestasi.</div>
-        @endif
+        <?php endif; ?>
     </div>
 
     <div class="footer">
-        Dicetak pada: {{ \Carbon\Carbon::now()->format('d/m/Y H:i:s') }}
+        Dicetak pada: <?php echo e(\Carbon\Carbon::now()->format('d/m/Y H:i:s')); ?>
+
     </div>
 </body>
 </html>
+<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/admin/atlet/export-pdf.blade.php ENDPATH**/ ?>
