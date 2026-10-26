@@ -30,6 +30,8 @@ class PermissionSeeder extends Seeder
                 ['name' => 'database-bendahara', 'group' => 'Keuangan', 'display_name' => 'Database Bendahara'],
                 ['name' => 'file-kesekretariatan', 'group' => 'Kesekretariatan', 'display_name' => 'File Kesekretariatan'],
                 ['name' => 'surat-masuk-keluar', 'group' => 'Kesekretariatan', 'display_name' => 'Surat Masuk & Keluar'],
+                ['name' => 'surat-template', 'group' => 'Kesekretariatan', 'display_name' => 'Template Surat'],
+                ['name' => 'surat-penomoran', 'group' => 'Kesekretariatan', 'display_name' => 'Pengaturan Penomoran Surat'],
                 ['name' => 'pengajuan-modifikasi-laporan-view', 'group' => 'Sistem', 'display_name' => 'Lihat Pengajuan Modifikasi Laporan'],
                 ['name' => 'pengajuan-modifikasi-laporan-manage', 'group' => 'Sistem', 'display_name' => 'Kelola Pengajuan Modifikasi Laporan'],
 

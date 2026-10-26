@@ -14,6 +14,10 @@ use App\Http\Controllers\Admin\CabangOlahragaController;
 use App\Http\Controllers\Admin\ManajemenRKAController;
 use App\Http\Controllers\Admin\BendaharaController;
 use App\Http\Controllers\Admin\SuratController;
+use App\Http\Controllers\Admin\SuratKeluarTemplateController;
+use App\Http\Controllers\Admin\SuratKopController;
+use App\Http\Controllers\Admin\SuratPenomoranController;
+use App\Http\Controllers\Admin\SuratTemplateController;
 use App\Http\Controllers\Admin\BidangController;
 use App\Http\Controllers\Admin\LpjController;
 use App\Http\Controllers\LaporanRKAController;
@@ -97,7 +101,36 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     Route::resource('manajemen-rka', ManajemenRKAController::class);
     Route::resource('laporan-rka', LaporanRKAController::class);
 
+    // Surat keluar dari template & preview nomor (didaftarkan sebelum resource agar tidak tertangkap surat/{surat})
+    Route::middleware('can:surat-masuk-keluar')->group(function () {
+        Route::get('surat/nomor-preview', [SuratController::class, 'nomorPreview'])->name('surat.nomor-preview');
+        Route::get('surat/buat-dari-template', [SuratKeluarTemplateController::class, 'create'])->name('surat.template.create');
+        Route::post('surat/buat-dari-template', [SuratKeluarTemplateController::class, 'store'])->name('surat.template.store');
+        Route::match(['post', 'put'], 'surat/buat-dari-template/preview', [SuratKeluarTemplateController::class, 'preview'])->name('surat.template.preview');
+        Route::get('surat/{surat}/ubah-template', [SuratKeluarTemplateController::class, 'edit'])->name('surat.template.edit');
+        Route::put('surat/{surat}/ubah-template', [SuratKeluarTemplateController::class, 'update'])->name('surat.template.update');
+    });
+
     Route::resource('surat', SuratController::class);
+
+    Route::middleware('can:surat-template')->group(function () {
+        // match POST+PUT: tombol preview ikut mengirim _method=PUT dari form edit
+        Route::match(['post', 'put'], 'surat-template/preview/{template?}', [SuratTemplateController::class, 'preview'])->name('surat-template.preview');
+        Route::resource('surat-template', SuratTemplateController::class)
+            ->except('show')
+            ->parameters(['surat-template' => 'template']);
+
+        Route::match(['post', 'put'], 'surat-kop/preview/{kop?}', [SuratKopController::class, 'preview'])->name('surat-kop.preview');
+        Route::resource('surat-kop', SuratKopController::class)->parameters(['surat-kop' => 'kop']);
+    });
+
+    Route::middleware('can:surat-penomoran')->group(function () {
+        Route::get('surat-penomoran/preview', [SuratPenomoranController::class, 'preview'])->name('surat-penomoran.preview');
+        Route::post('surat-penomoran/{penomoran}/counter', [SuratPenomoranController::class, 'setCounter'])->name('surat-penomoran.counter');
+        Route::resource('surat-penomoran', SuratPenomoranController::class)
+            ->only(['index', 'store', 'update', 'destroy'])
+            ->parameters(['surat-penomoran' => 'penomoran']);
+    });
 
     Route::prefix('konfigurasi')->name('konfigurasi.')->group(function () {
         Route::get('atlet/export', [AtletController::class, 'exportCsv'])->name('atlet.export');

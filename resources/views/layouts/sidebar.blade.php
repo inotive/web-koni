@@ -36,7 +36,7 @@
                         auth()->user()->canany(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya']) ||
                         auth()->user()->can('database-bendahara') ||
                         auth()->user()->can('file-kesekretariatan') ||
-                        auth()->user()->can('surat-masuk-keluar') ||
+                        auth()->user()->canany(['surat-masuk-keluar', 'surat-template', 'surat-penomoran']) ||
                         auth()->user()->canany(['arsip-dashboard', 'arsip-lokasi', 'arsip-kategori', 'arsip-data', 'arsip-peminjaman', 'arsip-retensi']))
                     <div class="menu-item">
                         <div class="menu-content">
@@ -59,17 +59,46 @@
                 @endcan
 
                 <!-- Surat masuk dan keluar -->
-                @can('surat-masuk-keluar')
+                @canany(['surat-masuk-keluar', 'surat-template', 'surat-penomoran'])
+                    @php
+                        $isSuratActive = request()->is('admin/surat*');
+                        $suratMenu = [
+                            ['can' => 'surat-masuk-keluar', 'route' => 'admin.surat.index', 'active' => request()->is('admin/surat') || request()->is('admin/surat/*'), 'title' => 'Surat Masuk & Keluar'],
+                            ['can' => 'surat-template', 'route' => 'admin.surat-template.index', 'active' => request()->is('admin/surat-template*'), 'title' => 'Template Surat'],
+                            ['can' => 'surat-template', 'route' => 'admin.surat-kop.index', 'active' => request()->is('admin/surat-kop*'), 'title' => 'Kop Surat'],
+                            ['can' => 'surat-penomoran', 'route' => 'admin.surat-penomoran.index', 'active' => request()->is('admin/surat-penomoran*'), 'title' => 'Pengaturan Penomoran'],
+                        ];
+                    @endphp
                     <div class="menu-item">
-                        <a class="menu-link {{ request()->is('admin/surat*') ? 'active bg-red' : '' }}"
-                            href=" {{ route('admin.surat.index') }}">
-                            <span class="menu-icon">
-                                <i class="fs-1 fa-solid fa-message"></i>
+                        <a class="menu-link d-flex justify-content-between {{ $isSuratActive ? 'active bg-orange' : '' }}"
+                            data-bs-toggle="collapse" href="#submenu-surat" role="button"
+                            aria-expanded="{{ $isSuratActive ? 'true' : 'false' }}" aria-controls="submenu-surat">
+                            <span class="d-flex align-items-center">
+                                <span class="menu-icon">
+                                    <i class="fa-solid fa-message fs-2 {{ $isSuratActive ? 'text-orange' : 'text-gray-600' }}"></i>
+                                </span>
+                                <span class="menu-title {{ $isSuratActive ? 'text-orange' : 'text-gray-800' }}">
+                                    Surat Masuk & Keluar
+                                </span>
                             </span>
-                            <span class="menu-title">Surat Masuk & Keluar</span>
+                            <i class="fa-solid {{ $isSuratActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isSuratActive ? 'text-orange' : 'text-gray-600' }}"></i>
                         </a>
+                        <div class="collapse {{ $isSuratActive ? 'show' : '' }}" id="submenu-surat">
+                            <ul class="menu flex-column ms-5">
+                                @foreach ($suratMenu as $item)
+                                    @can($item['can'])
+                                        <li class="menu-item">
+                                            <a class="menu-link {{ $item['active'] ? 'active' : '' }}" href="{{ route($item['route']) }}">
+                                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                                <span class="menu-title">{{ $item['title'] }}</span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
-                @endcan
+                @endcanany
                 <!-- Manajemen RKA -->
                 @can('manajemen-rka')
                     <div class="menu-item">

@@ -2,16 +2,26 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Arsip\ArsipKategori;
 use App\Models\Surat;
+use App\Models\SuratPenomoran;
+use App\Models\SuratTemplate;
+use App\Services\NomorSuratGenerator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class SuratController extends Controller
 {
+    public function __construct(private NomorSuratGenerator $generator)
+    {
+    }
+
     public function index(Request $request)
     {
-        $query = Surat::query();
+        $query = Surat::with('template:id,nama');
 
         // Expanded allowed sorts to include all sortable columns
         $allowedSorts = ['nama_kegiatan', 'no_surat', 'dokumen_surat', 'created_at', 'updated_at'];
@@ -100,32 +110,70 @@ class SuratController extends Controller
         $suratKeluar = $suratKeluarQuery->where('jenis_surat', 'keluar')->paginate($perPage);
         $suratKeluar->appends($request->query());
 
-        return view('admin.surat.index', compact('suratMasuk', 'suratKeluar'));
+        $templates = SuratTemplate::active()->orderBy('nama')->get(['id', 'nama', 'kode']);
+        $penomoranKeluar = SuratPenomoran::defaultUntuk('keluar');
+        $penomoranMasuk = SuratPenomoran::defaultUntuk('masuk');
+        $klasifikasiList = ArsipKategori::orderBy('kode_klasifikasi')->get(['kode_klasifikasi', 'nama']);
+
+        return view('admin.surat.index', compact('suratMasuk', 'suratKeluar', 'templates', 'penomoranKeluar', 'penomoranMasuk', 'klasifikasiList'));
     }
 
     public function store(Request $request)
     {
         try {
+            $penomoranKeluar = SuratPenomoran::defaultUntuk('keluar');
+            // Nomor otomatis dipaksa bila format default tidak boleh diedit manual
+            $otomatis = $request->input('jenis_surat') === 'keluar' && $penomoranKeluar
+                && ($request->boolean('nomor_otomatis') || !$penomoranKeluar->editable);
+            if ($otomatis) {
+                // Nomor di form hanya perkiraan; nomor final dibuat di bawah
+                $request->merge(['no_surat' => null]);
+            }
+
             $validated = $request->validate([
                 'nama_kegiatan' => 'required|string|max:255',
-                'no_surat' => 'required|string|max:255|unique:surat,no_surat',
+                'no_surat' => [$otomatis ? 'nullable' : 'required', 'string', 'max:255', 'unique:surat,no_surat'],
                 'jenis_surat' => 'required|in:masuk,keluar',
+                'tanggal_surat' => 'nullable|date',
+                'kode_surat' => 'nullable|string|max:50',
+                'kode_klasifikasi' => 'nullable|string|max:50',
                 'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             ]);
 
-            $surat = new Surat();
-            $surat->nama_kegiatan = $validated['nama_kegiatan'];
-            $surat->jenis_surat = $validated['jenis_surat'];
-            $surat->no_surat = $validated['no_surat']; // Use the provided no_surat instead of generating
+            $tanggal = isset($validated['tanggal_surat']) ? Carbon::parse($validated['tanggal_surat']) : now();
 
-            if ($request->hasFile('dokumen_surat')) {
-                $file = $request->file('dokumen_surat');
-                $filename = $file->getClientOriginalName();
-                $path = $file->storeAs('surat', $filename, 'public');
-                $surat->dokumen_surat = $path;
-            }
+            DB::transaction(function () use ($request, $validated, $otomatis, $penomoranKeluar, $tanggal) {
+                $surat = new Surat();
+                $surat->nama_kegiatan = $validated['nama_kegiatan'];
+                $surat->jenis_surat = $validated['jenis_surat'];
+                $surat->tanggal_surat = $tanggal;
+                $surat->sumber = 'upload';
+                $surat->kode_klasifikasi = $validated['kode_klasifikasi'] ?? null;
 
-            $surat->save();
+                if ($otomatis) {
+                    $surat->no_surat = $this->generator->generate($penomoranKeluar, $tanggal, [
+                        'kode' => strtoupper($validated['kode_surat'] ?? ''),
+                        'klasifikasi' => (string) $surat->kode_klasifikasi,
+                    ]);
+                    $surat->surat_penomoran_id = $penomoranKeluar->id;
+                } else {
+                    $surat->no_surat = $validated['no_surat'];
+                }
+
+                // Nomor agenda surat masuk selalu otomatis bila formatnya sudah diatur
+                if ($surat->jenis_surat === 'masuk' && ($penomoranMasuk = SuratPenomoran::defaultUntuk('masuk'))) {
+                    $surat->no_agenda = $this->generator->generate($penomoranMasuk, $tanggal);
+                }
+
+                if ($request->hasFile('dokumen_surat')) {
+                    $file = $request->file('dokumen_surat');
+                    $filename = $file->getClientOriginalName();
+                    $path = $file->storeAs('surat', $filename, 'public');
+                    $surat->dokumen_surat = $path;
+                }
+
+                $surat->save();
+            });
 
             if ($request->ajax()) {
                 return response()->json([
@@ -164,6 +212,40 @@ class SuratController extends Controller
         }
     }
 
+    /** Perkiraan nomor berikutnya untuk ditampilkan di form (tidak mengambil nomor). */
+    public function nomorPreview(Request $request)
+    {
+        $request->validate([
+            'jenis' => 'required|in:masuk,keluar',
+            'tanggal' => 'nullable|date',
+            'template_id' => 'nullable|exists:surat_template,id',
+            'kode' => 'nullable|string|max:50',
+            'klasifikasi' => 'nullable|string|max:50',
+        ]);
+
+        $template = $request->filled('template_id') ? SuratTemplate::find($request->template_id) : null;
+        $penomoran = $template ? $template->penomoranEfektif() : SuratPenomoran::defaultUntuk($request->jenis);
+
+        if (!$penomoran) {
+            return response()->json(['tersedia' => false]);
+        }
+
+        $tanggal = $request->filled('tanggal') ? Carbon::parse($request->tanggal) : now();
+        // Klasifikasi yang dipilih di form menggantikan klasifikasi bawaan template
+        $klasifikasi = $request->has('klasifikasi') ? (string) $request->klasifikasi : (string) $template?->kode_klasifikasi;
+        $context = [
+            'kode' => $template ? $template->kode : strtoupper((string) $request->kode),
+            'klasifikasi' => $klasifikasi,
+        ];
+
+        return response()->json([
+            'tersedia' => true,
+            'nomor' => $this->generator->preview($penomoran, $tanggal, $context),
+            'editable' => $penomoran->editable,
+            'format' => $penomoran->nama,
+        ]);
+    }
+
     public function update(Request $request, $id)
     {
         try {
@@ -173,12 +255,14 @@ class SuratController extends Controller
                 'nama_kegiatan' => 'required|string|max:255',
                 'no_surat' => 'required|string|max:255|unique:surat,no_surat,' . $id,
                 'jenis_surat' => 'required|in:masuk,keluar',
+                'tanggal_surat' => 'nullable|date',
                 'dokumen_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             ]);
 
             $surat->nama_kegiatan = $validated['nama_kegiatan'];
             $surat->no_surat = $validated['no_surat'];
             $surat->jenis_surat = $validated['jenis_surat'];
+            $surat->tanggal_surat = $validated['tanggal_surat'] ?? $surat->tanggal_surat;
 
             if ($request->hasFile('dokumen_surat')) {
                 // Delete old file if exists
@@ -264,27 +348,5 @@ class SuratController extends Controller
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan saat menghapus data');
         }
-    }
-
-
-    private function generateNoSurat($jenisSurat)
-    {
-        $prefix = $jenisSurat == 'masuk' ? 'SM' : 'SK';
-        $year = date('Y');
-        $month = date('m');
-
-        $lastSurat = Surat::where('jenis_surat', $jenisSurat)
-            ->where('no_surat', 'like', "{$prefix}/{$year}/{$month}%")
-            ->orderBy('no_surat', 'desc')
-            ->first();
-
-        if ($lastSurat) {
-            $lastNumber = (int) substr($lastSurat->no_surat, -3);
-            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-        } else {
-            $newNumber = '001';
-        }
-
-        return "{$prefix}/{$year}/{$month}/{$newNumber}";
     }
 }

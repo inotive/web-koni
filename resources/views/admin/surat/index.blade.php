@@ -250,6 +250,12 @@
                     <span id="tambahSuratText">Upload Surat</span>
                 </button>
 
+                <a href="{{ route('admin.surat.template.create') }}" id="buatTemplateBtn"
+                    class="btn btn-light-primary fw-bold align-items-center gap-2 rounded px-4 py-2 d-none">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>Buat dari Template</span>
+                </a>
+
                 <div class="search-container">
                     <div class="position-relative bg-light">
                         <i class="ki-outline ki-magnifier fs-2 search-icon"></i>
@@ -362,10 +368,59 @@
                     </div>
 
                     <div>
-                        <div class="fw-semibold required mb-3 text-gray-800">Nomor Surat</div>
-                        <input type="text" name="no_surat" placeholder="Masukkan Nomor Surat"
+                        <div class="fw-semibold required mb-3 text-gray-800">Tanggal Surat</div>
+                        <input type="date" name="tanggal_surat" id="addTanggalSurat" value="{{ now()->format('Y-m-d') }}"
                             class="form-control bg-light border border-gray-400" required />
                     </div>
+
+                    <div>
+                        <div class="fw-semibold required mb-3 text-gray-800">Nomor Surat</div>
+                        <input type="text" name="no_surat" id="addNoSurat" placeholder="Masukkan Nomor Surat"
+                            class="form-control bg-light border border-gray-400" required />
+
+                        {{-- Nomor otomatis surat keluar --}}
+                        @if ($penomoranKeluar)
+                            <div id="nomorOtomatisWrap" class="d-none mt-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <label class="form-check form-switch mb-0 flex-shrink-0">
+                                        <input type="hidden" name="nomor_otomatis" value="0">
+                                        <input class="form-check-input" type="checkbox" name="nomor_otomatis" value="1"
+                                            id="addNomorOtomatis" @disabled(!$penomoranKeluar->editable) checked>
+                                        <span class="form-check-label fs-7">Nomor otomatis</span>
+                                    </label>
+                                    @if (str_contains($penomoranKeluar->format, '{kode}'))
+                                        <input type="text" name="kode_surat" id="addKodeSurat" maxlength="50"
+                                            class="form-control form-control-sm bg-light border border-gray-400 text-uppercase"
+                                            placeholder="Kode surat, misal: UND">
+                                    @endif
+                                </div>
+                                @unless ($penomoranKeluar->editable)
+                                    <input type="hidden" name="nomor_otomatis" value="1">
+                                @endunless
+                                <div class="form-text">Perkiraan nomor; nomor final diambil saat surat disimpan.</div>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Kode klasifikasi surat keluar (token {klasifikasi} pada nomor otomatis) --}}
+                    <div id="klasifikasiWrap" class="d-none">
+                        <div class="fw-semibold mb-3 text-gray-800">Kode Klasifikasi</div>
+                        <select name="kode_klasifikasi" id="addKodeKlasifikasi" class="form-select bg-light border border-gray-400"
+                            data-control="select2" data-dropdown-parent="#add" data-placeholder="— Tanpa klasifikasi —" data-allow-clear="true">
+                            <option value=""></option>
+                            @foreach ($klasifikasiList as $k)
+                                <option value="{{ $k->kode_klasifikasi }}">{{ $k->kode_klasifikasi }} — {{ $k->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Nomor agenda otomatis surat masuk --}}
+                    @if ($penomoranMasuk)
+                        <div id="noAgendaWrap" class="rounded-3 p-3" style="background-color: #F4FAF7; border: 1px solid #E3F1EA;">
+                            <span class="text-muted fs-7">No. Agenda (otomatis):</span>
+                            <strong class="ms-2 font-monospace" id="addNoAgenda">-</strong>
+                        </div>
+                    @endif
 
                     <input type="hidden" name="jenis_surat" id="hiddenJenisSurat" value="masuk">
 
@@ -483,6 +538,50 @@
             $('#modalTitle').text(modalTitle);
             $('#submitBtn').text(buttonText);
             $('#hiddenJenisSurat').val(currentTab === 'keluar' ? 'keluar' : 'masuk');
+
+            const isKeluar = currentTab === 'keluar';
+            $('#buatTemplateBtn').toggleClass('d-none', !isKeluar).toggleClass('d-flex', isKeluar);
+            $('#nomorOtomatisWrap').toggleClass('d-none', !isKeluar);
+            $('#klasifikasiWrap').toggleClass('d-none', !isKeluar);
+            $('#noAgendaWrap').toggleClass('d-none', isKeluar);
+            applyNomorOtomatis();
+        }
+
+        function isNomorOtomatis() {
+            return currentTab === 'keluar' && $('#addNomorOtomatis').length > 0 &&
+                ($('#addNomorOtomatis').is(':checked') || $('#addNomorOtomatis').is(':disabled'));
+        }
+
+        // Surat keluar: nomor otomatis membuat input nomor read-only berisi perkiraan nomor
+        function applyNomorOtomatis() {
+            const otomatis = isNomorOtomatis();
+            const $no = $('#addNoSurat');
+            $no.prop('readonly', otomatis).prop('required', !otomatis);
+            if (otomatis) {
+                refreshNomorPreview();
+            } else if ($no.data('auto')) {
+                $no.val('').data('auto', false);
+            }
+            if (currentTab === 'masuk' && $('#addNoAgenda').length) {
+                refreshNomorPreview();
+            }
+        }
+
+        function refreshNomorPreview() {
+            const jenis = currentTab === 'keluar' ? 'keluar' : 'masuk';
+            $.get("{{ route('admin.surat.nomor-preview') }}", {
+                jenis: jenis,
+                tanggal: $('#addTanggalSurat').val(),
+                kode: $('#addKodeSurat').val() || '',
+                klasifikasi: $('#addKodeKlasifikasi').val() || ''
+            }).done(function(res) {
+                if (!res.tersedia) return;
+                if (jenis === 'keluar' && isNomorOtomatis()) {
+                    $('#addNoSurat').val(res.nomor).data('auto', true).removeClass('is-invalid');
+                } else if (jenis === 'masuk') {
+                    $('#addNoAgenda').text(res.nomor);
+                }
+            });
         }
 
         function updateDateFilterButton() {
@@ -715,6 +814,7 @@
 
                         if (formId === 'formAdd') {
                             formElement.reset();
+                            $('#addKodeKlasifikasi').val('').trigger('change.select2');
                             if (dropzones['formAdd']) {
                                 dropzones['formAdd'].removeAllFiles();
                             }
@@ -813,8 +913,14 @@
             updateDateFilterButton();
 
             $('#tambahSuratBtn').on('click', function() {
+                applyNomorOtomatis();
                 $('#add').modal('show');
             });
+
+            $('#addNomorOtomatis').on('change', applyNomorOtomatis);
+            $('#addTanggalSurat').on('change', applyNomorOtomatis);
+            $('#addKodeSurat').on('input', debounce(applyNomorOtomatis, 300));
+            $('#addKodeKlasifikasi').on('change', applyNomorOtomatis);
 
             $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
                 currentTab = $(e.target).attr('data-bs-target').replace('#', '').replace('-content', '');
@@ -982,6 +1088,7 @@
                     if (form) {
                         form.reset();
                     }
+                    $('#addKodeKlasifikasi').val('').trigger('change.select2');
                     if (dropzones['formAdd']) {
                         dropzones['formAdd'].removeAllFiles();
                     }

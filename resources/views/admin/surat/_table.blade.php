@@ -101,6 +101,17 @@
                                 <small class="text-muted text-truncate" style="max-width: 250px;" title="{{ $surat->no_surat }}">
                                     {{ $surat->no_surat }}
                                 </small>
+                                @if ($surat->no_agenda)
+                                    <small class="text-muted">Agenda: {{ $surat->no_agenda }}</small>
+                                @endif
+                                @if ($surat->kode_klasifikasi)
+                                    <small class="text-muted">Klasifikasi: {{ $surat->kode_klasifikasi }}</small>
+                                @endif
+                                @if ($surat->isFromTemplate())
+                                    <span class="badge badge-light-primary mt-1 align-self-start" title="{{ $surat->template?->nama }}">
+                                        <i class="fa-solid fa-file-signature fs-8 me-1 text-primary"></i>Template
+                                    </span>
+                                @endif
                             </div>
                         </td>
                         <td class="px-6 text-start">
@@ -120,7 +131,7 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        <td class="px-2 text-center">{{ Carbon\Carbon::parse($surat->created_at)->format('d M Y') }}</td>
+                        <td class="px-2 text-center">{{ ($surat->tanggal_surat ?? $surat->created_at)->format('d M Y') }}</td>
                         <td class="px-2 text-center">
                             <div class="dropdown dropdown-action" data-row-id="{{ $surat->id }}">
                                 <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
@@ -153,10 +164,18 @@
                                             <i class="fa-solid fa-share-from-square me-2"></i>Disposisi
                                         </li>
                                     @endif
-                                    <li class="dropdown-item edit" data-bs-toggle="modal"
-                                        data-bs-target="#edit-{{ $surat->id }}">
-                                        <i class="ki-outline ki-pencil me-2"></i>Edit Surat
-                                    </li>
+                                    @if ($surat->isFromTemplate())
+                                        <li>
+                                            <a class="dropdown-item edit" href="{{ route('admin.surat.template.edit', $surat) }}">
+                                                <i class="ki-outline ki-pencil me-2"></i>Edit Surat
+                                            </a>
+                                        </li>
+                                    @else
+                                        <li class="dropdown-item edit" data-bs-toggle="modal"
+                                            data-bs-target="#edit-{{ $surat->id }}">
+                                            <i class="ki-outline ki-pencil me-2"></i>Edit Surat
+                                        </li>
+                                    @endif
                                     <li class="dropdown-item delete"
                                         onclick="deleteItem('delete-form-{{ $surat->id }}', '{{ $surat->nama_kegiatan }}')">
                                         <i class="ki-outline ki-trash me-2"></i>Hapus
@@ -172,6 +191,7 @@
                         </td>
                     </tr>
 
+                    @unless ($surat->isFromTemplate())
                     <div class="modal fade" id="edit-{{ $surat->id }}" tabindex="-1"
                         aria-labelledby="edit-{{ $surat->id }}" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
@@ -203,6 +223,12 @@
                                         <input type="text" name="no_surat" value="{{ $surat->no_surat }}"
                                             placeholder="Masukkan Nomor Surat"
                                             class="form-control bg-light border border-gray-400" required />
+                                    </div>
+
+                                    <div>
+                                        <div class="fw-semibold mb-3 text-gray-800">Tanggal Surat</div>
+                                        <input type="date" name="tanggal_surat" value="{{ $surat->tanggal_surat?->format('Y-m-d') }}"
+                                            class="form-control bg-light border border-gray-400" />
                                     </div>
 
                                     <input type="hidden" name="jenis_surat" value="{{ $surat->jenis_surat }}">
@@ -251,6 +277,7 @@
                             </div>
                         </div>
                     </div>
+                    @endunless
                 @empty
                     <tr>
                         <td class="fw-bold p-6 text-center" colspan="5">
