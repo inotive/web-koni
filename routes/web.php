@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\LpjController;
 use App\Http\Controllers\LaporanRKAController;
 use App\Http\Controllers\Admin\KegiatanLainnyaController;
 use App\Http\Controllers\Admin\TargetController;
+use App\Http\Controllers\Admin\Arsip;
 
 
 
@@ -293,5 +294,53 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
         Route::put('/{bendahara}', [BendaharaController::class, 'update'])->name('update');
         Route::delete('/{bendahara}', [BendaharaController::class, 'destroy'])->name('destroy');
         Route::get('/{bendahara}/download', [BendaharaController::class, 'download'])->name('download');
+    });
+
+    // Manajemen Arsip
+    Route::prefix('arsip')->name('arsip.')->group(function () {
+        Route::get('/dashboard', [Arsip\DashboardArsipController::class, 'index'])->name('dashboard')->middleware('can:arsip-dashboard');
+
+        Route::prefix('lokasi')->name('lokasi.')->middleware('can:arsip-lokasi')->group(function () {
+            Route::get('/', [Arsip\LokasiController::class, 'index'])->name('index');
+            Route::post('/', [Arsip\LokasiController::class, 'store'])->name('store');
+            Route::put('/{lokasi}', [Arsip\LokasiController::class, 'update'])->name('update');
+            Route::delete('/{lokasi}', [Arsip\LokasiController::class, 'destroy'])->name('destroy');
+            Route::get('/{lokasi}/label', [Arsip\LokasiController::class, 'label'])->name('label');
+        });
+
+        Route::prefix('kategori')->name('kategori.')->middleware('can:arsip-kategori')->group(function () {
+            Route::get('/', [Arsip\KategoriController::class, 'index'])->name('index');
+            Route::post('/', [Arsip\KategoriController::class, 'store'])->name('store');
+            Route::put('/{kategori}', [Arsip\KategoriController::class, 'update'])->name('update');
+            Route::delete('/{kategori}', [Arsip\KategoriController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('data')->name('data.')->middleware('can:arsip-data')->group(function () {
+            Route::get('/export', [Arsip\ArsipController::class, 'export'])->name('export');
+            Route::get('/sumber-options', [Arsip\ArsipController::class, 'sumberOptions'])->name('sumber-options');
+            Route::get('/', [Arsip\ArsipController::class, 'index'])->name('index');
+            Route::get('/create', [Arsip\ArsipController::class, 'create'])->name('create');
+            Route::post('/', [Arsip\ArsipController::class, 'store'])->name('store');
+            Route::get('/{arsip}', [Arsip\ArsipController::class, 'show'])->name('show');
+            Route::get('/{arsip}/edit', [Arsip\ArsipController::class, 'edit'])->name('edit');
+            Route::put('/{arsip}', [Arsip\ArsipController::class, 'update'])->name('update');
+            Route::delete('/{arsip}', [Arsip\ArsipController::class, 'destroy'])->name('destroy');
+            Route::post('/{arsip}/pindah', [Arsip\ArsipController::class, 'pindah'])->name('pindah');
+            Route::get('/{arsip}/file', [Arsip\ArsipController::class, 'file'])->name('file');
+            Route::get('/{arsip}/label', [Arsip\ArsipController::class, 'label'])->name('label');
+        });
+
+        Route::prefix('peminjaman')->name('peminjaman.')->middleware('can:arsip-peminjaman')->group(function () {
+            Route::get('/', [Arsip\PeminjamanController::class, 'index'])->name('index');
+            Route::post('/', [Arsip\PeminjamanController::class, 'store'])->name('store');
+            Route::patch('/{peminjaman}/kembali', [Arsip\PeminjamanController::class, 'kembali'])->name('kembali');
+        });
+
+        Route::prefix('retensi')->name('retensi.')->middleware('can:arsip-retensi')->group(function () {
+            Route::get('/', [Arsip\RetensiController::class, 'index'])->name('index');
+            Route::post('/inaktifkan', [Arsip\RetensiController::class, 'inaktifkan'])->name('inaktifkan');
+            Route::post('/proses', [Arsip\RetensiController::class, 'proses'])->name('proses');
+            Route::get('/berita-acara/{pemusnahan}', [Arsip\RetensiController::class, 'beritaAcara'])->name('berita-acara');
+        });
     });
 }); //Batas Admin

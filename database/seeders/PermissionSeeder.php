@@ -41,6 +41,14 @@ class PermissionSeeder extends Seeder
                 ['name' => 'tahun-anggaran', 'group' => 'Keuangan', 'display_name' => 'Tahun Anggaran'],
                 ['name' => 'cabang-olahraga', 'group' => 'Konfigurasi', 'display_name' => 'Cabang Olahraga'],
                 ['name' => 'kejuaraan', 'group' => 'Konfigurasi', 'display_name' => 'Kejuaraan'],
+
+                // Kearsipan
+                ['name' => 'arsip-dashboard', 'group' => 'Kearsipan', 'display_name' => 'Dashboard Arsip'],
+                ['name' => 'arsip-lokasi', 'group' => 'Kearsipan', 'display_name' => 'Lokasi Arsip'],
+                ['name' => 'arsip-kategori', 'group' => 'Kearsipan', 'display_name' => 'Klasifikasi Arsip'],
+                ['name' => 'arsip-data', 'group' => 'Kearsipan', 'display_name' => 'Data Arsip'],
+                ['name' => 'arsip-peminjaman', 'group' => 'Kearsipan', 'display_name' => 'Peminjaman Arsip'],
+                ['name' => 'arsip-retensi', 'group' => 'Kearsipan', 'display_name' => 'Retensi & Pemusnahan Arsip'],
             ];
 
             foreach ($permissions as $permissionData) {

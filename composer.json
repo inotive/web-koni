@@ -17,6 +17,7 @@
         "mcamara/laravel-localization": "^2.3",
         "php-flasher/flasher-laravel": "v1.15.14",
         "setasign/fpdi": "^2.6",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-permission": "^6.3",
         "webklex/laravel-pdfmerger": "^1.3"
     },

@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             FileKesekretariatSeeder::class,
             SuratSeeder::class,
             SekretariatSeeder::class,
+            ArsipSeeder::class,
         ]);
     }
 }

@@ -36,7 +36,8 @@
                         auth()->user()->canany(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya']) ||
                         auth()->user()->can('database-bendahara') ||
                         auth()->user()->can('file-kesekretariatan') ||
-                        auth()->user()->can('surat-masuk-keluar'))
+                        auth()->user()->can('surat-masuk-keluar') ||
+                        auth()->user()->canany(['arsip-dashboard', 'arsip-lokasi', 'arsip-kategori', 'arsip-data', 'arsip-peminjaman', 'arsip-retensi']))
                     <div class="menu-item">
                         <div class="menu-content">
                             <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Menu Utama</span>
@@ -57,6 +58,18 @@
                     </div>
                 @endcan
 
+                <!-- Surat masuk dan keluar -->
+                @can('surat-masuk-keluar')
+                    <div class="menu-item">
+                        <a class="menu-link {{ request()->is('admin/surat*') ? 'active bg-red' : '' }}"
+                            href=" {{ route('admin.surat.index') }}">
+                            <span class="menu-icon">
+                                <i class="fs-1 fa-solid fa-message"></i>
+                            </span>
+                            <span class="menu-title">Surat Masuk & Keluar</span>
+                        </a>
+                    </div>
+                @endcan
                 <!-- Manajemen RKA -->
                 @can('manajemen-rka')
                     <div class="menu-item">
@@ -65,7 +78,7 @@
                             <span class="menu-icon">
                                 <i class="fs-1 ki-solid ki-tablet-text-up"></i>
                             </span>
-                            <span class="menu-title">Rencana Kerja Dan Anggaran</span>
+                            <span class="menu-title">File Rencana Kerja Dan Anggaran</span>
                         </a>
                     </div>
                 @endcan
@@ -159,20 +172,10 @@
                     </div>
                 @endcan
 
-                @can('surat-masuk-keluar')
-                    <div class="menu-item">
-                        <a class="menu-link {{ request()->is('admin/surat*') ? 'active bg-red' : '' }}"
-                            href=" {{ route('admin.surat.index') }}">
-                            <span class="menu-icon">
-                                <i class="fs-1 fa-solid fa-message"></i>
-                            </span>
-                            <span class="menu-title">Surat Masuk & Keluar</span>
-                        </a>
-                    </div>
-                @endcan
+               
 
                 <!-- File Kesekretariat - MENU BARU -->
-                @can('file-kesekretariatan')
+                {{-- @can('file-kesekretariatan')
                     @php
                         $isFileKesekretariatActive =
                             request()->routeIs('admin.file-kesekretariat*') ||
@@ -188,7 +191,52 @@
                             <span class="menu-title">File Kesekretariat</span>
                         </a>
                     </div>
-                @endcan
+                @endcan --}}
+
+                <!-- Manajemen Arsip -->
+                @canany(['arsip-dashboard', 'arsip-lokasi', 'arsip-kategori', 'arsip-data', 'arsip-peminjaman', 'arsip-retensi'])
+                    @php
+                        $isArsipActive = request()->is('admin/arsip*');
+                        $arsipMenu = [
+                            ['can' => 'arsip-dashboard', 'route' => 'admin.arsip.dashboard', 'pattern' => 'admin/arsip/dashboard*', 'title' => 'Dashboard Arsip'],
+                            ['can' => 'arsip-data', 'route' => 'admin.arsip.data.index', 'pattern' => 'admin/arsip/data*', 'title' => 'Data Arsip'],
+                            ['can' => 'arsip-lokasi', 'route' => 'admin.arsip.lokasi.index', 'pattern' => 'admin/arsip/lokasi*', 'title' => 'Lokasi Arsip'],
+                            ['can' => 'arsip-kategori', 'route' => 'admin.arsip.kategori.index', 'pattern' => 'admin/arsip/kategori*', 'title' => 'Klasifikasi & Retensi'],
+                            ['can' => 'arsip-peminjaman', 'route' => 'admin.arsip.peminjaman.index', 'pattern' => 'admin/arsip/peminjaman*', 'title' => 'Peminjaman Arsip'],
+                            ['can' => 'arsip-retensi', 'route' => 'admin.arsip.retensi.index', 'pattern' => 'admin/arsip/retensi*', 'title' => 'Penyusutan Arsip'],
+                        ];
+                    @endphp
+                    <div class="menu-item">
+                        <a class="menu-link d-flex justify-content-between {{ $isArsipActive ? 'active bg-orange' : '' }}"
+                            data-bs-toggle="collapse" href="#submenu-arsip" role="button"
+                            aria-expanded="{{ $isArsipActive ? 'true' : 'false' }}" aria-controls="submenu-arsip">
+                            <span class="d-flex align-items-center">
+                                <span class="menu-icon">
+                                    <i class="fa-solid fa-box-archive fs-2 {{ $isArsipActive ? 'text-orange' : 'text-gray-600' }}"></i>
+                                </span>
+                                <span class="menu-title {{ $isArsipActive ? 'text-orange' : 'text-gray-800' }}">
+                                    Manajemen Arsip
+                                </span>
+                            </span>
+                            <i class="fa-solid {{ $isArsipActive ? 'fa-angle-up' : 'fa-angle-down' }} fs-4 {{ $isArsipActive ? 'text-orange' : 'text-gray-600' }}"></i>
+                        </a>
+                        <div class="collapse {{ $isArsipActive ? 'show' : '' }}" id="submenu-arsip">
+                            <ul class="menu flex-column ms-5">
+                                @foreach ($arsipMenu as $item)
+                                    @can($item['can'])
+                                        <li class="menu-item">
+                                            <a class="menu-link {{ request()->is($item['pattern']) ? 'active' : '' }}"
+                                                href="{{ route($item['route']) }}">
+                                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                                <span class="menu-title">{{ $item['title'] }}</span>
+                                            </a>
+                                        </li>
+                                    @endcan
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endcanany
 
                 {{-- <!-- Konfigurasi Section -->
                 @if (auth()->user()->can('atlet') ||
