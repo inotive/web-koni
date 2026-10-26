@@ -14,8 +14,14 @@
 
         $subSection3Url = isset($routes[$parent->parent->id])
             ? route($routes[$parent->parent->id], array_merge(['parentId' => $parent->parent->id], $queryParams))
-            : route('admin.laporan-lpj.bidang.dynamic.index', $queryParams);
+            : route('admin.laporan-lpj.bidang.dynamic.child.index', array_merge(['parentId' => $parent->parent->id], $queryParams));
     }
+
+    // Folder kakek: Pembinaan Prestasi punya halaman sendiri, folder lain dibuka seperti biasa
+    $grandParent = $parent?->parent?->parent;
+    $subSection2Url = $grandParent && $grandParent->id != 6
+        ? route('admin.laporan-lpj.bidang.dynamic.child.index', array_merge(['parentId' => $grandParent->id], $queryParams))
+        : route('admin.laporan-lpj.bidang.prestasi.index', $queryParams);
 
     if (!function_exists('formatRupiah')) {
         function formatRupiah($number, $prefix = 'Rp ')
@@ -30,7 +36,7 @@
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index', $queryParams))
 @section('subSection2', $parent?->parent?->parent?->nama_program ?? '')
-@section('subSection2Url', route('admin.laporan-lpj.bidang.prestasi.index', $queryParams))
+@section('subSection2Url', $subSection2Url)
 @section('subSection3', $parent?->parent?->nama_program ?? '')
 @section('subSection3Url', $subSection3Url)
 @section('currentSection', $currentParent ? $currentParent->nama_program : 'Root Level')
@@ -153,8 +159,8 @@
 
         /* Modal styles */
         .modal .form-control:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.25rem rgba(248, 40, 90, 0.1);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 0.25rem rgba(31, 107, 90, 0.1);
         }
 
         .text-truncate-custom {
@@ -276,7 +282,7 @@
         <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
             <div class="progress-bar progress-bar-striped progress-bar-animated"
                 role="progressbar"
-                style="width: {{ $percentage }}%; background-color: #F8285A; border-radius: 12px;"
+                style="width: {{ $percentage }}%; background-color: #1F6B5A; border-radius: 12px;"
                 aria-valuenow="{{ $percentage }}"
                 aria-valuemin="0"
                 aria-valuemax="100">
@@ -297,20 +303,31 @@
     </div>
     @endif
 
+    @if ($parent)
+        <div class="mt-5">
+            @include('admin.laporan-lpj.partials.folder-explorer', [
+                'folders' => $folders,
+                'parentFolder' => $parent,
+                'trail' => $folderTrail,
+                'folderUrl' => fn ($folder) => route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $folder->id, 'year' => $selectedYear]),
+            ])
+        </div>
+    @endif
+
     {{-- Main Content Card --}}
     <div class="card mt-5">
         {{-- Card Header --}}
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
             <h3 class="card-title fw-bold fs-4 mb-0">
-                Daftar {{ $currentParent ? $currentParent->nama_program : 'Root Level' }} - {{ $selectedYear ?? now()->year }}
+                Daftar LPJ {{ $currentParent ? $currentParent->nama_program : 'Root Level' }} - {{ $selectedYear ?? now()->year }}
             </h3>
 
             {{-- Action Buttons --}}
             <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                 <a href="{{ $parentId ? route('admin.laporan-lpj.bidang.dynamic.child.create', $parentId) : route('admin.laporan-lpj.bidang.dynamic.create') }}"
                        class="btn custom-red-button"
-                       style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
-                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
+                       style="background-color: #1F6B5A !important; color: white !important; border-color: #1F6B5A !important;">
+                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
                     </a>
 
                 {{-- Search Input --}}

@@ -224,6 +224,13 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
     Route::prefix('laporan-lpj')->name('laporan-lpj.')->group(function () {
 
+        // Folder LPJ (dipakai menu Sekretariat dan Bidang Bidang)
+        Route::prefix('folder')->name('folder.')->group(function () {
+            Route::post('/', [App\Http\Controllers\Admin\LpjFolderController::class, 'store'])->name('store');
+            Route::put('/{id}', [App\Http\Controllers\Admin\LpjFolderController::class, 'update'])->name('update');
+            Route::delete('/{id}', [App\Http\Controllers\Admin\LpjFolderController::class, 'destroy'])->name('destroy');
+        });
+
         Route::prefix('sekretariat')->name('sekretariat.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\SekretariatController::class, 'index'])->name('index');
             Route::get('/create', [App\Http\Controllers\Admin\SekretariatController::class, 'create'])->name('create');

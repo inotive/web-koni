@@ -20,8 +20,8 @@ class LpjSeeder extends Seeder
                 'id' => 1,
                 'parent_id' => null,
                 'icon' => 'public\\assets2\\media\\misc\\bidang\\bank.png',
-                'nama_program' => 'Mobilisasi Sumberdaya & Pemasaran',
-                'nama_kegiatan' => 'Mobilisasi Sumberdaya & Pemasaran',
+                'nama_program' => 'Bidang Pencegahan dan Pengendalian Penyakit (P2P)',
+                'nama_kegiatan' => 'Bidang Pencegahan dan Pengendalian Penyakit (P2P)',
                 'volume' => '1',
                 'jumlah_harga_satuan' => 1,
                 'jumlah_harga' => 1,
@@ -35,8 +35,8 @@ class LpjSeeder extends Seeder
                 'id' => 2,
                 'parent_id' => null,
                 'icon' => '1',
-                'nama_program' => 'Hubungan Antar Lembaga',
-                'nama_kegiatan' => 'Hubungan Antar Lembaga',
+                'nama_program' => 'Bidang Kesehatan Masyarakat (Kesmas)',
+                'nama_kegiatan' => 'Bidang Kesehatan Masyarakat (Kesmas)',
                 'volume' => '1',
                 'jumlah_harga_satuan' => 1,
                 'jumlah_harga' => 1,
@@ -50,8 +50,8 @@ class LpjSeeder extends Seeder
                 'id' => 3,
                 'parent_id' => null,
                 'icon' => '1',
-                'nama_program' => 'Kesehatan',
-                'nama_kegiatan' => 'Kesehatan',
+                'nama_program' => 'Bidang Pelayanan Kesehatan (Yankes)',
+                'nama_kegiatan' => 'Bidang Pelayanan Kesehatan (Yankes)',
                 'volume' => '1',
                 'jumlah_harga_satuan' => 1,
                 'jumlah_harga' => 1,
@@ -65,8 +65,8 @@ class LpjSeeder extends Seeder
                 'id' => 4,
                 'parent_id' => null,
                 'icon' => null,
-                'nama_program' => 'Organisasi',
-                'nama_kegiatan' => 'Organisasi',
+                'nama_program' => 'Bidang Sumber Daya Kesehatan (SDK)',
+                'nama_kegiatan' => 'Bidang Sumber Daya Kesehatan (SDK)',
                 'volume' => '1',
                 'jumlah_harga_satuan' => 1,
                 'jumlah_harga' => 1,
@@ -887,5 +887,23 @@ class LpjSeeder extends Seeder
                 'updated_at' => null,
             ],
         ]);
+
+        // Tandai folder: semua root dan semua entri yang punya anak
+        $parentIds = DB::table('lpj')->whereNotNull('parent_id')->distinct()->pluck('parent_id');
+        DB::table('lpj')
+            ->whereNull('parent_id')
+            ->orWhereIn('id', $parentIds)
+            ->update(['is_folder' => true]);
+
+        // Bidang yang tampil di menu Bidang Bidang
+        $bidangIcons = [
+            1 => 'fa-solid fa-shield-virus',
+            2 => 'fa-solid fa-people-group',
+            3 => 'fa-solid fa-stethoscope',
+            4 => 'fa-solid fa-user-doctor',
+        ];
+        foreach ($bidangIcons as $id => $icon) {
+            DB::table('lpj')->where('id', $id)->update(['modul' => 'bidang', 'icon' => $icon]);
+        }
     }
 }

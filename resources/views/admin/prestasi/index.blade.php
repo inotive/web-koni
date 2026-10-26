@@ -47,20 +47,20 @@ body {
 
 /* Buttons */
 .btn-add-prestasi {
-    background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+    background: linear-gradient(135deg, #1F6B5A 0%, #2E8B6E 100%);
     border: none;
     border-radius: 8px;
     padding: 12px 24px;
     font-weight: 600;
     font-size: 0.95rem;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+    box-shadow: 0 2px 8px rgba(31, 107, 90, 0.3);
     color: white !important;
 }
 
 .btn-add-prestasi:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+    box-shadow: 0 4px 12px rgba(31, 107, 90, 0.4);
     color: white !important;
 }
 
@@ -281,8 +281,8 @@ body {
 }
 
 .form-select:focus {
-    border-color: #F8285A;
-    box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+    border-color: #1F6B5A;
+    box-shadow: 0 0 0 0.2rem rgba(31, 107, 90, 0.25);
 }
 
 .btn-outline-secondary:hover {
@@ -309,8 +309,8 @@ body {
 }
 
 .pagination-sm .page-item.active .page-link {
-    background-color: #F8285A;
-    border-color: #F8285A;
+    background-color: #1F6B5A;
+    border-color: #1F6B5A;
     color: white;
 }
 
@@ -583,7 +583,7 @@ body {
                                     <h3 class="header-title fw-semibold text-dark">Daftar Kejuaraan</h3>
                                     <div class="header-controls">
                                         <a href="{{ route('admin.konfigurasi.prestasi.create') }}" class="btn"
-                                            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 6px; padding: 10px 15px; font-weight: 500;">
+                                            style="background-color: #1F6B5A !important; color: white !important; border-color: #1F6B5A !important; border-radius: 6px; padding: 10px 15px; font-weight: 500;">
                                             <i class="ki-duotone ki-plus fs-4 me-2"
                                                 style="color: white !important;"></i>Tambah
                                             Prestasi

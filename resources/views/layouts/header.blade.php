@@ -4,8 +4,20 @@
     <div class="d-flex justify-content-between bg-white px-5 py-2">
         <!--begin::Logo-->
         <div class="d-flex align-items-center gap-3 px-4" style="width:220px; min-width:180px">
-            <a href="/" class="d-flex align-items-center">
-                <img alt="Logo" src="{{ asset('assets/img/koni.png') }}" class="h-60px" />
+            <a href="/" class="d-flex align-items-center gap-3 text-decoration-none">
+                <span class="d-flex align-items-center justify-content-center flex-shrink-0"
+                    style="width:46px; height:46px; border-radius:12px; background-color:#E3F1EA;">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1F6B5A" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <g transform="rotate(-8 12 12)">
+                            <path d="M14 3H8a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8z" />
+                            <path d="M14 3v3a2 2 0 0 0 2 2h3" />
+                        </g>
+                    </svg>
+                </span>
+                <span class="d-flex flex-column lh-1">
+                    <span class="fw-bolder fs-3" style="color:#0D2E2B; letter-spacing:0.18em;">SIMPATI</span>
+                </span>
             </a>
         </div>
         <!--end::Logo-->
@@ -30,7 +42,7 @@
                 <!--begin::Text Content-->
                 <div class="d-flex flex-column mx-2">
                     <!--begin::Title-->
-                    <h1 class="fw-bold fs-3 mb-0" style="color: #F8285A;">
+                    <h1 class="fw-bold fs-3 mb-0" style="color: #1F6B5A;">
                         @yield('pageTitle')
                     </h1>
 

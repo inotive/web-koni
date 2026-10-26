@@ -67,7 +67,7 @@
                     <div class="col-5">
                         <input type="search" name="search" id="search" class="form-control" placeholder="Search">
                     </div>
-                    <a href="#" class="btn text-white" style="background-color: #F8285A;" data-bs-toggle="modal"
+                    <a href="#" class="btn text-white" style="background-color: #1F6B5A;" data-bs-toggle="modal"
                         data-bs-target="#kt_modal_tambah_pengguna">
                         <i class="ki-duotone ki-plus fs-2" style="color: white"></i>Tambah Pengguna
                     </a>

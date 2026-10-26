@@ -38,19 +38,19 @@
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+            background: linear-gradient(135deg, #1F6B5A 0%, #2E8B6E 100%);
             border: none;
             border-radius: 8px;
             padding: 12px 24px;
             font-weight: 600;
             font-size: 0.95rem;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+            box-shadow: 0 2px 8px rgba(31, 107, 90, 0.3);
         }
 
         .btn-danger:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+            box-shadow: 0 4px 12px rgba(31, 107, 90, 0.4);
         }
 
         .currency-input {
@@ -232,6 +232,12 @@
                               id="sekretariatForm"
                               enctype="multipart/form-data">
                             @csrf
+                            <input type="hidden" name="folder_id" value="{{ $currentFolder->id }}">
+
+                            <div class="alert d-flex align-items-center gap-2 py-3 mb-4" style="background:#E3F1EA; color:#1F6B5A;">
+                                <i class="fa-solid fa-folder-open" style="color:#1F6B5A"></i>
+                                <span>Disimpan ke folder: <strong>{{ $currentFolder->nama_program }}</strong></span>
+                            </div>
 
                             <div class="row align-items-center mb-3">
                                 <div class="col-md-3">
@@ -434,10 +440,10 @@
                             </div>
                      <div class="row">
                         <div class="col-md-9 offset-md-3 d-flex gap-3">
-                            <button type="submit" class="btn btn-danger">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i>Simpan
                             </button>
-                            <a href="{{ route('admin.laporan-lpj.sekretariat.index') }}"
+                            <a href="{{ $currentFolder->parent_id ? route('admin.laporan-lpj.sekretariat.index', ['folder' => $currentFolder->id]) : route('admin.laporan-lpj.sekretariat.index') }}"
                                class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali
                             </a>

@@ -63,13 +63,13 @@
         }
 
         .date-filter-btn:hover {
-            border-color: #F8285A;
-            color: #F8285A;
+            border-color: #1F6B5A;
+            color: #1F6B5A;
         }
 
         .date-filter-btn.date-filter-active {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #1F6B5A;
+            border-color: #1F6B5A;
             color: white;
         }
 
@@ -126,8 +126,8 @@
 
         .date-input:focus {
             outline: none;
-            border-color: #F8285A;
-            box-shadow: 0 0 0 3px rgba(248, 40, 90, 0.1);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 3px rgba(31, 107, 90, 0.1);
         }
 
         .date-filter-actions {
@@ -140,7 +140,7 @@
 
         .date-filter-apply {
             flex: 1;
-            background-color: #F8285A;
+            background-color: #1F6B5A;
             color: white;
             border: none;
             border-radius: 6px;
@@ -152,7 +152,7 @@
         }
 
         .date-filter-apply:hover {
-            background-color: #e1244e;
+            background-color: #17564A;
         }
 
         .date-filter-clear {
@@ -188,14 +188,14 @@
         }
 
         .nav-tabs-custom .nav-link:hover {
-            border-bottom-color: #F8285A;
-            color: #F8285A;
+            border-bottom-color: #1F6B5A;
+            color: #1F6B5A;
             background: none;
         }
 
         .nav-tabs-custom .nav-link.active {
-            color: #F8285A;
-            border-bottom-color: #F8285A;
+            color: #1F6B5A;
+            border-bottom-color: #1F6B5A;
             background: none;
         }
 
@@ -245,7 +245,7 @@
                 <input type="hidden" name="jenis_surat" id="jenis_surat_input" value="{{ request('jenis_surat', 'all') }}">
 
                 <button type="button" id="tambahSuratBtn"
-                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                    class="btn btn-active-light-primary d-flex bg-primary align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
                     <span id="tambahSuratText">Upload Surat</span>
                 </button>
@@ -392,8 +392,74 @@
 
                 <div class="d-grid py-4">
                     <button type="button" onclick="submitForm('formAdd')" id="submitBtn"
-                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                        class="bg-primary fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                         Upload Surat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Disposisi Surat Masuk (dummy: belum disimpan & belum benar-benar mengirim WhatsApp) --}}
+    @php
+        $pegawaiDisposisi = [
+            ['nama' => 'dr. Andi Pratama', 'jabatan' => 'Kepala Bidang P2P', 'wa' => '0812-3456-7801'],
+            ['nama' => 'Siti Rahmawati, SKM', 'jabatan' => 'Kepala Bidang Kesmas', 'wa' => '0812-3456-7802'],
+            ['nama' => 'dr. Budi Santoso', 'jabatan' => 'Kepala Bidang Yankes', 'wa' => '0812-3456-7803'],
+            ['nama' => 'Rina Kartika, S.Kep', 'jabatan' => 'Kepala Bidang SDK', 'wa' => '0812-3456-7804'],
+            ['nama' => 'Ahmad Fauzi, SE', 'jabatan' => 'Sekretaris', 'wa' => '0812-3456-7805'],
+            ['nama' => 'Dewi Lestari', 'jabatan' => 'Staf Umum & Kepegawaian', 'wa' => '0812-3456-7806'],
+        ];
+    @endphp
+    <div class="modal fade" id="disposisiModal" tabindex="-1" aria-labelledby="disposisiModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 gap-5 px-10 py-8">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div class="fs-2 fw-bold" id="disposisiModalTitle">Disposisi Surat</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <form id="formDisposisi" class="d-grid gap-4">
+                    <div class="rounded-3 p-4" style="background-color: #F4FAF7; border: 1px solid #E3F1EA;">
+                        <div class="text-muted fs-7">Perihal</div>
+                        <div class="fw-bold text-gray-800" id="disposisiPerihal">-</div>
+                        <div class="text-muted fs-7 mt-2">Nomor Surat</div>
+                        <div class="fw-semibold text-gray-800" id="disposisiNoSurat">-</div>
+                    </div>
+
+                    <div>
+                        <label for="disposisiPegawai" class="fw-semibold required mb-3 text-gray-800">Pilih Pegawai</label>
+                        <select id="disposisiPegawai" class="form-select bg-light border border-gray-400" required>
+                            <option value="">-- Pilih pegawai tujuan disposisi --</option>
+                            @foreach ($pegawaiDisposisi as $pegawai)
+                                <option value="{{ $pegawai['nama'] }}" data-wa="{{ $pegawai['wa'] }}">
+                                    {{ $pegawai['nama'] }} — {{ $pegawai['jabatan'] }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="disposisiCatatan" class="fw-semibold mb-3 text-gray-800">Catatan / Instruksi</label>
+                        <textarea id="disposisiCatatan" rows="3" class="form-control bg-light border border-gray-400"
+                            placeholder="Contoh: Mohon ditindaklanjuti dan dilaporkan paling lambat Jumat."></textarea>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3 rounded-3 p-4" style="background-color: #E8F8EE; border: 1px solid #B7E4C7;">
+                        <i class="fa-brands fa-whatsapp fs-1" style="color: #25D366 !important;"></i>
+                        <div class="fs-7 text-gray-700">
+                            Pemberitahuan disposisi akan dikirim otomatis ke <strong>WhatsApp</strong> pegawai yang dipilih
+                            <span id="disposisiWaInfo" class="d-none">
+                                (<strong id="disposisiWaNumber"></strong>)
+                            </span>.
+                        </div>
+                    </div>
+                </form>
+
+                <div class="d-grid py-4">
+                    <button type="button" id="disposisiSubmitBtn"
+                        class="btn btn-primary fw-bold d-flex align-items-center justify-content-center gap-2 p-4">
+                        <i class="fa-solid fa-paper-plane"></i> Kirim Disposisi
                     </button>
                 </div>
             </div>
@@ -1034,6 +1100,48 @@
 
             // Initialize the button text on page load
             updateDateFilterButtonText();
+        });
+
+        // Disposisi surat masuk (dummy: hanya simulasi, belum disimpan ke database & belum kirim WhatsApp)
+        $(document).on('click', '.dropdown-item.disposisi', function() {
+            $('.dropdown-menu-custom').removeClass('show');
+            $('#disposisiPerihal').text($(this).data('perihal') || '-');
+            $('#disposisiNoSurat').text($(this).data('no-surat') || '-');
+            $('#disposisiPegawai').val('').removeClass('is-invalid');
+            $('#disposisiCatatan').val('');
+            $('#disposisiWaInfo').addClass('d-none');
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('disposisiModal')).show();
+        });
+
+        $('#disposisiPegawai').on('change', function() {
+            const wa = $(this).find(':selected').data('wa');
+            $(this).removeClass('is-invalid');
+            $('#disposisiWaNumber').text(wa || '');
+            $('#disposisiWaInfo').toggleClass('d-none', !wa);
+        });
+
+        $('#disposisiSubmitBtn').on('click', function() {
+            const $select = $('#disposisiPegawai');
+            const pegawai = $select.val();
+
+            if (!pegawai) {
+                $select.addClass('is-invalid');
+                toastr.error('Pilih pegawai tujuan disposisi terlebih dahulu.', 'Error!');
+                return;
+            }
+
+            const wa = $select.find(':selected').data('wa');
+            const $btn = $(this);
+            $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Mengirim...');
+
+            setTimeout(function() {
+                $btn.prop('disabled', false).html('<i class="fa-solid fa-paper-plane"></i> Kirim Disposisi');
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('disposisiModal')).hide();
+                toastr.success(
+                    'Surat didisposisikan ke ' + pegawai + '. Pemberitahuan telah dikirim ke WhatsApp ' + wa + '.',
+                    'Disposisi Terkirim'
+                );
+            }, 800);
         });
     </script>
 @endsection

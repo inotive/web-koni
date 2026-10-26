@@ -5,6 +5,7 @@
 <!--begin::Global Javascript Bundle(mandatory for all pages)-->
 <script src="<?php echo e(asset('assets/js/scripts.bundle.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/plugins/global/plugins.bundle.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/js/custom/table-dropdown.js')); ?>?v=<?php echo e(filemtime(public_path('assets/js/custom/table-dropdown.js'))); ?>"></script>
 <!--end::Global Javascript Bundle-->
 <!--begin::Vendors Javascript(used for this page only)-->
 <script src="<?php echo e(asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.js')); ?>"></script>
@@ -79,4 +80,4 @@
 </script>
 <!--end::Custom Javascript-->
 <!--end::Javascript-->
-<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/layouts/js-file.blade.php ENDPATH**/ ?>
+<?php /**PATH E:\.instalation\laragon\www\web-koni\resources\views/layouts/js-file.blade.php ENDPATH**/ ?>

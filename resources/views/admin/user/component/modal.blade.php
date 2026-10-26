@@ -54,7 +54,7 @@
 
                     <div class="text-end">
                         <button type="submit" class="btn w-100"
-                            style="background-color: #D20A11; color: white; border-radius: 8px;">
+                            style="background-color: #1F6B5A; color: white; border-radius: 8px;">
                             <i class="ki-duotone ki-pencil fs-2" style="color: white"></i>Update Pengguna
                         </button>
                     </div>

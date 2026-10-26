@@ -96,19 +96,19 @@
     }
 
     .btn-danger {
-        background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+        background: linear-gradient(135deg, #1F6B5A 0%, #2E8B6E 100%);
         border: none;
         border-radius: 8px;
         padding: 12px 24px;
         font-weight: 600;
         font-size: 0.95rem;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+        box-shadow: 0 2px 8px rgba(31, 107, 90, 0.3);
     }
 
     .btn-danger:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+        box-shadow: 0 4px 12px rgba(31, 107, 90, 0.4);
     }
 </style>
 
@@ -238,7 +238,7 @@
                     <input type="hidden" name="ketersediaan" value="Tersedia">
                      <div class="row">
                         <div class="col-md-9 offset-md-3 d-flex gap-3">
-                            <button type="submit" class="btn btn-danger">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save me-2"></i>Simpan
                             </button>
                             <a href="{{ route('admin.konfigurasi.atlet.index') }}"

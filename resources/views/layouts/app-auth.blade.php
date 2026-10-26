@@ -4,24 +4,24 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ config('app.name', 'KONI Tabalong') }} | {{ $title ?? 'Login' }}</title>
-    <meta name="description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong" />
+    <title>SIMPATI | {{ $title ?? 'Login' }}</title>
+    <meta name="description" content="SIMPATI - Sistem Administrasi Terintegrasi" />
     
     <!-- Open Graph / WhatsApp Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="KONI Tabalong - Sistem Informasi Manajemen">
-    <meta property="og:description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong">
-    <meta property="og:image" content="{{ asset('assets/img/koni.png') }}">
-    <meta property="og:site_name" content="KONI Tabalong">
+    <meta property="og:title" content="SIMPATI - Sistem Administrasi Terintegrasi">
+    <meta property="og:description" content="SIMPATI - Sistem Administrasi Terintegrasi">
+    <meta property="og:image" content="{{ asset('assets/img/simpati-icon.svg') }}">
+    <meta property="og:site_name" content="SIMPATI">
     
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="KONI Tabalong - Sistem Informasi Manajemen">
-    <meta name="twitter:description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong">
-    <meta name="twitter:image" content="{{ asset('assets/img/koni.png') }}">
+    <meta name="twitter:title" content="SIMPATI - Sistem Administrasi Terintegrasi">
+    <meta name="twitter:description" content="SIMPATI - Sistem Administrasi Terintegrasi">
+    <meta name="twitter:image" content="{{ asset('assets/img/simpati-icon.svg') }}">
     
-    <link rel="shortcut icon" href="{{ asset('landing-assets/img/logo.png') }}" />
+    <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('assets/img/simpati-icon.svg') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,6 +31,7 @@
     <!-- Stylesheets -->
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/theme-dinkes.css') }}?v={{ filemtime(public_path('assets/css/theme-dinkes.css')) }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
     <style>
@@ -39,17 +40,17 @@
         }
 
         .btn-orange {
-            background-color: #F8285A;
+            background-color: #1F6B5A;
             color: #fff;
         }
 
         .btn-orange:hover {
-            background-color: #F8285A;
+            background-color: #1F6B5A;
             color: #fff;
         }
 
         .text-orange {
-            color: #F8285A;
+            color: #1F6B5A;
         }
 
         .text-navy {

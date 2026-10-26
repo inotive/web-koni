@@ -60,7 +60,7 @@
 
                     <div class="d-grid py-4">
                         <button type="button" onclick="submitForm('form-{{ $item->id }}')"
-                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            class="bg-primary fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                             Edit Nama Folder
                         </button>
                     </div>

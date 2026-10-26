@@ -61,7 +61,7 @@
                     </div>
                     <div class="d-flex justify-content-between">
                         <button type="submit" class="btn w-100 me-2"
-                            style="background-color: #D20A11; color: white; border-radius: 8px;">
+                            style="background-color: #1F6B5A; color: white; border-radius: 8px;">
                             <i class="ki-duotone ki-plus fs-2" style="color: white"></i>Simpan Pengguna
                         </button>
                     </div>

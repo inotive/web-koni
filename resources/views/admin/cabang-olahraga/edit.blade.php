@@ -226,7 +226,7 @@
 
                     <div class="row mt-4">
                         <div class="col-md-9 offset-md-3 d-flex gap-2">
-                            <button type="submit" class="btn btn-danger px-4">Update Data</button>
+                            <button type="submit" class="btn btn-primary px-4">Update Data</button>
                             <a href="{{ route('admin.konfigurasi.cabang-olahraga.index') }}"
                                 class="btn btn-secondary px-4">Batal</a>
                         </div>

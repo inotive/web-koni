@@ -62,8 +62,8 @@
         }
 
         .search-input:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.15);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 0.2rem rgba(31, 107, 90, 0.15);
             outline: none;
         }
 
@@ -99,8 +99,8 @@
         }
 
         .sort-btn:hover {
-            border-color: #F8285A;
-            color: #F8285A;
+            border-color: #1F6B5A;
+            color: #1F6B5A;
         }
 
         .sort-menu {
@@ -141,7 +141,7 @@
         }
 
         .sort-option.active {
-            background-color: #F8285A;
+            background-color: #1F6B5A;
             color: white;
         }
 
@@ -192,7 +192,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(248, 40, 90, 0.05), transparent);
+            background: linear-gradient(90deg, transparent, rgba(31, 107, 90, 0.05), transparent);
             transition: left 0.5s;
         }
 
@@ -205,7 +205,7 @@
             box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
             text-decoration: none;
             color: inherit;
-            border-color: #F8285A;
+            border-color: #1F6B5A;
         }
 
         /* Fixed icon container - no upscaling */
@@ -229,6 +229,48 @@
             transition: all 0.3s ease;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
+        }
+
+        .bidang-icon i {
+            font-size: 36px;
+            color: inherit !important;
+            transition: all 0.3s ease;
+        }
+
+        .bidang-card-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 2;
+        }
+
+        .bidang-card-actions .btn {
+            color: #78829d;
+            padding: 2px 8px;
+        }
+
+        .bidang-icon.icon-p2p {
+            background-color: #E3F1EA;
+            color: #1F6B5A;
+        }
+
+        .bidang-icon.icon-kesmas {
+            background-color: #E0F2F1;
+            color: #00796B;
+        }
+
+        .bidang-icon.icon-yankes {
+            background-color: #E8F5E9;
+            color: #2E7D32;
+        }
+
+        .bidang-icon.icon-sdk {
+            background-color: #E1F0F5;
+            color: #0E6E8C;
+        }
+
+        .bidang-card:hover .bidang-icon i {
+            transform: scale(1.08);
         }
 
         .bidang-card:hover .bidang-icon img {
@@ -261,7 +303,7 @@
         }
 
         .bidang-card:hover .bidang-title {
-            color: #F8285A;
+            color: #1F6B5A;
         }
 
         /* Loading state */
@@ -334,6 +376,10 @@
 
                 <!-- Year Filter -->
                 <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-light-primary me-2" data-bs-toggle="modal"
+                        data-bs-target="#createFolderModal">
+                        <i class="fa-solid fa-folder-plus me-1"></i> Tambah Folder
+                    </button>
                     <label for="year" class="text-muted mb-0">Tahun:</label>
                     <select name="year" class="form-select" style="width: 120px" onchange="this.form.submit()">
                         @if(isset($availableYears) && count($availableYears) > 0)
@@ -362,7 +408,7 @@
                 <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
                     <div class="progress-bar progress-bar-striped progress-bar-animated"
                         role="progressbar"
-                        style="width: {{ $anggaran_percentage }}%; background-color: #F8285A; border-radius: 12px;"
+                        style="width: {{ $anggaran_percentage }}%; background-color: #1F6B5A; border-radius: 12px;"
                         aria-valuenow="{{ $anggaran_percentage }}"
                         aria-valuemin="0"
                         aria-valuemax="100">
@@ -391,163 +437,71 @@
 
         <!-- Bidang Grid -->
         <div class="bidang-grid grid-default" id="bidangGrid">
-            <!-- Mobilisasi Sumberdaya -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 1, 'year' => $selectedYear]) }}" class="bidang-card" data-title="mobilisasi sumberdaya" data-docs="{{ $mobilisasiCount ?? 0 }}">
-                <div class="bidang-icon icon-mobilisasi">
-                    <img src="{{ asset('assets2/media/misc/bidang/bank.png') }}" alt="">
-                </div>
-                <h4 class="bidang-title">Mobilisasi Sumberdaya</h4>
-                <p class="bidang-count">{{ $mobilisasiCount ?? 0 }} Dokumen</p>
-
+            @foreach ($bidangCards as $card)
                 @php
-                    $mobilisasi_anggaran = $bidangDetails['mobilisasi']['anggaran'] ?? 0;
-                    $mobilisasi_kegiatan = $bidangDetails['mobilisasi']['kegiatan'] ?? 0;
-                    $mobilisasi_target_kegiatan = $bidangDetails['mobilisasi']['target_kegiatan'] ?? 0;
-                    $mobilisasi_target_anggaran = $bidangDetails['mobilisasi']['target_anggaran'] ?? 0;
-                    $mobilisasi_percentage = $mobilisasi_target_anggaran > 0 ? ($mobilisasi_anggaran / $mobilisasi_target_anggaran) * 100 : 0;
+                    $folder = $card['folder'];
+                    $percentage = $card['target_anggaran'] > 0 ? ($card['anggaran'] / $card['target_anggaran']) * 100 : 0;
+                    $iconClass = str_starts_with((string) $folder->icon, 'fa') ? $folder->icon : 'fa-solid fa-folder';
+                    $iconVariant = ['icon-p2p', 'icon-kesmas', 'icon-yankes', 'icon-sdk'][$loop->index % 4];
                 @endphp
+                <div class="bidang-card" data-title="{{ strtolower($folder->nama_program) }}" data-docs="{{ $card['count'] }}">
+                    <span class="bidang-card-actions dropdown">
+                        <button type="button" class="btn btn-sm" data-bs-toggle="dropdown" aria-expanded="false" title="Aksi folder">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <button type="button" class="dropdown-item js-rename-folder"
+                                    data-url="{{ route('admin.laporan-lpj.folder.update', $folder->id) }}"
+                                    data-name="{{ $folder->nama_program }}">
+                                    <i class="fa-solid fa-pen me-2"></i>Ganti Nama
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item text-danger js-delete-folder"
+                                    data-url="{{ route('admin.laporan-lpj.folder.destroy', $folder->id) }}"
+                                    data-name="{{ $folder->nama_program }}">
+                                    <i class="fa-solid fa-trash me-2 text-danger"></i>Hapus
+                                </button>
+                            </li>
+                        </ul>
+                    </span>
 
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <small class="fw-bold mb-1">Rp. {{ number_format($mobilisasi_anggaran, 0, ',', '.') }} / Rp. {{ number_format($mobilisasi_target_anggaran, 0, ',', '.') }}</small>
-                        <small></small>
+                    <div class="bidang-icon {{ $iconVariant }}">
+                        <i class="{{ $iconClass }}"></i>
                     </div>
-                    <div class="progress" style="height: 8px; border-radius: 4px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated"
-                            role="progressbar"
-                            style="width: {{ $mobilisasi_percentage }}%; background-color: #F8285A;"
-                            aria-valuenow="{{ $mobilisasi_percentage }}"
-                            aria-valuemin="0"
-                            aria-valuemax="100">
+                    <h4 class="bidang-title">
+                        <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $folder->id, 'year' => $selectedYear]) }}"
+                            class="stretched-link text-reset text-decoration-none">{{ $folder->nama_program }}</a>
+                    </h4>
+                    <p class="bidang-count">{{ $card['subfolder_count'] }} Folder · {{ $card['count'] }} Dokumen</p>
+
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="fw-bold mb-1">Rp. {{ number_format($card['anggaran'], 0, ',', '.') }} / Rp. {{ number_format($card['target_anggaran'], 0, ',', '.') }}</small>
+                            <small></small>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between mt-1">
-                        <div class="'d-flex justify-content-start mt-1">
-                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $mobilisasi_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $mobilisasi_target_kegiatan}} Target</small>
+                        <div class="progress" style="height: 8px; border-radius: 4px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                role="progressbar"
+                                style="width: {{ $percentage }}%; background-color: #1F6B5A;"
+                                aria-valuenow="{{ $percentage }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100">
+                            </div>
                         </div>
-                        <small class="text-muted">{{ round($mobilisasi_percentage) }}%</small>
+                        <div class="d-flex justify-content-between mt-1">
+                            <div class="d-flex justify-content-start mt-1">
+                                <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $card['kegiatan'] }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $card['target_kegiatan'] }} Target</small>
+                            </div>
+                            <small class="text-muted">{{ round($percentage) }}%</small>
+                        </div>
                     </div>
                 </div>
-            </a>
+            @endforeach
 
-            <!-- Hubungan Antar Lembaga -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 2, 'year' => $selectedYear]) }}" class="bidang-card" data-title="hubungan antar lembaga" data-docs="{{ $hubungan_lembagaCount ?? 0 }}">
-                <div class="bidang-icon icon-hubungan">
-                    <img src="{{ asset('assets2/media/misc/bidang/data.png') }}" alt="">
-                </div>
-                <h4 class="bidang-title">Hubungan Antar Lembaga</h4>
-                <p class="bidang-count">{{ $hubungan_lembagaCount ?? 0 }} Dokumen</p>
-
-                @php
-                    $hubungan_anggaran = $bidangDetails['hubungan_lembaga']['anggaran'] ?? 0;
-                    $hubugan_kegiatan = $bidangDetails['hubungan_lembaga']['kegiatan'] ?? 0;
-                    $hubungan_target_kegiatan = $bidangDetails['hubungan_lembaga']['target_kegiatan'] ?? 0;
-                    $hubungan_target_anggaran = $bidangDetails['hubungan_lembaga']['target_anggaran'] ?? 0;
-                    $hubungan_percentage = $hubungan_target_anggaran > 0 ? ($hubungan_anggaran / $hubungan_target_anggaran) * 100 : 0;
-                @endphp
-
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <small class="fw-bold mb-1">Rp. {{ number_format($hubungan_anggaran, 0, ',', '.') }} / Rp. {{ number_format($hubungan_target_anggaran, 0, ',', '.') }}</small>
-                        <small></small>
-                    </div>
-                    <div class="progress" style="height: 8px; border-radius: 4px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated"
-                            role="progressbar"
-                            style="width: {{ $hubungan_percentage }}%; background-color: #F8285A;"
-                            aria-valuenow="{{ $hubungan_percentage }}"
-                            aria-valuemin="0"
-                            aria-valuemax="100">
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between mt-1">
-                        <div class="'d-flex justify-content-start mt-1">
-                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $hubugan_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $hubungan_target_kegiatan}} Target</small>
-                        </div>
-                        <small class="text-muted">{{ round($hubungan_percentage) }}%</small>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Continue for other cards... -->
-            <!-- Kesehatan -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 3, 'year' => $selectedYear]) }}" class="bidang-card" data-title="kesehatan" data-docs="{{ $kesehatanCount ?? 0 }}">
-                <div class="bidang-icon icon-kesehatan">
-                    <img src="{{ asset('assets2/media/misc/bidang/pulse.png') }}" alt="">
-                </div>
-                <h4 class="bidang-title">Kesehatan</h4>
-                <p class="bidang-count">{{ $kesehatanCount ?? 0 }} Dokumen</p>
-
-                @php
-                    $kesehatan_anggaran = $bidangDetails['kesehatan']['anggaran'] ?? 0;
-                    $kesehatan_target_anggaran = $bidangDetails['kesehatan']['target_anggaran'] ?? 0;
-                    $kesehatan_kegiatan = $bidangDetails['kesehatan']['kegiatan'] ?? 0;
-                    $kesehatan_target_kegiatan = $bidangDetails['kesehatan']['target_kegiatan'] ?? 0;
-                    $kesehatan_percentage = $kesehatan_target_anggaran > 0 ? ($kesehatan_anggaran / $kesehatan_target_anggaran) * 100 : 0;
-                @endphp
-
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <small class="fw-bold mb-1">Rp. {{ number_format($kesehatan_anggaran, 0, ',', '.') }} / Rp. {{ number_format($kesehatan_target_anggaran, 0, ',', '.') }}</small>
-                        <small></small>
-                    </div>
-                    <div class="progress" style="height: 8px; border-radius: 4px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated"
-                            role="progressbar"
-                            style="width: {{ $kesehatan_percentage }}%; background-color: #F8285A;"
-                            aria-valuenow="{{ $kesehatan_percentage }}"
-                            aria-valuemin="0"
-                            aria-valuemax="100">
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between mt-1">
-                        <div class="'d-flex justify-content-start mt-1">
-                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $kesehatan_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $kesehatan_target_kegiatan}} Target</small>
-                        </div>
-                        <small class="text-muted">{{ round($kesehatan_percentage) }}%</small>
-                    </div>
-                </div>
-            </a>
-
-            <!-- Organisasi -->
-            <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 4, 'year' => $selectedYear]) }}" class="bidang-card" data-title="organisasi" data-docs="{{ $organisasiCount ?? 0 }}">
-                <div class="bidang-icon icon-organisasi">
-                    <img src="{{ asset('assets2/media/misc/bidang/people.png') }}" alt="">
-                </div>
-                <h4 class="bidang-title">Organisasi</h4>
-                <p class="bidang-count">{{ $organisasiCount ?? 0 }} Dokumen</p>
-
-                @php
-                    $organisasi_anggaran = $bidangDetails['organisasi']['anggaran'] ?? 0;
-                    $organisasi_kegiatan = $bidangDetails['organisasi']['kegiatan'] ?? 0;
-                    $organisasi_target_kegiatan = $bidangDetails['organisasi']['target_kegiatan'] ?? 0;
-                    $organisasi_target_anggaran = $bidangDetails['organisasi']['target_anggaran'] ?? 0;
-                    $organisasi_percentage = $organisasi_target_anggaran > 0 ? ($organisasi_anggaran / $organisasi_target_anggaran) * 100 : 0;
-                @endphp
-
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <small class="fw-bold mb-1">Rp. {{ number_format($organisasi_anggaran, 0, ',', '.') }} / Rp. {{ number_format($organisasi_target_anggaran, 0, ',', '.') }}</small>
-                        <small></small>
-                    </div>
-                    <div class="progress" style="height: 8px; border-radius: 4px;">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated"
-                            role="progressbar"
-                            style="width: {{ $organisasi_percentage }}%; background-color: #F8285A;"
-                            aria-valuenow="{{ $organisasi_percentage }}"
-                            aria-valuemin="0"
-                            aria-valuemax="100">
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between mt-1">
-                        <div class="'d-flex justify-content-start mt-1">
-                            <small class="fw-bold bg-success-subtle text-success border border-success-subtle py-1 rounded px-1">{{ $organisasi_kegiatan }} Kegiatan</small><small class="fw-bold text-muted"> / </small><small class="fw-bold bg-primary-subtle text-primary border border-primary-subtle py-1 rounded px-1">{{ $organisasi_target_kegiatan}} Target</small>
-                        </div>
-                        <small class="text-muted">{{ round($organisasi_percentage) }}%</small>
-                    </div>
-                </div>
-            </a>
-
+            {{-- Bidang di bawah ini disembunyikan sementara --}}
+            @if (false)
             <!-- Pembinaan Hukum Olahraga -->
             <a href="{{ route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => 5, 'year' => $selectedYear]) }}" class="bidang-card" data-title="pembinaan hukum olahraga" data-docs="{{ $pembinaan_hukumCount ?? 0 }}">
                 <div class="bidang-icon icon-hukum">
@@ -572,7 +526,7 @@
                     <div class="progress" style="height: 8px; border-radius: 4px;">
                         <div class="progress-bar progress-bar-striped progress-bar-animated"
                             role="progressbar"
-                            style="width: {{ $hukum_percentage }}%; background-color: #F8285A;"
+                            style="width: {{ $hukum_percentage }}%; background-color: #1F6B5A;"
                             aria-valuenow="{{ $hukum_percentage }}"
                             aria-valuemin="0"
                             aria-valuemax="100">
@@ -611,7 +565,7 @@
                         <div class="progress" style="height: 8px; border-radius: 4px;">
                             <div class="progress-bar progress-bar-striped progress-bar-animated"
                                 role="progressbar"
-                                style="width: {{ $prestasi_percentage }}%; background-color: #F8285A;"
+                                style="width: {{ $prestasi_percentage }}%; background-color: #1F6B5A;"
                                 aria-valuenow="{{ $prestasi_percentage }}"
                                 aria-valuemin="0"
                                 aria-valuemax="100">
@@ -650,7 +604,7 @@
                     <div class="progress" style="height: 8px; border-radius: 4px;">
                         <div class="progress-bar progress-bar-striped progress-bar-animated"
                             role="progressbar"
-                            style="width: {{ $science_percentage }}%; background-color: #F8285A;"
+                            style="width: {{ $science_percentage }}%; background-color: #1F6B5A;"
                             aria-valuenow="{{ $science_percentage }}"
                             aria-valuemin="0"
                             aria-valuemax="100">
@@ -688,7 +642,7 @@
                     <div class="progress" style="height: 8px; border-radius: 4px;">
                         <div class="progress-bar progress-bar-striped progress-bar-animated"
                             role="progressbar"
-                            style="width: {{ $perencanaan_percentage }}%; background-color: #F8285A;"
+                            style="width: {{ $perencanaan_percentage }}%; background-color: #1F6B5A;"
                             aria-valuenow="{{ $perencanaan_percentage }}"
                             aria-valuemin="0"
                             aria-valuemax="100">
@@ -702,10 +656,17 @@
                     </div>
                 </div>
             </a>
+            @endif
         </div>
     </div>
 </div>
 
+    @include('admin.laporan-lpj.partials.folder-explorer', [
+        'showGrid' => false,
+        'folders' => collect(),
+        'parentFolder' => null,
+        'folderUrl' => fn ($folder) => '#',
+    ])
 @endsection
 
 @section('script')

@@ -153,7 +153,7 @@
         }
 
         .dropdown-item-custom.delete:hover {
-            background-color: #ffcad7 !important;
+            background-color: #E3F1EA !important;
         }
 
         .table-responsive {
@@ -498,7 +498,7 @@
         <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
             <div class="progress-bar progress-bar-striped progress-bar-animated"
                 role="progressbar"
-                style="width: {{ $percentage }}%; background-color: #F8285A; border-radius: 12px;"
+                style="width: {{ $percentage }}%; background-color: #1F6B5A; border-radius: 12px;"
                 aria-valuenow="{{ $percentage }}"
                 aria-valuemin="0"
                 aria-valuemax="100">
@@ -527,7 +527,7 @@
 
                 <div class="d-flex align-items-center gap-2 flex-wrap ms-auto">
                     <a href="{{ route('admin.laporan-lpj.kegiatan-lainnya.create') }}" class="btn btn-primary"
-    style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+    style="background-color: #1F6B5A !important; color: white !important; border-color: #1F6B5A !important;">
     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah Laporan
 </a>
 
@@ -1750,7 +1750,7 @@ $('#ajukanPerubahanBtn').on('click', function() {
 
                 <div class="d-grid py-4">
                     <button type="button" id="saveTargetBtn"
-                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            class="bg-primary fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                         <span class="btn-text">Simpan Target</span>
                     </button>
                 </div>

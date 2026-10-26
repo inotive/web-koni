@@ -5,14 +5,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KONI Tabalong - @yield('title')</title>
-    <link rel="shortcut icon" href="{{ asset('assets/media/logos/logo-mustikagadai-tiga-puteri.png') }}" />
+    <title>SIMPATI - @yield('title')</title>
+    <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('assets/img/simpati-icon.svg') }}" />
     <!--begin::Fonts(mandatory for all pages)-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <!--end::Fonts-->
     <!--begin::Global Stylesheets Bundle(mandatory for all pages)-->
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/theme-dinkes.css') }}?v={{ filemtime(public_path('assets/css/theme-dinkes.css')) }}" rel="stylesheet" type="text/css" />
     <!--end::Global Stylesheets Bundle-->
     @yield('style')
 

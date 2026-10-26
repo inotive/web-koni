@@ -69,8 +69,8 @@
         }
 
         .search-input:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.15);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 0.2rem rgba(31, 107, 90, 0.15);
             outline: none;
         }
 
@@ -106,8 +106,8 @@
         }
 
         .filter-btn:hover {
-            border-color: #F8285A;
-            color: #F8285A;
+            border-color: #1F6B5A;
+            color: #1F6B5A;
         }
 
         .filter-menu {
@@ -148,7 +148,7 @@
         }
 
         .filter-option.active {
-            background-color: #F8285A;
+            background-color: #1F6B5A;
             color: white;
         }
 
@@ -164,7 +164,7 @@
 
         /* Buttons */
         .btn-add-laporan {
-            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+            background: linear-gradient(135deg, #1F6B5A 0%, #2E8B6E 100%);
             border: none;
             border-radius: 8px;
             padding: 12px 24px;
@@ -172,13 +172,13 @@
             font-size: 0.95rem;
             color: white;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+            box-shadow: 0 2px 8px rgba(31, 107, 90, 0.3);
             white-space: nowrap;
         }
 
         .btn-add-laporan:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+            box-shadow: 0 4px 12px rgba(31, 107, 90, 0.4);
             color: white;
             text-decoration: none;
         }
@@ -358,8 +358,8 @@
         }
 
         .form-select:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 0.2rem rgba(31, 107, 90, 0.25);
         }
 
         .btn-outline-secondary:hover {
@@ -386,8 +386,8 @@
         }
 
         .pagination-sm .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #1F6B5A;
+            border-color: #1F6B5A;
             color: white;
         }
 
@@ -457,14 +457,14 @@
 
         /* Active filter indicator */
         .filter-active {
-            background-color: #F8285A !important;
+            background-color: #1F6B5A !important;
             color: white !important;
-            border-color: #F8285A !important;
+            border-color: #1F6B5A !important;
         }
 
         .filter-active:hover {
-            background-color: #e91e63 !important;
-            border-color: #e91e63 !important;
+            background-color: #2E8B6E !important;
+            border-color: #2E8B6E !important;
         }
 
         /* Debug helper */
@@ -504,8 +504,8 @@
 
         .form-control:focus,
         .form-select:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 0.2rem rgba(31, 107, 90, 0.25);
         }
 
         /* File upload styling */
@@ -1089,7 +1089,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary" style="background-color: #F8285A; border-color: #F8285A;">
+                        <button type="submit" class="btn btn-primary" style="background-color: #1F6B5A; border-color: #1F6B5A;">
                             <i class="fas fa-save me-2"></i>Simpan Laporan
                         </button>
                     </div>

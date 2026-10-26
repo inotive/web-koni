@@ -72,45 +72,36 @@
 <body>
     <div class="export-container">
         <div class="export-header">
-            <h2 class="export-title">Informasi Kegiatan</h2>
+            <h2 class="export-title">Informasi Serapan Kegiatan {{ $selectedYear }}</h2>
             <p class="export-date">Tanggal: {{ date('d F Y') }}</p>
         </div>
 
-        @foreach($kegiatan as $i => $item)
+        @foreach($units as $i => $unit)
             @php
-                // Menggunakan nilai serapan yang sudah dihitung di controller
-                $serapan = $item->serapan;
-                $total_budget = $item->total_budget;
-                // Menangani kasus ketika tidak ada RKA
-                $persen = ($total_budget > 0) ? round(($serapan / $total_budget) * 100) : 0;
-                // Menampilkan 0 jika tidak ada RKA
-                $display_serapan = $serapan;
-                $display_budget = $total_rka; // Menampilkan total RKA keseluruhan
-
                 $barClass = 'bar-success';
-                if ($persen <= 30) {
+                if ($unit['persen'] <= 30) {
                     $barClass = 'bar-danger';
-                } elseif ($persen <= 60) {
+                } elseif ($unit['persen'] <= 60) {
                     $barClass = 'bar-warning';
                 }
             @endphp
 
             <div class="d-flex align-items-center mb-3 gap-3">
                 <div style="min-width: 200px; max-width: 200px;">
-                    <span class="title-kegiatan">{{ $i + 1 }}. {{ $item->nama_program }}</span>
+                    <span class="title-kegiatan">{{ $i + 1 }}. {{ $unit['nama'] }}</span>
                 </div>
                 <div class="flex-grow-1 position-relative">
                     <div class="progress w-100" style="height: 35px;">
-                        <div class="progress-bar {{ $barClass }}" 
+                        <div class="progress-bar {{ $barClass }}"
                             role="progressbar"
-                            style="width: {{ $persen }}%;"
-                            aria-valuenow="{{ $persen }}" aria-valuemin="0" aria-valuemax="100">
+                            style="width: {{ $unit['persen'] }}%;"
+                            aria-valuenow="{{ $unit['persen'] }}" aria-valuemin="0" aria-valuemax="100">
                         </div>
                         <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-2" style="top: 0; left: 0; pointer-events: none;">
                             <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">
-                                Rp {{ number_format($display_serapan, 0, ',', '.') }} / Rp {{ number_format($display_budget, 0, ',', '.') }}
+                                Rp {{ number_format($unit['serapan'], 0, ',', '.') }} / Rp {{ number_format($unit['target_anggaran'], 0, ',', '.') }}
                             </span>
-                            <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">{{ $persen }}%</span>
+                            <span class="fw-bold" style="color: #151D48; text-shadow: 0 0 2px rgba(255,255,255,0.3);">{{ $unit['persen'] }}%</span>
                         </div>
                     </div>
                 </div>

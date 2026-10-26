@@ -10,13 +10,26 @@
 @section('content')
     <div class="row g-0 flex-grow-1 w-100" style="min-height:100vh; overflow: hidden;">
         <!-- Left: Illustration & Welcome -->
-        <div class="col-lg-7 d-none d-lg-flex flex-column justify-content-start align-items-center px-0 pt-7"
+        <div class="col-lg-7 d-none d-lg-flex flex-column justify-content-center align-items-center px-0"
             style="
-        background: url('{{ asset('assets/img/kantor-koni.png') }}') 10% center / cover no-repeat;
+        background: linear-gradient(135deg, #0D2E2B 0%, #17564A 100%);
         height: 100vh;
         max-width: 100%;
         position: relative;
     ">
+            <div class="d-flex align-items-center gap-5">
+                <span class="d-flex align-items-center justify-content-center flex-shrink-0"
+                    style="width:96px; height:96px; border-radius:24px; background-color:#E3F1EA;">
+                    <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#1F6B5A" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <g transform="rotate(-8 12 12)">
+                            <path d="M14 3H8a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V8z" />
+                            <path d="M14 3v3a2 2 0 0 0 2 2h3" />
+                        </g>
+                    </svg>
+                </span>
+                <span class="fw-bolder text-white" style="font-size:3.5rem; letter-spacing:0.18em;">SIMPATI</span>
+            </div>
         </div>
 
 
@@ -24,7 +37,10 @@
         <div class="col-lg-5 d-flex flex-column justify-content-center align-items-center bg-white px-4 px-lg-0">
             <div class="w-100" style="max-width:370px;">
                 <div class="text-center mb-4">
-                    <img src="{{ asset('assets/img/koni.png') }}" alt="Logo KONI" style="height:70px;">
+                    <span class="d-inline-flex align-items-center gap-3">
+                        <img src="{{ asset('assets/img/simpati-icon.svg') }}" alt="Logo SIMPATI" style="height:52px;">
+                        <span class="fw-bolder fs-1" style="color:#0D2E2B; letter-spacing:0.18em;">SIMPATI</span>
+                    </span>
                 </div>
                 <div class="card shadow-sm border-0 rounded-4 p-4">
                     <h5 class="fw-bold mb-3 text-center">Masuk</h5>
@@ -48,7 +64,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             <div class="d-flex justify-content-end mt-1">
-                                <a href="#" class="small" style="color:#D20A11">Lupa password?</a>
+                                <a href="#" class="small" style="color:#1F6B5A">Lupa password?</a>
                             </div>
                         </div>
                         <div class="mb-3 form-check">
@@ -56,14 +72,14 @@
                             <label class="form-check-label" for="remember">Ingat Saya</label>
                         </div>
                         <button type="submit" class="btn w-100 text-white fw-bold"
-                            style="background:#D20A11; height: 44px;">
+                            style="background:#1F6B5A; height: 44px;">
                             <span>Masuk</span>
                         </button>
                     </form>
                 </div>
                 {{-- Copyright di kanan --}}
                 <div class="text-end text-muted small mt-4">
-                    © 2025 KONI Tabalong. Hak Cipta Dilindungi.
+                    © 2025 SIMPATI. Hak Cipta Dilindungi.
                 </div>
             </div>
         </div>

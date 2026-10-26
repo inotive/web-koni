@@ -3,41 +3,42 @@
     font-size: 14px !important;
 }
 
-/* Custom active state for sidebar menu (orange like Dashboard) */
+/* Custom active state for sidebar menu (hijau tema Dinas Kesehatan) */
 .menu-link.active, .menu-link.active.bg-red {
-    background-color: transparent !important;
-    color: #F8285A !important;
-    border-radius: 0 !important;
+    background-color: #E3F1EA !important;
+    color: #1F6B5A !important;
+    border-radius: 12px !important;
 }
 .menu-link.active .menu-title,
 .menu-link.active.bg-red .menu-title {
-    color: #F8285A !important;
+    color: #1F6B5A !important;
+    font-weight: 600 !important;
 }
 .menu-link.active .menu-icon i,
 .menu-link.active.bg-red .menu-icon i {
-    color: #F8285A !important;
+    color: #1F6B5A !important;
 }
 
 /* Hover state for sidebar menu (orange like Dashboard) */
 .menu-link:hover:not(.active):not(.bg-red) {
-    background-color: #ffcad7ff !important;
-    color: #F8285A !important;
+    background-color: #E3F1EA !important;
+    color: #1F6B5A !important;
     border-radius: 12px !important;
 }
 .menu-link:hover:not(.active):not(.bg-red) .menu-title {
-    color: #F8285A !important;
+    color: #1F6B5A !important;
 }
 .menu-link:hover:not(.active):not(.bg-red) .menu-icon i {
-    color: #F8285A !important;
+    color: #1F6B5A !important;
 }
 .menu-link:hover:not(.active):not(.bg-red) .menu-bullet .bullet {
-    background-color: #F8285A !important;
+    background-color: #1F6B5A !important;
 }
 
 /* Bullet orange for active menu */
 .menu-link.active .menu-bullet .bullet,
 .menu-link.active.bg-red .menu-bullet .bullet {
-    background-color: #F8285A !important;
+    background-color: #1F6B5A !important;
 }
 
 .menu-link .fa-angle-down,

@@ -55,19 +55,19 @@
 
         /* Buttons */
         .btn-add-pelatih {
-            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+            background: linear-gradient(135deg, #1F6B5A 0%, #2E8B6E 100%);
             border: none;
             border-radius: 8px;
             padding: 12px 24px;
             font-weight: 600;
             font-size: 0.95rem;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+            box-shadow: 0 2px 8px rgba(31, 107, 90, 0.3);
         }
 
         .btn-add-pelatih:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+            box-shadow: 0 4px 12px rgba(31, 107, 90, 0.4);
         }
 
         /* Table Container */
@@ -297,8 +297,8 @@
         }
 
         .form-select:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 0.2rem rgba(31, 107, 90, 0.25);
         }
 
         .btn-outline-secondary:hover {
@@ -325,8 +325,8 @@
         }
 
         .pagination-sm .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #1F6B5A;
+            border-color: #1F6B5A;
             color: white;
         }
 
@@ -525,7 +525,7 @@
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-2" style="padding:10px 30px">
         <h2 class="fw-bold fs-2 mb-0 text-dark">Pelatih</h2>
         <a href="{{ route('admin.konfigurasi.pelatih.create') }}" class="btn"
-            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
+            style="background-color: #1F6B5A !important; color: white !important; border-color: #1F6B5A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Pelatih
         </a>
     </div>

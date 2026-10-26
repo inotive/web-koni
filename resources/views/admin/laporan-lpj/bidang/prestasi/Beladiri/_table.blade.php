@@ -25,7 +25,7 @@
                         <div class="progress" style="height: 8px; border-radius: 4px;">
                             <div class="progress-bar"
                                 role="progressbar"
-                                style="width: {{ $percentage }}%; background-color: #F8285A;"
+                                style="width: {{ $percentage }}%; background-color: #1F6B5A;"
                                 aria-valuenow="{{ $percentage }}"
                                 aria-valuemin="0"
                                 aria-valuemax="100">

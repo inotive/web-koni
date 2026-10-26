@@ -10,7 +10,7 @@
         }
 
         .delete:hover {
-            background-color: #ffcad7ff !important;
+            background-color: #E3F1EA !important;
         }
     </style>
 @endsection
@@ -51,7 +51,7 @@
 
                     <div class="d-grid py-4">
                         <button type="button" onclick="submitForm('formAdd')"
-                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            class="bg-primary fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                             Tambah Folder
                         </button>
                     </div>

@@ -1,0 +1,44 @@
+/* Tema warna Dinas Kesehatan: menimpa warna primary bawaan Metronic (biru) menjadi hijau */
+:root,
+[data-bs-theme=light] {
+    --bs-primary: #1F6B5A;
+    --bs-primary-rgb: 31, 107, 90;
+    --bs-primary-active: #17564A;
+    --bs-primary-light: #E3F1EA;
+    --bs-primary-clarity: rgba(31, 107, 90, 0.2);
+    --bs-primary-inverse: #ffffff;
+    --bs-text-primary: #1F6B5A;
+    --bs-primary-text-emphasis: #0D2E2B;
+    --bs-primary-bg-subtle: #E3F1EA;
+    --bs-primary-border-subtle: #B5D8C8;
+    --bs-link-color: #1F6B5A;
+    --bs-link-color-rgb: 31, 107, 90;
+    --bs-link-hover-color: #17564A;
+    --bs-link-hover-color-rgb: 23, 86, 74;
+}
+
+.btn-primary {
+    --bs-btn-color: #ffffff;
+    --bs-btn-bg: #1F6B5A;
+    --bs-btn-border-color: #1F6B5A;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: #17564A;
+    --bs-btn-hover-border-color: #17564A;
+    --bs-btn-focus-shadow-rgb: 31, 107, 90;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-bg: #17564A;
+    --bs-btn-active-border-color: #17564A;
+    --bs-btn-disabled-color: #ffffff;
+    --bs-btn-disabled-bg: #1F6B5A;
+    --bs-btn-disabled-border-color: #1F6B5A;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #1F6B5A;
+}
+
+.form-check-input:checked {
+    background-color: #1F6B5A;
+    border-color: #1F6B5A;
+}

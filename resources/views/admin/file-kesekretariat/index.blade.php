@@ -164,7 +164,7 @@
 
         .table tbody tr:hover {
     z-index: 10;
-    background-color: rgba(248, 40, 90, 0.03);
+    background-color: rgba(31, 107, 90, 0.03);
 }
 
         .table th.sortable {
@@ -196,7 +196,7 @@
         }
 
         .table th.sortable:hover .sort-icon i {
-            color: #F8285A;
+            color: #1F6B5A;
         }
 
         /* =================================
@@ -233,7 +233,7 @@
         }
 
         .document-name:hover {
-            color: #F8285A;
+            color: #1F6B5A;
             text-decoration: underline;
         }
 
@@ -271,9 +271,9 @@
         }
 
         .file-link:hover {
-            color: #F8285A;
+            color: #1F6B5A;
             background: #fdf2f4;
-            border-color: #F8285A;
+            border-color: #1F6B5A;
             text-decoration: none;
             transform: translateY(-1px);
         }
@@ -324,7 +324,7 @@
 
         .file-link:hover {
             background-color: #f8f9fa;
-            color: #F8285A;
+            color: #1F6B5A;
         }
 
         /* Document Link Styling (sama seperti di tabel) */
@@ -390,14 +390,14 @@
 
         .dropdown-toggle-action:hover {
             background-color: #fdf2f4 !important;
-            border-color: #F8285A !important;
+            border-color: #1F6B5A !important;
             transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(248, 40, 90, 0.2);
+            box-shadow: 0 3px 8px rgba(31, 107, 90, 0.2);
         }
 
         .dropdown-toggle-action:focus {
             outline: none !important;
-            box-shadow: 0 0 0 3px rgba(248, 40, 90, 0.2) !important;
+            box-shadow: 0 0 0 3px rgba(31, 107, 90, 0.2) !important;
         }
 
         .dropdown-toggle-action svg {
@@ -443,7 +443,7 @@
 
         .dropdown-item-action:hover {
             background-color: #f8f9fa !important;
-            color: #F8285A !important;
+            color: #1F6B5A !important;
             transform: translateX(4px) !important;
         }
 
@@ -477,8 +477,8 @@
                                                                                                                                                                             ================================= */
         .custom-red-button,
         .btn-active-light-danger {
-            background-color: #F8285A !important;
-            border-color: #F8285A !important;
+            background-color: #1F6B5A !important;
+            border-color: #1F6B5A !important;
             color: white !important;
             font-weight: 600;
             transition: all 0.2s ease;
@@ -486,11 +486,11 @@
 
         .custom-red-button:hover,
         .btn-active-light-danger:hover {
-            background-color: #e1244e !important;
-            border-color: #e1244e !important;
+            background-color: #17564A !important;
+            border-color: #17564A !important;
             color: white !important;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.3);
+            box-shadow: 0 4px 12px rgba(31, 107, 90, 0.3);
         }
 
         .form-control {
@@ -503,8 +503,8 @@
         }
 
         .form-control:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 3px rgba(248, 40, 90, 0.1);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 3px rgba(31, 107, 90, 0.1);
             background-color: #ffffff;
             /* Maintain white background on focus */
         }
@@ -577,15 +577,15 @@
         }
 
         .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #1F6B5A;
+            border-color: #1F6B5A;
             color: white;
         }
 
         .page-item:not(.disabled) .page-link:hover {
             background-color: #fdf2f4;
-            border-color: #F8285A;
-            color: #F8285A;
+            border-color: #1F6B5A;
+            color: #1F6B5A;
         }
 
         .page-item.disabled .page-link {
@@ -620,7 +620,7 @@
 
         .dropzone:hover,
         .dropzone.drag-over {
-            border-color: #F8285A;
+            border-color: #1F6B5A;
             background-color: #fdf2f4;
         }
 
@@ -755,7 +755,7 @@
         .loading-spinner .spinner-border {
             width: 2.5rem;
             height: 2.5rem;
-            color: #F8285A;
+            color: #1F6B5A;
         }
 
         /* =================================
@@ -1052,7 +1052,7 @@
                 <input type="hidden" name="sort_by" id="sort_by_input" value="{{ request('sort_by', 'created_at') }}">
                 <input type="hidden" name="order" id="order_input" value="{{ request('order', 'desc') }}">
                 <button type="button" id="tambahFileBtn"
-                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                    class="btn btn-active-light-primary d-flex bg-primary align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
                     <span>Tambah File</span>
                 </button>
@@ -1144,7 +1144,7 @@
                     <!-- Submit Button -->
                     <div class="d-grid py-4">
                         <button type="button" onclick="submitForm('tambahFileForm')" id="submitBtn"
-                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            class="bg-primary fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                             <i class="fas fa-save me-1"></i>Simpan File
                         </button>
                     </div>
@@ -1238,7 +1238,7 @@
                     <!-- Submit Button -->
                     <div class="d-grid py-4">
                         <button type="button" onclick="submitEditForm()" id="editSubmitBtn"
-                            class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                            class="bg-primary fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                             <i class="fas fa-save me-1"></i>Update File
                         </button>
                     </div>

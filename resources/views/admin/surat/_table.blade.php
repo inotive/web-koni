@@ -146,6 +146,13 @@
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-custom">
+                                    @if ($tableId === 'masuk')
+                                        <li class="dropdown-item disposisi"
+                                            data-no-surat="{{ $surat->no_surat }}"
+                                            data-perihal="{{ $surat->nama_kegiatan }}">
+                                            <i class="fa-solid fa-share-from-square me-2"></i>Disposisi
+                                        </li>
+                                    @endif
                                     <li class="dropdown-item edit" data-bs-toggle="modal"
                                         data-bs-target="#edit-{{ $surat->id }}">
                                         <i class="ki-outline ki-pencil me-2"></i>Edit Surat
@@ -237,7 +244,7 @@
                                 <div class="d-grid py-4">
                                     <button type="button" onclick="submitForm('form-{{ $surat->id }}')"
                                         id="editSubmitBtn-{{ $surat->id }}"
-                                        class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                                        class="bg-primary fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                                         Update {{ $surat->jenis_surat == 'masuk' ? 'Surat Masuk' : 'Surat Keluar' }}
                                     </button>
                                 </div>
@@ -410,7 +417,7 @@
     }
 
     .sort-link:hover {
-        color: #F8285A !important;
+        color: #1F6B5A !important;
         text-decoration: none !important;
     }
 
@@ -427,7 +434,7 @@
 
     .sort-link i.text-primary {
         opacity: 1;
-        color: #F8285A !important;
+        color: #1F6B5A !important;
     }
 
     #per_page {
@@ -507,12 +514,17 @@
         background-color: #f8f9fa;
     }
 
+    .dropdown-item.disposisi:hover {
+        background-color: #E3F1EA !important;
+        color: #1F6B5A;
+    }
+
     .dropdown-item.edit:hover {
         background-color: rgb(249, 245, 172) !important;
     }
 
     .dropdown-item.delete:hover {
-        background-color: #ffcad7 !important;
+        background-color: #E3F1EA !important;
     }
 
     .pagination-arrow {

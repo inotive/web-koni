@@ -5,16 +5,31 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-    <title>KONI Tabalong - <?php echo $__env->yieldContent('title'); ?></title>
+    <title>SIMPATI - <?php echo $__env->yieldContent('title'); ?></title>
+    
+    <!-- Open Graph / WhatsApp Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?php echo e(url()->current()); ?>">
+    <meta property="og:title" content="<?php echo $__env->yieldContent('title', 'Dashboard'); ?> - SIMPATI">
+    <meta property="og:description" content="SIMPATI - Sistem Administrasi Terintegrasi">
+    <meta property="og:image" content="<?php echo e(asset('assets/img/simpati-icon.svg')); ?>">
+    <meta property="og:site_name" content="SIMPATI">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?php echo $__env->yieldContent('title', 'Dashboard'); ?> - SIMPATI">
+    <meta name="twitter:description" content="SIMPATI - Sistem Administrasi Terintegrasi">
+    <meta name="twitter:image" content="<?php echo e(asset('assets/img/simpati-icon.svg')); ?>">
 
-    <link rel="shortcut icon" href="<?php echo e(asset('assets/img/logo-koni-simplified.png')); ?>" />
+    <link rel="shortcut icon" type="image/svg+xml" href="<?php echo e(asset('assets/img/simpati-icon.svg')); ?>" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
         rel="stylesheet">
 
     <link href="<?php echo e(asset('assets/plugins/global/plugins.bundle.css')); ?>" rel="stylesheet" type="text/css" />
     <link href="<?php echo e(asset('assets/css/style.bundle.css')); ?>" rel="stylesheet" type="text/css" />
-    <link href="<?php echo e(asset('assets/css/custom-sidebar.css')); ?>" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('assets/css/theme-dinkes.css')); ?>?v=<?php echo e(filemtime(public_path('assets/css/theme-dinkes.css'))); ?>" rel="stylesheet" type="text/css" />
+    <link href="<?php echo e(asset('assets/css/custom-sidebar.css')); ?>?v=<?php echo e(filemtime(public_path('assets/css/custom-sidebar.css'))); ?>" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="<?php echo e(asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css')); ?>" rel="stylesheet"
@@ -32,12 +47,12 @@
         }
 
         .bg-red {
-            background-color: #ffcad7ff !important;
+            background-color: #E3F1EA !important;
             font-weight: bold;
         }
 
         .bg-red-strong {
-            background-color: #F8285A !important;
+            background-color: #1F6B5A !important;
             font-weight: bold;
         }
 
@@ -47,7 +62,7 @@
         }
 
         .border-red {
-            border-color: #F8285A !important;
+            border-color: #1F6B5A !important;
         }
 
         .truncate {
@@ -60,11 +75,11 @@
         }
 
         .text-orange {
-            color: #F8285A !important;
+            color: #1F6B5A !important;
         }
 
         .muted-hover:hover {
-            color: #F8285A !important;
+            color: #1F6B5A !important;
         }
 
         .percentage-option {
@@ -76,7 +91,7 @@
         }
 
         .percentage-option.selected {
-            background-color: #F8285A;
+            background-color: #1F6B5A;
             color: white;
         }
 
@@ -193,4 +208,4 @@
 </body>
 
 </html>
-<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/layouts/app.blade.php ENDPATH**/ ?>
+<?php /**PATH E:\.instalation\laragon\www\web-koni\resources\views/layouts/app.blade.php ENDPATH**/ ?>

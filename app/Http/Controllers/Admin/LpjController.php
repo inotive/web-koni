@@ -34,13 +34,18 @@ class LpjController extends Controller
         $parent = $parentId ? Lpj::findOrFail($parentId) : null;
 
         if ($parentId) {
-            $query->where('parent_id', $parentId);
+            // Tabel hanya berisi LPJ, folder ditampilkan terpisah di atas tabel
+            $query->where('parent_id', $parentId)->where('is_folder', false);
 
             $target = Target::where('id_lpj', $parentId)->whereYear('created_at', $selectedYear)->first();
 
-            $children = Lpj::where('parent_id', $parentId)->whereYear('created_at', $selectedYear)->get();
-            $current_budget = $children->sum('jumlah_harga');
-            $kegiatan_count = $children->count();
+            // Total anggaran & kegiatan mencakup isi semua subfolder
+            $entries = Lpj::entries()
+                ->whereIn('parent_id', $parent->folderTreeIds())
+                ->whereYear('created_at', $selectedYear)
+                ->get();
+            $current_budget = $entries->sum('jumlah_harga');
+            $kegiatan_count = $entries->count();
         } else {
             $query->whereNull('parent_id');
         }
@@ -81,7 +86,30 @@ class LpjController extends Controller
             return view('admin.laporan-lpj.bidang_new.dynamic._table', compact('lpjData', 'currentParent'))->render();
         }
 
+        $folders = collect();
+        $folderTrail = [];
+        if ($parent) {
+            $folders = Lpj::folders()
+                ->where('parent_id', $parent->id)
+                ->withCount([
+                    'children as subfolder_count' => fn ($q) => $q->where('is_folder', true),
+                    'children as entry_count' => fn ($q) => $q->where('is_folder', false),
+                ])
+                ->orderBy('nama_program')
+                ->get();
+
+            $folderTrail = $parent->ancestors()->push($parent)->map(fn ($folder) => [
+                'title' => $folder->nama_program,
+                'url' => route('admin.laporan-lpj.bidang.dynamic.child.index', ['parentId' => $folder->id, 'year' => $selectedYear]),
+            ])->prepend([
+                'title' => 'Bidang Bidang',
+                'url' => route('admin.laporan-lpj.bidang.index', ['year' => $selectedYear]),
+            ])->all();
+        }
+
         return view('admin.laporan-lpj.bidang_new.dynamic.index', compact(
+            'folders',
+            'folderTrail',
             'lpjData',
             'currentParent',
             'parent',
@@ -399,6 +427,7 @@ class LpjController extends Controller
 
         $category = Lpj::create([
             'parent_id' => $parentId,
+            'is_folder' => true,
             'nama_program' => $validated['nama_program'],
             'nama_kegiatan' => $validated['nama_kegiatan'],
             'icon' => $validated['icon'],

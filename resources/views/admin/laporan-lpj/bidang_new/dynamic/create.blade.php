@@ -49,8 +49,8 @@
     .card-form { background-color: white; border-radius: 12px; border: 1px solid #e9ecef; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); }
     .form-control, .form-select { border-radius: 8px; padding: 10px 14px; font-size: 0.95rem; }
     .form-control:focus, .form-select:focus { border-color: #0d6efd; box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2); }
-    .btn-danger { background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%); border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3); }
-    .btn-danger:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4); }
+    .btn-danger { background: linear-gradient(135deg, #1F6B5A 0%, #2E8B6E 100%); border: none; border-radius: 8px; padding: 12px 24px; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(31, 107, 90, 0.3); }
+    .btn-danger:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(31, 107, 90, 0.4); }
 
     .currency-input { position: relative; }
     .currency-input::before { content: "Rp"; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #6c757d; font-size: 0.95rem; z-index: 1; }
@@ -276,7 +276,7 @@
 
                         <div class="row">
                             <div class="col-md-9 offset-md-3 d-flex gap-3">
-                                <button type="submit" class="btn btn-danger">
+                                <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save me-2"></i>Simpan
                                 </button>
                                 <a href="{{ $parentId ? route('admin.laporan-lpj.bidang.dynamic.child.index', $parentId) : route('admin.laporan-lpj.bidang.dynamic.index') }}"

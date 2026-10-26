@@ -153,7 +153,7 @@
         }
 
         .dropdown-item-custom.delete:hover {
-            background-color: #ffcad7 !important;
+            background-color: #E3F1EA !important;
         }
 
         .table-responsive {
@@ -494,6 +494,9 @@
 
         <!-- Year Filter -->
         <form method="GET" id="yearFilterForm" class="d-flex align-items-center gap-2">
+            @if ($currentFolder->id !== $parentCategory->id)
+                <input type="hidden" name="folder" value="{{ $currentFolder->id }}">
+            @endif
             <label for="year" class="text-muted mb-0">Tahun:</label>
             <select name="tahun_filter" class="form-select" style="width: 120px" onchange="this.form.submit()">
                 @if(isset($availableYears) && count($availableYears) > 0)
@@ -527,7 +530,7 @@
             <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
                 <div class="progress-bar progress-bar-striped progress-bar-animated"
                     role="progressbar"
-                    style="width: {{ $percentage }}%; background-color: #F8285A; border-radius: 12px;"
+                    style="width: {{ $percentage }}%; background-color: #1F6B5A; border-radius: 12px;"
                     aria-valuenow="{{ $percentage }}"
                     aria-valuemin="0"
                     aria-valuemax="100">
@@ -548,14 +551,21 @@
         </div>
     @endif
     
+    @include('admin.laporan-lpj.partials.folder-explorer', [
+        'folders' => $folders,
+        'parentFolder' => $currentFolder,
+        'trail' => $folderTrail,
+        'folderUrl' => fn ($folder) => route('admin.laporan-lpj.sekretariat.index', ['folder' => $folder->id]),
+    ])
+
     <div class="mt-5 col-12">
         <div class="card">
             <div class="flex-wrap py-5 card-header d-flex justify-content-between align-items-center">
-                <h3 class="mb-0 card-title fw-bold fs-4">Daftar Table Sekretariat - {{ $tahunFilter ?? date('Y') }}</h3>
+                <h3 class="mb-0 card-title fw-bold fs-4">Daftar LPJ {{ $currentFolder->nama_program }} - {{ $tahunFilter ?? date('Y') }}</h3>
 
                 <div class="flex-wrap gap-2 d-flex align-items-center ms-auto">
-                    <a href="{{ route('admin.laporan-lpj.sekretariat.create') }}" class="btn btn-primary"
-                        style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important;">
+                    <a href="{{ route('admin.laporan-lpj.sekretariat.create', $currentFolder->id !== $parentCategory->id ? ['folder' => $currentFolder->id] : []) }}" class="btn btn-primary"
+                        style="background-color: #1F6B5A !important; color: white !important; border-color: #1F6B5A !important;">
                         <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
                     </a>
 
@@ -1817,7 +1827,7 @@
 
                 <div class="py-4 d-grid">
                     <button type="button" id="saveTargetBtn"
-                        class="gap-2 p-4 text-white rounded border-0 bg-danger fw-bold d-flex align-items-center justify-content-center">
+                        class="gap-2 p-4 text-white rounded border-0 bg-primary fw-bold d-flex align-items-center justify-content-center">
                         <span class="btn-text">Simpan Target</span>
                     </button>
                 </div>

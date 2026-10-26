@@ -58,7 +58,7 @@
                 <div class="progress" style="height: 18px; border-radius: 12px; background-color: #f1f1f1;">
                     <div class="progress-bar progress-bar-striped progress-bar-animated"
                         role="progressbar"
-                        style="width: {{ $anggaran_percentage }}%; background-color: #F8285A; border-radius: 12px;"
+                        style="width: {{ $anggaran_percentage }}%; background-color: #1F6B5A; border-radius: 12px;"
                         aria-valuenow="{{ $anggaran_percentage }}"
                         aria-valuemin="0"
                         aria-valuemax="100">

@@ -16,6 +16,8 @@ class Lpj extends Model
     protected $fillable = [
         'modifiable_by_user_id',
         'parent_id',
+        'is_folder',
+        'modul',
         'icon',
         'nama_program',
         'nama_kegiatan',
@@ -37,6 +39,7 @@ class Lpj extends Model
     ];
 
     protected $casts = [
+        'is_folder' => 'boolean',
         'dokumen_pendukung' => 'array',
         'dokumen_lpj' => 'array',
         'dokumen_lpj_pdf' => 'array',
@@ -119,6 +122,69 @@ class Lpj extends Model
         }
 
         return $ancestors;
+    }
+
+    /**
+     * Get the root ancestor (top level folder) of this entry
+     */
+    public function rootAncestor(): Lpj
+    {
+        $current = $this;
+
+        while ($current->parent) {
+            $current = $current->parent;
+        }
+
+        return $current;
+    }
+
+    /**
+     * Check if this entry is the given folder or located somewhere inside it
+     */
+    public function isWithin(Lpj $folder): bool
+    {
+        $current = $this;
+
+        while ($current) {
+            if ($current->id === $folder->id) {
+                return true;
+            }
+            $current = $current->parent;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get IDs of this folder and all folders below it
+     */
+    public function folderTreeIds(): array
+    {
+        $ids = [$this->id];
+        $frontier = [$this->id];
+
+        while (!empty($frontier)) {
+            $frontier = static::whereIn('parent_id', $frontier)->where('is_folder', true)->pluck('id')->all();
+            $ids = array_merge($ids, $frontier);
+        }
+
+        return $ids;
+    }
+
+    /**
+     * Scope for folders only
+     */
+    public function scopeFolders($query)
+    {
+        return $query->where('is_folder', true);
+    }
+
+    /**
+     * Scope for LPJ entries only (not folders)
+     */
+    public function scopeEntries($query)
+    {
+        return $query->where('is_folder', false);
     }
 
     /**

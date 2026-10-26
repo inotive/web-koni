@@ -226,7 +226,7 @@
                                 </div>
 
                                 <div class="d-grid py-4">
-                                    <button type="button" onclick="submitForm('form-{{ $item->id }}')" id="submitBtn{{ $item->id }}" class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                                    <button type="button" onclick="submitForm('form-{{ $item->id }}')" id="submitBtn{{ $item->id }}" class="bg-primary fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                                         <span class="btn-text">Update Laporan</span>
                                     </button>
                                 </div>
@@ -361,7 +361,7 @@
     }
 
     .sortable:hover {
-        background-color: rgba(248, 40, 90, 0.05) !important;
+        background-color: rgba(31, 107, 90, 0.05) !important;
     }
 
     .sort-icons {
@@ -370,7 +370,7 @@
 
     .sortable:hover .sort-icons i {
         opacity: 1 !important;
-        color: #F8285A !important;
+        color: #1F6B5A !important;
     }
 
     .dropdown-action {
@@ -474,7 +474,7 @@
         top: 0;
         height: 100%;
         width: 0;
-        background: linear-gradient(90deg, transparent, rgba(248, 40, 90, 0.1));
+        background: linear-gradient(90deg, transparent, rgba(31, 107, 90, 0.1));
         transition: width 0.3s ease;
         z-index: -1;
     }
@@ -510,7 +510,7 @@
     }
 
     .dropdown-item.delete:hover {
-        background-color: #ffcad7 !important;
+        background-color: #E3F1EA !important;
         color: #721c24;
     }
 

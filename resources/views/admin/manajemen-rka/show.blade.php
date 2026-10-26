@@ -12,7 +12,7 @@
         }
 
         .delete:hover {
-            background-color: #ffcad7ff !important;
+            background-color: #E3F1EA !important;
         }
 
         input[type=number]::-webkit-inner-spin-button,
@@ -56,7 +56,7 @@
             </div>
             <form id="filter" class="d-flex gap-3">
                 <button type="button" data-bs-toggle="modal" data-bs-target="#add"
-                    class="btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
+                    class="btn btn-active-light-primary d-flex bg-primary align-items-center btn-facebook fw-bold gap-2 rounded border-0 px-4 py-2 text-white">
                     Tambah RKA
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_851_8468)">
@@ -129,7 +129,7 @@
 
                         <div class="d-grid py-4">
                             <button id="submitBtnAdd" type="submit" onclick="submitForm('formAdd')"
-                                class="bg-danger fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
+                                class="bg-primary fw-bold d-flex align-items-center justify-content-center gap-2 rounded border-0 p-4 text-white">
                                 Simpan
                             </button>
                         </div>

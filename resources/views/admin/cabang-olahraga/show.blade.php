@@ -48,19 +48,19 @@
 
         /* Buttons */
         .btn-add-pelatih {
-            background: linear-gradient(135deg, #F8285A 0%, #e91e63 100%);
+            background: linear-gradient(135deg, #1F6B5A 0%, #2E8B6E 100%);
             border: none;
             border-radius: 8px;
             padding: 12px 24px;
             font-weight: 600;
             font-size: 0.95rem;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(248, 40, 90, 0.3);
+            box-shadow: 0 2px 8px rgba(31, 107, 90, 0.3);
         }
 
         .btn-add-pelatih:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(248, 40, 90, 0.4);
+            box-shadow: 0 4px 12px rgba(31, 107, 90, 0.4);
         }
 
         /* Table Container */
@@ -287,8 +287,8 @@
         }
 
         .form-select:focus {
-            border-color: #F8285A;
-            box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.25);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 0.2rem rgba(31, 107, 90, 0.25);
         }
 
         .btn-outline-secondary:hover {
@@ -324,8 +324,8 @@
         }
 
         .pagination-sm .page-item.active .page-link {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #1F6B5A;
+            border-color: #1F6B5A;
             color: white;
         }
 

@@ -27,8 +27,9 @@ class SekretariatController extends Controller
     {
         // Cari atau buat parent kategori Sekretariat
         $parentCategory = $this->getOrCreateParentCategory();
+        $currentFolder = $this->resolveFolder($request->folder, $parentCategory);
 
-        $query = Lpj::where('parent_id', $parentCategory->id);
+        $query = Lpj::entries()->where('parent_id', $currentFolder->id);
 
         // Filter berdasarkan tahun - jika tidak ada filter tahun, gunakan tahun saat ini
         $tahunFilter = $request->tahun_filter ?? date('Y');
@@ -66,15 +67,16 @@ class SekretariatController extends Controller
             ->orderBy($sort, $direction)
             ->paginate($request->get('per_page', 10));
 
-        // Get total budget and kegiatan count for sekretariat
-        $current_budget = Lpj::where('parent_id', $parentCategory->id)->sum('jumlah_harga');
-        $kegiatan_count = Lpj::where('parent_id', $parentCategory->id)->count();
+        // Get total budget and kegiatan count for sekretariat (termasuk isi semua subfolder)
+        $folderTreeIds = $parentCategory->folderTreeIds();
+        $current_budget = Lpj::entries()->whereIn('parent_id', $folderTreeIds)->sum('jumlah_harga');
+        $kegiatan_count = Lpj::entries()->whereIn('parent_id', $folderTreeIds)->count();
         $target = \App\Models\Target::where('id_lpj', $parentCategory->id)->first();
         $target_anggaran = $target->target_anggaran ?? 0;
         $target_kegiatan = $target->target_kegiatan ?? 0;
 
         // Get available years for the dropdown
-        $availableYears = Lpj::where('parent_id', $parentCategory->id)
+        $availableYears = Lpj::entries()->whereIn('parent_id', $folderTreeIds)
             ->selectRaw('YEAR(created_at) as year')
             ->distinct()
             ->orderBy('year', 'desc')
@@ -85,6 +87,20 @@ class SekretariatController extends Controller
             return view('admin.laporan-lpj.sekretariat._table', compact('kegiatanLainnya'))->render();
         }
 
+        $folders = Lpj::folders()
+            ->where('parent_id', $currentFolder->id)
+            ->withCount([
+                'children as subfolder_count' => fn ($q) => $q->where('is_folder', true),
+                'children as entry_count' => fn ($q) => $q->where('is_folder', false),
+            ])
+            ->orderBy('nama_program')
+            ->get();
+
+        $folderTrail = $currentFolder->ancestors()->push($currentFolder)->map(fn ($folder) => [
+            'title' => $folder->nama_program,
+            'url' => $this->folderUrl($folder, $parentCategory),
+        ])->all();
+
         return view('admin.laporan-lpj.sekretariat.index', compact(
             'kegiatanLainnya',
             'current_budget',
@@ -93,13 +109,18 @@ class SekretariatController extends Controller
             'target_kegiatan',
             'parentCategory',
             'availableYears',
-            'tahunFilter'
+            'tahunFilter',
+            'currentFolder',
+            'folders',
+            'folderTrail'
         ));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('admin.laporan-lpj.sekretariat.create');
+        $currentFolder = $this->resolveFolder($request->folder, $this->getOrCreateParentCategory());
+
+        return view('admin.laporan-lpj.sekretariat.create', compact('currentFolder'));
     }
 
     public function store(Request $request)
@@ -128,11 +149,12 @@ class SekretariatController extends Controller
             'dokumen_lpj_pdf.max' => 'Ukuran Dokumen LPJ PDF maksimal 10MB.',
         ]);
 
-        // Cari atau buat parent kategori
+        // Cari atau buat parent kategori, lalu tentukan folder tujuan
         $parentCategory = $this->getOrCreateParentCategory();
+        $targetFolder = $this->resolveFolder($request->folder_id, $parentCategory);
 
         $data = [
-            'parent_id' => $parentCategory->id,
+            'parent_id' => $targetFolder->id,
             'nama_program' => $request->nama_program_kegiatan,
             'nama_kegiatan' => $request->jenis_kegiatan,
             'volume' => $request->volume ?? '',
@@ -185,21 +207,19 @@ class SekretariatController extends Controller
 
         Lpj::create($data);
 
-        return redirect()->route('admin.laporan-lpj.sekretariat.index')
+        return redirect()->to($this->folderUrl($targetFolder, $parentCategory))
                          ->with('OK', 'Kegiatan berhasil ditambahkan.');
     }
 
     public function show($id)
     {
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                          ->findOrFail($id);
+        $sekretariat = $this->findEntry($id);
         return view('admin.laporan-lpj.sekretariat.show', compact('sekretariat'));
     }
 
     public function edit($id)
     {
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                          ->findOrFail($id);
+        $sekretariat = $this->findEntry($id);
 
         // Cek apakah user adalah superadmin atau memiliki izin modifikasi
         if (!auth()->user()->hasRole('superadmin') &&
@@ -213,8 +233,7 @@ class SekretariatController extends Controller
 
     public function update(Request $request, $id)
     {
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                          ->findOrFail($id);
+        $sekretariat = $this->findEntry($id);
 
         // Cek apakah user adalah superadmin atau memiliki izin modifikasi
         if (!auth()->user()->hasRole('superadmin') &&
@@ -400,14 +419,13 @@ class SekretariatController extends Controller
             $sekretariat->update(['modifiable_by_user_id' => null]);
         }
 
-        return redirect()->route('admin.laporan-lpj.sekretariat.index')
+        return redirect()->to($this->folderUrl($sekretariat->parent ?? $this->getOrCreateParentCategory(), $this->getOrCreateParentCategory()))
                          ->with('OK', 'Kegiatan berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                          ->findOrFail($id);
+        $sekretariat = $this->findEntry($id);
 
         // Cek apakah user adalah superadmin atau memiliki izin modifikasi
         if (!auth()->user()->hasRole('superadmin') &&
@@ -464,8 +482,7 @@ class SekretariatController extends Controller
 
     public function removeFile(Request $request, $id)
     {
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                          ->findOrFail($id);
+        $sekretariat = $this->findEntry($id);
 
         // Cek apakah user adalah superadmin atau memiliki izin modifikasi
         if (!auth()->user()->hasRole('superadmin') &&
@@ -526,6 +543,38 @@ class SekretariatController extends Controller
     }
 
     /**
+     * Ambil folder yang diminta selama masih berada di dalam folder Sekretariat,
+     * selain itu kembali ke folder utama Sekretariat
+     */
+    private function resolveFolder($folderId, Lpj $parentCategory): Lpj
+    {
+        if (!$folderId) {
+            return $parentCategory;
+        }
+
+        $folder = Lpj::folders()->find($folderId);
+
+        return $folder && $folder->isWithin($parentCategory) ? $folder : $parentCategory;
+    }
+
+    /**
+     * Cari LPJ Sekretariat berdasarkan ID, termasuk yang berada di dalam subfolder
+     */
+    private function findEntry($id): Lpj
+    {
+        return Lpj::entries()
+            ->whereIn('parent_id', $this->getOrCreateParentCategory()->folderTreeIds())
+            ->findOrFail($id);
+    }
+
+    private function folderUrl(Lpj $folder, Lpj $parentCategory): string
+    {
+        return $folder->id === $parentCategory->id
+            ? route('admin.laporan-lpj.sekretariat.index')
+            : route('admin.laporan-lpj.sekretariat.index', ['folder' => $folder->id]);
+    }
+
+    /**
      * Mendapatkan atau membuat parent kategori untuk Sekretariat
      */
     private function getOrCreateParentCategory()
@@ -537,6 +586,8 @@ class SekretariatController extends Controller
                 'volume' => '',
                 'jumlah_harga_satuan' => 0,
                 'jumlah_harga' => 0,
+                'is_folder' => true,
+                'modul' => 'sekretariat',
                 'icon' => 'fas fa-building'
             ]
         );
@@ -552,8 +603,7 @@ class SekretariatController extends Controller
         ini_set('memory_limit', '512M');
         ini_set('max_execution_time', 300);
 
-        $sekretariat = Lpj::where('parent_id', $this->getOrCreateParentCategory()->id)
-                          ->findOrFail($id);
+        $sekretariat = $this->findEntry($id);
 
         // Validasi file sebelum proses
         $validPdfFiles = [];

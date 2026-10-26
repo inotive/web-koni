@@ -192,100 +192,7 @@
                     </div>
                 <?php endif; ?>
 
-                <!-- Konfigurasi Section -->
-                <?php if(auth()->user()->can('atlet') ||
-                        auth()->user()->can('pelatih') ||
-                        auth()->user()->can('cabang-olahraga') ||
-                        auth()->user()->can('kejuaraan')): ?>
-                    <div class="menu-item pt-10">
-                        <div class="menu-content">
-                            <span class="text-gray-800 menu-heading fw-bold text-uppercase fs-7">Konfigurasi</span>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Atlet -->
-                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('atlet')): ?>
-                    <?php
-                        $isAtletActive =
-                            request()->routeIs('admin.konfigurasi.atlet*') ||
-                            (isset($mainSection) && $mainSection == 'Atlet');
-                    ?>
-                    <div class="menu-item">
-                        <a class="menu-link <?php echo e($isAtletActive ? 'active' : ''); ?>"
-                            href="<?php echo e(route('admin.konfigurasi.atlet.index')); ?>"
-                            style="<?php echo e($isAtletActive ? 'background-color: #D20A11;' : ''); ?>">
-                            <span class="menu-icon">
-                                <i class="fa-solid fa-running fs-2"
-                                    style="color: <?php echo e($isAtletActive ? '#ffffff' : '#6c757d'); ?>"></i>
-                            </span>
-                            <span class="menu-title <?php echo e($isAtletActive ? 'text-white' : 'text-gray-800'); ?>">Atlet</span>
-                        </a>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Pelatih -->
-                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('pelatih')): ?>
-                    <?php
-                        $isPelatihActive =
-                            request()->routeIs('admin.konfigurasi.pelatih*') ||
-                            (isset($mainSection) && $mainSection == 'Pelatih');
-                    ?>
-                    <div class="menu-item">
-                        <a class="menu-link <?php echo e($isPelatihActive ? 'active' : ''); ?>"
-                            href="<?php echo e(route('admin.konfigurasi.pelatih.index')); ?>"
-                            style="<?php echo e($isPelatihActive ? 'background-color: #D20A11;' : ''); ?>">
-                            <span class="menu-icon">
-                                <i class="fa-solid fa-chalkboard-user fs-2"
-                                    style="color: <?php echo e($isPelatihActive ? '#ffffff' : '#6c757d'); ?>"></i>
-                            </span>
-                            <span
-                                class="menu-title <?php echo e($isPelatihActive ? 'text-white' : 'text-gray-800'); ?>">Pelatih</span>
-                        </a>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Cabang Olahraga -->
-                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('cabang-olahraga')): ?>
-                    <?php
-                        $isCabangOlahragaActive =
-                            request()->routeIs('admin.konfigurasi.cabang-olahraga*') ||
-                            (isset($mainSection) && $mainSection == 'Cabang Olahraga');
-                    ?>
-                    <div class="menu-item">
-                        <a class="menu-link <?php echo e($isCabangOlahragaActive ? 'active' : ''); ?>"
-                            href="<?php echo e(route('admin.konfigurasi.cabang-olahraga.index')); ?>"
-                            style="<?php echo e($isCabangOlahragaActive ? 'background-color: #D20A11;' : ''); ?>">
-                            <span class="menu-icon">
-                                <i class="fa-solid fa-basketball fs-2"
-                                    style="color: <?php echo e($isCabangOlahragaActive ? '#ffffff' : '#6c757d'); ?>"></i>
-                            </span>
-                            <span class="menu-title <?php echo e($isCabangOlahragaActive ? 'text-white' : 'text-gray-800'); ?>">Cabang
-                                Olahraga</span>
-                        </a>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Kejuaraan/Prestasi -->
-                <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('kejuaraan')): ?>
-                    <?php
-                        $isPrestasiActive =
-                            request()->routeIs('admin.konfigurasi.prestasi*') ||
-                            (isset($mainSection) && $mainSection == 'Kejuaraan');
-                    ?>
-                    <div class="menu-item">
-                        <a class="menu-link <?php echo e($isPrestasiActive ? 'active' : ''); ?>"
-                            href="<?php echo e(route('admin.konfigurasi.prestasi.index')); ?>"
-                            style="<?php echo e($isPrestasiActive ? 'background-color: #D20A11;' : ''); ?>">
-                            <span class="menu-icon">
-                                <i class="fa-solid fa-trophy fs-2"
-                                    style="color: <?php echo e($isPrestasiActive ? '#ffffff' : '#6c757d'); ?>"></i>
-                            </span>
-                            <span
-                                class="menu-title <?php echo e($isPrestasiActive ? 'text-white' : 'text-gray-800'); ?>">Kejuaraan</span>
-                        </a>
-                    </div>
-                <?php endif; ?>
+                
 
                 <!-- Manajemen Pengguna Section -->
                 <?php if(auth()->user()->can('pengguna') || auth()->user()->can('jabatan')): ?>
@@ -305,28 +212,26 @@
                     ?>
                     <div class="menu-item">
                         <a class="menu-link <?php echo e(request()->is('admin/manajemen-pengguna/pengguna*') ? 'active' : ''); ?>"
-                            href="<?php echo e(route('admin.manajemen-pengguna.pengguna.index')); ?>"
-                            style="<?php echo e(request()->is('admin/manajemen-pengguna/pengguna*') ? 'background-color: #D20A11;' : ''); ?>">
+                            href="<?php echo e(route('admin.manajemen-pengguna.pengguna.index')); ?>">
                             <span class="menu-icon">
                                 <i class="fa-solid fa-users fs-2"
-                                    style="color: <?php echo e(request()->is('admin/manajemen-pengguna/pengguna*') ? '#ffffff' : '#6c757d'); ?>"></i>
+                                    style="color: <?php echo e(request()->is('admin/manajemen-pengguna/pengguna*') ? '#1F6B5A' : '#6c757d'); ?>"></i>
                             </span>
                             <span
-                                class="menu-title <?php echo e(request()->is('admin/manajemen-pengguna/pengguna*') ? 'text-white' : 'text-gray-800'); ?>">Pengguna</span>
+                                class="menu-title <?php echo e(request()->is('admin/manajemen-pengguna/pengguna*') ? '' : 'text-gray-800'); ?>">Pengguna</span>
                         </a>
                     </div>
                 <?php endif; ?>
                 <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('jabatan')): ?>
                     <div class="menu-item">
                         <a class="menu-link <?php echo e(request()->is('admin/manajemen-pengguna/role*') ? 'active' : ''); ?>"
-                            href="<?php echo e(route('admin.manajemen-pengguna.role.index')); ?>"
-                            style="<?php echo e(request()->is('admin/manajemen-pengguna/role*') ? 'background-color: #D20A11;' : ''); ?>">
+                            href="<?php echo e(route('admin.manajemen-pengguna.role.index')); ?>">
                             <span class="menu-icon">
                                 <i class="fa-solid fa-diagram-project fs-2"
-                                    style="color: <?php echo e(request()->is('admin/manajemen-pengguna/role*') ? '#ffffff' : '#6c757d'); ?>"></i>
+                                    style="color: <?php echo e(request()->is('admin/manajemen-pengguna/role*') ? '#1F6B5A' : '#6c757d'); ?>"></i>
                             </span>
                             <span
-                                class="menu-title <?php echo e(request()->is('admin/manajemen-pengguna/role*') ? 'text-white' : 'text-gray-800'); ?>">Jabatan</span>
+                                class="menu-title <?php echo e(request()->is('admin/manajemen-pengguna/role*') ? '' : 'text-gray-800'); ?>">Jabatan</span>
                         </a>
                     </div>
                 <?php endif; ?>
@@ -337,4 +242,4 @@
     <!--end::Aside menu-->
 
 </div>
-<?php /**PATH /home/thur/Documents/Inotive/web-koni/resources/views/layouts/sidebar.blade.php ENDPATH**/ ?>
+<?php /**PATH E:\.instalation\laragon\www\web-koni\resources\views/layouts/sidebar.blade.php ENDPATH**/ ?>

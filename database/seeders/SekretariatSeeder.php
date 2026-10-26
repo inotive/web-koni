@@ -21,6 +21,8 @@ class SekretariatSeeder extends Seeder
                 'volume' => '',
                 'jumlah_harga_satuan' => 0,
                 'jumlah_harga' => 0,
+                'is_folder' => true,
+                'modul' => 'sekretariat',
                 'icon' => 'fas fa-building'
             ]
         );

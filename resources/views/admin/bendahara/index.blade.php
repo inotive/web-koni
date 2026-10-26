@@ -59,13 +59,13 @@
         }
 
         .filter-btn:hover {
-            border-color: #F8285A;
-            color: #F8285A;
+            border-color: #1F6B5A;
+            color: #1F6B5A;
         }
 
         .filter-btn.filter-active.fas.fa-file-pdf {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #1F6B5A;
+            border-color: #1F6B5A;
             color: white !important;
         }
 
@@ -106,7 +106,7 @@
         }
 
         .filter-option.active {
-            background-color: #F8285A;
+            background-color: #1F6B5A;
             color: white;
         }
 
@@ -147,13 +147,13 @@
         }
 
         .date-filter-btn:hover {
-            border-color: #F8285A;
-            color: #F8285A;
+            border-color: #1F6B5A;
+            color: #1F6B5A;
         }
 
         .date-filter-btn.date-filter-active {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #1F6B5A;
+            border-color: #1F6B5A;
             color: white;
         }
 
@@ -206,8 +206,8 @@
         }
 
         .date-preset-btn.active {
-            background-color: #F8285A;
-            border-color: #F8285A;
+            background-color: #1F6B5A;
+            border-color: #1F6B5A;
             color: white;
         }
 
@@ -241,8 +241,8 @@
 
         .date-input:focus {
             outline: none;
-            border-color: #F8285A;
-            box-shadow: 0 0 0 3px rgba(248, 40, 90, 0.1);
+            border-color: #1F6B5A;
+            box-shadow: 0 0 0 3px rgba(31, 107, 90, 0.1);
         }
 
         .date-filter-actions {
@@ -255,7 +255,7 @@
 
         .date-filter-apply {
             flex: 1;
-            background-color: #F8285A;
+            background-color: #1F6B5A;
             color: white;
             border: none;
             border-radius: 6px;
@@ -267,7 +267,7 @@
         }
 
         .date-filter-apply:hover {
-            background-color: #e1244e;
+            background-color: #17564A;
         }
 
         .date-filter-clear {
@@ -517,7 +517,7 @@
     <div class="flex-wrap mb-2 d-flex justify-content-between align-items-center" style="padding:10px 30px">
         <h2 class="mb-0 fw-bold fs-2 text-dark">Database Bendahara</h2>
         <button id="tambahLaporanBtn" class="btn"
-            style="background-color: #F8285A !important; color: white !important; border-color: #F8285A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
+            style="background-color: #1F6B5A !important; color: white !important; border-color: #1F6B5A !important; border-radius: 8px; padding: 12px 20px; font-weight: 500;">
             <i class="ki-duotone ki-plus fs-4 me-2" style="color: white !important;"></i>Tambah Laporan
         </button>
     </div>
@@ -536,7 +536,7 @@
 
                                     <form id="filter" class="gap-3 d-flex filter-container">
                                         {{-- <button type="button" id="tambahLaporanBtn"
-                                            class="gap-2 px-4 py-2 text-white rounded border-0 btn btn-active-light-danger d-flex bg-danger align-items-center btn-facebook fw-bold">
+                                            class="gap-2 px-4 py-2 text-white rounded border-0 btn btn-active-light-primary d-flex bg-primary align-items-center btn-facebook fw-bold">
                                             <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>
                                             <span>Tambah Laporan</span>
                                         </button> --}}
@@ -753,7 +753,7 @@
 
                 <div class="py-4 d-grid">
                     <button type="button" onclick="submitForm('formAdd')" id="submitBtnAdd"
-                        class="gap-2 p-4 text-white rounded border-0 bg-danger fw-bold d-flex align-items-center justify-content-center">
+                        class="gap-2 p-4 text-white rounded border-0 bg-primary fw-bold d-flex align-items-center justify-content-center">
                         <span class="btn-text">Tambah Laporan</span>
                     </button>
                 </div>

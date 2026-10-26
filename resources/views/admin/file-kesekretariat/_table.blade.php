@@ -416,7 +416,7 @@
     }
 
     .sortable:hover .sort-icon i {
-        color: #F8285A;
+        color: #1F6B5A;
     }
 
     /* Pagination styling */
@@ -438,15 +438,15 @@
     }
 
     .page-item.active .page-link {
-        background-color: #F8285A;
-        border-color: #F8285A;
+        background-color: #1F6B5A;
+        border-color: #1F6B5A;
         color: white;
     }
 
     .page-item:not(.disabled) .page-link:hover {
         background-color: #fff5f7;
-        border-color: #F8285A;
-        color: #F8285A;
+        border-color: #1F6B5A;
+        color: #1F6B5A;
     }
 
     .page-item.disabled .page-link {

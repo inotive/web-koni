@@ -63,8 +63,8 @@
     }
 
     .search-input:focus {
-        border-color: #F8285A;
-        box-shadow: 0 0 0 0.2rem rgba(248, 40, 90, 0.15);
+        border-color: #1F6B5A;
+        box-shadow: 0 0 0 0.2rem rgba(31, 107, 90, 0.15);
         outline: none;
     }
 
@@ -100,8 +100,8 @@
     }
 
     .sort-btn:hover {
-        border-color: #F8285A;
-        color: #F8285A;
+        border-color: #1F6B5A;
+        color: #1F6B5A;
     }
 
     .sort-menu {
@@ -142,7 +142,7 @@
     }
 
     .sort-option.active {
-        background-color: #F8285A;
+        background-color: #1F6B5A;
         color: white;
     }
 
@@ -193,7 +193,7 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(248, 40, 90, 0.05), transparent);
+        background: linear-gradient(90deg, transparent, rgba(31, 107, 90, 0.05), transparent);
         transition: left 0.5s;
     }
 
@@ -206,7 +206,7 @@
         box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
         text-decoration: none;
         color: inherit;
-        border-color: #F8285A;
+        border-color: #1F6B5A;
     }
 
     /* Fixed icon container - no upscaling */
@@ -253,7 +253,7 @@
     }
 
     .bidang-card:hover .bidang-title {
-        color: #F8285A;
+        color: #1F6B5A;
     }
 
     /* Loading state */

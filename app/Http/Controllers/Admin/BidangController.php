@@ -26,66 +26,49 @@ class BidangController extends Controller
                             ->orderBy('year', 'desc')
                             ->pluck('year');
 
-        $bidangParentIds = [
-            'mobilisasi' => 1,
-            'hubungan_lembaga' => 2,
-            'kesehatan' => 3,
-            'organisasi' => 4,
-            'pembinaan_hukum' => 5,
-            'prestasi' => 6,
-            'science' => 7,
-            'perencanaan_program' => 8,
-        ];
+        // Setiap folder level atas dengan modul 'bidang' tampil sebagai kartu bidang
+        $bidangFolders = Lpj::folders()
+            ->whereNull('parent_id')
+            ->where('modul', 'bidang')
+            ->withCount(['children as subfolder_count' => fn ($q) => $q->where('is_folder', true)])
+            ->orderBy('id')
+            ->get();
 
         $total_anggaran = 0;
         $total_kegiatan = 0;
-        $bidangInfo = [];
-        $bidangDetails = [];
-        
-        foreach ($bidangParentIds as $key => $id) {
-            $target = Target::where('id_lpj', $id)->whereYear('created_at', $selectedYear)->first();
+        $bidangCards = [];
 
-            if ($id == 6) { // Special handling for Pembinaan Prestasi
-                $info = $this->getPrestasiInfo($id, $selectedYear);
-                
-                $prestasi_children_ids = Lpj::where('parent_id', $id)->pluck('id');
-                $prestasi_grandchildren_ids = Lpj::whereIn('parent_id', $prestasi_children_ids)->pluck('id');
-                $prestasi_target_kegiatan = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->whereYear('created_at', $selectedYear)->sum('target_kegiatan');
-                $prestasi_target_anggaran = Target::whereIn('id_lpj', $prestasi_grandchildren_ids)->whereYear('created_at', $selectedYear)->sum('target_anggaran');
+        foreach ($bidangFolders as $folder) {
+            $target = Target::where('id_lpj', $folder->id)->whereYear('created_at', $selectedYear)->first();
+            $info = $this->getDescendantsInfo($folder->id, $selectedYear);
 
-                $bidangDetails[$key] = [
-                    'anggaran' => $info['anggaran'],
-                    'target_anggaran' => $prestasi_target_anggaran,
-                    'kegiatan' => $info['count'],
-                    'target_kegiatan' => $prestasi_target_kegiatan
-                ];
-            } else {
-                $info = $this->getDescendantsInfo($id, $selectedYear);
-                $bidangDetails[$key] = [
-                    'anggaran' => $info['anggaran'],
-                    'target_anggaran' => $target->target_anggaran ?? 0,
-                    'kegiatan' => $info['count'],
-                    'target_kegiatan' => $target->target_kegiatan ?? 0
-                ];
-            }
-            
-            $bidangInfo[$key . 'Count'] = $info['count'];
+            $bidangCards[] = [
+                'folder' => $folder,
+                'subfolder_count' => $folder->subfolder_count,
+                'count' => $info['count'],
+                'anggaran' => $info['anggaran'],
+                'target_anggaran' => $target->target_anggaran ?? 0,
+                'kegiatan' => $info['count'],
+                'target_kegiatan' => $target->target_kegiatan ?? 0,
+            ];
+
             $total_anggaran += $info['anggaran'];
             $total_kegiatan += $info['count'];
         }
 
-        $target_anggaran = Target::whereIn('id_lpj', array_values($bidangParentIds))->whereYear('created_at', $selectedYear)->sum('target_anggaran');
-        $target_kegiatan = Target::whereIn('id_lpj', array_values($bidangParentIds))->whereYear('created_at', $selectedYear)->sum('target_kegiatan');
+        $bidangIds = $bidangFolders->pluck('id');
+        $target_anggaran = Target::whereIn('id_lpj', $bidangIds)->whereYear('created_at', $selectedYear)->sum('target_anggaran');
+        $target_kegiatan = Target::whereIn('id_lpj', $bidangIds)->whereYear('created_at', $selectedYear)->sum('target_kegiatan');
 
-        return view('admin.laporan-lpj.bidang.index', array_merge($bidangInfo, [
+        return view('admin.laporan-lpj.bidang.index', [
             'total_anggaran' => $total_anggaran,
             'total_kegiatan' => $total_kegiatan,
             'target_anggaran' => $target_anggaran,
             'target_kegiatan' => $target_kegiatan,
-            'bidangDetails' => $bidangDetails,
+            'bidangCards' => $bidangCards,
             'selectedYear' => $selectedYear,
             'availableYears' => $availableYears,
-        ]));
+        ]);
     }
 
     private function getAllDescendantIds($parentId) {
@@ -118,7 +101,7 @@ class BidangController extends Controller
 
         $reports = Lpj::whereIn('parent_id', $allDescendantIds)
                         ->whereYear('created_at', $year)
-                        ->whereDoesntHave('children')
+                        ->where('is_folder', false)
                         ->get();
 
         return [

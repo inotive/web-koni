@@ -5,30 +5,31 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>KONI Tabalong - @yield('title')</title>
+    <title>SIMPATI - @yield('title')</title>
     
     <!-- Open Graph / WhatsApp Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="@yield('title', 'Dashboard') - KONI Tabalong">
-    <meta property="og:description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong">
-    <meta property="og:image" content="{{ asset('assets/img/logo-koni-simplified.png') }}">
-    <meta property="og:site_name" content="KONI Tabalong">
+    <meta property="og:title" content="@yield('title', 'Dashboard') - SIMPATI">
+    <meta property="og:description" content="SIMPATI - Sistem Administrasi Terintegrasi">
+    <meta property="og:image" content="{{ asset('assets/img/simpati-icon.svg') }}">
+    <meta property="og:site_name" content="SIMPATI">
     
     <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('title', 'Dashboard') - KONI Tabalong">
-    <meta name="twitter:description" content="Sistem Informasi Manajemen KONI Kabupaten Tabalong">
-    <meta name="twitter:image" content="{{ asset('assets/img/logo-koni-simplified.png') }}">
+    <meta name="twitter:title" content="@yield('title', 'Dashboard') - SIMPATI">
+    <meta name="twitter:description" content="SIMPATI - Sistem Administrasi Terintegrasi">
+    <meta name="twitter:image" content="{{ asset('assets/img/simpati-icon.svg') }}">
 
-    <link rel="shortcut icon" href="{{ asset('assets/img/logo-koni-simplified.png') }}" />
+    <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('assets/img/simpati-icon.svg') }}" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
         rel="stylesheet">
 
     <link href="{{ asset('assets/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('assets/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets/css/custom-sidebar.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/theme-dinkes.css') }}?v={{ filemtime(public_path('assets/css/theme-dinkes.css')) }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets/css/custom-sidebar.css') }}?v={{ filemtime(public_path('assets/css/custom-sidebar.css')) }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{{ asset('assets/plugins/custom/fullcalendar/fullcalendar.bundle.css') }}" rel="stylesheet"
@@ -46,12 +47,12 @@
         }
 
         .bg-red {
-            background-color: #ffcad7ff !important;
+            background-color: #E3F1EA !important;
             font-weight: bold;
         }
 
         .bg-red-strong {
-            background-color: #F8285A !important;
+            background-color: #1F6B5A !important;
             font-weight: bold;
         }
 
@@ -61,7 +62,7 @@
         }
 
         .border-red {
-            border-color: #F8285A !important;
+            border-color: #1F6B5A !important;
         }
 
         .truncate {
@@ -74,11 +75,11 @@
         }
 
         .text-orange {
-            color: #F8285A !important;
+            color: #1F6B5A !important;
         }
 
         .muted-hover:hover {
-            color: #F8285A !important;
+            color: #1F6B5A !important;
         }
 
         .percentage-option {
@@ -90,7 +91,7 @@
         }
 
         .percentage-option.selected {
-            background-color: #F8285A;
+            background-color: #1F6B5A;
             color: white;
         }
 
