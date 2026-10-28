@@ -15,6 +15,27 @@
 
 @include('admin.arsip._assets')
 
+@push('stack-css')
+    <style>
+        /* Lebar select2 kode klasifikasi tetap selebar kolom; nama yang panjang dipotong dengan elipsis */
+        .klasifikasi-field {
+            min-width: 0;
+        }
+
+        .klasifikasi-field .select2-container {
+            width: 100% !important;
+            max-width: 100%;
+        }
+
+        .klasifikasi-field .select2-selection__rendered {
+            display: block !important;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-6 gap-3">
         <div>
@@ -71,7 +92,7 @@
                                 value="{{ old('nama_kegiatan', $surat->nama_kegiatan) }}" placeholder="Contoh: Undangan Rapat Koordinasi">
                         </div>
 
-                        <div>
+                        <div class="klasifikasi-field">
                             @php $klasifikasiDipilih = old('kode_klasifikasi', $klasifikasi); @endphp
                             <label class="form-label">Kode Klasifikasi</label>
                             <select name="kode_klasifikasi" id="kodeKlasifikasi" class="form-select" data-control="select2">

@@ -112,13 +112,13 @@
                     </div>
                 @endcan
 
-                <!-- Laporan LPJ -->
+                <!-- Laporan SPJ -->
                 @canany(['laporan-lpj-sekretariat', 'laporan-lpj-bidang', 'laporan-lpj-kegiatan-lainnya', 'pengajuan-modifikasi-laporan-view', 'pengajuan-modifikasi-laporan-manage'])
                     @php
                         $isLaporanLPJActive =
                             request()->is('admin/laporan-lpj*') ||
                             request()->is('admin/bidang*') ||
-                            (isset($mainSection) && $mainSection == 'Laporan LPJ');
+                            (isset($mainSection) && $mainSection == 'Laporan SPJ');
                     @endphp
                     <div class="menu-item">
                         <a class="menu-link d-flex justify-content-between {{ $isLaporanLPJActive ? 'active bg-orange' : '' }}"
@@ -129,7 +129,7 @@
                                     <i class="fa-solid fa-money-bill fs-2 {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-600' }}"></i>
                                 </span>
                                 <span class="menu-title {{ $isLaporanLPJActive ? 'text-orange' : 'text-gray-800' }}">
-                                    Laporan LPJ
+                                    Laporan SPJ
                                 </span>
                                 @if($pengajuanCount > 0)
                                     <span class="badge bg-danger text-white ms-2"
@@ -175,7 +175,7 @@
                                         href="{{ route('admin.laporan-lpj.pengajuan.index') }}">
                                         <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
                                         <span class="menu-title">
-                                            Pengajuan Modifikasi LPJ
+                                            Pengajuan Modifikasi SPJ
                                             @if($pengajuanCount > 0)
                                                 <span class="badge bg-danger text-white ms-2" style="font-size: 0.7rem; border-radius: 50%;">
                                                     {{ $pengajuanCount }}

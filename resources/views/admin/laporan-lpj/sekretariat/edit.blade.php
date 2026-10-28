@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Edit Laporan Sekretariat')
-@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('mainSection', 'Surat Pertanggungjawaban')
 @section('subSection', 'Sekretariat')
 @section('subSectionUrl', route('admin.laporan-lpj.sekretariat.index'))
 @section('currentSection', 'Edit Laporan')
@@ -517,10 +517,10 @@
                                 </div>
                             </div>
 
-                            {{-- Dokumen LPJ Upload (PDF Only) --}}
+                            {{-- Dokumen SPJ Upload (PDF Only) --}}
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
-                                    <label class="form-label">Dokumen LPJ</label>
+                                    <label class="form-label">Dokumen SPJ</label>
                                     <p class="file-upload-hint">Unggah file PDF (opsional), maksimal 10MB</p>
                                 </div>
                                 <div class="col-md-9">
@@ -529,10 +529,10 @@
                                     @endphp
                                     @if($dokumenLpj)
                                         <div class="existing-files-section">
-                                            <h6><i class="fas fa-file-pdf me-2 text-danger"></i>Dokumen LPJ yang sudah ada:</h6>
+                                            <h6><i class="fas fa-file-pdf me-2 text-danger"></i>Dokumen SPJ yang sudah ada:</h6>
                                             <div id="existing-dokumen-lpj-preview">
                                                 @php
-                                                    // Handle berbagai tipe data untuk dokumen LPJ
+                                                    // Handle berbagai tipe data untuk dokumen SPJ
                                                     $path = '';
                                                     $originalName = '';
 
@@ -581,7 +581,7 @@
                                             </div>
                                             <div>
                                                 <p class="file-upload-text" id="dokumen-lpj-file-name-display">
-                                                    Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.
+                                                    Seret dan lepas dokumen SPJ di sini, atau klik untuk mengunggah.
                                                 </p>
                                             </div>
                                         </div>
@@ -716,7 +716,7 @@
                     dokumenLpjFileNameDisplay.textContent = file.name;
                     dokumenLpjPreviewContainer.style.display = 'block';
 
-                    // Tampilkan preview dokumen LPJ
+                    // Tampilkan preview dokumen SPJ
                     const previewHTML = `
                         <div class="file-preview-item">
                             <div class="file-icon">
@@ -731,7 +731,7 @@
                     dokumenLpjPreviewContainer.innerHTML = previewHTML;
                 } else {
                     selectedDokumenLpjFile = null;
-                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
+                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen SPJ di sini, atau klik untuk mengunggah.';
                     dokumenLpjPreviewContainer.style.display = 'none';
                     dokumenLpjPreviewContainer.innerHTML = '';
                 }
@@ -899,7 +899,7 @@
             };
 
             window.removeExistingDokumenLpj = function(button, filePath) {
-                if (confirm('Apakah Anda yakin ingin menghapus dokumen LPJ ini? File akan dihapus permanen setelah disimpan.')) {
+                if (confirm('Apakah Anda yakin ingin menghapus dokumen SPJ ini? File akan dihapus permanen setelah disimpan.')) {
                     const item = button.closest('.file-preview-item');
                     // Change input name to mark for deletion
                     const hiddenInput = item.querySelector('input[type=hidden]');

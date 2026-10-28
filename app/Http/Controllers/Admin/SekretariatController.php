@@ -144,9 +144,9 @@ class SekretariatController extends Controller
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
             'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
-            'dokumen_lpj_pdf.file' => 'File Dokumen LPJ PDF tidak valid.',
-            'dokumen_lpj_pdf.mimes' => 'Format Dokumen LPJ PDF harus PDF.',
-            'dokumen_lpj_pdf.max' => 'Ukuran Dokumen LPJ PDF maksimal 10MB.',
+            'dokumen_lpj_pdf.file' => 'File Dokumen SPJ PDF tidak valid.',
+            'dokumen_lpj_pdf.mimes' => 'Format Dokumen SPJ PDF harus PDF.',
+            'dokumen_lpj_pdf.max' => 'Ukuran Dokumen SPJ PDF maksimal 10MB.',
         ]);
 
         // Cari atau buat parent kategori, lalu tentukan folder tujuan
@@ -269,9 +269,9 @@ class SekretariatController extends Controller
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
             'dokumen_lpj.*.mimes' => 'Format dokumen harus PDF.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
-            'dokumen_lpj_pdf.file' => 'File Dokumen LPJ PDF tidak valid.',
-            'dokumen_lpj_pdf.mimes' => 'Format Dokumen LPJ PDF harus PDF.',
-            'dokumen_lpj_pdf.max' => 'Ukuran Dokumen LPJ PDF maksimal 10MB.',
+            'dokumen_lpj_pdf.file' => 'File Dokumen SPJ PDF tidak valid.',
+            'dokumen_lpj_pdf.mimes' => 'Format Dokumen SPJ PDF harus PDF.',
+            'dokumen_lpj_pdf.max' => 'Ukuran Dokumen SPJ PDF maksimal 10MB.',
         ]);
 
         $data = [
@@ -558,7 +558,7 @@ class SekretariatController extends Controller
     }
 
     /**
-     * Cari LPJ Sekretariat berdasarkan ID, termasuk yang berada di dalam subfolder
+     * Cari SPJ Sekretariat berdasarkan ID, termasuk yang berada di dalam subfolder
      */
     private function findEntry($id): Lpj
     {

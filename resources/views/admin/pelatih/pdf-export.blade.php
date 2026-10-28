@@ -13,14 +13,6 @@
             padding: 0;
         }
 
-        .kop img {
-            width: 100%;
-            max-height: 120px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto 10px auto;
-        }
-
         .header {
             text-align: center;
             margin: 0 20px 10px 20px;
@@ -108,9 +100,7 @@
     </style>
 </head>
 <body>
-    <div class="kop">
-        <img src="assets/img/kop-nobg.png" alt="Kop Surat">
-    </div>
+    @include('admin.surat-kop._kop-default')
 
     <div class="header">
         <h1>DATA DETAIL PELATIH</h1>

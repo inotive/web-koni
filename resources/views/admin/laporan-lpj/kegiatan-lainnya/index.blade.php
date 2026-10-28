@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Manajemen Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('mainSection', 'Surat Pertanggungjawaban')
 @section('currentSection', 'Kegiatan Lainnya')
 
 @section('breadcrumb-title')
@@ -1277,7 +1277,7 @@
             const name = path.split('/').pop();
             dokumenLpjPdfHtml = `
             <div class="mb-3">
-                <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-pdf text-danger me-1"></i>Dokumen LPJ (PDF):</label>
+                <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-pdf text-danger me-1"></i>Dokumen SPJ (PDF):</label>
                 <div class="bg-light p-3 rounded">
                     <div class="d-flex align-items-center p-2 border rounded bg-white">
                         <i class="fas fa-file-pdf text-danger me-3" style="font-size:1.2em"></i>

@@ -208,7 +208,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
     });
     Route::prefix('laporan-lpj/bidang')->name('laporan-lpj.bidang.')->group(function () {
 
-        // Dynamic LPJ Routes with hierarchical support
+        // Dynamic SPJ Routes with hierarchical support
         Route::prefix('dynamic')->name('dynamic.')->group(function () {
 
             // Root level routes (no parent)
@@ -258,7 +258,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
 
     Route::prefix('laporan-lpj')->name('laporan-lpj.')->group(function () {
 
-        // Folder LPJ (dipakai menu Sekretariat dan Bidang Bidang)
+        // Folder SPJ (dipakai menu Sekretariat dan Bidang Bidang)
         Route::prefix('folder')->name('folder.')->group(function () {
             Route::post('/', [App\Http\Controllers\Admin\LpjFolderController::class, 'store'])->name('store');
             Route::put('/{id}', [App\Http\Controllers\Admin\LpjFolderController::class, 'update'])->name('update');
@@ -317,7 +317,7 @@ Route::group(['middleware' => ['auth'], 'as' => 'admin.', 'prefix' => 'admin'], 
             Route::post('/{id}/approve', [KegiatanLainnyaController::class, 'approve'])->name('approve');
             Route::get('/{id}/export', [KegiatanLainnyaController::class, 'exportDetail'])->name('export');
         });
-    }); //Batas LPJ
+    }); //Batas SPJ
     Route::prefix('bendahara')->name('bendahara.')->group(function () {
         Route::get('/', [BendaharaController::class, 'index'])->name('index');
         Route::get('/create', [BendaharaController::class, 'create'])->name('create');

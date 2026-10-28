@@ -97,7 +97,7 @@
                     </td>
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-1">
-                            <a href="{{ route('admin.konfigurasi.cabang-olahraga.show', $cabor->id) }}"
+                            <a data-row-detail href="{{ route('admin.konfigurasi.cabang-olahraga.show', $cabor->id) }}"
                                 class="btn btn-icon btn-sm btn-light-primary" title="Detail">
                                 <i class="fa-solid fa-eye"></i>
                             </a>

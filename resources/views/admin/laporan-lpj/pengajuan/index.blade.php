@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Pengajuan Modifikasi Laporan')
-@section('mainSection', 'Laporan LPJ')
+@section('mainSection', 'Laporan SPJ')
 @section('currentSection', 'Pengajuan Modifikasi Laporan')
 
 @section('content')
@@ -544,7 +544,7 @@
 
     <div class="d-flex flex-column mb-8">
         <h1 class="text-dark fw-bold mb-1">Pengajuan Modifikasi Laporan</h1>
-        <p class="text-muted">Daftar pengajuan untuk modifikasi data laporan LPJ.</p>
+        <p class="text-muted">Daftar pengajuan untuk modifikasi data laporan SPJ.</p>
     </div>
 
     <div class="row col-12 mt-5">
@@ -848,7 +848,7 @@
                     <div class="detail-section">
                         <div class="section-title">
                             <i class="fas fa-calendar-alt"></i>
-                            Detail Laporan LPJ
+                            Detail Laporan SPJ
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">Program</div>

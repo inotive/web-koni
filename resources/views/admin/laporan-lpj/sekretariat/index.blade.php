@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Manajemen Sekretariat')
-@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('mainSection', 'Surat Pertanggungjawaban')
 @section('currentSection', 'Sekretariat')
 
 @section('breadcrumb-title')
@@ -561,12 +561,12 @@
     <div class="mt-5 col-12">
         <div class="card">
             <div class="flex-wrap py-5 card-header d-flex justify-content-between align-items-center">
-                <h3 class="mb-0 card-title fw-bold fs-4">Daftar LPJ {{ $currentFolder->nama_program }} - {{ $tahunFilter ?? date('Y') }}</h3>
+                <h3 class="mb-0 card-title fw-bold fs-4">Daftar SPJ {{ $currentFolder->nama_program }} - {{ $tahunFilter ?? date('Y') }}</h3>
 
                 <div class="flex-wrap gap-2 d-flex align-items-center ms-auto">
                     <a href="{{ route('admin.laporan-lpj.sekretariat.create', $currentFolder->id !== $parentCategory->id ? ['folder' => $currentFolder->id] : []) }}" class="btn btn-primary"
                         style="background-color: #1F6B5A !important; color: white !important; border-color: #1F6B5A !important;">
-                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
+                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah SPJ
                     </a>
 
                     <div class="input-group position-relative" style="width: 250px;">
@@ -1348,7 +1348,7 @@
                     const name = path.split('/').pop();
                     dokumenLpjPdfHtml = `
             <div class="mb-3">
-                <label class="mb-2 fw-semibold d-block"><i class="fas fa-file-pdf text-danger me-1"></i>Dokumen LPJ (PDF):</label>
+                <label class="mb-2 fw-semibold d-block"><i class="fas fa-file-pdf text-danger me-1"></i>Dokumen SPJ (PDF):</label>
                 <div class="p-3 rounded bg-light">
                     <div class="p-2 bg-white rounded border d-flex align-items-center">
                         <i class="fas fa-file-pdf text-danger me-3" style="font-size:1.2em"></i>

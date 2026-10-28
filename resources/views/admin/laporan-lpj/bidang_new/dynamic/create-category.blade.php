@@ -3,7 +3,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Tambah Kategori')
-@section('mainSection', 'Laporan LPJ')
+@section('mainSection', 'Laporan SPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
 @section('currentSection', 'Tambah Kategori')

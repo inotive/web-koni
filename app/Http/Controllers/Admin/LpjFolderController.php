@@ -71,7 +71,7 @@ class LpjFolderController extends Controller
         }
 
         if ($folder->children()->exists()) {
-            return back()->with('ERR', 'Folder masih berisi folder atau LPJ. Kosongkan folder terlebih dahulu.');
+            return back()->with('ERR', 'Folder masih berisi folder atau SPJ. Kosongkan folder terlebih dahulu.');
         }
 
         $folder->delete();

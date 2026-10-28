@@ -235,6 +235,14 @@ class SuratTemplateRenderer
         ];
     }
 
+    /** Kop default dari menu Kop Surat, dipakai export PDF di luar modul surat; null bila belum ada kop aktif. */
+    public function defaultKopView(): ?array
+    {
+        $kop = SuratKop::default();
+
+        return $kop ? $this->kopToView($kop) : null;
+    }
+
     /** PDF berisi kop saja dengan teks contoh, untuk preview di halaman Kop Surat. */
     public function kopPdf(SuratKop $kop)
     {

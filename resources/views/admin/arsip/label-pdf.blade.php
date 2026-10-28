@@ -84,7 +84,7 @@
                                     @if ($label['sub'])
                                         <div class="sub">{{ $label['sub'] }}</div>
                                     @endif
-                                    <div class="instansi">SIMPATI · Arsip KONI</div>
+                                    <div class="instansi">SIMPATI · Arsip DINKES</div>
                                 </td>
                             </tr>
                         </table>

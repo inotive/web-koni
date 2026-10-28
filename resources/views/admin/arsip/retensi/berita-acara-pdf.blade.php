@@ -62,6 +62,8 @@
 <body>
     @php $isMusnah = $pemusnahan->jenis === 'musnah'; @endphp
 
+    @include('admin.surat-kop._kop-default')
+
     <h2>Berita Acara {{ $isMusnah ? 'Pemusnahan Arsip' : 'Penyerahan Arsip Statis (Permanen)' }}</h2>
     <div class="nomor">Nomor: {{ $pemusnahan->nomor_berita_acara }}</div>
 

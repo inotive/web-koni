@@ -351,7 +351,7 @@
             @php
                 $stats = [
                     ['icon' => 'fa-solid fa-hospital', 'color' => '#1F6B5A', 'value' => $total_bidang, 'label' => 'Bidang', 'url' => route('admin.laporan-lpj.bidang.index', ['year' => $selectedYear])],
-                    ['icon' => 'fa-solid fa-file-invoice', 'color' => '#00796B', 'value' => $total_lpj, 'label' => 'Dokumen LPJ ' . $selectedYear, 'url' => null],
+                    ['icon' => 'fa-solid fa-file-invoice', 'color' => '#00796B', 'value' => $total_lpj, 'label' => 'Dokumen SPJ ' . $selectedYear, 'url' => null],
                     ['icon' => 'fa-solid fa-inbox', 'color' => '#0E6E8C', 'value' => $total_surat_masuk, 'label' => 'Surat Masuk ' . $selectedYear, 'url' => route('admin.surat.index')],
                     ['icon' => 'fa-solid fa-paper-plane', 'color' => '#2E7D32', 'value' => $total_surat_keluar, 'label' => 'Surat Keluar ' . $selectedYear, 'url' => route('admin.surat.index')],
                 ];
@@ -439,7 +439,7 @@
                                                     <div class="position-absolute w-100 h-100 d-flex justify-content-between align-items-center px-2" style="top: 0; left: 0; pointer-events: none;">
                                                         <span class="small fw-bold" style="color: #151D48;">
                                                             Rp {{ number_format($sub['serapan'], 0, ',', '.') }} / Rp {{ number_format($sub['target_anggaran'], 0, ',', '.') }}
-                                                            | {{ $sub['jumlah_lpj'] }} LPJ
+                                                            | {{ $sub['jumlah_lpj'] }} SPJ
                                                         </span>
                                                         <span class="small fw-bold" style="color: #151D48;">{{ $sub['persen'] }}%</span>
                                                     </div>
@@ -484,7 +484,7 @@
             <div class="col-lg-6">
                 <div class="card shadow-sm h-100">
                     <div class="card-body" style="padding: 24px;">
-                        <h5 class="mb-5">LPJ Terbaru</h5>
+                        <h5 class="mb-5">SPJ Terbaru</h5>
                         @forelse ($latest_lpj as $lpj)
                             <div class="d-flex align-items-center gap-3 py-3 {{ !$loop->last ? 'border-bottom' : '' }}">
                                 <span class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
@@ -501,7 +501,7 @@
                                 <div class="fw-bold text-gray-800 text-nowrap">Rp {{ number_format($lpj->jumlah_harga, 0, ',', '.') }}</div>
                             </div>
                         @empty
-                            <div class="text-center text-muted py-6">Belum ada LPJ pada tahun {{ $selectedYear }}.</div>
+                            <div class="text-center text-muted py-6">Belum ada SPJ pada tahun {{ $selectedYear }}.</div>
                         @endforelse
                     </div>
                 </div>

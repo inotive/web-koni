@@ -3,7 +3,7 @@
     <div class="text-center text-muted py-10">
         <i class="ki-duotone ki-information-5 fs-3x mb-3"></i>
         <h4>Tidak ada pengajuan modifikasi.</h4>
-        <p>Belum ada pengajuan untuk modifikasi laporan LPJ.</p>
+        <p>Belum ada pengajuan untuk modifikasi laporan SPJ.</p>
     </div>
 @else
     {{-- Data Table --}}
@@ -112,7 +112,7 @@
                                        class="text-decoration-none lpj-link"
                                        data-bs-toggle="tooltip"
                                        data-bs-placement="top"
-                                       title="Klik untuk melihat detail LPJ">
+                                       title="Klik untuk melihat detail SPJ">
                                         <strong class="text-truncate-custom text-primary">
                                             <i class="fas fa-external-link-alt me-1 text-muted" style="font-size: 0.8em;"></i>
                                             {{ $pengajuan->lpj->nama_program ?? 'N/A' }}
@@ -127,7 +127,7 @@
                                 @else
                                     <strong class="text-truncate-custom text-danger">
                                         <i class="fas fa-exclamation-triangle me-1"></i>
-                                        LPJ Tidak Ditemukan
+                                        SPJ Tidak Ditemukan
                                     </strong>
                                 @endif
                             </div>
@@ -219,7 +219,7 @@
 
                         </td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-primary" onclick='showDetailModal(@json($pengajuan))'>
+                            <button data-row-detail class="btn btn-sm btn-primary" onclick='showDetailModal(@json($pengajuan))'>
                                 <i class="fas fa-eye me-1"></i>Detail
                             </button>
                         </td>
@@ -326,7 +326,7 @@
             white-space: nowrap;
         }
 
-        /* Enhanced LPJ Link Styling */
+        /* Enhanced SPJ Link Styling */
         .lpj-link {
             position: relative;
             transition: all 0.3s ease;
@@ -371,7 +371,7 @@
             opacity: 0.7;
         }
 
-        /* Additional styling for missing LPJ indicator */
+        /* Additional styling for missing SPJ indicator */
         .text-danger strong {
             font-weight: 600;
         }

@@ -100,33 +100,10 @@
             font-style: italic;
             font-size: 10px;
         }
-
-        /* --- HEADER IMAGE FOR PDF EXPORT (appears only once at the top) --- */
-        .letterhead {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .letterhead img {
-            width: 100%;
-            height: auto;
-            max-height: 151px; /* match your letterhead (810x151) */
-            object-fit: contain;
-        }
     </style>
 </head>
 <body>
-    <!-- HEADER IMAGE -->
-    <div class="letterhead">
-        @if(file_exists(public_path('assets/img/kop-nobg.png')))
-            <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
-        @else
-            <div style="padding: 20px; border: 1px solid #ccc; text-align: center;">
-                <h2>KONI LETTERHEAD</h2>
-                <p>Header image not found</p>
-            </div>
-        @endif
-    </div>
+    @include('admin.surat-kop._kop-default')
 
     <div class="header">
         <h1>DATA DETAIL ATLET</h1>

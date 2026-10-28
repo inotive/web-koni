@@ -120,38 +120,21 @@
                             @endif
                         </td>
                         <td class="px-2 text-center">
-                            <div class="dropdown dropdown-action" data-row-id="{{ $item->id }}">
-                                <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
-                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="32" height="32" rx="6" fill="#EFF6FF" />
-                                        <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" stroke="#1B84FF" stroke-opacity="0.2" />
-                                        <g clip-path="url(#clip0_2223_4269)">
-                                            <path opacity="0.3" d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z" fill="#1B84FF" />
-                                            <path d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z" fill="#1B84FF" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_2223_4269">
-                                                <rect width="18" height="18" fill="white" transform="translate(7 7)" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
+                            <div class="d-inline-flex gap-2" data-row-id="{{ $item->id }}">
+                                @if($item->dokumen)
+                                    <button title="Preview Dokumen" type="button" class="btn btn-icon btn-sm btn-light-primary preview" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')">
+                                        <i class="ki-outline ki-eye"></i>
+                                    </button>
+                                @endif
+                                <button title="Edit Laporan" type="button" class="btn btn-icon btn-sm btn-light-warning edit" data-bs-toggle="modal" data-bs-target="#edit-{{ $item->id }}">
+                                    <i class="ki-outline ki-pencil"></i>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-custom">
-                                    @if($item->dokumen)
-                                        <li class="dropdown-item preview" onclick="previewFile('{{ Storage::url($item->dokumen) }}', '{{ $item->judul }}', '{{ strtolower(pathinfo($item->dokumen, PATHINFO_EXTENSION)) }}')">
-                                            <i class="ki-outline ki-eye me-2"></i>Preview Dokumen
-                                        </li>
-                                    @endif
-                                    <li class="dropdown-item edit" data-bs-toggle="modal" data-bs-target="#edit-{{ $item->id }}">
-                                        <i class="ki-outline ki-pencil me-2"></i>Edit Laporan
-                                    </li>
-                                    <li class="dropdown-item delete" onclick="deleteItemEnhanced('delete-form-{{ $item->id }}', '{{ $item->judul }}')">
-                                        <i class="ki-outline ki-trash me-2"></i>Hapus
-                                    </li>
-                                </ul>
+                                <button title="Hapus" type="button" class="btn btn-icon btn-sm btn-light-danger delete" onclick="deleteItemEnhanced('delete-form-{{ $item->id }}', '{{ $item->judul }}')">
+                                    <i class="ki-outline ki-trash"></i>
+                                </button>
                                 <form id="delete-form-{{ $item->id }}" action="{{ route('admin.bendahara.destroy', $item->id) }}" method="POST" style="display: none;">
-                                    @csrf
-                                    @method('DELETE')
+                                @csrf
+                                @method('DELETE')
                                 </form>
                             </div>
                         </td>
@@ -348,10 +331,6 @@
         padding: 1px 3px;
         border-radius: 3px;
         font-weight: bold;
-    }
-
-    .preview:hover {
-        background-color: #F4EEFF !important;
     }
 
     .sortable {

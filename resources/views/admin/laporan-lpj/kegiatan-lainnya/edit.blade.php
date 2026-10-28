@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Edit Laporan Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('mainSection', 'Surat Pertanggungjawaban')
 @section('subSection', 'Kegiatan Lainnya')
 @section('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index'))
 @section('currentSection', 'Edit Laporan')
@@ -527,10 +527,10 @@
                                 </div>
                             </div>
 
-                            {{-- Dokumen LPJ with PDF-only restrictions --}}
+                            {{-- Dokumen SPJ with PDF-only restrictions --}}
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
-                                    <label class="form-label">Dokumen LPJ</label>
+                                    <label class="form-label">Dokumen SPJ</label>
                                     <p class="file-upload-hint">Unggah file PDF, masing-masing hingga 10MB</p>
                                 </div>
                                 <div class="col-md-9">
@@ -539,7 +539,7 @@
                                     @endphp
                                     @if(count($dokumenLpjs) > 0)
                                         <div class="existing-files-section">
-                                            <h6><i class="fas fa-file-pdf me-2"></i>Dokumen LPJ yang sudah ada:</h6>
+                                            <h6><i class="fas fa-file-pdf me-2"></i>Dokumen SPJ yang sudah ada:</h6>
                                             <div id="existing-dokumen-lpj-preview">
                                                 @if($kegiatanLainnya->dokumen_lpj_pdf)
                                                     @php
@@ -600,7 +600,7 @@
                                             </div>
                                             <div>
                                                 <p class="file-upload-text" id="dokumen-lpj-file-name-display">
-                                                    Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.
+                                                    Seret dan lepas dokumen SPJ di sini, atau klik untuk mengunggah.
                                                 </p>
                                             </div>
                                         </div>
@@ -741,7 +741,7 @@
                     dokumenLpjFileNameDisplay.textContent = file.name;
                     dokumenLpjPreviewContainer.style.display = 'block';
 
-                    // Tampilkan preview dokumen LPJ
+                    // Tampilkan preview dokumen SPJ
                     const previewHTML = `
                         <div class="file-preview-item">
                             <div class="file-icon">
@@ -759,7 +759,7 @@
                     dokumenLpjPreviewContainer.innerHTML = previewHTML;
                 } else {
                     selectedDokumenLpjFiles = [];
-                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
+                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen SPJ di sini, atau klik untuk mengunggah.';
                     dokumenLpjPreviewContainer.style.display = 'none';
                     dokumenLpjPreviewContainer.innerHTML = '';
                 }
@@ -846,7 +846,7 @@
                     nameDisplay.textContent = isPhoto ?
                         'Seret dan lepas foto baru di sini, atau klik untuk mengunggah.' :
                         (isDokumenLpj ? 
-                            'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.' :
+                            'Seret dan lepas dokumen SPJ di sini, atau klik untuk mengunggah.' :
                             'Seret dan lepas dokumen baru di sini, atau klik untuk mengunggah.');
                     return;
                 }
@@ -956,7 +956,7 @@
                     selectedDokumenLpjFiles = [];
                     dokumenLpjPreviewContainer.style.display = 'none';
                     dokumenLpjPreviewContainer.innerHTML = '';
-                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
+                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen SPJ di sini, atau klik untuk mengunggah.';
                     document.getElementById('dokumen_lpj_pdf').value = '';
                 } else {
                     selectedDokumenFiles.splice(index, 1);
@@ -966,12 +966,12 @@
                 updateFileInput(type);
             };
 
-            // Global function to remove dokumen LPJ file specifically
+            // Global function to remove dokumen SPJ file specifically
             window.removeDokumenLpjFile = function() {
                 selectedDokumenLpjFiles = [];
                 dokumenLpjPreviewContainer.style.display = 'none';
                 dokumenLpjPreviewContainer.innerHTML = '';
-                dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
+                dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen SPJ di sini, atau klik untuk mengunggah.';
                 document.getElementById('dokumen_lpj_pdf').value = '';
                 
                 const totalDokumenLpjs = (existingDokumenLpjFiles ? 1 : 0) + selectedDokumenLpjFiles.length;

@@ -37,7 +37,7 @@ class SuratKopController extends Controller
             'garis' => 'ganda',
             'is_active' => true,
             'baris' => [
-                ['teks' => 'KOMITE OLAHRAGA NASIONAL INDONESIA', 'ukuran' => 14, 'tebal' => true],
+                ['teks' => 'DINAS KESEHATAN', 'ukuran' => 14, 'tebal' => true],
                 ['teks' => '', 'ukuran' => 11, 'tebal' => false],
             ],
         ])]);

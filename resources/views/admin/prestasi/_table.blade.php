@@ -220,7 +220,7 @@
 
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
-                                    <a href="{{ $detailRoute }}" class="btn btn-icon btn-sm btn-light-primary"
+                                    <a data-row-detail href="{{ $detailRoute }}" class="btn btn-icon btn-sm btn-light-primary"
                                         title="Lihat Detail Atlet"
                                         data-bs-toggle="tooltip">
                                         <i class="fa-solid fa-eye"></i>

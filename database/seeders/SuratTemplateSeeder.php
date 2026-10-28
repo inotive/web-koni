@@ -15,7 +15,7 @@ class SuratTemplateSeeder extends Seeder
         $this->seedKop();
 
         $keluar = SuratPenomoran::updateOrCreate(['nama' => 'Nomor Surat Keluar'], [
-            'format' => '{no}/{kode}/KONI/{bulan_romawi}/{tahun}',
+            'format' => '{no}/{kode}/DINKES/{bulan_romawi}/{tahun}',
             'digit' => 3,
             'reset_period' => 'tahunan',
             'scope' => 'bersama',
@@ -100,25 +100,25 @@ class SuratTemplateSeeder extends Seeder
         ]);
     }
 
-    /** Kop KONI Kabupaten Tabalong dari aset yang sudah ada di public/assets/img. */
+    /** Kop DINKES Kabupaten Tabalong dari aset yang sudah ada di public/assets/img. */
     private function seedKop(): void
     {
         $gambar = $this->copyAsset('kop-nobg.png', 'surat-kop/kop-koni-tabalong.png');
         $logo = $this->copyAsset('logo-koni-simplified.png', 'surat-kop/logo-koni.png');
 
-        SuratKop::updateOrCreate(['nama' => 'Kop Resmi KONI Tabalong'], [
+        SuratKop::updateOrCreate(['nama' => 'Kop Resmi DINKES Tabalong'], [
             'jenis' => 'gambar',
             'gambar' => $gambar,
             'garis' => 'tidak',
-            'is_default' => !SuratKop::where('is_default', true)->where('nama', '!=', 'Kop Resmi KONI Tabalong')->exists(),
+            'is_default' => !SuratKop::where('is_default', true)->where('nama', '!=', 'Kop Resmi DINKES Tabalong')->exists(),
             'is_active' => true,
         ]);
 
-        SuratKop::updateOrCreate(['nama' => 'Kop Teks KONI Tabalong'], [
+        SuratKop::updateOrCreate(['nama' => 'Kop Teks DINKES Tabalong'], [
             'jenis' => 'susun',
             'logo_kiri' => $logo,
             'baris' => [
-                ['teks' => 'KOMITE OLAHRAGA NASIONAL INDONESIA', 'ukuran' => 15, 'tebal' => true],
+                ['teks' => 'DINAS KESEHATAN', 'ukuran' => 15, 'tebal' => true],
                 ['teks' => 'KABUPATEN TABALONG', 'ukuran' => 15, 'tebal' => true],
                 ['teks' => 'Alamat Sekretariat : Jln. P.H.M.Noor Komplek Stadion Pembataan Tanjung 71571', 'ukuran' => 10, 'tebal' => false],
                 ['teks' => 'Kabupaten Tabalong Telp/Fax 0526 2025230', 'ukuran' => 10, 'tebal' => false],

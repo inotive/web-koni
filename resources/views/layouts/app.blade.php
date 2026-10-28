@@ -200,6 +200,24 @@
     @stack('stack-script')
 
     <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        tr:has([data-row-detail]) { cursor: pointer; }
+    </style>
+    <script>
+        // Klik baris tabel membuka detail: diteruskan ke elemen [data-row-detail] di baris itu
+        // (link halaman detail atau tombol modal). Klik pada kontrol lain di baris diabaikan.
+        document.addEventListener('click', function(e) {
+            const row = e.target.closest('tr');
+            const detail = row?.querySelector('[data-row-detail]');
+            if (!detail || e.target.closest('a, button, input, select, textarea, label, .dropdown-menu, [data-bs-toggle]')) {
+                return;
+            }
+            if (window.getSelection().toString()) {
+                return;
+            }
+            detail.click();
+        });
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             lucide.createIcons();

@@ -84,7 +84,7 @@ class Lpj extends Model
     }
 
     /**
-     * Get the parent LPJ
+     * Get the parent SPJ
      */
     public function parent(): BelongsTo
     {
@@ -92,7 +92,7 @@ class Lpj extends Model
     }
 
     /**
-     * Get all children LPJ entries
+     * Get all children SPJ entries
      */
     public function children(): HasMany
     {
@@ -180,7 +180,7 @@ class Lpj extends Model
     }
 
     /**
-     * Scope for LPJ entries only (not folders)
+     * Scope for SPJ entries only (not folders)
      */
     public function scopeEntries($query)
     {
@@ -204,7 +204,7 @@ class Lpj extends Model
     }
 
     /**
-     * Check if LPJ is a root entry (no parent)
+     * Check if SPJ is a root entry (no parent)
      */
     public function isRoot(): bool
     {
@@ -212,7 +212,7 @@ class Lpj extends Model
     }
 
     /**
-     * Check if LPJ has children
+     * Check if SPJ has children
      */
     public function hasChildren(): bool
     {
@@ -220,7 +220,7 @@ class Lpj extends Model
     }
 
     /**
-     * Get depth level of the LPJ entry
+     * Get depth level of the SPJ entry
      */
     public function getDepthAttribute(): int
     {

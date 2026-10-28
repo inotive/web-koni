@@ -31,8 +31,8 @@
     }
 @endphp
 
-@section('pageTitle', 'Edit Laporan LPJ')
-@section('mainSection', 'Laporan LPJ')
+@section('pageTitle', 'Edit Laporan SPJ')
+@section('mainSection', 'Laporan SPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index'))
 @section('subSection2', $lpj->parent?->parent?->parent?->nama_program ?? '')
@@ -327,7 +327,7 @@
 </style>
 
 <div class="d-flex justify-content-between align-items-center flex-wrap mb-4" style="padding: 20px 20px">
-    <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Laporan LPJ</h3>
+    <h3 class="fw-bold fs-2 mb-0 text-dark">Edit Laporan SPJ</h3>
 </div>
 
 <div class="main-content">
@@ -507,7 +507,7 @@
 
                     <div class="row mb-3">
                         <div class="col-md-3">
-                            <label class="form-label">Dokumen LPJ</label>
+                            <label class="form-label">Dokumen SPJ</label>
                             <small class="text-muted d-block">Ukuran per file maksimal 10MB</small>
                         </div>
                         <div class="col-md-9">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Detail Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('mainSection', 'Surat Pertanggungjawaban')
 @section('currentSection', 'Kegiatan Lainnya')
 
 @section('content')

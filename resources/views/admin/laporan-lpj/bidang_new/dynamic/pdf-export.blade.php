@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan LPJ - {{ $lpj->nama_program }}</title>
+    <title>Laporan SPJ - {{ $lpj->nama_program }}</title>
     <meta charset="UTF-8">
     <style>
         @page {
-            margin-top: 160px;   /* reserve space for letterhead */
+            margin-top: 30px;
             margin-left: 30px;
             margin-right: 30px;
             margin-bottom: 40px;
@@ -18,23 +18,6 @@
             margin: 0;
             padding: 0;
             color: #333;
-        }
-
-        /* --- HEADER IMAGE --- */
-        .letterhead {
-            position: fixed;
-            top: -160px;   /* move into the reserved top margin */
-            left: 0;
-            right: 0;
-            text-align: center;
-            height: 151px; /* actual header image height */
-        }
-
-        .letterhead img {
-            width: 100%;
-            height: auto;
-            max-height: 151px; /* match your letterhead (810x151) */
-            object-fit: contain;
         }
 
         /* --- MAIN CONTENT --- */
@@ -158,10 +141,7 @@
     </style>
 </head>
 <body>
-    <!-- HEADER IMAGE -->
-    <div class="letterhead">
-        <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
-    </div>
+    @include('admin.surat-kop._kop-default')
 
     <!-- MAIN CONTENT -->
     <div class="content">

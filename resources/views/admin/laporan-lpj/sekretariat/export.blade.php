@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan LPJ - {{ $sekretariat->nama_program }}</title>
+    <title>Laporan SPJ - {{ $sekretariat->nama_program }}</title>
     <meta charset="UTF-8">
     <style>
         @page {
-            margin-top: 151px;   /* reserve space for letterhead - matching image height */
+            margin-top: 30px;
             margin-left: 30px;
             margin-right: 30px;
             margin-bottom: 40px;
@@ -18,23 +18,6 @@
             margin: 0;
             padding: 0;
             color: #333;
-        }
-
-        /* --- HEADER IMAGE --- */
-        .letterhead {
-            position: fixed;
-            top: -151px;   /* move into the reserved top margin - matching reserved space */
-            left: 0;
-            right: 0;
-            text-align: center;
-            height: 151px; /* actual header image height */
-        }
-
-        .letterhead img {
-            width: 100%;
-            height: auto;
-            max-height: 151px; /* match your letterhead (810x151) */
-            object-fit: contain;
         }
 
         /* --- MAIN CONTENT --- */
@@ -168,17 +151,7 @@
     </style>
 </head>
 <body>
-    <!-- HEADER IMAGE -->
-    <div class="letterhead">
-        @if(file_exists(public_path('assets/img/kop-nobg.png')))
-            <img src="{{ public_path('assets/img/kop-nobg.png') }}" alt="KONI Letterhead">
-        @else
-            <div style="padding: 20px; border: 1px solid #ccc; text-align: center;">
-                <h2>KONI LETTERHEAD</h2>
-                <p>Header image not found</p>
-            </div>
-        @endif
-    </div>
+    @include('admin.surat-kop._kop-default')
 
     <!-- MAIN CONTENT -->
     <div class="content">

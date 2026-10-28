@@ -46,8 +46,9 @@
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <label class="form-label">Klasifikasi</label>
-                                <select name="arsip_kategori_id" class="form-select">
-                                    <option value="">— Pilih klasifikasi —</option>
+                                <select name="arsip_kategori_id" class="form-select" data-control="select2"
+                                    data-placeholder="— Pilih klasifikasi —" data-allow-clear="true">
+                                    <option value=""></option>
                                     @foreach ($kategoriList as $k)
                                         <option value="{{ $k->id }}" @selected(old('arsip_kategori_id', $arsip->arsip_kategori_id) == $k->id)>
                                             {{ $k->kode_klasifikasi }} - {{ $k->nama }} (retensi {{ $k->retensi_aktif_tahun }}+{{ $k->retensi_inaktif_tahun }} thn)

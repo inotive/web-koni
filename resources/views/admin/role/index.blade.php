@@ -130,7 +130,7 @@
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="{{ route('admin.manajemen-pengguna.role.show', $value->id) }}"
+                                                        <a data-row-detail href="{{ route('admin.manajemen-pengguna.role.show', $value->id) }}"
                                                             class="dropdown-item d-flex align-items-center gap-2">
                                                             Atur Hak Akses
                                                         </a>

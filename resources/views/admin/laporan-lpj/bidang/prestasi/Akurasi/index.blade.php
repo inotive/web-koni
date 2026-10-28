@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Cabor Akurasi')
-@section('mainSection', 'Laporan LPJ')
+@section('mainSection', 'Laporan SPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index', ['year' => $selectedYear]))
 @section('subSection2', 'Pembinaan Prestasi')

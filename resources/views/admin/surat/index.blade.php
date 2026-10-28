@@ -1210,8 +1210,7 @@
         });
 
         // Disposisi surat masuk (dummy: hanya simulasi, belum disimpan ke database & belum kirim WhatsApp)
-        $(document).on('click', '.dropdown-item.disposisi', function() {
-            $('.dropdown-menu-custom').removeClass('show');
+        $(document).on('click', '.btn.disposisi', function() {
             $('#disposisiPerihal').text($(this).data('perihal') || '-');
             $('#disposisiNoSurat').text($(this).data('no-surat') || '-');
             $('#disposisiPegawai').val('').removeClass('is-invalid');

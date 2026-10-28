@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Bidang Bidang')
-@section('mainSection', 'Laporan LPJ')
+@section('mainSection', 'Laporan SPJ')
 @section('currentSection', 'Bidang Bidang')
 
 @section('content')

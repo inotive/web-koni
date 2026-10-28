@@ -24,9 +24,9 @@ class PermissionSeeder extends Seeder
             $permissions = [
                 ['name' => 'dashboard', 'group' => 'Sistem', 'display_name' => 'Dashboard'],
                 ['name' => 'manajemen-rka', 'group' => 'Keuangan', 'display_name' => 'Manajemen RKA'],
-                ['name' => 'laporan-lpj-sekretariat', 'group' => 'Keuangan', 'display_name' => 'Laporan LPJ Sekretariat'],
-                ['name' => 'laporan-lpj-bidang', 'group' => 'Keuangan', 'display_name' => 'Laporan LPJ Bidang'],
-                ['name' => 'laporan-lpj-kegiatan-lainnya', 'group' => 'Keuangan', 'display_name' => 'Laporan LPJ Kegiatan Lainnya'],
+                ['name' => 'laporan-lpj-sekretariat', 'group' => 'Keuangan', 'display_name' => 'Laporan SPJ Sekretariat'],
+                ['name' => 'laporan-lpj-bidang', 'group' => 'Keuangan', 'display_name' => 'Laporan SPJ Bidang'],
+                ['name' => 'laporan-lpj-kegiatan-lainnya', 'group' => 'Keuangan', 'display_name' => 'Laporan SPJ Kegiatan Lainnya'],
                 ['name' => 'database-bendahara', 'group' => 'Keuangan', 'display_name' => 'Database Bendahara'],
                 ['name' => 'file-kesekretariatan', 'group' => 'Kesekretariatan', 'display_name' => 'File Kesekretariatan'],
                 ['name' => 'surat-masuk-keluar', 'group' => 'Kesekretariatan', 'display_name' => 'Surat Masuk & Keluar'],

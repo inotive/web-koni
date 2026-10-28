@@ -15,7 +15,7 @@
                             ['key' => 'jumlah_harga', 'title' => 'Total Anggaran'],
                             ['key' => null, 'title' => 'Foto Jurnal', 'sortable' => false],
                             ['key' => null, 'title' => 'Dokumen Pendukung', 'sortable' => false],
-                            ['key' => null, 'title' => 'Dokumen LPJ', 'sortable' => false],
+                            ['key' => null, 'title' => 'Dokumen SPJ', 'sortable' => false],
                             ['key' => 'created_at', 'title' => 'Tanggal Ditambahkan'],
                             ['key' => null, 'title' => 'Aksi', 'sortable' => false],
                         ];
@@ -83,7 +83,7 @@
                         <td class="text-start">
                             @if ($kegiatan->dokumen_lpj_pdf)
                                 @php
-                                    // Handle berbagai tipe data untuk dokumen LPJ PDF
+                                    // Handle berbagai tipe data untuk dokumen SPJ PDF
                                     $path = '';
                                     $originalName = '';
 
@@ -112,101 +112,74 @@
                         </td>
                         <td class="text-start">{{ $kegiatan->created_at ? $kegiatan->created_at->format('d/m/Y') : '-' }}</td>
                         <td class="text-start">
-                            <div class="dropdown dropdown-action" data-row-id="{{ $kegiatan->id }}">
-                                <button class="btn btn-sm p-0 dropdown-toggle-custom" type="button">
-                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="32" height="32" rx="6" fill="#EFF6FF" />
-                                        <rect x="0.5" y="0.5" width="31" height="31" rx="5.5"
-                                            stroke="#1B84FF" stroke-opacity="0.2" />
-                                        <g clip-path="url(#clip0_2223_4269)">
-                                            <path opacity="0.3"
-                                                d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z"
-                                                fill="#1B84FF" />
-                                            <path
-                                                d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z"
-                                                fill="#1B84FF" />
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_2223_4269">
-                                                <rect width="18" height="18" fill="white"
-                                                    transform="translate(7 7)" />
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-custom">
-                                    <li>
-                                        <a href="javascript:void(0)" class="dropdown-item-custom"
-                                           onclick="showDetailModal({{ json_encode($kegiatan) }})">
-                                            <i class="fas fa-eye me-2"></i> Lihat Detail
-                                        </a>
-                                    </li>
+                            <div class="d-inline-flex gap-2" data-row-id="{{ $kegiatan->id }}">
+                                    <a title="Lihat Detail" data-row-detail href="javascript:void(0)" class="btn btn-icon btn-sm btn-light-primary"
+                                       onclick="showDetailModal({{ json_encode($kegiatan) }})">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
 
-                                    @php
-                                        $pengajuan = null;
-                                        if (isset($kegiatan->pengajuan) && $kegiatan->pengajuan) {
-                                            // If pengajuan is a collection (hasMany), we need to filter
-                                            if (is_iterable($kegiatan->pengajuan)) {
-                                                $pengajuan = collect($kegiatan->pengajuan)->firstWhere('status', 'disetujui');
-                                            } else {
-                                                // If it's a single object (hasOne), use it directly
-                                                $pengajuan = $kegiatan->pengajuan;
-                                            }
+                                @php
+                                    $pengajuan = null;
+                                    if (isset($kegiatan->pengajuan) && $kegiatan->pengajuan) {
+                                        // If pengajuan is a collection (hasMany), we need to filter
+                                        if (is_iterable($kegiatan->pengajuan)) {
+                                            $pengajuan = collect($kegiatan->pengajuan)->firstWhere('status', 'disetujui');
+                                        } else {
+                                            // If it's a single object (hasOne), use it directly
+                                            $pengajuan = $kegiatan->pengajuan;
                                         }
+                                    }
 
-                                        $isModifiable = isset($kegiatan->modifiable_by_user_id) &&
-                                                        auth()->user()->id == $kegiatan->modifiable_by_user_id &&
-                                                        $pengajuan && $pengajuan->token > 0;
+                                    $isModifiable = isset($kegiatan->modifiable_by_user_id) &&
+                                                    auth()->user()->id == $kegiatan->modifiable_by_user_id &&
+                                                    $pengajuan && $pengajuan->token > 0;
 
-                                        $canEdit = auth()->user()->hasRole('superadmin') ||
-                                                   auth()->user()->can('pengajuan-modifikasi-laporan-manage') ||
-                                                   $isModifiable;
-                                    @endphp
+                                    $canEdit = auth()->user()->hasRole('superadmin') ||
+                                               auth()->user()->can('pengajuan-modifikasi-laporan-manage') ||
+                                               $isModifiable;
+                                @endphp
 
-                                    <li>
-                                        <a href="{{ $canEdit ? route('admin.laporan-lpj.kegiatan-lainnya.edit', $kegiatan->id) : 'javascript:void(0)' }}"
-                                           class="dropdown-item-custom e    dit {{ !$canEdit ? 'restricted-action' : '' }}"
-                                           @if(!$canEdit)
-                                               data-bs-toggle="tooltip"
-                                               data-bs-placement="left"
-                                               data-bs-custom-class="custom-tooltip"
-                                               data-bs-html="true"
-                                               title="<div class='tooltip-content'>
-                                                           <strong>Informasi</strong><br>
-                                                           Ajukan approval untuk<br>
-                                                           modifikasi laporan ini
-                                                           <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
-                                                       </div>"
-                                           @endif
-                                           style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
-                                            <i class="fas fa-edit me-2"></i> Modifikasi
-                                        </a>
-                                    </li>
+                                    <a href="{{ $canEdit ? route('admin.laporan-lpj.kegiatan-lainnya.edit', $kegiatan->id) : 'javascript:void(0)' }}"
+                                       class="btn btn-icon btn-sm btn-light-warning edit {{ !$canEdit ? 'restricted-action' : '' }}"
+                                       @if(!$canEdit)
+                                           data-bs-toggle="tooltip"
+                                           data-bs-placement="left"
+                                           data-bs-custom-class="custom-tooltip"
+                                           data-bs-html="true"
+                                           title="<div class='tooltip-content'>
+                                                       <strong>Informasi</strong><br>
+                                                       Ajukan approval untuk<br>
+                                                       modifikasi laporan ini
+                                                       <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                   </div>"
+                                       @else
+                                           title="Modifikasi"
+                                       @endif
+                                       style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
 
-                                    <li>
-                                        <a href="javascript:void(0)"
-                                           class="dropdown-item-custom delete {{ !$canEdit ? 'restricted-action' : '' }}"
-                                           @if($canEdit)
-                                               onclick="destroyItem(this)"
-                                               data-route="{{ route('admin.laporan-lpj.kegiatan-lainnya.destroy', $kegiatan->id) }}"
-                                           @else
-                                               data-bs-toggle="tooltip"
-                                               data-bs-placement="left"
-                                               data-bs-custom-class="custom-tooltip"
-                                               data-bs-html="true"
-                                               title="<div class='tooltip-content'>
-                                                           <strong>Informasi</strong><br>
-                                                           Ajukan approval untuk<br>
-                                                           menghapus laporan ini
-                                                           <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
-                                                       </div>"
-                                           @endif
-                                           style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
-                                            <i class="fas fa-trash me-2"></i> Hapus
-                                        </a>
-                                    </li>
-                                </ul>
+                                    <a href="javascript:void(0)"
+                                       class="btn btn-icon btn-sm btn-light-danger delete {{ !$canEdit ? 'restricted-action' : '' }}"
+                                       @if($canEdit)
+                                           onclick="destroyItem(this)"
+                                           data-route="{{ route('admin.laporan-lpj.kegiatan-lainnya.destroy', $kegiatan->id) }}"
+                                           title="Hapus"
+                                       @else
+                                           data-bs-toggle="tooltip"
+                                           data-bs-placement="left"
+                                           data-bs-custom-class="custom-tooltip"
+                                           data-bs-html="true"
+                                           title="<div class='tooltip-content'>
+                                                       <strong>Informasi</strong><br>
+                                                       Ajukan approval untuk<br>
+                                                       menghapus laporan ini
+                                                       <a href='javascript:void(0)' onclick='showDetailModal({{ json_encode($kegiatan) }})' class='text-primary mt-2 d-inline-block' onmouseover='keepTooltipVisible(this)' onmouseout='hideTooltipWithDelay(this)'>Lihat Detail</a>
+                                                   </div>"
+                                       @endif
+                                       style="{{ !$canEdit ? 'cursor: not-allowed; opacity: 0.6;' : '' }}">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                             </div>
                         </td>
                     </tr>

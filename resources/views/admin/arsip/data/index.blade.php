@@ -30,8 +30,9 @@
                         placeholder="Cari nomor, judul, uraian...">
                 </div>
                 <div class="col-md-2">
-                    <select name="kategori" class="form-select form-select-sm auto-submit">
-                        <option value="">Semua klasifikasi</option>
+                    <select name="kategori" class="form-select form-select-sm auto-submit" data-control="select2"
+                        data-placeholder="Semua klasifikasi" data-allow-clear="true">
+                        <option value=""></option>
                         @foreach ($kategoriList as $k)
                             <option value="{{ $k->id }}" @selected(request('kategori') == $k->id)>{{ $k->kode_klasifikasi }} - {{ $k->nama }}</option>
                         @endforeach
@@ -107,7 +108,7 @@
                                 </td>
                                 <td><span class="badge {{ $item->status_badge }}">{{ $item->status_label }}</span></td>
                                 <td class="text-end text-nowrap">
-                                    <a href="{{ route('admin.arsip.data.show', $item) }}" class="btn btn-sm btn-icon btn-light" title="Detail">
+                                    <a data-row-detail href="{{ route('admin.arsip.data.show', $item) }}" class="btn btn-sm btn-icon btn-light" title="Detail">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>
                                     @if (in_array($item->status, ['aktif', 'inaktif']))
@@ -135,8 +136,7 @@
 
 @section('script')
     <script>
-        document.querySelectorAll('#filterForm .auto-submit').forEach(el => {
-            el.addEventListener('change', () => document.getElementById('filterForm').submit());
-        });
+        // Lewat jQuery agar change dari select2 (filter klasifikasi) ikut tertangkap
+        $('#filterForm .auto-submit').on('change', () => document.getElementById('filterForm').submit());
     </script>
 @endsection

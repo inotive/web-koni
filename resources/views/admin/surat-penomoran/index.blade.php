@@ -123,7 +123,7 @@
                         <div class="col-md-7">
                             <label class="form-label required">Nama Format</label>
                             <input type="text" name="nama" id="p_nama" class="form-control" required maxlength="255"
-                                placeholder="Contoh: Nomor Surat Keluar KONI">
+                                placeholder="Contoh: Nomor Surat Keluar DINKES">
                         </div>
                         <div class="col-md-5">
                             <label class="form-label required">Berlaku Untuk</label>
@@ -145,7 +145,7 @@
                                 </button>
                             @endforeach
                         </div>
-                        <div class="form-text">Klik token untuk menyisipkan. Teks lain (misalnya <code>KONI-KAB</code> atau <code>/</code>) ditulis apa adanya.</div>
+                        <div class="form-text">Klik token untuk menyisipkan. Teks lain (misalnya <code>DINKES-KAB</code> atau <code>/</code>) ditulis apa adanya.</div>
                         <div class="rounded p-3 mt-3" style="background:#F4FAF7;border:1px solid #E3F1EA">
                             <span class="text-muted fs-7">Contoh hasil:</span>
                             <strong id="p_contoh" class="ms-2 font-monospace">-</strong>
@@ -254,7 +254,7 @@
             document.getElementById('p_id').value = data.id ?? '';
             document.getElementById('p_nama').value = data.nama ?? '';
             document.getElementById('p_berlaku_untuk').value = data.berlaku_untuk ?? 'keluar';
-            formatInput.value = data.format ?? '{no}/{kode}/KONI/{bulan_romawi}/{tahun}';
+            formatInput.value = data.format ?? '{no}/{kode}/DINKES/{bulan_romawi}/{tahun}';
             digitInput.value = data.digit ?? 3;
             document.getElementById('p_reset_period').value = data.reset_period ?? 'tahunan';
             document.getElementById('p_scope').value = data.scope ?? 'bersama';

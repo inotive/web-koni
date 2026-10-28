@@ -125,9 +125,9 @@ class KegiatanLainnyaController extends Controller
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
             'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
-            'dokumen_lpj_pdf.file' => 'File dokumen LPJ tidak valid.',
-            'dokumen_lpj_pdf.mimes' => 'Format dokumen LPJ harus PDF.',
-            'dokumen_lpj_pdf.max' => 'Ukuran dokumen LPJ maksimal 10MB.',
+            'dokumen_lpj_pdf.file' => 'File dokumen SPJ tidak valid.',
+            'dokumen_lpj_pdf.mimes' => 'Format dokumen SPJ harus PDF.',
+            'dokumen_lpj_pdf.max' => 'Ukuran dokumen SPJ maksimal 10MB.',
         ]);
         
         // Parse numeric values
@@ -286,9 +286,9 @@ class KegiatanLainnyaController extends Controller
             'dokumen_lpj.*.file' => 'File dokumen tidak valid.',
             'dokumen_lpj.*.mimes' => 'Format dokumen harus: pdf, doc, docx, xls, xlsx.',
             'dokumen_lpj.*.max' => 'Ukuran dokumen maksimal 10MB.',
-            'dokumen_lpj_pdf.file' => 'File dokumen LPJ tidak valid.',
-            'dokumen_lpj_pdf.mimes' => 'Format dokumen LPJ harus PDF.',
-            'dokumen_lpj_pdf.max' => 'Ukuran dokumen LPJ maksimal 10MB.',
+            'dokumen_lpj_pdf.file' => 'File dokumen SPJ tidak valid.',
+            'dokumen_lpj_pdf.mimes' => 'Format dokumen SPJ harus PDF.',
+            'dokumen_lpj_pdf.max' => 'Ukuran dokumen SPJ maksimal 10MB.',
         ]);
         
         // Validasi tambahan: jika tidak ada foto lama dan tidak ada foto baru diunggah

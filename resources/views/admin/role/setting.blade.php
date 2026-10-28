@@ -50,14 +50,14 @@
                                     <p class="mb-3 desc">Memiliki wewenang penuh (Create, Read, Update, Delete) atas data
                                         Rencana Kerja dan Anggaran.</p>
                                 @elseif ($permission->name === 'laporan-lpj-sekretariat')
-                                    <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian kesekretariatan.</p>
+                                    <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan SPJ bagian kesekretariatan.</p>
                                 @elseif ($permission->name === 'laporan-lpj-bidang')
-                                    <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian bidang-bidang.</p>
+                                    <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan SPJ bagian bidang-bidang.</p>
                                 @elseif ($permission->name === 'laporan-lpj-kegiatan-lainnya')
-                                    <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan LPJ bagian kegiatan lainnya.</p>
+                                    <p class="mb-3 desc">Memberikan hak akses untuk mengelola laporan SPJ bagian kegiatan lainnya.</p>
                                 @elseif ($permission->name === 'database-bendahara')
                                     <p class="mb-3 desc">Mengelola seluruh data master yang berkaitan dengan keuangan dan
-                                        perbendaharaan KONI.</p>
+                                        perbendaharaan DINKES.</p>
                                 @elseif ($permission->name === 'file-kesekretariatan')
                                     <p class="mb-3 desc">Admin dapat mengelola struktur folder, mengatur kuota penyimpanan,
                                         dan melakukan backup data penting.</p>
@@ -78,10 +78,10 @@
                                         mengakses informasi sesuai jabatannya.</p>
                                 @elseif ($permission->name === 'tahun-anggaran')
                                     <p class="mb-3 desc">Mengelola daftar Tahun Anggaran yang menjadi acuan untuk semua
-                                        modul keuangan (RKA dan LPJ).</p>
+                                        modul keuangan (RKA dan SPJ).</p>
                                 @elseif ($permission->name === 'cabang-olahraga')
                                     <p class="mb-3 desc">Bertanggung jawab untuk mengelola data master Cabang Olahraga
-                                        (Cabor) yang diakui oleh KONI.</p>
+                                        (Cabor) yang diakui oleh DINKES.</p>
                                 @elseif ($permission->name === 'kejuaraan')
                                     <p class="mb-3 desc">Memiliki wewenang penuh untuk mengelola data event skala besar atau
                                         memperbaiki data historis kejuaraan.</p>

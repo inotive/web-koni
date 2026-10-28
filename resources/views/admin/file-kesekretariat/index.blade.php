@@ -2546,37 +2546,19 @@ function hideLoading() {
     </a>
 </td>
                         <td class="text-center">
-                            <div class="dropdown dropdown-action">
-                                <button class="btn btn-icon btn-sm btn-preview"
-                                        onclick="previewFile('${fileData.file_url}', '${fileData.dokumen_file}', '${fileData.extension}')"
-                                        title="Preview ${fileData.dokumen_file}">
-                                    <i class="fas fa-eye text-primary"></i>
+                            <div class="d-inline-flex gap-2">
+                                <button title="Preview" type="button" class="btn btn-icon btn-sm btn-light-primary btn-preview"
+                                        onclick="previewFile('${fileData.file_url}', '${fileData.dokumen_file}', '${fileData.extension}')">
+                                    <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-icon btn-sm ms-2 dropdown-toggle-action" type="button">
-                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="32" height="32" rx="6" fill="#EFF6FF"/>
-                                        <rect x="0.5" y="0.5" width="31" height="31" rx="5.5" stroke="#1B84FF" stroke-opacity="0.2"/>
-                                        <g clip-path="url(#clip0_2223_4269)">
-                                            <path opacity="0.3" d="M19.4266 7.9375H12.5734C10.0131 7.9375 7.9375 10.0131 7.9375 12.5734V19.4266C7.9375 21.9869 10.0131 24.0625 12.5734 24.0625H19.4266C21.9869 24.0625 24.0625 21.9869 24.0625 19.4266V12.5734C24.0625 10.0131 21.9869 7.9375 19.4266 7.9375Z" fill="#1B84FF"/>
-                                            <path d="M12.251 14.8232C12.8475 14.8233 13.331 15.3067 13.3311 15.9033C13.3311 16.4999 12.8476 16.9833 12.251 16.9834C11.6543 16.9834 11.1709 16.5 11.1709 15.9033C11.1709 15.3067 11.6543 14.8232 12.251 14.8232ZM16.2979 14.8232C16.8945 14.8232 17.3789 15.3066 17.3789 15.9033C17.3789 16.5 16.8945 16.9834 16.2979 16.9834C15.7013 16.9832 15.2178 16.4999 15.2178 15.9033C15.2178 15.3067 15.7013 14.8234 16.2979 14.8232ZM20.3369 14.8232C20.9336 14.8232 21.418 15.3066 21.418 15.9033C21.418 16.5 20.9336 16.9834 20.3369 16.9834C19.7404 16.9832 19.2568 16.4999 19.2568 15.9033C19.2568 15.3068 19.7404 14.8234 20.3369 14.8232Z" fill="#1B84FF"/>
-                                        </g>
-                                        <defs>
-                                            <clipPath id="clip0_2223_4269">
-                                                <rect width="18" height="18" fill="white" transform="translate(7 7)"/>
-                                            </clipPath>
-                                        </defs>
-                                    </svg>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-action">
-                                    <li class="dropdown-item edit"
+                                <button title="Edit File" type="button" class="btn btn-icon btn-sm btn-light-warning edit"
                                         onclick="openEditModal(${fileData.id}, '${fileData.nama_dokumen}', '${fileData.tanggal_dokumen}', '${fileData.dokumen_file}')">
-                                        <i class="ki-outline ki-pencil me-2"></i>Edit File
-                                    </li>
-                                    <li class="dropdown-item delete"
+                                    <i class="ki-outline ki-pencil"></i>
+                                </button>
+                                <button title="Hapus" type="button" class="btn btn-icon btn-sm btn-light-danger delete"
                                         onclick="deleteFile(${fileData.id}, '${fileData.nama_dokumen}', '/admin/file-kesekretariat/${fileData.id}')">
-                                        <i class="ki-outline ki-trash me-2"></i>Hapus
-                                    </li>
-                                </ul>
+                                    <i class="ki-outline ki-trash"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -2612,25 +2594,18 @@ function hideLoading() {
     </a>
 </td>
                         <td class="text-center">
-                            <div class="dropdown-action">
-                                <button class="dropdown-toggle-action" type="button">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
-                                    </svg>
+                            <div class="d-inline-flex gap-2">
+                                <button title="Edit File" type="button" class="btn btn-icon btn-sm btn-light-warning edit btn-edit"
+                                        data-id="${fileData.id}"
+                                        data-nama="${fileData.nama_dokumen}"
+                                        data-tanggal="${fileData.tanggal_dokumen}"
+                                        data-filename="${fileData.dokumen_file}">
+                                    <i class="ki-outline ki-pencil"></i>
                                 </button>
-                                <div class="dropdown-menu-action">
-                                    <button class="dropdown-item-action btn-edit"
-                                            data-id="${fileData.id}"
-                                            data-nama="${fileData.nama_dokumen}"
-                                            data-tanggal="${fileData.tanggal_dokumen}"
-                                            data-filename="${fileData.dokumen_file}">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button class="dropdown-item-action text-danger"
-                                            onclick="deleteFile(${fileData.id}, '${fileData.nama_dokumen}', '/admin/file-kesekretariat/${fileData.id}')">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </div>
+                                <button title="Hapus" type="button" class="btn btn-icon btn-sm btn-light-danger delete"
+                                        onclick="deleteFile(${fileData.id}, '${fileData.nama_dokumen}', '/admin/file-kesekretariat/${fileData.id}')">
+                                    <i class="ki-outline ki-trash"></i>
+                                </button>
                             </div>
                         </td>
                     `);

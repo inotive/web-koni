@@ -74,7 +74,7 @@
                         <div>
                             <label class="form-label required">Nama Kop</label>
                             <input type="text" name="nama" class="form-control" required maxlength="255"
-                                value="{{ old('nama', $kop->nama) }}" placeholder="Contoh: Kop Resmi KONI">
+                                value="{{ old('nama', $kop->nama) }}" placeholder="Contoh: Kop Resmi DINKES">
                         </div>
 
                         <div>

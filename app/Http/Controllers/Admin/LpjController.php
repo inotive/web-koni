@@ -34,7 +34,7 @@ class LpjController extends Controller
         $parent = $parentId ? Lpj::findOrFail($parentId) : null;
 
         if ($parentId) {
-            // Tabel hanya berisi LPJ, folder ditampilkan terpisah di atas tabel
+            // Tabel hanya berisi SPJ, folder ditampilkan terpisah di atas tabel
             $query->where('parent_id', $parentId)->where('is_folder', false);
 
             $target = Target::where('id_lpj', $parentId)->whereYear('created_at', $selectedYear)->first();
@@ -478,7 +478,7 @@ class LpjController extends Controller
                 'active' => false
             ],
             [
-                'title' => 'Laporan LPJ',
+                'title' => 'Laporan SPJ',
                 'url' => route('admin.dashboard.index'),
                 'active' => false
             ],
@@ -615,7 +615,7 @@ class LpjController extends Controller
 
             $finalPdf = $fpdi->Output('S');
 
-            $filename = 'Laporan_LPJ_All_' . date('Y-m-d') . '.pdf';
+            $filename = 'Laporan_SPJ_All_' . date('Y-m-d') . '.pdf';
 
             return response($finalPdf, 200, [
                 'Content-Type' => 'application/pdf',

@@ -212,12 +212,12 @@
                 $imageMimeType = mime_content_type($imagePath);
                 $imageData = base64_encode(file_get_contents($imagePath));
                 $imageSrc = 'data:' . $imageMimeType . ';base64,' . $imageData;
-                echo '<img src="' . $imageSrc . '" alt="KONI Letterhead">';
+                echo '<img src="' . $imageSrc . '" alt="DINKES Letterhead">';
             } else {
                 // Fallback if image doesn't exist - show the text header
                 echo '<div class="kop-surat">
-                        <h1>KOMITE OLAHRAGA NASIONAL INDONESIA</h1>
-                        <h2>LAPORAN PERTANGGUNGJAWABAN KEGIATAN LAINNYA</h2>
+                        <h1>DINAS KESEHATAN</h1>
+                        <h2>SURAT PERTANGGUNGJAWABAN KEGIATAN LAINNYA</h2>
                         <p>Jl. Jenderal Sudirman No. 123, Jakarta Pusat 10210</p>
                         <p>Telp: (021) 1234567 | Email: info@koni.or.id</p>
                       </div>';

@@ -44,11 +44,11 @@
                 $headerImageMimeType = mime_content_type($headerImagePath);
                 $headerImageData = base64_encode(file_get_contents($headerImagePath));
                 $headerImageSrc = 'data:' . $headerImageMimeType . ';base64,' . $headerImageData;
-                echo '<img src="' . $headerImageSrc . '" alt="KONI Letterhead">';
+                echo '<img src="' . $headerImageSrc . '" alt="DINKES Letterhead">';
             } else {
                 // Fallback if image doesn't exist
                 echo '<div style="height: 151px; display: flex; align-items: center; justify-content: center; background-color: #f8f9fa; border-bottom: 1px solid #dee2e6;">
-                        <span style="color: #6c757d; font-weight: bold;">LOGO KONI</span>
+                        <span style="color: #6c757d; font-weight: bold;">LOGO DINKES</span>
                       </div>';
             }
         @endphp

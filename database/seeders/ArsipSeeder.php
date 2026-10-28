@@ -19,7 +19,7 @@ class ArsipSeeder extends Seeder
             ['kode_klasifikasi' => '010', 'nama' => 'Surat Masuk & Keluar', 'retensi_aktif_tahun' => 2, 'retensi_inaktif_tahun' => 3, 'tindakan_akhir' => 'dinilai_kembali'],
             ['kode_klasifikasi' => '060', 'nama' => 'Organisasi & Tata Laksana', 'retensi_aktif_tahun' => 5, 'retensi_inaktif_tahun' => 5, 'tindakan_akhir' => 'permanen'],
             ['kode_klasifikasi' => '800', 'nama' => 'Kepegawaian / Kepengurusan', 'retensi_aktif_tahun' => 5, 'retensi_inaktif_tahun' => 5, 'tindakan_akhir' => 'permanen'],
-            ['kode_klasifikasi' => '900', 'nama' => 'Keuangan (RKA, LPJ, SPJ)', 'retensi_aktif_tahun' => 2, 'retensi_inaktif_tahun' => 8, 'tindakan_akhir' => 'musnah'],
+            ['kode_klasifikasi' => '900', 'nama' => 'Keuangan (RKA, SPJ)', 'retensi_aktif_tahun' => 2, 'retensi_inaktif_tahun' => 8, 'tindakan_akhir' => 'musnah'],
             ['kode_klasifikasi' => '420', 'nama' => 'Pembinaan Prestasi Olahraga', 'retensi_aktif_tahun' => 3, 'retensi_inaktif_tahun' => 7, 'tindakan_akhir' => 'permanen'],
         ];
 
@@ -31,7 +31,7 @@ class ArsipSeeder extends Seeder
             return;
         }
 
-        $gedung = ArsipLokasi::create(['tipe' => 'gedung', 'kode' => 'G1', 'nama' => 'Kantor KONI']);
+        $gedung = ArsipLokasi::create(['tipe' => 'gedung', 'kode' => 'G1', 'nama' => 'Kantor DINKES']);
         $ruang = ArsipLokasi::create(['parent_id' => $gedung->id, 'tipe' => 'ruang', 'kode' => 'R1', 'nama' => 'Ruang Arsip']);
 
         foreach (['A', 'B'] as $rakKode) {

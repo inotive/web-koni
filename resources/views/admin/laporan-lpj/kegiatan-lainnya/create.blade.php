@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('pageTitle', 'Tambah Laporan Kegiatan Lainnya')
-@section('mainSection', 'Laporan Pertanggungjawaban')
+@section('mainSection', 'Surat Pertanggungjawaban')
 @section('subSection', 'Kegiatan Lainnya')
 @section('subSectionUrl', route('admin.laporan-lpj.kegiatan-lainnya.index'))
 @section('currentSection', 'Tambah Laporan')
@@ -388,10 +388,10 @@
                                 </div>
                             </div>
 
-                            {{-- Dokumen LPJ Upload (PDF Only) --}}
+                            {{-- Dokumen SPJ Upload (PDF Only) --}}
                             <div class="row align-items-start mb-4">
                                 <div class="col-md-3">
-                                    <label class="form-label">Dokumen LPJ</label>
+                                    <label class="form-label">Dokumen SPJ</label>
                                     <p class="file-upload-hint">Unggah file PDF saja, maksimal 10MB</p>
                                 </div>
                                 <div class="col-md-9">
@@ -406,7 +406,7 @@
                                             </div>
                                             <div>
                                                 <p class="file-upload-text" id="dokumen-lpj-file-name-display">
-                                                    Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.
+                                                    Seret dan lepas dokumen SPJ di sini, atau klik untuk mengunggah.
                                                 </p>
                                             </div>
                                         </div>
@@ -528,7 +528,7 @@
                     dokumenLpjFileNameDisplay.textContent = file.name;
                     dokumenLpjPreviewContainer.style.display = 'block';
 
-                    // Tampilkan preview dokumen LPJ
+                    // Tampilkan preview dokumen SPJ
                     const previewHTML = `
                         <div class="file-preview-item">
                             <div class="file-icon">
@@ -543,7 +543,7 @@
                     dokumenLpjPreviewContainer.innerHTML = previewHTML;
                 } else {
                     selectedDokumenLpjFile = null;
-                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen LPJ di sini, atau klik untuk mengunggah.';
+                    dokumenLpjFileNameDisplay.textContent = 'Seret dan lepas dokumen SPJ di sini, atau klik untuk mengunggah.';
                     dokumenLpjPreviewContainer.style.display = 'none';
                     dokumenLpjPreviewContainer.innerHTML = '';
                 }

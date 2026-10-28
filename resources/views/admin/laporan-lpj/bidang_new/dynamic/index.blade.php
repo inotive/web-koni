@@ -32,7 +32,7 @@
 @endphp
 
 @section('pageTitle', $currentParent ? $currentParent->nama_program : 'Root Level')
-@section('mainSection', 'Laporan LPJ')
+@section('mainSection', 'Laporan SPJ')
 @section('subSection', 'Bidang Bidang')
 @section('subSectionUrl', route('admin.laporan-lpj.bidang.index', $queryParams))
 @section('subSection2', $parent?->parent?->parent?->nama_program ?? '')
@@ -319,7 +319,7 @@
         {{-- Card Header --}}
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap py-5">
             <h3 class="card-title fw-bold fs-4 mb-0">
-                Daftar LPJ {{ $currentParent ? $currentParent->nama_program : 'Root Level' }} - {{ $selectedYear ?? now()->year }}
+                Daftar SPJ {{ $currentParent ? $currentParent->nama_program : 'Root Level' }} - {{ $selectedYear ?? now()->year }}
             </h3>
 
             {{-- Action Buttons --}}
@@ -327,7 +327,7 @@
                 <a href="{{ $parentId ? route('admin.laporan-lpj.bidang.dynamic.child.create', $parentId) : route('admin.laporan-lpj.bidang.dynamic.create') }}"
                        class="btn custom-red-button"
                        style="background-color: #1F6B5A !important; color: white !important; border-color: #1F6B5A !important;">
-                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah LPJ
+                        <i class="ki-duotone ki-plus fs-2" style="color: white !important;"></i>Tambah SPJ
                     </a>
 
                 {{-- Search Input --}}
@@ -856,7 +856,7 @@ $(document).ready(function() {
                     <button type="button" class="btn btn-outline-secondary btn-sm preview-btn"
                             data-files='${JSON.stringify(data.dokumen_lpj)}'
                             data-type="document"
-                            data-title="Dokumen LPJ">
+                            data-title="Dokumen SPJ">
                     </button>
                 </div>`;
         }
@@ -910,7 +910,7 @@ $(document).ready(function() {
                             <div class="bg-light p-3 rounded">${dokumenHtml}</div>
                         </div>
                         <div>
-                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen LPJ:</label>
+                            <label class="fw-semibold mb-2 d-block"><i class="fas fa-file-alt me-1"></i>Dokumen SPJ:</label>
                             <div class="bg-light p-3 rounded">${dokumenLpj}</div>
                         </div>
                     </div>

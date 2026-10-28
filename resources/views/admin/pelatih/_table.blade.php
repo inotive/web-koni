@@ -301,7 +301,7 @@
                             </td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-1">
-                                    <a href="{{ route('admin.konfigurasi.pelatih.show', $item->id) }}"
+                                    <a data-row-detail href="{{ route('admin.konfigurasi.pelatih.show', $item->id) }}"
                                     class="btn btn-icon btn-sm btn-light-primary"
                                     title="Detail">
                                         <i class="fa-solid fa-eye"></i>

@@ -156,7 +156,7 @@
                     <span class="d-flex flex-column pe-5">
                         <a href="{{ $folderUrl($folder) }}" class="folder-name stretched-link">{{ $folder->nama_program }}</a>
                         <span class="folder-meta">
-                            {{ $folder->subfolder_count ?? 0 }} folder · {{ $folder->entry_count ?? 0 }} LPJ
+                            {{ $folder->subfolder_count ?? 0 }} folder · {{ $folder->entry_count ?? 0 }} SPJ
                         </span>
                     </span>
                     <span class="folder-actions dropdown">
